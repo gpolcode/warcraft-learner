@@ -17,12 +17,16 @@ const svc = TestBed.inject(GearFeatureService);
 TestBed.resetTestingModule();
 
 const STANDARD_KEY = 'v3:11.1,22.1';
+const GAZE = { id: 100, name: 'A', icon: 'inv_a' };
+const PUZZLE_BOX = { id: 200, name: 'B', icon: 'inv_b' };
+const STANDARD_PAIR = [{ items: [GAZE, PUZZLE_BOX], pct: 70 }];
+const STANDARD_TRINKETS = [{ slot: 12, id: GAZE.id, name: GAZE.name }, { slot: 13, id: PUZZLE_BOX.id, name: PUZZLE_BOX.name }];
 
 function benchWith(overrides: Partial<GearBench> = {}): GearBench {
   return {
     spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', sample_count: 10,
     talent_builds: [{ key: STANDARD_KEY, pct: 80, report_code: 'abc', fight_id: 2, player_name: 'Top', source_id: 5, diff: [] }],
-    trinkets: { 12: [{ id: 100, name: 'A', icon: 'inv_a', pct: 70 }] },
+    trinket_sets: STANDARD_PAIR,
     enchants: { 15: [{ id: 8041, name: 'Sophic', pct: 90 }] },
     ...overrides,
   };
@@ -47,7 +51,7 @@ describe('benchToStats', () => {
   it('extracts the gear stats block from a bench', () => {
     expect(svc['benchToStats'](benchWith())).toEqual({
       talent_builds: [{ key: STANDARD_KEY, pct: 80, report_code: 'abc', fight_id: 2, player_name: 'Top', source_id: 5, diff: [] }],
-      trinkets: { 12: [{ id: 100, name: 'A', icon: 'inv_a', pct: 70 }] },
+      trinket_sets: STANDARD_PAIR,
       enchants: { 15: [{ id: 8041, name: 'Sophic', pct: 90 }] },
     });
   });
@@ -62,7 +66,7 @@ describe('buildCharacterGear', () => {
   it('builds the gear fingerprint when the event carries gear', () => {
     const event = toRawEvent({
       talent_key: STANDARD_KEY,
-      trinkets: [{ slot: 12, id: 100, name: 'A' }],
+      trinkets: STANDARD_TRINKETS,
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
     });
     const result = svc['buildCharacterGear'](event, {});
@@ -75,15 +79,15 @@ describe('buildCharacterGear', () => {
 describe('buildBenchGearView', () => {
   const stats = svc['benchToStats'](benchWith());
 
-  it('comparison off, bench rows populated from the dedicated bench builders', () => {
+  it('comparison off, bench rows populated with no row marked as the player\'s', () => {
     const view = svc['buildBenchGearView'](stats);
     expect(view.comparison).toBe(false);
-    expect(view.benchTrinketRows).toEqual([{ slotLabel: 'Trinket 1', id: 100, name: 'A', icon: 'inv_a', pct: 70 }]);
     expect(view.benchEnchantRows).toEqual([{ slotName: 'Main Hand', name: 'Sophic' }]);
     expect(view.talentBuilds[0]).toMatchObject({ pct: 80, label: 'Most common build' });
+    expect(view.trinketSets[0]).toEqual({ pct: 70, isPlayer: false, label: 'Most common pair', items: [GAZE, PUZZLE_BOX] });
+    expect(view.trinketStatus).toEqual({ status: 'unknown', note: 'No trinket data.' });
     // The comparison rows stay empty in bench-only mode (no player to compare).
     expect(view.enchantRows).toEqual([]);
-    expect(view.trinketRows).toEqual([]);
   });
 });
 
@@ -93,20 +97,32 @@ describe('buildGearView', () => {
   it('comparison mode: player matching bench is on-plan (ok)', () => {
     const player: CharacterGear = {
       talent_key: STANDARD_KEY,
-      trinkets: [{ slot: 12, id: 100, name: 'A' }],
+      trinkets: STANDARD_TRINKETS,
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
     };
     const view = svc['buildGearView'](player, stats);
     expect(view.comparison).toBe(true);
     expect(view.talentStatus.status).toBe('ok');
-    expect(view.trinketStatus).toBe('ok');
+    expect(view.trinketStatus).toEqual({ status: 'ok', note: 'Standard pair.' });
+    expect(view.trinketSets[0]).toMatchObject({ isPlayer: true });
     expect(view.enchantStatus).toBe('ok');
+  });
+
+  it('comparison mode: a pair off the bench pairs is flagged off-meta', () => {
+    const player: CharacterGear = {
+      talent_key: STANDARD_KEY,
+      trinkets: [{ slot: 12, id: 999, name: 'Off Meta' }],
+      enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
+    };
+    const view = svc['buildGearView'](player, stats);
+    expect(view.trinketStatus).toEqual({ status: 'warn', note: 'Off-meta pair. 70% use the standard one.' });
+    expect(view.trinketSets.some(row => row.isPlayer)).toBe(false);
   });
 
   it('comparison mode: missing high-consensus enchant flags a warning', () => {
     const player: CharacterGear = {
       talent_key: STANDARD_KEY,
-      trinkets: [{ slot: 12, id: 100, name: 'A' }],
+      trinkets: STANDARD_TRINKETS,
       enchants: [],
     };
     const view = svc['buildGearView'](player, stats);
@@ -120,7 +136,7 @@ describe('emptyGearView', () => {
     expect(svc.emptyGearView()).toEqual({
       comparison: false,
       talentBuilds: [], talentStatus: { status: 'unknown', note: 'No talent data.' },
-      trinketRows: [], trinketStatus: 'ok', benchTrinketRows: [],
+      trinketSets: [], trinketStatus: { status: 'unknown', note: 'No trinket data.' },
       enchantRows: [], enchantStatus: 'ok', benchEnchantRows: [],
     });
   });
@@ -140,7 +156,7 @@ describe('GearFeatureService', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value.comparison).toBe(false);
-    expect(result.value.benchTrinketRows).toHaveLength(1);
+    expect(result.value.trinketSets).toHaveLength(1);
   });
 
   it('loadBenchView propagates a missing bench unchanged', async () => {
@@ -151,7 +167,7 @@ describe('GearFeatureService', () => {
   it('loadComparisonView merges fetched player gear with the bench', async () => {
     const player: CharacterGear = {
       talent_key: STANDARD_KEY,
-      trinkets: [{ slot: 12, id: 100, name: 'A' }],
+      trinkets: STANDARD_TRINKETS,
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
     };
     const result = await configure(Results.ok(benchWith()), player).loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);

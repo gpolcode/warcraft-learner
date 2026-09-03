@@ -8,7 +8,7 @@ import { TestBed } from '@angular/core/testing';
 const gearComparison = TestBed.inject(GearComparisonService);
 
 function stats(partial: Partial<EncounterGearStats> = {}): EncounterGearStats {
-  return { talent_builds: [], trinkets: {}, enchants: {}, ...partial };
+  return { talent_builds: [], trinket_sets: [], enchants: {}, ...partial };
 }
 
 function gear(partial: Partial<CharacterGear> = {}): CharacterGear {
@@ -71,193 +71,82 @@ describe('buildBenchEnchantRows', () => {
   });
 });
 
-describe('buildBenchTrinketRows', () => {
-  it('returns the two distinct trinkets ranked by overall usage', () => {
-    const rows = gearComparison.buildBenchTrinketRows(stats({
-      trinkets: {
-        12: [{ id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box', pct: 50 }],
-        13: [{ id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze', pct: 80 }],
-      },
-    }));
-    expect(rows).toHaveLength(2);
-    expect(rows[0]).toEqual({ slotLabel: 'Trinket 1', id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze', pct: 80 });
-    expect(rows[1]).toEqual({ slotLabel: 'Trinket 2', id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box', pct: 50 });
+const GAZE = { id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze' };
+const PUZZLE_BOX = { id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box' };
+const VOLATILE = { id: 999999, name: 'Volatile Phoenix Fire', icon: 'phoenix' };
+
+const TRINKET_STATS = stats({
+  trinket_sets: [
+    { items: [PUZZLE_BOX, GAZE], pct: 50 },
+    { items: [PUZZLE_BOX, VOLATILE], pct: 30 },
+    { items: [GAZE, VOLATILE], pct: 15 },
+  ],
+});
+
+describe('trinketSetKey', () => {
+  it('is the same key whichever slot each trinket of a pair sits in', () => {
+    expect(gearComparison.trinketSetKey([{ id: GAZE.id }, { id: PUZZLE_BOX.id }]))
+      .toBe(gearComparison.trinketSetKey([{ id: PUZZLE_BOX.id }, { id: GAZE.id }]));
   });
 
-  it('never repeats the same trinket when one item dominates both slots', () => {
-    // The Rotmire bug: "Gaze" is the single most popular trinket, so raw per-slot aggregation ranks it #1 in both slots; the merged pair must surface it once (summed 40+30=70).
-    const rows = gearComparison.buildBenchTrinketRows(stats({
-      trinkets: {
-        12: [{ id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze', pct: 40 },
-             { id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box', pct: 30 }],
-        13: [{ id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze', pct: 30 },
-             { id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box', pct: 25 }],
-      },
-    }));
-    expect(rows).toHaveLength(2);
-    expect(rows[0]).toEqual({ slotLabel: 'Trinket 1', id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze', pct: 70 });
-    expect(rows[1]).toEqual({ slotLabel: 'Trinket 2', id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box', pct: 55 });
-    expect(new Set(rows.map(r => r.id)).size).toBe(2);
-  });
-
-  it('returns a single row when only one distinct trinket has bench data', () => {
-    const rows = gearComparison.buildBenchTrinketRows(stats({
-      trinkets: { 12: [{ id: 193701, name: 'Box', icon: 'box', pct: 50 }] },
-    }));
-    expect(rows).toHaveLength(1);
-    assert.exists(rows[0]);
-    expect(rows[0].slotLabel).toBe('Trinket 1');
-  });
-
-  it('returns an empty array when stats or trinkets are absent', () => {
-    expect(gearComparison.buildBenchTrinketRows(null)).toEqual([]);
-    expect(gearComparison.buildBenchTrinketRows(stats({ trinkets: {} }))).toEqual([]);
+  it('separates a pair from either trinket worn alone, and is empty for no trinkets', () => {
+    const pair = gearComparison.trinketSetKey([{ id: GAZE.id }, { id: PUZZLE_BOX.id }]);
+    expect(gearComparison.trinketSetKey([{ id: GAZE.id }])).not.toBe(pair);
+    expect(gearComparison.trinketSetKey([])).toBe('');
   });
 });
 
-describe('buildTrinketRows', () => {
-  const benchStats = stats({
-    trinkets: {
-      12: [{ id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box', pct: 50 }],
-      13: [{ id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze', pct: 80 }],
-    },
+describe('buildTrinketSets', () => {
+  it('labels the most common pair first and numbers the alts after it', () => {
+    const rows = gearComparison.buildTrinketSets(TRINKET_STATS, '');
+    expect(rows.map(row => row.label)).toEqual(['Most common pair', 'Alt pair 1', 'Alt pair 2']);
+    expect(rows.map(row => row.pct)).toEqual([50, 30, 15]);
+    assert.exists(rows[0]);
+    expect(rows[0].items).toEqual([PUZZLE_BOX, GAZE]);
   });
 
-  it('accepts both rows when the two top trinkets are worn in swapped slots', () => {
-    // Player wears the same two top trinkets but with the slots reversed.
-    const rows = gearComparison.buildTrinketRows(
-      gear({
-        trinkets: [
-          { slot: 12, id: 249343, name: 'Gaze of the Alnseer' },
-          { slot: 13, id: 193701, name: "Algeth'ar Puzzle Box" },
-        ],
-      }),
-      benchStats,
-    );
-    expect(rows).toHaveLength(2);
-    expect(rows.every(row => row.status === 'ok')).toBe(true);
-    expect(rows.every(row => row.note === null)).toBe(true);
-    // topPct comes from whichever bench slot lists the worn trinket.
-    expect(rows[0]).toMatchObject({ slotLabel: 'Trinket 1', id: 249343, topPct: 80 });
-    expect(rows[1]).toMatchObject({ slotLabel: 'Trinket 2', id: 193701, topPct: 50 });
+  it('marks the row the player uses, whichever slot order they wear it in', () => {
+    const playerKey = gearComparison.trinketSetKey([{ id: GAZE.id }, { id: PUZZLE_BOX.id }]);
+    expect(gearComparison.buildTrinketSets(TRINKET_STATS, playerKey).map(row => row.isPlayer))
+      .toEqual([true, false, false]);
   });
 
-  it('accepts both rows when the two top trinkets are worn in the matching slots', () => {
-    const rows = gearComparison.buildTrinketRows(
-      gear({
-        trinkets: [
-          { slot: 12, id: 193701, name: "Algeth'ar Puzzle Box" },
-          { slot: 13, id: 249343, name: 'Gaze of the Alnseer' },
-        ],
-      }),
-      benchStats,
-    );
-    expect(rows).toHaveLength(2);
-    expect(rows.every(row => row.status === 'ok' && row.note === null)).toBe(true);
-    // Each worn trinket reports its own consensus share regardless of slot - slot position carries no meaning.
-    expect(rows[0]).toMatchObject({ slotLabel: 'Trinket 1', id: 193701, topPct: 50 });
-    expect(rows[1]).toMatchObject({ slotLabel: 'Trinket 2', id: 249343, topPct: 80 });
+  it('marks no row when the player key is empty or matches no bench pair', () => {
+    const unbenchedKey = gearComparison.trinketSetKey([{ id: VOLATILE.id }]);
+    expect(gearComparison.buildTrinketSets(TRINKET_STATS, '').some(row => row.isPlayer)).toBe(false);
+    expect(gearComparison.buildTrinketSets(TRINKET_STATS, unbenchedKey).some(row => row.isPlayer)).toBe(false);
   });
 
-  it('still flags per slot when only one of the two top trinkets is worn', () => {
-    // Slot 12 holds the correct top pick; slot 13 holds an off-meta trinket.
-    const rows = gearComparison.buildTrinketRows(
-      gear({
-        trinkets: [
-          { slot: 12, id: 193701, name: "Algeth'ar Puzzle Box" },
-          { slot: 13, id: 999999, name: 'Off Meta Trinket' },
-        ],
-      }),
-      benchStats,
-    );
-    expect(rows).toHaveLength(2);
-    expect(rows[0]).toMatchObject({ slotLabel: 'Trinket 1', status: 'ok', note: null });
-    expect(rows[1]).toMatchObject({
-      slotLabel: 'Trinket 2',
-      status: 'info',
-      note: 'Switch to Gaze of the Alnseer. 80% of top raiders use it.',
-    });
+  it('returns an empty array when stats or trinket sets are absent', () => {
+    expect(gearComparison.buildTrinketSets(null, '')).toEqual([]);
+    expect(gearComparison.buildTrinketSets(stats({ trinket_sets: [] }), '')).toEqual([]);
+  });
+});
+
+describe('trinketStatusOf (a player pair matched against the top pairs)', () => {
+  it('marks a match to the most common pair as standard', () => {
+    const playerKey = gearComparison.trinketSetKey([{ id: PUZZLE_BOX.id }, { id: GAZE.id }]);
+    expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
+      .toEqual({ status: 'ok', note: 'Standard pair.' });
   });
 
-  it('flags a slot whose worn trinket matches neither recommended trinket', () => {
-    // Neither worn trinket is recommended, so both slots get a "Switch to", assigned in overall-usage order without colliding.
-    const rows = gearComparison.buildTrinketRows(
-      gear({
-        trinkets: [
-          { slot: 12, id: 111111, name: 'Wrong A' },
-          { slot: 13, id: 222222, name: 'Wrong B' },
-        ],
-      }),
-      benchStats,
-    );
-    expect(rows[0]).toMatchObject({ status: 'info', note: 'Switch to Gaze of the Alnseer. 80% of top raiders use it.' });
-    expect(rows[1]).toMatchObject({ status: 'info', note: "Switch to Algeth'ar Puzzle Box. 50% of top raiders use it." });
+  it('marks a match to a lower-ranked top pair as a known alt, not standard', () => {
+    const playerKey = gearComparison.trinketSetKey([{ id: PUZZLE_BOX.id }, { id: VOLATILE.id }]);
+    expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
+      .toEqual({ status: 'info', note: 'Alt pair 1. 30% use this pair.' });
   });
 
-  it('never recommends the same trinket for both slots when one item dominates', () => {
-    // Same dominant-trinket bench as the Rotmire bug; a player wearing neither recommended trinket must get two distinct suggestions, not Gaze twice.
-    const dominantStats = stats({
-      trinkets: {
-        12: [{ id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze', pct: 40 },
-             { id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box', pct: 30 }],
-        13: [{ id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze', pct: 30 },
-             { id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box', pct: 25 }],
-      },
-    });
-    const rows = gearComparison.buildTrinketRows(
-      gear({
-        trinkets: [
-          { slot: 12, id: 111111, name: 'Wrong A' },
-          { slot: 13, id: 222222, name: 'Wrong B' },
-        ],
-      }),
-      dominantStats,
-    );
-    expect(rows).toHaveLength(2);
-    expect(rows[0]).toMatchObject({ status: 'info', note: 'Switch to Gaze of the Alnseer. 70% of top raiders use it.' });
-    expect(rows[1]).toMatchObject({ status: 'info', note: "Switch to Algeth'ar Puzzle Box. 55% of top raiders use it." });
+  it('marks a pair matching none of the top pairs as off-meta', () => {
+    const playerKey = gearComparison.trinketSetKey([{ id: VOLATILE.id }]);
+    expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
+      .toEqual({ status: 'warn', note: 'Off-meta pair. 50% use the standard one.' });
   });
 
-  it('suggests the remaining trinket when the player wears one recommendation in both slots', () => {
-    // A recommendation is consumed by at most one slot: the same top pick worn in both slots yields one on-plan row plus a switch, never two on-plan rows that drop the second recommendation.
-    const rows = gearComparison.buildTrinketRows(
-      gear({
-        trinkets: [
-          { slot: 12, id: 249343, name: 'Gaze of the Alnseer' },
-          { slot: 13, id: 249343, name: 'Gaze of the Alnseer' },
-        ],
-      }),
-      benchStats,
-    );
-    expect(rows).toHaveLength(2);
-    expect(rows[0]).toMatchObject({ slotLabel: 'Trinket 1', id: 249343, status: 'ok', note: null });
-    expect(rows[1]).toMatchObject({
-      slotLabel: 'Trinket 2',
-      status: 'info',
-      note: "Switch to Algeth'ar Puzzle Box. 50% of top raiders use it.",
-    });
-  });
-
-  it('surfaces the top recommendation when the player has no trinket in a slot', () => {
-    const rows = gearComparison.buildTrinketRows(
-      gear({ trinkets: [{ slot: 12, id: 193701, name: "Algeth'ar Puzzle Box" }] }),
-      benchStats,
-    );
-    expect(rows).toHaveLength(2);
-    expect(rows[0]).toMatchObject({ slotLabel: 'Trinket 1', status: 'ok', note: null });
-    expect(rows[1]).toMatchObject({
-      slotLabel: 'Trinket 2',
-      id: 249343,
-      icon: 'gaze',
-      status: 'info',
-      note: '80% run this trinket',
-    });
-  });
-
-  it('returns an empty array when the player wears no trinket and there is no bench data', () => {
-    // The comparison builders take real player gear; a player with no trinkets and no bench data yields no rows (the bench-only plan uses buildBenchTrinketRows).
-    expect(gearComparison.buildTrinketRows(gear({ trinkets: [] }), null)).toEqual([]);
-    expect(gearComparison.buildTrinketRows(gear({ trinkets: [] }), stats({ trinkets: {} }))).toEqual([]);
+  it('is unknown without a player pair or without bench pairs', () => {
+    const playerKey = gearComparison.trinketSetKey([{ id: GAZE.id }]);
+    expect(gearComparison.trinketStatusOf(TRINKET_STATS, '')).toEqual({ status: 'unknown', note: 'No trinket data.' });
+    expect(gearComparison.trinketStatusOf(stats({ trinket_sets: [] }), playerKey))
+      .toEqual({ status: 'unknown', note: 'No trinket data.' });
   });
 });
 
@@ -427,7 +316,7 @@ describe('talentStatusOf', () => {
 
   it('is warn when the player key is a comparable version but off the standard build', () => {
     expect(gearComparison.talentStatusOf(topBuilds, 'v3:11.1,33.1')).toEqual({
-      status: 'warn', note: 'Off-meta build. 62% run the standard one.',
+      status: 'warn', note: 'Off-meta build. 62% use the standard one.',
     });
   });
 });
@@ -459,14 +348,14 @@ describe('talentStatusOf (a player build matched against the top builds)', () =>
   it('marks a match to a lower-ranked top build as a known alt, not standard', () => {
     expect(gearComparison.talentStatusOf(topStats, ALT_1)).toEqual({
       status: 'info',
-      note: 'Alt build 1. 30% run this build.',
+      note: 'Alt build 1. 30% use this build.',
     });
   });
 
   it('marks a build matching none of the top builds as off-meta', () => {
     expect(gearComparison.talentStatusOf(topStats, OFF_META)).toEqual({
       status: 'warn',
-      note: 'Off-meta build. 50% run the standard one.',
+      note: 'Off-meta build. 50% use the standard one.',
     });
   });
 });

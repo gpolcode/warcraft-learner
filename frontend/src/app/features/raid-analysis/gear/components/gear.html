@@ -21,9 +21,9 @@
     <div class="px-4 pt-5 pb-2">
       <h3 class="section-heading">Talents</h3>
       @if (view().comparison && view().talentBuilds.length) {
-        <div class="section-intro mt-0.5">Your build against the builds top raiders run.</div>
+        <div class="section-intro mt-0.5">Your build against the builds top raiders use.</div>
       } @else if (view().talentBuilds.length) {
-        <div class="section-intro mt-0.5">The builds top raiders run, most common first.</div>
+        <div class="section-intro mt-0.5">The builds top raiders use, most common first.</div>
       }
     </div>
 
@@ -131,97 +131,50 @@
   <div class="card-section [&>:first-child+*]:border-t-0">
     <div class="px-4 pt-5 pb-2">
       <h3 class="section-heading">Trinkets</h3>
-      @if (view().comparison && view().trinketRows.length) {
-        <div class="section-intro mt-0.5">Your trinkets against the pair top raiders wear.</div>
-      } @else if (!view().comparison && view().benchTrinketRows.length) {
-        <div class="section-intro mt-0.5">The two trinkets top raiders wear most.</div>
+      @if (view().comparison && view().trinketSets.length) {
+        <div class="section-intro mt-0.5">Your pair against the pairs top raiders use.</div>
+      } @else if (view().trinketSets.length) {
+        <div class="section-intro mt-0.5">The pairs top raiders use, most common first.</div>
       }
     </div>
 
-    @if (view().comparison) {
-      @if (view().trinketStatus !== 'ok') {
-        @for (row of view().trinketRows; track row.slotLabel) {
-          @if (row.status !== 'ok') {
-            <div class="grid grid-cols-[20px_minmax(0,1fr)] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-2 md:gap-y-0 px-4 py-[10px] items-start md:items-center border-t border-[var(--border)]">
-              <div class="flex items-center justify-center self-start md:self-center">
-                <mat-icon class="icon-18"
-                  [class.badge-warning]="row.status === 'warn'"
-                  [class.badge-info]="row.status === 'info'">
-                  {{ row.status === 'info' ? 'info' : 'warning_amber' }}
-                </mat-icon>
-              </div>
-              <div class="min-w-0">
-                <wl-game-icon kind="item" [id]="row.id" [name]="row.name" [icon]="row.icon"></wl-game-icon>
-                <div class="text-[11px] text-[var(--muted)] mt-0.5">{{ row.slotLabel }}</div>
-              </div>
-              <div class="col-start-2 md:col-auto flex items-baseline gap-2 md:block text-left md:text-right leading-[1.1]"
-                [class.badge-warning]="row.status === 'warn'"
-                [class.badge-info]="row.status === 'info'">
-                @if (row.topPct !== null) {
-                  <span class="md:hidden font-mono text-[10px] uppercase tracking-wider text-[var(--muted)]">Measured</span>
-                  <div class="text-[15px] font-semibold tabular-nums">{{ row.topPct }}%</div>
-                  <div class="text-[12px] text-[var(--muted)] md:text-inherit md:text-[10px] md:opacity-60 md:mt-px tabular-nums">of top logs</div>
-                }
-              </div>
-              <div class="col-start-2 md:col-auto text-[13px] text-[var(--muted)] leading-[1.45] border-t md:border-t-0 md:border-l border-[var(--border)] pt-2 md:pt-0 pl-0 md:pl-[14px]">
-                <span class="md:hidden block font-mono text-[10px] uppercase tracking-wider text-[var(--muted)] mb-1">Fix</span>
-                <wl-collapsible>{{ row.note }}</wl-collapsible>
-              </div>
-            </div>
-          } @else {
-            <div class="grid grid-cols-[20px_minmax(0,1fr)] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-2 md:gap-y-0 px-4 py-[7px] items-start md:items-center border-t border-[var(--border)]/30 opacity-55">
-              <div class="flex items-center justify-center self-start md:self-center">
-                <span class="block h-[7px] w-[7px] shrink-0 rounded-full bg-[var(--success)]/60"></span>
-              </div>
-              <div class="min-w-0">
-                <wl-game-icon kind="item" [id]="row.id" [name]="row.name" [icon]="row.icon"></wl-game-icon>
-                <div class="text-[11px] text-[var(--muted)] mt-0.5">{{ row.slotLabel }}</div>
-              </div>
-              <div class="col-start-2 md:col-auto flex items-baseline gap-2 md:block text-left md:text-right leading-[1.1] text-[var(--success)]">
-                @if (row.topPct !== null) {
-                  <span class="md:hidden font-mono text-[10px] uppercase tracking-wider text-[var(--muted)]">Measured</span>
-                  <div class="text-[14px] font-semibold tabular-nums">{{ row.topPct }}%</div>
-                  <div class="text-[12px] text-[var(--muted)] md:text-inherit md:text-[10px] md:opacity-60 md:mt-px tabular-nums">of top logs</div>
-                }
-              </div>
-              <div class="hidden md:block"></div>
-            </div>
-          }
-        }
-      } @else if (view().trinketRows.length) {
+    @if (view().trinketSets.length) {
+      @if (view().comparison && view().trinketStatus.status !== 'unknown') {
         <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
-          <span class="section-label mr-0.5">On plan</span>
-          @for (row of view().trinketRows; track row.slotLabel) {
-            <span class="chip-onplan">
-              <wl-game-icon kind="item" [id]="row.id" [name]="row.name" [icon]="row.icon"></wl-game-icon>
-            </span>
+          <span class="section-label mr-0.5">Your pair</span>
+          @if (view().trinketStatus.status === 'warn') {
+            <mat-icon class="icon-18 badge-warning">warning_amber</mat-icon>
           }
+          <span class="text-[13px] text-[var(--muted)]">{{ view().trinketStatus.note }}</span>
         </div>
-      } @else {
-        <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
-          No trinket data.
+      }
+      @for (set of view().trinketSets; track set.label) {
+        <div class="grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-1 md:gap-y-0 items-center px-4 py-[10px] border-t border-[var(--border)]">
+          <div class="hidden md:block"></div>
+          <div class="min-w-0">
+            <div class="flex flex-col items-start gap-1">
+              @for (item of set.items; track $index) {
+                <wl-game-icon kind="item" [id]="item.id" [name]="item.name" [icon]="item.icon"></wl-game-icon>
+              }
+            </div>
+            <div class="text-[11px] text-[var(--muted)] mt-0.5">
+              {{ set.label }}
+              @if (set.isPlayer) {
+                <span class="ml-1.5 text-[10px] uppercase tracking-wider text-[var(--accent)]">your pair</span>
+              }
+            </div>
+          </div>
+          <div class="text-right leading-[1.1] text-[var(--muted)]">
+            <div class="text-[15px] font-semibold tabular-nums">{{ set.pct }}%</div>
+            <div class="text-[10px] opacity-60 mt-px tabular-nums">of top logs</div>
+          </div>
+          <div class="hidden md:block"></div>
         </div>
       }
     } @else {
-        @for (row of view().benchTrinketRows; track row.slotLabel) {
-          <div class="grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-1 md:gap-y-0 items-center px-4 py-[10px] border-t border-[var(--border)]">
-            <div class="hidden md:block"></div>
-            <div class="min-w-0">
-              <wl-game-icon kind="item" [id]="row.id" [name]="row.name" [icon]="row.icon"></wl-game-icon>
-              <div class="text-[11px] text-[var(--muted)] mt-0.5">{{ row.slotLabel }}</div>
-            </div>
-            <div class="text-right leading-[1.1] text-[var(--muted)]">
-              <div class="text-[15px] font-semibold tabular-nums">{{ row.pct }}%</div>
-              <div class="text-[10px] opacity-60 mt-px tabular-nums">of top logs</div>
-            </div>
-            <div class="hidden md:block"></div>
-          </div>
-        }
-      @empty {
-        <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
-          No trinket data.
-        </div>
-      }
+      <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+        No trinket data.
+      </div>
     }
   </div>
 
