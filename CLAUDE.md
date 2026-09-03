@@ -27,26 +27,6 @@ WclApiService -> *TransformService          data/specs/** -> DataFileApiService
 
 The deployed site is composed on **`gh-pages`** from disjoint single-owner folders: `data/specs/` (shared dataset, written by `ingest-parses`), `main/` (prod shell), `pr-N/` (per-PR shells), and a root `index.html` redirect (all written by `deploy-pages`). Code deploys never re-push data; both writers share one concurrency group. Local dev: `npm run data:pull`.
 
-```
-frontend/        # the entire Angular 22 app
-  src/app/       # the shell: app.*, post-raid/ (route /), pre-fight/ (route /pre), page-nav/
-  src/app/domains/raid-analysis/
-    feature-*/     # one per use-case card: rotation, burst-windows, defensive, gear, map, live, northern-sky, pull-overview; feature-ingest (bundled only by the ingest configuration)
-    ui-*/          # finding-table, plan-table, window-comparison, game-icon, spec-name, bench-empty-banner
-    data/          # one folder per feature (its *TransformService, *DataSource token, *FeatureService, local math) plus analysis/, gear/, rulebook/, encounter/, capture/, wcl/, data-files/, data-source/, http/ (the HttpClient chokepoint), selection/, ingest/
-    util-wowhead/
-  src/app/domains/shared/
-    ui-*/          # load-state (+ LoadResourceService), collapsible, flyover-panel, format (pipes)
-    util-*/        # http (Result, retry interceptor, providers), logging, validation, card-deck
-  schema/        # wcl.graphql - the introspected WCL v2 SDL, for browsing available fields; gitignored, written by `npm run schema:pull`
-  scripts/       # ingest-server.js + ingest-headless.mjs + schema-pull.mjs - plain Node, zero ingestion logic
-  e2e/           # Playwright happy-path suite (one WCL analysis per run)
-  public/data/specs/  # static ingested data - not tracked on main; lives on gh-pages
-.github/workflows/  # deploy-pages, ingest-parses (hourly), test, e2e
-.claude/agents/   # rulebook-author.md - the isolated per-spec authoring worker
-.claude/skills/   # on-demand skills (see the router below)
-```
-
 ## Commands (run from `frontend/`)
 
 | Command | Description |
