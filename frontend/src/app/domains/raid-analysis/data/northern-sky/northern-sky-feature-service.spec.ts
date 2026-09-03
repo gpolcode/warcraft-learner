@@ -25,7 +25,6 @@ function ability(spell_id: number, kind: NorthernSkyAbility['kind'], cast_times_
 const HEADER = `EncounterID:${NORTHERN_SKY_ENCOUNTER_ID};Name:Boss;Difficulty:Mythic`;
 const LEAD_S = 5;
 
-// Entombed Sentinels: swapping in an encounter Northern Sky does not phase would leave every case below asserting phase 1.
 const PHASED_ENCOUNTER_ID = 3445;
 const SECOND_PHASE = 2;
 const SECOND_PHASE_START_S = 56;

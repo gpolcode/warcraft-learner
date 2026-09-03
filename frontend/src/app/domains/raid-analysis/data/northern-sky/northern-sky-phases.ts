@@ -1,11 +1,11 @@
 export interface NorthernSkyPhase {
-  /** Northern Sky's own phase number, fractional for its intermission phases. */
+  /** Fractional for Northern Sky's intermission phases. */
   phase: number;
   start_s: number;
 }
 
-/** Northern Sky's Mythic phase starts, seconds from the pull, mirrored from the addon's own boss timelines. */
-// Only encounters whose Northern Sky module advances the phase in combat: a single-phase one listed here would strand its later lines in a phase the addon never enters.
+/** Mirrored from Northern Sky's own Mythic boss timelines. */
+// Listing an encounter whose Northern Sky module does not advance the phase in combat would strand its later lines in a phase the addon never enters.
 export const NORTHERN_SKY_PHASES: Readonly<Record<number, readonly NorthernSkyPhase[]>> = {
   3429: [
     { phase: 1, start_s: 0 },

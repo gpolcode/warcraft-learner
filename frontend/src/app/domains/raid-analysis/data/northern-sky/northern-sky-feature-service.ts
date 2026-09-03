@@ -7,7 +7,6 @@ import { NORTHERN_SKY_PHASES, NorthernSkyPhase } from './northern-sky-phases';
 const MYTHIC_DIFFICULTY = 'Mythic';
 // The raid lead re-assigns lines to their roster on import; no Blizzard spec id is exposed to tag with.
 const EVERYONE_TAG = 'everyone';
-// Northern Sky shortens this to the line's own `time` for a cast that early in its phase.
 const REMINDER_LEAD_S = 5;
 const PULL_PHASE: NorthernSkyPhase = { phase: 1, start_s: 0 };
 
@@ -26,7 +25,8 @@ export class NorthernSkyFeatureService {
     for (const ability of bench.abilities) {
       if (!selectedSpellIds.has(ability.spell_id)) continue;
       for (const time_s of ability.cast_times_s) {
-        lines.push({ time_s, text: this.noteLine(ability.spell_id, time_s, this.phaseAt(phases, time_s)) });
+        const phase = this.phaseAt(phases, time_s);
+        lines.push({ time_s, text: `tag:${EVERYONE_TAG};time:${round(time_s - phase.start_s)};spellid:${ability.spell_id};ph:${phase.phase};dur:${REMINDER_LEAD_S}` });
       }
     }
     lines.sort((a, b) => a.time_s - b.time_s);
@@ -37,13 +37,9 @@ export class NorthernSkyFeatureService {
   protected phaseAt(phases: readonly NorthernSkyPhase[], time_s: number): NorthernSkyPhase {
     let current = PULL_PHASE;
     for (const phase of phases) {
-      if (phase.start_s <= time_s && phase.start_s >= current.start_s) current = phase;
+      if (phase.start_s <= time_s) current = phase;
     }
     return current;
-  }
-
-  protected noteLine(spellId: number, time_s: number, phase: NorthernSkyPhase): string {
-    return `tag:${EVERYONE_TAG};time:${round(time_s - phase.start_s)};spellid:${spellId};ph:${phase.phase};dur:${REMINDER_LEAD_S}`;
   }
 
   abilitiesByKind(abilities: NorthernSkyAbility[]): { cooldowns: NorthernSkyAbility[]; defensives: NorthernSkyAbility[] } {
