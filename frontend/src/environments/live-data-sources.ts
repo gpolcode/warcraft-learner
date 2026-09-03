@@ -1,18 +1,18 @@
 /** Never import from `environment.ts`: these `*TransformService` references must stay out of the production graph. */
 import { Provider } from '@angular/core';
-import { provideLiveDataSource } from '../app/core/data-source/provide-data-source';
-import { BURST_DATA_SOURCE } from '../app/features/raid-analysis/burst-windows/data-access/burst-data-source';
-import { BurstTransformService } from '../app/features/raid-analysis/burst-windows/data-access/burst-transform-service';
-import { ROTATION_DATA_SOURCE } from '../app/features/raid-analysis/rotation/data-access/rotation-data-source';
-import { RotationTransformService } from '../app/features/raid-analysis/rotation/data-access/rotation-transform-service';
-import { DEFENSIVE_DATA_SOURCE } from '../app/features/raid-analysis/defensive/data-access/defensive-data-source';
-import { DefensiveTransformService } from '../app/features/raid-analysis/defensive/data-access/defensive-transform-service';
-import { GEAR_DATA_SOURCE } from '../app/features/raid-analysis/gear/data-access/gear-data-source';
-import { GearTransformService } from '../app/features/raid-analysis/gear/data-access/gear-transform-service';
-import { MAP_DATA_SOURCE } from '../app/features/raid-analysis/map/data-access/map-data-source';
-import { MapTransformService } from '../app/features/raid-analysis/map/data-access/map-transform-service';
-import { NORTHERN_SKY_DATA_SOURCE } from '../app/features/raid-analysis/northern-sky/data-access/northern-sky-data-source';
-import { NorthernSkyTransformService } from '../app/features/raid-analysis/northern-sky/data-access/northern-sky-transform-service';
+import { provideLiveDataSource } from '../app/domains/raid-analysis/data/data-source/provide-data-source';
+import { BURST_DATA_SOURCE } from '../app/domains/raid-analysis/data/burst-windows/burst-data-source';
+import { BurstTransformService } from '../app/domains/raid-analysis/data/burst-windows/burst-transform-service';
+import { ROTATION_DATA_SOURCE } from '../app/domains/raid-analysis/data/rotation/rotation-data-source';
+import { RotationTransformService } from '../app/domains/raid-analysis/data/rotation/rotation-transform-service';
+import { DEFENSIVE_DATA_SOURCE } from '../app/domains/raid-analysis/data/defensive/defensive-data-source';
+import { DefensiveTransformService } from '../app/domains/raid-analysis/data/defensive/defensive-transform-service';
+import { GEAR_DATA_SOURCE } from '../app/domains/raid-analysis/data/gear/gear-data-source';
+import { GearTransformService } from '../app/domains/raid-analysis/data/gear/gear-transform-service';
+import { MAP_DATA_SOURCE } from '../app/domains/raid-analysis/data/map/map-data-source';
+import { MapTransformService } from '../app/domains/raid-analysis/data/map/map-transform-service';
+import { NORTHERN_SKY_DATA_SOURCE } from '../app/domains/raid-analysis/data/northern-sky/northern-sky-data-source';
+import { NorthernSkyTransformService } from '../app/domains/raid-analysis/data/northern-sky/northern-sky-transform-service';
 
 export const liveDataSourceProviders: Provider[] = [
   provideLiveDataSource(BURST_DATA_SOURCE, BurstTransformService),

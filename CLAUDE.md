@@ -14,7 +14,9 @@ This file is the always-on **router**: the few rules that apply on every turn, t
 
 ## Architecture at a glance
 
-One `raid-analysis` feature holding both pages, per-use-case **vertical slices** (rotation / burst / defensive / gear / map / live) typed inside as `components/ data-access/ facade/ domain/`, over the layers `domain/` (cross-slice business services), `core/` (system foundation) and `shared/` (reusable UI). Behavior is implemented as methods on `@Injectable` services - stateless, data in, data out (eslint-enforced); exactly **two pass-through API services** (`WclApiService`, `DataFileApiService`) do IO. Ingestion is the same Angular app booted with the `ingest` configuration, living inside the feature it bakes data for, driving the same `*TransformService`s and persisting through a micro file server to `frontend/public/data/specs/**`:
+The layout is domain-oriented: module types over the Angular style guide's feature-area folders. One business domain, `raid-analysis`, plus the technical `shared` domain, each split into the four module types: `feature-*` (a use case's smart components), `ui-*` (presentational components and pipes), `data` (the domain model and every service operating on it: WCL and data-file access, transforms, the per-feature `*FeatureService`s, analysis math, selection state) and `util-*` (technical helpers). Everything directly under `src/app/` outside `domains/` is the shell (the routed pages and the nav) and may reach anything. Access, eslint-enforced (`frontend/eslint.config.js`): feature -> ui, data, util; ui -> ui, data, util; data -> util; util -> util; a domain reaches only itself and `shared`.
+
+Behavior is implemented as methods on `@Injectable` services - stateless, data in, data out (eslint-enforced); exactly **two pass-through API services** (`WclApiService`, `DataFileApiService`) do IO. Ingestion is the same Angular app booted with the `ingest` configuration (`feature-ingest`), driving the same `*TransformService`s and persisting through a micro file server to `frontend/public/data/specs/**`:
 
 ```
 INGEST (browser, ingest env)                RUNTIME (browser, Angular)
@@ -24,21 +26,6 @@ WclApiService -> *TransformService          data/specs/** -> DataFileApiService
 ```
 
 The deployed site is composed on **`gh-pages`** from disjoint single-owner folders: `data/specs/` (shared dataset, written by `ingest-parses`), `main/` (prod shell), `pr-N/` (per-PR shells), and a root `index.html` redirect (all written by `deploy-pages`). Code deploys never re-push data; both writers share one concurrency group. Local dev: `npm run data:pull`.
-
-```
-frontend/        # the entire Angular 22 app
-  src/app/features/raid-analysis/  # pages/ (post-raid /, pre-fight /pre), the slices, ingest/ (bundled only by the ingest configuration)
-  src/app/domain/  # cross-slice business logic: analysis/, gear/, rulebook/, encounter/, capture/
-  src/app/core/    # wcl/, data-files/, http/ (the HttpClient chokepoint), state/, validation/, observability/, wowhead/, data-source/
-  src/app/shared/  # reusable UI: components/, pipes/, state/
-  schema/        # wcl.graphql - the introspected WCL v2 SDL, for browsing available fields; gitignored, written by `npm run schema:pull`
-  scripts/       # ingest-server.js + ingest-headless.mjs + schema-pull.mjs - plain Node, zero ingestion logic
-  e2e/           # Playwright happy-path suite (one WCL analysis per run)
-  public/data/specs/  # static ingested data - not tracked on main; lives on gh-pages
-.github/workflows/  # deploy-pages, ingest-parses (hourly), test, e2e
-.claude/agents/   # rulebook-author.md - the isolated per-spec authoring worker
-.claude/skills/   # on-demand skills (see the router below)
-```
 
 ## Commands (run from `frontend/`)
 
@@ -61,7 +48,7 @@ Load the matching skill(s) **before** you start that step. The `warcraft-*` skil
 
 | When you are... | Load |
 |---|---|
-| Building or changing any code (finding, rule kind, slice, page, component) | **warcraft-change** |
+| Building or changing any code (finding, rule kind, feature, page, component) | **warcraft-change** |
 | Writing or changing any string a user sees | **warcraft-writing** |
 | Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
 | Generating or refreshing a spec's `rulebook.json` | **warcraft-rulebook** |

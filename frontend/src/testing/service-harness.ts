@@ -1,10 +1,10 @@
 import { InjectionToken, Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { DataSource } from '../app/core/data-source/data-source';
-import { Result } from '../app/core/http/result';
-import { WclApiService } from '../app/core/wcl/wcl-api-service';
+import { DataSource } from '../app/domains/raid-analysis/data/data-source/data-source';
+import { Result } from '../app/domains/shared/util-http/result';
+import { WclApiService } from '../app/domains/raid-analysis/data/wcl/wcl-api-service';
 
-export function sliceService<T, S>(
+export function featureService<T, S>(
   token: InjectionToken<DataSource<T>>,
   service: Type<S>,
   bench: Result<T>,
