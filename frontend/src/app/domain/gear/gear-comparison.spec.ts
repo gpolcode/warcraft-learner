@@ -316,7 +316,7 @@ describe('talentStatusOf', () => {
 
   it('is warn when the player key is a comparable version but off the standard build', () => {
     expect(gearComparison.talentStatusOf(topBuilds, 'v3:11.1,33.1')).toEqual({
-      status: 'warn', note: 'Off-meta build. 62% run the standard one.',
+      status: 'warn', note: 'Off-meta build. 62% use the standard one.',
     });
   });
 });
@@ -348,14 +348,14 @@ describe('talentStatusOf (a player build matched against the top builds)', () =>
   it('marks a match to a lower-ranked top build as a known alt, not standard', () => {
     expect(gearComparison.talentStatusOf(topStats, ALT_1)).toEqual({
       status: 'info',
-      note: 'Alt build 1. 30% run this build.',
+      note: 'Alt build 1. 30% use this build.',
     });
   });
 
   it('marks a build matching none of the top builds as off-meta', () => {
     expect(gearComparison.talentStatusOf(topStats, OFF_META)).toEqual({
       status: 'warn',
-      note: 'Off-meta build. 50% run the standard one.',
+      note: 'Off-meta build. 50% use the standard one.',
     });
   });
 });

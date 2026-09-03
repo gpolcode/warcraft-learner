@@ -18,7 +18,7 @@ const MAX_TALENT_BUILDS = 3;
 const MAX_TRINKET_SETS = 3;
 const MAX_ENCHANTS_PER_SLOT = 3;
 
-// The parse identity rides along so each bench talent build can link back to an example parse running it.
+// The parse identity rides along so each bench talent build can link back to an example parse using it.
 export interface ParseGear {
   talent_key: string;
   trinkets: { slot: number; id: number; name: string; icon: string }[];

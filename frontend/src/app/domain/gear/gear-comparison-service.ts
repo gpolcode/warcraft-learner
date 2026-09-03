@@ -49,7 +49,7 @@ export class GearComparisonService {
     return rows.some(r => r.status === 'warn') ? 'warn' : 'ok';
   }
 
-  /** Top-parse talent builds with a link to an example parse running each one. */
+  /** Top-parse talent builds with a link to an example parse using each one. */
   buildTalentBuilds(stats: EncounterGearStats | null, playerKey: string): TalentBuildRow[] {
     const builds = stats?.talent_builds ?? [];
     if (!builds.length) return [];
@@ -132,9 +132,9 @@ export class GearComparisonService {
     const altIndex = builds.findIndex(b => b.key === playerKey);
     const altBuild = altIndex > 0 ? builds[altIndex] : undefined;
     if (altBuild) {
-      return { status: 'info', note: `Alt build ${altIndex}. ${altBuild.pct}% run this build.` };
+      return { status: 'info', note: `Alt build ${altIndex}. ${altBuild.pct}% use this build.` };
     }
-    return { status: 'warn', note: `Off-meta build. ${topBuild.pct}% run the standard one.` };
+    return { status: 'warn', note: `Off-meta build. ${topBuild.pct}% use the standard one.` };
   }
 
   /** Sorted-id identity of a worn trinket combination, so two parses using the same trinkets in opposite slots share one key. */
