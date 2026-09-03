@@ -22,7 +22,7 @@ const SECONDS = /[+-]?\d+(\.\d+)?s/;
 
 const MEASURE = new RegExp([RATIO, PERCENT, CLOCK, SECONDS].map(r => r.source).join('|'));
 
-/** Mirrors CAT_LABEL in shared/components/finding-table/finding-rows-service.ts. */
+/** Mirrors CAT_LABEL in src/app/domains/raid-analysis/data/analysis/analysis.models.ts. */
 export const CD_CHIP = /\b(lost cast|late|Bloodlust|downtime|hold until)\b/;
 
 /** Asserts at least one named ability/gear row renders with a real icon + name, regardless of which one the bench ranks first. */
