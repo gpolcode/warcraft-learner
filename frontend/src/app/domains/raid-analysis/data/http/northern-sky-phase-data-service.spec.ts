@@ -125,6 +125,28 @@ describe('NorthernSkyPhaseDataService', () => {
     expect(await second).toEqual(await first);
   });
 
+  it('re-reads the addon on the next ask after a failed read', async () => {
+    const { service, httpMock } = setup();
+    const failed = service.getPhases();
+    httpMock.expectOne(TOC_URL).error(new ProgressEvent('error'));
+    httpMock.expectOne(MANIFEST_URL).flush(MANIFEST);
+    expect((await failed).ok).toBe(false);
+    const retried = service.getPhases();
+    await flushAddon(httpMock);
+    expect((await retried).ok).toBe(true);
+  });
+
+  it('is transient when one listed file drops mid-read, rather than baking that boss pull-relative', async () => {
+    const { service, httpMock } = setup();
+    const pending = service.getPhases();
+    await flushManifests(httpMock);
+    httpMock.expectOne(`${ADDON_ROOT}/EncounterAlerts/MidnightS2/EntombedSentinels.lua`).flush(REARMING_ALERT);
+    httpMock.expectOne(`${ADDON_ROOT}/EncounterAlerts/MidnightS2/NymrissaWavecaller.lua`).flush(STATIC_ALERT);
+    httpMock.expectOne(`${ADDON_ROOT}/BossTimelines/MidnightS2/EntombedSentinels.lua`).error(new ProgressEvent('error'));
+    httpMock.expectOne(`${ADDON_ROOT}/BossTimelines/MidnightS2/NymrissaWavecaller.lua`).flush(SINGLE_PHASE_TIMELINE);
+    expect(await pending).toEqual(Results.transient('WCL is unreachable right now.'));
+  });
+
   it('drops the boss whose file the .toc misspells rather than the whole table', async () => {
     const { service, httpMock } = setup();
     const pending = service.getPhases();

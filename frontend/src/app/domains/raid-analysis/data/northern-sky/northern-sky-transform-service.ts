@@ -29,6 +29,9 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
   private readonly dataFiles = inject(DataFileApiService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<NorthernSkyBench>> {
+    const phases = await this.phaseData.getPhases();
+    // Baking empty phases over a failed read would stamp the bench complete and freeze the export pull-relative until the top parses change.
+    if (!phases.ok && phases.error.kind !== 'missing') return phases;
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'NorthernSkyTransformService',
       errorId: 'northern-sky.bench',
@@ -43,13 +46,12 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
         const icons = this.wclProjections.abilityIcons(await this.wclApi.getAbilities(built.map(entry => entry.spell_id)));
         return {
           abilities: built.map(entry => ({ ...entry, icon: icons[entry.spell_id]?.icon ?? '' })),
-          phases: this.encounterPhases(await this.phaseData.getPhases(), encounterId),
+          phases: this.encounterPhases(phases, encounterId),
         };
       },
     });
   }
 
-  // A pull-relative note is what an encounter Northern Sky never phases gets anyway, so an unreachable addon must not fail the whole export.
   private encounterPhases(phases: Result<NorthernSkyPhases>, encounterId: number): NorthernSkyPhase[] {
     return phases.ok ? [...(phases.value[encounterId] ?? [])] : [];
   }

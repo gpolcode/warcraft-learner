@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import type { NorthernSkyPhase, NorthernSkyPhases } from '../northern-sky/northern-sky-phases';
 import { Result, Results } from '../../../shared/util-http/result';
@@ -9,6 +9,7 @@ import { LoggerService } from '../../../shared/util-logging/logger-service';
 const ADDON_ROOT = 'https://raw.githubusercontent.com/Reloe/NorthernSkyRaidTools/main/NorthernSkyRaidTools';
 const TOC = 'NorthernSkyRaidTools.toc';
 const TIMELINE_MANIFEST = 'BossTimelines/BossTimelines.xml';
+const HTTP_NOT_FOUND = 404;
 
 const ALERT_ENTRY = /^(EncounterAlerts[\\/](?!Locales)[^\\/\s]+[\\/][^\\/\s]+\.lua)\s*$/gm;
 const TIMELINE_ENTRY = /<Script\s+file="([^"]+\/[^"]+\.lua)"/g;
@@ -24,9 +25,12 @@ export class NorthernSkyPhaseDataService {
   private _phases: Promise<Result<NorthernSkyPhases>> | null = null;
 
   // Only WCL responses are cached, so without this the addon is re-read for every spec's every bench.
-  getPhases(): Promise<Result<NorthernSkyPhases>> {
+  async getPhases(): Promise<Result<NorthernSkyPhases>> {
     this._phases ??= this.fetchPhases();
-    return this._phases;
+    const phases = await this._phases;
+    // Keeping a failed read would deny phases to every later bench of the run over one blip.
+    if (!phases.ok && phases.error.kind !== 'missing') this._phases = null;
+    return phases;
   }
 
   private async fetchPhases(): Promise<Result<NorthernSkyPhases>> {
@@ -48,12 +52,13 @@ export class NorthernSkyPhaseDataService {
     return firstValueFrom(this.http.get(`${ADDON_ROOT}/${path.replace(/\\/g, '/')}`, { responseType: 'text' }));
   }
 
-  // The .toc spells one file's name in a case the case-sensitive raw host cannot serve, so a miss drops that boss rather than the whole table.
+  // Only a 404 is a misspelt .toc entry to drop; swallowing any other failure bakes that boss pull-relative.
   private async fetchOptionalFile(path: string): Promise<string> {
     try {
       return await this.fetchFile(path);
-    } catch {
-      return '';
+    } catch (cause) {
+      if (cause instanceof HttpErrorResponse && cause.status === HTTP_NOT_FOUND) return '';
+      throw cause;
     }
   }
 
