@@ -1,10 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { Result } from '../../../shared/util-http/result';
+import { round } from '../analysis/analysis-math';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
+import { NorthernSkyPhase } from './northern-sky-phases';
 
 const MYTHIC_DIFFICULTY = 'Mythic';
 // The raid lead re-assigns lines to their roster on import; no Blizzard spec id is exposed to tag with.
 const EVERYONE_TAG = 'everyone';
+const REMINDER_LEAD_S = 5;
+const PULL_PHASE: NorthernSkyPhase = { phase: 1, start_s: 0 };
 
 @Injectable({ providedIn: 'root' })
 export class NorthernSkyFeatureService {
@@ -20,11 +24,21 @@ export class NorthernSkyFeatureService {
     for (const ability of bench.abilities) {
       if (!selectedSpellIds.has(ability.spell_id)) continue;
       for (const time_s of ability.cast_times_s) {
-        lines.push({ time_s, text: `time:${time_s};tag:${EVERYONE_TAG};spellid:${ability.spell_id};text:${ability.name}` });
+        const phase = this.phaseAt(bench.phases, time_s);
+        lines.push({ time_s, text: `tag:${EVERYONE_TAG};time:${round(time_s - phase.start_s)};spellid:${ability.spell_id};ph:${phase.phase};dur:${REMINDER_LEAD_S}` });
       }
     }
     lines.sort((a, b) => a.time_s - b.time_s);
     return [header, ...lines.map(line => line.text)].join('\n');
+  }
+
+  // Northern Sky re-arms reminders per phase and drops the outgoing phase's unfired lines, so a pull-relative time goes silent at the first transition.
+  protected phaseAt(phases: readonly NorthernSkyPhase[], time_s: number): NorthernSkyPhase {
+    let current = PULL_PHASE;
+    for (const phase of phases) {
+      if (phase.start_s <= time_s) current = phase;
+    }
+    return current;
   }
 
   abilitiesByKind(abilities: NorthernSkyAbility[]): { cooldowns: NorthernSkyAbility[]; defensives: NorthernSkyAbility[] } {

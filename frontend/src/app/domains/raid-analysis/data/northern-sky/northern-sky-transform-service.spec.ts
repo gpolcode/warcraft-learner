@@ -59,6 +59,8 @@ const filesFake = {
   })),
 };
 
+const ENCOUNTER_ID = 1;
+
 describe('NorthernSkyTransformService (live, in-browser)', () => {
   it('bakes the #1 log\'s own cast schedule for cooldowns and defensives, with icons', async () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake }) });
@@ -72,6 +74,30 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
       { spell_id: SHADOW_DANCE, name: 'Shadow Dance', icon: `icon_${SHADOW_DANCE}`, kind: 'cooldown', cast_times_s: [40] },
       { spell_id: EVASION, name: 'Evasion', icon: `icon_${EVASION}`, kind: 'defensive', cast_times_s: [70] },
     ]);
+  });
+
+  it('bakes the encounter\'s own Northern Sky phases onto the bench', async () => {
+    const phases = [{ phase: 1, start_s: 0 }, { phase: 2, start_s: 56 }];
+    const phaseFake = { getPhases: async () => Results.ok({ [ENCOUNTER_ID]: phases, [ENCOUNTER_ID + 1]: [] }) };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake, northernSkyPhases: phaseFake }) });
+    const bench = await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', ENCOUNTER_ID);
+    expect(bench.ok).toBe(true);
+    if (bench.ok) expect(bench.value.phases).toEqual(phases);
+  });
+
+  it('bakes no phases when the addon declares none, leaving the note pull-relative', async () => {
+    const phaseFake = { getPhases: async () => Results.missing('No Northern Sky phase tables.') };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake, northernSkyPhases: phaseFake }) });
+    const bench = await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', ENCOUNTER_ID);
+    expect(bench.ok).toBe(true);
+    if (bench.ok) expect(bench.value.phases).toEqual([]);
+  });
+
+  it('returns the read failure when the addon source cannot be read, so the bench is skipped rather than baked pull-relative', async () => {
+    const unreachable = Results.transient('WCL is unreachable right now.');
+    const phaseFake = { getPhases: async () => unreachable };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake, northernSkyPhases: phaseFake }) });
+    expect(await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', ENCOUNTER_ID)).toEqual(unreachable);
   });
 
   it('returns missing when the spec rulebook has no cooldowns or defensives', async () => {

@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
+import { NorthernSkyPhaseDataService } from '../http/northern-sky-phase-data-service';
 import { DataFileApiService } from '../data-files/data-file-api-service';
 import { TopParseSelection } from '../wcl/wcl.models';
 import { Rulebook } from '../rulebook/rulebook.models';
@@ -9,6 +10,7 @@ import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-s
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
 import { NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
+import { NorthernSkyPhase, NorthernSkyPhases } from './northern-sky-phases';
 
 interface ExportAbility { spell_id: number; name: string; kind: NorthernSkyAbility['kind']; }
 
@@ -23,9 +25,13 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
+  private readonly phaseData = inject(NorthernSkyPhaseDataService);
   private readonly dataFiles = inject(DataFileApiService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<NorthernSkyBench>> {
+    const phases = await this.phaseData.getPhases();
+    // Baking empty phases over a failed read would stamp the bench complete and freeze the export pull-relative until the top parses change.
+    if (!phases.ok && phases.error.kind !== 'missing') return phases;
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'NorthernSkyTransformService',
       errorId: 'northern-sky.bench',
@@ -38,9 +44,16 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
       bench: async ({ parses }) => {
         const built = parses[0] ?? [];
         const icons = this.wclProjections.abilityIcons(await this.wclApi.getAbilities(built.map(entry => entry.spell_id)));
-        return { abilities: built.map(entry => ({ ...entry, icon: icons[entry.spell_id]?.icon ?? '' })) };
+        return {
+          abilities: built.map(entry => ({ ...entry, icon: icons[entry.spell_id]?.icon ?? '' })),
+          phases: this.encounterPhases(phases, encounterId),
+        };
       },
     });
+  }
+
+  private encounterPhases(phases: Result<NorthernSkyPhases>, encounterId: number): NorthernSkyPhase[] {
+    return phases.ok ? [...(phases.value[encounterId] ?? [])] : [];
   }
 
   // A parse that cast none of the exported abilities is no schedule at all, never an empty export.

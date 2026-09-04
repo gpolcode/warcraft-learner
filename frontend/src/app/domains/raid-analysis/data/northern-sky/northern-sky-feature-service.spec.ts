@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { Results } from '../../../shared/util-http/result';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../../testing/spell-ids';
-import { featureService } from '../../../../../testing/service-harness';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyAbility } from './northern-sky-data-source';
 import { NorthernSkyFeatureService } from './northern-sky-feature-service';
+import { NorthernSkyPhase } from './northern-sky-phases';
+import { featureService } from '../../../../../testing/service-harness';
 import { NORTHERN_SKY_ENCOUNTER_ID, NORTHERN_SKY_SPEC, bench } from './northern-sky-harness';
 import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
@@ -22,42 +23,45 @@ function ability(spell_id: number, kind: NorthernSkyAbility['kind'], cast_times_
 }
 
 const HEADER = `EncounterID:${NORTHERN_SKY_ENCOUNTER_ID};Name:Boss;Difficulty:Mythic`;
+const LEAD_S = 5;
+const SECOND_PHASE = 2;
+const SECOND_PHASE_START_S = 56;
+const PHASES: readonly NorthernSkyPhase[] = [{ phase: 1, start_s: 0 }, { phase: SECOND_PHASE, start_s: SECOND_PHASE_START_S }];
 
 describe('buildNorthernSkyNote', () => {
   it('emits the Mythic header alone when nothing is selected', () => {
-    const model = bench({ abilities: [{ spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [10] }] });
-    expect(svc.buildNorthernSkyNote(model, new Set())).toBe(HEADER);
+    expect(svc.buildNorthernSkyNote(bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [10])] }), new Set())).toBe(HEADER);
   });
 
-  it('emits one line per cast time, tagged everyone, with no phase field', () => {
-    const model = bench({ abilities: [{ spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [10, 40] }] });
+  it('emits one line per cast time, tagged everyone, with an explicit reminder lead', () => {
+    const model = bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [10, 40])] });
     expect(svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
       HEADER,
-      `time:10;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
-      `time:40;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
+      `tag:everyone;time:10;spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
+      `tag:everyone;time:40;spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
     ].join('\n'));
   });
 
   it('interleaves a cooldown and a defensive in chronological order', () => {
     const model = bench({ abilities: [
-      { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [40] },
-      { spell_id: SHADOW_DANCE, name: 'Evasion', icon: '', kind: 'defensive', cast_times_s: [10] },
+      ability(SHADOW_BLADES, 'cooldown', [40]),
+      ability(SHADOW_DANCE, 'defensive', [10]),
     ] });
     expect(svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES, SHADOW_DANCE]))).toBe([
       HEADER,
-      `time:10;tag:everyone;spellid:${SHADOW_DANCE};text:Evasion`,
-      `time:40;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
+      `tag:everyone;time:10;spellid:${SHADOW_DANCE};ph:1;dur:${LEAD_S}`,
+      `tag:everyone;time:40;spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
     ].join('\n'));
   });
 
   it('omits a deselected ability', () => {
     const model = bench({ abilities: [
-      { spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [10] },
-      { spell_id: SHADOW_DANCE, name: 'Shadow Dance', icon: '', kind: 'cooldown', cast_times_s: [20] },
+      ability(SHADOW_BLADES, 'cooldown', [10]),
+      ability(SHADOW_DANCE, 'cooldown', [20]),
     ] });
     expect(svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
       HEADER,
-      `time:10;tag:everyone;spellid:${SHADOW_BLADES};text:Shadow Blades`,
+      `tag:everyone;time:10;spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
     ].join('\n'));
   });
 
@@ -67,6 +71,51 @@ describe('buildNorthernSkyNote', () => {
 
   it('emits no line for a selected ability that has no cast times', () => {
     expect(svc.buildNorthernSkyNote(bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [])] }), new Set([SHADOW_BLADES]))).toBe(HEADER);
+  });
+});
+
+describe('buildNorthernSkyNote phase mapping', () => {
+  function note(cast_times_s: number[], phases: readonly NorthernSkyPhase[] = PHASES): string {
+    return svc.buildNorthernSkyNote(bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', cast_times_s)], phases: [...phases] }), new Set([SHADOW_BLADES]));
+  }
+
+  it('measures a cast in a later phase from that phase start', () => {
+    const into_s = 12.5;
+    expect(note([SECOND_PHASE_START_S + into_s])).toBe([
+      HEADER,
+      `tag:everyone;time:${into_s};spellid:${SHADOW_BLADES};ph:${SECOND_PHASE};dur:${LEAD_S}`,
+    ].join('\n'));
+  });
+
+  it('puts a cast exactly at the phase start in the phase it opens', () => {
+    expect(note([SECOND_PHASE_START_S])).toBe([
+      HEADER,
+      `tag:everyone;time:0;spellid:${SHADOW_BLADES};ph:${SECOND_PHASE};dur:${LEAD_S}`,
+    ].join('\n'));
+  });
+
+  it('keeps a cast one tick before the phase start in the outgoing phase', () => {
+    const before_s = SECOND_PHASE_START_S - 0.1;
+    expect(note([before_s])).toBe([
+      HEADER,
+      `tag:everyone;time:${before_s};spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
+    ].join('\n'));
+  });
+
+  it('rounds a phase-relative time taken off a fractional phase start', () => {
+    const intermission: NorthernSkyPhase = { phase: 1.5, start_s: 197.89 };
+    expect(note([intermission.start_s + 2.51], [{ phase: 1, start_s: 0 }, intermission])).toBe([
+      HEADER,
+      `tag:everyone;time:2.5;spellid:${SHADOW_BLADES};ph:${intermission.phase};dur:${LEAD_S}`,
+    ].join('\n'));
+  });
+
+  it('leaves an encounter Northern Sky does not phase pull-relative in phase 1', () => {
+    const late_s = SECOND_PHASE_START_S + 12.5;
+    expect(note([late_s], [])).toBe([
+      HEADER,
+      `tag:everyone;time:${late_s};spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
+    ].join('\n'));
   });
 });
 
@@ -140,9 +189,9 @@ describe('isPanelOpen', () => {
   });
 });
 
-describe('NorthernSkyFeatureService', () => {
+describe('getExport', () => {
   it('returns the bench from its data source', async () => {
-    const model = bench({ abilities: [{ spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [10] }] });
+    const model = bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [10])] });
     const service = featureService(NORTHERN_SKY_DATA_SOURCE, NorthernSkyFeatureService, Results.ok(model));
     expect(await service.getExport(NORTHERN_SKY_SPEC, NORTHERN_SKY_ENCOUNTER_ID)).toEqual(Results.ok(model));
   });
