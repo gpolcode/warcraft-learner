@@ -1,6 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { DataSource } from '../data-source/data-source';
 import { BenchIdentity } from '../analysis/bench-pipeline-service';
+import { NorthernSkyPhase } from './northern-sky-phases';
 
 export interface NorthernSkyAbility {
   spell_id: number;
@@ -14,6 +15,8 @@ export interface NorthernSkyAbility {
 /** The tailored Northern Sky export bench for one encounter, read from `data/specs/{spec}/northern-sky/{enc}.json`. */
 export interface NorthernSkyBench extends BenchIdentity {
   abilities: NorthernSkyAbility[];
+  /** Empty for an encounter Northern Sky keeps on one clock all fight. */
+  phases: NorthernSkyPhase[];
 }
 
 /** The feature's data-source token: prod reads the tailored file, dev/ingest computes it live. */

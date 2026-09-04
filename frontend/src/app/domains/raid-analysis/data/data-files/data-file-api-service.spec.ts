@@ -4,7 +4,6 @@ import { DataFileApiService } from './data-file-api-service';
 import { DATA_FILE_TRANSPORT, DataFileTransport } from './data-file-transport';
 import type { EncounterEntry, SpecEntry } from '../encounter/encounter.models';
 import { SpecMeta } from './spec-meta.models';
-import { NorthernSkyPhases } from '../northern-sky/northern-sky-phases';
 import { Result, Results } from '../../../shared/util-http/result';
 
 // These tests pin the exact relative paths the service owns: a drift silently 404s every runtime read or writes ingested data to the wrong place.
@@ -131,19 +130,6 @@ describe('DataFileApiService reads', () => {
 
     const outage = new RecordingTransport(Results.transient('WCL is unreachable right now.'));
     expect(await withTransport(outage).getSpecMeta()).toEqual(Results.transient('WCL is unreachable right now.'));
-  });
-
-  it('reads the Northern Sky phases at northern-sky-phases.json, folding a missing file to {} but surfacing a real failure', async () => {
-    const phases: NorthernSkyPhases = { [ENCOUNTER_ID]: [{ phase: 1, start_s: 0 }, { phase: 2, start_s: 56 }] };
-    const present = new RecordingTransport(Results.ok(phases));
-    expect(await withTransport(present).getNorthernSkyPhases()).toEqual(Results.ok(phases));
-    expect(present.reads).toEqual(['northern-sky-phases.json']);
-
-    const beforeFirstPull = new RecordingTransport(Results.missing('Not yet ingested.'));
-    expect(await withTransport(beforeFirstPull).getNorthernSkyPhases()).toEqual(Results.ok({}));
-
-    const outage = new RecordingTransport(Results.transient('WCL is unreachable right now.'));
-    expect(await withTransport(outage).getNorthernSkyPhases()).toEqual(Results.transient('WCL is unreachable right now.'));
   });
 });
 

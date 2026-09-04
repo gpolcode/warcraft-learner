@@ -1,15 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Result, Results } from '../../../shared/util-http/result';
+import { Result } from '../../../shared/util-http/result';
 import { round } from '../analysis/analysis-math';
-import { DataFileApiService } from '../data-files/data-file-api-service';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
 import { NorthernSkyPhase } from './northern-sky-phases';
-
-/** The parse's cast times plus the Northern Sky phases their note lines are measured against. */
-export interface NorthernSkySchedule {
-  bench: NorthernSkyBench;
-  phases: readonly NorthernSkyPhase[];
-}
 
 const MYTHIC_DIFFICULTY = 'Mythic';
 // The raid lead re-assigns lines to their roster on import; no Blizzard spec id is exposed to tag with.
@@ -20,23 +13,18 @@ const PULL_PHASE: NorthernSkyPhase = { phase: 1, start_s: 0 };
 @Injectable({ providedIn: 'root' })
 export class NorthernSkyFeatureService {
   private readonly source = inject(NORTHERN_SKY_DATA_SOURCE);
-  private readonly dataFiles = inject(DataFileApiService);
 
-  async getExport(spec: string, encounterId: number): Promise<Result<NorthernSkySchedule>> {
-    const bench = await this.source.getBench(spec, encounterId);
-    if (!bench.ok) return bench;
-    const phases = await this.dataFiles.getNorthernSkyPhases();
-    if (!phases.ok) return phases;
-    return Results.ok({ bench: bench.value, phases: phases.value[encounterId] ?? [] });
+  getExport(spec: string, encounterId: number): Promise<Result<NorthernSkyBench>> {
+    return this.source.getBench(spec, encounterId);
   }
 
-  buildNorthernSkyNote({ bench, phases }: NorthernSkySchedule, selectedSpellIds: ReadonlySet<number>): string {
+  buildNorthernSkyNote(bench: NorthernSkyBench, selectedSpellIds: ReadonlySet<number>): string {
     const header = `EncounterID:${bench.encounter_id};Name:${bench.encounter_name};Difficulty:${MYTHIC_DIFFICULTY}`;
     const lines: { time_s: number; text: string }[] = [];
     for (const ability of bench.abilities) {
       if (!selectedSpellIds.has(ability.spell_id)) continue;
       for (const time_s of ability.cast_times_s) {
-        const phase = this.phaseAt(phases, time_s);
+        const phase = this.phaseAt(bench.phases, time_s);
         lines.push({ time_s, text: `tag:${EVERYONE_TAG};time:${round(time_s - phase.start_s)};spellid:${ability.spell_id};ph:${phase.phase};dur:${REMINDER_LEAD_S}` });
       }
     }
