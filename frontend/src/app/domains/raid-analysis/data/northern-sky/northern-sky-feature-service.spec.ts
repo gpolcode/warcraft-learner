@@ -117,15 +117,6 @@ describe('buildNorthernSkyNote phase mapping', () => {
       `tag:everyone;time:${late_s};spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
     ].join('\n'));
   });
-
-  it('leaves a bench file that carries no phases field pull-relative in phase 1', () => {
-    const late_s = SECOND_PHASE_START_S + 12.5;
-    const model = bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [late_s])], phases: undefined });
-    expect(svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
-      HEADER,
-      `tag:everyone;time:${late_s};spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
-    ].join('\n'));
-  });
 });
 
 describe('abilitiesByKind', () => {
