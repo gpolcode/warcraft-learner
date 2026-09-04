@@ -4,11 +4,11 @@ import { Result, Results } from '../../shared/util-http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { SelectionStore } from '../data/selection/selection-store';
 import { NorthernSkyExport } from './northern-sky-export';
-import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
-import { NorthernSkyAbility, NorthernSkyBench } from '../data/northern-sky/northern-sky-data-source';
+import { NorthernSkyFeatureService, NorthernSkySchedule } from '../data/northern-sky/northern-sky-feature-service';
+import { NorthernSkyAbility } from '../data/northern-sky/northern-sky-data-source';
 import { SHADOW_BLADES, EVASION } from '../../../../testing/spell-ids';
 import { whenStable } from '../../../../testing/when-stable';
-import { NORTHERN_SKY_ENCOUNTER_ID, NORTHERN_SKY_SPEC, bench } from '../data/northern-sky/northern-sky-harness';
+import { NORTHERN_SKY_ENCOUNTER_ID, NORTHERN_SKY_SPEC, schedule } from '../data/northern-sky/northern-sky-harness';
 
 const CAST_TIMES_S = [10, 30];
 const EXPORT_BUTTON = 'button[mat-stroked-button]';
@@ -30,7 +30,7 @@ interface Mounted {
 }
 
 async function mount(
-  getExport: () => Promise<Result<NorthernSkyBench>>,
+  getExport: () => Promise<Result<NorthernSkySchedule>>,
   copySucceeds = true,
 ): Promise<Mounted> {
   const copies: string[] = [];
@@ -53,7 +53,7 @@ async function mount(
 
 describe('NorthernSkyExport export availability', () => {
   it('waits, with no error banner, when the bench carries no abilities', async () => {
-    const { dom } = await mount(async () => Results.ok(bench()));
+    const { dom } = await mount(async () => Results.ok(schedule()));
 
     expect(dom.query('wl-load-state')).not.toBeNull();
     expect(dom.query(EXPORT_BUTTON)).toBeNull();
@@ -61,7 +61,7 @@ describe('NorthernSkyExport export availability', () => {
   });
 
   it('offers the export button once the bench carries at least one ability', async () => {
-    const { dom } = await mount(async () => Results.ok(bench({ abilities: POPULATED_ABILITIES })));
+    const { dom } = await mount(async () => Results.ok(schedule({ abilities: POPULATED_ABILITIES })));
 
     expect(dom.query('wl-load-state')).toBeNull();
     expect(dom.query(EXPORT_BUTTON)).not.toBeNull();
@@ -79,7 +79,7 @@ describe('NorthernSkyExport export availability', () => {
 
 describe('NorthernSkyExport copy', () => {
   const openPanel = async (copySucceeds = true): Promise<Mounted> => {
-    const mounted = await mount(async () => Results.ok(bench({ abilities: POPULATED_ABILITIES })), copySucceeds);
+    const mounted = await mount(async () => Results.ok(schedule({ abilities: POPULATED_ABILITIES })), copySucceeds);
     mounted.dom.click(EXPORT_BUTTON);
     return mounted;
   };

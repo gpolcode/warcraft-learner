@@ -57,6 +57,12 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      # continue-on-error: a GitHub outage must not block parse ingestion, and the previously published file survives in the gh-pages overlay.
+      - name: Refresh Northern Sky phase timings
+        working-directory: frontend
+        continue-on-error: true
+        run: npm run phases:pull
+
       # CURRENT_RAIDS: WCL zone names to bench, comma separated (e.g. "The Venomous Abyss"). Anything else is pruned; unset prunes nothing.
       # PRIORITY_SPECS (repo variable) is optional: unset or malformed falls back safely (see ordering.ts parsePrioritySpecs).
       - name: Run parse ingestion

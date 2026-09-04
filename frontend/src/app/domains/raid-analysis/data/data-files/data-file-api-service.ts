@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import type { Rulebook } from '../rulebook/rulebook.models';
 import type { EncounterEntry, SpecEntry } from '../encounter/encounter.models';
+import type { NorthernSkyPhases } from '../northern-sky/northern-sky-phases';
 import { SpecMeta } from './spec-meta.models';
 import { DATA_FILE_TRANSPORT } from './data-file-transport';
 import { Result, Results } from '../../../shared/util-http/result';
@@ -30,6 +31,13 @@ export class DataFileApiService {
 
   async getSpecMeta(): Promise<Result<SpecMeta[]>> {
     return foldMissingToEmpty(await this.io.readJson<SpecMeta[]>('spec-meta.json'));
+  }
+
+  // The export still works for the encounters the addon never phases, so a dataset without this file yet must not fail the card.
+  async getNorthernSkyPhases(): Promise<Result<NorthernSkyPhases>> {
+    const result = await this.io.readJson<NorthernSkyPhases>('northern-sky-phases.json');
+    if (result.ok) return result;
+    return result.error.kind === 'missing' ? Results.ok({}) : result;
   }
 
   async getEncounters(spec: string): Promise<Result<EncounterEntry[]>> {

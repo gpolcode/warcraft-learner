@@ -1,11 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { Results } from '../../../shared/util-http/result';
+import { Result, Results } from '../../../shared/util-http/result';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../../testing/spell-ids';
-import { featureService } from '../../../../../testing/service-harness';
-import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyAbility } from './northern-sky-data-source';
+import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyAbility, NorthernSkyBench } from './northern-sky-data-source';
 import { NorthernSkyFeatureService } from './northern-sky-feature-service';
-import { NORTHERN_SKY_PHASES } from './northern-sky-phases';
-import { NORTHERN_SKY_ENCOUNTER_ID, NORTHERN_SKY_SPEC, bench } from './northern-sky-harness';
+import { NorthernSkyPhase } from './northern-sky-phases';
+import { NORTHERN_SKY_ENCOUNTER_ID, NORTHERN_SKY_SPEC, bench, schedule } from './northern-sky-harness';
 import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
@@ -24,25 +23,17 @@ function ability(spell_id: number, kind: NorthernSkyAbility['kind'], cast_times_
 
 const HEADER = `EncounterID:${NORTHERN_SKY_ENCOUNTER_ID};Name:Boss;Difficulty:Mythic`;
 const LEAD_S = 5;
-
-const PHASED_ENCOUNTER_ID = 3445;
 const SECOND_PHASE = 2;
 const SECOND_PHASE_START_S = 56;
-const PHASED_HEADER = `EncounterID:${PHASED_ENCOUNTER_ID};Name:Boss;Difficulty:Mythic`;
-
-const FRACTIONAL_ENCOUNTER_ID = 3470;
-const INTERMISSION_PHASE = 1.5;
-const INTERMISSION_START_S = 197.89;
-const FRACTIONAL_HEADER = `EncounterID:${FRACTIONAL_ENCOUNTER_ID};Name:Boss;Difficulty:Mythic`;
+const PHASES: readonly NorthernSkyPhase[] = [{ phase: 1, start_s: 0 }, { phase: SECOND_PHASE, start_s: SECOND_PHASE_START_S }];
 
 describe('buildNorthernSkyNote', () => {
   it('emits the Mythic header alone when nothing is selected', () => {
-    const model = bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [10])] });
-    expect(svc.buildNorthernSkyNote(model, new Set())).toBe(HEADER);
+    expect(svc.buildNorthernSkyNote(schedule({ abilities: [ability(SHADOW_BLADES, 'cooldown', [10])] }), new Set())).toBe(HEADER);
   });
 
   it('emits one line per cast time, tagged everyone, with an explicit reminder lead', () => {
-    const model = bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [10, 40])] });
+    const model = schedule({ abilities: [ability(SHADOW_BLADES, 'cooldown', [10, 40])] });
     expect(svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
       HEADER,
       `tag:everyone;time:10;spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
@@ -51,7 +42,7 @@ describe('buildNorthernSkyNote', () => {
   });
 
   it('interleaves a cooldown and a defensive in chronological order', () => {
-    const model = bench({ abilities: [
+    const model = schedule({ abilities: [
       ability(SHADOW_BLADES, 'cooldown', [40]),
       ability(SHADOW_DANCE, 'defensive', [10]),
     ] });
@@ -63,7 +54,7 @@ describe('buildNorthernSkyNote', () => {
   });
 
   it('omits a deselected ability', () => {
-    const model = bench({ abilities: [
+    const model = schedule({ abilities: [
       ability(SHADOW_BLADES, 'cooldown', [10]),
       ability(SHADOW_DANCE, 'cooldown', [20]),
     ] });
@@ -74,63 +65,55 @@ describe('buildNorthernSkyNote', () => {
   });
 
   it('emits the header alone for a bench with no abilities', () => {
-    expect(svc.buildNorthernSkyNote(bench(), new Set())).toBe(HEADER);
+    expect(svc.buildNorthernSkyNote(schedule(), new Set())).toBe(HEADER);
   });
 
   it('emits no line for a selected ability that has no cast times', () => {
-    expect(svc.buildNorthernSkyNote(bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [])] }), new Set([SHADOW_BLADES]))).toBe(HEADER);
+    expect(svc.buildNorthernSkyNote(schedule({ abilities: [ability(SHADOW_BLADES, 'cooldown', [])] }), new Set([SHADOW_BLADES]))).toBe(HEADER);
   });
 });
 
 describe('buildNorthernSkyNote phase mapping', () => {
-  function phasedNote(cast_times_s: number[]): string {
-    const model = bench({ encounter_id: PHASED_ENCOUNTER_ID, abilities: [ability(SHADOW_BLADES, 'cooldown', cast_times_s)] });
-    return svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES]));
+  function note(cast_times_s: number[], phases: readonly NorthernSkyPhase[] = PHASES): string {
+    return svc.buildNorthernSkyNote(schedule({ abilities: [ability(SHADOW_BLADES, 'cooldown', cast_times_s)] }, phases), new Set([SHADOW_BLADES]));
   }
-
-  it('carries the addon phase start the cases below are written against', () => {
-    expect(NORTHERN_SKY_PHASES[PHASED_ENCOUNTER_ID]).toContainEqual({ phase: SECOND_PHASE, start_s: SECOND_PHASE_START_S });
-  });
 
   it('measures a cast in a later phase from that phase start', () => {
     const into_s = 12.5;
-    expect(phasedNote([SECOND_PHASE_START_S + into_s])).toBe([
-      PHASED_HEADER,
+    expect(note([SECOND_PHASE_START_S + into_s])).toBe([
+      HEADER,
       `tag:everyone;time:${into_s};spellid:${SHADOW_BLADES};ph:${SECOND_PHASE};dur:${LEAD_S}`,
     ].join('\n'));
   });
 
   it('puts a cast exactly at the phase start in the phase it opens', () => {
-    expect(phasedNote([SECOND_PHASE_START_S])).toBe([
-      PHASED_HEADER,
+    expect(note([SECOND_PHASE_START_S])).toBe([
+      HEADER,
       `tag:everyone;time:0;spellid:${SHADOW_BLADES};ph:${SECOND_PHASE};dur:${LEAD_S}`,
     ].join('\n'));
   });
 
   it('keeps a cast one tick before the phase start in the outgoing phase', () => {
     const before_s = SECOND_PHASE_START_S - 0.1;
-    expect(phasedNote([before_s])).toBe([
-      PHASED_HEADER,
+    expect(note([before_s])).toBe([
+      HEADER,
       `tag:everyone;time:${before_s};spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
     ].join('\n'));
   });
 
   it('rounds a phase-relative time taken off a fractional phase start', () => {
-    expect(NORTHERN_SKY_PHASES[FRACTIONAL_ENCOUNTER_ID]).toContainEqual({ phase: INTERMISSION_PHASE, start_s: INTERMISSION_START_S });
-    const into_s = 2.51;
-    const model = bench({ encounter_id: FRACTIONAL_ENCOUNTER_ID, abilities: [ability(SHADOW_BLADES, 'cooldown', [INTERMISSION_START_S + into_s])] });
-    expect(svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
-      FRACTIONAL_HEADER,
-      `tag:everyone;time:2.5;spellid:${SHADOW_BLADES};ph:${INTERMISSION_PHASE};dur:${LEAD_S}`,
+    const intermission: NorthernSkyPhase = { phase: 1.5, start_s: 197.89 };
+    expect(note([intermission.start_s + 2.51], [{ phase: 1, start_s: 0 }, intermission])).toBe([
+      HEADER,
+      `tag:everyone;time:2.5;spellid:${SHADOW_BLADES};ph:${intermission.phase};dur:${LEAD_S}`,
     ].join('\n'));
   });
 
   it('leaves an encounter Northern Sky does not phase pull-relative in phase 1', () => {
-    expect(NORTHERN_SKY_PHASES[NORTHERN_SKY_ENCOUNTER_ID]).toBeUndefined();
-    const model = bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [SECOND_PHASE_START_S + 12.5])] });
-    expect(svc.buildNorthernSkyNote(model, new Set([SHADOW_BLADES]))).toBe([
+    const late_s = SECOND_PHASE_START_S + 12.5;
+    expect(note([late_s], [])).toBe([
       HEADER,
-      `tag:everyone;time:${SECOND_PHASE_START_S + 12.5};spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
+      `tag:everyone;time:${late_s};spellid:${SHADOW_BLADES};ph:1;dur:${LEAD_S}`,
     ].join('\n'));
   });
 });
@@ -205,15 +188,31 @@ describe('isPanelOpen', () => {
   });
 });
 
-describe('NorthernSkyFeatureService', () => {
-  it('returns the bench from its data source', async () => {
-    const model = bench({ abilities: [{ spell_id: SHADOW_BLADES, name: 'Shadow Blades', icon: '', kind: 'cooldown', cast_times_s: [10] }] });
-    const service = featureService(NORTHERN_SKY_DATA_SOURCE, NorthernSkyFeatureService, Results.ok(model));
-    expect(await service.getExport(NORTHERN_SKY_SPEC, NORTHERN_SKY_ENCOUNTER_ID)).toEqual(Results.ok(model));
+describe('getExport', () => {
+  const model = bench({ abilities: [ability(SHADOW_BLADES, 'cooldown', [10])] });
+  const phases: NorthernSkyPhase[] = [{ phase: 1, start_s: 0 }, { phase: SECOND_PHASE, start_s: SECOND_PHASE_START_S }];
+
+  function service(benchResult: Result<NorthernSkyBench> = Results.ok(model), phasesFile: unknown = { [NORTHERN_SKY_ENCOUNTER_ID]: phases }): NorthernSkyFeatureService {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ providers: [
+      { provide: NORTHERN_SKY_DATA_SOURCE, useValue: { getBench: () => Promise.resolve(benchResult) } },
+      { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => Promise.resolve(Results.ok(phasesFile)) } },
+    ] });
+    return TestBed.inject(NorthernSkyFeatureService);
+  }
+
+  it('pairs the bench with its own encounter phases', async () => {
+    expect(await service().getExport(NORTHERN_SKY_SPEC, NORTHERN_SKY_ENCOUNTER_ID)).toEqual(Results.ok({ bench: model, phases }));
+  });
+
+  it('leaves an encounter the phase file does not list without phases', async () => {
+    const other = NORTHERN_SKY_ENCOUNTER_ID + 1;
+    expect(await service(Results.ok(model), { [other]: phases }).getExport(NORTHERN_SKY_SPEC, NORTHERN_SKY_ENCOUNTER_ID))
+      .toEqual(Results.ok({ bench: model, phases: [] }));
   });
 
   it('propagates a missing bench so the export waiting state shows', async () => {
-    const service = featureService(NORTHERN_SKY_DATA_SOURCE, NorthernSkyFeatureService, Results.missing('Not yet ingested.'));
-    expect(await service.getExport(NORTHERN_SKY_SPEC, NORTHERN_SKY_ENCOUNTER_ID)).toEqual(Results.missing('Not yet ingested.'));
+    const missing = Results.missing('Not yet ingested.');
+    expect(await service(missing).getExport(NORTHERN_SKY_SPEC, NORTHERN_SKY_ENCOUNTER_ID)).toEqual(missing);
   });
 });

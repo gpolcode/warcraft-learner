@@ -13,7 +13,8 @@
     "lint": "ng lint && eslint scripts e2e playwright.config.ts",
     "knip": "knip",
     "data:pull": "git -C .. fetch origin gh-pages && rm -rf public/data/specs && git -C .. archive origin/gh-pages data/specs | tar -x -C public",
-    "schema:pull": "node scripts/schema-pull.mjs"
+    "schema:pull": "node scripts/schema-pull.mjs",
+    "phases:pull": "node scripts/northern-sky-phases.mjs"
   },
   "private": true,
   "packageManager": "npm@11.13.0",

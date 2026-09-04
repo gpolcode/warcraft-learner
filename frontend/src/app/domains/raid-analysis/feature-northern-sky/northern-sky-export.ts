@@ -6,8 +6,7 @@ import { FlyoverPanel } from '../../shared/ui-flyover-panel/flyover-panel';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { SelectionStore } from '../data/selection/selection-store';
-import { NorthernSkyBench } from '../data/northern-sky/northern-sky-data-source';
-import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
+import { NorthernSkyFeatureService, NorthernSkySchedule } from '../data/northern-sky/northern-sky-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
 
 @Component({
@@ -31,19 +30,19 @@ export class NorthernSkyExport {
     params: () => ({ spec: this.spec(), encounterId: this.encounterId() }),
     load: ({ spec, encounterId }) => this.feature.getExport(spec, encounterId),
     context: 'northernSky.getExport',
-    availableWhen: (bench: NorthernSkyBench) => bench.abilities.length > 0,
+    availableWhen: (schedule: NorthernSkySchedule) => schedule.bench.abilities.length > 0,
     busyChange: this.busyChange,
     availableChange: this.availableChange,
   });
 
-  private readonly bench = this.load.value;
+  private readonly schedule = this.load.value;
   private readonly excluded = signal<ReadonlySet<number>>(new Set(this.selection.loadNorthernSky()?.excludedSpellIds ?? []));
   protected readonly open = signal(false);
   protected readonly copied = signal(false);
   protected readonly copyFailed = signal(false);
   protected readonly error = this.load.error;
 
-  protected readonly abilities = computed(() => this.bench()?.abilities ?? []);
+  protected readonly abilities = computed(() => this.schedule()?.bench.abilities ?? []);
   private readonly grouped = computed(() => this.feature.abilitiesByKind(this.abilities()));
   protected readonly cooldowns = computed(() => this.grouped().cooldowns);
   protected readonly defensives = computed(() => this.grouped().defensives);
@@ -64,9 +63,9 @@ export class NorthernSkyExport {
   }
 
   protected copyNote(): void {
-    const bench = this.bench();
-    if (!bench) return;
-    const succeeded = this.clipboard.copy(this.feature.buildNorthernSkyNote(bench, this.feature.selectedIds(this.abilities(), this.excluded())));
+    const schedule = this.schedule();
+    if (!schedule) return;
+    const succeeded = this.clipboard.copy(this.feature.buildNorthernSkyNote(schedule, this.feature.selectedIds(this.abilities(), this.excluded())));
     this.copied.set(succeeded);
     this.copyFailed.set(!succeeded);
   }
