@@ -15,7 +15,7 @@ export interface NorthernSkyAbility {
 /** The tailored Northern Sky export bench for one encounter, read from `data/specs/{spec}/northern-sky/{enc}.json`. */
 export interface NorthernSkyBench extends BenchIdentity {
   abilities: NorthernSkyAbility[];
-  /** Empty for an encounter Northern Sky keeps on one clock all fight; absent from a file still on an ingest version below 30. */
+  /** Empty for an encounter Northern Sky keeps on one clock all fight. */
   phases?: NorthernSkyPhase[];
 }
 
