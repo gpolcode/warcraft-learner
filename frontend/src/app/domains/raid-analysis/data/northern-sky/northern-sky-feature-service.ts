@@ -24,7 +24,7 @@ export class NorthernSkyFeatureService {
     for (const ability of bench.abilities) {
       if (!selectedSpellIds.has(ability.spell_id)) continue;
       for (const time_s of ability.cast_times_s) {
-        const phase = this.phaseAt(bench.phases, time_s);
+        const phase = this.phaseAt(bench.phases ?? [], time_s);
         lines.push({ time_s, text: `tag:${EVERYONE_TAG};time:${round(time_s - phase.start_s)};spellid:${ability.spell_id};ph:${phase.phase};dur:${REMINDER_LEAD_S}` });
       }
     }
