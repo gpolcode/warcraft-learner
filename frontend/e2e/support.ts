@@ -16,7 +16,7 @@ export const RATIO = /\d+ \/ \d+/;
 export async function showsTypicalUses(scope: Locator): Promise<void> {
   const cell = scope.locator('span').filter({ hasText: 'Typical uses' }).first();
   await expect(cell.getByText(/^\d+(\.\d+)?x$/).first()).toBeVisible();
-  await expect(cell.getByText(/^used in \d+ of \d+ logs$/).first()).toBeVisible();
+  await expect(cell.getByText(/^Used in \d+ of \d+ logs$/).first()).toBeVisible();
 }
 const SECONDS = /[+-]?\d+(\.\d+)?s/;
 
