@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Result, Results } from '../../shared/util-http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { whenStable } from '../../../../testing/when-stable';
@@ -9,7 +10,7 @@ import { GearComparisonView, GearFeatureService } from '../data/gear/gear-featur
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER_ID = 3379;
 const COPY_BUTTON = 'button[aria-label="Copy name"]';
-const COPIED_BUTTON = 'button[aria-label="Copied"]';
+const COPIED_MESSAGE = 'Copied to clipboard. Paste it into the auction house search.';
 const FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 const ARMOR_KIT_ITEM = "Forest Hunter's Armor Kit";
 const HELM_ENCHANT = 'Enchant Helm - Empowered Rune of Avoidance';
@@ -43,10 +44,12 @@ function comparisonView(): GearComparisonView {
 interface Mounted {
   readonly dom: MountedDom;
   readonly copies: string[];
+  readonly messages: string[];
 }
 
 async function mount(view: GearComparisonView, copySucceeds = true): Promise<Mounted> {
   const copies: string[] = [];
+  const messages: string[] = [];
   const load = async (): Promise<Result<GearComparisonView>> => Results.ok(view);
   // The prototype supplies the empty view; only the two IO loads are faked.
   const feature = Object.assign(Object.create(GearFeatureService.prototype) as GearFeatureService, {
@@ -55,6 +58,7 @@ async function mount(view: GearComparisonView, copySucceeds = true): Promise<Mou
   const clipboard = {
     copy: (text: string) => { copies.push(text); return copySucceeds; },
   } as unknown as Clipboard;
+  const snackBar = { open: (message: string) => { messages.push(message); } } as unknown as MatSnackBar;
   const inputs = view.comparison
     ? { spec: SPEC, encounterId: ENCOUNTER_ID, report: 'abc', fight: 1, player: 10 }
     : { spec: SPEC, encounterId: ENCOUNTER_ID };
@@ -62,10 +66,11 @@ async function mount(view: GearComparisonView, copySucceeds = true): Promise<Mou
   const dom = mountDom(Gear, inputs, [
     { provide: GearFeatureService, useValue: feature },
     { provide: Clipboard, useValue: clipboard },
+    { provide: MatSnackBar, useValue: snackBar },
   ]);
   await whenStable();
   dom.detectChanges();
-  return { dom, copies };
+  return { dom, copies, messages };
 }
 
 describe('Gear enchant copy', () => {
@@ -76,25 +81,21 @@ describe('Gear enchant copy', () => {
     expect(dom.text()).toContain(ARMOR_KIT_ITEM);
   });
 
-  it('hands the clipboard the row\'s item name and confirms on that row alone', async () => {
-    const { dom, copies } = await mount(benchView());
+  it('hands the clipboard the row\'s item name and confirms the copy', async () => {
+    const { dom, copies, messages } = await mount(benchView());
 
     dom.queryAll(COPY_BUTTON)[1]?.click();
-    dom.detectChanges();
 
     expect(copies).toEqual([ARMOR_KIT_ITEM]);
-    expect(dom.queryAll(COPIED_BUTTON)).toHaveLength(1);
-    expect(dom.queryAll(COPY_BUTTON)).toHaveLength(1);
-    expect(dom.text()).not.toContain(FAILED_MESSAGE);
+    expect(messages).toEqual([COPIED_MESSAGE]);
   });
 
   it('reports the failure, and no confirmation, when the clipboard write is refused', async () => {
-    const { dom } = await mount(benchView(), false);
+    const { dom, messages } = await mount(benchView(), false);
 
     dom.click(COPY_BUTTON);
 
-    expect(dom.text()).toContain(FAILED_MESSAGE);
-    expect(dom.query(COPIED_BUTTON)).toBeNull();
+    expect(messages).toEqual([FAILED_MESSAGE]);
   });
 
   it('offers the consensus item to copy beside the fix on a flagged comparison row', async () => {

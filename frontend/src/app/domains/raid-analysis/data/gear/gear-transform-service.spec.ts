@@ -256,7 +256,7 @@ const talentDataFake = { getTalents: async () => Results.missing('No talent data
 const enchantItemsFake = { getEnchantItems: async () => Results.ok({ [SOPHIC_ENCHANT]: SOPHIC_ITEM }) };
 const noEnchantItemsFake = { getEnchantItems: async () => Results.transient('Raidbots is unreachable right now.') };
 
-describe('fillEnchantItemNames', () => {
+describe('nameEnchantsByItem', () => {
   const ranked = { [ENCHANT_SLOT]: [{ id: SOPHIC_ENCHANT, name: 'Soph', pct: 100 }, { id: 9000, name: 'Other', pct: 50 }] };
   const names = { [`i${SOPHIC_ITEM}`]: { id: SOPHIC_ITEM, name: 'Enchant Weapon - Sophic &amp; Devotion' } };
 
@@ -265,11 +265,11 @@ describe('fillEnchantItemNames', () => {
     expect(svc['enchantItemIds'](twoSlots, { [SOPHIC_ENCHANT]: SOPHIC_ITEM })).toEqual([SOPHIC_ITEM]);
   });
 
-  it('names the item behind each enchant, decoded, and leaves a blank name where the dump or WCL has none', () => {
-    expect(svc['fillEnchantItemNames'](ranked, { [SOPHIC_ENCHANT]: SOPHIC_ITEM, 9000: 1 }, names)).toEqual({
+  it('renames each enchant to its decoded item name and keeps the WCL name where the dump or WCL has none', () => {
+    expect(svc['nameEnchantsByItem'](ranked, { [SOPHIC_ENCHANT]: SOPHIC_ITEM, 9000: 1 }, names)).toEqual({
       [ENCHANT_SLOT]: [
-        { id: SOPHIC_ENCHANT, name: 'Soph', item_name: 'Enchant Weapon - Sophic & Devotion', pct: 100 },
-        { id: 9000, name: 'Other', item_name: '', pct: 50 },
+        { id: SOPHIC_ENCHANT, name: 'Enchant Weapon - Sophic & Devotion', pct: 100 },
+        { id: 9000, name: 'Other', pct: 50 },
       ],
     });
   });
@@ -287,10 +287,10 @@ describe('GearTransformService (live, in-browser)', () => {
       key: 'v3:650.1', pct: 100, report_code: 'r1', fight_id: 1, player_name: 'P1', source_id: 10,
     });
     expect(bench.value.trinket_sets).toEqual([{ items: [{ id: 100, name: 'A', icon: 't' }], pct: 100 }]);
-    expect(bench.value.enchants[15]).toEqual([{ id: SOPHIC_ENCHANT, name: 'Soph', item_name: SOPHIC_ITEM_NAME, pct: 100 }]);
+    expect(bench.value.enchants[15]).toEqual([{ id: SOPHIC_ENCHANT, name: SOPHIC_ITEM_NAME, pct: 100 }]);
   });
 
-  it('keeps the WCL enchant names, with no item names, when the Raidbots dump fails to load', async () => {
+  it('keeps the WCL enchant names when the Raidbots dump fails to load', async () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, talents: talentDataFake, enchantItems: noEnchantItemsFake }) });
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);

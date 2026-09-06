@@ -9,7 +9,6 @@ const DUMP_URL = 'https://www.raidbots.com/static/data/live/enchantments.json';
 
 interface RaidbotsEnchantment { id?: number; itemId?: number }
 
-/** The purchasable item behind each enchant id, keyed by the enchant id WCL reports on gear. */
 export type EnchantItems = Record<number, number>;
 
 @Injectable({ providedIn: 'root' })
@@ -27,7 +26,6 @@ export class EnchantItemDataService {
     }
   }
 
-  // Runes and other trainer-taught enchants carry no item; only entries with a real item resolve.
   protected indexEnchantItems(dump: RaidbotsEnchantment[]): EnchantItems {
     const items: EnchantItems = {};
     for (const enchant of dump) {

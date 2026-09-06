@@ -209,16 +209,11 @@
               <div class="flex items-start gap-1">
                 <wl-collapsible class="min-w-0 flex-1">{{ row.note }}</wl-collapsible>
                 @if (row.copyName; as copyName) {
-                  <button mat-icon-button class="shrink-0 -my-2"
-                    [attr.aria-label]="copiedSlot() === row.slotName ? 'Copied' : 'Copy name'"
-                    (click)="copy(row.slotName, copyName)">
-                    <mat-icon class="icon-18">{{ copiedSlot() === row.slotName ? 'check' : 'content_copy' }}</mat-icon>
+                  <button mat-icon-button class="icon-button-inline shrink-0 -my-1" aria-label="Copy name" (click)="copy(copyName)">
+                    <mat-icon class="icon-18">content_copy</mat-icon>
                   </button>
                 }
               </div>
-              @if (copyFailedSlot() === row.slotName) {
-                <div class="text-caption text-critical">Clipboard write failed. Retry the copy.</div>
-              }
             </div>
           </div>
         }
@@ -250,14 +245,9 @@
               <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
               <span class="text-name">{{ row.name }}</span>
               @if (row.copyName; as copyName) {
-                <button mat-icon-button class="shrink-0 -my-2"
-                  [attr.aria-label]="copiedSlot() === row.slotName ? 'Copied' : 'Copy name'"
-                  (click)="copy(row.slotName, copyName)">
-                  <mat-icon class="icon-18">{{ copiedSlot() === row.slotName ? 'check' : 'content_copy' }}</mat-icon>
+                <button mat-icon-button class="icon-button-inline shrink-0 -my-1" aria-label="Copy name" (click)="copy(copyName)">
+                  <mat-icon class="icon-18">content_copy</mat-icon>
                 </button>
-              }
-              @if (copyFailedSlot() === row.slotName) {
-                <span class="text-caption text-critical">Clipboard write failed. Retry the copy.</span>
               }
             </div>
             <div class="hidden md:block"></div>

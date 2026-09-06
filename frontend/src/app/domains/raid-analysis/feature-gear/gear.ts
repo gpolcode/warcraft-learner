@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { GameIcon } from '../ui-game-icon/game-icon';
@@ -7,6 +8,10 @@ import { Collapsible } from '../../shared/ui-collapsible/collapsible';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { GearFeatureService } from '../data/gear/gear-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
+
+const COPIED_MESSAGE = 'Copied to clipboard. Paste it into the auction house search.';
+const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
+const COPY_MESSAGE_DURATION_MS = 3000;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,6 +23,7 @@ export class Gear {
   private readonly loadRes = inject(LoadResourceService);
   private readonly gear = inject(GearFeatureService);
   private readonly clipboard = inject(Clipboard);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
@@ -53,13 +59,8 @@ export class Gear {
   protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
   protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
 
-  // Keyed by slot name, so the confirmation sits on the one row whose name was copied.
-  protected readonly copiedSlot = signal<string | null>(null);
-  protected readonly copyFailedSlot = signal<string | null>(null);
-
-  protected copy(slotName: string, name: string): void {
+  protected copy(name: string): void {
     const succeeded = this.clipboard.copy(name);
-    this.copiedSlot.set(succeeded ? slotName : null);
-    this.copyFailedSlot.set(succeeded ? null : slotName);
+    this.snackBar.open(succeeded ? COPIED_MESSAGE : COPY_FAILED_MESSAGE, undefined, { duration: COPY_MESSAGE_DURATION_MS });
   }
 }

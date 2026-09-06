@@ -52,7 +52,7 @@ export class GearTransformService implements DataSource<GearBench> {
         return {
           talent_builds: this.withTalentDiffs(stats.talent_builds, await this.talentData.getTalents(spec)),
           trinket_sets: stats.trinket_sets,
-          enchants: await this.withEnchantItemNames(stats.enchants),
+          enchants: await this.withItemNames(stats.enchants),
         };
       },
     });
@@ -87,13 +87,12 @@ export class GearTransformService implements DataSource<GearBench> {
     }
   }
 
-  // A failed dump or item lookup keeps the ids and WCL names, so the bench still benches without item names.
-  private async withEnchantItemNames(enchants: EncounterGearStats['enchants']): Promise<EncounterGearStats['enchants']> {
+  private async withItemNames(enchants: EncounterGearStats['enchants']): Promise<EncounterGearStats['enchants']> {
     const enchantItems = await this.enchantItemData.getEnchantItems();
     if (!enchantItems.ok) return enchants;
     try {
       const names = await this.wclApi.getGameNames(this.enchantItemIds(enchants, enchantItems.value), []);
-      return this.fillEnchantItemNames(enchants, enchantItems.value, names);
+      return this.nameEnchantsByItem(enchants, enchantItems.value, names);
     } catch (err) {
       this.logger.logWarn('GearTransformService enchant item names', err);
       return enchants;
@@ -105,18 +104,19 @@ export class GearTransformService implements DataSource<GearBench> {
     return [...new Set(itemIds)];
   }
 
-  protected fillEnchantItemNames(
+  // WCL names an enchant by its effect (stat text for an armor kit); the item name is what the auction house lists.
+  protected nameEnchantsByItem(
     enchants: EncounterGearStats['enchants'], enchantItems: EnchantItems, names: GameNames,
   ): EncounterGearStats['enchants'] {
-    const filled: EncounterGearStats['enchants'] = {};
+    const named: EncounterGearStats['enchants'] = {};
     for (const [slot, ranked] of Object.entries(enchants)) {
-      filled[Number(slot)] = ranked.map(enchant => {
+      named[Number(slot)] = ranked.map(enchant => {
         const itemId = enchantItems[enchant.id];
-        const item_name = itemId === undefined ? '' : this.gearExtract.decodeHtmlEntities(names[`i${itemId}`]?.name ?? '');
-        return { ...enchant, item_name };
+        const itemName = itemId === undefined ? '' : this.gearExtract.decodeHtmlEntities(names[`i${itemId}`]?.name ?? '');
+        return itemName ? { ...enchant, name: itemName } : enchant;
       });
     }
-    return filled;
+    return named;
   }
 
   private pct(count: number, total: number): number {
