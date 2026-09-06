@@ -1,9 +1,9 @@
 <div class="mx-auto max-w-[860px] px-3 md:px-4 pt-6 pb-12">
     <mat-card appearance="outlined" class="mb-5 p-4">
-      <p class="mb-3.5 text-[13px] text-[var(--muted)]">Paste a Warcraft Logs report to see how your Mythic pulls compare with the top logs for your spec.</p>
+      <p class="mb-3.5 text-body text-muted">Paste a Warcraft Logs report to see how your Mythic pulls compare with the top logs for your spec.</p>
 
       <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Warcraft Logs Report URL or Code</mat-label>
+        <mat-label>Warcraft Logs report URL or code</mat-label>
         <input matInput #reportInput [formControl]="reportControl" placeholder="https://www.warcraftlogs.com/reports/AbCdEfGh…"
                (keydown.enter)="loadReport()" (paste)="onPaste($event, reportInput)" />
         <!-- Unconditional: `@if`-gating this leaves the field red with no message (MAT_ERROR misses a conditional child). -->
@@ -13,7 +13,7 @@
       <wl-live-controls></wl-live-controls>
 
       @if (fights().length) {
-        <div class="mt-4 border-t border-[var(--border)] pt-4">
+        <div class="mt-4 border-t border-line pt-4">
           <div class="flex flex-wrap gap-[14px]">
             <!-- Disabled via the form control while live sync drives the selection, so keyboard changes are blocked too. -->
             <mat-form-field appearance="outline" class="flex-[1_1_200px]">
@@ -73,7 +73,7 @@
     </mat-card>
 
     @if (notice()) {
-      <div class="mb-4 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-3.5 text-[13px] text-[var(--muted)]">{{ notice() }}</div>
+      <div class="mb-4 rounded-lg border border-line bg-surface px-4 py-3.5 text-body text-muted">{{ notice() }}</div>
     }
 
     @if (loadError(); as err) {

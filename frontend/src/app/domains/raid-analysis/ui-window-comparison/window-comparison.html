@@ -1,10 +1,10 @@
-<div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
+<div class="bg-surface border border-line rounded-[10px] overflow-hidden">
 
   @if (heading()) {
     <div class="px-4 pt-3 pb-2">
-      <h2 class="text-[17px] font-semibold text-[var(--text)]">{{ heading() }}</h2>
+      <h2 class="text-title">{{ heading() }}</h2>
       @if (subtitle()) {
-        <div class="card-subtitle mt-0.5">{{ subtitle() }}</div>
+        <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
       }
     </div>
   }
@@ -24,37 +24,37 @@
             @let w = cell.window;
             @let active = activeIndex() === cell.index;
             @let iconTone =
-              w.status === 'good' ? 'text-[var(--success)]' :
-              w.status === 'warn' ? 'text-[var(--warning)]' :
-              w.status === 'bad' ? 'text-[var(--critical)]' :
-              w.status === 'info' ? 'text-[var(--info)]' : 'text-[var(--muted)]';
+              w.status === 'good' ? 'text-success' :
+              w.status === 'warn' ? 'text-warning' :
+              w.status === 'bad' ? 'text-critical' :
+              w.status === 'info' ? 'text-accent' : 'text-muted';
             @let barTone =
-              w.status === 'good' ? 'bg-[var(--success)]' :
-              w.status === 'warn' ? 'bg-[var(--warning)]' :
-              w.status === 'bad' ? 'bg-[var(--critical)]' :
-              w.status === 'info' ? 'bg-[var(--info)]' : 'bg-[var(--muted)]';
+              w.status === 'good' ? 'bg-success' :
+              w.status === 'warn' ? 'bg-warning' :
+              w.status === 'bad' ? 'bg-critical' :
+              w.status === 'info' ? 'bg-accent' : 'bg-muted';
             <div class="flex flex-col items-center gap-1.5 shrink-0">
               <button
                 type="button"
                 role="option"
                 tabindex="-1"
                 [id]="optionId(cell.index)"
-                [class]="'relative flex items-center justify-center w-10 h-10 rounded-lg overflow-hidden bg-[var(--bg)] border border-[var(--border)] ' + iconTone + (active ? ' outline outline-2 outline-offset-0 outline-[var(--gold)]' : ' focus:outline-none')"
+                [class]="'relative flex items-center justify-center w-10 h-10 rounded-lg overflow-hidden bg-bg border border-line ' + iconTone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
                 [attr.aria-selected]="active"
                 [attr.aria-label]="(w.timeStartS | formatDuration)"
                 (click)="select(cell.index)">
                 <mat-icon class="icon-seg">{{ w.statusIcon }}</mat-icon>
                 <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
               </button>
-              <span [class]="'tabular-nums text-[10px] ' + (active ? 'text-[var(--gold)]' : 'text-[var(--muted)]')">
+              <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted')">
                 {{ w.timeStartS | formatDuration }}
               </span>
             </div>
           } @else {
             <!-- The hidden label keeps this box top-aligned with the chips' timestamp row. -->
             <div class="flex flex-col items-center gap-1.5 shrink-0" aria-hidden="true">
-              <div class="w-5 h-10 rounded-md border border-dashed border-[var(--border)] opacity-40"></div>
-              <span class="text-[10px] invisible">0</span>
+              <div class="w-5 h-10 rounded-md border border-dashed border-line opacity-40"></div>
+              <span class="text-caption invisible">0</span>
             </div>
           }
         }
@@ -64,36 +64,36 @@
 
   @if (activeWindow(); as w) {
     @let fillBg =
-      w.status === 'good' ? 'bg-[var(--success)]' :
-      w.status === 'warn' ? 'bg-[var(--warning)]' :
-      w.status === 'bad' ? 'bg-[var(--critical)]' :
-      w.status === 'muted' ? 'bg-[var(--muted)]' : 'bg-[var(--info)]';
+      w.status === 'good' ? 'bg-success' :
+      w.status === 'warn' ? 'bg-warning' :
+      w.status === 'bad' ? 'bg-critical' :
+      w.status === 'muted' ? 'bg-muted' : 'bg-accent';
 
-    <div class="px-4 py-2.5 bg-[var(--surface)] border-t border-[var(--border)]">
+    <div class="px-4 py-2.5 bg-surface border-t border-line">
       <div class="flex flex-wrap items-center gap-4 gap-y-2 md:gap-x-[22px]">
         <div class="flex flex-col shrink-0">
-          <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">window</span>
-          <span class="text-[13px] font-semibold tabular-nums text-[var(--text)] whitespace-nowrap">
+          <span class="text-label text-muted">Window</span>
+          <span class="tabular-nums text-value whitespace-nowrap">
             {{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}
           </span>
         </div>
         <div class="flex flex-col shrink-0">
-          <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">{{ metricLabel() }}</span>
+          <span class="text-label text-muted">{{ metricLabel() }}</span>
           @if (!activeIsMuted()) {
-            <span class="text-[13px] font-semibold tabular-nums text-[var(--text)]">{{ w.overview.playerPct | formatDamage }}</span>
+            <span class="tabular-nums text-value">{{ w.overview.playerPct | formatDamage }}</span>
           } @else if (activeIsBenchOnly()) {
-            <span class="text-[13px] font-semibold tabular-nums text-[var(--text)]">{{ w.overview.topAvg | formatDamage }}</span>
+            <span class="tabular-nums text-value">{{ w.overview.topAvg | formatDamage }}</span>
           } @else {
-            <span class="text-[13px] font-semibold italic text-[var(--muted)]">not reached</span>
+            <span class="text-value text-muted">Not reached</span>
           }
         </div>
         @if (!activeIsMuted() && overviewDelta() !== null) {
           <div class="flex flex-col shrink-0">
-            <span class="text-[9px] uppercase tracking-[1px] text-[var(--muted)]">vs top raiders average</span>
-            <span class="text-[13px] font-semibold tabular-nums"
-              [class.badge-muted]="overviewDeltaStatus() === 'muted'"
-              [class.badge-success]="overviewDeltaStatus() === 'better'"
-              [class.badge-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDelta() | signedPercent }}</span>
+            <span class="text-label text-muted">Vs top raiders average</span>
+            <span class="tabular-nums text-value"
+              [class.text-muted]="overviewDeltaStatus() === 'muted'"
+              [class.text-success]="overviewDeltaStatus() === 'better'"
+              [class.text-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDelta() | signedPercent }}</span>
           </div>
         }
         <div class="ml-auto flex items-center gap-[7px] shrink-0">
@@ -113,7 +113,7 @@
       </div>
       @if (w.spells.length || w.labels.length) {
         <div class="mt-2.5">
-          <span class="block section-label mb-1.5">{{ chipsLabel() }}</span>
+          <span class="block text-label text-muted mb-1.5">{{ chipsLabel() }}</span>
           <div class="flex flex-wrap items-center gap-2">
             @for (spell of w.spells; track spell.id) {
               <span class="chip-onplan">
@@ -122,7 +122,7 @@
             }
             @for (lbl of w.labels; track lbl) {
               <span class="chip-onplan">
-                <span class="text-[13px] text-[var(--muted)]">{{ lbl }}</span>
+                <span>{{ lbl }}</span>
               </span>
             }
           </div>
@@ -130,9 +130,9 @@
       }
       @if (w.note) {
         <div class="mt-2.5">
-          <span class="block section-label mb-1.5">What you did</span>
+          <span class="block text-label text-muted mb-1.5">What you did</span>
           <span class="chip-onplan">
-            <span class="text-[13px] text-[var(--muted)]">{{ w.note }}</span>
+            <span>{{ w.note }}</span>
           </span>
         </div>
       }
@@ -141,23 +141,23 @@
     <!-- Damage-spread bar, hidden for bench-only (pre-fight) windows that have no player to compare against. -->
     @if (!activeIsBenchOnly()) {
       <div class="px-4 pb-2">
-        <span class="block section-label mb-1.5">{{ rangeLabel() }}</span>
-        <div class="relative h-5 rounded bg-[var(--bg)]" aria-hidden="true">
+        <span class="block text-label text-muted mb-1.5">{{ rangeLabel() }}</span>
+        <div class="relative h-5 rounded bg-bg" aria-hidden="true">
           @if (overviewPlayerWidthPct() !== null) {
             <div [class]="'absolute inset-y-0 left-0 rounded opacity-[0.65] ' + fillBg"
               [style.width.%]="overviewPlayerWidthPct()"></div>
           }
           @if (overviewRangeLeftPct() !== null) {
-            <div class="absolute inset-y-0 rounded bg-[var(--info)]/30 border border-[var(--info)]" [style.left.%]="overviewRangeLeftPct()" [style.width.%]="overviewRangeWidthPct()"></div>
+            <div class="absolute inset-y-0 rounded bg-accent/30 border border-accent" [style.left.%]="overviewRangeLeftPct()" [style.width.%]="overviewRangeWidthPct()"></div>
           }
           @if (overviewAvgLeftPct() !== null) {
-            <div class="absolute inset-y-0 w-[2px] bg-[var(--info)]" [style.left.%]="overviewAvgLeftPct()"></div>
+            <div class="absolute inset-y-0 w-[2px] bg-accent" [style.left.%]="overviewAvgLeftPct()"></div>
           }
         </div>
-        <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-[var(--muted)]">
-          <span class="flex items-center gap-1"><span [class]="'inline-block h-2 w-2 rounded-[2px] opacity-[0.65] ' + fillBg" aria-hidden="true"></span>you</span>
-          <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] bg-[var(--info)]/30 border border-[var(--info)]" aria-hidden="true"></span>top raiders, lowest to highest</span>
-          <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-[2px] bg-[var(--info)]" aria-hidden="true"></span>top raiders average</span>
+        <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-muted">
+          <span class="flex items-center gap-1"><span [class]="'inline-block h-2 w-2 rounded-[2px] opacity-[0.65] ' + fillBg" aria-hidden="true"></span>You</span>
+          <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] bg-accent/30 border border-accent" aria-hidden="true"></span>Top raiders, lowest to highest</span>
+          <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-[2px] bg-accent" aria-hidden="true"></span>Top raiders average</span>
         </div>
       </div>
     }
@@ -165,15 +165,15 @@
     <!-- Grid tracks mirror compact-ability-row.html and finding-table's column dividers. -->
     @if (w.detailRows.length) {
       <!-- Border is desktop-only so it does not double up with the mobile per-row borders. -->
-      <div class="md:border-t border-[var(--border)] pt-2 pb-2">
+      <div class="md:border-t border-line pt-2 pb-2">
         <div class="hidden md:grid grid-cols-[minmax(0,1fr)_96px_156px_90px] gap-x-[14px] items-center px-4 pb-1">
-          <span class="col-start-1 section-label">ability</span>
+          <span class="col-start-1 text-label text-muted">Ability</span>
           @if (showCasts() && !activeIsMuted()) {
-            <span class="col-start-2 text-right section-label">casts</span>
+            <span class="col-start-2 text-right text-label text-muted">Casts</span>
           }
-          <span class="col-start-3 text-left section-label">top raiders average</span>
+          <span class="col-start-3 text-left text-label text-muted">Top raiders average</span>
           @if (!activeIsMuted()) {
-            <span class="col-start-4 text-right section-label">gap</span>
+            <span class="col-start-4 text-right text-label text-muted">Gap</span>
           }
         </div>
         @for (row of activeDetailRows(); track row.spellId) {

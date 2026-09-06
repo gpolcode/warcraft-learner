@@ -16,7 +16,7 @@ Every change delivers some subset of:
 1. **Feature math** - named, stateless methods: protected on the feature's `*FeatureService`, or public on a cross-feature `data/` service. Methods take data in and return data; IO stays behind the two API services.
 2. **Bench shape** - if the change alters what ingestion must bake, update the feature's `*Bench` interface in its `data/<feature>/*-data-source.ts` and bump `INGEST_VERSION` (`src/app/domains/raid-analysis/data/ingest/ingest-version.ts`).
 3. **Failure handling** - every fallible load returns `Result<T, LoadError>`; the four render states (content / waiting / transient error / permanent error). No silent swallow.
-4. **UI** - template owns styling off the `styles.scss` tokens, formatting goes through pipes, drill-down uses `wl-finding-occurrences`.
+4. **UI** - template styles text and color only through the theme's named utilities (a type role plus a color token), formatting goes through pipes, drill-down uses `wl-finding-occurrences`.
 5. **Copy** - message + remedy in the terse analyst voice. Governing skill: **warcraft-writing**.
 6. **Specs** - pure math tested at the lowest altitude, services end-to-end through fakes. Each "triggers" case paired with a "does not trigger at the boundary" case.
 7. **WCL reads** - a new event stream or gear/talent/position field means checking the quirks table first. Governing skill: **warcraft-wcl-data**.
@@ -52,8 +52,8 @@ Deliver: the shell (zero domain services) or leaf (inputs/outputs only), copy pe
 
 ## UI rules (hard)
 
-- **Styling is Angular Material + Tailwind utilities over `frontend/src/styles.scss`** - the one stylesheet, holding the design tokens and the `badge-*` / `fill-*` / `icon-*` / `chip-onplan` classes.
-- **Templates and `styles.scss` reach a color through a token** - a Tailwind arbitrary value (`text-[var(--success)]`) or a `badge-*` class.
+- **Styling is Angular Material + Tailwind utilities over `frontend/src/styles.scss`** - the one stylesheet. Its `@theme` block is the single source of the color tokens, the one font family, and the type roles; the `text-label`, `chip-onplan` and `icon-*` utilities sit beside it. Material's type scale is pointed at the same roles through its `--mat-sys-*` tokens.
+- **Every text element wears exactly one type role** - `text-title`, `text-heading`, `text-label`, `text-name`, `text-body`, `text-caption`, `text-value`, and `text-hero`, the single display size reserved for the DPS number - and adds a named color utility only where the color differs from the body default (`text-muted`, `text-critical`, `bg-surface`, `border-line`). `text-accent` is both the link and time color and the informational severity; there is no separate info token. The `theme-utilities-only` lint rule rejects arbitrary sizes, `var(--...)` colors, second font families, and case utilities in templates; the numbers themselves live only in `styles.scss`.
 - **`computed()` exposes semantic state only**; the template maps that state to a class.
 - **All formatting goes through Angular pipes** (`FormatDurationPipe`, `FormatDamagePipe`, `DecimalPipe`, `FormatSpecPipe`).
 - **A rule finding's drill-down is `wl-finding-occurrences`** (`domains/raid-analysis/ui-finding-table/`): populate `occurrences` on the finding and the UI work is done.

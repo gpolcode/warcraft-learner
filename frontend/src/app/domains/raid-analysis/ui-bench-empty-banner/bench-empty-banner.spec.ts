@@ -24,9 +24,9 @@ describe('BenchEmptyBanner', () => {
     const text = render({ encounter: 'Boss' });
     expect(text).toContain('Mythic kills logged');
     expect(text).toContain('Ingest samples them');
-    expect(text).toContain('waiting');
-    expect(text).toContain('hourly');
-    expect(text).toContain('automatic');
+    expect(text).toContain('Waiting');
+    expect(text).toContain('Hourly');
+    expect(text).toContain('Automatic');
   });
 
   it('uses the post-raid copy by default (Comparisons unlock)', () => {

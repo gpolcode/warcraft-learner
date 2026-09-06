@@ -31,7 +31,7 @@ test.beforeAll(async ({ browser }) => {
     [STICKY_PLAYER_KEY, PLAYER_NAME] as const,
   );
   await page.goto('/');
-  await page.getByLabel('Warcraft Logs Report URL or Code').fill(REPORT_URL);
+  await page.getByLabel('Warcraft Logs report URL or code').fill(REPORT_URL);
   await page.keyboard.press('Enter');
   // The cards stay hidden until every feature settles, so this one wait covers the whole analysis.
   await expect(page.getByText('Pull overview')).toBeVisible({ timeout: ANALYZE_TIMEOUT_MS });
@@ -82,7 +82,7 @@ test('recording the game client captures a named display source', async () => {
 
   await record.click();
   await expect(record).not.toBeChecked();
-  await shows(controls, 'stays in this browser session, nothing is uploaded');
+  await shows(controls, 'Stays in this browser session, nothing is uploaded');
 });
 
 test('pull overview reports the DPS, the death, and the kill', async () => {
@@ -94,15 +94,15 @@ test('pull overview reports the DPS, the death, and the kill', async () => {
   await shows(pullOverview, DAMAGE);
   await shows(pullOverview, /Death \d+/);
   const deathRow = pullOverview.locator('div.grid', { hasText: /Death \d+/ }).first();
-  await expect(deathRow.locator('span.font-mono')).toHaveText(CLOCK);
+  await expect(deathRow.locator('span.text-accent')).toHaveText(CLOCK);
   const outcomeRow = pullOverview.locator('div.grid', { hasText: 'Boss defeated' }).first();
   await expect(outcomeRow).toContainText('Kill');
-  await expect(outcomeRow.locator('span.font-mono')).toHaveText(CLOCK);
+  await expect(outcomeRow.locator('span.text-accent')).toHaveText(CLOCK);
 });
 
 test('rotation rules count the casts that broke each rulebook rule, and name the ones followed', async () => {
   const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'How your casts held up against the rules the top Mythic logs follow for your spec.' });
-  await shows(rotationRules, 'Rotation Rules');
+  await shows(rotationRules, 'Rotation rules');
   await showsFindingRows(rotationRules);
   // A rule the pull followed shows as a chip rather than a row, so only both together cover the rulebook.
   await showsOnPlan(rotationRules);
@@ -137,9 +137,9 @@ test('offensives flag the cooldown casts that missed the top-parse plan', async 
 test('burst windows compare the player damage against the top-parse windows', async () => {
   const burstWindows = page.locator('wl-burst-windows');
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
-  await shows(burstWindows, 'window');
+  await shows(burstWindows, 'Window');
   await shows(burstWindows, /\d+:\d{2} - \d+:\d{2}/);
-  await shows(burstWindows, 'damage');
+  await shows(burstWindows, 'Damage');
   await shows(burstWindows, DAMAGE);
   await shows(burstWindows, PERCENT);
   await showsEntity(burstWindows);

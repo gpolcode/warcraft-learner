@@ -4,12 +4,12 @@
   }
 
   <mat-card appearance="outlined" class="p-4">
-    <p class="mb-3.5 text-[13px] text-[var(--muted)]">Pick a spec and a boss to see the plan top raiders run there.</p>
+    <p class="mb-3.5 text-body text-muted">Pick a spec and a boss to see the plan top raiders run there.</p>
 
     @if (loading()) {
       <wl-loading-spinner message="Loading specs…"></wl-loading-spinner>
     } @else if (specs().length === 0 || classes().length === 0) {
-      <p class="text-[13px] text-[var(--muted)]">No spec data available.</p>
+      <p class="text-body text-muted">No spec data available.</p>
     } @else {
       <div class="flex flex-wrap gap-[14px]">
         <mat-form-field appearance="outline" class="flex-[1_1_200px]">

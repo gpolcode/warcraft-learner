@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { WindowComparison } from './window-comparison';
 import type { ComparisonWindow, WindowStatus, RangeRow } from '../data/analysis/window-comparison.models';
-import { badgeStatus, mountDom, MountedDom } from '../../../../testing/component-harness';
+import { statusColor, mountDom, MountedDom } from '../../../../testing/component-harness';
 
 const CHIP = 'button[role="option"]';
 const LISTBOX = '[role="listbox"]';
@@ -10,7 +10,8 @@ const PLAYER_FILL = `${BAR_TRACK} > div[class*="opacity-"]`;
 const AVG_MARKER = `${BAR_TRACK} > div[class*="w-[2px]"]`;
 const LEGEND = 'div[class*="gap-x-3"]';
 const COLUMN_HEADERS = 'div.hidden.md\\:grid';
-const DELTA_BADGE = 'span[class*="badge-"]';
+// The stats row is window, metric, then the delta column when it renders.
+const DELTA_BADGE = 'div.flex-col.shrink-0:nth-of-type(3) > span.text-value';
 const CELL = '[role="listbox"] div.flex-col.shrink-0';
 const GAP_CELL = `${CELL}[aria-hidden="true"]`;
 
@@ -222,7 +223,7 @@ describe('WindowComparison damage bar', () => {
   it('names all three marks on the bar, so the fill and the blue box are readable', () => {
     const dom = render([win({ playerPct: 60, topAvg: 50, topMin: 40, topMax: 80 })]);
 
-    expect(dom.textAll(`${LEGEND} > span`)).toEqual(['you', 'top raiders, lowest to highest', 'top raiders average']);
+    expect(dom.textAll(`${LEGEND} > span`)).toEqual(['You', 'Top raiders, lowest to highest', 'Top raiders average']);
   });
 
   it('drops the legend with the bar for a bench-only window, which draws no player mark', () => {
@@ -240,12 +241,12 @@ describe('WindowComparison delta badge', () => {
   });
 
   it('marks a player ahead of top average as better, and one behind as worse', () => {
-    expect(badgeStatus(render([win({ playerPct: 110, topAvg: 100 })]).query(DELTA_BADGE))).toBe('success');
-    expect(badgeStatus(render([win({ playerPct: 90, topAvg: 100 })]).query(DELTA_BADGE))).toBe('critical');
+    expect(statusColor(render([win({ playerPct: 110, topAvg: 100 })]).query(DELTA_BADGE))).toBe('success');
+    expect(statusColor(render([win({ playerPct: 90, topAvg: 100 })]).query(DELTA_BADGE))).toBe('critical');
   });
 
   it('flips which direction counts as better for damage taken', () => {
-    expect(badgeStatus(render([win({ playerPct: 90, topAvg: 100 })], { higherIsBetter: false }).query(DELTA_BADGE)))
+    expect(statusColor(render([win({ playerPct: 90, topAvg: 100 })], { higherIsBetter: false }).query(DELTA_BADGE)))
       .toBe('success');
   });
 
@@ -255,10 +256,10 @@ describe('WindowComparison delta badge', () => {
     expect(dom.query(DELTA_BADGE)).toBeNull();
   });
 
-  it('reads "not reached" instead of a player number for a muted window', () => {
+  it('reads "Not reached" instead of a player number for a muted window', () => {
     const dom = render([win({ playerPct: null, topAvg: 100 }, 'muted')]);
 
-    expect(dom.text()).toContain('not reached');
+    expect(dom.text()).toContain('Not reached');
     expect(dom.query(DELTA_BADGE)).toBeNull();
   });
 
@@ -299,7 +300,7 @@ describe('WindowComparison vocabulary', () => {
   });
 
   it('names each breakdown column in full words, so no header reads as a code', () => {
-    expect(render(detailWindows()).textAll(`${COLUMN_HEADERS} > span`)).toEqual(['ability', 'casts', 'top raiders average', 'gap']);
+    expect(render(detailWindows()).textAll(`${COLUMN_HEADERS} > span`)).toEqual(['Ability', 'Casts', 'Top raiders average', 'Gap']);
   });
 
   it('sets the window note apart from the cooldown strip, so a verdict never reads as advice', () => {

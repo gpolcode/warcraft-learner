@@ -80,11 +80,11 @@ export function mountDom<T>(
   };
 }
 
-const BADGE_CLASS = /^badge-(\w+)$/;
+const STATUS_COLOR_CLASS = /^text-(critical|warning|success|accent|muted)$/;
 
-export function badgeStatus(el: HTMLElement | null): string | null {
+export function statusColor(el: HTMLElement | null): string | null {
   for (const cls of Array.from(el?.classList ?? [])) {
-    const match = BADGE_CLASS.exec(cls);
+    const match = STATUS_COLOR_CLASS.exec(cls);
     if (match) return match[1] ?? null;
   }
   return null;

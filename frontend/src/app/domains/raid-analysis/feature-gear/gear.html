@@ -2,55 +2,55 @@
 @if (error() || !available()) {
   <wl-load-state heading="Gear" subtitle="Gear consensus across top logs." [error]="error()"></wl-load-state>
 } @else {
-<div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
+<div class="bg-surface border border-line rounded-[10px] overflow-hidden">
 
   <div class="px-4 pt-3 pb-2 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
     <div class="md:col-span-2">
-      <h2 class="text-[17px] font-semibold text-[var(--text)]">Gear</h2>
+      <h2 class="text-title">Gear</h2>
       @if (view().comparison) {
-        <div class="card-subtitle mt-0.5">Gear vs top logs.</div>
+        <div class="text-body text-muted mt-0.5">Gear vs top logs.</div>
       } @else {
-        <div class="card-subtitle mt-0.5">Gear consensus across top logs.</div>
+        <div class="text-body text-muted mt-0.5">Gear consensus across top logs.</div>
       }
     </div>
-    <div class="hidden md:block section-label text-right">Measured</div>
-    <div class="hidden md:block section-label pl-[14px]">Fix</div>
+    <div class="hidden md:block text-label text-muted text-right">Measured</div>
+    <div class="hidden md:block text-label text-muted pl-[14px]">Fix</div>
   </div>
 
   <div class="card-section [&>:first-child+*]:border-t-0">
     <div class="px-4 pt-5 pb-2">
-      <h3 class="section-heading">Talents</h3>
+      <h3 class="text-heading">Talents</h3>
       @if (view().comparison && view().talentBuilds.length) {
-        <div class="section-intro mt-0.5">Your build against the builds top raiders use.</div>
+        <div class="text-body text-muted mt-0.5">Your build against the builds top raiders use.</div>
       } @else if (view().talentBuilds.length) {
-        <div class="section-intro mt-0.5">The builds top raiders use, most common first.</div>
+        <div class="text-body text-muted mt-0.5">The builds top raiders use, most common first.</div>
       }
     </div>
 
     @if (view().talentBuilds.length) {
       @if (view().comparison && view().talentStatus.status !== 'unknown') {
-        <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
-          <span class="section-label mr-0.5">Your build</span>
+        <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-[10px]">
+          <span class="text-label text-muted mr-0.5">Your build</span>
           @if (view().talentStatus.status === 'warn') {
-            <mat-icon class="icon-18 badge-warning">warning_amber</mat-icon>
+            <mat-icon class="icon-18 text-warning">warning_amber</mat-icon>
           }
-          <span class="text-[13px] text-[var(--muted)]">{{ view().talentStatus.note }}</span>
+          <span>{{ view().talentStatus.note }}</span>
         </div>
       }
       @for (build of view().talentBuilds; track build.label) {
-        <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-1 md:gap-y-0 items-center px-4 py-[10px] border-t border-[var(--border)]">
+        <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-1 md:gap-y-0 items-center px-4 py-[10px] border-t border-line">
           <div class="hidden md:block"></div>
-          <div class="min-w-0 text-sm text-[var(--text)]">
+          <div class="min-w-0 text-name">
             {{ build.label }}
             @if (build.isPlayer) {
-              <span class="ml-1.5 text-[10px] uppercase tracking-wider text-[var(--accent)]">your build</span>
+              <span class="ml-1.5 text-label text-gold">Your build</span>
             }
           </div>
-          <div class="text-right leading-[1.1] text-[var(--muted)]">
-            <div class="text-[15px] font-semibold tabular-nums">{{ build.pct }}%</div>
-            <div class="text-[10px] opacity-60 mt-px tabular-nums">of top logs</div>
+          <div class="text-right text-muted">
+            <div class="tabular-nums text-value">{{ build.pct }}%</div>
+            <div class="tabular-nums text-caption mt-px">of top logs</div>
           </div>
-          <div class="text-right md:text-left text-[13px] text-[var(--muted)] leading-[1.45] md:border-l md:border-[var(--border)] md:pl-[7px]">
+          <div class="text-right md:text-left md:border-l md:border-line md:pl-[7px]">
             <a mat-stroked-button class="whitespace-nowrap" [href]="build.link" target="_blank" rel="noopener">
               <mat-icon>arrow_forward</mat-icon>
               Get talent code
@@ -61,10 +61,10 @@
           <div class="px-4 pb-[10px] md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px]">
             <div class="hidden md:block"></div>
             <div class="md:col-span-3 flex flex-col gap-2.5">
-              <div class="section-intro">The talents this build changes from the most common build.</div>
+              <div class="text-body text-muted">The talents this build changes from the most common build.</div>
               @if (build.added.length) {
                 <div>
-                  <span class="block section-label mb-1.5">Added</span>
+                  <span class="block text-label text-muted mb-1.5">Added</span>
                   <wl-collapsible mode="chips">
                     <div class="flex flex-wrap items-center gap-2">
                       @for (talent of build.added; track talent.name) {
@@ -72,7 +72,7 @@
                           @if (talent.spellId; as spellId) {
                             <wl-game-icon [id]="spellId" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
                           } @else {
-                            <span class="text-[13px] text-[var(--muted)]">{{ talent.name }}</span>
+                            <span>{{ talent.name }}</span>
                           }
                         </span>
                       }
@@ -82,7 +82,7 @@
               }
               @if (build.dropped.length) {
                 <div>
-                  <span class="block section-label mb-1.5">Dropped</span>
+                  <span class="block text-label text-muted mb-1.5">Dropped</span>
                   <wl-collapsible mode="chips">
                     <div class="flex flex-wrap items-center gap-2">
                       @for (talent of build.dropped; track talent.name) {
@@ -90,7 +90,7 @@
                           @if (talent.spellId; as spellId) {
                             <wl-game-icon [id]="spellId" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
                           } @else {
-                            <span class="text-[13px] text-[var(--muted)]">{{ talent.name }}</span>
+                            <span>{{ talent.name }}</span>
                           }
                         </span>
                       }
@@ -100,7 +100,7 @@
               }
               @if (build.ranks.length) {
                 <div>
-                  <span class="block section-label mb-1.5">Points</span>
+                  <span class="block text-label text-muted mb-1.5">Points</span>
                   <wl-collapsible mode="chips">
                     <div class="flex flex-wrap items-center gap-2">
                       @for (r of build.ranks; track r.talent.name) {
@@ -108,9 +108,9 @@
                           @if (r.talent.spellId; as spellId) {
                             <wl-game-icon [id]="spellId" [icon]="r.talent.icon" [name]="r.talent.name"></wl-game-icon>
                           } @else {
-                            <span class="text-[13px] text-[var(--muted)]">{{ r.talent.name }}</span>
+                            <span>{{ r.talent.name }}</span>
                           }
-                          <span class="text-[13px] text-[var(--muted)] ml-1 tabular-nums">{{ r.standardRank }}&#8594;{{ r.rank }}</span>
+                          <span class="tabular-nums text-body text-muted ml-1">{{ r.standardRank }}&#8594;{{ r.rank }}</span>
                         </span>
                       }
                     </div>
@@ -122,7 +122,7 @@
         }
       }
     } @else {
-      <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+      <div class="flex items-center gap-2 border-t border-line px-4 py-3 text-body text-muted">
         No talent data.
       </div>
     }
@@ -130,26 +130,26 @@
 
   <div class="card-section [&>:first-child+*]:border-t-0">
     <div class="px-4 pt-5 pb-2">
-      <h3 class="section-heading">Trinkets</h3>
+      <h3 class="text-heading">Trinkets</h3>
       @if (view().comparison && view().trinketSets.length) {
-        <div class="section-intro mt-0.5">Your pair against the pairs top raiders use.</div>
+        <div class="text-body text-muted mt-0.5">Your pair against the pairs top raiders use.</div>
       } @else if (view().trinketSets.length) {
-        <div class="section-intro mt-0.5">The pairs top raiders use, most common first.</div>
+        <div class="text-body text-muted mt-0.5">The pairs top raiders use, most common first.</div>
       }
     </div>
 
     @if (view().trinketSets.length) {
       @if (view().comparison && view().trinketStatus.status !== 'unknown') {
-        <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
-          <span class="section-label mr-0.5">Your pair</span>
+        <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-[10px]">
+          <span class="text-label text-muted mr-0.5">Your pair</span>
           @if (view().trinketStatus.status === 'warn') {
-            <mat-icon class="icon-18 badge-warning">warning_amber</mat-icon>
+            <mat-icon class="icon-18 text-warning">warning_amber</mat-icon>
           }
-          <span class="text-[13px] text-[var(--muted)]">{{ view().trinketStatus.note }}</span>
+          <span>{{ view().trinketStatus.note }}</span>
         </div>
       }
       @for (set of view().trinketSets; track set.label) {
-        <div class="grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-1 md:gap-y-0 items-center px-4 py-[10px] border-t border-[var(--border)]">
+        <div class="grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-1 md:gap-y-0 items-center px-4 py-[10px] border-t border-line">
           <div class="hidden md:block"></div>
           <div class="min-w-0">
             <div class="flex flex-col items-start gap-1">
@@ -157,22 +157,22 @@
                 <wl-game-icon kind="item" [id]="item.id" [name]="item.name" [icon]="item.icon"></wl-game-icon>
               }
             </div>
-            <div class="text-[11px] text-[var(--muted)] mt-0.5">
+            <div class="text-caption text-muted mt-0.5">
               {{ set.label }}
               @if (set.isPlayer) {
-                <span class="ml-1.5 text-[10px] uppercase tracking-wider text-[var(--accent)]">your pair</span>
+                <span class="ml-1.5 text-label text-gold">Your pair</span>
               }
             </div>
           </div>
-          <div class="text-right leading-[1.1] text-[var(--muted)]">
-            <div class="text-[15px] font-semibold tabular-nums">{{ set.pct }}%</div>
-            <div class="text-[10px] opacity-60 mt-px tabular-nums">of top logs</div>
+          <div class="text-right text-muted">
+            <div class="tabular-nums text-value">{{ set.pct }}%</div>
+            <div class="tabular-nums text-caption mt-px">of top logs</div>
           </div>
           <div class="hidden md:block"></div>
         </div>
       }
     } @else {
-      <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+      <div class="flex items-center gap-2 border-t border-line px-4 py-3 text-body text-muted">
         No trinket data.
       </div>
     }
@@ -180,70 +180,70 @@
 
   <div class="card-section [&>:first-child+*]:border-t-0">
     <div class="px-4 pt-5 pb-2">
-      <h3 class="section-heading">Enchants</h3>
+      <h3 class="text-heading">Enchants</h3>
       @if (view().comparison && view().enchantRows.length) {
-        <div class="section-intro mt-0.5">Only the slots where your enchant is missing or differs.</div>
+        <div class="text-body text-muted mt-0.5">Only the slots where your enchant is missing or differs.</div>
       } @else if (!view().comparison && view().benchEnchantRows.length) {
-        <div class="section-intro mt-0.5">What most top raiders use.</div>
+        <div class="text-body text-muted mt-0.5">What most top raiders use.</div>
       }
     </div>
 
     @if (view().comparison) {
       @if (enchantIssues().length) {
         @for (row of enchantIssues(); track row.slotName) {
-          <div class="grid grid-cols-[20px_minmax(0,1fr)] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-2 md:gap-y-0 px-4 py-[10px] items-start md:items-center border-t border-[var(--border)]">
+          <div class="grid grid-cols-[20px_minmax(0,1fr)] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-2 md:gap-y-0 px-4 py-[10px] items-start md:items-center border-t border-line">
             <div class="flex items-center justify-center self-start md:self-center">
               <mat-icon class="icon-18"
-                [class.badge-warning]="row.status === 'warn'"
-                [class.badge-info]="row.status === 'info'">
+                [class.text-warning]="row.status === 'warn'"
+                [class.text-accent]="row.status === 'info'">
                 {{ row.status === 'info' ? 'info' : 'warning_amber' }}
               </mat-icon>
             </div>
             <div class="min-w-0 flex items-baseline gap-2">
-              <span class="shrink-0 w-20 whitespace-nowrap section-label">{{ row.slotName }}</span>
-              <span class="text-sm text-[var(--text)] truncate">{{ row.name }}</span>
+              <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
+              <span class="text-name truncate">{{ row.name }}</span>
             </div>
             <div class="hidden md:block"></div>
-            <div class="col-start-2 md:col-auto text-[13px] text-[var(--muted)] leading-[1.45] border-t md:border-t-0 md:border-l border-[var(--border)] pt-2 md:pt-0 pl-0 md:pl-[14px]">
-              <span class="md:hidden block font-mono text-[10px] uppercase tracking-wider text-[var(--muted)] mb-1">Fix</span>
+            <div class="col-start-2 md:col-auto text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-[14px]">
+              <span class="md:hidden block text-label text-muted mb-1">Fix</span>
               <wl-collapsible>{{ row.note }}</wl-collapsible>
             </div>
           </div>
         }
         @if (enchantOnPlan().length) {
-          <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
-            <span class="section-label mr-0.5">On plan</span>
+          <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-[10px]">
+            <span class="text-label text-muted mr-0.5">On plan</span>
             <span class="chip-onplan">
-              <span class="text-[13px] text-[var(--muted)]">{{ enchantOnPlan().length }} enchants</span>
+              <span>{{ enchantOnPlan().length }} enchants</span>
             </span>
           </div>
         }
       } @else if (view().enchantRows.length) {
-        <div class="flex items-center gap-2 flex-wrap border-t border-[var(--border)] px-4 py-[10px]">
-          <span class="section-label mr-0.5">On plan</span>
+        <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-[10px]">
+          <span class="text-label text-muted mr-0.5">On plan</span>
           <span class="chip-onplan">
-            <span class="text-[13px] text-[var(--muted)]">All enchants</span>
+            <span>All enchants</span>
           </span>
         </div>
       } @else {
-        <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+        <div class="flex items-center gap-2 border-t border-line px-4 py-3 text-body text-muted">
           No enchant data.
         </div>
       }
     } @else {
         @for (row of view().benchEnchantRows; track row.slotName) {
-          <div class="px-4 py-[10px] border-t border-[var(--border)] md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-center">
+          <div class="px-4 py-[10px] border-t border-line md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-center">
             <div class="hidden md:block"></div>
             <div class="min-w-0 flex items-baseline gap-2">
-              <span class="shrink-0 w-20 whitespace-nowrap section-label">{{ row.slotName }}</span>
-              <span class="text-sm text-[var(--text)]">{{ row.name }}</span>
+              <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
+              <span class="text-name">{{ row.name }}</span>
             </div>
             <div class="hidden md:block"></div>
             <div class="hidden md:block"></div>
           </div>
         }
       @empty {
-        <div class="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3 text-[13px] text-[var(--muted)]">
+        <div class="flex items-center gap-2 border-t border-line px-4 py-3 text-body text-muted">
           No enchant data.
         </div>
       }

@@ -1,66 +1,66 @@
 @if (state() === 'unavailable') {
   <wl-load-state [heading]="heading()" [subtitle]="subtitle()" [error]="error()"></wl-load-state>
 } @else if (state() === 'rows') {
-  <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
+  <div class="bg-surface border border-line rounded-[10px] overflow-hidden">
     <div class="px-4 pt-3 pb-2">
-      <h2 class="text-[17px] font-semibold text-[var(--text)]">{{ heading() }}</h2>
-      <div class="card-subtitle mt-0.5">{{ subtitle() }}</div>
+      <h2 class="text-title">{{ heading() }}</h2>
+      <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
     </div>
 
     <!-- Column labels (desktop only; mobile uses inline labels per cell) -->
     <div class="hidden md:grid grid-cols-[1fr_264px_200px] gap-[14px] px-4 pb-1">
       <div></div>
-      <div class="section-label text-right">Plan</div>
-      <div class="section-label pl-[14px]">How to use</div>
+      <div class="text-label text-muted text-right">Plan</div>
+      <div class="text-label text-muted pl-[14px]">How to use</div>
     </div>
 
     @for (row of orderedRows(); track row.name) {
       @if ($index === unpickedFrom()) {
-        <div class="border-t border-[var(--border)] bg-[var(--bg)] px-4 py-2 text-[11px] text-[var(--muted)]">Not used in any sampled top log. Usually a different talent build.</div>
+        <div class="border-t border-line bg-bg px-4 py-2 text-caption text-muted">Not used in any sampled top log. Usually a different talent build.</div>
       }
-      <div class="grid grid-cols-1 md:grid-cols-[1fr_264px_200px] gap-3 md:gap-[14px] items-start md:items-center px-4 py-[10px] border-t border-[var(--border)]">
+      <div class="grid grid-cols-1 md:grid-cols-[1fr_264px_200px] gap-3 md:gap-[14px] items-start md:items-center px-4 py-[10px] border-t border-line">
         <div class="flex items-center gap-[11px] min-w-0 flex-wrap">
           @if (row.spellId; as spellId) {
             <wl-game-icon [id]="spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
           } @else {
-            <span class="text-sm text-[var(--text)] whitespace-nowrap">{{ row.name }}</span>
+            <span class="text-name whitespace-nowrap">{{ row.name }}</span>
           }
           @if (row.bloodlust) {
-            <span class="inline-flex items-center gap-1.5 bg-[var(--gold)]/10 border border-[var(--gold)]/35 rounded-[4px] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--gold)] whitespace-nowrap">Bloodlust</span>
+            <span class="inline-flex items-center gap-1.5 bg-gold/10 border border-gold/35 rounded-[4px] px-2 py-0.5 text-label text-gold whitespace-nowrap">Bloodlust</span>
           }
         </div>
 
         <div class="flex flex-col items-start md:items-end gap-1.5">
           <span class="flex items-baseline gap-1.5">
-            <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">First use</span>
-            <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ row.firstCastS | formatDuration }}</span>
+            <span class="text-label text-muted">First use</span>
+            <span class="tabular-nums text-body text-accent">{{ row.firstCastS | formatDuration }}</span>
           </span>
           <span class="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 md:justify-end">
-            <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Typical uses</span>
+            <span class="text-label text-muted">Typical uses</span>
             @if (!row.sampleCount) {
-              <span class="font-mono text-[12.5px] text-[var(--muted)]">-</span>
+              <span class="text-body text-muted">-</span>
             } @else if (row.typicalUses != null) {
-              <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">{{ row.typicalUses | number:'1.0-1' }}x</span>
+              <span class="tabular-nums text-body">{{ row.typicalUses | number:'1.0-1' }}x</span>
             } @else {
-              <span class="font-mono text-[12.5px] text-[var(--text)] tabular-nums">None</span>
+              <span class="tabular-nums text-body">None</span>
             }
             @if (row.sampleCount) {
-              <span class="font-mono text-[10px] text-[var(--muted)] tabular-nums">used in {{ row.usedSampleCount }} of {{ row.sampleCount }} logs</span>
+              <span class="tabular-nums text-caption text-muted">Used in {{ row.usedSampleCount }} of {{ row.sampleCount }} logs</span>
             }
           </span>
           <div class="flex flex-wrap items-baseline gap-1.5 md:justify-end">
-            <span class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Hold until</span>
+            <span class="text-label text-muted">Hold until</span>
               @for (hold of row.holds; track hold.castIndex) {
-                <span class="font-mono text-[13px] text-[var(--accent)] bg-[var(--surface-alt)] border border-[var(--border)] rounded-[4px] px-1.5 py-px whitespace-nowrap tabular-nums">{{ hold.targetS | formatDuration }}</span>
+                <span class="tabular-nums text-body text-accent bg-surface-alt border border-line rounded-[4px] px-1.5 py-px whitespace-nowrap">{{ hold.targetS | formatDuration }}</span>
               }
             @empty {
-              <span class="font-mono text-[12.5px] text-[var(--muted)]">None</span>
+              <span class="text-body text-muted">None</span>
             }
           </div>
         </div>
 
-        <div class="text-[13px] text-[var(--muted)] leading-[1.45] border-t md:border-t-0 md:border-l border-[var(--border)] pt-2.5 md:pt-0 pl-0 md:pl-[14px]">
-          <span class="md:hidden block font-mono text-[10px] uppercase tracking-wider text-[var(--muted)] mb-1">How to use</span>
+        <div class="text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2.5 md:pt-0 pl-0 md:pl-[14px]">
+          <span class="md:hidden block text-label text-muted mb-1">How to use</span>
           <wl-collapsible>{{ row.rule }}</wl-collapsible>
         </div>
       </div>

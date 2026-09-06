@@ -1,15 +1,15 @@
 @if (timeline(); as t) {
-  <div class="section-label mb-1.5">Uptime across the fight</div>
-  <div class="relative h-[22px] rounded-md bg-[var(--bg)] overflow-hidden mb-3" aria-hidden="true">
+  <div class="text-label text-muted mb-1.5">Uptime across the fight</div>
+  <div class="relative h-[22px] rounded-md bg-bg overflow-hidden mb-3" aria-hidden="true">
     @for (seg of segments(); track $index) {
-      <div class="absolute inset-y-0 rounded-md bg-[var(--success)]/65" [style.left.%]="seg.leftPercentage" [style.width.%]="seg.widthPercentage"></div>
+      <div class="absolute inset-y-0 rounded-md bg-success/65" [style.left.%]="seg.leftPercentage" [style.width.%]="seg.widthPercentage"></div>
     }
   </div>
   @if (t.segmentsS.length) {
-    <div class="section-label mb-1.5">Largest gaps</div>
+    <div class="text-label text-muted mb-1.5">Largest gaps</div>
   }
 } @else {
-  <div class="section-label mb-1.5">Instances</div>
+  <div class="text-label text-muted mb-1.5">Instances</div>
 }
 
 <div
@@ -20,8 +20,8 @@
   (keydown)="onKeydown($event)">
   <div class="flex flex-wrap items-start gap-1.5">
     @for (occ of occurrences(); track $index) {
-      @let tone = occ.marker ? 'text-[var(--gold)]' : (occ.ok ? 'text-[var(--success)]' : 'text-[var(--critical)]');
-      @let barTone = occ.marker ? 'bg-[var(--gold)]' : (occ.ok ? 'bg-[var(--success)]' : 'bg-[var(--critical)]');
+      @let tone = occ.marker ? 'text-gold' : (occ.ok ? 'text-success' : 'text-critical');
+      @let barTone = occ.marker ? 'bg-gold' : (occ.ok ? 'bg-success' : 'bg-critical');
       @let active = activeIndex() === $index;
       <div class="flex flex-col items-center gap-1.5 shrink-0">
         <button
@@ -29,14 +29,14 @@
           role="option"
           tabindex="-1"
           [id]="optionId($index)"
-          [class]="'relative flex items-center justify-center min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-[var(--bg)] border border-[var(--border)] text-[11.5px] font-semibold whitespace-nowrap ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-[var(--gold)]' : ' focus:outline-none')"
+          [class]="'relative flex items-center justify-center min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-bg border border-line text-caption whitespace-nowrap ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
           [attr.aria-selected]="active"
           [attr.aria-describedby]="active ? detailId : null"
           (click)="select($index)">
           {{ occ.label }}
           <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
         </button>
-        <span [class]="'tabular-nums text-[10px] ' + (active ? 'text-[var(--gold)]' : 'text-[var(--muted)]')">
+        <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted')">
           {{ occ.atS != null ? (occ.atS | formatDuration) : occ.note }}
         </span>
       </div>
@@ -45,15 +45,15 @@
 </div>
 
 @if (target()) {
-  <div class="text-[11px] text-[var(--muted)] mt-2 pt-2 border-t border-[var(--border)]">
-    <span class="text-[var(--text)]">Target:</span> {{ target() }}
+  <div class="text-caption text-muted mt-2 pt-2 border-t border-line">
+    <span class="text-text">Target:</span> {{ target() }}
   </div>
 }
 
 @if (active(); as occ) {
-  <div [id]="detailId" class="mt-[11px] text-[13px] text-[var(--muted)] leading-[1.5]">
+  <div [id]="detailId" class="mt-[11px] text-body text-muted">
     @if (occ.atS != null) {
-      <span class="text-[var(--accent)] font-semibold mr-0.5">{{ occ.atS | formatDuration }}</span>
+      <span class="text-accent mr-0.5">{{ occ.atS | formatDuration }}</span>
     }
     {{ occ.detail }}
   </div>

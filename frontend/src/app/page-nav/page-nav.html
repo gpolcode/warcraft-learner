@@ -1,13 +1,13 @@
 <!-- Toolbar background comes from mat.toolbar-overrides in styles.scss; a plain bg-* utility loses to Material's unlayered rule. -->
-<mat-toolbar class="border-b border-[var(--border)] gap-2 shrink-0">
+<mat-toolbar class="border-b border-line gap-2 shrink-0">
   <button mat-icon-button (click)="toggleNav()" aria-label="Toggle navigation menu">
     <mat-icon>menu</mat-icon>
   </button>
 
-  <a routerLink="/" class="flex items-center gap-2 no-underline text-[var(--gold)] font-semibold text-[15px]" aria-label="warcraft-learner home">
+  <a routerLink="/" class="flex items-center gap-2 no-underline text-heading text-gold" aria-label="warcraft-learner home">
     <svg class="w-6 h-6 shrink-0" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      <path class="fill-[var(--gold)]" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
-      <g class="fill-[var(--surface)]">
+      <path class="fill-gold" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
+      <g class="fill-surface">
         <rect x="9.5" y="18" width="3" height="4" rx="1"/>
         <rect x="14.5" y="14" width="3" height="8" rx="1"/>
         <rect x="19.5" y="10" width="3" height="12" rx="1"/>
@@ -19,7 +19,7 @@
 
 <mat-sidenav-container class="flex-1 min-h-0">
   <!-- Mobile: modal overlay that slides in with a scrim. Desktop: permanent drawer that collapses to an icons-only rail via its width. -->
-  <mat-sidenav class="border-r border-[var(--border)]"
+  <mat-sidenav class="border-r border-line"
                [class.nav-drawer-modal]="isMobile()"
                [class.nav-drawer-full]="!isMobile() && !railCollapsed()"
                [class.nav-drawer-rail]="railCollapsed()"
@@ -29,11 +29,11 @@
       <div class="flex-1 px-3">
         <mat-nav-list>
           <a mat-list-item routerLink="/pre" routerLinkActive #pre="routerLinkActive"
-             [activated]="pre.isActive" (click)="onNavigate()" aria-label="Pre-Fight"
-             [matTooltip]="railCollapsed() ? 'Pre-Fight' : ''" matTooltipPosition="right">
+             [activated]="pre.isActive" (click)="onNavigate()" aria-label="Pre-fight"
+             [matTooltip]="railCollapsed() ? 'Pre-fight' : ''" matTooltipPosition="right">
             <mat-icon matListItemIcon>lightbulb</mat-icon>
             @if (!railCollapsed()) {
-              <span matListItemTitle>Pre-Fight</span>
+              <span matListItemTitle>Pre-fight</span>
             }
           </a>
           <a mat-list-item routerLink="/" routerLinkActive #post="routerLinkActive"

@@ -8,6 +8,7 @@ import singleLineComment from './eslint-rules/single-line-comment.js';
 import bannedCharacters from './eslint-rules/banned-characters.js';
 import pathConventions from './eslint-rules/path-conventions.js';
 import noFunctionAliasMembers from './eslint-rules/no-function-alias-members.js';
+import themeUtilitiesOnly from './eslint-rules/theme-utilities-only.js';
 
 const local = {
   rules: {
@@ -15,6 +16,7 @@ const local = {
     'banned-characters': bannedCharacters,
     'path-conventions': pathConventions,
     'no-function-alias-members': noFunctionAliasMembers,
+    'theme-utilities-only': themeUtilitiesOnly,
   },
 };
 
@@ -56,12 +58,12 @@ const COLOR_FUNCTION = String.raw`\brgba?\(`;
 const COLOR_LITERAL = `${HEX_COLOR}|${COLOR_FUNCTION}`;
 
 // Anchored at a token start so module specifiers like './class-icon-pipe' are not class names.
-const DESIGN_SYSTEM_CLASS = String.raw`(?:^|\s)(?:badge|icon|chip)-`;
+const DESIGN_SYSTEM_CLASS = String.raw`(?:^|\s)(?:icon-|chip-|text-label)`;
 
 const styleFileMessage =
   'Zero per-component style files: styling is Angular Material + Tailwind utilities over the tokens in src/styles.scss.';
 const colorMessage =
-  'No hardcoded colors: use a src/styles.scss token through a Tailwind arbitrary value or a badge-* class.';
+  'No hardcoded colors: use a src/styles.scss color token through its named utility (text-muted, bg-surface).';
 const classProductionMessage =
   'Component TS never produces CSS classes: expose semantic state and let the template pick the class.';
 
@@ -187,6 +189,12 @@ export default defineConfig([
     },
   },
   {
+    // Inline templates and class strings; specs are prose and stay out.
+    files: ['src/app/**/*.ts'],
+    ignores: ['src/**/*.spec.ts'],
+    rules: { 'local/theme-utilities-only': 'error' },
+  },
+  {
     files: ['src/**/*.ts'],
     plugins: { boundaries },
     settings: {
@@ -298,6 +306,7 @@ export default defineConfig([
       'local/single-line-comment': 'error',
       'local/banned-characters': 'error',
       'local/path-conventions': 'error',
+      'local/theme-utilities-only': 'error',
     },
   },
 ]);

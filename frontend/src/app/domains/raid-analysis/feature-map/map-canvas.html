@@ -1,7 +1,7 @@
 @if (loadError(); as e) {
   <wl-load-state [error]="e" />
 } @else if (!positions()) {
-  <p class="text-[13px] text-[var(--muted)]">
+  <p class="text-body text-muted">
     No position data for this encounter.
   </p>
 } @else {
@@ -17,29 +17,29 @@
     </mat-form-field>
   </div>
 
-  <div class="relative rounded-lg border border-[var(--border)] bg-[var(--surface-alt)]">
+  <div class="relative rounded-lg border border-line bg-surface-alt">
     <canvas #canvas class="block h-[420px] w-full"></canvas>
-    <div class="pointer-events-none absolute bottom-2 left-2 flex flex-col gap-0.5 text-[10px]">
-      @if (live()) { <span class="text-[var(--gold)]">◆ you</span> }
-      <span class="text-[var(--muted)]">● top logs</span>
-      <span class="text-[var(--accent)]">◯ top-log centre</span>
-      <span class="text-[var(--critical)]">▲ reference (facing up)</span>
+    <div class="pointer-events-none absolute bottom-2 left-2 flex flex-col gap-0.5 text-caption">
+      @if (live()) { <span class="text-gold">◆ You</span> }
+      <span class="text-muted">● Top logs</span>
+      <span class="text-accent">◯ Top-log centre</span>
+      <span class="text-critical">▲ Reference (facing up)</span>
     </div>
   </div>
 
-  <p class="mt-1.5 text-[10px] text-[var(--muted)]">Every position is drawn relative to the reference, which sits at the centre facing up.</p>
+  <p class="mt-1.5 text-caption text-muted">Every position is drawn relative to the reference, which sits at the centre facing up.</p>
 
   <div class="mt-2 flex items-center gap-2">
     <button mat-icon-button [attr.aria-label]="playing() ? 'Pause' : 'Play'" (click)="togglePlay()">
       <mat-icon>{{ playing() ? 'pause' : 'play_arrow' }}</mat-icon>
     </button>
     <div class="min-w-0 flex-1">
-      <input type="range" class="block w-full accent-[var(--gold)]"
+      <input type="range" class="block w-full accent-gold"
         [min]="windowStart()" [max]="windowEnd()" step="0.25"
         [value]="scrubT()" (input)="onScrub($any($event.target).valueAsNumber)" />
-      <div class="mt-1 flex justify-between text-[10px] text-[var(--muted)]">
+      <div class="mt-1 flex justify-between text-caption text-muted">
         <span>{{ windowStart() | formatDuration }}</span>
-        <span>opened at {{ anchorTime() | formatDuration }}</span>
+        <span>Opened at {{ anchorTime() | formatDuration }}</span>
         <span>{{ windowEnd() | formatDuration }}</span>
       </div>
     </div>
