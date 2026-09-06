@@ -29,7 +29,7 @@
           role="option"
           tabindex="-1"
           [id]="optionId($index)"
-          [class]="'relative flex items-center justify-center min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-bg border border-line text-caption font-semibold whitespace-nowrap ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
+          [class]="'relative flex items-center justify-center min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-bg border border-line text-caption whitespace-nowrap ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
           [attr.aria-selected]="active"
           [attr.aria-describedby]="active ? detailId : null"
           (click)="select($index)">
@@ -53,7 +53,7 @@
 @if (active(); as occ) {
   <div [id]="detailId" class="mt-[11px] text-body text-muted">
     @if (occ.atS != null) {
-      <span class="text-accent font-semibold mr-0.5">{{ occ.atS | formatDuration }}</span>
+      <span class="text-accent mr-0.5">{{ occ.atS | formatDuration }}</span>
     }
     {{ occ.detail }}
   </div>

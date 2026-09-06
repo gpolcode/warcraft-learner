@@ -2,7 +2,7 @@
 
   @if (heading()) {
     <div class="px-4 pt-3 pb-2">
-      <h2 class="text-title text-text">{{ heading() }}</h2>
+      <h2 class="text-title">{{ heading() }}</h2>
       @if (subtitle()) {
         <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
       }
@@ -27,12 +27,12 @@
               w.status === 'good' ? 'text-success' :
               w.status === 'warn' ? 'text-warning' :
               w.status === 'bad' ? 'text-critical' :
-              w.status === 'info' ? 'text-info' : 'text-muted';
+              w.status === 'info' ? 'text-accent' : 'text-muted';
             @let barTone =
               w.status === 'good' ? 'bg-success' :
               w.status === 'warn' ? 'bg-warning' :
               w.status === 'bad' ? 'bg-critical' :
-              w.status === 'info' ? 'bg-info' : 'bg-muted';
+              w.status === 'info' ? 'bg-accent' : 'bg-muted';
             <div class="flex flex-col items-center gap-1.5 shrink-0">
               <button
                 type="button"
@@ -67,22 +67,22 @@
       w.status === 'good' ? 'bg-success' :
       w.status === 'warn' ? 'bg-warning' :
       w.status === 'bad' ? 'bg-critical' :
-      w.status === 'muted' ? 'bg-muted' : 'bg-info';
+      w.status === 'muted' ? 'bg-muted' : 'bg-accent';
 
     <div class="px-4 py-2.5 bg-surface border-t border-line">
       <div class="flex flex-wrap items-center gap-4 gap-y-2 md:gap-x-[22px]">
         <div class="flex flex-col shrink-0">
           <span class="text-label text-muted">Window</span>
-          <span class="tabular-nums text-value text-text whitespace-nowrap">
+          <span class="tabular-nums text-value whitespace-nowrap">
             {{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}
           </span>
         </div>
         <div class="flex flex-col shrink-0">
           <span class="text-label text-muted">{{ metricLabel() }}</span>
           @if (!activeIsMuted()) {
-            <span class="tabular-nums text-value text-text">{{ w.overview.playerPct | formatDamage }}</span>
+            <span class="tabular-nums text-value">{{ w.overview.playerPct | formatDamage }}</span>
           } @else if (activeIsBenchOnly()) {
-            <span class="tabular-nums text-value text-text">{{ w.overview.topAvg | formatDamage }}</span>
+            <span class="tabular-nums text-value">{{ w.overview.topAvg | formatDamage }}</span>
           } @else {
             <span class="text-value text-muted">Not reached</span>
           }
@@ -148,16 +148,16 @@
               [style.width.%]="overviewPlayerWidthPct()"></div>
           }
           @if (overviewRangeLeftPct() !== null) {
-            <div class="absolute inset-y-0 rounded bg-info/30 border border-info" [style.left.%]="overviewRangeLeftPct()" [style.width.%]="overviewRangeWidthPct()"></div>
+            <div class="absolute inset-y-0 rounded bg-accent/30 border border-accent" [style.left.%]="overviewRangeLeftPct()" [style.width.%]="overviewRangeWidthPct()"></div>
           }
           @if (overviewAvgLeftPct() !== null) {
-            <div class="absolute inset-y-0 w-[2px] bg-info" [style.left.%]="overviewAvgLeftPct()"></div>
+            <div class="absolute inset-y-0 w-[2px] bg-accent" [style.left.%]="overviewAvgLeftPct()"></div>
           }
         </div>
         <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-muted">
           <span class="flex items-center gap-1"><span [class]="'inline-block h-2 w-2 rounded-[2px] opacity-[0.65] ' + fillBg" aria-hidden="true"></span>You</span>
-          <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] bg-info/30 border border-info" aria-hidden="true"></span>Top raiders, lowest to highest</span>
-          <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-[2px] bg-info" aria-hidden="true"></span>Top raiders average</span>
+          <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] bg-accent/30 border border-accent" aria-hidden="true"></span>Top raiders, lowest to highest</span>
+          <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-[2px] bg-accent" aria-hidden="true"></span>Top raiders average</span>
         </div>
       </div>
     }

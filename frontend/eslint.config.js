@@ -58,7 +58,7 @@ const COLOR_FUNCTION = String.raw`\brgba?\(`;
 const COLOR_LITERAL = `${HEX_COLOR}|${COLOR_FUNCTION}`;
 
 // Anchored at a token start so module specifiers like './class-icon-pipe' are not class names.
-const DESIGN_SYSTEM_CLASS = String.raw`(?:^|\s)(?:icon-|chip-|text-label|text-tag)`;
+const DESIGN_SYSTEM_CLASS = String.raw`(?:^|\s)(?:icon-|chip-|text-label)`;
 
 const styleFileMessage =
   'Zero per-component style files: styling is Angular Material + Tailwind utilities over the tokens in src/styles.scss.';

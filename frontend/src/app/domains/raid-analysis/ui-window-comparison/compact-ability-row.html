@@ -6,12 +6,12 @@
       @if (row().spellId; as spellId) {
         <wl-game-icon [id]="spellId" [icon]="row().icon" [name]="row().label"></wl-game-icon>
       } @else {
-        <span class="truncate text-name text-text">{{ row().label }}</span>
+        <span class="truncate text-name">{{ row().label }}</span>
       }
     </div>
 
     @if (!hidePlayer()) {
-      <span class="tabular-nums shrink-0 md:col-start-4 md:row-start-1 text-right text-body font-semibold"
+      <span class="tabular-nums shrink-0 md:col-start-4 md:row-start-1 text-right text-value"
             [class.text-success]="gapStatus() === 'success'"
             [class.text-warning]="gapStatus() === 'warning'"
             [class.text-critical]="gapStatus() === 'critical'"
@@ -32,7 +32,7 @@
 
     @if (showCasts() && !hidePlayer()) {
       @if (isPassive()) {
-        <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-tag rounded px-2 py-0.5 border border-current text-muted">Passive</span>
+        <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-label rounded px-2 py-0.5 border border-current text-muted">Passive</span>
       } @else {
         <span class="md:hidden text-label text-muted">Casts</span>
         <span class="tabular-nums shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-body rounded px-2 py-0.5 border border-current"

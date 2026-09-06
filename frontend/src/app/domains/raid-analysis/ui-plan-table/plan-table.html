@@ -3,7 +3,7 @@
 } @else if (state() === 'rows') {
   <div class="bg-surface border border-line rounded-[10px] overflow-hidden">
     <div class="px-4 pt-3 pb-2">
-      <h2 class="text-title text-text">{{ heading() }}</h2>
+      <h2 class="text-title">{{ heading() }}</h2>
       <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
     </div>
 
@@ -23,10 +23,10 @@
           @if (row.spellId; as spellId) {
             <wl-game-icon [id]="spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
           } @else {
-            <span class="text-name text-text whitespace-nowrap">{{ row.name }}</span>
+            <span class="text-name whitespace-nowrap">{{ row.name }}</span>
           }
           @if (row.bloodlust) {
-            <span class="inline-flex items-center gap-1.5 bg-gold/10 border border-gold/35 rounded-[4px] px-2 py-0.5 text-tag text-gold whitespace-nowrap">Bloodlust</span>
+            <span class="inline-flex items-center gap-1.5 bg-gold/10 border border-gold/35 rounded-[4px] px-2 py-0.5 text-label text-gold whitespace-nowrap">Bloodlust</span>
           }
         </div>
 
@@ -40,9 +40,9 @@
             @if (!row.sampleCount) {
               <span class="text-body text-muted">-</span>
             } @else if (row.typicalUses != null) {
-              <span class="tabular-nums text-body text-text">{{ row.typicalUses | number:'1.0-1' }}x</span>
+              <span class="tabular-nums text-body">{{ row.typicalUses | number:'1.0-1' }}x</span>
             } @else {
-              <span class="tabular-nums text-body text-text">None</span>
+              <span class="tabular-nums text-body">None</span>
             }
             @if (row.sampleCount) {
               <span class="tabular-nums text-caption text-muted">Used in {{ row.usedSampleCount }} of {{ row.sampleCount }} logs</span>

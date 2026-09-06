@@ -1,8 +1,8 @@
 <div class="bg-surface border border-line rounded-[10px] p-4">
   <div class="flex items-start gap-2.5">
-    <mat-icon class="icon-18 text-info mt-px shrink-0">info</mat-icon>
+    <mat-icon class="icon-18 text-accent mt-px shrink-0">info</mat-icon>
     <div>
-      <div class="text-heading text-text">No benchmark for {{ encounter() }} yet</div>
+      <div class="text-heading">No benchmark for {{ encounter() }} yet</div>
       <div class="text-body text-muted mt-0.5">
         @if (variant() === 'pre') {
           The pre-fight plan is built entirely from top-parse logs. Gear, cooldown, defensive and burst plans all need parses - none are in yet. Here's what has to happen first:
@@ -16,9 +16,9 @@
   <div class="flex items-stretch gap-1 bg-bg border border-line rounded-lg px-4 py-3.5 mt-3.5">
     <div class="flex-1 flex flex-col gap-1.5">
       <mat-icon class="icon-seg text-muted">military_tech</mat-icon>
-      <div class="text-heading text-text">Mythic kills logged</div>
+      <div class="text-heading">Mythic kills logged</div>
       <div class="text-caption text-muted">Players upload to WCL.</div>
-      <div class="text-tag text-critical mt-px">Waiting</div>
+      <div class="text-label text-critical mt-px">Waiting</div>
     </div>
 
     <div class="w-[26px] shrink-0 flex items-center justify-center">
@@ -27,9 +27,9 @@
 
     <div class="flex-1 flex flex-col gap-1.5">
       <mat-icon class="icon-seg text-muted">cloud_sync</mat-icon>
-      <div class="text-heading text-text">Ingest samples them</div>
+      <div class="text-heading">Ingest samples them</div>
       <div class="text-caption text-muted">We pull new top rankings.</div>
-      <div class="text-tag text-warning mt-px">Hourly</div>
+      <div class="text-label text-warning mt-px">Hourly</div>
     </div>
 
     <div class="w-[26px] shrink-0 flex items-center justify-center">
@@ -39,13 +39,13 @@
     <div class="flex-1 flex flex-col gap-1.5">
       <mat-icon class="icon-seg text-success">check_circle</mat-icon>
       @if (variant() === 'pre') {
-        <div class="text-heading text-text">Plan unlocks</div>
+        <div class="text-heading">Plan unlocks</div>
         <div class="text-caption text-muted">The cards below fill in.</div>
       } @else {
-        <div class="text-heading text-text">Comparisons unlock</div>
+        <div class="text-heading">Comparisons unlock</div>
         <div class="text-caption text-muted">The sections below fill in.</div>
       }
-      <div class="text-tag text-success mt-px">Automatic</div>
+      <div class="text-label text-success mt-px">Automatic</div>
     </div>
   </div>
 </div>

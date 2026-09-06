@@ -8,7 +8,7 @@
 
     <!-- Pull time + boss % live in the stat column, not here. -->
     <div class="px-4 pt-3 pb-2">
-      <h2 class="text-title text-text">Pull overview</h2>
+      <h2 class="text-title">Pull overview</h2>
       <div class="text-body text-muted mt-0.5">
         @if (v.result === 'kill') { Pull {{ v.attempt }} - kill. }
         @else { Pull {{ v.attempt }} of this session. }
@@ -19,13 +19,13 @@
     <div class="px-4 md:grid md:grid-cols-[minmax(0,1fr)_200px]">
 
       <div class="card-section pt-5 pb-1.5 [&>:first-child+*]:border-t-0">
-        <h3 class="text-heading text-text mb-2">Deaths &amp; result</h3>
+        <h3 class="text-heading mb-2">Deaths &amp; result</h3>
 
         @for (d of v.deaths; track d.index) {
           <div class="grid grid-cols-[20px_minmax(0,1fr)_auto_auto] gap-[11px] items-center py-2.5 border-t border-line">
             <mat-icon class="icon-18 text-critical">skull</mat-icon>
             <div class="min-w-0">
-              <div class="text-body text-text">Death {{ d.index }}</div>
+              <div class="text-body">Death {{ d.index }}</div>
               @if (d.ability) {
                 <div class="text-caption text-muted truncate">{{ d.ability }}</div>
               }
@@ -49,7 +49,7 @@
         } @empty {
           <div class="flex items-center gap-2.5 py-2.5 border-t border-line">
             <mat-icon class="icon-18 text-success">check_circle</mat-icon>
-            <span class="text-body text-text">No deaths - {{ v.result === 'kill' ? 'clean pull' : 'you survived' }}</span>
+            <span class="text-body">No deaths - {{ v.result === 'kill' ? 'clean pull' : 'you survived' }}</span>
           </div>
         }
 
@@ -60,7 +60,7 @@
             <mat-icon class="icon-18 text-warning">flag</mat-icon>
           }
           <div class="min-w-0">
-            <div class="text-body font-medium text-text">{{ v.result === 'kill' ? 'Kill' : 'Wipe' }}</div>
+            <div class="text-body">{{ v.result === 'kill' ? 'Kill' : 'Wipe' }}</div>
             <div class="text-caption text-muted">
               @if (v.result === 'kill') { Boss defeated }
               @else { Boss reached {{ v.bossPercentage | number:'1.0-0' }}% - raid ended }
@@ -88,7 +88,7 @@
         <div class="flex items-baseline gap-6 md:flex-col md:items-stretch md:gap-4">
           <div>
             <div class="text-label text-muted mb-1.5">Your DPS</div>
-            <div class="tabular-nums text-hero text-text">{{ v.dps | formatDamage }}</div>
+            <div class="tabular-nums text-hero">{{ v.dps | formatDamage }}</div>
           </div>
           <div class="flex gap-6">
             <div>
@@ -101,7 +101,7 @@
                 <div class="text-value text-gold">Kill</div>
               } @else {
                 <div class="text-label text-muted">Boss health</div>
-                <div class="tabular-nums text-value text-text">{{ v.bossPercentage | number:'1.0-0' }}%</div>
+                <div class="tabular-nums text-value">{{ v.bossPercentage | number:'1.0-0' }}%</div>
               }
             </div>
           </div>

@@ -2,7 +2,7 @@
 
   <div class="px-4 pt-3 pb-2 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px_28px] md:gap-[14px] md:items-baseline">
     <div class="md:col-span-2">
-      <h2 class="text-title text-text">{{ heading() }}</h2>
+      <h2 class="text-title">{{ heading() }}</h2>
       @if (subtitle()) {
         <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
       }
@@ -20,7 +20,7 @@
           <mat-icon class="icon-18"
             [class.text-critical]="row.severity === 'critical'"
             [class.text-warning]="row.severity === 'warning'"
-            [class.text-info]="row.severity === 'info'">
+            [class.text-accent]="row.severity === 'info'">
             {{ row.severity === 'critical' ? 'error' : row.severity === 'info' ? 'info' : 'warning_amber' }}
           </mat-icon>
         </div>
@@ -32,7 +32,7 @@
                 <wl-game-icon [id]="spellId" [icon]="row.icon" [name]="name"></wl-game-icon>
               } @else {
                 <span class="inline-block bg-surface-alt border border-dashed border-line rounded w-[19px] h-[19px] shrink-0"></span>
-                <span class="text-name text-text">{{ name }}</span>
+                <span class="text-name">{{ name }}</span>
               }
               @if (row.timestampS != null) {
                 <span class="tabular-nums text-body text-accent">{{ row.timestampS | formatDuration }}</span>
@@ -50,18 +50,18 @@
                 }
               }
             } @else {
-              <span class="text-name text-text">{{ row.what }}</span>
+              <span class="text-name">{{ row.what }}</span>
             }
             @if (row.chip) {
               @switch (row.severity) {
                 @case ('critical') {
-                  <span class="tabular-nums text-tag rounded-sm px-[5px] text-critical bg-critical/10 border border-critical/25">{{ row.chip }}</span>
+                  <span class="tabular-nums text-label rounded-sm px-[5px] text-critical bg-critical/10 border border-critical/25">{{ row.chip }}</span>
                 }
                 @case ('info') {
-                  <span class="tabular-nums text-tag rounded-sm px-[5px] text-info bg-info/10 border border-info/25">{{ row.chip }}</span>
+                  <span class="tabular-nums text-label rounded-sm px-[5px] text-accent bg-accent/10 border border-accent/25">{{ row.chip }}</span>
                 }
                 @default {
-                  <span class="tabular-nums text-tag rounded-sm px-[5px] text-warning bg-warning/10 border border-warning/25">{{ row.chip }}</span>
+                  <span class="tabular-nums text-label rounded-sm px-[5px] text-warning bg-warning/10 border border-warning/25">{{ row.chip }}</span>
                 }
               }
             }
@@ -71,7 +71,7 @@
         <div class="col-start-2 md:col-auto flex items-baseline gap-2 md:block text-left md:text-right"
           [class.text-critical]="row.severity === 'critical'"
           [class.text-warning]="row.severity === 'warning'"
-          [class.text-info]="row.severity === 'info'">
+          [class.text-accent]="row.severity === 'info'">
           <span class="md:hidden text-label text-muted">Measured</span>
           <div class="tabular-nums text-value">{{ row.measured.value }}</div>
           @if (row.measured.unit) {

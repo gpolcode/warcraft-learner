@@ -6,7 +6,7 @@
 
   <div class="px-4 pt-3 pb-2 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
     <div class="md:col-span-2">
-      <h2 class="text-title text-text">Gear</h2>
+      <h2 class="text-title">Gear</h2>
       @if (view().comparison) {
         <div class="text-body text-muted mt-0.5">Gear vs top logs.</div>
       } @else {
@@ -19,7 +19,7 @@
 
   <div class="card-section [&>:first-child+*]:border-t-0">
     <div class="px-4 pt-5 pb-2">
-      <h3 class="text-heading text-text">Talents</h3>
+      <h3 class="text-heading">Talents</h3>
       @if (view().comparison && view().talentBuilds.length) {
         <div class="text-body text-muted mt-0.5">Your build against the builds top raiders use.</div>
       } @else if (view().talentBuilds.length) {
@@ -40,10 +40,10 @@
       @for (build of view().talentBuilds; track build.label) {
         <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-1 md:gap-y-0 items-center px-4 py-[10px] border-t border-line">
           <div class="hidden md:block"></div>
-          <div class="min-w-0 text-name text-text">
+          <div class="min-w-0 text-name">
             {{ build.label }}
             @if (build.isPlayer) {
-              <span class="ml-1.5 text-tag text-gold">Your build</span>
+              <span class="ml-1.5 text-label text-gold">Your build</span>
             }
           </div>
           <div class="text-right text-muted">
@@ -130,7 +130,7 @@
 
   <div class="card-section [&>:first-child+*]:border-t-0">
     <div class="px-4 pt-5 pb-2">
-      <h3 class="text-heading text-text">Trinkets</h3>
+      <h3 class="text-heading">Trinkets</h3>
       @if (view().comparison && view().trinketSets.length) {
         <div class="text-body text-muted mt-0.5">Your pair against the pairs top raiders use.</div>
       } @else if (view().trinketSets.length) {
@@ -160,7 +160,7 @@
             <div class="text-caption text-muted mt-0.5">
               {{ set.label }}
               @if (set.isPlayer) {
-                <span class="ml-1.5 text-tag text-gold">Your pair</span>
+                <span class="ml-1.5 text-label text-gold">Your pair</span>
               }
             </div>
           </div>
@@ -180,7 +180,7 @@
 
   <div class="card-section [&>:first-child+*]:border-t-0">
     <div class="px-4 pt-5 pb-2">
-      <h3 class="text-heading text-text">Enchants</h3>
+      <h3 class="text-heading">Enchants</h3>
       @if (view().comparison && view().enchantRows.length) {
         <div class="text-body text-muted mt-0.5">Only the slots where your enchant is missing or differs.</div>
       } @else if (!view().comparison && view().benchEnchantRows.length) {
@@ -195,13 +195,13 @@
             <div class="flex items-center justify-center self-start md:self-center">
               <mat-icon class="icon-18"
                 [class.text-warning]="row.status === 'warn'"
-                [class.text-info]="row.status === 'info'">
+                [class.text-accent]="row.status === 'info'">
                 {{ row.status === 'info' ? 'info' : 'warning_amber' }}
               </mat-icon>
             </div>
             <div class="min-w-0 flex items-baseline gap-2">
               <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
-              <span class="text-name text-text truncate">{{ row.name }}</span>
+              <span class="text-name truncate">{{ row.name }}</span>
             </div>
             <div class="hidden md:block"></div>
             <div class="col-start-2 md:col-auto text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-[14px]">
@@ -236,7 +236,7 @@
             <div class="hidden md:block"></div>
             <div class="min-w-0 flex items-baseline gap-2">
               <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
-              <span class="text-name text-text">{{ row.name }}</span>
+              <span class="text-name">{{ row.name }}</span>
             </div>
             <div class="hidden md:block"></div>
             <div class="hidden md:block"></div>

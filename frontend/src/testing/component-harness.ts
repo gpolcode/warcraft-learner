@@ -80,7 +80,7 @@ export function mountDom<T>(
   };
 }
 
-const STATUS_COLOR_CLASS = /^text-(critical|warning|success|info|muted)$/;
+const STATUS_COLOR_CLASS = /^text-(critical|warning|success|accent|muted)$/;
 
 export function statusColor(el: HTMLElement | null): string | null {
   for (const cls of Array.from(el?.classList ?? [])) {
