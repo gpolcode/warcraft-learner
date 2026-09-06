@@ -49,7 +49,7 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
   await page.getByRole('button', { name: 'Close export' }).click();
 });
 
-test('gear shows the top-parse talent, trinket, and enchant consensus, and how the alt build differs', async () => {
+test('gear shows the top-parse talent, trinket, and enchant consensus, and how a lower-ranked build differs', async () => {
   const gear = page.locator('wl-gear');
   await shows(gear, 'Gear consensus across top logs.');
   const talents = gear.locator('div.card-section').filter({ hasText: 'Talents' }).first();
@@ -57,7 +57,7 @@ test('gear shows the top-parse talent, trinket, and enchant consensus, and how t
   await shows(talents, PERCENT);
   await shows(talents, 'of top logs');
   await shows(talents, 'Get talent code');
-  await shows(talents, 'Alt build 1');
+  await shows(talents, '2nd most common build');
   await shows(talents, 'The talents this build changes from the most common build.');
   await shows(talents, 'Added');
   await shows(talents, 'Dropped');
