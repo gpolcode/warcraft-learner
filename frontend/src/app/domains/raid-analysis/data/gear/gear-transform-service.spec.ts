@@ -30,6 +30,7 @@ const EXAMPLE_SOURCE_ID = 537;
 const SOPHIC_ENCHANT = 8041;
 const SOPHIC_ITEM = 244001;
 const SOPHIC_ITEM_NAME = 'Enchant Weapon - Sophic Devotion';
+const SOPHIC_ITEM_ICON = 'inv_sophic';
 
 describe('talentKeyFromTree', () => {
   it('builds a v3: key of entry.rank pairs ordered by entry, ignoring the node', () => {
@@ -248,7 +249,7 @@ const wclFake = {
   getCombatantInfo: async (code: string) => [combatantInfo(code === 'r1' ? 10 : 20)],
   getGameNames: async () => ({
     [`e${SOPHIC_ENCHANT}`]: { id: SOPHIC_ENCHANT, name: 'Soph' },
-    [`i${SOPHIC_ITEM}`]: { id: SOPHIC_ITEM, name: SOPHIC_ITEM_NAME },
+    [`i${SOPHIC_ITEM}`]: { id: SOPHIC_ITEM, name: SOPHIC_ITEM_NAME, icon: `${SOPHIC_ITEM_ICON}.jpg` },
   }),
 };
 
@@ -258,17 +259,17 @@ const noEnchantItemsFake = { getEnchantItems: async () => Results.transient('Rai
 
 describe('nameEnchantsByItem', () => {
   const ranked = { [ENCHANT_SLOT]: [{ id: SOPHIC_ENCHANT, name: 'Soph', pct: 100 }, { id: 9000, name: 'Other', pct: 50 }] };
-  const names = { [`i${SOPHIC_ITEM}`]: { id: SOPHIC_ITEM, name: 'Enchant Weapon - Sophic &amp; Devotion' } };
+  const names = { [`i${SOPHIC_ITEM}`]: { id: SOPHIC_ITEM, name: 'Enchant Weapon - Sophic &amp; Devotion', icon: `${SOPHIC_ITEM_ICON}.jpg` } };
 
   it('collects each ranked enchant\'s item id once, skipping enchants the dump has no item for', () => {
     const twoSlots = { ...ranked, 16: [{ id: SOPHIC_ENCHANT, name: 'Soph', pct: 100 }] };
     expect(svc['enchantItemIds'](twoSlots, { [SOPHIC_ENCHANT]: SOPHIC_ITEM })).toEqual([SOPHIC_ITEM]);
   });
 
-  it('renames each enchant to its decoded item name and keeps the WCL name where the dump or WCL has none', () => {
+  it('names each enchant by its decoded item, with the item id and icon file, and keeps the WCL name where the dump or WCL has none', () => {
     expect(svc['nameEnchantsByItem'](ranked, { [SOPHIC_ENCHANT]: SOPHIC_ITEM, 9000: 1 }, names)).toEqual({
       [ENCHANT_SLOT]: [
-        { id: SOPHIC_ENCHANT, name: 'Enchant Weapon - Sophic & Devotion', pct: 100 },
+        { id: SOPHIC_ENCHANT, name: 'Enchant Weapon - Sophic & Devotion', icon: SOPHIC_ITEM_ICON, item_id: SOPHIC_ITEM, pct: 100 },
         { id: 9000, name: 'Other', pct: 50 },
       ],
     });
@@ -287,7 +288,7 @@ describe('GearTransformService (live, in-browser)', () => {
       key: 'v3:650.1', pct: 100, report_code: 'r1', fight_id: 1, player_name: 'P1', source_id: 10,
     });
     expect(bench.value.trinket_sets).toEqual([{ items: [{ id: 100, name: 'A', icon: 't' }], pct: 100 }]);
-    expect(bench.value.enchants[15]).toEqual([{ id: SOPHIC_ENCHANT, name: SOPHIC_ITEM_NAME, pct: 100 }]);
+    expect(bench.value.enchants[15]).toEqual([{ id: SOPHIC_ENCHANT, name: SOPHIC_ITEM_NAME, icon: SOPHIC_ITEM_ICON, item_id: SOPHIC_ITEM, pct: 100 }]);
   });
 
   it('keeps the WCL enchant names when the Raidbots dump fails to load', async () => {

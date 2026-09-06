@@ -112,8 +112,9 @@ export class GearTransformService implements DataSource<GearBench> {
     for (const [slot, ranked] of Object.entries(enchants)) {
       named[Number(slot)] = ranked.map(enchant => {
         const itemId = enchantItems[enchant.id];
-        const itemName = itemId === undefined ? '' : this.gearExtract.decodeHtmlEntities(names[`i${itemId}`]?.name ?? '');
-        return itemName ? { ...enchant, name: itemName } : enchant;
+        const item = itemId === undefined ? undefined : names[`i${itemId}`];
+        if (itemId === undefined || !item?.name) return enchant;
+        return { ...enchant, name: this.gearExtract.decodeHtmlEntities(item.name), icon: this.gearExtract.iconFile(item.icon), item_id: itemId };
       });
     }
     return named;

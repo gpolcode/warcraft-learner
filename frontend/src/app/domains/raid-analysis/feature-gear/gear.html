@@ -206,14 +206,19 @@
             <div class="hidden md:block"></div>
             <div class="col-start-2 md:col-auto text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-[14px]">
               <span class="md:hidden block text-label text-muted mb-1">Fix</span>
-              <div class="flex items-start gap-1">
-                <wl-collapsible class="min-w-0 flex-1">{{ row.note }}</wl-collapsible>
-                @if (row.copyName; as copyName) {
-                  <button mat-icon-button class="shrink-0 -my-1 [--mat-icon-button-state-layer-size:28px] [--mat-icon-button-icon-size:18px] [--mat-icon-button-touch-target-display:none]" aria-label="Copy name" (click)="copy(copyName)">
+              @if (row.top; as top) {
+                <div class="flex items-center gap-2">
+                  @if (top.itemId; as itemId) {
+                    <wl-game-icon kind="item" [id]="itemId" [name]="top.name" [icon]="top.icon"></wl-game-icon>
+                  } @else {
+                    <span class="text-name">{{ top.name }}</span>
+                  }
+                  <button mat-icon-button class="shrink-0 -my-1 [--mat-icon-button-state-layer-size:28px] [--mat-icon-button-icon-size:18px] [--mat-icon-button-touch-target-display:none]" aria-label="Copy name" (click)="copy(top.name)">
                     <mat-icon class="icon-18">content_copy</mat-icon>
                   </button>
-                }
-              </div>
+                </div>
+              }
+              <wl-collapsible>{{ row.note }}</wl-collapsible>
             </div>
           </div>
         }
@@ -243,12 +248,14 @@
             <div class="hidden md:block"></div>
             <div class="min-w-0 flex items-center gap-2">
               <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
-              <span class="text-name">{{ row.name }}</span>
-              @if (row.copyName; as copyName) {
-                <button mat-icon-button class="shrink-0 -my-1 [--mat-icon-button-state-layer-size:28px] [--mat-icon-button-icon-size:18px] [--mat-icon-button-touch-target-display:none]" aria-label="Copy name" (click)="copy(copyName)">
-                  <mat-icon class="icon-18">content_copy</mat-icon>
-                </button>
+              @if (row.enchant.itemId; as itemId) {
+                <wl-game-icon kind="item" [id]="itemId" [name]="row.enchant.name" [icon]="row.enchant.icon"></wl-game-icon>
+              } @else {
+                <span class="text-name">{{ row.enchant.name }}</span>
               }
+              <button mat-icon-button class="shrink-0 -my-1 [--mat-icon-button-state-layer-size:28px] [--mat-icon-button-icon-size:18px] [--mat-icon-button-touch-target-display:none]" aria-label="Copy name" (click)="copy(row.enchant.name)">
+                <mat-icon class="icon-18">content_copy</mat-icon>
+              </button>
             </div>
             <div class="hidden md:block"></div>
             <div class="hidden md:block"></div>

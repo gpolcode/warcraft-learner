@@ -10,10 +10,12 @@ import { GearComparisonView, GearFeatureService } from '../data/gear/gear-featur
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER_ID = 3379;
 const COPY_BUTTON = 'button[aria-label="Copy name"]';
+const ITEM_LINK = 'a[href*="wowhead.com/item="]';
 const COPIED_MESSAGE = 'Copied to clipboard. Paste it into the auction house search.';
 const FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
-const ARMOR_KIT_ITEM = "Forest Hunter's Armor Kit";
-const HELM_ENCHANT = 'Enchant Helm - Empowered Rune of Avoidance';
+const ARMOR_KIT_ITEM_ID = 244641;
+const ARMOR_KIT = { name: "Forest Hunter's Armor Kit", itemId: ARMOR_KIT_ITEM_ID, icon: 'inv_kit' };
+const HELM_ENCHANT = { name: 'Enchant Helm - Empowered Rune of Avoidance', itemId: null, icon: '' };
 
 function benchView(over: Partial<GearComparisonView> = {}): GearComparisonView {
   return {
@@ -22,9 +24,8 @@ function benchView(over: Partial<GearComparisonView> = {}): GearComparisonView {
     trinketSets: [], trinketStatus: { status: 'unknown', note: 'No trinket data.' },
     enchantRows: [], enchantStatus: 'ok',
     benchEnchantRows: [
-      { slotName: 'Head', name: HELM_ENCHANT, copyName: HELM_ENCHANT },
-      { slotName: 'Legs', name: ARMOR_KIT_ITEM, copyName: ARMOR_KIT_ITEM },
-      { slotName: 'Feet', name: 'Enchant #8042', copyName: null },
+      { slotName: 'Head', enchant: HELM_ENCHANT },
+      { slotName: 'Legs', enchant: ARMOR_KIT },
     ],
     ...over,
   };
@@ -35,8 +36,8 @@ function comparisonView(): GearComparisonView {
     comparison: true,
     benchEnchantRows: [],
     enchantRows: [
-      { slotName: 'Legs', status: 'warn', name: 'Not enchanted', note: `Most top raiders run ${ARMOR_KIT_ITEM}. Apply it.`, copyName: ARMOR_KIT_ITEM },
-      { slotName: 'Head', status: 'ok', name: HELM_ENCHANT, note: null, copyName: null },
+      { slotName: 'Legs', status: 'warn', name: 'Not enchanted', note: 'Most top raiders run it. Apply it.', top: ARMOR_KIT },
+      { slotName: 'Head', status: 'ok', name: HELM_ENCHANT.name, note: null, top: null },
     ],
   });
 }
@@ -74,11 +75,12 @@ async function mount(view: GearComparisonView, copySucceeds = true): Promise<Mou
 }
 
 describe('Gear enchant copy', () => {
-  it('offers a copy button only on the bench rows that resolved a name', async () => {
+  it('links the enchant to its item only where the bench resolved one, and offers every row to copy', async () => {
     const { dom } = await mount(benchView());
 
     expect(dom.queryAll(COPY_BUTTON)).toHaveLength(2);
-    expect(dom.text()).toContain(ARMOR_KIT_ITEM);
+    expect(dom.queryAll(ITEM_LINK).map(link => link.getAttribute('href'))).toEqual([`https://www.wowhead.com/item=${ARMOR_KIT_ITEM_ID}`]);
+    expect(dom.text()).toContain(HELM_ENCHANT.name);
   });
 
   it('hands the clipboard the row\'s item name and confirms the copy', async () => {
@@ -86,7 +88,7 @@ describe('Gear enchant copy', () => {
 
     dom.queryAll(COPY_BUTTON)[1]?.click();
 
-    expect(copies).toEqual([ARMOR_KIT_ITEM]);
+    expect(copies).toEqual([ARMOR_KIT.name]);
     expect(messages).toEqual([COPIED_MESSAGE]);
   });
 
@@ -98,12 +100,13 @@ describe('Gear enchant copy', () => {
     expect(messages).toEqual([FAILED_MESSAGE]);
   });
 
-  it('offers the consensus item to copy beside the fix on a flagged comparison row', async () => {
+  it('shows the consensus item beside the fix on a flagged comparison row and offers it to copy', async () => {
     const { dom, copies } = await mount(comparisonView());
 
+    expect(dom.queryAll(ITEM_LINK)).toHaveLength(1);
     expect(dom.queryAll(COPY_BUTTON)).toHaveLength(1);
     dom.click(COPY_BUTTON);
 
-    expect(copies).toEqual([ARMOR_KIT_ITEM]);
+    expect(copies).toEqual([ARMOR_KIT.name]);
   });
 });

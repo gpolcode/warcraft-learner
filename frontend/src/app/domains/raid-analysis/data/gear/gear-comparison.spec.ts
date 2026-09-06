@@ -15,20 +15,30 @@ function gear(partial: Partial<CharacterGear> = {}): CharacterGear {
   return { ...partial };
 }
 
+const SOPHIC_ITEM = { name: 'Sophic Devotion', itemId: null, icon: '' };
+const ARMOR_KIT_ITEM_ID = 244641;
+
 describe('buildBenchEnchantRows', () => {
-  it('shows the enchant name and offers it to copy', () => {
+  it('shows the consensus enchant as an item with no link when the bench resolved no item', () => {
     const rows = gearComparison.buildBenchEnchantRows(stats({
       enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 80 }] },
     }));
-    expect(rows).toEqual([{ slotName: 'Main Hand', name: 'Sophic Devotion', copyName: 'Sophic Devotion' }]);
+    expect(rows).toEqual([{ slotName: 'Main Hand', enchant: SOPHIC_ITEM }]);
   });
 
-  it('falls back to Enchant #id, with nothing to copy, when the bench enchant name is empty', () => {
+  it('links the item and shows its icon when the bench carries them', () => {
+    const rows = gearComparison.buildBenchEnchantRows(stats({
+      enchants: { 6: [{ id: 8159, name: "Forest Hunter's Armor Kit", icon: 'inv_kit', item_id: ARMOR_KIT_ITEM_ID, pct: 100 }] },
+    }));
+    expect(rows).toEqual([{ slotName: 'Legs', enchant: { name: "Forest Hunter's Armor Kit", itemId: ARMOR_KIT_ITEM_ID, icon: 'inv_kit' } }]);
+  });
+
+  it('falls back to Enchant #id when the bench enchant name is empty', () => {
     // WCL does not populate permanentEnchantName; ingest writes empty strings until gameData.enchant(id) resolves them on the next ingest run.
     const rows = gearComparison.buildBenchEnchantRows(stats({
       enchants: { 15: [{ id: 8041, name: '', pct: 90 }] },
     }));
-    expect(rows).toEqual([{ slotName: 'Main Hand', name: 'Enchant #8041', copyName: null }]);
+    expect(rows).toEqual([{ slotName: 'Main Hand', enchant: { name: 'Enchant #8041', itemId: null, icon: '' } }]);
   });
 
   it('skips slots below the consensus share of top parsers', () => {
@@ -157,7 +167,7 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
     expect(rows).toHaveLength(1);
     expect(rows[0]).toEqual({
       slotName: 'Main Hand', status: 'warn', name: 'Not enchanted',
-      note: 'Most top raiders run Sophic Devotion. Apply it.', copyName: 'Sophic Devotion',
+      note: 'Most top raiders run it. Apply it.', top: SOPHIC_ITEM,
     });
   });
 
@@ -174,16 +184,16 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
       gear({ enchants: [{ slot: 15, id: 8041, name: 'Sophic Devotion' }] }),
       stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
     );
-    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion', note: null, copyName: null });
+    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion', note: null, top: null });
   });
 
-  it('names the consensus enchant when the player runs a different one', () => {
+  it('carries the consensus enchant when the player runs a different one', () => {
     const rows = gearComparison.buildEnchantRows(
       gear({ enchants: [{ slot: 15, id: 8039, name: 'Burning Devotion' }] }),
       stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
     );
     expect(rows[0]).toMatchObject({
-      status: 'info', name: 'Burning Devotion', note: 'Most top raiders run Sophic Devotion.', copyName: 'Sophic Devotion',
+      status: 'info', name: 'Burning Devotion', note: 'Most top raiders run it.', top: SOPHIC_ITEM,
     });
   });
 
@@ -196,7 +206,7 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
       gear({ enchants: [{ slot: 9, id: 7, name: 'Handguard' }] }),
       stats({ enchants: {} }),
     );
-    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Handguard', note: null, copyName: null });
+    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Handguard', note: null, top: null });
   });
 });
 
