@@ -1,20 +1,20 @@
 # warcraft-learner
 
-A web-based diagnostic tool for Mythic WoW raiders. It fetches your combat data from Warcraft Logs, evaluates it against spec-specific rulebooks, and delivers prescriptive, coaching-style feedback benchmarked against top-parse players.
+A web-based diagnostic tool for Mythic WoW raiders. It fetches your combat data from Warcraft Logs, evaluates it against spec-specific rulebooks, and delivers coaching-style feedback benchmarked against the top raiders on your spec.
 
-**Live site: https://warcraft-learner.com/**
+Live site: https://warcraft-learner.com/
 
 ## What it does
 
-- **Analyzes cooldown usage** - finds lost casts, poor Bloodlust alignment, slow openers, and held cooldowns.
-- **Compares you to top parsers** - uses-per-minute and first-cast timing against the top 10 WCL parses for the boss.
-- **Detects hold patterns** - flags when you fire a cooldown earlier than top parsers consistently delay it.
-- **Maps burst windows** - surfaces recurring damage windows across top parses and the cooldowns active in them.
-- **Evaluates rotation rules** - a rulebook-driven engine, not hardcoded spec logic.
-- **Pre-fight gear check** - compares your trinkets, talents, and enchants against top parsers for each boss.
-- **Replays your pull** - opt-in screen recording during a live raid, then a clip of each burst/defensive window cut to the WCL timeline. Everything stays in the browser; nothing is uploaded.
+Before the pull, pick a class, spec and boss to see the plan top raiders run there: when they press each offensive and defensive cooldown, the talent builds, trinket pairs and enchants they bring, and the burst windows they hold for. Those timings export as a note for the Northern Sky raid addon.
 
-All thresholds are derived from real top-parse data for the same encounter and spec, not arbitrary constants.
+After the pull, paste a Warcraft Logs report and pick a fight and a player. A rulebook drives the grading instead of hardcoded spec logic, covering aura uptime, clipped refreshes, wasted procs, capped resources, opener order, target counts, buff windows and filler choice. On top of that it finds lost casts, poor Bloodlust alignment and slow openers, and flags the cooldowns you spend early where top raiders hold them.
+
+Your damage in each burst window and the damage you took in each defensive window go against the range top raiders manage there, and your talents, trinkets and enchants against their consensus for that boss. The pull itself gets read back to you as well: every death and the ability that landed it, your DPS, the duration, and the boss health you ended on.
+
+Any finding, death or window opens a scrubbable map of where you and the top raiders stood at that moment. During a live raid the page re-analyzes as new pulls upload, and an opt-in screen recording cuts a clip of each window without ever leaving the browser.
+
+Every threshold is derived from the top 10 Mythic parses for the same encounter and spec, not from arbitrary constants.
 
 ## Run locally
 
