@@ -213,7 +213,7 @@ describe('withTalentDiffs', () => {
     { key: 'v3:11.1', pct: 40, report_code: 'r2', fight_id: 2, player_name: 'P2', source_id: 2, diff: [] },
   ];
 
-  it('bakes each alt build\'s diff against the most common build, leaving the most common one empty', () => {
+  it('bakes each lower-ranked build\'s diff against the most common build, leaving the most common one empty', () => {
     const out = svc['withTalentDiffs'](builds(), Results.ok(talents));
     assert.exists(out[0]);
     expect(out[0].diff).toEqual([]);

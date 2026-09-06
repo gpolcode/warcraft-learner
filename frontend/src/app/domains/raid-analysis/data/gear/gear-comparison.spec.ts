@@ -97,9 +97,10 @@ describe('trinketSetKey', () => {
 });
 
 describe('buildTrinketSets', () => {
-  it('labels the most common pair first and numbers the alts after it', () => {
+  it('labels each pair by its rank among the top pairs, most common first', () => {
     const rows = gearComparison.buildTrinketSets(TRINKET_STATS, '');
-    expect(rows.map(row => row.label)).toEqual(['Most common pair', 'Alt pair 1', 'Alt pair 2']);
+    expect(rows.map(row => row.label))
+      .toEqual(['Most common pair', '2nd most common pair', '3rd most common pair']);
     expect(rows.map(row => row.pct)).toEqual([50, 30, 15]);
     assert.exists(rows[0]);
     expect(rows[0].items).toEqual([PUZZLE_BOX, GAZE]);
@@ -124,22 +125,22 @@ describe('buildTrinketSets', () => {
 });
 
 describe('trinketStatusOf (a player pair matched against the top pairs)', () => {
-  it('marks a match to the most common pair as standard', () => {
+  it('notes a match to the most common pair', () => {
     const playerKey = gearComparison.trinketSetKey([{ id: PUZZLE_BOX.id }, { id: GAZE.id }]);
     expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
-      .toEqual({ status: 'ok', note: 'Standard pair.' });
+      .toEqual({ status: 'ok', note: 'Most common pair.' });
   });
 
-  it('marks a match to a lower-ranked top pair as a known alt, not standard', () => {
+  it('notes a match to a lower-ranked top pair by its rank', () => {
     const playerKey = gearComparison.trinketSetKey([{ id: PUZZLE_BOX.id }, { id: VOLATILE.id }]);
     expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
-      .toEqual({ status: 'info', note: 'Alt pair 1. 30% use this pair.' });
+      .toEqual({ status: 'info', note: '2nd most common pair. 30% use this pair.' });
   });
 
-  it('marks a pair matching none of the top pairs as off-meta', () => {
+  it('marks a pair matching none of the top pairs as uncommon', () => {
     const playerKey = gearComparison.trinketSetKey([{ id: VOLATILE.id }]);
     expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
-      .toEqual({ status: 'warn', note: 'Off-meta pair. 50% use the standard one.' });
+      .toEqual({ status: 'warn', note: 'Uncommon pair. 50% use the most common one.' });
   });
 
   it('is unknown without a player pair or without bench pairs', () => {
@@ -220,7 +221,7 @@ const TIERED_2_POINTS = 'v3:11.1,22.2,55.1,56.1';
 const TIERED_3_POINTS = 'v3:11.1,22.2,55.1,56.2';
 const TIERED_4_POINTS = 'v3:11.1,22.2,55.1,56.2,57.1';
 
-describe('buildTalentDiff (an alt build vs the most common build)', () => {
+describe('buildTalentDiff (a lower-ranked build vs the most common build)', () => {
   it('is empty when the build matches the most common one', () => {
     expect(gearComparison.buildTalentDiff(BASELINE, BASELINE, TALENTS)).toEqual([]);
   });
@@ -306,26 +307,27 @@ describe('talentStatusOf', () => {
     expect(gearComparison.talentStatusOf(topBuilds, '')).toEqual({ status: 'unknown', note: 'No talent data.' });
   });
 
-  it('is ok when the player key matches the standard build', () => {
-    expect(gearComparison.talentStatusOf(topBuilds, BASELINE)).toEqual({ status: 'ok', note: 'Standard build.' });
+  it('is ok when the player key matches the most common build', () => {
+    expect(gearComparison.talentStatusOf(topBuilds, BASELINE)).toEqual({ status: 'ok', note: 'Most common build.' });
   });
 
   it('is unknown when the player key version prefix does not match the bench build key format', () => {
     expect(gearComparison.talentStatusOf(topBuilds, 'v2:11,22')).toEqual({ status: 'unknown', note: 'No talent data.' });
   });
 
-  it('is warn when the player key is a comparable version but off the standard build', () => {
+  it('is warn when the player key is a comparable version but off the most common build', () => {
     expect(gearComparison.talentStatusOf(topBuilds, 'v3:11.1,33.1')).toEqual({
-      status: 'warn', note: 'Off-meta build. 62% use the standard one.',
+      status: 'warn', note: 'Uncommon build. 62% use the most common one.',
     });
   });
 });
 
 describe('talentStatusOf (a player build matched against the top builds)', () => {
   const MOST_COMMON = 'v3:11.1,22.2';
-  const ALT_1 = 'v3:12.1,22.2';
-  const ALT_2 = 'v3:11.1,22.1';
-  const OFF_META = 'v3:99.1,22.2';
+  const SECOND_BUILD = 'v3:12.1,22.2';
+  const THIRD_BUILD = 'v3:11.1,22.1';
+  const FOURTH_BUILD = 'v3:12.1,22.1';
+  const UNBENCHED_BUILD = 'v3:99.1,22.2';
 
   function talentBuild(
     partial: Partial<EncounterGearStats['talent_builds'][number]> = {},
@@ -336,26 +338,36 @@ describe('talentStatusOf (a player build matched against the top builds)', () =>
   const topStats = stats({
     talent_builds: [
       talentBuild({ key: MOST_COMMON, pct: 50 }),
-      talentBuild({ key: ALT_1, pct: 30 }),
-      talentBuild({ key: ALT_2, pct: 15 }),
+      talentBuild({ key: SECOND_BUILD, pct: 30 }),
+      talentBuild({ key: THIRD_BUILD, pct: 15 }),
     ],
   });
 
-  it('marks a match to the most common build as standard', () => {
-    expect(gearComparison.talentStatusOf(topStats, MOST_COMMON)).toEqual({ status: 'ok', note: 'Standard build.' });
+  it('notes a match to the most common build', () => {
+    expect(gearComparison.talentStatusOf(topStats, MOST_COMMON)).toEqual({ status: 'ok', note: 'Most common build.' });
   });
 
-  it('marks a match to a lower-ranked top build as a known alt, not standard', () => {
-    expect(gearComparison.talentStatusOf(topStats, ALT_1)).toEqual({
+  it('notes a match to a lower-ranked top build by its rank', () => {
+    expect(gearComparison.talentStatusOf(topStats, SECOND_BUILD)).toEqual({
       status: 'info',
-      note: 'Alt build 1. 30% use this build.',
+      note: '2nd most common build. 30% use this build.',
     });
   });
 
-  it('marks a build matching none of the top builds as off-meta', () => {
-    expect(gearComparison.talentStatusOf(topStats, OFF_META)).toEqual({
+  it('ranks a build past the named ordinals by its position', () => {
+    const deepStats = stats({
+      talent_builds: [...topStats.talent_builds, talentBuild({ key: FOURTH_BUILD, pct: 5 })],
+    });
+    expect(gearComparison.talentStatusOf(deepStats, FOURTH_BUILD)).toEqual({
+      status: 'info',
+      note: '4th most common build. 5% use this build.',
+    });
+  });
+
+  it('marks a build matching none of the top builds as uncommon', () => {
+    expect(gearComparison.talentStatusOf(topStats, UNBENCHED_BUILD)).toEqual({
       status: 'warn',
-      note: 'Off-meta build. 50% use the standard one.',
+      note: 'Uncommon build. 50% use the most common one.',
     });
   });
 });

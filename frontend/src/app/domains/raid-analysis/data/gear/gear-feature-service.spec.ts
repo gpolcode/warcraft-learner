@@ -103,19 +103,19 @@ describe('buildGearView', () => {
     const view = svc['buildGearView'](player, stats);
     expect(view.comparison).toBe(true);
     expect(view.talentStatus.status).toBe('ok');
-    expect(view.trinketStatus).toEqual({ status: 'ok', note: 'Standard pair.' });
+    expect(view.trinketStatus).toEqual({ status: 'ok', note: 'Most common pair.' });
     expect(view.trinketSets[0]).toMatchObject({ isPlayer: true });
     expect(view.enchantStatus).toBe('ok');
   });
 
-  it('comparison mode: a pair off the bench pairs is flagged off-meta', () => {
+  it('comparison mode: a pair off the bench pairs is flagged uncommon', () => {
     const player: CharacterGear = {
       talent_key: STANDARD_KEY,
       trinkets: [{ slot: 12, id: 999, name: 'Off Meta' }],
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
     };
     const view = svc['buildGearView'](player, stats);
-    expect(view.trinketStatus).toEqual({ status: 'warn', note: 'Off-meta pair. 70% use the standard one.' });
+    expect(view.trinketStatus).toEqual({ status: 'warn', note: 'Uncommon pair. 70% use the most common one.' });
     expect(view.trinketSets.some(row => row.isPlayer)).toBe(false);
   });
 

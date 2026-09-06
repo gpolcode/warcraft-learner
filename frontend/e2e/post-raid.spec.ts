@@ -164,7 +164,7 @@ test('defensives flag the mistimed cooldowns and benchmark the damage taken', as
   await shows(defensives, PERCENT);
 });
 
-test('gear lists the top-parse talent builds and how the alt build differs, plus trinkets and enchants', async () => {
+test('gear lists the top-parse talent builds and how a lower-ranked build differs, plus trinkets and enchants', async () => {
   const gear = page.locator('wl-gear');
   await shows(gear, 'Gear vs top logs.');
   const talents = gear.locator('div.card-section').filter({ hasText: 'Talents' }).first();
@@ -173,9 +173,9 @@ test('gear lists the top-parse talent builds and how the alt build differs, plus
   await shows(talents, PERCENT);
   await shows(talents, 'of top logs');
   await shows(talents, 'Get talent code');
-  // How many alt builds the bench carries moves with every refresh; a thin sample can leave zero.
-  if (await talents.getByText(/Alt build \d+/).count()) {
-    await shows(talents, /Alt build 1/);
+  // How many builds the bench carries moves with every refresh; a thin sample can leave only the most common one.
+  if (await talents.getByText(/\d(?:nd|rd|th) most common build/).count()) {
+    await shows(talents, '2nd most common build');
     await shows(talents, 'The talents this build changes from the most common build.');
     await shows(talents, 'Added');
     await shows(talents, 'Dropped');

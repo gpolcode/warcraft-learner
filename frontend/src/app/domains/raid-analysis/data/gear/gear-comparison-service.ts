@@ -11,6 +11,10 @@ export class GearComparisonService {
 
   private slotName(slot: number): string { return SLOT_NAMES[slot] ?? `Slot ${slot}`; }
 
+  private rankLabel(index: number, noun: string): string {
+    return `${RANK_PREFIXES[index] ?? `${index + 1}th most common`} ${noun}`;
+  }
+
   private enchantLabel(enchant: { id: number; name: string } | undefined): string {
     return enchant ? (enchant.name || `Enchant #${enchant.id}`) : '';
   }
@@ -59,7 +63,7 @@ export class GearComparisonService {
       // Deep-link to the example parse: select the fight, the summary tab, and the player (`source` = their actor id within that report).
       link: `https://www.warcraftlogs.com/reports/${b.report_code}?fight=${b.fight_id}&type=summary&source=${b.source_id}`,
       playerName: b.player_name,
-      label: i === 0 ? 'Most common build' : `Alt build ${i}`,
+      label: this.rankLabel(i, 'build'),
       // Benches from the prior ingest have no diff field on disk.
       added: (b.diff ?? []).filter(d => d.kind === 'added').map(d => d.talent),
       dropped: (b.diff ?? []).filter(d => d.kind === 'dropped').map(d => d.talent),
@@ -127,14 +131,14 @@ export class GearComparisonService {
       return { status: 'unknown', note: 'No talent data.' };
     }
     if (topBuild.key === playerKey) {
-      return { status: 'ok', note: 'Standard build.' };
+      return { status: 'ok', note: `${this.rankLabel(0, 'build')}.` };
     }
-    const altIndex = builds.findIndex(b => b.key === playerKey);
-    const altBuild = altIndex > 0 ? builds[altIndex] : undefined;
-    if (altBuild) {
-      return { status: 'info', note: `Alt build ${altIndex}. ${altBuild.pct}% use this build.` };
+    const rank = builds.findIndex(b => b.key === playerKey);
+    const ranked = rank > 0 ? builds[rank] : undefined;
+    if (ranked) {
+      return { status: 'info', note: `${this.rankLabel(rank, 'build')}. ${ranked.pct}% use this build.` };
     }
-    return { status: 'warn', note: `Off-meta build. ${topBuild.pct}% use the standard one.` };
+    return { status: 'warn', note: `Uncommon build. ${topBuild.pct}% use the most common one.` };
   }
 
   /** Sorted-id identity of a worn trinket combination, so two parses using the same trinkets in opposite slots share one key. */
@@ -147,7 +151,7 @@ export class GearComparisonService {
     return (stats?.trinket_sets ?? []).map((set, i) => ({
       pct: set.pct,
       isPlayer: !!playerKey && this.trinketSetKey(set.items) === playerKey,
-      label: i === 0 ? 'Most common pair' : `Alt pair ${i}`,
+      label: this.rankLabel(i, 'pair'),
       items: set.items,
     }));
   }
@@ -157,14 +161,14 @@ export class GearComparisonService {
     const [topSet] = sets;
     if (!topSet || !playerKey) return { status: 'unknown', note: 'No trinket data.' };
     if (this.trinketSetKey(topSet.items) === playerKey) {
-      return { status: 'ok', note: 'Standard pair.' };
+      return { status: 'ok', note: `${this.rankLabel(0, 'pair')}.` };
     }
-    const altIndex = sets.findIndex(set => this.trinketSetKey(set.items) === playerKey);
-    const altSet = altIndex > 0 ? sets[altIndex] : undefined;
-    if (altSet) {
-      return { status: 'info', note: `Alt pair ${altIndex}. ${altSet.pct}% use this pair.` };
+    const rank = sets.findIndex(set => this.trinketSetKey(set.items) === playerKey);
+    const ranked = rank > 0 ? sets[rank] : undefined;
+    if (ranked) {
+      return { status: 'info', note: `${this.rankLabel(rank, 'pair')}. ${ranked.pct}% use this pair.` };
     }
-    return { status: 'warn', note: `Off-meta pair. ${topSet.pct}% use the standard one.` };
+    return { status: 'warn', note: `Uncommon pair. ${topSet.pct}% use the most common one.` };
   }
 
   /** Shows the consensus enchant per slot for the boss-study view; omits slots below the top-parse consensus share. */
@@ -187,6 +191,8 @@ export type GearStatus = 'ok' | 'warn' | 'info' | 'unknown';
 
 /** A slot counts as consensus-enchanted, and an un-enchanted one warns, at this top-parse share. */
 const ENCHANT_CONSENSUS_PCT = 50;
+
+const RANK_PREFIXES = ['Most common', '2nd most common', '3rd most common'];
 
 const SLOT_NAMES: Record<number, string> = {
   0:'Head', 1:'Neck', 2:'Shoulder', 3:'Shirt', 4:'Chest', 5:'Waist', 6:'Legs',
