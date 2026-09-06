@@ -148,7 +148,7 @@ test('burst windows compare the player damage against the top-parse windows', as
   const count = await abilities.count();
   expect(count).toBeGreaterThan(0);
   for (let i = 0; i < count; i++) {
-    await expect(abilities.nth(i)).toHaveText(new RegExp(`${RATIO.source}|passive`));
+    await expect(abilities.nth(i)).toHaveText(new RegExp(`${RATIO.source}|Passive`));
   }
 });
 
@@ -199,9 +199,9 @@ test('the positioning map opens anchored on the death', async () => {
   await openMap.click();
   await shows(page, 'Positioning');
   await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
-  await shows(page, /opened at -?\d+:\d{2}/);
-  await shows(page, '● top logs');
+  await shows(page, /Opened at -?\d+:\d{2}/);
+  await shows(page, '● Top logs');
   // The gold marker renders only once the player's own trail has loaded.
-  await expect(page.getByText('◆ you')).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
+  await expect(page.getByText('◆ You')).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
   await page.getByRole('button', { name: 'Close map' }).click();
 });
