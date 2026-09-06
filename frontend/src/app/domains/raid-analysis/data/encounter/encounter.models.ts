@@ -64,5 +64,6 @@ export type PerDefensiveBenchmark = CadenceBenchmark;
 export interface EncounterGearStats {
   talent_builds: { key: string; pct: number; report_code: string; fight_id: number; player_name: string; source_id: number; diff?: TalentDiff[] }[];
   trinket_sets: { items: { id: number; name: string; icon: string }[]; pct: number }[];
-  enchants: Record<number, { id: number; name: string; pct: number }[]>;
+  // WCL's `name` is stat text for an armor kit; the purchasable item's name is `item_name`, absent on benches from the prior ingest.
+  enchants: Record<number, { id: number; name: string; item_name?: string; pct: number }[]>;
 }

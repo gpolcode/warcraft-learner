@@ -15,23 +15,28 @@ export class GearComparisonService {
     return `${RANK_PREFIXES[index] ?? `${index + 1}th most common`} ${noun}`;
   }
 
-  private enchantLabel(enchant: { id: number; name: string } | undefined): string {
-    return enchant ? (enchant.name || `Enchant #${enchant.id}`) : '';
+  private enchantName(enchant: { id: number; name: string; item_name?: string } | undefined): string | null {
+    return enchant ? ([enchant.item_name, enchant.name].find(name => name) ?? null) : null;
+  }
+
+  private enchantLabel(enchant: { id: number; name: string; item_name?: string } | undefined): string {
+    return enchant ? (this.enchantName(enchant) ?? `Enchant #${enchant.id}`) : '';
   }
 
   private enchantRowFor(name: string, player: PlayerEnchant | undefined, top: TopEnchant | undefined): EnchantRow | null {
     const topName = this.enchantLabel(top);
+    const copyName = this.enchantName(top);
     if (!player) {
       if (!top || top.pct < ENCHANT_CONSENSUS_PCT) return null;
       return { slotName: name, status: 'warn', name: 'Not enchanted',
-        note: `Most top raiders run ${topName}. Apply it.` };
+        note: `Most top raiders run ${topName}. Apply it.`, copyName };
     }
     const playerName = this.enchantLabel(player);
     if (top && player.id !== top.id) {
       return { slotName: name, status: 'info', name: playerName,
-        note: `Most top raiders run ${topName}.` };
+        note: `Most top raiders run ${topName}.`, copyName };
     }
-    return { slotName: name, status: 'ok', name: playerName, note: null };
+    return { slotName: name, status: 'ok', name: playerName, note: null, copyName: null };
   }
 
   /** Flags slots the player left un-enchanted that top parsers consider mandatory, and surfaces where the player differs from the consensus enchant. */
@@ -180,7 +185,7 @@ export class GearComparisonService {
       .reduce<BenchEnchantRow[]>((acc, slot) => {
         const top = topEnch[slot]?.[0];
         if (top && top.pct >= ENCHANT_CONSENSUS_PCT) {
-          acc.push({ slotName: this.slotName(slot), name: top.name || `Enchant #${top.id}` });
+          acc.push({ slotName: this.slotName(slot), name: this.enchantLabel(top), copyName: this.enchantName(top) });
         }
         return acc;
       }, []);
@@ -200,11 +205,13 @@ const SLOT_NAMES: Record<number, string> = {
   12:'Trinket 1', 13:'Trinket 2', 14:'Back', 15:'Main Hand', 16:'Off Hand',
 };
 
+/** `copyName` is the consensus enchant's item name to paste into the auction house, null once the slot is on plan or no name resolved. */
 export interface EnchantRow {
   slotName: string;
   status: GearStatus;
   name: string;
   note: string | null;
+  copyName: string | null;
 }
 
 export interface TalentBuildRow {
@@ -239,4 +246,5 @@ interface TalentSpend {
 export interface BenchEnchantRow {
   slotName: string;
   name: string;
+  copyName: string | null;
 }

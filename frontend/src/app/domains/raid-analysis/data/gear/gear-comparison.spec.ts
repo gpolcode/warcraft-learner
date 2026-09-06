@@ -15,25 +15,31 @@ function gear(partial: Partial<CharacterGear> = {}): CharacterGear {
   return { ...partial };
 }
 
+const ARMOR_KIT_ENCHANT = 8159;
+const ARMOR_KIT_STATS = '+41 Agility/Strength & +115 Stamina';
+const ARMOR_KIT_ITEM = "Forest Hunter's Armor Kit";
+
 describe('buildBenchEnchantRows', () => {
-  it('shows the enchant name when the bench data has a name', () => {
+  it('shows the enchant name, and offers it to copy, when the bench carries only the WCL name', () => {
     const rows = gearComparison.buildBenchEnchantRows(stats({
       enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 80 }] },
     }));
-    expect(rows).toHaveLength(1);
-    assert.exists(rows[0]);
-    expect(rows[0].name).toBe('Sophic Devotion');
-    assert.exists(rows[0]);
-    expect(rows[0].slotName).toBe('Main Hand');
+    expect(rows).toEqual([{ slotName: 'Main Hand', name: 'Sophic Devotion', copyName: 'Sophic Devotion' }]);
   });
 
-  it('falls back to Enchant #id when the bench enchant name is empty', () => {
+  it('shows and copies the item name over the WCL stat text once the bench carries it', () => {
+    const rows = gearComparison.buildBenchEnchantRows(stats({
+      enchants: { 6: [{ id: ARMOR_KIT_ENCHANT, name: ARMOR_KIT_STATS, item_name: ARMOR_KIT_ITEM, pct: 100 }] },
+    }));
+    expect(rows).toEqual([{ slotName: 'Legs', name: ARMOR_KIT_ITEM, copyName: ARMOR_KIT_ITEM }]);
+  });
+
+  it('falls back to Enchant #id, with nothing to copy, when both names are empty', () => {
     // WCL does not populate permanentEnchantName; ingest writes empty strings until gameData.enchant(id) resolves them on the next ingest run.
     const rows = gearComparison.buildBenchEnchantRows(stats({
-      enchants: { 15: [{ id: 8041, name: '', pct: 90 }] },
+      enchants: { 15: [{ id: 8041, name: '', item_name: '', pct: 90 }] },
     }));
-    assert.exists(rows[0]);
-    expect(rows[0].name).toBe('Enchant #8041');
+    expect(rows).toEqual([{ slotName: 'Main Hand', name: 'Enchant #8041', copyName: null }]);
   });
 
   it('skips slots below the consensus share of top parsers', () => {
@@ -160,9 +166,18 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
       stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
     );
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({
-      status: 'warn', name: 'Not enchanted', note: 'Most top raiders run Sophic Devotion. Apply it.',
+    expect(rows[0]).toEqual({
+      slotName: 'Main Hand', status: 'warn', name: 'Not enchanted',
+      note: 'Most top raiders run Sophic Devotion. Apply it.', copyName: 'Sophic Devotion',
     });
+  });
+
+  it('names the consensus item, not its stat text, in the note and the copy', () => {
+    const rows = gearComparison.buildEnchantRows(
+      gear({ enchants: [] }),
+      stats({ enchants: { 6: [{ id: ARMOR_KIT_ENCHANT, name: ARMOR_KIT_STATS, item_name: ARMOR_KIT_ITEM, pct: 90 }] } }),
+    );
+    expect(rows[0]).toMatchObject({ note: `Most top raiders run ${ARMOR_KIT_ITEM}. Apply it.`, copyName: ARMOR_KIT_ITEM });
   });
 
   it('stays silent on an un-enchanted slot below the consensus share', () => {
@@ -178,7 +193,7 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
       gear({ enchants: [{ slot: 15, id: 8041, name: 'Sophic Devotion' }] }),
       stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
     );
-    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion', note: null });
+    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion', note: null, copyName: null });
   });
 
   it('names the consensus enchant when the player runs a different one', () => {
@@ -187,7 +202,7 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
       stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
     );
     expect(rows[0]).toMatchObject({
-      status: 'info', name: 'Burning Devotion', note: 'Most top raiders run Sophic Devotion.',
+      status: 'info', name: 'Burning Devotion', note: 'Most top raiders run Sophic Devotion.', copyName: 'Sophic Devotion',
     });
   });
 
@@ -200,7 +215,7 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
       gear({ enchants: [{ slot: 9, id: 7, name: 'Handguard' }] }),
       stats({ enchants: {} }),
     );
-    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Handguard', note: null });
+    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Handguard', note: null, copyName: null });
   });
 });
 

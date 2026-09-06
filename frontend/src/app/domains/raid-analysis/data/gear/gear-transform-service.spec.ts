@@ -27,6 +27,9 @@ const TRINKET_1_SLOT = 12;
 const TRINKET_2_SLOT = 13;
 const ENCHANT_SLOT = 15;
 const EXAMPLE_SOURCE_ID = 537;
+const SOPHIC_ENCHANT = 8041;
+const SOPHIC_ITEM = 244001;
+const SOPHIC_ITEM_NAME = 'Enchant Weapon - Sophic Devotion';
 
 describe('talentKeyFromTree', () => {
   it('builds a v3: key of entry.rank pairs ordered by entry, ignoring the node', () => {
@@ -243,14 +246,38 @@ const wclFake = {
   getReport: reportsByCode(),
   // getCombatantInfo returns the raw events array; the transform selects the player's event.
   getCombatantInfo: async (code: string) => [combatantInfo(code === 'r1' ? 10 : 20)],
-  getGameNames: async () => ({ e8041: { id: 8041, name: 'Soph' } }),
+  getGameNames: async () => ({
+    [`e${SOPHIC_ENCHANT}`]: { id: SOPHIC_ENCHANT, name: 'Soph' },
+    [`i${SOPHIC_ITEM}`]: { id: SOPHIC_ITEM, name: SOPHIC_ITEM_NAME },
+  }),
 };
 
 const talentDataFake = { getTalents: async () => Results.missing('No talent data for this spec.') };
+const enchantItemsFake = { getEnchantItems: async () => Results.ok({ [SOPHIC_ENCHANT]: SOPHIC_ITEM }) };
+const noEnchantItemsFake = { getEnchantItems: async () => Results.transient('Raidbots is unreachable right now.') };
+
+describe('fillEnchantItemNames', () => {
+  const ranked = { [ENCHANT_SLOT]: [{ id: SOPHIC_ENCHANT, name: 'Soph', pct: 100 }, { id: 9000, name: 'Other', pct: 50 }] };
+  const names = { [`i${SOPHIC_ITEM}`]: { id: SOPHIC_ITEM, name: 'Enchant Weapon - Sophic &amp; Devotion' } };
+
+  it('collects each ranked enchant\'s item id once, skipping enchants the dump has no item for', () => {
+    const twoSlots = { ...ranked, 16: [{ id: SOPHIC_ENCHANT, name: 'Soph', pct: 100 }] };
+    expect(svc['enchantItemIds'](twoSlots, { [SOPHIC_ENCHANT]: SOPHIC_ITEM })).toEqual([SOPHIC_ITEM]);
+  });
+
+  it('names the item behind each enchant, decoded, and leaves a blank name where the dump or WCL has none', () => {
+    expect(svc['fillEnchantItemNames'](ranked, { [SOPHIC_ENCHANT]: SOPHIC_ITEM, 9000: 1 }, names)).toEqual({
+      [ENCHANT_SLOT]: [
+        { id: SOPHIC_ENCHANT, name: 'Soph', item_name: 'Enchant Weapon - Sophic & Devotion', pct: 100 },
+        { id: 9000, name: 'Other', item_name: '', pct: 50 },
+      ],
+    });
+  });
+});
 
 describe('GearTransformService (live, in-browser)', () => {
   it('computes a gear bench aggregated from the top parses', async () => {
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, talents: talentDataFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, talents: talentDataFake, enchantItems: enchantItemsFake }) });
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
@@ -260,7 +287,14 @@ describe('GearTransformService (live, in-browser)', () => {
       key: 'v3:650.1', pct: 100, report_code: 'r1', fight_id: 1, player_name: 'P1', source_id: 10,
     });
     expect(bench.value.trinket_sets).toEqual([{ items: [{ id: 100, name: 'A', icon: 't' }], pct: 100 }]);
-    expect(bench.value.enchants[15]).toEqual([{ id: 8041, name: 'Soph', pct: 100 }]);
+    expect(bench.value.enchants[15]).toEqual([{ id: SOPHIC_ENCHANT, name: 'Soph', item_name: SOPHIC_ITEM_NAME, pct: 100 }]);
+  });
+
+  it('keeps the WCL enchant names, with no item names, when the Raidbots dump fails to load', async () => {
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, talents: talentDataFake, enchantItems: noEnchantItemsFake }) });
+    const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
+    expect(bench.ok).toBe(true);
+    if (bench.ok) expect(bench.value.enchants[15]).toEqual([{ id: SOPHIC_ENCHANT, name: 'Soph', pct: 100 }]);
   });
 
   it('bakes talent diffs into the bench when the dump carries the spec', async () => {
@@ -278,7 +312,7 @@ describe('GearTransformService (live, in-browser)', () => {
       }],
     };
     TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: splitBuildWcl, talents: { getTalents: async () => Results.ok(talents) } }),
+      providers: provideApiFakes({ wcl: splitBuildWcl, talents: { getTalents: async () => Results.ok(talents) }, enchantItems: enchantItemsFake }),
     });
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
@@ -291,7 +325,7 @@ describe('GearTransformService (live, in-browser)', () => {
   });
 
   it('leaves the bench talent builds diff-free when the dump carries no entry for the spec', async () => {
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, talents: talentDataFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, talents: talentDataFake, enchantItems: enchantItemsFake }) });
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (bench.ok) expect(bench.value.talent_builds.every(build => (build.diff ?? []).length === 0)).toBe(true);
@@ -317,7 +351,7 @@ describe('GearTransformService (live, in-browser)', () => {
         { ...combatantInfo(RANKED_ID), talentTree: [{ nodeID: 65, id: RANKED_TALENT_ENTRY, rank: 1 }] },
       ],
     };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: twinWcl, talents: talentDataFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: twinWcl, talents: talentDataFake, enchantItems: enchantItemsFake }) });
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;

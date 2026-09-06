@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { GameIcon } from '../ui-game-icon/game-icon';
@@ -16,6 +17,7 @@ import { LoadResourceService } from '../../shared/ui-load-state/load-resource-se
 export class Gear {
   private readonly loadRes = inject(LoadResourceService);
   private readonly gear = inject(GearFeatureService);
+  private readonly clipboard = inject(Clipboard);
 
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
@@ -50,4 +52,14 @@ export class Gear {
   // Partitioned in the component (semantic data only, no styling).
   protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
   protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
+
+  // Keyed by slot name, so the confirmation sits on the one row whose name was copied.
+  protected readonly copiedSlot = signal<string | null>(null);
+  protected readonly copyFailedSlot = signal<string | null>(null);
+
+  protected copy(slotName: string, name: string): void {
+    const succeeded = this.clipboard.copy(name);
+    this.copiedSlot.set(succeeded ? slotName : null);
+    this.copyFailedSlot.set(succeeded ? null : slotName);
+  }
 }

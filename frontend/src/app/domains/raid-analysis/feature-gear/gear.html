@@ -184,7 +184,7 @@
       @if (view().comparison && view().enchantRows.length) {
         <div class="text-body text-muted mt-0.5">Only the slots where your enchant is missing or differs.</div>
       } @else if (!view().comparison && view().benchEnchantRows.length) {
-        <div class="text-body text-muted mt-0.5">What most top raiders use.</div>
+        <div class="text-body text-muted mt-0.5">What most top raiders use. Copy a name to find it in the auction house.</div>
       }
     </div>
 
@@ -206,7 +206,19 @@
             <div class="hidden md:block"></div>
             <div class="col-start-2 md:col-auto text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-[14px]">
               <span class="md:hidden block text-label text-muted mb-1">Fix</span>
-              <wl-collapsible>{{ row.note }}</wl-collapsible>
+              <div class="flex items-start gap-1">
+                <wl-collapsible class="min-w-0 flex-1">{{ row.note }}</wl-collapsible>
+                @if (row.copyName; as copyName) {
+                  <button mat-icon-button class="shrink-0 -my-2"
+                    [attr.aria-label]="copiedSlot() === row.slotName ? 'Copied' : 'Copy name'"
+                    (click)="copy(row.slotName, copyName)">
+                    <mat-icon class="icon-18">{{ copiedSlot() === row.slotName ? 'check' : 'content_copy' }}</mat-icon>
+                  </button>
+                }
+              </div>
+              @if (copyFailedSlot() === row.slotName) {
+                <div class="text-caption text-critical">Clipboard write failed. Retry the copy.</div>
+              }
             </div>
           </div>
         }
@@ -234,9 +246,19 @@
         @for (row of view().benchEnchantRows; track row.slotName) {
           <div class="px-4 py-[10px] border-t border-line md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-center">
             <div class="hidden md:block"></div>
-            <div class="min-w-0 flex items-baseline gap-2">
+            <div class="min-w-0 flex items-center gap-2">
               <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
               <span class="text-name">{{ row.name }}</span>
+              @if (row.copyName; as copyName) {
+                <button mat-icon-button class="shrink-0 -my-2"
+                  [attr.aria-label]="copiedSlot() === row.slotName ? 'Copied' : 'Copy name'"
+                  (click)="copy(row.slotName, copyName)">
+                  <mat-icon class="icon-18">{{ copiedSlot() === row.slotName ? 'check' : 'content_copy' }}</mat-icon>
+                </button>
+              }
+              @if (copyFailedSlot() === row.slotName) {
+                <span class="text-caption text-critical">Clipboard write failed. Retry the copy.</span>
+              }
             </div>
             <div class="hidden md:block"></div>
             <div class="hidden md:block"></div>

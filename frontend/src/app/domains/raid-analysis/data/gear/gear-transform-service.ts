@@ -6,6 +6,7 @@ import { Result } from '../../../shared/util-http/result';
 import { GearExtractService, GameNames } from './gear-extract-service';
 import { TalentKeyService } from './talent-key-service';
 import { TalentDataService } from '../http/talent-data-service';
+import { EnchantItemDataService, EnchantItems } from '../http/enchant-item-data-service';
 import { SpecTalents } from './talent.models';
 import { getOrInsert } from '../analysis/analysis-math';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
@@ -38,6 +39,7 @@ export class GearTransformService implements DataSource<GearBench> {
   private readonly talentKey = inject(TalentKeyService);
   private readonly wclApi = inject(WclApiService);
   private readonly talentData = inject(TalentDataService);
+  private readonly enchantItemData = inject(EnchantItemDataService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<GearBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
@@ -50,7 +52,7 @@ export class GearTransformService implements DataSource<GearBench> {
         return {
           talent_builds: this.withTalentDiffs(stats.talent_builds, await this.talentData.getTalents(spec)),
           trinket_sets: stats.trinket_sets,
-          enchants: stats.enchants,
+          enchants: await this.withEnchantItemNames(stats.enchants),
         };
       },
     });
@@ -83,6 +85,38 @@ export class GearTransformService implements DataSource<GearBench> {
       this.logger.logWarn(`GearTransformService name resolution ${ranking.report_code}:${ranking.fight_id}`, err);
       return {};
     }
+  }
+
+  // A failed dump or item lookup keeps the ids and WCL names, so the bench still benches without item names.
+  private async withEnchantItemNames(enchants: EncounterGearStats['enchants']): Promise<EncounterGearStats['enchants']> {
+    const enchantItems = await this.enchantItemData.getEnchantItems();
+    if (!enchantItems.ok) return enchants;
+    try {
+      const names = await this.wclApi.getGameNames(this.enchantItemIds(enchants, enchantItems.value), []);
+      return this.fillEnchantItemNames(enchants, enchantItems.value, names);
+    } catch (err) {
+      this.logger.logWarn('GearTransformService enchant item names', err);
+      return enchants;
+    }
+  }
+
+  protected enchantItemIds(enchants: EncounterGearStats['enchants'], enchantItems: EnchantItems): number[] {
+    const itemIds = Object.values(enchants).flat().map(enchant => enchantItems[enchant.id]).filter(itemId => itemId !== undefined);
+    return [...new Set(itemIds)];
+  }
+
+  protected fillEnchantItemNames(
+    enchants: EncounterGearStats['enchants'], enchantItems: EnchantItems, names: GameNames,
+  ): EncounterGearStats['enchants'] {
+    const filled: EncounterGearStats['enchants'] = {};
+    for (const [slot, ranked] of Object.entries(enchants)) {
+      filled[Number(slot)] = ranked.map(enchant => {
+        const itemId = enchantItems[enchant.id];
+        const item_name = itemId === undefined ? '' : this.gearExtract.decodeHtmlEntities(names[`i${itemId}`]?.name ?? '');
+        return { ...enchant, item_name };
+      });
+    }
+    return filled;
   }
 
   private pct(count: number, total: number): number {

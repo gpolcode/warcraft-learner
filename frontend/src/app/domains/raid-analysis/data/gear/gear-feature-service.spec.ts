@@ -82,7 +82,7 @@ describe('buildBenchGearView', () => {
   it('comparison off, bench rows populated with no row marked as the player\'s', () => {
     const view = svc['buildBenchGearView'](stats);
     expect(view.comparison).toBe(false);
-    expect(view.benchEnchantRows).toEqual([{ slotName: 'Main Hand', name: 'Sophic' }]);
+    expect(view.benchEnchantRows).toEqual([{ slotName: 'Main Hand', name: 'Sophic', copyName: 'Sophic' }]);
     expect(view.talentBuilds[0]).toMatchObject({ pct: 80, label: 'Most common build' });
     expect(view.trinketSets[0]).toEqual({ pct: 70, isPlayer: false, label: 'Most common pair', items: [GAZE, PUZZLE_BOX] });
     expect(view.trinketStatus).toEqual({ status: 'unknown', note: 'No trinket data.' });
