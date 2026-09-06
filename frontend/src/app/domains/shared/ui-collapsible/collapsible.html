@@ -5,7 +5,7 @@
 @if (overflowing()) {
   <button
     type="button"
-    [class]="'mt-1.5 inline-flex items-center gap-0.5 text-[11.5px] text-[var(--accent)] ' + (mode() === 'chips' ? '' : 'md:hidden')"
+    [class]="'mt-1.5 inline-flex items-center gap-0.5 text-caption text-accent ' + (mode() === 'chips' ? '' : 'md:hidden')"
     [attr.aria-expanded]="expanded()"
     (click)="toggle()">
     {{ expanded() ? 'Show less' : 'Show more' }}

@@ -5,12 +5,12 @@
     </mat-slide-toggle>
     @if (capture.liveEnabled()) {
       @if (capture.status()) {
-        <span class="ml-auto flex items-center gap-2 text-[12.5px] text-[var(--muted)]">
-          <span class="h-[9px] w-[9px] rounded-full bg-[var(--accent)]"></span>{{ capture.status() }}
+        <span class="ml-auto flex items-center gap-2 text-body text-muted">
+          <span class="h-[9px] w-[9px] rounded-full bg-accent"></span>{{ capture.status() }}
         </span>
       }
     } @else {
-      <span class="ml-auto text-[12.5px] text-[var(--muted)]">Re-analyzes as new pulls upload during a live log.</span>
+      <span class="ml-auto text-body text-muted">Re-analyzes as new pulls upload during a live log.</span>
     }
   </div>
 
@@ -18,17 +18,17 @@
     <mat-slide-toggle [checked]="capture.recordToggleOn()" [disabled]="capture.isStarting()" (change)="onRecordToggle($event.checked)">
       Record game client
     </mat-slide-toggle>
-    <span class="ml-auto flex items-center gap-2 text-[12.5px] text-[var(--muted)]">
+    <span class="ml-auto flex items-center gap-2 text-body text-muted">
       @if (capture.isStarting()) {
         <mat-progress-spinner mode="indeterminate" diameter="15"></mat-progress-spinner>
-        <span>pick a window...</span>
+        <span>Pick a window...</span>
       } @else if (capture.isCapturing()) {
-        <span class="h-[9px] w-[9px] rounded-full bg-[var(--critical)]"></span>
+        <span class="h-[9px] w-[9px] rounded-full bg-critical"></span>
         <span>Recording "{{ capture.sourceLabel() }}" in the background</span>
       } @else if (capture.captureError()) {
-        <span class="text-[var(--critical)]">{{ capture.captureError() }}</span>
+        <span class="text-critical">{{ capture.captureError() }}</span>
       } @else {
-        <span>stays in this browser session, nothing is uploaded</span>
+        <span>Stays in this browser session, nothing is uploaded</span>
       }
     </span>
   </div>

@@ -1,23 +1,23 @@
 <!-- Desktop grid tracks mirror window-comparison's + finding-table's column dividers. -->
-<div class="md:grid md:grid-cols-[minmax(0,1fr)_96px_156px_90px] md:gap-x-[14px] md:items-center px-4 py-1.5 min-w-0 border-t md:border-t-0 border-[var(--border)]">
+<div class="md:grid md:grid-cols-[minmax(0,1fr)_96px_156px_90px] md:gap-x-[14px] md:items-center px-4 py-1.5 min-w-0 border-t md:border-t-0 border-line">
 
   <div class="flex items-baseline gap-2 min-w-0 md:contents">
     <div class="flex-1 min-w-0 overflow-hidden md:col-start-1 md:row-start-1">
       @if (row().spellId; as spellId) {
         <wl-game-icon [id]="spellId" [icon]="row().icon" [name]="row().label"></wl-game-icon>
       } @else {
-        <span class="truncate text-sm">{{ row().label }}</span>
+        <span class="truncate text-name text-text">{{ row().label }}</span>
       }
     </div>
 
     @if (!hidePlayer()) {
-      <span class="shrink-0 md:col-start-4 md:row-start-1 text-right tabular-nums text-xs font-semibold"
-            [class.badge-success]="gapStatus() === 'success'"
-            [class.badge-warning]="gapStatus() === 'warning'"
-            [class.badge-critical]="gapStatus() === 'critical'"
-            [class.badge-muted]="gapStatus() === 'muted'">
+      <span class="tabular-nums shrink-0 md:col-start-4 md:row-start-1 text-right text-body font-semibold"
+            [class.text-success]="gapStatus() === 'success'"
+            [class.text-warning]="gapStatus() === 'warning'"
+            [class.text-critical]="gapStatus() === 'critical'"
+            [class.text-muted]="gapStatus() === 'muted'">
         @if (row().playerPct == null) {
-          not used
+          Not used
         } @else {
           {{ gapSign() }}{{ gapMagnitude() | formatDamage }}
         }
@@ -26,21 +26,21 @@
   </div>
 
   <div class="flex items-baseline flex-wrap gap-x-1.5 gap-y-1 mt-1.5 md:mt-0 md:contents">
-    <span class="shrink-0 mr-2 md:mr-0 md:col-start-3 md:row-start-1 md:text-left tabular-nums text-xs text-[var(--muted)]">
-      <span class="md:hidden font-mono text-[10px] uppercase tracking-wider">Top raiders average </span>{{ row().topAvg | formatDamage }}
+    <span class="tabular-nums shrink-0 mr-2 md:mr-0 md:col-start-3 md:row-start-1 md:text-left text-body text-muted">
+      <span class="md:hidden text-label">Top raiders average </span>{{ row().topAvg | formatDamage }}
     </span>
 
     @if (showCasts() && !hidePlayer()) {
       @if (isPassive()) {
-        <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-xs rounded px-2 py-0.5 border border-current badge-muted">passive</span>
+        <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-tag rounded px-2 py-0.5 border border-current text-muted">Passive</span>
       } @else {
-        <span class="md:hidden font-mono text-[10px] uppercase tracking-wider text-[var(--muted)]">Casts</span>
-        <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center tabular-nums text-xs rounded px-2 py-0.5 border border-current"
-              [class.badge-success]="castsStatus() === 'success'"
-              [class.badge-warning]="castsStatus() === 'warning'"
-              [class.badge-critical]="castsStatus() === 'critical'"
-              [class.badge-muted]="castsStatus() === 'muted'">
-          {{ row().playerCasts ?? 0 }}<span class="text-[var(--muted)]"> / {{ row().topCasts ?? '-' }}</span>
+        <span class="md:hidden text-label text-muted">Casts</span>
+        <span class="tabular-nums shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-body rounded px-2 py-0.5 border border-current"
+              [class.text-success]="castsStatus() === 'success'"
+              [class.text-warning]="castsStatus() === 'warning'"
+              [class.text-critical]="castsStatus() === 'critical'"
+              [class.text-muted]="castsStatus() === 'muted'">
+          {{ row().playerCasts ?? 0 }}<span class="text-muted"> / {{ row().topCasts ?? '-' }}</span>
         </span>
       }
     }

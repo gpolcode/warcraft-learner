@@ -1,6 +1,80 @@
 @use '@angular/material' as mat;
 @use "tailwindcss";
 
+// Sass cannot parse Tailwind's `--name-*` wildcard, so the wildcard names are interpolated.
+@theme static {
+  --#{'color-*'}: initial;
+  --color-bg: #101216;
+  --color-surface: #16181c;
+  --color-surface-alt: #20242b;
+  --color-line: #282e35;
+  --color-text: #e6edf3;
+  --color-muted: #8b949e;
+  --color-accent: #58a6ff;
+  --color-critical: #f85149;
+  --color-warning: #d29922;
+  --color-success: #3fb950;
+  --color-info: #58a6ff;
+  --color-gold: #e5cc80; /* Warcraft Logs 100-parse ("Astounding") gold - brand color */
+
+  --font-sans: 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: initial;
+  --font-mono: initial;
+
+  /* Every text element wears exactly one role; a size exists only here, never in a template. */
+  --#{'text-*'}: initial;
+  --text-caption: 11px;
+  --text-caption--line-height: 1.35;
+  --text-body: 13px;
+  --text-body--line-height: 1.45;
+  --text-name: 14px;
+  --text-name--line-height: 1.3;
+  --text-heading: 14px;
+  --text-heading--line-height: 1.3;
+  --text-heading--font-weight: 600;
+  --text-value: 15px;
+  --text-value--line-height: 1.3;
+  --text-value--font-weight: 600;
+  --text-title: 17px;
+  --text-title--line-height: 1.3;
+  --text-title--font-weight: 600;
+  --text-hero: 32px;
+  --text-hero--line-height: 1;
+  --text-hero--font-weight: 600;
+
+  --#{'leading-*'}: initial;
+  --#{'tracking-*'}: initial;
+}
+
+@utility text-label {
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+@utility text-tag {
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* "On plan" markers: deliberately understated (muted surface tag, no green fill or check glyph) so a clean result reads calm, not celebratory. */
+@utility chip-onplan {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--color-line);
+  background-color: var(--color-surface-alt);
+  color: var(--color-muted);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+}
+
 html {
   height: 100%;
   color-scheme: dark;
@@ -15,32 +89,21 @@ html {
     density: 0,
   ));
 
-  /* App-level design tokens - the single source of color truth */
-  --bg: #101216;
-  --surface: #16181c;
-  --surface-alt: #20242b;
-  --border: #282e35;
-  --text: #e6edf3;
-  --muted: #8b949e;
-  --muted-strong: #adbac7;
-  --accent: #58a6ff;
-  --critical: #f85149;
-  --warning: #d29922;
-  --success: #3fb950;
-  --info: #58a6ff;
-  --gold: #e5cc80; /* Warcraft Logs 100-parse ("Astounding") gold - brand color */
+  /* Material text on the app's type roles: inputs, options and nav items read body-large; checkbox and toggle labels read body-medium. */
+  --mat-sys-body-large-size: var(--text-name);
+  --mat-sys-body-medium-size: var(--text-body);
 
   /* Outline behind the map player marker, visible over any trail color; read at draw time via getComputedStyle (map-canvas.ts). */
   --map-dot-outline: rgba(0, 0, 0, 0.55);
 
   /* Restyle Material through its override mixins: its unlayered styles beat layered Tailwind utilities, so mixins are the only no-!important lever. */
   @include mat.card-overrides((
-    outlined-container-color: var(--surface),
-    outlined-outline-color: var(--border),
+    outlined-container-color: var(--color-surface),
+    outlined-outline-color: var(--color-line),
     outlined-container-shape: 12px,
   ));
   @include mat.toolbar-overrides((
-    container-background-color: var(--surface),
+    container-background-color: var(--color-surface),
   ));
   // Roomier drawer rows with a fully rounded active indicator: a pill when expanded, a circle on the square collapsed rail.
   @include mat.list-overrides((
@@ -52,17 +115,19 @@ html {
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--text);
-  font-family: 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
   margin: 0;
   height: 100%;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 3px; }
 
 /* Drawer widths (modal / expanded / collapsed rail): element+class (0,1,1) outranks Material's unlayered .mat-drawer (0,1,0) without !important. */
 mat-sidenav.nav-drawer-modal { width: 18rem; }
@@ -100,52 +165,6 @@ mat-icon.icon-18 { font-size: 18px; width: 18px; height: 18px; line-height: 18px
 mat-icon.icon-seg { font-size: 22px; width: 22px; height: 22px; line-height: 1; }
 @media (min-width: 48rem) {
   mat-icon.icon-seg { font-size: 18px; width: 18px; height: 18px; }
-}
-
-/* Severity badges: text color by status; templates toggle via a bracket-free [class.badge-*] binding driven by a status enum, never a component-built class string. */
-.badge-critical { color: var(--critical); }
-.badge-warning  { color: var(--warning); }
-.badge-success  { color: var(--success); }
-.badge-info     { color: var(--info); }
-.badge-muted    { color: var(--muted); }
-
-.card-subtitle {
-  font-size: 13px;
-  line-height: 1.35;
-  color: var(--muted-strong);
-}
-
-.section-heading {
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--text);
-}
-
-.section-intro {
-  font-size: 12px;
-  line-height: 1.4;
-  color: var(--muted);
-}
-
-.section-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--muted-strong);
-}
-
-/* "On plan" markers: deliberately understated (muted surface tag, no green fill or check glyph) so a clean result reads calm, not celebratory. */
-.chip-onplan {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  background-color: var(--surface-alt);
-  color: var(--muted);
-  font-size: 13px;
 }
 
 /* Icon font class for MatIconRegistry's default set; the face itself is declared in index.html beside its preload. */

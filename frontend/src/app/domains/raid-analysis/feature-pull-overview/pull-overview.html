@@ -4,12 +4,12 @@
   <!-- No error and no view: the pull's own log was not found (a missing result). -->
   <wl-load-state caption="" />
 } @else if (view(); as v) {
-  <div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
+  <div class="bg-surface border border-line rounded-[10px] overflow-hidden">
 
     <!-- Pull time + boss % live in the stat column, not here. -->
     <div class="px-4 pt-3 pb-2">
-      <h2 class="text-[17px] font-semibold text-[var(--text)]">Pull overview</h2>
-      <div class="card-subtitle mt-0.5">
+      <h2 class="text-title text-text">Pull overview</h2>
+      <div class="text-body text-muted mt-0.5">
         @if (v.result === 'kill') { Pull {{ v.attempt }} - kill. }
         @else { Pull {{ v.attempt }} of this session. }
       </div>
@@ -19,18 +19,18 @@
     <div class="px-4 md:grid md:grid-cols-[minmax(0,1fr)_200px]">
 
       <div class="card-section pt-5 pb-1.5 [&>:first-child+*]:border-t-0">
-        <h3 class="section-heading mb-2">Deaths &amp; result</h3>
+        <h3 class="text-heading text-text mb-2">Deaths &amp; result</h3>
 
         @for (d of v.deaths; track d.index) {
-          <div class="grid grid-cols-[20px_minmax(0,1fr)_auto_auto] gap-[11px] items-center py-2.5 border-t border-[var(--border)]">
-            <mat-icon class="icon-18 badge-critical">skull</mat-icon>
+          <div class="grid grid-cols-[20px_minmax(0,1fr)_auto_auto] gap-[11px] items-center py-2.5 border-t border-line">
+            <mat-icon class="icon-18 text-critical">skull</mat-icon>
             <div class="min-w-0">
-              <div class="text-[13px] text-[var(--text)]">Death {{ d.index }}</div>
+              <div class="text-body text-text">Death {{ d.index }}</div>
               @if (d.ability) {
-                <div class="text-xs text-[var(--muted)] truncate">{{ d.ability }}</div>
+                <div class="text-caption text-muted truncate">{{ d.ability }}</div>
               }
             </div>
-            <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ d.timeS | formatDuration }}</span>
+            <span class="tabular-nums text-body text-accent">{{ d.timeS | formatDuration }}</span>
             <div class="flex gap-0.5 pr-2">
               @if (showMap()) {
                 <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenMap(d.timeS)">
@@ -47,26 +47,26 @@
             </div>
           </div>
         } @empty {
-          <div class="flex items-center gap-2.5 py-2.5 border-t border-[var(--border)]">
-            <mat-icon class="icon-18 badge-success">check_circle</mat-icon>
-            <span class="text-[13px] text-[var(--text)]">No deaths - {{ v.result === 'kill' ? 'clean pull' : 'you survived' }}</span>
+          <div class="flex items-center gap-2.5 py-2.5 border-t border-line">
+            <mat-icon class="icon-18 text-success">check_circle</mat-icon>
+            <span class="text-body text-text">No deaths - {{ v.result === 'kill' ? 'clean pull' : 'you survived' }}</span>
           </div>
         }
 
-        <div class="grid grid-cols-[20px_minmax(0,1fr)_auto_auto] gap-[11px] items-center py-2.5 border-t border-[var(--border)]">
+        <div class="grid grid-cols-[20px_minmax(0,1fr)_auto_auto] gap-[11px] items-center py-2.5 border-t border-line">
           @if (v.result === 'kill') {
-            <mat-icon class="icon-18 text-[var(--gold)]">emoji_events</mat-icon>
+            <mat-icon class="icon-18 text-gold">emoji_events</mat-icon>
           } @else {
-            <mat-icon class="icon-18 badge-warning">flag</mat-icon>
+            <mat-icon class="icon-18 text-warning">flag</mat-icon>
           }
           <div class="min-w-0">
-            <div class="text-[13px] font-medium text-[var(--text)]">{{ v.result === 'kill' ? 'Kill' : 'Wipe' }}</div>
-            <div class="text-xs text-[var(--muted)]">
+            <div class="text-body font-medium text-text">{{ v.result === 'kill' ? 'Kill' : 'Wipe' }}</div>
+            <div class="text-caption text-muted">
               @if (v.result === 'kill') { Boss defeated }
               @else { Boss reached {{ v.bossPercentage | number:'1.0-0' }}% - raid ended }
             </div>
           </div>
-          <span class="font-mono text-[13px] text-[var(--accent)] tabular-nums">{{ v.outcomeTimeS | formatDuration }}</span>
+          <span class="tabular-nums text-body text-accent">{{ v.outcomeTimeS | formatDuration }}</span>
           <div class="flex gap-0.5 pr-2">
             @if (showMap()) {
               <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenMap(v.outcomeTimeS)">
@@ -84,24 +84,24 @@
         </div>
       </div>
 
-      <div class="pt-3.5 pb-3.5 md:pt-5 border-t md:border-t-0 md:border-l border-[var(--border)] md:pl-4">
+      <div class="pt-3.5 pb-3.5 md:pt-5 border-t md:border-t-0 md:border-l border-line md:pl-4">
         <div class="flex items-baseline gap-6 md:flex-col md:items-stretch md:gap-4">
           <div>
-            <div class="font-mono text-[10px] uppercase tracking-[1px] text-[var(--muted)] mb-1.5">Your DPS</div>
-            <div class="text-[34px] leading-none font-semibold text-[var(--text)] tabular-nums">{{ v.dps | formatDamage }}</div>
+            <div class="text-label text-muted mb-1.5">Your DPS</div>
+            <div class="tabular-nums text-hero text-text">{{ v.dps | formatDamage }}</div>
           </div>
           <div class="flex gap-6">
             <div>
-              <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Duration</div>
-              <div class="font-mono text-[14px] text-[var(--accent)] tabular-nums">{{ v.durationS | formatDuration }}</div>
+              <div class="text-label text-muted">Duration</div>
+              <div class="tabular-nums text-value text-accent">{{ v.durationS | formatDuration }}</div>
             </div>
             <div>
               @if (v.result === 'kill') {
-                <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Result</div>
-                <div class="font-mono text-[14px] text-[var(--gold)]">Kill</div>
+                <div class="text-label text-muted">Result</div>
+                <div class="text-value text-gold">Kill</div>
               } @else {
-                <div class="font-mono text-[10px] uppercase tracking-[0.5px] text-[var(--muted)]">Boss health</div>
-                <div class="font-mono text-[14px] text-[var(--text)] tabular-nums">{{ v.bossPercentage | number:'1.0-0' }}%</div>
+                <div class="text-label text-muted">Boss health</div>
+                <div class="tabular-nums text-value text-text">{{ v.bossPercentage | number:'1.0-0' }}%</div>
               }
             </div>
           </div>

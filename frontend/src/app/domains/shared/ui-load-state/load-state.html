@@ -1,27 +1,27 @@
 @let err = error();
-<div class="bg-[var(--surface)] border border-[var(--border)] rounded-[10px] overflow-hidden">
+<div class="bg-surface border border-line rounded-[10px] overflow-hidden">
   @if (heading()) {
     <div class="px-4 pt-3 pb-2">
-      <h2 class="text-[17px] font-semibold text-[var(--text)]">{{ heading() }}</h2>
+      <h2 class="text-title text-text">{{ heading() }}</h2>
       @if (subtitle()) {
-        <div class="card-subtitle mt-0.5">{{ subtitle() }}</div>
+        <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
       }
     </div>
   }
-  <div class="px-4 py-6 flex flex-col items-center gap-2 text-center {{ heading() ? 'border-t border-dashed border-[var(--border)]' : '' }}">
+  <div class="px-4 py-6 flex flex-col items-center gap-2 text-center {{ heading() ? 'border-t border-dashed border-line' : '' }}">
     @if (err) {
-      <mat-icon class="icon-seg text-[var(--info)]">{{ err.kind === 'permanent' ? 'error' : 'cloud_off' }}</mat-icon>
-      <div class="text-[13px] text-[var(--muted)]">{{ err.message }}</div>
-      <div class="text-[11.5px] text-[var(--muted)]/70">
+      <mat-icon class="icon-seg text-info">{{ err.kind === 'permanent' ? 'error' : 'cloud_off' }}</mat-icon>
+      <div class="text-body text-muted">{{ err.message }}</div>
+      <div class="text-caption text-muted">
         {{ err.kind === 'permanent'
           ? 'This analysis is bugged. Retrying will not fix it.'
           : 'Retries on the next sync, or reselect the fight.' }}
       </div>
     } @else {
-      <mat-icon class="icon-seg text-[var(--muted)]">schedule</mat-icon>
-      <div class="text-[13px] text-[var(--muted)]">Waiting for top logs</div>
+      <mat-icon class="icon-seg text-muted">schedule</mat-icon>
+      <div class="text-body text-muted">Waiting for top logs</div>
       @if (caption()) {
-        <div class="text-[11.5px] text-[var(--muted)]/70">{{ caption() }}</div>
+        <div class="text-caption text-muted">{{ caption() }}</div>
       }
     }
   </div>

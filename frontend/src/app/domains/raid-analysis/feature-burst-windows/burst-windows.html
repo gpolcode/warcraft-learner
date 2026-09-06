@@ -1,14 +1,14 @@
 @if (error() || !available()) {
-  <wl-load-state heading="Burst Windows" subtitle="The short stretches where top logs deal their biggest damage, compared with your log." [error]="error()"></wl-load-state>
+  <wl-load-state heading="Burst windows" subtitle="The short stretches where top logs deal their biggest damage, compared with your log." [error]="error()"></wl-load-state>
 } @else {
   <wl-window-comparison
     [windows]="windows()"
     [higherIsBetter]="true"
     [showMap]="showMap()"
     [showClip]="showClip()"
-    heading="Burst Windows"
+    heading="Burst windows"
     subtitle="The short stretches where top logs deal their biggest damage, compared with your log."
-    metricLabel="damage"
+    metricLabel="Damage"
     chipsLabel="Cooldowns top raiders use here"
     rangeLabel="Damage vs top range"
     (openMap)="onOpenMap($event)"

@@ -219,11 +219,11 @@ function readPalette(canvas: HTMLCanvasElement): Palette {
   const css = getComputedStyle(canvas);
   const token = (name: string): string => css.getPropertyValue(name).trim();
   return {
-    gold: token('--gold'),
-    border: token('--border'),
-    muted: token('--muted'),
-    enemy: token('--critical'),
-    ranked: token('--accent'),
+    gold: token('--color-gold'),
+    border: token('--color-line'),
+    muted: token('--color-muted'),
+    enemy: token('--color-critical'),
+    ranked: token('--color-accent'),
     outline: token('--map-dot-outline'),
   };
 }

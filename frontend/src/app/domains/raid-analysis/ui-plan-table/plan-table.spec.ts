@@ -63,7 +63,7 @@ describe('PlanTable', () => {
 
     expect(dom.text()).toContain('1:05');
     expect(dom.text()).toContain('2x');
-    expect(dom.text()).toContain('used in 8 of 10 logs');
+    expect(dom.text()).toContain('Used in 8 of 10 logs');
   });
 
   it('marks a bloodlust row so its window is visible in the plan', () => {
