@@ -20,7 +20,7 @@ export class GearComparisonService {
   }
 
   private enchantItem(top: TopEnchant): EnchantItem {
-    return { name: this.enchantLabel(top), itemId: top.item_id ?? null, icon: top.icon ?? '' };
+    return { name: this.enchantLabel(top), itemId: top.item_id, icon: top.icon };
   }
 
   private enchantRowFor(name: string, player: PlayerEnchant | undefined, top: TopEnchant | undefined): EnchantRow | null {

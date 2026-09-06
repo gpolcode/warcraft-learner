@@ -266,11 +266,11 @@ describe('nameEnchantsByItem', () => {
     expect(svc['enchantItemIds'](twoSlots, { [SOPHIC_ENCHANT]: SOPHIC_ITEM })).toEqual([SOPHIC_ITEM]);
   });
 
-  it('names each enchant by its decoded item, with the item id and icon file, and keeps the WCL name where the dump or WCL has none', () => {
+  it('names each enchant by its decoded item, with the item id and icon file, and keeps the WCL name with no item where the dump or WCL has none', () => {
     expect(svc['nameEnchantsByItem'](ranked, { [SOPHIC_ENCHANT]: SOPHIC_ITEM, 9000: 1 }, names)).toEqual({
       [ENCHANT_SLOT]: [
         { id: SOPHIC_ENCHANT, name: 'Enchant Weapon - Sophic & Devotion', icon: SOPHIC_ITEM_ICON, item_id: SOPHIC_ITEM, pct: 100 },
-        { id: 9000, name: 'Other', pct: 50 },
+        { id: 9000, name: 'Other', icon: '', item_id: null, pct: 50 },
       ],
     });
   });
@@ -295,7 +295,7 @@ describe('GearTransformService (live, in-browser)', () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, talents: talentDataFake, enchantItems: noEnchantItemsFake }) });
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
-    if (bench.ok) expect(bench.value.enchants[15]).toEqual([{ id: SOPHIC_ENCHANT, name: 'Soph', pct: 100 }]);
+    if (bench.ok) expect(bench.value.enchants[15]).toEqual([{ id: SOPHIC_ENCHANT, name: 'Soph', icon: '', item_id: null, pct: 100 }]);
   });
 
   it('bakes talent diffs into the bench when the dump carries the spec', async () => {

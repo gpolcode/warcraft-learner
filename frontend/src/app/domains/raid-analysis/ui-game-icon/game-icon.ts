@@ -23,7 +23,8 @@ export class GameIcon {
     });
   }
 
-  readonly id = input.required<number>();
+  // A null id renders the name alone, so a caller with no game identity never wraps this in an @if with a text fallback.
+  readonly id = input<number | null>(null);
   readonly kind = input<GameIconKind>('spell');
   readonly name = input.required<string>();
   /** Explicit icon filename; an empty string renders name-only (no art). */
@@ -38,5 +39,8 @@ export class GameIcon {
     return file ? `https://wow.zamimg.com/images/wow/icons/small/${file}.jpg` : null;
   });
 
-  protected readonly wowheadUrl = computed(() => `https://www.wowhead.com/${this.kind()}=${this.id()}`);
+  protected readonly wowheadUrl = computed(() => {
+    const id = this.id();
+    return id ? `https://www.wowhead.com/${this.kind()}=${id}` : null;
+  });
 }
