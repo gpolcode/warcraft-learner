@@ -209,7 +209,7 @@
               <div class="flex items-start gap-1">
                 <wl-collapsible class="min-w-0 flex-1">{{ row.note }}</wl-collapsible>
                 @if (row.copyName; as copyName) {
-                  <button mat-icon-button class="icon-button-inline shrink-0 -my-1" aria-label="Copy name" (click)="copy(copyName)">
+                  <button mat-icon-button class="shrink-0 -my-1 [--mat-icon-button-state-layer-size:28px] [--mat-icon-button-icon-size:18px] [--mat-icon-button-touch-target-display:none]" aria-label="Copy name" (click)="copy(copyName)">
                     <mat-icon class="icon-18">content_copy</mat-icon>
                   </button>
                 }
@@ -245,7 +245,7 @@
               <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
               <span class="text-name">{{ row.name }}</span>
               @if (row.copyName; as copyName) {
-                <button mat-icon-button class="icon-button-inline shrink-0 -my-1" aria-label="Copy name" (click)="copy(copyName)">
+                <button mat-icon-button class="shrink-0 -my-1 [--mat-icon-button-state-layer-size:28px] [--mat-icon-button-icon-size:18px] [--mat-icon-button-touch-target-display:none]" aria-label="Copy name" (click)="copy(copyName)">
                   <mat-icon class="icon-18">content_copy</mat-icon>
                 </button>
               }

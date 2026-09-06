@@ -149,9 +149,6 @@ mat-sidenav.nav-drawer-rail .mdc-list-item__content { display: none; }
 /* Top-align the trigger so a custom icon+text trigger's bottom-edge baseline does not leave line-height strut space below the value, floating it above the field center. Element+class (0,1,1) beats Material's rule without !important. */
 mat-select .mat-mdc-select-trigger { vertical-align: top; }
 
-/* An icon button inline with a text row: the default 40px target plus its 48px touch target reads as a gap after the text. */
-.icon-button-inline { @include mat.icon-button-overrides((state-layer-size: 28px, icon-size: 18px, touch-target-display: none)); }
-
 mat-icon.icon-16 { font-size: 16px; width: 16px; height: 16px; line-height: 16px; }
 mat-icon.icon-18 { font-size: 18px; width: 18px; height: 18px; line-height: 18px; }
 
