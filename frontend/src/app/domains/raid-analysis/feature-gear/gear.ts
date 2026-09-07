@@ -11,7 +11,6 @@ import { LoadResourceService } from '../../shared/ui-load-state/load-resource-se
 
 const COPIED_MESSAGE = 'Copied to clipboard. Paste it into the auction house search.';
 const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
-const COPY_MESSAGE_DURATION_MS = 3000;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,7 +59,6 @@ export class Gear {
   protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
 
   protected copy(name: string): void {
-    const succeeded = this.clipboard.copy(name);
-    this.snackBar.open(succeeded ? COPIED_MESSAGE : COPY_FAILED_MESSAGE, undefined, { duration: COPY_MESSAGE_DURATION_MS });
+    this.snackBar.open(this.clipboard.copy(name) ? COPIED_MESSAGE : COPY_FAILED_MESSAGE);
   }
 }

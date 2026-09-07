@@ -7,7 +7,7 @@
         <h2 class="text-title">Northern Sky export</h2>
         <div class="text-body text-muted mt-0.5">Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.</div>
       </div>
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" type="button" (click)="openPanel()">Export note</button>
+      <button mat-stroked-button class="shrink-0 whitespace-nowrap" type="button" (click)="open.set(true)">Export note</button>
     </div>
   </div>
 }
@@ -23,14 +23,6 @@
         <button mat-button type="button" (click)="toggleAll()">{{ allSelected() ? 'Deselect all' : 'Select all' }}</button>
         <button mat-flat-button type="button" (click)="copyNote()">Copy note</button>
       </div>
-
-      @if (copied()) {
-        <div class="text-body text-success">Copied to clipboard. Paste it into your Northern Sky note.</div>
-      }
-
-      @if (copyFailed()) {
-        <div class="text-body text-critical">Clipboard write failed. Retry the copy.</div>
-      }
 
       @if (cooldowns().length > 0) {
         <div class="text-label text-muted">Cooldowns</div>

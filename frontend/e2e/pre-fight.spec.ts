@@ -46,6 +46,11 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
   const checkboxCount = await checkboxes.count();
   expect(checkboxCount).toBeGreaterThan(0);
   for (let i = 0; i < checkboxCount; i++) await expect(checkboxes.nth(i)).toContainText(/×\d+/);
+
+  await panel.getByRole('button', { name: 'Copy note' }).click();
+  await shows(page, 'Copied to clipboard. Paste it into your Northern Sky note.');
+  await expect(panel).not.toContainText('Copied to clipboard');
+
   await page.getByRole('button', { name: 'Close export' }).click();
 });
 

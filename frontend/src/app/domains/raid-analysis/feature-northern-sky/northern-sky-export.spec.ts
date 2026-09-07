@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { Result, Results } from '../../shared/util-http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SelectionStore } from '../data/selection/selection-store';
 import { NorthernSkyExport } from './northern-sky-export';
 import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
@@ -27,6 +28,7 @@ const POPULATED_ABILITIES = [ability(SHADOW_BLADES, 'cooldown'), ability(EVASION
 interface Mounted {
   readonly dom: MountedDom;
   readonly copies: string[];
+  readonly messages: string[];
 }
 
 async function mount(
@@ -34,21 +36,19 @@ async function mount(
   copySucceeds = true,
 ): Promise<Mounted> {
   const copies: string[] = [];
+  const messages: string[] = [];
   // The prototype supplies the real panel and note methods; only the IO read is faked.
   const feature = Object.assign(Object.create(NorthernSkyFeatureService.prototype) as NorthernSkyFeatureService, { getExport });
-  const selection = { loadNorthernSky: () => null, saveNorthernSky: () => undefined } as unknown as SelectionStore;
-  const clipboard = {
-    copy: (text: string) => { copies.push(text); return copySucceeds; },
-  } as unknown as Clipboard;
 
   const dom = mountDom(NorthernSkyExport, { spec: NORTHERN_SKY_SPEC, encounterId: NORTHERN_SKY_ENCOUNTER_ID }, [
     { provide: NorthernSkyFeatureService, useValue: feature },
-    { provide: SelectionStore, useValue: selection },
-    { provide: Clipboard, useValue: clipboard },
+    { provide: SelectionStore, useValue: { loadNorthernSky: () => null, saveNorthernSky: () => undefined } },
+    { provide: Clipboard, useValue: { copy: (text: string) => { copies.push(text); return copySucceeds; } } },
+    { provide: MatSnackBar, useValue: { open: (message: string) => { messages.push(message); } } },
   ]);
   await whenStable();
   dom.detectChanges();
-  return { dom, copies };
+  return { dom, copies, messages };
 }
 
 describe('NorthernSkyExport export availability', () => {
@@ -98,23 +98,29 @@ describe('NorthernSkyExport copy', () => {
   });
 
   it('confirms the copy, and hands the clipboard a note naming every selected ability', async () => {
-    const { dom, copies } = await openPanel();
+    const { dom, copies, messages } = await openPanel();
 
     dom.click(COPY_BUTTON);
 
-    expect(dom.text()).toContain(COPIED_MESSAGE);
-    expect(dom.text()).not.toContain(FAILED_MESSAGE);
+    expect(messages).toEqual([COPIED_MESSAGE]);
     expect(copies).toHaveLength(1);
     expect(copies[0]).toContain(`spellid:${SHADOW_BLADES}`);
     expect(copies[0]).toContain(`spellid:${EVASION}`);
   });
 
   it('reports the failure, and no confirmation, when the clipboard write is refused', async () => {
-    const { dom } = await openPanel(false);
+    const { dom, messages } = await openPanel(false);
 
     dom.click(COPY_BUTTON);
 
-    expect(dom.text()).toContain(FAILED_MESSAGE);
+    expect(messages).toEqual([FAILED_MESSAGE]);
+  });
+
+  it('keeps the confirmation off the panel, so the ability list never shifts under the copy button', async () => {
+    const { dom } = await openPanel();
+
+    dom.click(COPY_BUTTON);
+
     expect(dom.text()).not.toContain(COPIED_MESSAGE);
   });
 

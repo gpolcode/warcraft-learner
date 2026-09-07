@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { Clipboard } from '@angular/cdk/clipboard';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Result, Results } from '../../shared/util-http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { whenStable } from '../../../../testing/when-stable';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Gear } from './gear';
 import { GearComparisonView, GearFeatureService } from '../data/gear/gear-feature-service';
 
@@ -56,18 +56,14 @@ async function mount(view: GearComparisonView, copySucceeds = true): Promise<Mou
   const feature = Object.assign(Object.create(GearFeatureService.prototype) as GearFeatureService, {
     loadBenchView: load, loadComparisonView: load,
   });
-  const clipboard = {
-    copy: (text: string) => { copies.push(text); return copySucceeds; },
-  } as unknown as Clipboard;
-  const snackBar = { open: (message: string) => { messages.push(message); } } as unknown as MatSnackBar;
   const inputs = view.comparison
     ? { spec: SPEC, encounterId: ENCOUNTER_ID, report: 'abc', fight: 1, player: 10 }
     : { spec: SPEC, encounterId: ENCOUNTER_ID };
 
   const dom = mountDom(Gear, inputs, [
     { provide: GearFeatureService, useValue: feature },
-    { provide: Clipboard, useValue: clipboard },
-    { provide: MatSnackBar, useValue: snackBar },
+    { provide: Clipboard, useValue: { copy: (text: string) => { copies.push(text); return copySucceeds; } } },
+    { provide: MatSnackBar, useValue: { open: (message: string) => { messages.push(message); } } },
   ]);
   await whenStable();
   dom.detectChanges();

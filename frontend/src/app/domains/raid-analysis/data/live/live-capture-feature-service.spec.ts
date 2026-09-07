@@ -134,3 +134,21 @@ describe('segmentsCover', () => {
     expect(svc['segmentsCover']([], 0, 1_000)).toBe(false);
   });
 });
+
+describe('saveSegments', () => {
+  const FILENAME = 'full-pull.webm';
+
+  it('reports no footage when the buffer rolled past the window', async () => {
+    expect(await svc['saveSegments']([], FILENAME)).toBe('no-footage');
+  });
+
+  it('reports a failure when the buffered footage will not remux', async () => {
+    expect(await svc['saveSegments']([new Blob(['not webm'])], FILENAME)).toBe('failed');
+  });
+});
+
+describe('downloadFullPull', () => {
+  it('reports no footage while no fight is prepared, rather than saving an empty file', async () => {
+    expect(await svc.downloadFullPull()).toBe('no-footage');
+  });
+});
