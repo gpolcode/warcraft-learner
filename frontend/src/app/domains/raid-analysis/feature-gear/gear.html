@@ -230,15 +230,13 @@
         @for (row of view().benchEnchantRows; track row.slotName) {
           <div class="px-4 py-[10px] border-t border-line md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-center">
             <div class="hidden md:block"></div>
-            <div class="min-w-0 flex items-center gap-2">
+            <div class="min-w-0 flex items-center gap-2 md:col-span-3">
               <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
               <wl-game-icon kind="item" [id]="row.enchant.itemId" [name]="row.enchant.name" [icon]="row.enchant.icon"></wl-game-icon>
               <button mat-icon-button class="shrink-0 -my-1 [--mat-icon-button-state-layer-size:28px] [--mat-icon-button-icon-size:18px] [--mat-icon-button-touch-target-display:none]" aria-label="Copy name" (click)="copy(row.enchant.name)">
                 <mat-icon class="icon-18">content_copy</mat-icon>
               </button>
             </div>
-            <div class="hidden md:block"></div>
-            <div class="hidden md:block"></div>
           </div>
         }
       @empty {
