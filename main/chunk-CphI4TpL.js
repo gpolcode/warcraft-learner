@@ -1,0 +1,3 @@
+import{c as Se,n as Ac}from"./chunk-CjtLTaM5.js";import{t as o}from"./chunk-CdC3y5V3.js";import{t as A}from"./chunk-CIcJLJHN.js";async function w(p,m,t){let{reportCode:i,fightId:n}=m;try{let r=await p.getReport(i),e=r.fights.find(u=>u.id===n);return e?Se(await t.analyze({report:r,fight:e,fightDurationS:A(e.endTime,e.startTime)})):Se(t.emptyView())}catch(r){return o(`${t.logSource} ${i}:${n}`,r),Ac(r,t.errorId)}}export{w as t};
+//# debugId=f21af322-3e98-5230-a456-be4979a0b972
+//# sourceMappingURL=chunk-CphI4TpL.js.map

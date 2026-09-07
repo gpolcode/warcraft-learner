@@ -1,0 +1,148 @@
+{
+  "spec": "PreservationEvoker",
+  "spec_icon": "classicon_evoker_preservation",
+  "major_cooldowns": [
+    {
+      "name": "Dream Breath",
+      "spell_id": 355936,
+      "cooldown": 30,
+      "usage_rule": "Cast it right after you consume your Echo buffs so it does not eat them, at rank 1 when damage is light and rank 3 when you need a burst heal.",
+      "id_note": "355936 is the empower cast; 355941 and 376788 are the Dream Breath auras."
+    },
+    {
+      "name": "Fire Breath",
+      "spell_id": 357208,
+      "cooldown": 30,
+      "usage_rule": "Cast it at rank 3 whenever it is up for the large area damage and the party healing that rides along with it.",
+      "id_note": "357208 is the empower cast; 357209 is the enemy debuff, 1283718 and 1283719 are unobserved twins."
+    },
+    {
+      "name": "Stasis",
+      "spell_id": 370537,
+      "cooldown": 90,
+      "usage_rule": "Plan it ahead, store one Temporal Anomaly and at least one Dream Breath, then release the pack into a damage event you know is coming.",
+      "id_note": "370537 is the store cast; 370564 is the release cast and 370562 the stored aura."
+    },
+    {
+      "name": "Tip the Scales",
+      "spell_id": 370553,
+      "cooldown": 120,
+      "usage_rule": "Press it before an empowered cast so Dream Breath or Fire Breath goes out instantly at max rank, and as Chronowarden line it up with Stasis."
+    },
+    {
+      "name": "Dream Flight",
+      "spell_id": 359816,
+      "cooldown": 120,
+      "usage_rule": "Fly it across a stacked group every time it is up, and keep casting Emerald Blossom through the Inner Flame window it opens.",
+      "id_note": "359816 is not pressed in the sampled parses but is castable per its tooltip, and the guide gives it a full section.",
+      "talent_gated": true
+    },
+    {
+      "name": "Rewind",
+      "spell_id": 363534,
+      "cooldown": 240,
+      "usage_rule": "Save it for the fight's most dangerous moment and press it right after the hit lands, since it heals back a share of the last 5 seconds of damage."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press it before a hit aimed at you to cut the damage by 30% and heal back what it prevents through Renewing Blaze."
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Press it just before area damage lands to cut it by 20% for you and the four nearest allies."
+    },
+    {
+      "name": "Time Dilation",
+      "spell_id": 357170,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Put it on whoever is about to take a big hit and use it often, since half of that damage is spread over 8 seconds instead."
+    },
+    {
+      "name": "Cauterizing Flame",
+      "spell_id": 374251,
+      "cooldown": 60,
+      "usage_rule": "Press it to strip a harmful effect for a free heal, and store three inside Stasis when the whole group needs cleansing.",
+      "id_note": "374251 is not pressed in the sampled parses but is castable per its tooltip.",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend every Essence Burst before it falls off",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 369299,
+        "buff_spell_name": "Essence Burst",
+        "spend_spell_ids": [364343, 355913, 356995],
+        "spend_spell_names": ["Echo", "Emerald Blossom", "Disintegrate"]
+      },
+      "action": "Dump it into Echo, or into Emerald Blossom while Twin Echoes still has room."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Emerald Blossom never at capped Twin Echoes",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 355913,
+        "spell_name": "Emerald Blossom",
+        "buff_spell_id": 1242759,
+        "buff_spell_name": "Twin Echoes",
+        "bound": "max",
+        "max_stacks": 2,
+        "except_buff_spell_ids": [1242747],
+        "except_buff_spell_names": ["Inner Flame"]
+      },
+      "action": "Press Echo once Twin Echoes is capped and blossom again after the stacks are spent."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Store Temporal Anomaly inside every Stasis",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 370537,
+        "spell_name": "Stasis",
+        "required_spell_id": 373861,
+        "required_spell_name": "Temporal Anomaly",
+        "position": "after"
+      },
+      "action": "Follow the store with a Temporal Anomaly and a Dream Breath, then release into planned damage."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Keep Reversion up between Temporal Anomalies",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 367364,
+        "aura_spell_name": "Reversion",
+        "on": "self"
+      },
+      "action": "Follow each Temporal Anomaly with Reversion so the heal over time never lapses."
+    },
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Blessing of the Bronze up for the whole pull",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 381748,
+        "aura_spell_name": "Blessing of the Bronze",
+        "on": "self"
+      },
+      "action": "Cast it before you pull so the raid buff covers the whole fight."
+    }
+  ]
+}

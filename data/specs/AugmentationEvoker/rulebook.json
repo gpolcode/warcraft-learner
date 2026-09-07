@@ -1,0 +1,175 @@
+{
+  "spec": "AugmentationEvoker",
+  "spec_icon": "classicon_evoker_augmentation",
+  "major_cooldowns": [
+    {
+      "name": "Breath of Eons",
+      "spell_id": 403631,
+      "cooldown": 120,
+      "opener_priority": 1,
+      "usage_rule": "Fly the shortest safe path that clips the boss hitbox and land the 10 second Temporal Wounds window on your allies' burst.",
+      "id_note": "403631 is both the cast and the player-side aura in the sampled parses; 409632 shares the name but was not observed."
+    },
+    {
+      "name": "Ebon Might",
+      "spell_id": 395152,
+      "cooldown": 30,
+      "opener_priority": 2,
+      "usage_rule": "Refresh it with no more than 3 to 4 seconds left on the buff, and recast it right after channeling Time Skip to fish for a Double-time crit.",
+      "id_note": "395152 is the cast id; 395296 is the player-side aura the rules read."
+    },
+    {
+      "name": "Tip the Scales",
+      "spell_id": 370553,
+      "cooldown": 120,
+      "opener_priority": 3,
+      "usage_rule": "Spend it on a max rank Fire Breath, and with Time Skip talented cancel its buff with a macro so its cooldown starts at once."
+    },
+    {
+      "name": "Fire Breath",
+      "spell_id": 357208,
+      "cooldown": 30,
+      "opener_priority": 4,
+      "usage_rule": "Cast it at max rank inside Ebon Might, and drop to Rank 1 when Upheaval is ready or under 4 to 5 seconds remain on Ebon Might or Duplicate.",
+      "id_note": "357208 is the observed cast id; 382266 and 1283718 share the name but were not seen as casts, and 357209 is the enemy debuff."
+    },
+    {
+      "name": "Upheaval",
+      "spell_id": 396286,
+      "cooldown": 40,
+      "opener_priority": 5,
+      "usage_rule": "Press it at Rank 1 inside Ebon Might, and only uprank it when the wider radius picks up more enemies.",
+      "id_note": "The guide cites 408092, which was not observed as a cast; 396286 is the id seen in casts in all five sampled parses."
+    },
+    {
+      "name": "Time Skip",
+      "spell_id": 404977,
+      "cooldown": 180,
+      "opener_priority": 6,
+      "usage_rule": "Channel it right after your first Fire Breath and Upheaval, then on cooldown while Temporal Burst is up and your other cooldowns are spent.",
+      "talent_gated": true
+    },
+    {
+      "name": "Nullsight",
+      "spell_id": 1260459,
+      "cooldown": 90,
+      "usage_rule": "Fire the trinket as soon as you land from Breath of Eons so its Mastery covers your buff window.",
+      "id_note": "On-use Mastery trinket cast in 2 of the 5 sampled parses; a different trinket carries a different id.",
+      "talent_gated": true
+    },
+    {
+      "name": "Potion of Recklessness",
+      "spell_id": 1236994,
+      "cooldown": 300,
+      "usage_rule": "Drink it at the start of your opener ahead of Ebon Might, and again when a later burst window lines up.",
+      "id_note": "The potion the sampled parses drank; another potion choice carries a different id, so zero casts is not an error.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Obsidian Scales",
+      "spell_id": 363916,
+      "cooldown": 90,
+      "duration": 12,
+      "usage_rule": "Press it ahead of a known spike to cut 30% of the damage for 12 seconds."
+    },
+    {
+      "name": "Zephyr",
+      "spell_id": 374227,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Use it on raid-wide area damage to give yourself and your four nearest allies 20% less damage taken.",
+      "talent_gated": true
+    },
+    {
+      "name": "Emerald Blossom",
+      "spell_id": 355913,
+      "cooldown": 30,
+      "usage_rule": "Drop it during downtime or forced movement to heal yourself and injured allies standing near you.",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Keep Ebon Might up on the raid",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 395296,
+        "aura_spell_name": "Ebon Might",
+        "on": "self"
+      },
+      "action": "Refresh it just before it falls off and keep spending Eruption so Sands of Time extends it."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "warning",
+      "description": "Fire Breath only inside Ebon Might",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 357208,
+        "spell_name": "Fire Breath",
+        "buff_spell_id": 395296,
+        "buff_spell_name": "Ebon Might",
+        "require": "inside"
+      },
+      "action": "Hold the empower until Ebon Might is back up and build resources with your filler meanwhile."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "warning",
+      "description": "Upheaval only inside Ebon Might",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 396286,
+        "spell_name": "Upheaval",
+        "buff_spell_id": 395296,
+        "buff_spell_name": "Ebon Might",
+        "require": "inside"
+      },
+      "action": "Wait for Ebon Might before you empower so the cast extends the buff and sends Shifting Sands to buffed allies."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Eruption only inside Ebon Might",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 395160,
+        "spell_name": "Eruption",
+        "buff_spell_id": 395296,
+        "buff_spell_name": "Ebon Might",
+        "require": "inside"
+      },
+      "action": "Bank your Essence while Ebon Might is down and dump it once the buff is back up."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Essence Burst before casting Chrono Flames",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 431443,
+        "spell_name": "Chrono Flames",
+        "buff_spell_id": 392268,
+        "buff_spell_name": "Essence Burst",
+        "bound": "max",
+        "max_stacks": 2
+      },
+      "action": "Burn a stack with Eruption before you press your filler again."
+    },
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Prescience and Breath of Eons before the empowers",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [409311, 403631, 370553, 357208, 396286],
+        "spell_names": ["Prescience", "Breath of Eons", "Tip the Scales", "Fire Breath", "Upheaval"]
+      },
+      "action": "Send double Prescience, then Breath of Eons, then Tip the Scales into a max rank Fire Breath and Upheaval."
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "spec": "AssassinationRogue",
+  "spec_icon": "ability_rogue_deadlybrew",
+  "major_cooldowns": [
+    {
+      "name": "Deathmark",
+      "spell_id": 360194,
+      "cooldown": 120,
+      "opener_priority": 1,
+      "usage_rule": "Press it on cooldown with Garrote, Rupture and your Envenom buff running and Kingsbane about to come up, and align every other cooldown to it."
+    },
+    {
+      "name": "Kingsbane",
+      "spell_id": 385627,
+      "cooldown": 60,
+      "opener_priority": 2,
+      "usage_rule": "Send it straight after Deathmark so the doubled poison applications ramp its damage, and use the off-window one only when Deathmark is more than 52 seconds out."
+    },
+    {
+      "name": "Vanish",
+      "spell_id": 1856,
+      "cooldown": 120,
+      "usage_rule": "Press it inside Deathmark and Garrote instantly for the Improved Garrote snapshot, and hold it in dungeons for a chainpull you cannot stealth into.",
+      "id_note": "1856 is the cast id; 11327 is the Vanish self aura."
+    },
+    {
+      "name": "Shiv",
+      "spell_id": 5938,
+      "cooldown": 30,
+      "usage_rule": "With Toxic Stiletto, press it in single target while Darkest Night is up and you are one combo point short of full, and hold it in dungeons to strip an enrage.",
+      "id_note": "Table base_cd_s is 30; Toxic Stiletto cuts it to 15s, and the guide only calls for Shiv on Deathstalker builds.",
+      "talent_gated": true
+    },
+    {
+      "name": "Thistle Tea",
+      "spell_id": 381623,
+      "cooldown": 60,
+      "usage_rule": "Drink it when your energy bottoms out during your cooldowns, and dump the leftover charges before the fight ends.",
+      "id_note": "Two live cast ids share the name; 381623 carries the 60s cooldown and appears in more parses, 1298826 is the twin.",
+      "talent_gated": true
+    },
+    {
+      "name": "Voracious Heart of Ula'tek",
+      "spell_id": 1297761,
+      "cooldown": 90,
+      "usage_rule": "Fire it in the same GCD window as Deathmark so its Agility covers the whole burst.",
+      "talent_gated": true
+    },
+    {
+      "name": "Algeth'ar Puzzle",
+      "spell_id": 383781,
+      "cooldown": 120,
+      "usage_rule": "Pop it just before Deathmark with the Envenom buff running so the Mastery lands on your burst window.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Pop it to shrug off a magic hit or a damaging debuff you cannot dodge."
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Turn it on for heavy melee damage, since it only dodges attacks from the front."
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Drink it whenever you take chip damage to heal 20% of your health back."
+    },
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 6,
+      "usage_rule": "Press it right before an area-of-effect hit to cut 40% of that damage."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Garrote and Rupture, Envenom, then Deathmark and Kingsbane",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [703, 1943, 32645, 360194, 385627],
+        "spell_names": ["Garrote", "Rupture", "Envenom", "Deathmark", "Kingsbane"]
+      },
+      "action": "Land Garrote and Rupture, Envenom into your cooldowns, then chain Deathmark into Kingsbane."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "warning",
+      "description": "Save Vanish and Kingsbane for the Deathmark window",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [1856, 385627],
+        "spell_names": ["Vanish", "Kingsbane"],
+        "anchor_spell_id": 360194,
+        "anchor_spell_name": "Deathmark"
+      },
+      "action": "Hold them until you press Deathmark so they ramp inside its window."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Garrote immediately after every Vanish",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 1856,
+        "spell_name": "Vanish",
+        "required_spell_id": 703,
+        "required_spell_name": "Garrote",
+        "position": "after"
+      },
+      "action": "Follow each Vanish with Garrote so the bleed lands with Improved Garrote."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Keep Garrote ticking on your target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 703,
+        "aura_spell_name": "Garrote",
+        "on": "target"
+      },
+      "action": "Refresh Garrote late in its duration so the bleed never drops."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Keep Rupture ticking on your target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 1943,
+        "aura_spell_name": "Rupture",
+        "on": "target"
+      },
+      "action": "Refresh Rupture late in its duration with a full combo point finisher."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Envenom only at full combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 32645,
+        "spell_name": "Envenom",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "min"
+      },
+      "action": "Build to full combo points before you spend Envenom."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Mutilate without overcapping combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 1329,
+        "spell_name": "Mutilate",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "max"
+      },
+      "action": "Press Envenom or Rupture instead of building past the combo point cap."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Fan of Knives over Mutilate on multiple targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 1329,
+        "spell_name": "Mutilate",
+        "bound": "max"
+      },
+      "action": "Build with Fan of Knives instead as soon as a second enemy is up."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Crimson Tempest spreads bleeds in AoE",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 1247227,
+        "spell_name": "Crimson Tempest",
+        "bound": "min"
+      },
+      "action": "Save Crimson Tempest for packs and spread your bleeds with it before cooldowns."
+    }
+  ]
+}

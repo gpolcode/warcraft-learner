@@ -1,0 +1,161 @@
+{
+  "spec": "BloodDeathKnight",
+  "spec_icon": "spell_deathknight_bloodpresence",
+  "major_cooldowns": [
+    {
+      "name": "Dancing Rune Weapon",
+      "spell_id": 49028,
+      "cooldown": 120,
+      "opener_priority": 1,
+      "usage_rule": "Press it on cooldown and spend the window on Blood Boil for the extra Blood Plague copies, Marrowrend for the bonus Bone Shield charges, and strikes that stack Essence of the Blood Queen.",
+      "id_note": "49028 is the cast id; 81256 is the self aura the logs carry, and 1237128/1264353 are talent nodes."
+    },
+    {
+      "name": "Reaper's Mark",
+      "spell_id": 439843,
+      "cooldown": 45,
+      "usage_rule": "Press it on cooldown and keep it just ahead of Dancing Rune Weapon so the two stay synced, then spend its Exterminate charges on Marrowrend before the mark detonates.",
+      "id_note": "439843 is the castable Reaper's Mark per its tooltip and carries the 45s base cooldown; 434765 is the enemy aura the logs carry and 436304/439594 are talent nodes. No sampled parse cast it, since all five played San'layn. Reaper's Onslaught shortens the cooldown to 30s.",
+      "talent_gated": true
+    },
+    {
+      "name": "Consumption",
+      "spell_id": 1263824,
+      "cooldown": 45,
+      "usage_rule": "Empower it to rank 1 whenever Dancing Rune Weapon is not active, and to rank 3 the moment Dancing Rune Weapon ends.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; it is an optional talent in every build shown in the guide.",
+      "talent_gated": true
+    },
+    {
+      "name": "Raise Dead",
+      "spell_id": 46585,
+      "cooldown": 120,
+      "usage_rule": "Summon the ghoul off the global cooldown at the pull and re-summon it every time it comes back up.",
+      "id_note": "46585 is the cast id; 52150 and 1242866 share the name and were not pressed."
+    },
+    {
+      "name": "Light's Potential",
+      "spell_id": 1236616,
+      "cooldown": 300,
+      "usage_rule": "Drink it in the first seconds after Dancing Rune Weapon goes off, and again once the fight is inside its last 30 seconds.",
+      "id_note": "Cast id for the stat potion all five sampled parses used; other potions carry different ids."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Vampiric Blood",
+      "spell_id": 55233,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Keep it rolling on cooldown and Death Strike inside it, since it raises your maximum health and every heal and absorb you receive by 30%."
+    },
+    {
+      "name": "Icebound Fortitude",
+      "spell_id": 48792,
+      "cooldown": 120,
+      "duration": 8,
+      "usage_rule": "Save it for the biggest damage spike in the fight, and press it to break out of a stun."
+    },
+    {
+      "name": "Anti-Magic Shell",
+      "spell_id": 48707,
+      "cooldown": 60,
+      "duration": 5,
+      "usage_rule": "Press it into incoming magic damage to absorb up to 30% of your health and stop harmful magic effects from landing."
+    },
+    {
+      "name": "Anti-Magic Zone",
+      "spell_id": 51052,
+      "cooldown": 240,
+      "duration": 6,
+      "usage_rule": "Drop it under the group for a heavy magic hit to cut magic damage taken by 15% for everyone standing in it.",
+      "id_note": "51052 is the cast id; 145629 is the self aura the logs carry."
+    },
+    {
+      "name": "Lichborne",
+      "spell_id": 49039,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Press it to shake off charm, fear and sleep effects and for the extra leech while you heal yourself through damage."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Keep Bone Shield up with Marrowrend",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 195181,
+        "aura_spell_name": "Bone Shield",
+        "on": "self"
+      },
+      "action": "Refresh it with Marrowrend before it drops, or Death's Caress when your runes are short."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Stand in your own Death and Decay",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 188290,
+        "aura_spell_name": "Death and Decay",
+        "on": "self"
+      },
+      "action": "Recast it under yourself and stay standing in the circle whenever the buff is missing."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Essence of the Blood Queen rolling",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 433925,
+        "aura_spell_name": "Essence of the Blood Queen",
+        "on": "self"
+      },
+      "action": "Spend a Vampiric Strike proc before the 20 second window runs out so the stacks keep rolling instead of restacking inside the next Dancing Rune Weapon."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Crimson Scourge on a free Death and Decay",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 81141,
+        "buff_spell_name": "Crimson Scourge",
+        "spend_spell_ids": [43265],
+        "spend_spell_names": ["Death and Decay"]
+      },
+      "action": "Drop a rune free Death and Decay as soon as the proc lands and stand in it."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Death Strike before Heart Strike overcaps Runic Power",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 206930,
+        "spell_name": "Heart Strike",
+        "resource_type": 6,
+        "resource_name": "runic power",
+        "bound": "max"
+      },
+      "action": "Spend down with Death Strike before you press another Heart Strike."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Blood Boil inside every Dancing Rune Weapon",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 49028,
+        "spell_name": "Dancing Rune Weapon",
+        "required_spell_id": 50842,
+        "required_spell_name": "Blood Boil",
+        "position": "after"
+      },
+      "action": "Follow each cast with a Blood Boil so every rune weapon applies its own copy of Blood Plague."
+    }
+  ]
+}
