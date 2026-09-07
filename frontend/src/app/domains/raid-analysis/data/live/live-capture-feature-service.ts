@@ -37,6 +37,9 @@ export interface ClipRoll {
   postMs: number;
 }
 
+/** Why a save produced no file; the caller owns the wording. */
+export type DownloadOutcome = 'ok' | 'no-footage' | 'failed';
+
 const DEFAULT_CAPTURE_PROFILE: CaptureProfile = {
   codec: 'vp9',
   maxHeight: 1080,
@@ -67,7 +70,6 @@ export class LiveCaptureFeatureService {
   readonly sourceLabel = signal('');
   readonly captureProfile = signal<CaptureProfile>(DEFAULT_CAPTURE_PROFILE);
   readonly captureError = signal<string | null>(null);
-  readonly downloadError = signal<string | null>(null);
 
   /** Includes `isStarting` so a cancelled picker moves the bound value, forcing Material to reset the switch - a plain `isCapturing` binding stays false and never re-writes it. */
   readonly recordToggleOn = computed(() => this.isCapturing() || this.isStarting());
@@ -179,7 +181,6 @@ export class LiveCaptureFeatureService {
   openClip(anchor: ClipAnchor): void {
     this.currentAnchor = anchor;
     this.open.set(true);
-    this.downloadError.set(null);
     this.playbackFailed.set(false);
     this.handle.set(null);
     const ctx = this.ctx();
@@ -195,30 +196,28 @@ export class LiveCaptureFeatureService {
     const anchor = this.currentAnchor;
     const handle = this.handle();
     if (!anchor || !handle) return;
-    this.downloadError.set(null);
     this.triggerDownload(handle.blob, `${anchor.key}.webm`);
   }
 
-  downloadFullPull(): void {
+  async downloadFullPull(): Promise<DownloadOutcome> {
     const ctx = this.ctx();
-    if (!ctx) return;
+    if (!ctx) return 'no-footage';
     const segments = this.selectSegments(this.segments(), this.fullPullWindow(ctx.reportStartTime, ctx.fight.startTime, ctx.fight.endTime));
-    void this.saveSegments(segments.map(segment => segment.blob), 'full-pull.webm');
+    return this.saveSegments(segments.map(segment => segment.blob), 'full-pull.webm');
   }
 
   /** No re-encode, so it stays near-instant. */
-  private async saveSegments(blobs: Blob[], filename: string): Promise<void> {
-    this.downloadError.set(null);
+  protected async saveSegments(blobs: Blob[], filename: string): Promise<DownloadOutcome> {
     if (!blobs.length) {
-      this.downloadError.set('Download failed.');
       this.logger.logWarn('LiveCaptureFeatureService.saveSegments', `no footage for ${filename}`);
-      return;
+      return 'no-footage';
     }
     try {
       this.triggerDownload(await this.remuxSegments(blobs), filename);
+      return 'ok';
     } catch (err) {
-      this.downloadError.set('Download failed.');
       this.logger.logWarn('LiveCaptureFeatureService.saveSegments', err);
+      return 'failed';
     }
   }
 
@@ -237,7 +236,6 @@ export class LiveCaptureFeatureService {
     this.ctx.set(null);
     this.currentAnchor = null;
     this.resolved.clear();
-    this.downloadError.set(null);
     this.playbackFailed.set(false);
   }
 

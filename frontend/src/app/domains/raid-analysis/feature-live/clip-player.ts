@@ -2,7 +2,11 @@ import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inj
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { LoadingSpinner } from '../../shared/ui-load-state/loading-spinner';
-import { LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
+import { SnackbarService } from '../../shared/ui-snackbar/snackbar-service';
+import { DownloadOutcome, LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
+
+const NO_FOOTAGE_MESSAGE = 'No footage for this pull.';
+const DOWNLOAD_FAILED_MESSAGE = 'Download failed. Retry it.';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -12,6 +16,7 @@ import { LiveCaptureFeatureService } from '../data/live/live-capture-feature-ser
 })
 export class ClipPlayer {
   protected readonly clip = inject(LiveCaptureFeatureService);
+  private readonly snackbar = inject(SnackbarService);
   private readonly player = viewChild<ElementRef<HTMLVideoElement>>('player');
 
   private srcUrl = '';
@@ -27,6 +32,15 @@ export class ClipPlayer {
       video.src = this.srcUrl;
     });
     inject(DestroyRef).onDestroy(() => { this.releaseSrc(); });
+  }
+
+  protected async downloadFullPull(): Promise<void> {
+    this.reportDownload(await this.clip.downloadFullPull());
+  }
+
+  private reportDownload(outcome: DownloadOutcome): void {
+    if (outcome === 'no-footage') this.snackbar.warn(NO_FOOTAGE_MESSAGE);
+    else if (outcome === 'failed') this.snackbar.warn(DOWNLOAD_FAILED_MESSAGE);
   }
 
   protected onLoaded(video: HTMLVideoElement): void {

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FlyoverPanel } from '../../shared/ui-flyover-panel/flyover-panel';
@@ -9,6 +8,9 @@ import { SelectionStore } from '../data/selection/selection-store';
 import { NorthernSkyBench } from '../data/northern-sky/northern-sky-data-source';
 import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
+import { SnackbarService } from '../../shared/ui-snackbar/snackbar-service';
+
+const COPIED_MESSAGE = 'Copied to clipboard. Paste it into your Northern Sky note.';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,7 +22,7 @@ export class NorthernSkyExport {
   private readonly loadRes = inject(LoadResourceService);
   private readonly feature = inject(NorthernSkyFeatureService);
   private readonly selection = inject(SelectionStore);
-  private readonly clipboard = inject(Clipboard);
+  private readonly snackbar = inject(SnackbarService);
 
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
@@ -39,8 +41,6 @@ export class NorthernSkyExport {
   private readonly bench = this.load.value;
   private readonly excluded = signal<ReadonlySet<number>>(new Set(this.selection.loadNorthernSky()?.excludedSpellIds ?? []));
   protected readonly open = signal(false);
-  protected readonly copied = signal(false);
-  protected readonly copyFailed = signal(false);
   protected readonly error = this.load.error;
 
   protected readonly abilities = computed(() => this.bench()?.abilities ?? []);
@@ -66,15 +66,8 @@ export class NorthernSkyExport {
   protected copyNote(): void {
     const bench = this.bench();
     if (!bench) return;
-    const succeeded = this.clipboard.copy(this.feature.buildNorthernSkyNote(bench, this.feature.selectedIds(this.abilities(), this.excluded())));
-    this.copied.set(succeeded);
-    this.copyFailed.set(!succeeded);
-  }
-
-  protected openPanel(): void {
-    this.copied.set(false);
-    this.copyFailed.set(false);
-    this.open.set(true);
+    const note = this.feature.buildNorthernSkyNote(bench, this.feature.selectedIds(this.abilities(), this.excluded()));
+    this.snackbar.copyAndConfirm(note, COPIED_MESSAGE);
   }
 
   private persist(excluded: ReadonlySet<number>): void {
