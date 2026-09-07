@@ -96,6 +96,14 @@ html {
   @include mat.toolbar-overrides((
     container-background-color: var(--color-surface),
   ));
+  // The dark theme's default snack bar is `inverse-surface`, a light bar with dark text; these put it on the app's own floating surface.
+  @include mat.snack-bar-overrides((
+    container-color: var(--color-surface-alt),
+    container-shape: 10px,
+    supporting-text-color: var(--color-text),
+    supporting-text-size: var(--text-body),
+    supporting-text-line-height: var(--text-body--line-height),
+  ));
   // Roomier drawer rows with a fully rounded active indicator: a pill when expanded, a circle on the square collapsed rail.
   @include mat.list-overrides((
     active-indicator-shape: 9999px,

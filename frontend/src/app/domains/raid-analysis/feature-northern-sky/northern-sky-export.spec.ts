@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { Result, Results } from '../../shared/util-http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { SelectionStore } from '../data/selection/selection-store';
+import { SnackbarService } from '../../shared/ui-snackbar/snackbar-service';
 import { NorthernSkyExport } from './northern-sky-export';
 import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
 import { NorthernSkyAbility, NorthernSkyBench } from '../data/northern-sky/northern-sky-data-source';
@@ -16,7 +16,6 @@ const COPY_BUTTON = 'button[mat-flat-button]';
 const CHECKBOX = 'mat-checkbox input[type="checkbox"]';
 const PANEL_INTRO = 'Pick the abilities you want timings for, copy the note, and paste it into your Northern Sky addon.';
 const COPIED_MESSAGE = 'Copied to clipboard. Paste it into your Northern Sky note.';
-const FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 
 function ability(spellId: number, kind: NorthernSkyAbility['kind']): NorthernSkyAbility {
   return { spell_id: spellId, name: `name_${spellId}`, icon: `icon_${spellId}`, kind, cast_times_s: CAST_TIMES_S };
@@ -27,28 +26,27 @@ const POPULATED_ABILITIES = [ability(SHADOW_BLADES, 'cooldown'), ability(EVASION
 interface Mounted {
   readonly dom: MountedDom;
   readonly copies: string[];
+  readonly messages: string[];
 }
 
-async function mount(
-  getExport: () => Promise<Result<NorthernSkyBench>>,
-  copySucceeds = true,
-): Promise<Mounted> {
+async function mount(getExport: () => Promise<Result<NorthernSkyBench>>): Promise<Mounted> {
   const copies: string[] = [];
+  const messages: string[] = [];
   // The prototype supplies the real panel and note methods; only the IO read is faked.
   const feature = Object.assign(Object.create(NorthernSkyFeatureService.prototype) as NorthernSkyFeatureService, { getExport });
   const selection = { loadNorthernSky: () => null, saveNorthernSky: () => undefined } as unknown as SelectionStore;
-  const clipboard = {
-    copy: (text: string) => { copies.push(text); return copySucceeds; },
-  } as unknown as Clipboard;
+  const snackbar = {
+    copyAndConfirm: (text: string, confirmation: string) => { copies.push(text); messages.push(confirmation); },
+  } as unknown as SnackbarService;
 
   const dom = mountDom(NorthernSkyExport, { spec: NORTHERN_SKY_SPEC, encounterId: NORTHERN_SKY_ENCOUNTER_ID }, [
     { provide: NorthernSkyFeatureService, useValue: feature },
     { provide: SelectionStore, useValue: selection },
-    { provide: Clipboard, useValue: clipboard },
+    { provide: SnackbarService, useValue: snackbar },
   ]);
   await whenStable();
   dom.detectChanges();
-  return { dom, copies };
+  return { dom, copies, messages };
 }
 
 describe('NorthernSkyExport export availability', () => {
@@ -78,8 +76,8 @@ describe('NorthernSkyExport export availability', () => {
 });
 
 describe('NorthernSkyExport copy', () => {
-  const openPanel = async (copySucceeds = true): Promise<Mounted> => {
-    const mounted = await mount(async () => Results.ok(bench({ abilities: POPULATED_ABILITIES })), copySucceeds);
+  const openPanel = async (): Promise<Mounted> => {
+    const mounted = await mount(async () => Results.ok(bench({ abilities: POPULATED_ABILITIES })));
     mounted.dom.click(EXPORT_BUTTON);
     return mounted;
   };
@@ -98,23 +96,21 @@ describe('NorthernSkyExport copy', () => {
   });
 
   it('confirms the copy, and hands the clipboard a note naming every selected ability', async () => {
-    const { dom, copies } = await openPanel();
+    const { dom, copies, messages } = await openPanel();
 
     dom.click(COPY_BUTTON);
 
-    expect(dom.text()).toContain(COPIED_MESSAGE);
-    expect(dom.text()).not.toContain(FAILED_MESSAGE);
+    expect(messages).toEqual([COPIED_MESSAGE]);
     expect(copies).toHaveLength(1);
     expect(copies[0]).toContain(`spellid:${SHADOW_BLADES}`);
     expect(copies[0]).toContain(`spellid:${EVASION}`);
   });
 
-  it('reports the failure, and no confirmation, when the clipboard write is refused', async () => {
-    const { dom } = await openPanel(false);
+  it('keeps the confirmation off the panel, so the ability list never shifts under the copy button', async () => {
+    const { dom } = await openPanel();
 
     dom.click(COPY_BUTTON);
 
-    expect(dom.text()).toContain(FAILED_MESSAGE);
     expect(dom.text()).not.toContain(COPIED_MESSAGE);
   });
 
