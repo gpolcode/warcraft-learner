@@ -137,9 +137,9 @@ export class WclApiService {
   }
 
   // Names may carry HTML entities, so consumers decode them.
-  async getGameNames(itemIds: number[], enchantIds: number[]): Promise<Record<string, { id: number; name: string }>> {
+  async getGameNames(itemIds: number[], enchantIds: number[]): Promise<Record<string, { id: number; name: string; icon?: string }>> {
     if (!itemIds.length && !enchantIds.length) return {};
-    const result = await this.query<{ gameData: Record<string, { id: number; name: string }> | null }>(
+    const result = await this.query<{ gameData: Record<string, { id: number; name: string; icon?: string }> | null }>(
       this.buildGearNamesQuery(itemIds, enchantIds),
     );
     return result.gameData ?? {};
@@ -185,7 +185,7 @@ export class WclApiService {
   // Item aliases are prefixed `i`, enchant aliases `e` (bare numeric identifiers are not valid GraphQL field names).
   private buildGearNamesQuery(itemIds: number[], enchantIds: number[]): string {
     const fields = [
-      ...itemIds.map(id => `i${id}: item(id:${id}){id name}`),
+      ...itemIds.map(id => `i${id}: item(id:${id}){id name icon}`),
       ...enchantIds.map(id => `e${id}: enchant(id:${id}){id name}`),
     ].join(' ');
     return `query{gameData{${fields}}}`;

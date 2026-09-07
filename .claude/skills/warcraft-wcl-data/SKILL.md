@@ -29,6 +29,7 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 | **Weapon slots are 15/16 (since Midnight)** | Gear array has 17 entries (0-16). Weapons at index 15 (MH) and 16 (OH). Index 14 is Back/Cloak. |
 | **Trinket slots are 12 and 13** | Confirmed from `encounterRankings` responses. |
 | **`permanentEnchant` is a string** | Numeric ID returned as string. `permanentEnchantName` is never populated. Enchant names resolved via `gameData.enchant(id)` in the gear transform service. |
+| **`gameData.enchant(id).name` is the enchantment effect, not the item** | The id is a `SpellItemEnchantment` row and WCL exposes only `{id name}` of it. For an enchant scroll the effect name happens to read like the item (`Enchant Helm - Empowered Rune of Avoidance`), but for an armor kit it is the stat text (`+41 Agility/Strength & +115 Stamina` for `Forest Hunter's Armor Kit`), and a weapon rite drops its `Enchant Weapon - ` prefix. WCL has no enchant-to-item link; `EnchantItemDataService` reads Raidbots' `enchantments.json` (enchant `id` -> `itemId`) and the gear transform resolves the exact in-game name through `gameData.item(id)`, baking it as the bench enchant's `name` with the item's `icon` and `item_id`, so the card renders it through `wl-game-icon` like a trinket (the WCL name stays only where no item resolves). |
 | **The partition decides which parses you see** | Without one WCL answers from its default, whose top parses can be months old. Query partitions newest-first (`rankingsFromPartition`). |
 | **A raid zone can have a frozen twin** | WCL keeps a frozen copy of a zone under the same name, carrying different encounter ids. Match unfrozen zones only. |
 | **Nothing marks a zone as the current raid** | A finished tier stays unfrozen and ranked, and each patch gives it a fresh partition, so even its top parses look recent. The raids to bench are named in the `CURRENT_RAIDS` repo variable. |
@@ -55,6 +56,7 @@ Non-obvious things that have caused bugs - read before touching gear extraction 
 |---|---|---|
 | Warcraft Logs v2 (GraphQL, `/api/v2/client`) | Client credentials (browser; embedded secret, see "Browser auth model") | Report events, character rankings, gear lookup |
 | Warcraft Logs v2 (GraphQL, `/api/v2/client`) | Client credentials (browser; the same embedded pair) | The transform services fetching parses during ingest (via the shared `WclApiService`, driven by `src/app/domains/raid-analysis/feature-ingest/ingest-orchestrator-service.ts`) |
+| Raidbots static data (`raidbots.com/static/data/live/*.json`) | None (public, CORS-open) | `TalentDataService` (`talents.json`, talent names and icons) and `EnchantItemDataService` (`enchantments.json`, enchant id -> purchasable item id), both read by the gear transform during ingest |
 
 ## Event positions
 

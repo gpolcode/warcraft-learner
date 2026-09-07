@@ -67,7 +67,7 @@ test('gear shows the top-parse talent, trinket, and enchant consensus, and how a
   await shows(trinkets, 'Most common pair');
   await shows(trinkets, PERCENT);
   const enchants = gear.locator('div.card-section').filter({ hasText: 'Enchants' }).first();
-  await shows(enchants, 'What most top raiders use.');
+  await shows(enchants, 'What most top raiders use. Copy a name to find it in the auction house.');
 });
 
 test('the cooldown plan lists first use, typical uses, and the holds', async () => {

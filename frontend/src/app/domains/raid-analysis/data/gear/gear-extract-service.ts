@@ -64,4 +64,4 @@ const HTML_ENTITIES: Record<string, string> = {
 };
 
 /** A WCL game-name batch, keyed by the alias the query built: `i` plus an item id, `e` plus an enchant id. */
-export type GameNames = Record<string, { id: number; name: string }>;
+export type GameNames = Record<string, { id: number; name: string; icon?: string }>;

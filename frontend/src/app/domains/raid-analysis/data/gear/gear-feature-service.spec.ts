@@ -27,7 +27,7 @@ function benchWith(overrides: Partial<GearBench> = {}): GearBench {
     spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', sample_count: 10,
     talent_builds: [{ key: STANDARD_KEY, pct: 80, report_code: 'abc', fight_id: 2, player_name: 'Top', source_id: 5, diff: [] }],
     trinket_sets: STANDARD_PAIR,
-    enchants: { 15: [{ id: 8041, name: 'Sophic', pct: 90 }] },
+    enchants: { 15: [{ id: 8041, name: 'Sophic', icon: '', item_id: null, pct: 90 }] },
     ...overrides,
   };
 }
@@ -52,7 +52,7 @@ describe('benchToStats', () => {
     expect(svc['benchToStats'](benchWith())).toEqual({
       talent_builds: [{ key: STANDARD_KEY, pct: 80, report_code: 'abc', fight_id: 2, player_name: 'Top', source_id: 5, diff: [] }],
       trinket_sets: STANDARD_PAIR,
-      enchants: { 15: [{ id: 8041, name: 'Sophic', pct: 90 }] },
+      enchants: { 15: [{ id: 8041, name: 'Sophic', icon: '', item_id: null, pct: 90 }] },
     });
   });
 });
@@ -82,7 +82,7 @@ describe('buildBenchGearView', () => {
   it('comparison off, bench rows populated with no row marked as the player\'s', () => {
     const view = svc['buildBenchGearView'](stats);
     expect(view.comparison).toBe(false);
-    expect(view.benchEnchantRows).toEqual([{ slotName: 'Main Hand', name: 'Sophic' }]);
+    expect(view.benchEnchantRows).toEqual([{ slotName: 'Main Hand', enchant: { name: 'Sophic', itemId: null, icon: '' } }]);
     expect(view.talentBuilds[0]).toMatchObject({ pct: 80, label: 'Most common build' });
     expect(view.trinketSets[0]).toEqual({ pct: 70, isPlayer: false, label: 'Most common pair', items: [GAZE, PUZZLE_BOX] });
     expect(view.trinketStatus).toEqual({ status: 'unknown', note: 'No trinket data.' });

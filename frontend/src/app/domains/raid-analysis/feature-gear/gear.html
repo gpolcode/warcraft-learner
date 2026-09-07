@@ -69,11 +69,7 @@
                     <div class="flex flex-wrap items-center gap-2">
                       @for (talent of build.added; track talent.name) {
                         <span class="chip-onplan">
-                          @if (talent.spellId; as spellId) {
-                            <wl-game-icon [id]="spellId" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
-                          } @else {
-                            <span>{{ talent.name }}</span>
-                          }
+                          <wl-game-icon [id]="talent.spellId ?? null" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
                         </span>
                       }
                     </div>
@@ -87,11 +83,7 @@
                     <div class="flex flex-wrap items-center gap-2">
                       @for (talent of build.dropped; track talent.name) {
                         <span class="chip-onplan">
-                          @if (talent.spellId; as spellId) {
-                            <wl-game-icon [id]="spellId" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
-                          } @else {
-                            <span>{{ talent.name }}</span>
-                          }
+                          <wl-game-icon [id]="talent.spellId ?? null" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
                         </span>
                       }
                     </div>
@@ -105,11 +97,7 @@
                     <div class="flex flex-wrap items-center gap-2">
                       @for (r of build.ranks; track r.talent.name) {
                         <span class="chip-onplan">
-                          @if (r.talent.spellId; as spellId) {
-                            <wl-game-icon [id]="spellId" [icon]="r.talent.icon" [name]="r.talent.name"></wl-game-icon>
-                          } @else {
-                            <span>{{ r.talent.name }}</span>
-                          }
+                          <wl-game-icon [id]="r.talent.spellId ?? null" [icon]="r.talent.icon" [name]="r.talent.name"></wl-game-icon>
                           <span class="tabular-nums text-body text-muted ml-1">{{ r.standardRank }}&#8594;{{ r.rank }}</span>
                         </span>
                       }
@@ -184,7 +172,7 @@
       @if (view().comparison && view().enchantRows.length) {
         <div class="text-body text-muted mt-0.5">Only the slots where your enchant is missing or differs.</div>
       } @else if (!view().comparison && view().benchEnchantRows.length) {
-        <div class="text-body text-muted mt-0.5">What most top raiders use.</div>
+        <div class="text-body text-muted mt-0.5">What most top raiders use. Copy a name to find it in the auction house.</div>
       }
     </div>
 
@@ -206,6 +194,14 @@
             <div class="hidden md:block"></div>
             <div class="col-start-2 md:col-auto text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-[14px]">
               <span class="md:hidden block text-label text-muted mb-1">Fix</span>
+              @if (row.top; as top) {
+                <div class="flex items-center gap-2">
+                  <wl-game-icon kind="item" [id]="top.itemId" [name]="top.name" [icon]="top.icon"></wl-game-icon>
+                  <button mat-icon-button class="shrink-0 -my-1 [--mat-icon-button-state-layer-size:28px] [--mat-icon-button-icon-size:18px] [--mat-icon-button-touch-target-display:none]" aria-label="Copy name" (click)="copy(top.name)">
+                    <mat-icon class="icon-18">content_copy</mat-icon>
+                  </button>
+                </div>
+              }
               <wl-collapsible>{{ row.note }}</wl-collapsible>
             </div>
           </div>
@@ -234,12 +230,13 @@
         @for (row of view().benchEnchantRows; track row.slotName) {
           <div class="px-4 py-[10px] border-t border-line md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-center">
             <div class="hidden md:block"></div>
-            <div class="min-w-0 flex items-baseline gap-2">
+            <div class="min-w-0 flex items-center gap-2 md:col-span-3">
               <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
-              <span class="text-name">{{ row.name }}</span>
+              <wl-game-icon kind="item" [id]="row.enchant.itemId" [name]="row.enchant.name" [icon]="row.enchant.icon"></wl-game-icon>
+              <button mat-icon-button class="shrink-0 -my-1 [--mat-icon-button-state-layer-size:28px] [--mat-icon-button-icon-size:18px] [--mat-icon-button-touch-target-display:none]" aria-label="Copy name" (click)="copy(row.enchant.name)">
+                <mat-icon class="icon-18">content_copy</mat-icon>
+              </button>
             </div>
-            <div class="hidden md:block"></div>
-            <div class="hidden md:block"></div>
           </div>
         }
       @empty {

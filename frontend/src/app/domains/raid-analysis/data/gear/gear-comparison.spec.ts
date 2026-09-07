@@ -15,30 +15,35 @@ function gear(partial: Partial<CharacterGear> = {}): CharacterGear {
   return { ...partial };
 }
 
+const SOPHIC_ITEM = { name: 'Sophic Devotion', itemId: null, icon: '' };
+const ARMOR_KIT_ITEM_ID = 244641;
+
 describe('buildBenchEnchantRows', () => {
-  it('shows the enchant name when the bench data has a name', () => {
+  it('shows the consensus enchant as an item with no link when the bench resolved no item', () => {
     const rows = gearComparison.buildBenchEnchantRows(stats({
-      enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 80 }] },
+      enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 80 }] },
     }));
-    expect(rows).toHaveLength(1);
-    assert.exists(rows[0]);
-    expect(rows[0].name).toBe('Sophic Devotion');
-    assert.exists(rows[0]);
-    expect(rows[0].slotName).toBe('Main Hand');
+    expect(rows).toEqual([{ slotName: 'Main Hand', enchant: SOPHIC_ITEM }]);
+  });
+
+  it('links the item and shows its icon when the bench carries them', () => {
+    const rows = gearComparison.buildBenchEnchantRows(stats({
+      enchants: { 6: [{ id: 8159, name: "Forest Hunter's Armor Kit", icon: 'inv_kit', item_id: ARMOR_KIT_ITEM_ID, pct: 100 }] },
+    }));
+    expect(rows).toEqual([{ slotName: 'Legs', enchant: { name: "Forest Hunter's Armor Kit", itemId: ARMOR_KIT_ITEM_ID, icon: 'inv_kit' } }]);
   });
 
   it('falls back to Enchant #id when the bench enchant name is empty', () => {
     // WCL does not populate permanentEnchantName; ingest writes empty strings until gameData.enchant(id) resolves them on the next ingest run.
     const rows = gearComparison.buildBenchEnchantRows(stats({
-      enchants: { 15: [{ id: 8041, name: '', pct: 90 }] },
+      enchants: { 15: [{ id: 8041, name: '', icon: '', item_id: null, pct: 90 }] },
     }));
-    assert.exists(rows[0]);
-    expect(rows[0].name).toBe('Enchant #8041');
+    expect(rows).toEqual([{ slotName: 'Main Hand', enchant: { name: 'Enchant #8041', itemId: null, icon: '' } }]);
   });
 
   it('skips slots below the consensus share of top parsers', () => {
     const rows = gearComparison.buildBenchEnchantRows(stats({
-      enchants: { 15: [{ id: 8041, name: 'Rune', pct: 49 }] },
+      enchants: { 15: [{ id: 8041, name: 'Rune', icon: '', item_id: null, pct: 49 }] },
     }));
     expect(rows).toHaveLength(0);
   });
@@ -46,8 +51,8 @@ describe('buildBenchEnchantRows', () => {
   it('includes slots at or above the consensus share of top parsers', () => {
     const rows = gearComparison.buildBenchEnchantRows(stats({
       enchants: {
-        15: [{ id: 8041, name: 'Rune A', pct: 50 }],
-        16: [{ id: 8039, name: 'Rune B', pct: 60 }],
+        15: [{ id: 8041, name: 'Rune A', icon: '', item_id: null, pct: 50 }],
+        16: [{ id: 8039, name: 'Rune B', icon: '', item_id: null, pct: 60 }],
       },
     }));
     expect(rows).toHaveLength(2);
@@ -62,9 +67,9 @@ describe('buildBenchEnchantRows', () => {
   it('sorts slots by slot number', () => {
     const rows = gearComparison.buildBenchEnchantRows(stats({
       enchants: {
-        16: [{ id: 8039, name: 'B', pct: 60 }],
-        0:  [{ id: 8017, name: 'A', pct: 70 }],
-        4:  [{ id: 7987, name: 'C', pct: 100 }],
+        16: [{ id: 8039, name: 'B', icon: '', item_id: null, pct: 60 }],
+        0:  [{ id: 8017, name: 'A', icon: '', item_id: null, pct: 70 }],
+        4:  [{ id: 7987, name: 'C', icon: '', item_id: null, pct: 100 }],
       },
     }));
     expect(rows.map(r => r.slotName)).toEqual(['Head', 'Chest', 'Off Hand']);
@@ -157,18 +162,19 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
   it('flags a high-consensus slot the real player left un-enchanted', () => {
     const rows = gearComparison.buildEnchantRows(
       gear({ enchants: [] }),
-      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
+      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 90 }] } }),
     );
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({
-      status: 'warn', name: 'Not enchanted', note: 'Most top raiders run Sophic Devotion. Apply it.',
+    expect(rows[0]).toEqual({
+      slotName: 'Main Hand', status: 'warn', name: 'Not enchanted',
+      note: 'Most top raiders run it. Apply it.', top: SOPHIC_ITEM,
     });
   });
 
   it('stays silent on an un-enchanted slot below the consensus share', () => {
     const rows = gearComparison.buildEnchantRows(
       gear({ enchants: [] }),
-      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 49 }] } }),
+      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 49 }] } }),
     );
     expect(rows).toEqual([]);
   });
@@ -176,18 +182,18 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
   it('marks a slot on-plan when the player runs the consensus enchant', () => {
     const rows = gearComparison.buildEnchantRows(
       gear({ enchants: [{ slot: 15, id: 8041, name: 'Sophic Devotion' }] }),
-      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
+      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 90 }] } }),
     );
-    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion', note: null });
+    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion', note: null, top: null });
   });
 
-  it('names the consensus enchant when the player runs a different one', () => {
+  it('carries the consensus enchant when the player runs a different one', () => {
     const rows = gearComparison.buildEnchantRows(
       gear({ enchants: [{ slot: 15, id: 8039, name: 'Burning Devotion' }] }),
-      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', pct: 90 }] } }),
+      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 90 }] } }),
     );
     expect(rows[0]).toMatchObject({
-      status: 'info', name: 'Burning Devotion', note: 'Most top raiders run Sophic Devotion.',
+      status: 'info', name: 'Burning Devotion', note: 'Most top raiders run it.', top: SOPHIC_ITEM,
     });
   });
 
@@ -200,7 +206,7 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
       gear({ enchants: [{ slot: 9, id: 7, name: 'Handguard' }] }),
       stats({ enchants: {} }),
     );
-    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Handguard', note: null });
+    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Handguard', note: null, top: null });
   });
 });
 

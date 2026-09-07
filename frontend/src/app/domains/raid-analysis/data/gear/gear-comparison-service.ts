@@ -19,19 +19,22 @@ export class GearComparisonService {
     return enchant ? (enchant.name || `Enchant #${enchant.id}`) : '';
   }
 
+  private enchantItem(top: TopEnchant): EnchantItem {
+    return { name: this.enchantLabel(top), itemId: top.item_id, icon: top.icon };
+  }
+
   private enchantRowFor(name: string, player: PlayerEnchant | undefined, top: TopEnchant | undefined): EnchantRow | null {
-    const topName = this.enchantLabel(top);
     if (!player) {
       if (!top || top.pct < ENCHANT_CONSENSUS_PCT) return null;
       return { slotName: name, status: 'warn', name: 'Not enchanted',
-        note: `Most top raiders run ${topName}. Apply it.` };
+        note: 'Most top raiders run it. Apply it.', top: this.enchantItem(top) };
     }
     const playerName = this.enchantLabel(player);
     if (top && player.id !== top.id) {
       return { slotName: name, status: 'info', name: playerName,
-        note: `Most top raiders run ${topName}.` };
+        note: 'Most top raiders run it.', top: this.enchantItem(top) };
     }
-    return { slotName: name, status: 'ok', name: playerName, note: null };
+    return { slotName: name, status: 'ok', name: playerName, note: null, top: null };
   }
 
   /** Flags slots the player left un-enchanted that top parsers consider mandatory, and surfaces where the player differs from the consensus enchant. */
@@ -180,7 +183,7 @@ export class GearComparisonService {
       .reduce<BenchEnchantRow[]>((acc, slot) => {
         const top = topEnch[slot]?.[0];
         if (top && top.pct >= ENCHANT_CONSENSUS_PCT) {
-          acc.push({ slotName: this.slotName(slot), name: top.name || `Enchant #${top.id}` });
+          acc.push({ slotName: this.slotName(slot), enchant: this.enchantItem(top) });
         }
         return acc;
       }, []);
@@ -200,11 +203,19 @@ const SLOT_NAMES: Record<number, string> = {
   12:'Trinket 1', 13:'Trinket 2', 14:'Back', 15:'Main Hand', 16:'Off Hand',
 };
 
+/** The consensus enchant as the item that applies it; `itemId` is null where the bench resolved no item. */
+export interface EnchantItem {
+  name: string;
+  itemId: number | null;
+  icon: string;
+}
+
 export interface EnchantRow {
   slotName: string;
   status: GearStatus;
   name: string;
   note: string | null;
+  top: EnchantItem | null;
 }
 
 export interface TalentBuildRow {
@@ -238,5 +249,5 @@ interface TalentSpend {
 
 export interface BenchEnchantRow {
   slotName: string;
-  name: string;
+  enchant: EnchantItem;
 }

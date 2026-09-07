@@ -6,6 +6,7 @@ import { Result } from '../../../shared/util-http/result';
 import { GearExtractService, GameNames } from './gear-extract-service';
 import { TalentKeyService } from './talent-key-service';
 import { TalentDataService } from '../http/talent-data-service';
+import { EnchantItemDataService, EnchantItems } from '../http/enchant-item-data-service';
 import { SpecTalents } from './talent.models';
 import { getOrInsert } from '../analysis/analysis-math';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
@@ -19,6 +20,14 @@ const MAX_TRINKET_SETS = 3;
 const MAX_ENCHANTS_PER_SLOT = 3;
 
 // The parse identity rides along so each bench talent build can link back to an example parse using it.
+export type RankedEnchants = Record<number, { id: number; name: string; pct: number }[]>;
+
+interface ParseGearStats {
+  talent_builds: EncounterGearStats['talent_builds'];
+  trinket_sets: EncounterGearStats['trinket_sets'];
+  enchants: RankedEnchants;
+}
+
 export interface ParseGear {
   talent_key: string;
   trinkets: { slot: number; id: number; name: string; icon: string }[];
@@ -38,6 +47,7 @@ export class GearTransformService implements DataSource<GearBench> {
   private readonly talentKey = inject(TalentKeyService);
   private readonly wclApi = inject(WclApiService);
   private readonly talentData = inject(TalentDataService);
+  private readonly enchantItemData = inject(EnchantItemDataService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<GearBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
@@ -50,7 +60,7 @@ export class GearTransformService implements DataSource<GearBench> {
         return {
           talent_builds: this.withTalentDiffs(stats.talent_builds, await this.talentData.getTalents(spec)),
           trinket_sets: stats.trinket_sets,
-          enchants: stats.enchants,
+          enchants: await this.withItemNames(stats.enchants),
         };
       },
     });
@@ -83,6 +93,37 @@ export class GearTransformService implements DataSource<GearBench> {
       this.logger.logWarn(`GearTransformService name resolution ${ranking.report_code}:${ranking.fight_id}`, err);
       return {};
     }
+  }
+
+  private async withItemNames(ranked: RankedEnchants): Promise<EncounterGearStats['enchants']> {
+    const enchantItems = await this.enchantItemData.getEnchantItems();
+    const items = enchantItems.ok ? enchantItems.value : {};
+    let names: GameNames = {};
+    try {
+      names = await this.wclApi.getGameNames(this.enchantItemIds(ranked, items), []);
+    } catch (err) {
+      this.logger.logWarn('GearTransformService enchant item names', err);
+    }
+    return this.nameEnchantsByItem(ranked, items, names);
+  }
+
+  protected enchantItemIds(ranked: RankedEnchants, enchantItems: EnchantItems): number[] {
+    const itemIds = Object.values(ranked).flat().map(enchant => enchantItems[enchant.id]).filter(itemId => itemId !== undefined);
+    return [...new Set(itemIds)];
+  }
+
+  // WCL names an enchant by its effect (stat text for an armor kit); the item name is what the auction house lists.
+  protected nameEnchantsByItem(ranked: RankedEnchants, enchantItems: EnchantItems, names: GameNames): EncounterGearStats['enchants'] {
+    const named: EncounterGearStats['enchants'] = {};
+    for (const [slot, enchants] of Object.entries(ranked)) {
+      named[Number(slot)] = enchants.map(enchant => {
+        const itemId = enchantItems[enchant.id];
+        const item = itemId === undefined ? undefined : names[`i${itemId}`];
+        if (itemId === undefined || !item?.name) return { ...enchant, icon: '', item_id: null };
+        return { ...enchant, name: this.gearExtract.decodeHtmlEntities(item.name), icon: this.gearExtract.iconFile(item.icon), item_id: itemId };
+      });
+    }
+    return named;
   }
 
   private pct(count: number, total: number): number {
@@ -159,7 +200,7 @@ export class GearTransformService implements DataSource<GearBench> {
       .map(({ count, items }) => ({ items, pct: this.pct(count, total) }));
   }
 
-  protected aggregateEnchants(parses: ParseGear[]): EncounterGearStats['enchants'] {
+  protected aggregateEnchants(parses: ParseGear[]): RankedEnchants {
     const total = parses.length;
     const countsBySlot = new Map<number, Map<number, number>>();
     const names = new Map<number, string>();
@@ -172,7 +213,7 @@ export class GearTransformService implements DataSource<GearBench> {
       if (!names.get(enchant.id) && enchant.name) names.set(enchant.id, enchant.name);
     }
 
-    const enchants: EncounterGearStats['enchants'] = {};
+    const enchants: RankedEnchants = {};
     for (const [slot, counter] of [...countsBySlot.entries()].sort((a, b) => a[0] - b[0])) {
       enchants[slot] = [...counter.entries()]
         .sort((a, b) => b[1] - a[1])
@@ -182,7 +223,7 @@ export class GearTransformService implements DataSource<GearBench> {
     return enchants;
   }
 
-  protected aggregateParseGear(parses: ParseGear[]): EncounterGearStats {
+  protected aggregateParseGear(parses: ParseGear[]): ParseGearStats {
     return {
       talent_builds: this.aggregateTalents(parses),
       trinket_sets: this.aggregateTrinketSets(parses),
