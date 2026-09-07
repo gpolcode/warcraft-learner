@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FlyoverPanel } from '../../shared/ui-flyover-panel/flyover-panel';
@@ -8,9 +10,9 @@ import { SelectionStore } from '../data/selection/selection-store';
 import { NorthernSkyBench } from '../data/northern-sky/northern-sky-data-source';
 import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
-import { SnackbarService } from '../../shared/ui-snackbar/snackbar-service';
 
 const COPIED_MESSAGE = 'Copied to clipboard. Paste it into your Northern Sky note.';
+const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,7 +24,8 @@ export class NorthernSkyExport {
   private readonly loadRes = inject(LoadResourceService);
   private readonly feature = inject(NorthernSkyFeatureService);
   private readonly selection = inject(SelectionStore);
-  private readonly snackbar = inject(SnackbarService);
+  private readonly clipboard = inject(Clipboard);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
@@ -67,7 +70,7 @@ export class NorthernSkyExport {
     const bench = this.bench();
     if (!bench) return;
     const note = this.feature.buildNorthernSkyNote(bench, this.feature.selectedIds(this.abilities(), this.excluded()));
-    this.snackbar.copyAndConfirm(note, COPIED_MESSAGE);
+    this.snackBar.open(this.clipboard.copy(note) ? COPIED_MESSAGE : COPY_FAILED_MESSAGE);
   }
 
   private persist(excluded: ReadonlySet<number>): void {

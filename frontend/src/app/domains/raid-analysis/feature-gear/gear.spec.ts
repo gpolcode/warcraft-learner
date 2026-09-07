@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { Result, Results } from '../../shared/util-http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { whenStable } from '../../../../testing/when-stable';
-import { SnackbarService } from '../../shared/ui-snackbar/snackbar-service';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Gear } from './gear';
 import { GearComparisonView, GearFeatureService } from '../data/gear/gear-feature-service';
 
@@ -11,6 +12,7 @@ const ENCOUNTER_ID = 3379;
 const COPY_BUTTON = 'button[aria-label="Copy name"]';
 const ITEM_LINK = 'a[href*="wowhead.com/item="]';
 const COPIED_MESSAGE = 'Copied to clipboard. Paste it into the auction house search.';
+const FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 const ARMOR_KIT_ITEM_ID = 244641;
 const ARMOR_KIT = { name: "Forest Hunter's Armor Kit", itemId: ARMOR_KIT_ITEM_ID, icon: 'inv_kit' };
 const HELM_ENCHANT = { name: 'Enchant Helm - Empowered Rune of Avoidance', itemId: null, icon: '' };
@@ -46,7 +48,7 @@ interface Mounted {
   readonly messages: string[];
 }
 
-async function mount(view: GearComparisonView): Promise<Mounted> {
+async function mount(view: GearComparisonView, copySucceeds = true): Promise<Mounted> {
   const copies: string[] = [];
   const messages: string[] = [];
   const load = async (): Promise<Result<GearComparisonView>> => Results.ok(view);
@@ -54,16 +56,14 @@ async function mount(view: GearComparisonView): Promise<Mounted> {
   const feature = Object.assign(Object.create(GearFeatureService.prototype) as GearFeatureService, {
     loadBenchView: load, loadComparisonView: load,
   });
-  const snackbar = {
-    copyAndConfirm: (text: string, confirmation: string) => { copies.push(text); messages.push(confirmation); },
-  } as unknown as SnackbarService;
   const inputs = view.comparison
     ? { spec: SPEC, encounterId: ENCOUNTER_ID, report: 'abc', fight: 1, player: 10 }
     : { spec: SPEC, encounterId: ENCOUNTER_ID };
 
   const dom = mountDom(Gear, inputs, [
     { provide: GearFeatureService, useValue: feature },
-    { provide: SnackbarService, useValue: snackbar },
+    { provide: Clipboard, useValue: { copy: (text: string) => { copies.push(text); return copySucceeds; } } },
+    { provide: MatSnackBar, useValue: { open: (message: string) => { messages.push(message); } } },
   ]);
   await whenStable();
   dom.detectChanges();
@@ -86,6 +86,14 @@ describe('Gear enchant copy', () => {
 
     expect(copies).toEqual([ARMOR_KIT.name]);
     expect(messages).toEqual([COPIED_MESSAGE]);
+  });
+
+  it('reports the failure, and no confirmation, when the clipboard write is refused', async () => {
+    const { dom, messages } = await mount(benchView(), false);
+
+    dom.click(COPY_BUTTON);
+
+    expect(messages).toEqual([FAILED_MESSAGE]);
   });
 
   it('shows the consensus item beside the fix on a flagged comparison row and offers it to copy', async () => {

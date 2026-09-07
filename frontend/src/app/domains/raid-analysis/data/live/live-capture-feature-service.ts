@@ -37,7 +37,6 @@ export interface ClipRoll {
   postMs: number;
 }
 
-/** Why a save produced no file; the caller owns the wording. */
 export type DownloadOutcome = 'ok' | 'no-footage' | 'failed';
 
 const DEFAULT_CAPTURE_PROFILE: CaptureProfile = {

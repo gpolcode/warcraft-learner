@@ -96,7 +96,7 @@ html {
   @include mat.toolbar-overrides((
     container-background-color: var(--color-surface),
   ));
-  // The dark theme's default snack bar is `inverse-surface`, a light bar with dark text; these put it on the app's own floating surface.
+  // A dark M3 theme puts the snack bar on `inverse-surface`: a light bar with dark text.
   @include mat.snack-bar-overrides((
     container-color: var(--color-surface-alt),
     container-shape: 10px,

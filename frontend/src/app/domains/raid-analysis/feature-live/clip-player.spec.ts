@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { signal } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { whenStable } from '../../../../testing/when-stable';
-import { SnackbarService } from '../../shared/ui-snackbar/snackbar-service';
 import { ClipHandle, DownloadOutcome, LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
 import { ClipPlayer } from './clip-player';
 
@@ -13,34 +13,33 @@ const HANDLE: ClipHandle = { blob: new Blob([]), startOffsetS: 0, endOffsetS: 1 
 
 interface Mounted {
   readonly dom: MountedDom;
-  readonly warnings: string[];
+  readonly messages: string[];
 }
 
 function mount(outcome: DownloadOutcome): Mounted {
-  const warnings: string[] = [];
+  const messages: string[] = [];
   const clip = {
     playbackFailed: signal(false),
     preparing: signal(false),
     handle: signal<ClipHandle | null>(HANDLE),
     clipReady: signal(true),
-    downloadFullPull: async () => outcome,
+    downloadFullPull: async (): Promise<DownloadOutcome> => outcome,
     download: () => undefined,
     onPlaybackError: () => undefined,
-  } as unknown as LiveCaptureFeatureService;
-  const snackbar = { warn: (message: string) => { warnings.push(message); } } as unknown as SnackbarService;
+  };
 
   const dom = mountDom(ClipPlayer, {}, [
     { provide: LiveCaptureFeatureService, useValue: clip },
-    { provide: SnackbarService, useValue: snackbar },
+    { provide: MatSnackBar, useValue: { open: (message: string) => { messages.push(message); } } },
   ]);
-  return { dom, warnings };
+  return { dom, messages };
 }
 
 async function saveFullPull(outcome: DownloadOutcome): Promise<string[]> {
-  const { dom, warnings } = mount(outcome);
+  const { dom, messages } = mount(outcome);
   dom.click(FULL_PULL_BUTTON);
   await whenStable();
-  return warnings;
+  return messages;
 }
 
 describe('ClipPlayer full-pull download', () => {
