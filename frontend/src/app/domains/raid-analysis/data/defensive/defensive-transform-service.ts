@@ -123,7 +123,6 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     return times;
   }
 
-  // Each buff span (or explicit cast for self-buff-less defensives) is one use; hold windows mark casts delayed > 8s past reset.
   protected summarizeDefensiveCasts(
     defensives: RulebookDefensive[],
     buffWindows: Map<number, [number, number | null][]>,
@@ -285,7 +284,6 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     return result.sort((a, b) => a.time_s - b.time_s);
   }
 
-  /** Aggregate per-parse summaries into the per-defensive benchmarks. */
   protected aggregateDefensiveBenchmarks(
     perParseSummaries: ParseDefensiveSummary[][],
     defensives: RulebookDefensive[],
@@ -298,7 +296,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     // Iterate the rulebook defensives so the name, cooldown, and spell id come from one source.
     for (const defensive of defensives) {
       const summaries = byName.get(defensive.name);
-      if (!summaries?.length) continue; // no sampled parse used this defensive
+      if (!summaries?.length) continue;
       perDefensiveBenchmarks[defensive.name] = this.castCadence.buildCadenceBenchmark(summaries, defensive.cooldown, totalParses);
     }
     return perDefensiveBenchmarks;

@@ -31,7 +31,6 @@ export class WindowComparison {
   readonly higherIsBetter = input<boolean>(true);
   readonly showMap = input<boolean>(false);
   readonly showClip = input<boolean>(false);
-  // Casts column is meaningful for burst (offensive) windows only; hidden for defensives.
   readonly showCasts = input<boolean>(true);
   readonly heading = input<string>('');
   readonly subtitle = input<string>('');
@@ -167,7 +166,6 @@ export class WindowComparison {
     return isBetter ? 'better' : 'worse';
   });
 
-  // Overview bar geometry as plain percentages, bound via [style.left.%]/[style.width.%] in the template.
   protected readonly overviewPlayerWidthPct = computed<number | null>(() => {
     const w = this.activeWindow();
     if (w?.overview.playerPct == null) return null;

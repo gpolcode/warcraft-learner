@@ -21,7 +21,6 @@ import { RotationBloodlustService } from './rotation-bloodlust-service';
 
 export interface RotationFindingRow {
   severity: 'critical' | 'warning' | 'info';
-  /** Empty for rule rows, which render `what` instead. */
   name: string;
   spellId?: number | null;
   icon: string;
@@ -65,16 +64,13 @@ export interface RotationPlayerView {
   onPlan: RotationOnPlanChip[];
 }
 
-/** Bench-only cooldown plan; an `ok` result implies the top-parse bench exists. */
 export interface RotationPlanView {
   rows: CdPlanRow[];
 }
 
 const BLOODLUST_DURATION_S = 40;
-// A cast from BL_WINDOW_LEAD_S before BL through BL_WINDOW_TRAIL_S after it expires counts as aligned.
 const BL_WINDOW_LEAD_S = 30;
 const BL_WINDOW_TRAIL_S = 15;
-/** A cooldown counts as Bloodlust-aligned when at least this share (%) of top parses align it. */
 const BL_CONSENSUS_PCT = 50;
 
 const ROTATION_VOICE: CadenceVoice = {

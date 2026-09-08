@@ -26,15 +26,15 @@ TestBed.resetTestingModule();
 const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclProjections.withRelativeS(events, startMs);
 
 // Enemy-side identifiers for the damage-taken fixtures (not player abilities, so local).
-const BOSS_HIT = 700;       // an enemy ability id the player takes damage from
+const BOSS_HIT = 700;
 const ADD_HIT = 701;
-const BOSS_ACTOR = 9;       // report actor id of the boss
-const ADD_ACTOR = 8;        // report actor id of an add
-const BOSS_GAME_ID = 6666;  // stable gameID the boss actor maps to
-const ADD_GAME_ID = 5555;   // stable gameID the add actor maps to
+const BOSS_ACTOR = 9;
+const ADD_ACTOR = 8;
+const BOSS_GAME_ID = 6666;
+const ADD_GAME_ID = 5555;
 
 const CLOAK = { name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, duration: 5 };
-const FIGHT_DUR_S = 300;  // standard fight length used across the per-parse summary fixtures
+const FIGHT_DUR_S = 300;
 
 describe('defensivePlanMeta', () => {
   it('carries metadata with nullable defaults', () => {

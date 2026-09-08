@@ -14,7 +14,6 @@ export interface WclFight {
   difficulty?: number | null;
 }
 
-/** The only difficulty the app analyzes and benches. */
 export const MYTHIC_DIFFICULTY = 5;
 
 export interface WclPlayer {
@@ -70,7 +69,6 @@ export interface WclReport {
   };
 }
 
-/** A mapped top parse: which report + fight + player to refetch (from rankings). */
 export interface ParseRanking {
   player: string;
   server: string;
@@ -105,7 +103,6 @@ export interface WclCombatantInfo {
 // CombatantInfo rows come back through the same `events.data` field as ordinary events, so one type has to cover both.
 export type WclEventData = (WclEvent & WclCombatantInfo)[];
 
-/** One `playerDetails` role entry (dps / healers / tanks / unknown). */
 interface PlayerDetailEntry {
   id: number;
   type: string;

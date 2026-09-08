@@ -11,7 +11,6 @@ function foldMissingToEmpty<T>(result: Result<T[]>): Result<T[]> {
   return result.error.kind === 'missing' ? Results.ok([]) : result;
 }
 
-// Delegates IO to an injected DataFileTransport so one API serves both runtimes: the browser binds an HTTP read-only transport, Node ingestion an fs read+write one.
 @Injectable({ providedIn: 'root' })
 export class DataFileApiService {
   private readonly io = inject(DATA_FILE_TRANSPORT);

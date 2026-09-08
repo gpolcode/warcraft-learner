@@ -25,7 +25,6 @@ export class WclProjectionsService {
     return id;
   }
 
-  /** Unwrap WCL's `characterRankings` envelope (string or already-parsed) into its ranking rows; never throws, always returns an array. */
   unwrapRankings(blob: WclRankingsBlob | null | undefined): WclRawRanking[] {
     if (!blob) return [];
     const parsed = typeof blob === 'string'
@@ -34,7 +33,6 @@ export class WclProjectionsService {
     return parsed?.rankings ?? [];
   }
 
-  /** Projects WCL's aliased ability map into an id-keyed `{ icon, name }` record, stripping `.jpg` for the bare filename `wl-game-icon` expects; a null icon becomes '' for name-only render. */
   abilityIcons(raw: Record<string, WclRawAbility | null>): AbilityIcons {
     const icons: AbilityIcons = {};
     for (const entry of Object.values(raw)) {
@@ -78,13 +76,11 @@ export class WclProjectionsService {
     return { icon: ability?.icon ?? '', name: ability?.name ?? `Ability #${id}` };
   }
 
-  /** Header chips for a window: each spell id with its baked icon + name. */
   windowSpells(spellIds: number[], abilities: AbilityIcons): WindowSpell[] {
     return spellIds.map(id => ({ id, ...this.resolveAbility(abilities, id, 'windowSpells') }));
   }
 }
 
-/** Generic, cross-feature WCL-response projections and window view-row builders, kept here so each feature imports one implementation. No Angular / IO. */
 import * as z from '../../../shared/util-validation/zod-mini';
 import { ParseRanking, WclEvent, WclRankingsBlob, WclRawAbility, WclRawRanking, WclReport } from '../wcl/wcl.models';
 import { WindowSpell } from './window-comparison.models';

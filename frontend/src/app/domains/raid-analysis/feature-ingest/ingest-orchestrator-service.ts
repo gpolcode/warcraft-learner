@@ -244,7 +244,6 @@ export class IngestOrchestratorService {
     return selected;
   }
 
-  /** Returns true when the run stopped on the WCL budget (remaining specs resume next run). */
   private async ingestSpec(
     spec: string, encounters: IngestEncounter[], version: string,
   ): Promise<boolean> {

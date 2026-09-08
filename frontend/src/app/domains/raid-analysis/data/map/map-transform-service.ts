@@ -11,7 +11,6 @@ import { DataSource } from '../data-source/data-source';
 import { MapData } from './map-data-source';
 import { MapDrawService } from './map-draw-service';
 
-/** Fixed resample cadence, seconds (mirrors ingest `POSITIONS_INTERVAL_S`). */
 const POSITIONS_INTERVAL_S = 1.5;
 const MAX_TRACKED_ENEMIES = 5;
 const MIN_ENEMY_SAMPLES = 4;

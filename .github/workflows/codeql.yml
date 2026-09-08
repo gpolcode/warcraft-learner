@@ -18,8 +18,7 @@ jobs:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
 
-    # Dependabot-triggered runs get a read-only token unless the job asks for more, and the
-    # analysis cannot upload without security-events: write.
+    # Dependabot-triggered runs get a read-only token unless the job asks for more, and the analysis cannot upload without security-events: write.
     permissions:
       contents: read
       actions: read

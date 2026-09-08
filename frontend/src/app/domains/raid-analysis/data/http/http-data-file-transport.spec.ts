@@ -10,7 +10,6 @@ const REL_PATH = 'SubtletyRogue/burst/3176.json';
 const BENCH_BODY = { encounter_id: 3176, sample_count: 5 };
 const NOT_FOUND_STATUS = 404;
 const SERVER_ERROR_STATUS = 500;
-// The two taxonomy messages toLoadError stamps for these statuses.
 const MISSING_MESSAGE = 'Not yet ingested.';
 const TRANSIENT_MESSAGE = 'WCL is unreachable right now.';
 const BROWSER_READONLY_ERROR = /read-only in the browser/;
@@ -25,7 +24,6 @@ function setup(): { transport: DataFileTransport; httpMock: HttpTestingControlle
   };
 }
 
-// Silences and captures the transport's logWarn output on a failed read.
 function spyOnWarn() {
   return vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 }

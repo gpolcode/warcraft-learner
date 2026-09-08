@@ -1,4 +1,3 @@
-// Components stay purely declarative: they `switchMap` onto `pollTriggers()` and handle the actual network call themselves.
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Observable, fromEvent, interval, merge } from 'rxjs';

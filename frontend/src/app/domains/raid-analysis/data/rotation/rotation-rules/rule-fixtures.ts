@@ -38,7 +38,6 @@ export function benched(rule: RulebookRule, ruleBandValue: RuleBand | null = ban
   return { rule, band: ruleBandValue, sample_count: ruleBandValue == null ? 0 : 10 };
 }
 
-// Build a RuleContext for a 0..120s fight from just the casts - keeps the rule call sites terse.
 export const RULE_FIGHT_END_S = 120;
 interface RuleCtxOverrides { buffs: WclEvent[]; debuffs: WclEvent[]; damage: WclEvent[]; fightDurationS: number }
 export function ruleCtx(casts: WclEvent[], over: Partial<RuleCtxOverrides> = {}): RuleContext {
@@ -52,7 +51,6 @@ export function ruleCtx(casts: WclEvent[], over: Partial<RuleCtxOverrides> = {})
   });
 }
 
-// Two real Subtlety rules reused across the evaluator and rules-followed specs.
 export const SECRET_TECH_NEEDS_DANCE: CastWithoutPriorCondition = {
   kind: 'cast_without_prior',
   spell_id: SECRET_TECHNIQUE, spell_name: 'Secret Technique',
@@ -64,7 +62,6 @@ export const HOLD_DANCE_FOR_BLADES: HoldCooldownForAnchorCondition = {
   anchor_spell_id: SHADOW_BLADES, anchor_spell_name: 'Shadow Blades',
 };
 
-// Fight-relative seconds shared by the new-kind fixtures.
 export const DANCE_START_S = 20, DANCE_END_S = 28;
-export const COMBO_POINT_TYPE = 4;  // WCL power-type id for combo points
+export const COMBO_POINT_TYPE = 4;
 export const MAX_COMBO_POINTS = 5;

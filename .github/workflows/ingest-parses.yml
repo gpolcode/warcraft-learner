@@ -58,7 +58,7 @@ jobs:
         run: npm ci
 
       # CURRENT_RAIDS: WCL zone names to bench, comma separated (e.g. "The Venomous Abyss"). Anything else is pruned; unset prunes nothing.
-      # PRIORITY_SPECS (repo variable) is optional: unset or malformed falls back safely (see ordering.ts parsePrioritySpecs).
+      # PRIORITY_SPECS (repo variable) is optional: unset or malformed falls back safely (see parsePrioritySpecs in ingest-ordering-service.ts).
       - name: Run parse ingestion
         working-directory: frontend
         env:

@@ -54,7 +54,6 @@ export class Gear {
   protected readonly available = this.load.available;
   protected readonly error = this.load.error;
 
-  // Partitioned in the component (semantic data only, no styling).
   protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
   protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
 

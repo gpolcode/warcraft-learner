@@ -126,7 +126,6 @@ export class MapCanvas {
     this.playing.set(true);
     this.stopTimer();
     this.lastFrameMs = 0;
-    // requestAnimationFrame aligns redraws to the display refresh and pauses when the tab is hidden.
     const step = (nowMs: number): void => {
       const dt = this.lastFrameMs ? Math.min((nowMs - this.lastFrameMs) / 1000, MAX_FRAME_DT_S) : 0;
       this.lastFrameMs = nowMs;

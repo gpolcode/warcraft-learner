@@ -22,10 +22,8 @@ import { CastCadenceService } from '../analysis/cast-cadence-service';
 
 /** The rule engine's own floor, so an encounter never benches a parse count every rule band would then reject. */
 const MIN_PARSE_COUNT = MIN_MEASURED_PARSES;
-/** BL window: a CD counts as aligned if cast 30s before to 55s after BL start. */
 const BL_WINDOW_BEFORE_S = 30;
 const BL_WINDOW_AFTER_S = 55;
-/** p90 of pooled cast gaps is the downtime floor. */
 const DOWNTIME_PERCENTILE = 0.9;
 const DEFAULT_DOWNTIME_THRESHOLD_S = 1.5;
 
@@ -41,7 +39,6 @@ export interface CdSummary {
   fight_duration_s: number;
 }
 
-/** One parse's contribution for each judged rule, index-aligned with the rules. */
 export type ParseRuleSamples = RuleSample[];
 
 interface ParseRotation {

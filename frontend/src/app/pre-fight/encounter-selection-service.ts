@@ -1,4 +1,3 @@
-/** Pre-fight spec + encounter discovery shell over the data-file indices. */
 import { Injectable, inject } from '@angular/core';
 import { DataFileApiService } from '../domains/raid-analysis/data/data-files/data-file-api-service';
 import { EncounterEntry, SpecEntry } from '../domains/raid-analysis/data/encounter/encounter.models';

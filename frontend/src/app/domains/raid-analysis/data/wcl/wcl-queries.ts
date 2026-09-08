@@ -60,15 +60,11 @@ query CombatantInfo($code:String!,$fightIDs:[Int]!,$sourceID:Int){
   }}
 }`;
 
-// The discovery reads' queries, issued only during ingestion.
-
-/** The WCL hourly point budget - the ingest orchestrator's budget gate. */
 export const RATE_LIMIT_Q = gql`query RateLimit { rateLimitData { limitPerHour pointsSpentThisHour } }`;
 
 // `class.slug`/`spec.slug` are the exact `className`/`specName` the rankings query takes; the folder key is `spec.slug + class.slug`.
 export const CLASSES_Q = gql`query Classes { gameData { classes { name slug specs { name slug } } } }`;
 
-/** The worldData expansion tree the current-raid discovery filters. */
 export const ENCOUNTERS_Q = gql`
 query Encounters {
   worldData {

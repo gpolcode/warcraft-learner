@@ -1,4 +1,3 @@
-/** Rulebook fixture factory: fills in the boilerplate so a test only states the one cooldown or rule it cares about. */
 import { Rulebook, RulebookCooldown, RulebookDefensive, RulebookRule } from '../../app/domains/raid-analysis/data/rulebook/rulebook.models';
 
 type CooldownSeed = Pick<RulebookCooldown, 'name' | 'spell_id' | 'cooldown'> & Partial<RulebookCooldown>;

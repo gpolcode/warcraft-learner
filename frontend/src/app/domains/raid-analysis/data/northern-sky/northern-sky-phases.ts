@@ -4,5 +4,4 @@ export interface NorthernSkyPhase {
   start_s: number;
 }
 
-/** Northern Sky's Mythic phase starts, by encounter id, as its addon source declares them. */
 export type NorthernSkyPhases = Record<number, readonly NorthernSkyPhase[]>;

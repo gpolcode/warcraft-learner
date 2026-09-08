@@ -8,10 +8,8 @@ const freshStore = () => TestBed.runInInjectionContext(() => new NavStateStore()
 // Mirrors NAV_COLLAPSED_KEY in the source; a stored preference outlives deploys, so changing the key orphans every visitor's saved choice.
 const NAV_COLLAPSED_STORAGE_KEY = 'wl.nav.collapsed';
 
-/** Stands in for a disabled, full, or otherwise unavailable localStorage. */
 const STORAGE_FAILURE = 'localStorage unavailable';
 
-/** Captures the store's logWarn output and keeps it out of the test log. */
 function spyOnWarn() {
   return vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 }

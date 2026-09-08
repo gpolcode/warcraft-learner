@@ -1,5 +1,3 @@
-/** Named spell-id constants for tests, since production code never hardcodes spec spell IDs (they come from the rulebook). */
-
 // Bloodlust - must match the real ID the engine detects.
 export const BLOODLUST = 2825;
 

@@ -11,7 +11,6 @@ import { RuleContext } from './rotation-rules/rule-context-service';
 
 export type { RuleBand, BenchedRule, RuleSample } from './rotation-rules/rule-kind';
 
-/** Short chip label for a rulebook rule `type`, matching the tone of `CAT_LABEL`. */
 export const RULE_TYPE_LABEL: Record<string, string> = {
   cooldown_pairing: 'pairing',
   cd_hold: 'cd hold',

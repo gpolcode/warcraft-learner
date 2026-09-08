@@ -36,7 +36,6 @@ function setup(): { service: WclAuthService; httpMock: HttpTestingController } {
   };
 }
 
-/** Answers the single pending token request with `token`, mimicking a successful WCL grant. */
 function flushToken(httpMock: HttpTestingController, token: string): void {
   httpMock.expectOne(WCL_TOKEN_URL).flush({ access_token: token, expires_in: TOKEN_LIFETIME_S });
 }

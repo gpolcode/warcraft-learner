@@ -1,23 +1,19 @@
-/** Generic, cross-feature analysis math + formatting helpers that several features import instead of re-declaring. */
 import { deviation, least, mean, median, pairs } from 'd3-array';
 import { AnalysisFinding } from './analysis.models';
 
-/** Round to `decimals` places (default 1). d3-array has no rounding helper. */
+/** d3-array has no rounding helper. */
 export function round(value: number, decimals = 1): number {
   return Math.round(value * 10 ** decimals) / 10 ** decimals;
 }
 
-/** Rounded mean, or `fallback` when there is nothing to average; the fallback type is the caller's, so a bench field can read 0 or null. */
 export function avgOr<T>(values: number[], fallback: T, decimals = 1): number | T {
   return values.length ? round(mean(values) ?? 0, decimals) : fallback;
 }
 
-/** Rounded standard deviation, or `fallback` when there is nothing to measure. */
 export function stddevOr<T>(values: number[], fallback: T, decimals = 1): number | T {
   return values.length ? round(deviation(values) ?? 0, decimals) : fallback;
 }
 
-/** Rounded median, or `fallback` when there is nothing to rank. */
 export function medianOr<T>(values: number[], fallback: T): number | T {
   return values.length ? round(median(values) ?? 0) : fallback;
 }
@@ -37,7 +33,6 @@ export function getOrInsert<K, V>(map: Map<K, V>, key: K, makeDefault: () => V):
   return value;
 }
 
-/** Group windows whose time is within `mergeS` of the running cluster median. */
 export function groupByTime<T extends { time_s: number }>(windows: T[], mergeS: number): T[][] {
   const sorted = [...windows].sort((a, b) => a.time_s - b.time_s);
   const clusters: T[][] = [];
@@ -54,27 +49,22 @@ export function groupByTime<T extends { time_s: number }>(windows: T[], mergeS: 
   return clusters;
 }
 
-/** True when `value` sits more than `sigmas` stddev ABOVE the mean (strict). */
 export function isOutlierAbove(value: number, mean: number, stddev: number, sigmas = 2): boolean {
   return value > mean + sigmas * stddev;
 }
 
-/** True when `|value - mean|` exceeds `sigmas` stddev (two-tailed, strict). */
 export function isOutlierBeyond(value: number, mean: number, stddev: number, sigmas = 2): boolean {
   return Math.abs(value - mean) > sigmas * stddev;
 }
 
-/** True when `value` sits more than `sigmas` stddev BELOW the mean (strict). Mirror of `isOutlierAbove`. */
 export function isOutlierBelow(value: number, mean: number, stddev: number, sigmas = 2): boolean {
   return value < mean - sigmas * stddev;
 }
 
-/** Cast efficiency percentage given total downtime in gaps (clamped to >= 0). */
 export function castEfficiencyPct(totalDowntimeS: number, fightDurS: number): number {
   return Math.max(0, (1 - totalDowntimeS / fightDurS) * 100);
 }
 
-/** The value closest to zero (smallest absolute value) - the primary BL offset. */
 export function closestToZero(values: number[]): number {
   return least(values, value => Math.abs(value)) ?? 0;
 }
@@ -88,7 +78,6 @@ export function benchExpectedUses(
   return { expected, floor };
 }
 
-/** Format seconds as `mm:ss` (zero-padded). */
 export function fmtClock(seconds: number): string {
   return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 }
@@ -96,7 +85,6 @@ export function fmtClock(seconds: number): string {
 const SEVERITY_ORDER: Record<AnalysisFinding['severity'], number> = {
   critical: 0, warning: 1, info: 2, hold_suggestion: 2, success: 3,
 };
-/** Sort findings in place: critical first, success last (stable for equal ranks). */
 export function sortBySeverity(findings: AnalysisFinding[]): void {
   findings.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
 }

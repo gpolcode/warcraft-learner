@@ -51,7 +51,6 @@ describe('buildClipWindow', () => {
 });
 
 describe('fullPullWindow', () => {
-  // A fight ending 5 minutes after it starts on the report clock.
   const FIGHT_END_MS = FIGHT_START_MS + 5 * 60 * 1000;
 
   it('spans the whole fight on the report clock', () => {

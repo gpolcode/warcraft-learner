@@ -29,7 +29,6 @@ export interface RuleJudging {
   twoSided: boolean;
 }
 
-/** Whether the parse contributes one value per occurrence or exactly one value for the whole pull. */
 export type RulePooling = 'instance' | 'parse';
 
 export interface Scale {
@@ -55,7 +54,6 @@ export interface RuleSample {
   unmeasuredOut: number;
 }
 
-/** One kind's facts in one class, so adding a kind is one subclass rather than one edit per dispatch site. */
 export abstract class RuleKind<C extends RuleCondition> {
   protected readonly auraWindows = inject(AuraWindowsService);
 

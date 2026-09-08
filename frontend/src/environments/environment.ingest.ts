@@ -10,7 +10,7 @@ import { IngestOrchestratorService } from '../app/domains/raid-analysis/feature-
 // Why 3: see RETRY_MAX_ATTEMPTS - unattended runs must ride out longer blips.
 const INGEST_RETRY_MAX_ATTEMPTS = 3;
 
-export const environment = withEnvironment({ ingest: true });
+export const environment = withEnvironment({});
 
 export const environmentProviders: (Provider | EnvironmentProviders)[] = [
   ...liveDataSourceProviders,

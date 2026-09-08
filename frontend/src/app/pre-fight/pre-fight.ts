@@ -37,7 +37,6 @@ export const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
   { id: 'burst', hasBench: true },
 ];
 
-/** Pre-fight page shell; selection is not carried in the URL - the last spec is restored from localStorage, the encounter is always re-selected. */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pre-fight',

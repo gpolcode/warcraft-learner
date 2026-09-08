@@ -1,4 +1,3 @@
-/** The positioning math is owned here as pure fns rather than shared, so the feature stays self-contained. */
 import { Injectable, Injector, PendingTasks, computed, inject, signal } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { WclEvent, WclFight } from '../wcl/wcl.models';
@@ -54,7 +53,6 @@ export interface MapAnchor {
   timeS: number;
   /** A window plays its exact span (`timeS` to `timeS + windowLengthS`); a point-in-time cast omits it (0/undefined) and gets pre/post padding instead. */
   windowLengthS?: number;
-  /** Optional reference override; defaults to the boss. */
   reference?: ReferenceSelector;
 }
 
@@ -97,20 +95,17 @@ export class MapFeatureService {
   readonly open = signal(false);
   readonly anchorTime = signal(0);
   readonly reference = signal<ReferenceSelector>({ kind: 'boss' });
-  /** Seconds of the scrub window before / after `anchorTime`, set per anchor by `openAt`. */
   readonly preS = signal(MAP_POINT_PAD_S);
   readonly postS = signal(MAP_POINT_PAD_S);
 
   readonly ready = computed(() => !!this.positions());
 
-  /** Load the top-parse bench (the /pre and initial post-raid path). Clears any stale live overlay. */
   async loadBench(spec: string, encounterId: number): Promise<Result<MapData>> {
     const result = await this.source.getBench(spec, encounterId);
     this._applyBench(result);
     return result;
   }
 
-  /** Push a bench result to the `positions`/`error` signals and clear any stale live overlay. */
   private _applyBench(result: Result<MapData>): void {
     this.live.set(null);
     if (result.ok) {

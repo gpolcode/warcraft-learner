@@ -104,7 +104,6 @@ html {
     supporting-text-size: var(--text-body),
     supporting-text-line-height: var(--text-body--line-height),
   ));
-  // Roomier drawer rows with a fully rounded active indicator: a pill when expanded, a circle on the square collapsed rail.
   @include mat.list-overrides((
     active-indicator-shape: 9999px,
     list-item-one-line-container-height: 48px,
@@ -123,7 +122,6 @@ body {
   height: 100%;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 3px; }

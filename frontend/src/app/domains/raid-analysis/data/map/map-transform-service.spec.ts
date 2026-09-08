@@ -250,10 +250,8 @@ describe('buildParsePositions', () => {
     // duration 6s, interval 1.5 -> rows resample at t = 0, 1.5, 3, 4.5, 6, clearing the MIN_ENEMY_SAMPLES (4) resampled-row gate.
     const PLAYER_FACING = 1500; // sampled on the wire, but player rows store no facing
     const events: WclEvent[] = [
-      // player (id 5), not in enemyMeta
       resEvent({ ts: 0, source: 5, x: 0, y: 0, facing: PLAYER_FACING }),
       resEvent({ ts: 6000, source: 5, x: 150, y: 0, facing: PLAYER_FACING }),
-      // boss (id 10) high HP
       resEvent({ ts: 0, source: 10, x: 0, y: 0, maxHp: 9000 }),
       resEvent({ ts: 6000, source: 10, x: 10, y: 0, maxHp: 9000 }),
       // add (id 11) lower HP, spans the fight so it keeps >= 4 resampled rows
@@ -297,14 +295,13 @@ describe('buildParsePositions', () => {
   });
 });
 
-/** One recorded getAllEvents call, reduced to the fields that decide what WCL returns. */
 interface RecordedFetch { dataType: string; sourceId?: number; includeResources?: boolean; hostilityType?: string; }
 
 describe('MapTransformService.getBench', () => {
   const SPEC = 'SubtletyRogue';
   const ENCOUNTER_ID = 3144;
   const FIGHT_ID = 1;
-  const SIX_SEC_MS = 6000;                 // short fight span [0, endTime)
+  const SIX_SEC_MS = 6000;
   const PLAYER_ACTOR_ID = 5;
   const BOSS_ACTOR_ID = 10;
   const BOSS_GAME_ID = 100;

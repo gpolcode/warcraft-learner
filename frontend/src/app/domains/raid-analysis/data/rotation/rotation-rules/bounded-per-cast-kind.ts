@@ -3,7 +3,6 @@ import { AnalysisFinding, FindingOccurrence } from '../../analysis/analysis.mode
 import { RuleCondition, RuleSeverity } from '../../rulebook/rulebook.models';
 import { RuleBand, RuleJudging, RuleKind, Scale } from './rule-kind';
 
-/** Shared by every per-cast kind so they cannot drift apart in maths or in voice. */
 export interface BoundedCasts {
   values: { timeS: number; value: number }[];
   scale: Scale;

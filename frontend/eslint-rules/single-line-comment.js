@@ -34,8 +34,7 @@ export default {
             continue;
           }
 
-          // Group a run of adjacent own-line `//` comments: that is one logical
-          // multi-line comment even though each line is individually a Line token.
+          // A run of adjacent own-line `//` comments is one logical multi-line comment even though each is its own Line token.
           if (!isOwnLine(sourceCode, comment)) {
             i++;
             continue;

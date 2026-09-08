@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
-      # main requires an approving review, and Dependabot cannot approve its own pull request,
-      # so auto-merge alone leaves every update parked.
+      # main requires an approving review, and Dependabot cannot approve its own pull request, so auto-merge alone leaves every update parked.
       - name: Approve
         run: gh pr review --approve "$PR_URL"
         env:

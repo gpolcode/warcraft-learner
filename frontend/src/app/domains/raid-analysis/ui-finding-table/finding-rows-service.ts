@@ -82,19 +82,16 @@ interface FindingMeasure {
   unit?: string;
 }
 
-/** One row of the flat finding table; rule rows carry a plain `what` label, cooldown rows carry a spell identity. */
 export interface FindingRow {
   severity: 'critical' | 'warning' | 'info';
   name?: string;
   spellId?: number | null;
-  /** Baked icon filename for `wl-game-icon` (empty string when there is no art). */
   icon: string;
   timestampS?: number | null;
   chip?: string;
   what?: string;
   measured: FindingMeasure;
   fix?: string;
-  /** Empty renders the row with no expand chevron. */
   occurrences: FindingOccurrence[];
   occurrenceTarget?: string;
   timeline?: FindingTimeline;
@@ -103,14 +100,12 @@ export interface FindingRow {
 export interface OnPlanChip {
   name: string;
   spellId: number | null;
-  /** Baked icon filename for `wl-game-icon` (empty string when there is no art). */
   icon: string;
 }
 
 export interface FindingEntry {
   name: string;
   spellId: number | null;
-  /** Baked icon filename for `wl-game-icon` (empty string when there is no art). */
   icon: string;
   hasIssue: boolean;
   findings: AnalysisFinding[];
