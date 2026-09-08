@@ -6,7 +6,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FlyoverPanel } from '../../shared/ui-flyover-panel/flyover-panel';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { LoadState } from '../../shared/ui-load-state/load-state';
-import { SelectionStore } from '../data/selection/selection-store';
 import { NorthernSkyBench } from '../data/northern-sky/northern-sky-data-source';
 import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
@@ -23,7 +22,6 @@ const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 export class NorthernSkyExport {
   private readonly loadRes = inject(LoadResourceService);
   private readonly feature = inject(NorthernSkyFeatureService);
-  private readonly selection = inject(SelectionStore);
   private readonly clipboard = inject(Clipboard);
   private readonly snackBar = inject(MatSnackBar);
 
@@ -42,7 +40,7 @@ export class NorthernSkyExport {
   });
 
   private readonly bench = this.load.value;
-  private readonly excluded = signal<ReadonlySet<number>>(new Set(this.selection.loadNorthernSky()?.excludedSpellIds ?? []));
+  private readonly excluded = signal<ReadonlySet<number>>(this.feature.loadExcluded());
   protected readonly open = signal(false);
   protected readonly error = this.load.error;
 
@@ -75,6 +73,6 @@ export class NorthernSkyExport {
 
   private persist(excluded: ReadonlySet<number>): void {
     this.excluded.set(excluded);
-    this.selection.saveNorthernSky({ excludedSpellIds: [...excluded] });
+    this.feature.saveExcluded(excluded);
   }
 }

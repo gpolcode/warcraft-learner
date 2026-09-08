@@ -3,7 +3,6 @@ import { Result, Results } from '../../shared/util-http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SelectionStore } from '../data/selection/selection-store';
 import { NorthernSkyExport } from './northern-sky-export';
 import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
 import { NorthernSkyAbility, NorthernSkyBench } from '../data/northern-sky/northern-sky-data-source';
@@ -37,12 +36,15 @@ async function mount(
 ): Promise<Mounted> {
   const copies: string[] = [];
   const messages: string[] = [];
-  // The prototype supplies the real panel and note methods; only the IO read is faked.
-  const feature = Object.assign(Object.create(NorthernSkyFeatureService.prototype) as NorthernSkyFeatureService, { getExport });
+  // The prototype supplies the real panel and note methods; only the stored and fetched values are faked.
+  const feature = Object.assign(Object.create(NorthernSkyFeatureService.prototype) as NorthernSkyFeatureService, {
+    getExport,
+    loadExcluded: () => new Set<number>(),
+    saveExcluded: () => undefined,
+  });
 
   const dom = mountDom(NorthernSkyExport, { spec: NORTHERN_SKY_SPEC, encounterId: NORTHERN_SKY_ENCOUNTER_ID }, [
     { provide: NorthernSkyFeatureService, useValue: feature },
-    { provide: SelectionStore, useValue: { loadNorthernSky: () => null, saveNorthernSky: () => undefined } },
     { provide: Clipboard, useValue: { copy: (text: string) => { copies.push(text); return copySucceeds; } } },
     { provide: MatSnackBar, useValue: { open: (message: string) => { messages.push(message); } } },
   ]);
