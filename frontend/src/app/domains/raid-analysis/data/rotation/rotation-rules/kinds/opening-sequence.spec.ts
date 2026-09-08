@@ -75,8 +75,8 @@ describe('evaluateOpeningSequence', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('opening_sequence: a chip per authored step, a missed one carrying a "not reached" note instead of a time', () => {
+describe('an opening_sequence finding', () => {
+  it('carries a chip per authored step, a missed one noting "not reached" instead of a time', () => {
     const opener: OpeningSequenceCondition = {
       kind: 'opening_sequence',
       spell_ids: [SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE],

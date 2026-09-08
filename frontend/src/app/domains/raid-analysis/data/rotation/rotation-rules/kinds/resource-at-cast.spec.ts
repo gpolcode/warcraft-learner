@@ -129,10 +129,11 @@ describe('evaluateResourceAtCast', () => {
     });
   });
 
-  it('flags the far side: a finisher spent at the pool\'s own cap, over the field\'s own ceiling', () => {
+  it('flags a finisher spent at the pool\'s own cap, past the field\'s own ceiling, and passes one exactly on it', () => {
     const FIELD_LO_FRAC = 0.4, FIELD_HI_FRAC = 0.8;
+    const CEILING_POINTS = FIELD_HI_FRAC * MAX_COMBO_POINTS;
     const overCap = ruleCtx([atCombo(10, MAX_COMBO_POINTS)]);
-    const atHi = ruleCtx([atCombo(10, 4)]);
+    const atHi = ruleCtx([atCombo(10, CEILING_POINTS)]);
     const finding = evaluateResourceAtCast(finisherAtMax, overCap, band(FIELD_LO_FRAC, FIELD_HI_FRAC), 'warning', 'do x');
     expect(finding?.message).toBe('1 of 1 Eviscerate casts were spent above 4/5 combo points. Spend before you cap.');
     // Spending sooner is what the authored action asks for, and it answers a capped pool too.
@@ -141,8 +142,8 @@ describe('evaluateResourceAtCast', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('resource_at_cast: a chip per cast, the raw amount over its own cap as the label (a small pool reads as a count, not a percent)', () => {
+describe('a resource_at_cast finding', () => {
+  it('carries a chip per cast, the raw amount over its own cap as the label, since a small pool reads as a count rather than a percent', () => {
     const finisher: ResourceAtCastCondition = {
       kind: 'resource_at_cast', spell_id: EVISCERATE, spell_name: 'Eviscerate',
       resource_type: COMBO_POINT_TYPE, resource_name: 'combo points', bound: 'min',
@@ -158,7 +159,7 @@ describe('occurrence strips', () => {
     expect(finding?.occurrenceTarget).toBe('Spend at 5/5 or more.');
   });
 
-  it('resource_at_cast: a large pool (mana) still reads as a percent, since WCL reports it as a five/six-digit number', () => {
+  it('reads a large pool (mana) as a percent, since WCL reports it as a five/six-digit number', () => {
     const innervate: ResourceAtCastCondition = {
       kind: 'resource_at_cast', spell_id: EVISCERATE, spell_name: 'Innervate',
       resource_type: COMBO_POINT_TYPE, resource_name: 'mana', bound: 'min',

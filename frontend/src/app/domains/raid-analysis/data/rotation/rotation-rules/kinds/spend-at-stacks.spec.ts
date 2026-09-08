@@ -143,7 +143,7 @@ describe('evaluateSpendAtStacks', () => {
     expect(kind.label(spendAtStacks)).toBe('Lightning Bolt at Maelstrom Weapon');
   });
 
-  it('flags the far side: a spender held to the buff\'s own cap, over the field\'s own ceiling', () => {
+  it('flags a spender held to the buff\'s own cap, past the field\'s own ceiling, and passes one exactly on it', () => {
     const FIELD_LO = 3, FIELD_HI = 8;
     const overCap = ruleCtx([cast(LIGHTNING_BOLT, holding(MAELSTROM_WEAPON_MAX_STACKS))], { buffs: climbing });
     const atHi = ruleCtx([cast(LIGHTNING_BOLT, holding(FIELD_HI))], { buffs: climbing });
@@ -154,8 +154,8 @@ describe('evaluateSpendAtStacks', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('spend_at_stacks: a chip per cast, the count against the cap as the label', () => {
+describe('a spend_at_stacks finding', () => {
+  it('carries a chip per cast, the count against the cap as the label', () => {
     const spendAtStacks: SpendAtStacksCondition = {
       kind: 'spend_at_stacks',
       spell_id: LIGHTNING_BOLT, spell_name: 'Lightning Bolt',

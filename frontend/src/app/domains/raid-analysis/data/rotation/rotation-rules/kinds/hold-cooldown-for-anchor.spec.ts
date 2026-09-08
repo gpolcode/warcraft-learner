@@ -54,8 +54,8 @@ describe('sampleRule', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('hold_cooldown_for_anchor: marks the anchor cast and reads each charge\'s gap to it', () => {
+describe('a hold_cooldown_for_anchor finding', () => {
+  it('marks the anchor cast and reads each charge\'s gap to it', () => {
     const ctx = ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 120), cast(SHADOW_DANCE, 110)]);
     const finding = evaluateHoldForAnchor(HOLD_DANCE_FOR_BLADES, ctx, band(HOLD_WINDOW_S), 'critical');
     expect(finding?.occurrences).toEqual([
@@ -65,7 +65,7 @@ describe('occurrence strips', () => {
     expect(finding?.occurrenceTarget).toBe('saved when Shadow Blades is within 15s');
   });
 
-  it('hold_cooldown_for_anchor: the chip and the window limit both read one decimal, so a violation gap reads visibly smaller than the limit', () => {
+  it('reads the chip and the window limit to one decimal, so a violation gap reads visibly smaller than the limit', () => {
     const HOLD_LIMIT_S = 12;
     const ANCHOR_S = 100;
     const CLEARED_GAP_S = 12.4;
@@ -84,7 +84,7 @@ describe('occurrence strips', () => {
     ]);
   });
 
-  it('hold_cooldown_for_anchor: a gap that clears the window is ok, and the low edge itself is strict', () => {
+  it('never appears for a gap at or past the field\'s low edge, only for one under it', () => {
     const HOLD_LIMIT_S = 12;
     const ANCHOR_S = 100;
     const CLEARED_GAP_S = 12.4;

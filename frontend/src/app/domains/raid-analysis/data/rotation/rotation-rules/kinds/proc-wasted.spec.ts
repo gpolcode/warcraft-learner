@@ -79,8 +79,8 @@ describe('sampleRule', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('proc_wasted: a chip per proc span, used vs wasted as the label', () => {
+describe('a proc_wasted finding', () => {
+  it('carries a chip per proc span, used vs wasted as the label', () => {
     const spendDance: ProcWastedCondition = {
       kind: 'proc_wasted', buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance',
       spend_spell_ids: [SECRET_TECHNIQUE], spend_spell_names: ['Secret Technique'],

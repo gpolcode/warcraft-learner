@@ -85,8 +85,8 @@ describe('sampleRule', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('cast_outside_buff: a chip per cast, the buff state as the label', () => {
+describe('a cast_outside_buff finding', () => {
+  it('carries a chip per cast, the buff state as the label', () => {
     const outsideDance: CastOutsideBuffCondition = {
       kind: 'cast_outside_buff', spell_id: SECRET_TECHNIQUE, spell_name: 'Secret Technique',
       buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance', require: 'inside',
