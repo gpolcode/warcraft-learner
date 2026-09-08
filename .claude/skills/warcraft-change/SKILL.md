@@ -1,109 +1,81 @@
 ---
 name: warcraft-change
-description: warcraft-learner change contract - what a code change must deliver, end to end. Covers the four change kinds (finding, rule kind, feature, page), the universal checklist (feature math, bench shape, failure handling, UI, copy, specs), the self-review checklist, and the verification commands. Load this before writing, changing, or reviewing any code under frontend/src.
+description: warcraft-learner change contract - what a code change must deliver, end to end. Covers the four change kinds (finding, rule kind, feature, page), the conventions no lint rule or type checks (architecture roles, failure handling, UI, testing, e2e), and the verification steps. Load this before writing, changing, or reviewing any code under frontend/src.
 ---
 
 # warcraft-learner change
 
 **What good looks like:** a change is playable end to end - the analysis computes it, ingestion bakes it, the page renders it, the copy coaches it, and a spec pins it. Testing is not a phase; it is part of the deliverable.
 
-**Deliverable:** the checklist below holds for your diff, the self-review checklist passes, and `npm test` + `npm run lint` + `npm run build` pass.
-
-## Universal checklist
-
-Every change delivers some subset of:
-
-1. **Feature math** - named, stateless methods: protected on the feature's `*FeatureService`, or public on a cross-feature `data/` service. Methods take data in and return data; IO stays behind the two API services.
-2. **Bench shape** - if the change alters what ingestion must bake, update the feature's `*Bench` interface in its `data/<feature>/*-data-source.ts` and bump `INGEST_VERSION` (`src/app/domains/raid-analysis/data/ingest/ingest-version.ts`).
-3. **Failure handling** - every fallible load returns `Result<T, LoadError>`; the four render states (content / waiting / transient error / permanent error). No silent swallow.
-4. **UI** - template styles text and color only through the theme's named utilities (a type role plus a color token), formatting goes through pipes, drill-down uses `wl-finding-occurrences`.
-5. **Copy** - message + remedy in the terse analyst voice. Governing skill: **warcraft-writing**.
-6. **Specs** - pure math tested at the lowest altitude, services end-to-end through fakes. Each "triggers" case paired with a "does not trigger at the boundary" case.
-7. **WCL reads** - a new event stream or gear/talent/position field means checking the quirks table first. Governing skill: **warcraft-wcl-data**.
+Layer access, the two HTTP chokepoints, method shape, styling syntax, and file naming are eslint-enforced (`frontend/eslint.config.js`); this skill holds only what no tool checks. Two sibling skills govern parts of a change: **warcraft-writing** for every string a user sees, **warcraft-wcl-data** before reading a new event stream or gear/talent/position field.
 
 ## Change kinds
 
 ### New finding on an existing feature
 
-Deliver: the pure check in the feature's `data/<feature>/` service, a `FindingOccurrence`-populated result, message + remedy copy, boundary-paired specs. No bench change means no `INGEST_VERSION` bump.
+Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences` populated on the finding (all `wl-finding-occurrences` needs to render the drill-down), message + remedy copy, boundary-paired specs. No bench change means no `INGEST_VERSION` bump.
 
 ### New rule-engine kind
 
-Deliver: the kind's class in `rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`rotation-rules/rule-kinds.ts`; the mapped type will not compile with one missing), per-instance `occurrences` on the finding, boundary-paired specs. The kind must also be declared in the rulebook schema (`.claude/skills/warcraft-rulebook/rulebook.schema.json`) - bump `INGEST_VERSION`.
+Deliver: the kind's class in `data/rotation/rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`data/rotation/rotation-rules/rule-kinds.ts`), declared in the rulebook schema (`.claude/skills/warcraft-rulebook/rulebook.schema.json`), per-instance `occurrences` on the finding, boundary-paired specs. Bump `INGEST_VERSION`.
 
 ### New feature
 
-Follow the Burst feature (`domains/raid-analysis/feature-burst-windows/` + `data/burst-windows/`) as the reference. Deliver: the feature's `*TransformService` + `*DataSource` token pair and its `*FeatureService` in `data/<feature>/`, the smart component in `feature-<feature>/`, feature-local math beside the services in `data/<feature>/`, wired into the ingest bench registry (`feature-ingest/bench-registry.ts`) and the page shell, its tailored bench file, specs at both altitudes. Bump `INGEST_VERSION`.
+Follow the Burst feature (`domains/raid-analysis/feature-burst-windows/` + `data/burst-windows/`) as the reference. Deliver: the `*TransformService` + `*DataSource` token pair and the `*FeatureService` in `data/<feature>/`, feature-local math beside them, the smart component in `feature-<feature>/`, the bench registered in `feature-ingest/bench-registry.ts` and the component in the page shell, specs at both altitudes. Bump `INGEST_VERSION`.
 
 ### New page or shared component
 
-Deliver: the shell (zero domain services) or leaf (inputs/outputs only), copy per **warcraft-writing**, specs per the testing rules below, and - for a page - an e2e card test per the e2e rules below.
+Deliver: the shell (zero domain services beyond selection) or leaf (inputs/outputs only), specs per the testing rules below, and - for a page - an e2e card test per the e2e rules below.
 
-## Architecture rules (hard)
+## Ingest version
 
-- **Exactly two pass-through API services at runtime** - `WclApiService` and `DataFileApiService`. Bytes in, typed bytes out.
-- **Module types and access** (eslint-enforced): `feature-*` -> `ui-*`, `data`, `util-*`; `ui-*` -> `ui-*`, `data`, `util-*`; `data` -> `util-*`; `util-*` -> `util-*`; a domain reaches only itself and `shared`; the shell under `src/app/` reaches everything.
-- **Services are self-contained**: inject only the two API services (or the feature `*DataSource` token), `data/` services, and `LoggerService`; import models. A `*FeatureService` owns its feature-local math as protected methods or delegates to a sibling `data/<feature>/` service. The method shape itself is eslint-enforced (`no-function-alias-members` plus the exported-function ban, whose `ignores` list the sanctioned exceptions).
-- **`*DataSource` interface + `*_DATA_SOURCE` InjectionToken** - the only swap point between production (`*DataFileService`) and development/ingest (`*TransformService`).
-- **`*FeatureService`** - the runtime shell, one per feature component, in `data/<feature>/`. Injects its token + the cached `WclApiService` + other `data/` services, exposes signals; its public members are the component's surface.
-- **Feature components inject their `*FeatureService`** plus the ui services (`LoadResourceService`, `FindingRowsService`) - never another `data/` service.
-- **Page shells (`src/app/post-raid/`, `src/app/pre-fight/`) - zero `data/` services beyond selection.** Resolve selection, compose feature components, pass selection as inputs.
-- **Presentational leaves - inputs/outputs only**, no services beyond framework tokens.
+`INGEST_VERSION` (`data/ingest/ingest-version.ts`) bumps exactly when what ingestion bakes changes: a feature's `*Bench` interface in its `data/<feature>/*-data-source.ts`, measured values, or a republished rulebook.
 
-## UI rules (hard)
+## Architecture roles
 
-- **Styling is Angular Material + Tailwind utilities over `frontend/src/styles.scss`** - the one stylesheet. Its `@theme` block is the single source of the color tokens, the one font family, and the type roles; the `text-label`, `chip-onplan` and `icon-*` utilities sit beside it. Material's type scale is pointed at the same roles through its `--mat-sys-*` tokens.
-- **Every text element wears exactly one type role** - `text-title`, `text-heading`, `text-label`, `text-name`, `text-body`, `text-caption`, `text-value`, and `text-hero`, the single display size reserved for the DPS number - and adds a named color utility only where the color differs from the body default (`text-muted`, `text-critical`, `bg-surface`, `border-line`). `text-accent` is both the link and time color and the informational severity; there is no separate info token. The `theme-utilities-only` lint rule rejects arbitrary sizes, `var(--...)` colors, second font families, and case utilities in templates; the numbers themselves live only in `styles.scss`.
-- **`computed()` exposes semantic state only**; the template maps that state to a class.
-- **All formatting goes through Angular pipes** (`FormatDurationPipe`, `FormatDamagePipe`, `DecimalPipe`, `FormatSpecPipe`).
-- **A rule finding's drill-down is `wl-finding-occurrences`** (`domains/raid-analysis/ui-finding-table/`): populate `occurrences` on the finding and the UI work is done.
+- **`*DataSource` interface + `*_DATA_SOURCE` token** - the only swap point between production (`*DataFileService`) and ingest (`*TransformService`).
+- **`*FeatureService`** - one per feature component, in `data/<feature>/`; exposes signals and owns its feature-local math as protected methods, or delegates to a sibling `data/<feature>/` service.
+- **Feature components are thin** - inject their `*FeatureService`, load through `LoadResourceService`, render content or one `wl-load-state`.
+- **Page shells** (`src/app/post-raid/`, `src/app/pre-fight/`) resolve selection, compose feature components, and pass selection as inputs.
+- **Presentational leaves** - inputs/outputs only, no services beyond framework tokens.
 
-## Failure-handling rules (hard)
+## Failure handling
 
-- Every fallible load returns `Result<T, LoadError>` - never `T | null`, never an escaping throw.
-- The error channel is the three-variant `LoadError` union: `missing` (404, not an error), `transient` (network/5xx, retried once by the interceptor), `permanent` (200 but semantically unusable, carries an `id` and is `logWarn`ed).
-- `try/catch` lives only in the imperative shell; the catch `logWarn`s then returns `toLoadError(cause, id)` (`domains/raid-analysis/data/http/http-load-error.ts`).
-- Pure core functions signal failure with `missing(...)` / `permanent(...)`, never by throwing.
-- Components apply the `Result`, keep one `available` signal (`= result.ok`) and one `error` signal (null for `missing`), and render content or one `wl-load-state`.
+- A card's loader returns `Result<T>`; the `LoadResourceService.loadResource` signature enforces it. The variants and the HTTP status mapping are documented in `shared/util-http/result.ts` and `data/http/http-load-error.ts`.
+- `try/catch` lives in the imperative shell only: the catch `logWarn`s, then returns `HttpLoadErrors.toLoadError(cause, id)`. Pure functions signal failure with `Results.missing(...)` / `Results.permanent(...)`, never by throwing.
 
-## Testing rules (hard)
+## UI
 
-- **Altitude rule:** test behavior exhaustively at the lowest altitude that owns it. A composite gets exactly one composition test; never re-test shared helpers from feature specs. A service under test is resolved with `TestBed.inject`; protected members are read through the bracket-access loophole.
+- Templates style text through one type role plus, where the color differs from the body default, one color token from `frontend/src/styles.scss`; the `theme-utilities-only` lint message lists them. `text-accent` doubles as the informational severity; there is no info token.
+- `computed()` exposes semantic state only; the template maps that state to a class.
+- All formatting goes through Angular pipes (`shared/ui-format/` and the `raid-analysis/ui-*` pipes).
+
+## Testing
+
+- **Altitude rule:** test behavior exhaustively at the lowest altitude that owns it. A composite gets exactly one composition test; never re-test shared helpers from feature specs. Feature components are covered by their service spec, not by mounting them.
+- **Titles, setup, and assertions read as sentences:** `describe` names the unit, `it` finishes the sentence - no arrows, colon prefixes, or labels. The body keeps that voice: setup is a few named fixture calls that spell out the scenario (`reapplied(CLIPPED_ELAPSED_S)`, `at(FIELD_ELAPSED_S - 1)`), and each `expect` states one claim from the title, so a reviewer reads the test top to bottom without decoding it. The aura-clipped kind spec is the reference for setup; the e2e specs (`frontend/e2e/*.spec.ts`) with their `support.ts` verbs (`shows`, `showsFindingRows`, `showsOnPlan`) for assertions.
+- **Boundary pairs:** every "triggers" case has a "does not trigger at the boundary" partner, and comparisons are strict: a value exactly at `mean + 2*stddev` is not an outlier.
 - **Named constants, never magic numbers or raw ids.** Spell/item ids come from `src/testing/spell-ids.ts`; every computed value gets a named `const` with a one-line derivation.
-- **Boundary comparisons are strict** and tested as such: a value exactly at `mean + 2*stddev` is not an outlier - pair the cases.
 - **Never load a WCL JSON blob** - build minimal event streams from the factories in `src/testing/builders/events.ts`.
-- **Bench fixtures are local to each feature spec**: a small `bench(over: Partial<RotationBench>)` factory that defaults every field and spreads overrides.
-- **Presentational leaves:** read `computed()` signals via `mountVm` (`src/testing/component-harness.ts`) - no DOM assertions.
-- **Feature components are thin** - their logic is covered by the service spec, not by mounting them.
+- **Bench fixtures are local to each feature spec:** a small `bench(over: Partial<...Bench>)` factory that defaults every field and spreads overrides.
+- A service under test is resolved with `TestBed.inject`, protected members read through bracket access. Presentational leaves read `computed()` signals via `mountVm` (`src/testing/component-harness.ts`), no DOM assertions.
 
-## E2E rules (for page changes)
+## E2E (page changes)
 
-- **One WCL analysis per run** - the suite runs in `mode: 'serial'` over one shared `page`, `retries: 0`.
-- **Production configuration only** - `playwright.config.ts` serves the production build so features read ingested files.
-- **Static copy exact, computed values by shape or existence** - never pin a number, name, or timestamp that comes from the log or bench.
-- **One happy-path test per use-case card**, located by its `wl-*` tag.
-
-## Self-review checklist
-
-Before committing, verify:
-
-- [ ] Every new behavior has a spec at the lowest altitude that owns it
-- [ ] Each "triggers" case is paired with a "does not trigger at the boundary" case
-- [ ] `INGEST_VERSION` bumped exactly when what ingestion bakes changes: bench shape, measured values, or a republished rulebook
-- [ ] Every finding populates `occurrences` (or explains why not)
-- [ ] All copy passes the terse-analyst voice rules in **warcraft-writing**
-- [ ] `npm test`, `npm run lint`, and `npm run build` pass
-- [ ] Templates reach every color through a token, and all formatting goes through pipes
-- [ ] Every fallible load returns `Result<T, LoadError>` and renders one `wl-load-state`
-- [ ] Every comment the diff adds passes the CLAUDE.md gate, audited one by one: it names the concrete mistake a reader makes without it, in one line - summaries, narration, restated code, and fixture descriptions are deleted, not kept
+- One WCL analysis per run: the suite is serial over one shared `page`, so a new card test reuses it rather than analyzing again.
+- Static copy exact, computed values by shape or existence - never pin a number, name, or timestamp that comes from the log or bench.
+- One happy-path test per use-case card, located by its `wl-*` tag.
 
 ## Verification
 
 ```bash
 cd frontend
-npm test
 npm run lint
+npm run knip
+npm test
 npm run build
 ```
 
-E2e spends one WCL analysis per run - run `npm run e2e` only when the change touches a rendered page, and read the e2e rules above first.
+Then check what no tool does: every new behavior has a spec at the lowest altitude, every "triggers" case has its boundary partner, `INGEST_VERSION` bumped exactly per the ingest-version rule, every finding populates `occurrences`.
+
+E2e runs in the PR's E2E workflow and spends one WCL analysis per run - read the check there; never run `npm run e2e` locally.

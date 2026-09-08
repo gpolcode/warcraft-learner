@@ -52,7 +52,7 @@ Load the matching skill(s) **before** you start that step. The `warcraft-*` skil
 | Writing or changing any string a user sees | **warcraft-writing** |
 | Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
 | Generating or refreshing a spec's `rulebook.json` | **warcraft-rulebook** |
-| Reviewing code, a diff, or a PR | **warcraft-change** (the self-review checklist applies) |
+| Reviewing code, a diff, or a PR | **warcraft-change** (the verification section applies) |
 | Verifying a change runs / manual end-to-end check | run the relevant command from the Commands table above |
 
 On any conflict between a skill and this file, **this file wins**.
