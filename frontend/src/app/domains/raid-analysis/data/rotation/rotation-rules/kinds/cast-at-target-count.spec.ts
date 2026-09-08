@@ -127,8 +127,8 @@ describe('unanimous field', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('cast_at_target_count: a chip per cast, the target count as the label', () => {
+describe('a cast_at_target_count finding', () => {
+  it('carries a chip per cast, the target count as the label', () => {
     const blackPowder: CastAtTargetCountCondition = {
       kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min',
     };

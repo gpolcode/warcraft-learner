@@ -88,8 +88,8 @@ describe('evaluateFillerBelowHealth', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('filler_below_health: a chip per filler cast under the health gate, coached vs alternative as the label', () => {
+describe('a filler_below_health finding', () => {
+  it('carries a chip per filler cast under the health gate, coached vs alternative as the label', () => {
     const executeBelow: FillerBelowHealthCondition = {
       kind: 'filler_below_health',
       spell_id: EXECUTE, spell_name: 'Execute',

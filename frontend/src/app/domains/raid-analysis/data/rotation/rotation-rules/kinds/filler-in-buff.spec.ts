@@ -117,8 +117,8 @@ describe('evaluateFillerInBuff', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('filler_in_buff: a chip per filler cast inside the buff, coached vs alternative as the label', () => {
+describe('a filler_in_buff finding', () => {
+  it('carries a chip per filler cast inside the buff, coached vs alternative as the label', () => {
     const wrathInSolar: FillerInBuffCondition = {
       kind: 'filler_in_buff',
       spell_id: WRATH, spell_name: 'Wrath',

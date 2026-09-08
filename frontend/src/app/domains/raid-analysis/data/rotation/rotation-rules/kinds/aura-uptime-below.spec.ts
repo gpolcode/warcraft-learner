@@ -96,8 +96,8 @@ describe('sampleRule', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('aura_uptime_below: a timeline of merged up-spans, plus a chip for each of the largest gaps', () => {
+describe('an aura_uptime_below finding', () => {
+  it('carries a timeline of merged up-spans, plus a chip for each of the largest gaps', () => {
     const uptime: AuraUptimeBelowCondition = {
       kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
     };
@@ -117,7 +117,7 @@ describe('occurrence strips', () => {
     ]);
   });
 
-  it('aura_uptime_below: drops a sub-second gap from the chip strip, since it would render as a nonsensical "0s"', () => {
+  it('drops a sub-second gap from the chip strip, since it would render as a nonsensical "0s"', () => {
     const uptime: AuraUptimeBelowCondition = {
       kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
     };
@@ -132,7 +132,7 @@ describe('occurrence strips', () => {
     ]);
   });
 
-  it('aura_uptime_below: draws the timeline against the full fight, so a dead stretch still reads as a downtime gap', () => {
+  it('draws its timeline against the full fight, so a dead stretch still reads as a downtime gap', () => {
     const uptime: AuraUptimeBelowCondition = {
       kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target',
     };

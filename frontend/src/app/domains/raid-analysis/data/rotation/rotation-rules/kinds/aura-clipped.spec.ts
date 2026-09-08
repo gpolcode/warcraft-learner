@@ -101,19 +101,22 @@ describe('evaluateAuraClipped', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('aura_clipped: a chip per hard-cast refresh, the elapsed time as the label', () => {
+describe('an aura_clipped finding', () => {
+  it('carries a chip per hard-cast refresh, the elapsed time as the label', () => {
     const moonfireClipped: AuraClippedCondition = {
       kind: 'aura_clipped',
       aura_spell_id: MOONFIRE_DOT, aura_spell_name: 'Moonfire',
       cast_spell_id: MOONFIRE, cast_spell_name: 'Moonfire', on: 'target',
     };
-    const debuffs = [applyDebuff(MOONFIRE_DOT, 20), refreshDebuff(MOONFIRE_DOT, 24), refreshDebuff(MOONFIRE_DOT, 36)];
-    const ctx = ruleCtx([cast(MOONFIRE, 24), cast(MOONFIRE, 36)], { debuffs });
-    const finding = evaluateAuraClipped(moonfireClipped, ctx, band(10, 12), 'warning');
+    const FIELD_LOW_S = 10, FIELD_HIGH_S = 12;
+    const APPLY_AT_S = 20, CLIPPED_ELAPSED_S = 4;
+    const CLIPPED_AT_S = APPLY_AT_S + CLIPPED_ELAPSED_S, HELD_AT_S = CLIPPED_AT_S + FIELD_HIGH_S;
+    const debuffs = [applyDebuff(MOONFIRE_DOT, APPLY_AT_S), refreshDebuff(MOONFIRE_DOT, CLIPPED_AT_S), refreshDebuff(MOONFIRE_DOT, HELD_AT_S)];
+    const ctx = ruleCtx([cast(MOONFIRE, CLIPPED_AT_S), cast(MOONFIRE, HELD_AT_S)], { debuffs });
+    const finding = evaluateAuraClipped(moonfireClipped, ctx, band(FIELD_LOW_S, FIELD_HIGH_S), 'warning');
     expect(finding?.occurrences).toEqual([
-      { atS: 24, ok: false, label: '4s', detail: 'Refreshed 4s into the aura.' },
-      { atS: 36, ok: true, label: '12s', detail: 'Refreshed 12s into the aura.' },
+      { atS: CLIPPED_AT_S, ok: false, label: '4s', detail: 'Refreshed 4s into the aura.' },
+      { atS: HELD_AT_S, ok: true, label: '12s', detail: 'Refreshed 12s into the aura.' },
     ]);
     expect(finding?.occurrenceTarget).toBe('let it run at least 10s');
   });

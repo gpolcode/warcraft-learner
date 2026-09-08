@@ -79,8 +79,8 @@ describe('sampleRule', () => {
   });
 });
 
-describe('occurrence strips', () => {
-  it('cast_without_prior: a chip per judged cast, its lead as the label', () => {
+describe('a cast_without_prior finding', () => {
+  it('carries a chip per judged cast, its lead as the label', () => {
     const ctx = ruleCtx([cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 12), cast(SECRET_TECHNIQUE, 40)]);
     const finding = evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, band(PAIR_WINDOW_S), 'warning');
     expect(finding?.occurrences).toEqual([
@@ -90,7 +90,7 @@ describe('occurrence strips', () => {
     expect(finding?.occurrenceTarget).toBe('within 5s of Shadow Dance');
   });
 
-  it('cast_without_prior: the chip and the window limit both read one decimal, so a lead just past it reads visibly larger', () => {
+  it('reads the chip and the window limit to one decimal, so a lead just past the limit reads visibly larger', () => {
     const WINDOW_LIMIT_S = 12;
     const OVER_LIMIT_LEAD_S = 12.4;
     const ctx = ruleCtx([cast(SHADOW_DANCE, 0), cast(SECRET_TECHNIQUE, WINDOW_LIMIT_S), cast(SECRET_TECHNIQUE, OVER_LIMIT_LEAD_S)]);
