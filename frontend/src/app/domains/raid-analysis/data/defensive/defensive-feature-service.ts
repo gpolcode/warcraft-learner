@@ -3,6 +3,7 @@ import { WclApiService } from '../wcl/wcl-api-service';
 import {
   AnalysisFinding, BurstWindow, PlayerBurstWindow, PlayerDefensive,
 } from '../analysis/analysis.models';
+import { FindingRow, FindingRowsService, OnPlanChip } from '../analysis/finding-rows-service';
 import { PerDefensiveBenchmark } from '../encounter/encounter.models';
 import { ComparisonWindow, WindowStatus } from '../analysis/window-comparison.models';
 import { ClipAnchor } from '../capture/capture.models';
@@ -28,9 +29,8 @@ export interface DefensiveMapAnchor {
 }
 
 export interface DefensiveView {
-  findings: AnalysisFinding[];
-  spellIdsByName: Record<string, number>;
-  iconByName: Record<string, string>;
+  findingRows: FindingRow[];
+  onPlan: OnPlanChip[];
   windows: ComparisonWindow[];
   anchors: DefensiveMapAnchor[];
   clipAnchors: ClipAnchor[];
@@ -86,6 +86,7 @@ export interface DefensiveWindowsInput {
 @Injectable({ providedIn: 'root' })
 export class DefensiveFeatureService {
   private readonly logger = inject(LoggerService);
+  private readonly findingRows = inject(FindingRowsService);
   private readonly holdTargets = inject(HoldTargetsService);
   private readonly auraWindows = inject(AuraWindowsService);
   private readonly castCadence = inject(CastCadenceService);
@@ -110,7 +111,7 @@ export class DefensiveFeatureService {
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'DefensiveFeatureService.loadAnalysisView',
       errorId: 'defensive.player-view',
-      emptyView: () => ({ findings: [], spellIdsByName: bench.value.cd_spell_ids, iconByName: {}, windows: [], anchors: [], clipAnchors: [] }),
+      emptyView: () => ({ findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [] }),
       analyze: context => this.analysisView(bench.value, pull, playerId, context),
     });
   }
@@ -145,7 +146,15 @@ export class DefensiveFeatureService {
     const { windows, anchors, clipAnchors } = this.buildDefensiveWindows({
       topWindows: bench.defensive_windows, playerWindows, playerDefensives, fightDurationS, abilities: bench.ability_icons,
     });
-    return { findings, spellIdsByName: bench.cd_spell_ids, iconByName, windows, anchors, clipAnchors };
+    const entries = this.findingRows.bucketFindings(findings, {
+      spellId: name => bench.cd_spell_ids[name] ?? null,
+      icon: name => iconByName[name] ?? '',
+    });
+    return {
+      findingRows: this.findingRows.rowsFromEntries(entries),
+      onPlan: this.findingRows.onPlanFromEntries(entries),
+      windows, anchors, clipAnchors,
+    };
   }
 
   async loadPlan(spec: string, encounterId: number): Promise<Result<DefensivePlanView>> {

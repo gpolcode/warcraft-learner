@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { type AnalysisFinding, type FindingOccurrence, type FindingTimeline, CAT_LABEL } from '../data/analysis/analysis.models';
-import { LoggerService } from '../../shared/util-logging/logger-service';
+import { type AnalysisFinding, type FindingOccurrence, type FindingTimeline, CAT_LABEL } from './analysis.models';
+import { LoggerService } from '../../../shared/util-logging/logger-service';
 
 @Injectable({ providedIn: 'root' })
 export class FindingRowsService {

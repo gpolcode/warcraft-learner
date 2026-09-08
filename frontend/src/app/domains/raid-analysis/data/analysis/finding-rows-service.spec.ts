@@ -1,7 +1,7 @@
 import { assert, describe, it, expect, vi, beforeEach, afterEach, MockInstance } from 'vitest';
 import { FindingEntry, UNKNOWN_COOLDOWN_LABEL, FindingRowsService } from './finding-rows-service';
-import type { AnalysisFinding } from '../data/analysis/analysis.models';
-import { SHADOW_BLADES, VANISH } from '../../../../testing/spell-ids';
+import type { AnalysisFinding } from './analysis.models';
+import { SHADOW_BLADES, VANISH } from '../../../../../testing/spell-ids';
 import { TestBed } from '@angular/core/testing';
 
 const rowBuilder = TestBed.inject(FindingRowsService);
