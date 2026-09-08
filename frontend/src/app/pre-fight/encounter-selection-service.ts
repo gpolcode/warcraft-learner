@@ -1,11 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { DataFileApiService } from '../domains/raid-analysis/data/data-files/data-file-api-service';
+import { SpecMetaService } from '../domains/raid-analysis/data/data-files/spec-meta-service';
+import { SpecMeta } from '../domains/raid-analysis/data/data-files/spec-meta.models';
 import { EncounterEntry, SpecEntry } from '../domains/raid-analysis/data/encounter/encounter.models';
 import { Result } from '../domains/shared/util-http/result';
 
 @Injectable({ providedIn: 'root' })
 export class EncounterSelectionService {
   private readonly files = inject(DataFileApiService);
+  private readonly specMeta = inject(SpecMetaService);
 
   getSpecs(): Promise<Result<SpecEntry[]>> {
     return this.files.getSpecs();
@@ -14,5 +17,17 @@ export class EncounterSelectionService {
   /** Zero-sample entries stay listed: selecting one is what shows the waiting banner while a new raid has no parses yet. */
   getEncounters(spec: string): Promise<Result<EncounterEntry[]>> {
     return this.files.getEncounters(spec);
+  }
+
+  classList(): { className: string; classLabel: string; classIcon: string }[] {
+    return this.specMeta.classList();
+  }
+
+  specsForClass(className: string, available: string[]): SpecMeta[] {
+    return this.specMeta.specsForClass(className, available);
+  }
+
+  resolve(spec: string | null | undefined): Promise<SpecMeta | undefined> {
+    return this.specMeta.resolve(spec);
   }
 }

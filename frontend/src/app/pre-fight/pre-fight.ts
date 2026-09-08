@@ -17,7 +17,6 @@ import { FormatSpecPipe } from '../domains/raid-analysis/ui-spec-name/format-spe
 import { ClassIconPipe } from '../domains/raid-analysis/ui-game-icon/class-icon-pipe';
 import { SpecIconPipe } from '../domains/raid-analysis/ui-game-icon/spec-icon-pipe';
 import { BossIconPipe } from '../domains/raid-analysis/ui-game-icon/boss-icon-pipe';
-import { SpecMetaService } from '../domains/raid-analysis/data/data-files/spec-meta-service';
 import { RotationCdPlan } from '../domains/raid-analysis/feature-rotation/rotation-cd-plan';
 import { DefensivePlan } from '../domains/raid-analysis/feature-defensive/defensive-plan';
 import { BurstWindows } from '../domains/raid-analysis/feature-burst-windows/burst-windows';
@@ -56,7 +55,6 @@ export class PreFight implements OnInit {
   private readonly encounterSelection = inject(EncounterSelectionService);
   private readonly mapFeature = inject(MapFeatureService);
   private readonly selectionStore = inject(SelectionStore);
-  private readonly specMeta = inject(SpecMetaService);
   private readonly pendingTasks = inject(PendingTasks);
 
   protected readonly classControl = new FormControl('', { nonNullable: true });
@@ -71,10 +69,10 @@ export class PreFight implements OnInit {
 
   protected readonly classes = computed(() => {
     const available = this.specs().map(entry => entry.spec);
-    return this.specMeta.classList().filter(cls => this.specMeta.specsForClass(cls.className, available).length > 0);
+    return this.encounterSelection.classList().filter(cls => this.encounterSelection.specsForClass(cls.className, available).length > 0);
   });
   protected readonly specsForSelectedClass = computed(() =>
-    this.specMeta.specsForClass(this.selectedClass(), this.specs().map(entry => entry.spec)));
+    this.encounterSelection.specsForClass(this.selectedClass(), this.specs().map(entry => entry.spec)));
   protected readonly selectedEncounter = computed(() =>
     this.encounters().find(entry => entry.id === this.selectedEncId()));
   protected readonly loading = signal(false);
@@ -119,7 +117,7 @@ export class PreFight implements OnInit {
     }
 
     const autoSpec = this.selectionStore.loadPreFight()?.spec ?? '';
-    const meta = await this.specMeta.resolve(autoSpec);
+    const meta = await this.encounterSelection.resolve(autoSpec);
     if (autoSpec && meta && this.specs().some(specEntry => specEntry.spec === autoSpec)) {
       this.classControl.setValue(meta.className);
       this.specControl.enable({ emitEvent: false });
@@ -138,7 +136,7 @@ export class PreFight implements OnInit {
     this.encControl.disable({ emitEvent: false });
     this.encounters.set([]);
     const available = this.specs().map(entry => entry.spec);
-    if (this.specMeta.specsForClass(this.classControl.value, available).length) {
+    if (this.encounterSelection.specsForClass(this.classControl.value, available).length) {
       this.specControl.enable({ emitEvent: false });
     } else {
       this.specControl.disable({ emitEvent: false });
