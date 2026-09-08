@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { Results } from '../../../shared/util-http/result';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../../testing/spell-ids';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyAbility } from './northern-sky-data-source';
@@ -172,6 +172,22 @@ describe('toggleAllExclusion', () => {
   it('leaves persisted exclusions untouched over an empty ability list', () => {
     const excluded = new Set([SHADOW_BLADES, EVASION]);
     expect(svc.toggleAllExclusion([], excluded)).toEqual(excluded);
+  });
+});
+
+describe('saveExcluded and loadExcluded', () => {
+  const DESELECTED = new Set([SHADOW_BLADES, EVASION]);
+
+  beforeEach(() => { localStorage.clear(); });
+
+  it('loads back every ability id an earlier visit deselected', () => {
+    svc.saveExcluded(DESELECTED);
+
+    expect(svc.loadExcluded()).toEqual(DESELECTED);
+  });
+
+  it('excludes nothing until the user deselects an ability', () => {
+    expect(svc.loadExcluded()).toEqual(new Set());
   });
 });
 
