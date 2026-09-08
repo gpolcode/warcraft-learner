@@ -15,14 +15,14 @@
       </div>
     </div>
 
-    <!-- Body geometry (px-4 + trailing 200px column) mirrors the finding-table cards so the columns line up. -->
-    <div class="px-4 md:grid md:grid-cols-[minmax(0,1fr)_200px]">
+    <!-- The stat column names the finding cards' own fix track, so the two line up. -->
+    <div class="px-4 md:grid md:grid-cols-(--cols-stat)">
 
       <div class="card-section pt-5 pb-1.5 [&>:first-child+*]:border-t-0">
         <h3 class="text-heading mb-2">Deaths &amp; result</h3>
 
         @for (d of v.deaths; track d.index) {
-          <div class="grid grid-cols-[20px_minmax(0,1fr)_auto_auto] gap-[11px] items-center py-2.5 border-t border-line">
+          <div class="grid grid-cols-(--cols-death) gap-[11px] items-center py-2.5 border-t border-line">
             <mat-icon class="icon-18 text-critical">skull</mat-icon>
             <div class="min-w-0">
               <div class="text-body">Death {{ d.index }}</div>
@@ -53,7 +53,7 @@
           </div>
         }
 
-        <div class="grid grid-cols-[20px_minmax(0,1fr)_auto_auto] gap-[11px] items-center py-2.5 border-t border-line">
+        <div class="grid grid-cols-(--cols-death) gap-[11px] items-center py-2.5 border-t border-line">
           @if (v.result === 'kill') {
             <mat-icon class="icon-18 text-gold">emoji_events</mat-icon>
           } @else {

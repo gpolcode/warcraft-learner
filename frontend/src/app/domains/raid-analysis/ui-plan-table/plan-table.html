@@ -7,17 +7,16 @@
       <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
     </div>
 
-    <div class="hidden md:grid grid-cols-[1fr_264px_200px] gap-[14px] px-4 pb-1">
-      <div></div>
-      <div class="text-label text-muted text-right">Plan</div>
-      <div class="text-label text-muted pl-[14px]">How to use</div>
+    <div class="hidden md:grid grid-cols-(--cols-plan) gap-(--gap-card) px-4 pb-1">
+      <div class="col-start-2 text-label text-muted text-right">Plan</div>
+      <div class="text-label text-muted pl-(--gap-card)">How to use</div>
     </div>
 
     @for (row of orderedRows(); track row.name) {
       @if ($index === unpickedFrom()) {
         <div class="border-t border-line bg-bg px-4 py-2 text-caption text-muted">Not used in any sampled top log. Usually a different talent build.</div>
       }
-      <div class="grid grid-cols-1 md:grid-cols-[1fr_264px_200px] gap-3 md:gap-[14px] items-start md:items-center px-4 py-[10px] border-t border-line">
+      <div class="grid grid-cols-1 md:grid-cols-(--cols-plan) gap-3 md:gap-(--gap-card) items-start md:items-center px-4 py-[10px] border-t border-line">
         <div class="flex items-center gap-[11px] min-w-0 flex-wrap">
           @if (row.spellId; as spellId) {
             <wl-game-icon [id]="spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
@@ -58,7 +57,7 @@
           </div>
         </div>
 
-        <div class="text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2.5 md:pt-0 pl-0 md:pl-[14px]">
+        <div class="text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2.5 md:pt-0 pl-0 md:pl-(--gap-card)">
           <span class="md:hidden block text-label text-muted mb-1">How to use</span>
           <wl-collapsible>{{ row.rule }}</wl-collapsible>
         </div>
