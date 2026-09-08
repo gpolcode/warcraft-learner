@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { WclEvent, WclFight, WclReport, WclTableBlob } from '../wcl/wcl.models';
-import { Results } from '../../../shared/util-http/result';
-import { PullOverviewFeatureService } from './pull-overview-feature-service';
+import { Result, Results } from '../../../shared/util-http/result';
+import { PullOverviewFeatureService, PullOverviewView } from './pull-overview-feature-service';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
@@ -39,6 +39,13 @@ const EXPECTED_DPS = PLAYER_TOTAL / FIGHT_DURATION_S;
 const DEATH_1_AT_S = 41;
 const DEATH_2_AT_S = 93;
 
+const BOSS_PERCENTAGE = 41;
+
+function okValue<T>(result: Result<T>): T {
+  if (!result.ok) assert.fail(`expected an ok result, got a ${result.error.kind} error`);
+  return result.value;
+}
+
 function deathEvent(targetID: number, atS: number, killingAbilityGameID: number): WclEvent {
   return { type: 'death', timestamp: FIGHT_START_MS + atS * MS_PER_S, abilityGameID: 0, targetID, sourceID: KILLER_ID, killingAbilityGameID };
 }
@@ -50,7 +57,7 @@ function resEvent(targetID: number, atS: number): WclEvent {
 function fight(over: Partial<WclFight> = {}): WclFight {
   return {
     id: 6, name: 'Boss', startTime: FIGHT_START_MS, endTime: FIGHT_START_MS + FIGHT_DURATION_S * MS_PER_S,
-    kill: false, encounterID: 3183, attempt: 3, duration_s: FIGHT_DURATION_S, friendlyPlayers: [], fightPercentage: 41,
+    kill: false, encounterID: 3183, attempt: 3, duration_s: FIGHT_DURATION_S, friendlyPlayers: [], fightPercentage: BOSS_PERCENTAGE,
     ...over,
   };
 }
@@ -190,7 +197,7 @@ describe('PullOverviewFeatureService.loadView', () => {
   const RAID_D2_AT_S = 60;
   const RAID_D3_AT_S = 90; // player@41 + 2 others, spread out - 3 dead at once, no window
 
-  it('summarizes a wipe: player deaths listed, wipe timed when the 3rd player is concurrently dead', async () => {
+  async function wipedPull(): Promise<{ view: PullOverviewView; calls: FakeCalls }> {
     const { service, calls } = makeService({
       deaths: [
         deathEvent(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST),
@@ -198,18 +205,29 @@ describe('PullOverviewFeatureService.loadView', () => {
         deathEvent(OTHER_PLAYER + 1, RAID_D3_AT_S, FROST_BOMB),
       ],
     });
-    const result = await service.loadView('r', PLAYER_ID, fight());
+    return { view: okValue(await service.loadView('r', PLAYER_ID, fight())), calls };
+  }
 
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    const view = result.value;
+  it('reports a wipe with the boss percentage, pull length and player dps', async () => {
+    const { view } = await wipedPull();
     expect(view.result).toBe('wipe');
-    expect(view.bossPercentage).toBe(41);
+    expect(view.bossPercentage).toBe(BOSS_PERCENTAGE);
     expect(view.durationS).toBe(FIGHT_DURATION_S);
     expect(view.dps).toBe(EXPECTED_DPS);
+  });
+
+  it('lists the player deaths and leaves the raidmates out', async () => {
+    const { view } = await wipedPull();
     expect(view.deaths).toEqual([{ index: 1, timeS: DEATH_1_AT_S, ability: 'Overwhelming Blast' }]);
+  });
+
+  it('times the wipe at the third concurrent death', async () => {
+    const { view } = await wipedPull();
     expect(view.outcomeTimeS).toBe(RAID_D3_AT_S);
-    // The killing-blow name comes off the death event, so a death costs no DamageTaken read.
+  });
+
+  it('names the killing blow off the death event, so a death costs no damage-taken read', async () => {
+    const { calls } = await wipedPull();
     expect(calls.dataTypes).not.toContain('DamageTaken');
   });
 

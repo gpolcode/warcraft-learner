@@ -65,17 +65,13 @@ describe('defensiveWindowStatus', () => {
   const ABOVE_BAND = BAND_EDGE + 1;          // 1301 - strictly above the band
 
   it.each([
-    // Not reached / no player data -> muted, no annotation (coverage irrelevant).
-    { name: 'not reached -> muted', player: 950, notReached: true, covered: true, status: 'muted', icon: 'schedule', note: '' },
-    { name: 'missing -> muted', player: null, notReached: false, covered: true, status: 'muted', icon: 'help_outline', note: '' },
-    // Within/below the band -> good, whether or not the defensive was pressed.
-    { name: 'within band, covered -> good (covered)', player: WITHIN_BAND, notReached: false, covered: true, status: 'good', icon: 'check_circle', note: 'covered' },
-    { name: 'within band, not covered -> good (no defensive used)', player: WITHIN_BAND, notReached: false, covered: false, status: 'good', icon: 'check_circle', note: 'no defensive used' },
-    // At exactly the band edge is still good (strict boundary - only STRICTLY above is bad).
-    { name: 'at band edge -> good', player: BAND_EDGE, notReached: false, covered: true, status: 'good', icon: 'check_circle', note: 'covered' },
-    // Above the band -> bad, whether or not the defensive was pressed.
-    { name: 'above band, covered -> bad (used wrongly)', player: ABOVE_BAND, notReached: false, covered: true, status: 'bad', icon: 'error', note: 'defensive used wrongly' },
-    { name: 'above band, not covered -> bad (needed, unused)', player: ABOVE_BAND, notReached: false, covered: false, status: 'bad', icon: 'error', note: 'defensive needed, unused' },
+    { name: 'is muted and unannotated when the window was not reached', player: WITHIN_BAND, notReached: true, covered: true, status: 'muted', icon: 'schedule', note: '' },
+    { name: 'is muted and unannotated when the player took no damage in the window', player: null, notReached: false, covered: true, status: 'muted', icon: 'help_outline', note: '' },
+    { name: 'is good with a covered note when damage taken is within the band and the defensive was pressed', player: WITHIN_BAND, notReached: false, covered: true, status: 'good', icon: 'check_circle', note: 'covered' },
+    { name: 'is good, noting no defensive used, when damage taken is within the band and none was pressed', player: WITHIN_BAND, notReached: false, covered: false, status: 'good', icon: 'check_circle', note: 'no defensive used' },
+    { name: 'is good, not bad, at the exact band edge', player: BAND_EDGE, notReached: false, covered: true, status: 'good', icon: 'check_circle', note: 'covered' },
+    { name: 'is bad, noting the defensive was used wrongly, when damage taken is above the band and it was pressed', player: ABOVE_BAND, notReached: false, covered: true, status: 'bad', icon: 'error', note: 'defensive used wrongly' },
+    { name: 'is bad, noting the defensive was needed and unused, when damage taken is above the band and none was pressed', player: ABOVE_BAND, notReached: false, covered: false, status: 'bad', icon: 'error', note: 'defensive needed, unused' },
   ])('$name', ({ player, notReached, covered, status, icon, note }) => {
     expect(svc['defensiveWindowStatus'](player, TOP_MAX, STDDEV, notReached, covered)).toEqual({ status, icon, note });
   });

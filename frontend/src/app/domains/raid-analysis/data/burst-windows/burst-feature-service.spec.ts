@@ -31,24 +31,35 @@ function first<T>(items: readonly T[]): T {
   return head;
 }
 
+function okValue<T>(result: Result<T>): T {
+  if (!result.ok) assert.fail(`expected an ok result, got a ${result.error.kind} error`);
+  return result.value;
+}
+
 describe('burstWindowStatus', () => {
-  // topAvg 1000, topMin 800, stddev 100 -> bad below 700, warn below 900.
+  const TOP_AVG = 1000;
+  const TOP_MIN = 800;
+  const STDDEV = 100;
+  const BAD_EDGE = TOP_MIN - STDDEV;               // 700 - damage strictly below this is bad
+  const WARN_EDGE = TOP_AVG - STDDEV;              // 900 - damage strictly below this, down to the bad edge, is warn
+  const BELOW_BAD_EDGE = BAD_EDGE - STDDEV / 2;
+  const BELOW_WARN_EDGE = WARN_EDGE - STDDEV / 2;
+
   it.each([
-    { name: 'not reached -> muted', player: 950, notReached: true, status: 'muted', icon: 'schedule' },
-    { name: 'missing player data -> muted', player: null, notReached: false, status: 'muted', icon: 'help_outline' },
-    { name: 'far below min -> bad', player: 650, notReached: false, status: 'bad', icon: 'error' },
-    { name: 'below avg band -> warn', player: 850, notReached: false, status: 'warn', icon: 'warning_amber' },
-    { name: 'within range -> good', player: 1000, notReached: false, status: 'good', icon: 'check_circle' },
-    { name: 'at min band edge (700) -> warn, not bad (strict)', player: 700, notReached: false, status: 'warn', icon: 'warning_amber' },
-    { name: 'at avg band edge (900) -> good, not warn (strict)', player: 900, notReached: false, status: 'good', icon: 'check_circle' },
+    { name: 'is muted when the window was not reached', player: TOP_AVG, notReached: true, status: 'muted', icon: 'schedule' },
+    { name: 'is muted when the player has no damage in the window', player: null, notReached: false, status: 'muted', icon: 'help_outline' },
+    { name: 'is bad when the damage falls below the bad-band edge', player: BELOW_BAD_EDGE, notReached: false, status: 'bad', icon: 'error' },
+    { name: 'is warn when the damage falls below the warn-band edge', player: BELOW_WARN_EDGE, notReached: false, status: 'warn', icon: 'warning_amber' },
+    { name: 'is good when the damage matches the top average', player: TOP_AVG, notReached: false, status: 'good', icon: 'check_circle' },
+    { name: 'is warn, not bad, at the exact bad-band edge', player: BAD_EDGE, notReached: false, status: 'warn', icon: 'warning_amber' },
+    { name: 'is good, not warn, at the exact warn-band edge', player: WARN_EDGE, notReached: false, status: 'good', icon: 'check_circle' },
   ])('$name', ({ player, notReached, status, icon }) => {
-    expect(svc['burstWindowStatus'](player, 1000, 800, 100, notReached)).toEqual({ status, icon });
+    expect(svc['burstWindowStatus'](player, TOP_AVG, TOP_MIN, STDDEV, notReached)).toEqual({ status, icon });
   });
 
-  it('bench-only -> neutral info, overriding every other state', () => {
-    // Even with no player data and "not reached", benchOnly forces the neutral info glyph.
-    expect(svc['burstWindowStatus'](null, 1000, 800, 100, true, true)).toEqual({ status: 'info', icon: 'insights' });
-    expect(svc['burstWindowStatus'](650, 1000, 800, 100, false, true)).toEqual({ status: 'info', icon: 'insights' });
+  it('is neutral info on a bench-only window, whatever the player damage and the window reach', () => {
+    expect(svc['burstWindowStatus'](null, TOP_AVG, TOP_MIN, STDDEV, true, true)).toEqual({ status: 'info', icon: 'insights' });
+    expect(svc['burstWindowStatus'](BELOW_BAD_EDGE, TOP_AVG, TOP_MIN, STDDEV, false, true)).toEqual({ status: 'info', icon: 'insights' });
   });
 });
 
@@ -155,12 +166,20 @@ describe('findPlayerBurstWindows', () => {
   });
 });
 
+const BENCH_WINDOW_START_S = 10;
+const BENCH_WINDOW_LENGTH_S = 20;
+const PLAYER_WINDOW_DAMAGE = 950;
+const PLAYER_CAST_S = BENCH_WINDOW_START_S + 1;
+const PLAYER_HIT_S = BENCH_WINDOW_START_S + 2;
+
 const wclFake = {
   getReport: async () => wclReport({
     actors: [], abilities: [{ gameID: SHADOW_BLADES_DAMAGE, name: 'Eviscerate', icon: 'inv' }],
   }),
   getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
-    dataType === 'Casts' ? [cast(SHADOW_BLADES, 11)] : [damage(SHADOW_BLADES_DAMAGE, 12, 950)],
+    dataType === 'Casts'
+      ? [cast(SHADOW_BLADES, PLAYER_CAST_S)]
+      : [damage(SHADOW_BLADES_DAMAGE, PLAYER_HIT_S, PLAYER_WINDOW_DAMAGE)],
 };
 
 function withBench(bench: Result<BurstBench>, wcl: unknown = wclFake): BurstFeatureService {
@@ -172,13 +191,19 @@ const benchFixture: BurstBench = {
   cd_spell_ids: { 'Shadow Blades': SHADOW_BLADES },
   ability_icons: { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' }, [SHADOW_BLADES_DAMAGE]: { icon: 'evis', name: 'Eviscerate' } },
   windows: [{
-    time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
+    time_s: BENCH_WINDOW_START_S, window_length_s: BENCH_WINDOW_LENGTH_S,
+    dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
     common_cds: ['Shadow Blades'],
     ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 2 }],
   }],
 };
 
 describe('BurstFeatureService', () => {
+  const BENCH_ANCHOR = { timeS: BENCH_WINDOW_START_S, windowLengthS: BENCH_WINDOW_LENGTH_S };
+
+  const benchOnlyView = async () => okValue(await withBench(Results.ok(benchFixture)).loadBenchView('SubtletyRogue', 1));
+  const playerView = async () => okValue(await withBench(Results.ok(benchFixture)).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10));
+
   it('propagates the data-source error when the bench read fails', async () => {
     const result = await withBench(Results.missing('Not yet ingested.')).loadBenchView('SubtletyRogue', 1);
     expect(result).toEqual(Results.missing('Not yet ingested.'));
@@ -189,27 +214,34 @@ describe('BurstFeatureService', () => {
     expect(result.ok).toBe(true);
   });
 
-  it('bench-only: shows the top windows with no player overlay (neutral info status)', async () => {
-    const result = await withBench(Results.ok(benchFixture)).loadBenchView('SubtletyRogue', 1);
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    expect(result.value.windows).toHaveLength(1);
-    const burstWindow = first(result.value.windows);
-    expect(burstWindow.overview.playerPct).toBeNull();
-    expect(burstWindow.status).toBe('info');
-    expect(burstWindow.statusIcon).toBe('insights');
-    expect(result.value.anchors[0]).toEqual({ timeS: 10, windowLengthS: 20 });
+  it('shows one window per bench window with no player damage overlaid', async () => {
+    const view = await benchOnlyView();
+    expect(view.windows).toHaveLength(1);
+    expect(first(view.windows).overview.playerPct).toBeNull();
   });
 
-  it('player view: fetches the log and compares the player damage against the bench', async () => {
-    const result = await withBench(Results.ok(benchFixture)).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10);
-    expect(result.ok).toBe(true);
-    if (!result.ok) return;
-    expect(result.value.windows).toHaveLength(1);
-    const burstWindow = first(result.value.windows);
-    expect(burstWindow.overview.playerPct).toBe(950);
-    expect(first(burstWindow.detailRows).label).toBe('Eviscerate');
-    expect(result.value.anchors[0]).toEqual({ timeS: 10, windowLengthS: 20 });
+  it('marks a bench-only window neutral info', async () => {
+    const burstWindow = first((await benchOnlyView()).windows);
+    expect(burstWindow.status).toBe('info');
+    expect(burstWindow.statusIcon).toBe('insights');
+  });
+
+  it('anchors the bench view on each window start and length', async () => {
+    expect((await benchOnlyView()).anchors[0]).toEqual(BENCH_ANCHOR);
+  });
+
+  it('overlays the player damage read from the log on the bench window', async () => {
+    const view = await playerView();
+    expect(view.windows).toHaveLength(1);
+    expect(first(view.windows).overview.playerPct).toBe(PLAYER_WINDOW_DAMAGE);
+  });
+
+  it('labels a player detail row with the bench ability name', async () => {
+    expect(first(first((await playerView()).windows).detailRows).label).toBe('Eviscerate');
+  });
+
+  it('anchors the player view on each window start and length', async () => {
+    expect((await playerView()).anchors[0]).toEqual(BENCH_ANCHOR);
   });
 
   it('wires the shared pull context with the bench-only view and the burst repro id', async () => {
