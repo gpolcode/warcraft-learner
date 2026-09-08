@@ -5,10 +5,9 @@ import { GameIcon } from '../ui-game-icon/game-icon';
 import { Collapsible } from '../../shared/ui-collapsible/collapsible';
 import { FindingOccurrences } from './finding-occurrences';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
-import type { FindingRow, OnPlanChip } from './finding-rows-service';
+import type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
 
-// Re-export so callers can import types + helpers from either this file or the utils module.
-export type { FindingRow, OnPlanChip } from './finding-rows-service';
+export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

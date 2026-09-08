@@ -3,13 +3,30 @@ import { DEFENSIVE_DATA_SOURCE, DefensiveBench } from './defensive-data-source';
 import { featureService } from '../../../../../testing/service-harness';
 import { DefensiveFeatureService } from './defensive-feature-service';
 import { applyBuff, removeBuff, damageTaken } from '../../../../../testing/builders/events';
-import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
+import { CLOAK_OF_SHADOWS, EVASION } from '../../../../../testing/spell-ids';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { Result, Results } from '../../../shared/util-http/result';
-import { BOSS_HIT_SPELL_ID, WINDOW_REF_GAME_ID, fullBench } from './defensive-harness';
+import { BOSS_HIT_SPELL_ID, CLOAK_META, WINDOW_REF_GAME_ID, benchWith, defBench, fullBench } from './defensive-harness';
 
 function serviceWith(bench: Result<DefensiveBench>, wcl: Record<string, unknown> = {}): DefensiveFeatureService {
   return featureService(DEFENSIVE_DATA_SOURCE, DefensiveFeatureService, bench, wcl);
+}
+
+const EVASION_META = { name: 'Evasion', spell_id: EVASION, cooldown: 120, usage_rule: 'Use on melee', talent_gated: false };
+
+function twoDefensiveBench(): DefensiveBench {
+  return benchWith({
+    per_defensive_benchmarks: {
+      'Cloak of Shadows': defBench(),
+      Evasion: defBench({ used_sample_count: 0 }),
+    },
+    defensives: [CLOAK_META, EVASION_META],
+    cd_spell_ids: { 'Cloak of Shadows': CLOAK_OF_SHADOWS, Evasion: EVASION },
+    ability_icons: {
+      [CLOAK_OF_SHADOWS]: { icon: 'cloak', name: 'Cloak of Shadows' },
+      [EVASION]: { icon: 'evasion', name: 'Evasion' },
+    },
+  });
 }
 
 describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
@@ -33,14 +50,30 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const result = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.value.spellIdsByName).toEqual({ 'Cloak of Shadows': CLOAK_OF_SHADOWS });
-    expect(result.value.iconByName).toEqual({ 'Cloak of Shadows': 'cloak' });
     expect(result.value.windows).toHaveLength(1);
     assert.exists(result.value.windows[0]);
     expect(result.value.windows[0].overview.playerPct).toBe(1150);
     expect(result.value.anchors[0]).toMatchObject({ refGameId: WINDOW_REF_GAME_ID });
     // 1 use vs avg ~2, but only one buff window -> first cast at 30 (late) gives a warning finding.
-    expect(result.value.findings.length).toBeGreaterThan(0);
+    expect(result.value.findingRows.length).toBeGreaterThan(0);
+  });
+
+  it('shapes a missed defensive into a finding row and a defensive used on plan into a chip', async () => {
+    const ON_PLAN_USE_S = 40;
+    const wcl = {
+      getReport: async () => wclReport({ playerName: 'P' }),
+      getAllEvents: async (_c: string, _f: number, dataType: string) =>
+        dataType === 'Buffs' ? [applyBuff(EVASION, ON_PLAN_USE_S)] : [],
+    };
+    const service = serviceWith(Results.ok(twoDefensiveBench()), wcl);
+    const result = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.findingRows).toHaveLength(1);
+    expect(result.value.findingRows[0]).toMatchObject({
+      severity: 'critical', name: 'Cloak of Shadows', spellId: CLOAK_OF_SHADOWS, icon: 'cloak',
+    });
+    expect(result.value.onPlan).toEqual([{ name: 'Evasion', spellId: EVASION, icon: 'evasion' }]);
   });
 
   it('does not throw and yields an empty icon when a cd spell id is missing from the ability map', async () => {
@@ -51,7 +84,9 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const service = serviceWith(Results.ok(bench), wcl);
     const result = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value.iconByName).toEqual({ 'Cloak of Shadows': '' });
+    if (!result.ok) return;
+    assert.exists(result.value.findingRows[0]);
+    expect(result.value.findingRows[0].icon).toBe('');
   });
 
   it('wires the shared pull context with the empty defensive view and the defensive repro id', async () => {
@@ -68,8 +103,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
 
     const onMissingFight = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', UNLOGGED_FIGHT_ID, 10);
     expect(onMissingFight).toEqual(Results.ok({
-      findings: [], spellIdsByName: { 'Cloak of Shadows': CLOAK_OF_SHADOWS }, iconByName: {},
-      windows: [], anchors: [], clipAnchors: [],
+      findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [],
     }));
 
     const onFailure = await service.loadAnalysisView('SubtletyRogue', 1, FAILING_CODE, 1, 10);

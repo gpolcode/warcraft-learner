@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { ClipAnchor } from '../data/capture/capture.models';
 import {
-  FindingRow, FindingTable,
+  FindingRow, FindingTable, OnPlanChip,
 } from '../ui-finding-table/finding-table';
-import { FindingRowsService } from '../ui-finding-table/finding-rows-service';
 import { WindowComparison } from '../ui-window-comparison/window-comparison';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { DefensiveFeatureService, DefensiveMapAnchor } from '../data/defensive/defensive-feature-service';
@@ -17,7 +16,6 @@ import { LoadResourceService } from '../../shared/ui-load-state/load-resource-se
 })
 export class Defensive {
   private readonly loadRes = inject(LoadResourceService);
-  private readonly rowBuilder = inject(FindingRowsService);
   private readonly defensive = inject(DefensiveFeatureService);
 
   readonly spec = input.required<string>();
@@ -54,18 +52,8 @@ export class Defensive {
   private readonly anchors = computed<DefensiveMapAnchor[]>(() => this.load.value()?.anchors ?? []);
   private readonly clipAnchors = computed<ClipAnchor[]>(() => this.load.value()?.clipAnchors ?? []);
 
-  private readonly entries = computed(() => {
-    const view = this.load.value();
-    const spellIds = view?.spellIdsByName ?? {};
-    const icons = view?.iconByName ?? {};
-    return this.rowBuilder.bucketFindings(view?.findings ?? [], {
-      spellId: name => spellIds[name] ?? null,
-      icon: name => icons[name] ?? '',
-    });
-  });
-
-  protected readonly findingRows = computed<FindingRow[]>(() => this.rowBuilder.rowsFromEntries(this.entries()));
-  protected readonly onPlan = computed(() => this.rowBuilder.onPlanFromEntries(this.entries()));
+  protected readonly findingRows = computed<FindingRow[]>(() => this.load.value()?.findingRows ?? []);
+  protected readonly onPlan = computed<OnPlanChip[]>(() => this.load.value()?.onPlan ?? []);
 
   protected onOpenMap(index: number): void {
     const anchor = this.anchors()[index];
