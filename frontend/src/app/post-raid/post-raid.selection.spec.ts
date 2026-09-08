@@ -3,13 +3,11 @@ import { TestBed } from '@angular/core/testing';
 import { PlayerDetailGroups, WclReport } from '../domains/raid-analysis/data/wcl/wcl.models';
 import { SelectionStore } from '../domains/raid-analysis/data/selection/selection-store';
 import { wclReport } from '../../testing/builders/wcl-fixtures';
-import { PostRaid } from './post-raid';
 import { mapFeatureStub } from '../../testing/page-stubs';
 import { MapFeatureService } from '../domains/raid-analysis/data/map/map-feature-service';
 import { fight } from './post-raid-harness';
+import { ReportSelectionService } from './report-selection-service';
 import { FIGHT_SELECT, PLAYER_SELECT, postRaidPage } from './post-raid-page';
-
-const svc = Object.create(PostRaid.prototype) as PostRaid;
 
 const REPORT_CODE = 'grBQ3vTHXAtPa4JK'; // a valid 16-character report code
 const REPORT_URL = `https://www.warcraftlogs.com/reports/${REPORT_CODE}`;
@@ -182,7 +180,8 @@ describe('PostRaid keystone fight', () => {
   const RAID_FIGHT = { id: 5, name: 'Vorasius', encounterID: BOSS_ENCOUNTER_ID, difficulty: RAID_MYTHIC_DIFFICULTY };
   const DUNGEON_FIGHT = { id: 2, name: 'Nexus-Point Xenas', encounterID: 112526, difficulty: MYTHIC_PLUS_DIFFICULTY };
   const PLAYER = { id: 1, name: 'Anya', spec: 'Rogue' };
-  const KEYSTONE_NOTICE = svc['unsupportedEncounterNotice'](DUNGEON_FIGHT.name, DUNGEON_FIGHT.difficulty);
+  const keystoneNotice = () =>
+    TestBed.inject(ReportSelectionService).unsupportedEncounterNotice(DUNGEON_FIGHT.name, DUNGEON_FIGHT.difficulty);
 
   const groups: PlayerDetailGroups = {
     dps: [{ id: PLAYER.id, type: 'Rogue', name: PLAYER.name, specs: [{ spec: 'Subtlety' }] }],
@@ -216,7 +215,7 @@ describe('PostRaid keystone fight', () => {
 
     expect(page.options(FIGHT_SELECT).join(' ')).toContain(DUNGEON_FIGHT.name);
     expect(page.chosen(FIGHT_SELECT)).toContain(RAID_FIGHT.name);
-    expect(page.text()).not.toContain(KEYSTONE_NOTICE);
+    expect(page.text()).not.toContain(keystoneNotice());
     expect(prepareMap).toHaveBeenCalled();
   });
 
@@ -230,7 +229,7 @@ describe('PostRaid keystone fight', () => {
     page.choose(FIGHT_SELECT, DUNGEON_FIGHT.name);
     await page.settled();
 
-    expect(page.text()).toContain(KEYSTONE_NOTICE);
+    expect(page.text()).toContain(keystoneNotice());
     expect(getPlayerDetails).not.toHaveBeenCalled();
     expect(prepareMap).not.toHaveBeenCalled();
   });
@@ -241,12 +240,12 @@ describe('PostRaid keystone fight', () => {
     await page.settled();
     page.choose(FIGHT_SELECT, DUNGEON_FIGHT.name);
     await page.settled();
-    expect(page.text()).toContain(KEYSTONE_NOTICE);
+    expect(page.text()).toContain(keystoneNotice());
 
     page.choose(FIGHT_SELECT, RAID_FIGHT.name);
     await page.settled();
 
-    expect(page.text()).not.toContain(KEYSTONE_NOTICE);
+    expect(page.text()).not.toContain(keystoneNotice());
     expect(page.chosen(FIGHT_SELECT)).toContain(RAID_FIGHT.name);
   });
 });

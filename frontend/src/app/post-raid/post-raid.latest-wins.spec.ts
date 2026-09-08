@@ -6,8 +6,7 @@ import { PlayerDetailGroups, WclFight, WclPlayer, WclReport } from '../domains/r
 import { wclReport } from '../../testing/builders/wcl-fixtures';
 import { PostRaid } from './post-raid';
 import { ParkedWclApi, fight, loadReport, parkedWclApi, player, postRaidProviders } from './post-raid-harness';
-
-const svc = Object.create(PostRaid.prototype) as PostRaid;
+import { ReportSelectionService } from './report-selection-service';
 
 interface SelectionHandle {
   onFightChange(): Promise<void>;
@@ -99,6 +98,7 @@ describe('PostRaid selection latest-wins', () => {
 
   it('clears the spinner when the selection that supersedes a resolve stops at the keystone notice', async () => {
     const { api, vm } = setup();
+    const selection = TestBed.inject(ReportSelectionService);
 
     const earlier = selectFight(vm, EARLIER_PULL_ID);
     expect(vm.loadingAnalysis()).toBe(true);
@@ -109,7 +109,7 @@ describe('PostRaid selection latest-wins', () => {
     api.settleDetails(EARLIER_PULL_ID, EARLIER_DETAILS);
     await earlier;
 
-    expect(vm.notice()).toBe(svc['unsupportedEncounterNotice'](KEYSTONE_PULL.name, MYTHIC_PLUS_DIFFICULTY));
+    expect(vm.notice()).toBe(selection.unsupportedEncounterNotice(KEYSTONE_PULL.name, MYTHIC_PLUS_DIFFICULTY));
     expect(vm.spec()).toBe('');
     expect(vm.loadingAnalysis()).toBe(false);
   });

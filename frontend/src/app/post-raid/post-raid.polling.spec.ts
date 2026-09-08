@@ -62,18 +62,17 @@ describe('PostRaid live-sync poll', () => {
   it('drops an in-flight poll when live sync is switched off before its report fetch resolves', async () => {
     const { comp, wcl, liveCapture } = mountPostRaid();
     const pendingReport = deferred<WclReport>();
-    const fightsProbe = Promise.resolve([pull1(), pull2()]);
-    wcl.getReportFights.mockReturnValue(fightsProbe);
-    wcl.getReport.mockReturnValue(pendingReport.promise);
+    const requestedCode = deferred<string>();
+    wcl.getReportFights.mockResolvedValue([pull1(), pull2()]);
+    wcl.getReport.mockImplementation((code: string) => { requestedCode.resolve(code); return pendingReport.promise; });
     seedLoaded(comp, liveCapture);
 
     const pollPromise = comp._pollOnce();
     const checkingStatus = liveCapture.status();
-    // The poll resumed from this probe before we reach here, so its report fetch has already gone out.
-    await fightsProbe;
+    // Awaited rather than read off the mock: the poll reaches its report fetch only once the probe's Result settles.
+    expect(await requestedCode.promise).toBe(REPORT_A);
     // Exactly one poll runs (the pipeline is torn down), so the guard is the only thing under test.
     expect(wcl.getReportFights).toHaveBeenCalledTimes(1);
-    expect(wcl.getReport).toHaveBeenCalledWith(REPORT_A);
 
     liveCapture.setLive(false);
     pendingReport.resolve(report([pull1(), pull2()]));
