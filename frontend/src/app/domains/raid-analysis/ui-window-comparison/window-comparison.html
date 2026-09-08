@@ -70,7 +70,7 @@
       w.status === 'muted' ? 'bg-muted' : 'bg-accent';
 
     <div class="px-4 py-2.5 bg-surface border-t border-line">
-      <div class="flex flex-wrap items-center gap-4 gap-y-2 md:gap-x-[22px]">
+      <div class="flex flex-wrap items-center gap-4 gap-y-2 md:gap-x-5.5">
         <div class="flex flex-col shrink-0">
           <span class="text-label text-muted">Window</span>
           <span class="tabular-nums text-value whitespace-nowrap">
@@ -96,7 +96,7 @@
               [class.text-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDelta() | signedPercent }}</span>
           </div>
         }
-        <div class="ml-auto flex items-center gap-[7px] shrink-0">
+        <div class="ml-auto flex items-center gap-1.75 shrink-0">
           @if (showMap()) {
             <button mat-stroked-button class="whitespace-nowrap" (click)="openMap.emit(activeIndex())">
               <mat-icon>my_location</mat-icon>
@@ -161,11 +161,10 @@
       </div>
     }
 
-    <!-- Grid tracks mirror compact-ability-row.html and finding-table's column dividers. -->
     @if (w.detailRows.length) {
       <!-- Border is desktop-only so it does not double up with the mobile per-row borders. -->
       <div class="md:border-t border-line pt-2 pb-2">
-        <div class="hidden md:grid grid-cols-[minmax(0,1fr)_96px_156px_90px] gap-x-[14px] items-center px-4 pb-1">
+        <div class="hidden md:grid grid-cols-(--cols-ability) gap-x-(--gap-card) items-center px-4 pb-1">
           <span class="col-start-1 text-label text-muted">Ability</span>
           @if (showCasts() && !activeIsMuted()) {
             <span class="col-start-2 text-right text-label text-muted">Casts</span>

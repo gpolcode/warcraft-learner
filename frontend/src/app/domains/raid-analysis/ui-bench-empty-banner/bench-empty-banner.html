@@ -13,30 +13,30 @@
     </div>
   </div>
 
-  <div class="flex items-stretch gap-1 bg-bg border border-line rounded-lg px-4 py-3.5 mt-3.5">
-    <div class="flex-1 flex flex-col gap-1.5">
+  <div class="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch gap-1 bg-bg border border-line rounded-lg px-4 py-3.5 mt-3.5">
+    <div class="flex flex-col gap-1.5">
       <mat-icon class="icon-seg text-muted">military_tech</mat-icon>
       <div class="text-heading">Mythic kills logged</div>
       <div class="text-caption text-muted">Players upload to WCL.</div>
       <div class="text-label text-critical mt-px">Waiting</div>
     </div>
 
-    <div class="w-[26px] shrink-0 flex items-center justify-center">
+    <div class="flex items-center justify-center">
       <mat-icon class="icon-16 text-line">arrow_forward</mat-icon>
     </div>
 
-    <div class="flex-1 flex flex-col gap-1.5">
+    <div class="flex flex-col gap-1.5">
       <mat-icon class="icon-seg text-muted">cloud_sync</mat-icon>
       <div class="text-heading">Ingest samples them</div>
       <div class="text-caption text-muted">We pull new top rankings.</div>
       <div class="text-label text-warning mt-px">Hourly</div>
     </div>
 
-    <div class="w-[26px] shrink-0 flex items-center justify-center">
+    <div class="flex items-center justify-center">
       <mat-icon class="icon-16 text-line">arrow_forward</mat-icon>
     </div>
 
-    <div class="flex-1 flex flex-col gap-1.5">
+    <div class="flex flex-col gap-1.5">
       <mat-icon class="icon-seg text-success">check_circle</mat-icon>
       @if (variant() === 'pre') {
         <div class="text-heading">Plan unlocks</div>

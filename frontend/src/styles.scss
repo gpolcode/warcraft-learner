@@ -19,6 +19,21 @@
   --font-sans: 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: initial;
 
+  /* Card grids: a header, its rows and its drill-down are separate elements, so each one names the same track list here rather than repeating widths that have to be kept equal by hand. */
+  --gap-card: 0.875rem;
+  --col-icon: 1.25rem;
+  --col-measured: 6rem;
+  --col-fix: 12.5rem;
+  --col-toggle: 1.75rem;
+  --cols-card: var(--col-icon) minmax(0, 1fr) var(--col-measured) var(--col-fix);
+  --cols-card-sm: var(--col-icon) minmax(0, 1fr);
+  --cols-drill: var(--cols-card) var(--col-toggle);
+  --cols-drill-sm: var(--cols-card-sm) var(--col-toggle);
+  --cols-ability: minmax(0, 1fr) var(--col-measured) 9.75rem 5.625rem;
+  --cols-plan: 1fr 16.5rem var(--col-fix);
+  --cols-stat: minmax(0, 1fr) var(--col-fix);
+  --cols-death: var(--col-icon) minmax(0, 1fr) auto auto;
+
   /* Every text element wears exactly one role; a size exists only here, never in a template. */
   --#{'text-*'}: initial;
   --text-caption: 11px;

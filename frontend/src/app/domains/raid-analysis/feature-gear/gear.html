@@ -4,7 +4,7 @@
 } @else {
 <div class="bg-surface border border-line rounded-[10px] overflow-hidden">
 
-  <div class="px-4 pt-3 pb-2 md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-baseline">
+  <div class="px-4 pt-3 pb-2 md:grid md:grid-cols-(--cols-card) md:gap-(--gap-card) md:items-baseline">
     <div class="md:col-span-2">
       <h2 class="text-title">Gear</h2>
       @if (view().comparison) {
@@ -14,7 +14,7 @@
       }
     </div>
     <div class="hidden md:block text-label text-muted text-right">Measured</div>
-    <div class="hidden md:block text-label text-muted pl-[14px]">Fix</div>
+    <div class="hidden md:block text-label text-muted pl-(--gap-card)">Fix</div>
   </div>
 
   <div class="card-section [&>:first-child+*]:border-t-0">
@@ -29,7 +29,7 @@
 
     @if (view().talentBuilds.length) {
       @if (view().comparison && view().talentStatus.status !== 'unknown') {
-        <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-[10px]">
+        <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-2.5">
           <span class="text-label text-muted mr-0.5">Your build</span>
           @if (view().talentStatus.status === 'warn') {
             <mat-icon class="icon-18 text-warning">warning_amber</mat-icon>
@@ -38,9 +38,8 @@
         </div>
       }
       @for (build of view().talentBuilds; track build.label) {
-        <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-1 md:gap-y-0 items-center px-4 py-[10px] border-t border-line">
-          <div class="hidden md:block"></div>
-          <div class="min-w-0 text-name">
+        <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] md:grid-cols-(--cols-card) gap-x-(--gap-card) gap-y-1 md:gap-y-0 items-center px-4 py-2.5 border-t border-line">
+          <div class="min-w-0 text-name md:col-start-2">
             {{ build.label }}
             @if (build.isPlayer) {
               <span class="ml-1.5 text-label text-gold">Your build</span>
@@ -50,7 +49,7 @@
             <div class="tabular-nums text-value">{{ build.pct }}%</div>
             <div class="tabular-nums text-caption mt-px">of top logs</div>
           </div>
-          <div class="text-right md:text-left md:border-l md:border-line md:pl-[7px]">
+          <div class="text-right md:text-left md:border-l md:border-line md:pl-1.75">
             <a mat-stroked-button class="whitespace-nowrap" [href]="build.link" target="_blank" rel="noopener">
               <mat-icon>arrow_forward</mat-icon>
               Get talent code
@@ -58,9 +57,8 @@
           </div>
         </div>
         @if (build.added.length || build.dropped.length || build.ranks.length) {
-          <div class="px-4 pb-[10px] md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px]">
-            <div class="hidden md:block"></div>
-            <div class="md:col-span-3 flex flex-col gap-2.5">
+          <div class="px-4 pb-2.5 md:grid md:grid-cols-(--cols-card) md:gap-(--gap-card)">
+            <div class="md:col-start-2 md:col-span-3 flex flex-col gap-2.5">
               <div class="text-body text-muted">The talents this build changes from the most common build.</div>
               @if (build.added.length) {
                 <div>
@@ -128,7 +126,7 @@
 
     @if (view().trinketSets.length) {
       @if (view().comparison && view().trinketStatus.status !== 'unknown') {
-        <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-[10px]">
+        <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-2.5">
           <span class="text-label text-muted mr-0.5">Your pair</span>
           @if (view().trinketStatus.status === 'warn') {
             <mat-icon class="icon-18 text-warning">warning_amber</mat-icon>
@@ -137,9 +135,8 @@
         </div>
       }
       @for (set of view().trinketSets; track set.label) {
-        <div class="grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-1 md:gap-y-0 items-center px-4 py-[10px] border-t border-line">
-          <div class="hidden md:block"></div>
-          <div class="min-w-0">
+        <div class="grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-(--cols-card) gap-x-(--gap-card) gap-y-1 md:gap-y-0 items-center px-4 py-2.5 border-t border-line">
+          <div class="min-w-0 md:col-start-2">
             <div class="flex flex-col items-start gap-1">
               @for (item of set.items; track $index) {
                 <wl-game-icon kind="item" [id]="item.id" [name]="item.name" [icon]="item.icon"></wl-game-icon>
@@ -156,7 +153,6 @@
             <div class="tabular-nums text-value">{{ set.pct }}%</div>
             <div class="tabular-nums text-caption mt-px">of top logs</div>
           </div>
-          <div class="hidden md:block"></div>
         </div>
       }
     } @else {
@@ -179,7 +175,7 @@
     @if (view().comparison) {
       @if (enchantIssues().length) {
         @for (row of enchantIssues(); track row.slotName) {
-          <div class="grid grid-cols-[20px_minmax(0,1fr)] md:grid-cols-[20px_minmax(0,1fr)_96px_200px] gap-x-[14px] gap-y-2 md:gap-y-0 px-4 py-[10px] items-start md:items-center border-t border-line">
+          <div class="grid grid-cols-(--cols-card-sm) md:grid-cols-(--cols-card) gap-x-(--gap-card) gap-y-2 md:gap-y-0 px-4 py-2.5 items-start md:items-center border-t border-line">
             <div class="flex items-center justify-center self-start md:self-center">
               <mat-icon class="icon-18"
                 [class.text-warning]="row.status === 'warn'"
@@ -191,8 +187,7 @@
               <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
               <span class="text-name truncate">{{ row.name }}</span>
             </div>
-            <div class="hidden md:block"></div>
-            <div class="col-start-2 md:col-auto text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-[14px]">
+            <div class="col-start-2 md:col-start-4 text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-(--gap-card)">
               <span class="md:hidden block text-label text-muted mb-1">Fix</span>
               @if (row.top; as top) {
                 <div class="flex items-center gap-2">
@@ -207,7 +202,7 @@
           </div>
         }
         @if (enchantOnPlan().length) {
-          <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-[10px]">
+          <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-2.5">
             <span class="text-label text-muted mr-0.5">On plan</span>
             <span class="chip-onplan">
               <span>{{ enchantOnPlan().length }} enchants</span>
@@ -215,7 +210,7 @@
           </div>
         }
       } @else if (view().enchantRows.length) {
-        <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-[10px]">
+        <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-2.5">
           <span class="text-label text-muted mr-0.5">On plan</span>
           <span class="chip-onplan">
             <span>All enchants</span>
@@ -228,9 +223,8 @@
       }
     } @else {
         @for (row of view().benchEnchantRows; track row.slotName) {
-          <div class="px-4 py-[10px] border-t border-line md:grid md:grid-cols-[20px_minmax(0,1fr)_96px_200px] md:gap-[14px] md:items-center">
-            <div class="hidden md:block"></div>
-            <div class="min-w-0 flex items-center gap-2 md:col-span-3">
+          <div class="px-4 py-2.5 border-t border-line md:grid md:grid-cols-(--cols-card) md:gap-(--gap-card) md:items-center">
+            <div class="min-w-0 flex items-center gap-2 md:col-start-2 md:col-span-3">
               <span class="shrink-0 w-20 whitespace-nowrap text-label text-muted">{{ row.slotName }}</span>
               <wl-game-icon kind="item" [id]="row.enchant.itemId" [name]="row.enchant.name" [icon]="row.enchant.icon"></wl-game-icon>
               <button mat-icon-button class="shrink-0 -my-1 [--mat-icon-button-state-layer-size:28px] [--mat-icon-button-icon-size:18px] [--mat-icon-button-touch-target-display:none]" aria-label="Copy name" (click)="copy(row.enchant.name)">
