@@ -16,8 +16,8 @@
       @if ($index === unpickedFrom()) {
         <div class="border-t border-line bg-bg px-4 py-2 text-caption text-muted">Not used in any sampled top log. Usually a different talent build.</div>
       }
-      <div class="grid grid-cols-1 md:grid-cols-(--cols-plan) gap-3 md:gap-(--gap-card) items-start md:items-center px-4 py-[10px] border-t border-line">
-        <div class="flex items-center gap-[11px] min-w-0 flex-wrap">
+      <div class="grid grid-cols-1 md:grid-cols-(--cols-plan) gap-3 md:gap-(--gap-card) items-start md:items-center px-4 py-2.5 border-t border-line">
+        <div class="flex items-center gap-2.75 min-w-0 flex-wrap">
           @if (row.spellId; as spellId) {
             <wl-game-icon [id]="spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
           } @else {

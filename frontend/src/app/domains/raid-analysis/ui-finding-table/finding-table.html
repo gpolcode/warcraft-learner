@@ -13,7 +13,7 @@
 
   @for (row of rows(); track $index) {
     <div [class]="'border-t border-line' + (row.severity === 'critical' ? ' bg-critical/4' : '')">
-      <div class="grid grid-cols-(--cols-drill-sm) md:grid-cols-(--cols-drill) gap-x-(--gap-card) gap-y-2 md:gap-y-0 px-4 py-[10px] items-start md:items-center">
+      <div class="grid grid-cols-(--cols-drill-sm) md:grid-cols-(--cols-drill) gap-x-(--gap-card) gap-y-2 md:gap-y-0 px-4 py-2.5 items-start md:items-center">
 
         <div class="flex items-center justify-center self-start md:self-center">
           <mat-icon class="icon-18"
@@ -25,7 +25,7 @@
         </div>
 
         <div class="min-w-0">
-          <div class="flex items-center gap-[7px] flex-wrap">
+          <div class="flex items-center gap-1.75 flex-wrap">
             @if (row.name; as name) {
               @if (row.spellId; as spellId) {
                 <wl-game-icon [id]="spellId" [icon]="row.icon" [name]="name"></wl-game-icon>
@@ -54,13 +54,13 @@
             @if (row.chip) {
               @switch (row.severity) {
                 @case ('critical') {
-                  <span class="tabular-nums text-label rounded-sm px-[5px] text-critical bg-critical/10 border border-critical/25">{{ row.chip }}</span>
+                  <span class="tabular-nums text-label rounded-sm px-1.25 text-critical bg-critical/10 border border-critical/25">{{ row.chip }}</span>
                 }
                 @case ('info') {
-                  <span class="tabular-nums text-label rounded-sm px-[5px] text-accent bg-accent/10 border border-accent/25">{{ row.chip }}</span>
+                  <span class="tabular-nums text-label rounded-sm px-1.25 text-accent bg-accent/10 border border-accent/25">{{ row.chip }}</span>
                 }
                 @default {
-                  <span class="tabular-nums text-label rounded-sm px-[5px] text-warning bg-warning/10 border border-warning/25">{{ row.chip }}</span>
+                  <span class="tabular-nums text-label rounded-sm px-1.25 text-warning bg-warning/10 border border-warning/25">{{ row.chip }}</span>
                 }
               }
             }
@@ -114,7 +114,7 @@
   }
 
   @if (onPlan().length) {
-    <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-[10px]">
+    <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-2.5">
       <span class="text-label text-muted mr-0.5">On plan</span>
       @for (c of onPlan(); track c.name) {
         <span class="chip-onplan">
