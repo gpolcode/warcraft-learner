@@ -79,7 +79,6 @@ export class MapDrawService {
     return { id, samples };
   }
 
-  /** Build the player timeline from stored [t, x, y, mapID] rows (player rows store no facing). */
   playerRowsToTimeline(id: number, rows: PlayerPosRow[]): ActorTimeline {
     const samples: PosSample[] = rows.map(([t, x, y, mapID]) => ({
       t,
@@ -164,7 +163,6 @@ export interface RelPos {
   fwd: number;
   /** Yards to the right (+) / left (-) of the reference's facing. */
   right: number;
-  /** Distance from the reference, yards. */
   dist: number;
   /** The map this relative frame sits on; a trail draws no segment where it changes. */
   mapID?: number;

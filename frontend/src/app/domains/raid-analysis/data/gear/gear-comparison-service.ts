@@ -37,7 +37,6 @@ export class GearComparisonService {
     return { slotName: name, status: 'ok', name: playerName, note: null, top: null };
   }
 
-  /** Flags slots the player left un-enchanted that top parsers consider mandatory, and surfaces where the player differs from the consensus enchant. */
   buildEnchantRows(gear: CharacterGear, stats: EncounterGearStats | null): EnchantRow[] {
     const topEnch = stats?.enchants ?? {};
     const playerEnch = gear.enchants ?? [];
@@ -56,7 +55,6 @@ export class GearComparisonService {
     return rows.some(r => r.status === 'warn') ? 'warn' : 'ok';
   }
 
-  /** Top-parse talent builds with a link to an example parse using each one. */
   buildTalentBuilds(stats: EncounterGearStats | null, playerKey: string): TalentBuildRow[] {
     const builds = stats?.talent_builds ?? [];
     if (!builds.length) return [];
@@ -67,7 +65,6 @@ export class GearComparisonService {
       link: `https://www.warcraftlogs.com/reports/${b.report_code}?fight=${b.fight_id}&type=summary&source=${b.source_id}`,
       playerName: b.player_name,
       label: this.rankLabel(i, 'build'),
-      // Benches from the prior ingest have no diff field on disk.
       added: (b.diff ?? []).filter(d => d.kind === 'added').map(d => d.talent),
       dropped: (b.diff ?? []).filter(d => d.kind === 'dropped').map(d => d.talent),
       ranks: (b.diff ?? []).filter(d => d.kind === 'rank'),
@@ -149,7 +146,6 @@ export class GearComparisonService {
     return trinkets.map(trinket => trinket.id).sort((a, b) => a - b).join('-');
   }
 
-  /** The trinket combinations top parsers use, most common first. */
   buildTrinketSets(stats: EncounterGearStats | null, playerKey: string): TrinketSetRow[] {
     return (stats?.trinket_sets ?? []).map((set, i) => ({
       pct: set.pct,
@@ -174,7 +170,6 @@ export class GearComparisonService {
     return { status: 'warn', note: `Uncommon pair. ${topSet.pct}% use the most common one.` };
   }
 
-  /** Shows the consensus enchant per slot for the boss-study view; omits slots below the top-parse consensus share. */
   buildBenchEnchantRows(stats: EncounterGearStats | null): BenchEnchantRow[] {
     const topEnch = stats?.enchants ?? {};
     return Object.keys(topEnch)
@@ -192,7 +187,6 @@ export class GearComparisonService {
 
 export type GearStatus = 'ok' | 'warn' | 'info' | 'unknown';
 
-/** A slot counts as consensus-enchanted, and an un-enchanted one warns, at this top-parse share. */
 const ENCHANT_CONSENSUS_PCT = 50;
 
 const RANK_PREFIXES = ['Most common', '2nd most common', '3rd most common'];

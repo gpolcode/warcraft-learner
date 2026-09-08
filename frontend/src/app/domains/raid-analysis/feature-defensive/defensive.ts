@@ -25,16 +25,12 @@ export class Defensive {
   readonly report = input.required<string>();
   readonly fight = input.required<number>();
   readonly player = input.required<number>();
-  /** Map button is available once the page has loaded top-parse positions. */
   readonly showMap = input<boolean>(false);
-  /** Clip button is available once the page's rolling buffer covers this fight. */
   readonly showClip = input<boolean>(false);
 
   readonly openMap = output<DefensiveMapAnchor>();
   readonly openClip = output<ClipAnchor>();
-  /** Emits false when the card has finished loading; the page gates its spinner on it. */
   readonly busyChange = output<boolean>();
-  /** Whether the top-parse bench exists. The page aggregates it for the banner. */
   readonly availableChange = output<boolean>();
 
   private readonly load = this.loadRes.loadResource({
@@ -81,7 +77,6 @@ export class Defensive {
     if (anchor) this.openClip.emit(anchor);
   }
 
-  /** A timed finding's map button: open the map at that cast time (boss reference). */
   protected onFindingMap(row: FindingRow): void {
     if (row.timestampS == null) return;
     this.openMap.emit({
@@ -90,7 +85,6 @@ export class Defensive {
     });
   }
 
-  /** A timed finding's clip button: a clip centered on that cast instant (roll on each side). */
   protected onFindingClip(row: FindingRow): void {
     if (row.timestampS == null) return;
     this.openClip.emit(this.defensive.defensiveFindingClipAnchor(row.timestampS));

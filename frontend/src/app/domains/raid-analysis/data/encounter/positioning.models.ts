@@ -32,7 +32,6 @@ export interface EncounterPositions {
   parses: ParsePositions[];
 }
 
-/** How the map chooses the reference actor a parse's player position is measured against. */
 export type ReferenceSelector =
   | { kind: 'boss' }
   | { kind: 'enemy'; gameId: number };

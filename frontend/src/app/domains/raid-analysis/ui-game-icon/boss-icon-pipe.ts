@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-/** WCL encounter id -> boss-icon URL, or '' when there is no id. */
 @Pipe({ name: 'bossIcon' })
 export class BossIconPipe implements PipeTransform {
   transform(encounterId: number | null | undefined): string {

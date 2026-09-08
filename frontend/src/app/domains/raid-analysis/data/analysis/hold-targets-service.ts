@@ -84,9 +84,7 @@ export class HoldTargetsService {
   }
 }
 
-/** A gap beyond this past the expected on-cooldown time counts as a deliberate hold. */
 const HOLD_THRESHOLD_S = 8.0;
-/** A hold target surfaces only when a MAJORITY of sampled parses hold at that index. */
 export const HOLD_CONSENSUS_FRAC = 0.5;
 /** Floor on the runtime tolerance band half-width, so a tight cluster still tolerates jitter. */
 export const HOLD_BAND_MIN_S = 5.0;

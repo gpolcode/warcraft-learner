@@ -6,7 +6,6 @@ import { RuleBand, RuleJudging, RuleKind } from './rule-kind';
 /** Tracks PERCENT: whole points print a filler target and the share that missed it as the same number. */
 const FILLER_DECIMALS = 1;
 
-/** Shared by both filler kinds so the two can only differ in their gate. */
 export interface FillerSplit {
   coached: number;
   total: number;
@@ -50,7 +49,6 @@ export abstract class FillerKind<C extends RuleCondition> extends RuleKind<C> {
     };
   }
 
-  /** Shared by both filler kinds so their chip logic cannot drift apart. */
   protected fillerOccurrences(
     coachedId: number, coachedName: string, alternativeIds: number[], alternativeNames: string[],
     timesFor: (spellId: number) => number[],

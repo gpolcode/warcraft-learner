@@ -60,7 +60,6 @@ export class WclApiService {
     return report as WclReport;
   }
 
-  /** Fights-only read of a report - the live-sync poll's new-pull probe. */
   async getReportFights(code: string): Promise<WclReport['fights']> {
     const vars: ReportQueryVariables = { code };
     const result = await this.query<ReportFightsQuery>(REPORT_FIGHTS_Q, vars);
@@ -69,7 +68,6 @@ export class WclApiService {
     return (report.fights ?? []) as WclReport['fights'];
   }
 
-  /** Raw `playerDetails` groups (dps / healers / tanks / unknown). Consumers map to spec. */
   async getPlayerDetails(code: string, fightId: number): Promise<PlayerDetailGroups> {
     const vars: PlayerDetailsQueryVariables = { code, fightIDs: [fightId] };
     const result = await this.query<PlayerDetailsQuery>(PLAYER_DETAILS_Q, vars);
@@ -114,7 +112,6 @@ export class WclApiService {
     return this.fetchEventPages(EVENTS_Q, code, vars);
   }
 
-  // Returns the events array as WCL returns it (empty when the log carries none); consumers pick the player's event (see `selectCombatantInfo`).
   async getCombatantInfo(code: string, fightId: number, playerId: number): Promise<WclCombatantInfo[]> {
     const vars: CombatantInfoQueryVariables = { code, fightIDs: [fightId], sourceID: playerId };
     const result = await this.query<CombatantInfoQuery>(COMBATANT_INFO_Q, vars);
@@ -123,7 +120,6 @@ export class WclApiService {
     return report.events?.data ?? [];
   }
 
-  // Consumers pick their player's `data.entries` row by actor id and derive DPS from `total` over the fight duration.
   async getDamageDoneTable(code: string, fightId: number): Promise<WclTableBlob | null> {
     const vars: TableQueryVariables = { code, fightIDs: [fightId], dataType: 'DamageDone' };
     const result = await this.query<TableQuery>(TABLE_Q, vars);

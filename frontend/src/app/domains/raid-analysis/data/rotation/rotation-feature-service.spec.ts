@@ -24,7 +24,6 @@ TestBed.configureTestingModule({ providers: [
 const svc = TestBed.inject(RotationFeatureService);
 TestBed.resetTestingModule();
 
-// Build a RotationScanInput for a 0..120s fight - keeps the call sites terse.
 function scan(over: {
   bench: RotationBench; fightDurationS?: number; castEvents?: WclEvent[]; buffEvents?: WclEvent[]; cooldowns?: RulebookCooldown[];
 }): RotationScanInput {

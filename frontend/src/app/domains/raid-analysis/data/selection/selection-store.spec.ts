@@ -12,10 +12,8 @@ const PRE_FIGHT_STORAGE_KEY = 'wl.sel.preFight';
 const POST_RAID_SELECTION: PostRaidSelection = { playerName: 'Shadowmaster' };
 const PRE_FIGHT_SELECTION: PreFightSelection = { spec: 'SubtletyRogue' };
 
-/** Stands in for a disabled, full, or otherwise unavailable localStorage. */
 const STORAGE_FAILURE = 'localStorage unavailable';
 
-/** Captures the store's logWarn output and keeps it out of the test log. */
 function spyOnWarn() {
   return vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 }

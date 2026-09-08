@@ -48,7 +48,6 @@ export class PageNav {
     { initialValue: false },
   );
 
-  // Mobile: modal drawer, closed by default. Desktop: permanent drawer that collapses to an icons-only rail restored from the last session.
   protected readonly mobileOpen = signal(false);
   protected readonly desktopCollapsed = signal(this.navState.loadCollapsed());
 

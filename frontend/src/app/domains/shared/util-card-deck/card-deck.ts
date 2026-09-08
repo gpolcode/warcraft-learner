@@ -1,12 +1,11 @@
 import { Signal, WritableSignal, computed, signal } from '@angular/core';
 
-/** One analysis card in a page shell's registry; `hasBench` marks the cards whose availability keeps the empty-bench banner hidden. */
+/** `hasBench` marks the cards whose availability keeps the empty-bench banner hidden. */
 export interface CardEntry<Id extends string> {
   readonly id: Id;
   readonly hasBench: boolean;
 }
 
-/** The busy/available state of a page shell's analysis cards, folded from its card registry so a new card is one registry entry. */
 export class CardDeck<Id extends string> {
   private readonly busySignals: Record<Id, WritableSignal<boolean>>;
   private readonly availableSignals: Record<Id, WritableSignal<boolean>>;

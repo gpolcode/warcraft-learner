@@ -24,7 +24,6 @@ const f = (
 });
 
 describe('bucketFindings', () => {
-  // Spied to keep runner output clean and let tests assert on the logWarn call.
   let warnSpy: MockInstance<typeof console.warn>;
   beforeEach(() => { warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined); });
   afterEach(() => { warnSpy.mockRestore(); });

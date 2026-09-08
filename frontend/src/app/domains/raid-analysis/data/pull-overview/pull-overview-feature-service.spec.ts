@@ -29,7 +29,7 @@ const MISSING_TABLE_ERROR = Results.permanent('Damage table missing for this pul
 const OVERWHELMING_BLAST = 214001;
 const FROST_BOMB = 198002;
 
-const FIGHT_START_MS = 1_000_000; // report-absolute start of the pull
+const FIGHT_START_MS = 1_000_000;
 const MS_PER_S = 1000;
 
 const FIGHT_DURATION_S = 132; // 2:12

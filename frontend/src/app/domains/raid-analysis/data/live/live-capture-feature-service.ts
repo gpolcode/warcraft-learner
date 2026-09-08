@@ -61,7 +61,6 @@ const DOWNLOAD_URL_TTL_MS = 10_000;
 @Injectable({ providedIn: 'root' })
 export class LiveCaptureFeatureService {
   private readonly logger = inject(LoggerService);
-  // Live-sync on/off. Lives here because this is the only service that reads it.
   private readonly liveActive = signal(false);
 
   readonly isCapturing = signal(false);
@@ -126,7 +125,7 @@ export class LiveCaptureFeatureService {
     }
   }
 
-  /** Stop recording and release the display stream; the buffer is kept so covered fights stay clip-able. */
+  /** The buffer is kept so covered fights stay clip-able. */
   stopRecording(): void {
     this._releaseCapture(this.stream);
   }
@@ -205,7 +204,6 @@ export class LiveCaptureFeatureService {
     return this.saveSegments(segments.map(segment => segment.blob), 'full-pull.webm');
   }
 
-  /** No re-encode, so it stays near-instant. */
   protected async saveSegments(blobs: Blob[], filename: string): Promise<DownloadOutcome> {
     if (!blobs.length) {
       this.logger.logWarn('LiveCaptureFeatureService.saveSegments', `no footage for ${filename}`);

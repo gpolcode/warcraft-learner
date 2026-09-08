@@ -9,7 +9,6 @@ import { FetchOutcomes, WCL_TRANSPORT, WclTransport, WclTransportError, WCL_UNUS
 
 const UNAUTHORIZED_STATUS = 401;
 
-/** Records the token and variables of every query so the 401 refresh-and-retry and the pinned rankings difficulty can be asserted. */
 class RecordingTransport implements WclTransport {
   readonly tokens: string[] = [];
   readonly variables: object[] = [];

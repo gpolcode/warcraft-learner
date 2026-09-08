@@ -16,7 +16,6 @@ const INNER_POLL_DURATION_S = POLL_INTERVAL_S + HALF_INTERVAL_S;
 /** Base clock chosen so the very first refocus (with lastEmit still 0) already clears the cooldown. */
 const START_TIME_S = POLL_INTERVAL_S;
 
-/** A minimal DOCUMENT stand-in: a real EventTarget plus a settable visibilityState. */
 class FakeDocument extends EventTarget {
   visibilityState: DocumentVisibilityState = 'visible';
 

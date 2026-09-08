@@ -1,4 +1,3 @@
-/** Injects the Wowhead tooltip scripts on first use, keeping them off pages with no spell/item links. */
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { LoggerService } from '../../shared/util-logging/logger-service';

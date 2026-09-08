@@ -459,7 +459,6 @@ export class PostRaid {
     return latest.id === selectedFightId && analyzed ? 'skip' : 'analyze';
   }
 
-  // Keeps the currently selected player if visible in the new pull (matched by name, case-insensitively); else falls back to the first visible player.
   protected pickLivePlayerId(
     visiblePlayers: WclPlayer[],
     currentPlayerName: string | null,
@@ -480,7 +479,6 @@ export class PostRaid {
     return this.isValidReportCode(this.extractCode(value)) ? null : { invalidReportCode: true };
   }
 
-  // Builds <spec><class> with spaces stripped (e.g. "Subtlety" + "Rogue" -> "SubtletyRogue"); '' when not found.
   protected specOf(groups: PlayerDetailGroups, playerId: number): string {
     for (const role of ['dps', 'healers', 'tanks', 'unknown']) {
       for (const player of (groups[role] ?? [])) {

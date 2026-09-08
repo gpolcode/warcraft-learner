@@ -21,9 +21,7 @@ export interface AnalysisFinding {
   message: string;
   // Populated by the analysis engine so the UI never has to parse the templated `message`.
   measured?: { value: string; unit?: string };
-  /** Short display label for the "What" column (rule violations only). */
   label?: string;
-  /** Rulebook `type` of the rule that produced this finding (rule violations only). */
   rule_type?: string;
   timestamp_s?: number;
   details?: {
@@ -41,7 +39,6 @@ interface AbilityBreakdown {
   avg_damage: number;
   min_damage: number;
   max_damage: number;
-  /** Top-parse average cast count per window. Burst windows only; absent on defensives. */
   avg_casts?: number;
   // Burst windows only: true when no top parse ever cast this ability, so the UI shows a "passive" tag instead of a cast count.
   is_passive?: boolean;
@@ -58,7 +55,6 @@ export interface BurstWindow {
   window_length_s: number;
   defensive_name?: string;
   spell_id?: number;
-  /** Map reference for defensive windows: gameID of the enemy dealing the window's main damage. */
   ref_game_id?: number | null;
 }
 

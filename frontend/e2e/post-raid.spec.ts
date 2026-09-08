@@ -5,10 +5,10 @@ import {
 
 const REPORT_URL = 'https://www.warcraftlogs.com/reports/fGDk8PmvBzdhtQga?fight=last';
 const PLAYER_NAME = 'Pudders';
-// Mirrors POST_RAID_KEY in core/services/selection-store.ts.
+// Mirrors POST_RAID_KEY in src/app/domains/raid-analysis/data/selection/selection-store.ts.
 const STICKY_PLAYER_KEY = 'wl.sel.postRaid';
 
-// Mirrors POLL_INTERVAL_S in core/services/live-report-sync.ts.
+// Mirrors POLL_INTERVAL_S in src/app/domains/raid-analysis/data/wcl/live-report-sync-service.ts.
 const POLL_INTERVAL_S = 12;
 
 const ANALYZE_TIMEOUT_MS = 120_000;

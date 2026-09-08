@@ -13,9 +13,7 @@ on:
 permissions:
   contents: read
 
-# Shared with ingest-parses (the data/ tree): every gh-pages writer force-pushes a single
-# squashed commit built from a start-of-job checkout, so concurrent writers would revert
-# each other's folders. cancel-in-progress: false serializes them instead.
+# Shared with ingest-parses: every gh-pages writer force-pushes one squashed commit from a start-of-job checkout, so concurrent writers would revert each other's folders; cancel-in-progress: false serializes them.
 concurrency:
   group: gh-pages
   cancel-in-progress: false

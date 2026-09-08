@@ -1,6 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test';
 
-/** Asserts the scope shows the text: whole-element match for a string, raw-text for a pattern, first hit when it repeats. */
 export async function shows(scope: Page | Locator, text: string | RegExp): Promise<void> {
   const match = typeof text === 'string' ? scope.getByText(text, { exact: true }) : scope.getByText(text);
   await expect(match.first()).toBeVisible();
@@ -25,7 +24,6 @@ const MEASURE = new RegExp([RATIO, PERCENT, CLOCK, SECONDS].map(r => r.source).j
 /** Mirrors CAT_LABEL in src/app/domains/raid-analysis/data/analysis/analysis.models.ts. */
 export const CD_CHIP = /\b(lost cast|late|Bloodlust|downtime|hold until)\b/;
 
-/** Asserts at least one named ability/gear row renders with a real icon + name, regardless of which one the bench ranks first. */
 export async function showsEntity(scope: Locator): Promise<void> {
   await expect(scope.locator('wl-game-icon').first()).toBeVisible();
 }

@@ -10,7 +10,6 @@ const PLAYER_FILL = `${BAR_TRACK} > div[class*="opacity-"]`;
 const AVG_MARKER = `${BAR_TRACK} > div[class*="w-[2px]"]`;
 const LEGEND = 'div[class*="gap-x-3"]';
 const COLUMN_HEADERS = 'div.hidden.md\\:grid';
-// The stats row is window, metric, then the delta column when it renders.
 const DELTA_BADGE = 'div.flex-col.shrink-0:nth-of-type(3) > span.text-value';
 const CELL = '[role="listbox"] div.flex-col.shrink-0';
 const GAP_CELL = `${CELL}[aria-hidden="true"]`;

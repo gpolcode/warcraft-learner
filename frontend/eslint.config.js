@@ -101,8 +101,6 @@ const restrictHttpImports = {
 export default defineConfig([
   { ignores: ['src/**/*.generated.ts'] },
   {
-    // Base TypeScript rules for all TS (src/**, e2e/**, playwright.config.ts). Angular-specific
-    // rules live in the src-only block below; the plain-JS Node scripts have their own block.
     files: ['**/*.ts'],
     extends: [eslint.configs.recommended, tseslint.configs.strictTypeChecked, tseslint.configs.stylisticTypeChecked],
     plugins: { local },
@@ -113,7 +111,6 @@ export default defineConfig([
       },
     },
     rules: {
-      // Allow the underscore-prefix convention for deliberately-unused args/vars.
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       // Empty private constructors are the idiomatic "force the static factory" guard.
       '@typescript-eslint/no-empty-function': ['error', { allow: ['private-constructors'] }],
@@ -135,14 +132,12 @@ export default defineConfig([
     },
   },
   {
-    // Root config file reachable only via solution references; CI's tsserver fails to match it
-    // to the e2e project and reports every node type as unresolvable, so it lints type-unaware.
+    // CI's tsserver cannot match this solution-referenced root file to the e2e project and reports every node type as unresolvable, so it lints type-unaware.
     files: ['playwright.config.ts'],
     extends: [tseslint.configs.disableTypeChecked],
   },
   {
     // Test-only relaxations: fakes implement promise-returning interfaces with await-less `async () =>` bodies.
-    // `!` stays banned here too - specs assert presence via `defined()` (src/testing/defined.ts) instead.
     files: ['src/**/*.spec.ts', 'src/testing/**/*.ts', 'e2e/**/*.ts'],
     rules: {
       '@typescript-eslint/require-await': 'off',
@@ -154,7 +149,6 @@ export default defineConfig([
     },
   },
   {
-    // Angular-specific rules + the inline-template processor apply to the app only.
     files: ['src/**/*.ts'],
     extends: [angular.configs.tsRecommended],
     processor: angular.processInlineTemplates,
@@ -175,17 +169,17 @@ export default defineConfig([
           style: 'kebab-case',
         },
       ],
-      '@angular-eslint/prefer-standalone': 'error', // standalone is the default; no standalone:true
-      '@angular-eslint/prefer-host-metadata-property': 'error', // no @HostBinding/@HostListener; use `host`
-      '@angular-eslint/prefer-inject': 'error', // inject() over constructor injection
+      '@angular-eslint/prefer-standalone': 'error',
+      '@angular-eslint/prefer-host-metadata-property': 'error',
+      '@angular-eslint/prefer-inject': 'error',
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
       '@angular-eslint/prefer-signals': 'error',
       '@angular-eslint/prefer-output-readonly': 'error',
-      '@angular-eslint/prefer-output-emitter-ref': 'error', // output() over @Output/EventEmitter
+      '@angular-eslint/prefer-output-emitter-ref': 'error',
       '@angular-eslint/no-uncalled-signals': 'error',
       '@angular-eslint/computed-must-return': 'error',
       '@angular-eslint/use-component-view-encapsulation': 'error',
-      '@angular-eslint/component-max-inline-declarations': ['error', { template: 10, styles: 0 }], // beyond that, templateUrl
+      '@angular-eslint/component-max-inline-declarations': ['error', { template: 10, styles: 0 }],
     },
   },
   {
@@ -259,9 +253,7 @@ export default defineConfig([
     },
   },
   {
-    // Plain-JS Node scripts (the ingest file server + headless harness). console is
-    // their user-facing logging, so it stays allowed; plain JS keeps core `no-undef`,
-    // so the Node globals they use are declared here.
+    // console is these scripts' user-facing logging, so it stays allowed; plain JS keeps core `no-undef`, so their Node globals are declared here.
     files: ['scripts/**/*.{js,mjs}'],
     extends: [eslint.configs.recommended],
     plugins: { local },
@@ -288,14 +280,13 @@ export default defineConfig([
     extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
     plugins: { local },
     rules: {
-      '@angular-eslint/template/prefer-control-flow': 'error', // native @if/@for/@switch over *ngIf/*ngFor
-      // Keep strict equality, but allow the deliberate `x != null` / `x == null`
-      // idiom (matches both null and undefined) the templates use for optional fields.
+      '@angular-eslint/template/prefer-control-flow': 'error',
+      // `x != null` is allowed: the templates use it to match both null and undefined on optional fields.
       '@angular-eslint/template/eqeqeq': ['error', { allowNullOrUndefined: true }],
-      '@angular-eslint/template/prefer-class-binding': 'error', // class bindings over ngClass
+      '@angular-eslint/template/prefer-class-binding': 'error',
       // [style.x] bindings stay allowed: computed bar geometry needs them; ngStyle and static style= do not.
       '@angular-eslint/template/no-inline-styles': ['error', { allowBindToStyle: true }],
-      '@angular-eslint/template/prefer-ngsrc': 'error', // NgOptimizedImage for all static images
+      '@angular-eslint/template/prefer-ngsrc': 'error',
       '@angular-eslint/template/prefer-at-else': 'error',
       '@angular-eslint/template/prefer-at-empty': 'error',
       '@angular-eslint/template/no-empty-control-flow': 'error',

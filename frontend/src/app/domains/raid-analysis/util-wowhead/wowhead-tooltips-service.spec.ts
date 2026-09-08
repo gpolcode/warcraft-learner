@@ -22,7 +22,6 @@ function setup(): { service: WowheadTooltipsService; doc: Document } {
   };
 }
 
-// Stub of the $WowheadPower global that tooltips.js publishes; the service calls its refreshLinks.
 type PowerWindow = Window & { $WowheadPower?: { refreshLinks: () => void } };
 
 function stubWowheadPower(doc: Document): ReturnType<typeof vi.fn> {
@@ -31,7 +30,6 @@ function stubWowheadPower(doc: Document): ReturnType<typeof vi.fn> {
   return refreshLinks;
 }
 
-// Drive both script `load` events so the service reaches its `ready` state.
 function finishLoading(service: WowheadTooltipsService, doc: Document): void {
   service.ensureLoaded();
   const configScript = scriptWith(doc, CONFIG_SRC);

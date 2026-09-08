@@ -4,7 +4,6 @@ import { WclEvent } from '../../app/domains/raid-analysis/data/wcl/wcl.models';
 /** WCL timestamps are milliseconds; factory times are fight-relative seconds. */
 const MS_PER_SECOND = 1000;
 
-/** A player ability cast (`type: 'cast'`). `resources` mirrors what `includeResources: true` flattens onto the event. */
 export function cast(
   spellId: number, atS: number,
   opts?: { source?: number; target?: number; resources?: { amount: number; max?: number; type: number; cost?: number }[] },
@@ -19,7 +18,7 @@ export function cast(
   };
 }
 
-/** A buff gained (`type: 'applybuff'`). A self-buff lands on its target, so `target` sets both actor fields. */
+/** A self-buff lands on its target, so `target` sets both actor fields. */
 export function applyBuff(spellId: number, atS: number, opts?: { target?: number }): WclEvent {
   return {
     type: 'applybuff',
@@ -29,7 +28,6 @@ export function applyBuff(spellId: number, atS: number, opts?: { target?: number
   };
 }
 
-/** A buff lost (`type: 'removebuff'`). Same actor handling as {@link applyBuff}. */
 export function removeBuff(spellId: number, atS: number, opts?: { target?: number }): WclEvent {
   return {
     type: 'removebuff',

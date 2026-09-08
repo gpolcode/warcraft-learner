@@ -11,9 +11,7 @@ type TalentDiffKind = 'added' | 'dropped' | 'rank';
 
 export interface TalentDiff {
   kind: TalentDiffKind;
-  /** For `dropped`, the most common build's talent this one omits. */
   talent: TalentEntry;
-  /** `rank` only: points this build spends, and what the most common build spends. */
   rank?: number;
   standardRank?: number;
 }

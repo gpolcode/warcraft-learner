@@ -4,7 +4,6 @@ import { WowheadTooltipsService } from '../util-wowhead/wowhead-tooltips-service
 
 export type GameIconKind = 'spell' | 'item';
 
-/** Renders a WoW spell or item as an icon + name linking to Wowhead; an empty icon or a failed image load falls back to name-only. */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-game-icon',
@@ -27,7 +26,6 @@ export class GameIcon {
   readonly id = input<number | null>(null);
   readonly kind = input<GameIconKind>('spell');
   readonly name = input.required<string>();
-  /** Explicit icon filename; an empty string renders name-only (no art). */
   readonly icon = input.required<string>();
 
   // Tracks the URL that last failed to load so the template hides it and degrades to name-only; a changed `icon` retries.

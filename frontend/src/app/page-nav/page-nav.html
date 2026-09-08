@@ -18,7 +18,6 @@
 </mat-toolbar>
 
 <mat-sidenav-container class="flex-1 min-h-0">
-  <!-- Mobile: modal overlay that slides in with a scrim. Desktop: permanent drawer that collapses to an icons-only rail via its width. -->
   <mat-sidenav class="border-r border-line"
                [class.nav-drawer-modal]="isMobile()"
                [class.nav-drawer-full]="!isMobile() && !railCollapsed()"

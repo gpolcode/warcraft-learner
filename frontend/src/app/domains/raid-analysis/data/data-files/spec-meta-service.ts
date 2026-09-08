@@ -6,13 +6,11 @@ export type { SpecMeta };
 
 const ZAM = 'https://wow.zamimg.com/images/wow/icons/small';
 
-/** A spec universe: folder key -> meta, plus the set of real class-icon stems. */
 export interface SpecUniverse {
   metas: Record<string, SpecMeta>;
   classIcons: Set<string>;
 }
 
-/** The hydrated spec universe; loads itself on first injection. */
 @Injectable({ providedIn: 'root' })
 export class SpecMetaService {
   private readonly universe = signal<SpecUniverse>(this.buildUniverse([]));
@@ -25,7 +23,6 @@ export class SpecMetaService {
     void dataFile.getSpecMeta().then(result => { this.hydrate(result.ok ? result.value : []); });
   }
 
-  // Idempotent - a later call replaces the cache.
   hydrate(metas: SpecMeta[]): void {
     this.universe.set(this.buildUniverse(metas));
     this.markHydrated();
@@ -53,7 +50,6 @@ export class SpecMetaService {
     return this.specIconUrlOf(this.universe(), spec);
   }
 
-  /** Class-icon stem for a class name (space-tolerant): 'Death Knight' -> 'class_deathknight'. */
   private classIconStem(className: string): string {
     return `class_${className.toLowerCase().replace(/ /g, '')}`;
   }
@@ -65,7 +61,6 @@ export class SpecMetaService {
     };
   }
 
-  /** One entry per class, in stable display order, for the Class dropdown. */
   protected classListOf(universe: SpecUniverse): { className: string; classLabel: string; classIcon: string }[] {
     const byClass = new Map<string, { className: string; classLabel: string; classIcon: string }>();
     for (const meta of Object.values(universe.metas)) {
@@ -76,7 +71,6 @@ export class SpecMetaService {
     return [...byClass.values()].sort((first, second) => first.classLabel.localeCompare(second.classLabel));
   }
 
-  /** Spec metas for `className`, restricted to the `available` folder keys (those with data), sorted by spec label. */
   protected specsForClassOf(universe: SpecUniverse, className: string, available: string[]): SpecMeta[] {
     return available
       .map(spec => universe.metas[spec])
@@ -94,7 +88,6 @@ export class SpecMetaService {
     return universe.classIcons.has(stem) ? `${ZAM}/${stem}.jpg` : '';
   }
 
-  /** zamimg spec-icon URL for a spec folder key, or '' when the spec is unknown or has no baked stem. */
   protected specIconUrlOf(universe: SpecUniverse, spec: string): string {
     const meta = universe.metas[spec];
     return meta?.specIcon ? `${ZAM}/${meta.specIcon}.jpg` : '';

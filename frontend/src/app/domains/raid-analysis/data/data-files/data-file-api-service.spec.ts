@@ -11,7 +11,6 @@ const SPEC = 'SubtletyRogue';
 const ENCOUNTER_ID = 3176;
 const BENCH = 'burst';
 
-// Records every transport call so a test can assert the exact relative path used.
 class RecordingTransport implements DataFileTransport {
   readonly reads: string[] = [];
   readonly writes: [string, unknown][] = [];
