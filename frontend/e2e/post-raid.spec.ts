@@ -100,16 +100,14 @@ test('pull overview reports the DPS, the death, and the kill', async () => {
   await expect(outcomeRow.locator('span.text-accent')).toHaveText(CLOCK);
 });
 
-test('rotation rules count the casts that broke each rulebook rule, and name the ones followed', async () => {
-  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'How your casts held up against the rules the top Mythic logs follow for your spec.' });
+test('rotation rules count the casts that broke each rule, name the ones followed, and expand a row into the instances behind its count', async () => {
+  const rotationRules = page.locator('wl-rotation').locator('wl-finding-table')
+    .filter({ hasText: 'How your casts held up against the rules the top Mythic logs follow for your spec.' });
   await shows(rotationRules, 'Rotation rules');
   await showsFindingRows(rotationRules);
   // A rule the pull followed shows as a chip rather than a row, so only both together cover the rulebook.
   await showsOnPlan(rotationRules);
-});
 
-test('a rule row expands into a chip strip of the instances behind its count', async () => {
-  const rotationRules = page.locator('wl-finding-table').filter({ hasText: 'How your casts held up against the rules the top Mythic logs follow for your spec.' });
   // The button's accessible name flips to "Hide instances" once clicked, so the filter matches either name.
   const expandable = findingRows(rotationRules)
     .filter({ has: page.getByRole('button', { name: /instances/i }) });
@@ -129,7 +127,8 @@ test('a rule row expands into a chip strip of the instances behind its count', a
 });
 
 test('offensives flag the cooldown casts that missed the top-parse plan', async () => {
-  const offensives = page.locator('wl-finding-table').filter({ hasText: 'How you used your damage cooldowns compared with the top logs.' });
+  const offensives = page.locator('wl-rotation').locator('wl-finding-table')
+    .filter({ hasText: 'How you used your damage cooldowns compared with the top logs.' });
   await showsEntity(offensives);
   await showsFindingRows(offensives, CD_CHIP);
 });
