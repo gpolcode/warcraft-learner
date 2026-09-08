@@ -53,7 +53,7 @@ Deliver: the shell (zero domain services beyond selection) or leaf (inputs/outpu
 ## Testing
 
 - **Altitude rule:** test behavior exhaustively at the lowest altitude that owns it. A composite gets exactly one composition test; never re-test shared helpers from feature specs. Feature components are covered by their service spec, not by mounting them.
-- **Titles read as sentences:** `describe` names the unit, `it` finishes the sentence - no arrows, colon prefixes, or labels. The e2e specs (`frontend/e2e/*.spec.ts`) are the reference.
+- **Titles, setup, and assertions read as sentences:** `describe` names the unit, `it` finishes the sentence - no arrows, colon prefixes, or labels. The body keeps that voice: setup is a few named fixture calls that spell out the scenario (`reapplied(CLIPPED_ELAPSED_S)`, `at(FIELD_ELAPSED_S - 1)`), and each `expect` states one claim from the title, so a reviewer reads the test top to bottom without decoding it. The aura-clipped kind spec is the reference for setup; the e2e specs (`frontend/e2e/*.spec.ts`) with their `support.ts` verbs (`shows`, `showsFindingRows`, `showsOnPlan`) for assertions.
 - **Boundary pairs:** every "triggers" case has a "does not trigger at the boundary" partner, and comparisons are strict: a value exactly at `mean + 2*stddev` is not an outlier.
 - **Named constants, never magic numbers or raw ids.** Spell/item ids come from `src/testing/spell-ids.ts`; every computed value gets a named `const` with a one-line derivation.
 - **Never load a WCL JSON blob** - build minimal event streams from the factories in `src/testing/builders/events.ts`.
