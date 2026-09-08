@@ -9,7 +9,7 @@ import { MapPanel } from './map-panel';
 const INTRO = 'Replays where top raiders stood through the window this map opened at.';
 const PAD_S = 5;
 
-// The canvas mounts with the panel and reads these straight off the service, so a leaner stub throws.
+// The canvas mounts with the panel and reads these signals and map methods straight off the service, so a leaner stub throws.
 function stub(open: boolean): unknown {
   return mapFeatureStub({
     open: signal(open),
@@ -20,6 +20,11 @@ function stub(open: boolean): unknown {
     reference: signal({ kind: 'boss' }),
     preS: signal(PAD_S),
     postS: signal(PAD_S),
+    parseTimelinesFor: () => [],
+    benchTrailsAt: () => [],
+    liveRefIdOf: () => null,
+    liveTrailAt: () => [],
+    readoutAt: () => ({ benchNow: [], centroid: null, player: null }),
   });
 }
 

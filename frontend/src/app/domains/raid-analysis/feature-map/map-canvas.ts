@@ -9,8 +9,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { ReferenceSelector } from '../data/encounter/positioning.models';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import { LoadState, RenderableLoadError } from '../../shared/ui-load-state/load-state';
-import { MapFeatureService } from '../data/map/map-feature-service';
-import { MapDrawService, RelPos, ParseTimelines } from '../data/map/map-draw-service';
+import { MapFeatureService, MapReadout } from '../data/map/map-feature-service';
+import { RelPos } from '../data/map/map-draw-service';
 
 const STEP_S = 0.5;
 /** Clamped per frame so a backgrounded-then-resumed tab does not jump the scrubber by the whole elapsed gap. */
@@ -23,7 +23,6 @@ const MAX_FRAME_DT_S = 0.1;
   templateUrl: './map-canvas.html',
 })
 export class MapCanvas {
-  private readonly mapDraw = inject(MapDrawService);
   private readonly map = inject(MapFeatureService);
 
   protected readonly positions = this.map.positions;
@@ -58,42 +57,18 @@ export class MapCanvas {
   protected readonly windowEnd = computed(() => this.anchorTime() + this.postS());
 
   /** Scaling every stored row into a sample is the expensive step, so caching it here keeps playback cheap: each frame just interpolates the cached timelines. */
-  private readonly parseTimelines = computed<ParseTimelines[]>(() => {
-    const positions = this.positions();
-    return positions ? this.mapDraw.buildParseTimelines(positions, this.selector()) : [];
-  });
+  private readonly parseTimelines = computed(() => this.map.parseTimelinesFor(this.positions(), this.selector()));
 
   private readonly benchTrails = computed(() =>
-    this.mapDraw.parseTrailsOf(this.parseTimelines(), this.anchorTime(), this.preS(), this.postS(), STEP_S));
+    this.map.benchTrailsAt(this.parseTimelines(), this.anchorTime(), this.preS(), this.postS(), STEP_S));
 
-  private readonly liveRefId = computed(() => {
-    const live = this.live();
-    if (!live) return null;
-    const selector = this.selector();
-    return selector.kind === 'boss' ? live.bossActorId : (live.refActorByGameId.get(selector.gameId) ?? null);
-  });
+  private readonly liveRefId = computed(() => this.map.liveRefIdOf(this.live(), this.selector()));
 
-  private readonly liveTrail = computed<RelPos[]>(() => {
-    const live = this.live();
-    const refId = this.liveRefId();
-    if (!live || refId == null) return [];
-    return this.mapDraw.buildTrail(live.playerId, refId, live.timelines, this.anchorTime(), this.preS(), this.postS(), STEP_S);
-  });
+  private readonly liveTrail = computed(() =>
+    this.map.liveTrailAt(this.live(), this.liveRefId(), this.anchorTime(), this.preS(), this.postS(), STEP_S));
 
-  protected readonly readout = computed<Readout | null>(() => {
-    if (!this.positions()) return null;
-    const t = this.scrubT();
-    const points = this.mapDraw.parsePointsAt(this.parseTimelines(), t);
-    let centroid: { fwd: number; right: number } | null = null;
-    if (points.length) {
-      centroid = {
-        fwd: points.reduce((sum, point) => sum + point.fwd, 0) / points.length,
-        right: points.reduce((sum, point) => sum + point.right, 0) / points.length,
-      };
-    }
-    const player = this.livePlayerAt(t);
-    return { centroid, player };
-  });
+  protected readonly readout = computed<MapReadout | null>(() =>
+    this.positions() ? this.map.readoutAt(this.parseTimelines(), this.live(), this.liveRefId(), this.scrubT()) : null);
 
   constructor() {
     inject(DestroyRef).onDestroy(() => { this.stopTimer(); });
@@ -145,17 +120,6 @@ export class MapCanvas {
     if (this.rafId != null) { cancelAnimationFrame(this.rafId); this.rafId = null; }
   }
 
-  private livePlayerAt(t: number): RelPos | null {
-    const live = this.live();
-    const refId = this.liveRefId();
-    if (!live || refId == null) return null;
-    const ref = this.mapDraw.positionAt(live.timelines.get(refId), t);
-    const player = this.mapDraw.positionAt(live.timelines.get(live.playerId), t);
-    if (!ref || !player) return null;
-    if (ref.mapID != null && player.mapID != null && ref.mapID !== player.mapID) return null;
-    return this.mapDraw.toReferenceLocal(player, ref, t);
-  }
-
   private draw(canvas: HTMLCanvasElement): void {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -171,14 +135,9 @@ export class MapCanvas {
     drawRangeRings(frame);
     drawReference(frame);
     drawBenchTrails(frame, benchTrails);
-    drawBenchNow(frame, this.mapDraw.parsePointsAt(this.parseTimelines(), this.scrubT()), read);
+    drawBenchNow(frame, read);
     drawLive(frame, liveTrail, read);
   }
-}
-
-interface Readout {
-  centroid: { fwd: number; right: number } | null;
-  player: RelPos | null;
 }
 
 interface Palette {
@@ -281,17 +240,17 @@ function drawBenchTrails(frame: Frame, benchTrails: RelPos[][]): void {
   ctx.globalAlpha = 1;
 }
 
-function drawBenchNow(frame: Frame, benchNow: RelPos[], read: Readout | null): void {
+function drawBenchNow(frame: Frame, read: MapReadout | null): void {
   const { ctx, toScreen, palette } = frame;
   ctx.fillStyle = palette.muted;
-  for (const point of benchNow) { const [x, y] = toScreen(point); ctx.beginPath(); ctx.arc(x, y, 3, 0, 2 * Math.PI); ctx.fill(); }
+  for (const point of read?.benchNow ?? []) { const [x, y] = toScreen(point); ctx.beginPath(); ctx.arc(x, y, 3, 0, 2 * Math.PI); ctx.fill(); }
   if (!read?.centroid) return;
   const [x, y] = toScreen(read.centroid);
   ctx.strokeStyle = palette.ranked; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.arc(x, y, 7, 0, 2 * Math.PI); ctx.stroke();
 }
 
-function drawLive(frame: Frame, liveTrail: RelPos[], read: Readout | null): void {
+function drawLive(frame: Frame, liveTrail: RelPos[], read: MapReadout | null): void {
   const { ctx, toScreen, palette } = frame;
   if (liveTrail.length) {
     ctx.strokeStyle = palette.gold; ctx.globalAlpha = 0.5; ctx.lineWidth = 2;

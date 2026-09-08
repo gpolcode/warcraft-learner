@@ -6,7 +6,8 @@ import { Result, Results } from '../../../shared/util-http/result';
 import { MAP_DATA_SOURCE, MapData } from './map-data-source';
 import { DataSource } from '../data-source/data-source';
 import { featureService } from '../../../../../testing/service-harness';
-import { MapFeatureService, FACING_OFFSET_RAD } from './map-feature-service';
+import { MapFeatureService, FACING_OFFSET_RAD, ActorTimeline, MapLiveOverlay } from './map-feature-service';
+import { ParseTimelines } from './map-draw-service';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { whenStable } from '../../../../../testing/when-stable';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
@@ -148,6 +149,111 @@ describe('resolveLiveReference', () => {
     const ref = svc['resolveLiveReference'](positions, [{ id: 7, name: 'Add', gameID: 200 }]);
     expect(ref.bossActorId).toBeNull();
     expect(ref.refActorByGameId.get(200)).toBe(7);
+  });
+});
+
+/** Every fixture timeline holds one sample at this second, so a lookup there lands exactly on it. */
+const SCRUB_S = 4;
+const ORIGIN_YD = 0;
+const PARSE_PLAYER_ID = -1;
+const PARSE_REF_ID = -2;
+const LIVE_PLAYER_ID = 5;
+const LIVE_BOSS_ACTOR_ID = 42;
+const LIVE_ADD_ACTOR_ID = 7;
+const BOSS_GAME_ID = 100;
+const ADD_GAME_ID = 200;
+const ABSENT_GAME_ID = 999;
+const PRECISION = 6;
+
+function standingAt(id: number, x: number, y: number, mapID?: number): ActorTimeline {
+  return { id, samples: [{ t: SCRUB_S, x, y, mapID }] };
+}
+
+/** The reference sits at the origin without a facing, so world +x reads as forward and -y as right. */
+function parseWherePlayerStood(fwd: number, right: number): ParseTimelines {
+  return { player: standingAt(PARSE_PLAYER_ID, fwd, -right), ref: standingAt(PARSE_REF_ID, ORIGIN_YD, ORIGIN_YD) };
+}
+
+function liveWith(timelines: ActorTimeline[]): MapLiveOverlay {
+  return {
+    timelines: new Map(timelines.map(timeline => [timeline.id, timeline])),
+    playerId: LIVE_PLAYER_ID,
+    bossActorId: LIVE_BOSS_ACTOR_ID,
+    refActorByGameId: new Map([[BOSS_GAME_ID, LIVE_BOSS_ACTOR_ID], [ADD_GAME_ID, LIVE_ADD_ACTOR_ID]]),
+  };
+}
+
+describe('parseTimelinesFor', () => {
+  it('has no parse timelines without a loaded bench', () => {
+    expect(svc.parseTimelinesFor(null, { kind: 'boss' })).toEqual([]);
+  });
+});
+
+describe('liveRefIdOf', () => {
+  const live = liveWith([]);
+
+  it('resolves the boss selector to this pull boss actor', () => {
+    expect(svc.liveRefIdOf(live, { kind: 'boss' })).toBe(LIVE_BOSS_ACTOR_ID);
+  });
+
+  it('resolves an enemy selector to the live actor for that gameId', () => {
+    expect(svc.liveRefIdOf(live, { kind: 'enemy', gameId: ADD_GAME_ID })).toBe(LIVE_ADD_ACTOR_ID);
+  });
+
+  it('is null for an enemy selector no live actor matches', () => {
+    expect(svc.liveRefIdOf(live, { kind: 'enemy', gameId: ABSENT_GAME_ID })).toBeNull();
+  });
+
+  it('is null without a live overlay', () => {
+    expect(svc.liveRefIdOf(null, { kind: 'boss' })).toBeNull();
+  });
+});
+
+describe('liveTrailAt', () => {
+  const WINDOW_PAD_S = 5;
+  const TRAIL_STEP_S = 0.5;
+
+  it('has no trail without a live overlay', () => {
+    expect(svc.liveTrailAt(null, LIVE_BOSS_ACTOR_ID, SCRUB_S, WINDOW_PAD_S, WINDOW_PAD_S, TRAIL_STEP_S)).toEqual([]);
+  });
+});
+
+describe('readoutAt', () => {
+  const NEAR_FWD_YD = 2;
+  const NEAR_RIGHT_YD = 1;
+  const FAR_FWD_YD = 4;
+  const FAR_RIGHT_YD = 3;
+  const CENTROID_FWD_YD = 3; // mean of NEAR_FWD_YD and FAR_FWD_YD
+  const CENTROID_RIGHT_YD = 2; // mean of NEAR_RIGHT_YD and FAR_RIGHT_YD
+  const PLAYER_MAP_ID = 1;
+  const OTHER_MAP_ID = 2;
+
+  it('centres the ranked players on the mean of where they stood', () => {
+    const timelines = [parseWherePlayerStood(NEAR_FWD_YD, NEAR_RIGHT_YD), parseWherePlayerStood(FAR_FWD_YD, FAR_RIGHT_YD)];
+    const readout = svc.readoutAt(timelines, null, null, SCRUB_S);
+    expect(readout.benchNow).toHaveLength(timelines.length);
+    expect(readout.centroid?.fwd).toBeCloseTo(CENTROID_FWD_YD, PRECISION);
+    expect(readout.centroid?.right).toBeCloseTo(CENTROID_RIGHT_YD, PRECISION);
+  });
+
+  it('has no centre when no parse stands at the scrubbed time', () => {
+    expect(svc.readoutAt([], null, null, SCRUB_S).centroid).toBeNull();
+  });
+
+  it('places the live player ahead of the reference they share a map with', () => {
+    const live = liveWith([
+      standingAt(LIVE_PLAYER_ID, NEAR_FWD_YD, ORIGIN_YD, PLAYER_MAP_ID),
+      standingAt(LIVE_BOSS_ACTOR_ID, ORIGIN_YD, ORIGIN_YD, PLAYER_MAP_ID),
+    ]);
+    expect(svc.readoutAt([], live, LIVE_BOSS_ACTOR_ID, SCRUB_S).player?.fwd).toBeCloseTo(NEAR_FWD_YD, PRECISION);
+  });
+
+  it('has no live player when the reference stands on another map', () => {
+    const live = liveWith([
+      standingAt(LIVE_PLAYER_ID, NEAR_FWD_YD, ORIGIN_YD, PLAYER_MAP_ID),
+      standingAt(LIVE_BOSS_ACTOR_ID, ORIGIN_YD, ORIGIN_YD, OTHER_MAP_ID),
+    ]);
+    expect(svc.readoutAt([], live, LIVE_BOSS_ACTOR_ID, SCRUB_S).player).toBeNull();
   });
 });
 
