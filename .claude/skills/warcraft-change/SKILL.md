@@ -25,7 +25,7 @@ Follow the Burst feature (`domains/raid-analysis/feature-burst-windows/` + `data
 
 ### New page or shared component
 
-Deliver: the shell (zero domain services beyond selection) or leaf (inputs/outputs only), specs per the testing rules below, and - for a page - an e2e card test per the e2e rules below.
+Deliver: the shell (injecting only its selection service, `SelectionStore`, and the overlay feature services) or leaf (inputs/outputs only), specs per the testing rules below, and - for a page - an e2e card test per the e2e rules below.
 
 ## Ingest version
 
@@ -36,7 +36,8 @@ Deliver: the shell (zero domain services beyond selection) or leaf (inputs/outpu
 - **`*DataSource` interface + `*_DATA_SOURCE` token** - the only swap point between production (`*DataFileService`) and ingest (`*TransformService`).
 - **`*FeatureService`** - one per feature component, in `data/<feature>/`; exposes signals and owns its feature-local math as protected methods, or delegates to a sibling `data/<feature>/` service.
 - **Feature components are thin** - inject their `*FeatureService`, load through `LoadResourceService`, render content or one `wl-load-state`.
-- **Page shells** (`src/app/post-raid/`, `src/app/pre-fight/`) resolve selection, compose feature components, and pass selection as inputs.
+- **Page shells** (`src/app/post-raid/`, `src/app/pre-fight/`) resolve selection through a page-local selection service (`pre-fight/encounter-selection-service.ts`, `post-raid/report-selection-service.ts`) that wraps the API services and owns the pure selection helpers.
+  They compose feature components, pass selection as inputs, and route card anchors to the page-level overlays through `MapFeatureService` and `LiveCaptureFeatureService`.
 - **Presentational leaves** - inputs/outputs only, no services beyond framework tokens.
 
 ## Failure handling
