@@ -7,7 +7,7 @@ import { HttpLoadErrors } from '../http/http-load-error';
 import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
 import { MAP_DATA_SOURCE, MapData } from './map-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
-import { MapDrawService } from './map-draw-service';
+import { MapDrawService, ParseTimelines, RelPos } from './map-draw-service';
 
 /** WoW's `facing` zero-point does not align with our forward axis; empirically a -90 degree offset puts "behind the boss" below the reference. */
 export const FACING_OFFSET_RAD = -Math.PI / 2;
@@ -68,6 +68,12 @@ export interface LiveOverlayInput {
   events: TimedEvent[];
   playerId: number;
   enemies: MapEnemyActor[];
+}
+
+export interface MapReadout {
+  benchNow: RelPos[];
+  centroid: { fwd: number; right: number } | null;
+  player: RelPos | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -245,6 +251,48 @@ export class MapFeatureService {
       }
     }
     return [...map.values()].sort((a, b) => (b.isBoss ? 1 : 0) - (a.isBoss ? 1 : 0));
+  }
+
+  parseTimelinesFor(positions: EncounterPositions | null, selector: ReferenceSelector): ParseTimelines[] {
+    return positions ? this.mapDraw.buildParseTimelines(positions, selector) : [];
+  }
+
+  benchTrailsAt(timelines: ParseTimelines[], t: number, preS: number, postS: number, stepS: number): RelPos[][] {
+    return this.mapDraw.parseTrailsOf(timelines, t, preS, postS, stepS);
+  }
+
+  liveRefIdOf(live: MapLiveOverlay | null, selector: ReferenceSelector): number | null {
+    if (!live) return null;
+    return selector.kind === 'boss' ? live.bossActorId : (live.refActorByGameId.get(selector.gameId) ?? null);
+  }
+
+  liveTrailAt(
+    live: MapLiveOverlay | null, refId: number | null, t: number, preS: number, postS: number, stepS: number,
+  ): RelPos[] {
+    if (!live || refId == null) return [];
+    return this.mapDraw.buildTrail(live.playerId, refId, live.timelines, t, preS, postS, stepS);
+  }
+
+  readoutAt(timelines: ParseTimelines[], live: MapLiveOverlay | null, refId: number | null, t: number): MapReadout {
+    const benchNow = this.mapDraw.parsePointsAt(timelines, t);
+    return { benchNow, centroid: this.centroidOf(benchNow), player: this.livePlayerAt(live, refId, t) };
+  }
+
+  protected centroidOf(points: RelPos[]): { fwd: number; right: number } | null {
+    if (!points.length) return null;
+    return {
+      fwd: points.reduce((sum, point) => sum + point.fwd, 0) / points.length,
+      right: points.reduce((sum, point) => sum + point.right, 0) / points.length,
+    };
+  }
+
+  protected livePlayerAt(live: MapLiveOverlay | null, refId: number | null, t: number): RelPos | null {
+    if (!live || refId == null) return null;
+    const ref = this.mapDraw.positionAt(live.timelines.get(refId), t);
+    const player = this.mapDraw.positionAt(live.timelines.get(live.playerId), t);
+    if (!ref || !player) return null;
+    if (ref.mapID != null && player.mapID != null && ref.mapID !== player.mapID) return null;
+    return this.mapDraw.toReferenceLocal(player, ref, t);
   }
 
   protected resolveLiveReference(positions: EncounterPositions, enemies: MapEnemyActor[]): LiveReference {
