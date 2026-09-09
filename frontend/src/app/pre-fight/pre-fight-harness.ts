@@ -50,6 +50,8 @@ export const CLASS_SELECT = 0;
 export const SPEC_SELECT = 1;
 export const ENCOUNTER_SELECT = 2;
 
+export type EncounterReads = Pick<EncounterSelectionService, 'getSpecs' | 'getEncounters'>;
+
 export interface PreFightPage {
   readonly fixture: ComponentFixture<PreFight>;
   selectCount(): number;
@@ -62,13 +64,12 @@ export interface PreFightPage {
   render(): void;
 }
 
-export function preFightPage(encounterSelection: Partial<EncounterSelectionService>): PreFightPage {
+export function preFightPage(encounterSelection: EncounterReads): PreFightPage {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
     imports: [PreFight],
     providers: [
       provideZonelessChangeDetection(),
-      { provide: EncounterSelectionService, useValue: encounterSelection as EncounterSelectionService },
       { provide: MapFeatureService, useValue: mapFeatureStub() },
       {
         provide: SelectionStore,
@@ -77,7 +78,14 @@ export function preFightPage(encounterSelection: Partial<EncounterSelectionServi
           loadNorthernSky: () => null, saveNorthernSky: () => undefined,
         },
       },
-      { provide: DataFileApiService, useValue: { getSpecMeta: (): Promise<Result<SpecMeta[]>> => Promise.resolve(Results.ok(SPEC_META)) } },
+      {
+        provide: DataFileApiService,
+        useValue: {
+          getSpecMeta: (): Promise<Result<SpecMeta[]>> => Promise.resolve(Results.ok(SPEC_META)),
+          getSpecs: (): Promise<Result<SpecEntry[]>> => encounterSelection.getSpecs(),
+          getEncounters: (spec: string): Promise<Result<EncounterEntry[]>> => encounterSelection.getEncounters(spec),
+        },
+      },
       // Injected at construction by the gear card, never called on a benched-missing page.
       { provide: WclApiService, useValue: {} },
       ...stubBenchTokens(BENCH_TOKENS),

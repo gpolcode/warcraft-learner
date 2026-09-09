@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { EncounterEntry, SpecEntry } from '../domains/raid-analysis/data/encounter/encounter.models';
 import { Result, Results } from '../domains/shared/util-http/result';
 import {
-  CLASS_SELECT, ENCOUNTER_SELECT, FROST_MAGE, SPEC_INDEX, SPEC_SELECT, SUBTLETY_ROGUE,
+  CLASS_SELECT, ENCOUNTER_SELECT, EncounterReads, FROST_MAGE, SPEC_INDEX, SPEC_SELECT, SUBTLETY_ROGUE,
   ParkedEncounterSelection, preFightPage,
 } from './pre-fight-harness';
 
@@ -11,7 +11,7 @@ const BOSS_B: EncounterEntry = { id: 3145, name: 'Boss B', sample_count: 9 };
 
 const ROGUE_ENCOUNTERS = [BOSS_A, BOSS_B];
 
-function staticSelection(encounters: EncounterEntry[] = ROGUE_ENCOUNTERS): Partial<ParkedEncounterSelection> {
+function staticSelection(encounters: EncounterEntry[] = ROGUE_ENCOUNTERS): EncounterReads {
   return {
     getSpecs: (): Promise<Result<SpecEntry[]>> => Promise.resolve(Results.ok(SPEC_INDEX)),
     getEncounters: (): Promise<Result<EncounterEntry[]>> => Promise.resolve(Results.ok(encounters)),
