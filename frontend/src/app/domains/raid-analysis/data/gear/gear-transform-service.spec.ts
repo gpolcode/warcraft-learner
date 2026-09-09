@@ -33,7 +33,7 @@ const SOPHIC_ITEM_NAME = 'Enchant Weapon - Sophic Devotion';
 const SOPHIC_ITEM_ICON = 'inv_sophic';
 
 describe('talentKeyFromTree', () => {
-  it('builds a v3: key of entry.rank pairs ordered by entry, ignoring the node', () => {
+  it('builds the v3 key from entry.rank pairs ordered by entry, ignoring the node', () => {
     // Two parses of one build can report a talent under different nodeIDs, so the node is left out.
     expect(talentKeys.talentKeyFromTree([{ nodeID: 100001, id: 22, rank: 2 }, { nodeID: 90638, id: 11, rank: 1 }]))
       .toBe('v3:11.1,22.2');

@@ -149,7 +149,7 @@ describe('WclApiService', () => {
       expect(await api.getCombatantInfo('code', FIGHT_ID, PLAYER_ID)).toEqual([]);
     });
 
-    it('throws the permanent unavailable error when the report is unserved (report: null)', async () => {
+    it('throws the permanent unavailable error when WCL serves a null report', async () => {
       const { api, transport } = setup();
       transport.response = { reportData: { report: null } };
       await expect(api.getCombatantInfo('code', FIGHT_ID, PLAYER_ID))

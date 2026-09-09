@@ -93,22 +93,28 @@ describe('buildBenchGearView', () => {
 
 describe('buildGearView', () => {
   const stats = svc['benchToStats'](benchWith());
+  const matchingPlayer: CharacterGear = {
+    talent_key: STANDARD_KEY,
+    trinkets: STANDARD_TRINKETS,
+    enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
+  };
 
-  it('comparison mode: player matching bench is on-plan (ok)', () => {
-    const player: CharacterGear = {
-      talent_key: STANDARD_KEY,
-      trinkets: STANDARD_TRINKETS,
-      enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
-    };
-    const view = svc['buildGearView'](player, stats);
-    expect(view.comparison).toBe(true);
+  it('turns comparison mode on once there is a player to compare', () => {
+    expect(svc['buildGearView'](matchingPlayer, stats).comparison).toBe(true);
+  });
+
+  it('marks a player matching the bench on plan in talents, trinkets and enchants', () => {
+    const view = svc['buildGearView'](matchingPlayer, stats);
     expect(view.talentStatus.status).toBe('ok');
     expect(view.trinketStatus).toEqual({ status: 'ok', note: 'Most common pair.' });
-    expect(view.trinketSets[0]).toMatchObject({ isPlayer: true });
     expect(view.enchantStatus).toBe('ok');
   });
 
-  it('comparison mode: a pair off the bench pairs is flagged uncommon', () => {
+  it('marks the bench trinket pair the player is running as theirs', () => {
+    expect(svc['buildGearView'](matchingPlayer, stats).trinketSets[0]).toMatchObject({ isPlayer: true });
+  });
+
+  it('flags a trinket pair on no bench row as uncommon', () => {
     const player: CharacterGear = {
       talent_key: STANDARD_KEY,
       trinkets: [{ slot: 12, id: 999, name: 'Off Meta' }],
@@ -119,7 +125,7 @@ describe('buildGearView', () => {
     expect(view.trinketSets.some(row => row.isPlayer)).toBe(false);
   });
 
-  it('comparison mode: missing high-consensus enchant flags a warning', () => {
+  it('warns on both the section and the row when a high-consensus enchant is missing', () => {
     const player: CharacterGear = {
       talent_key: STANDARD_KEY,
       trinkets: STANDARD_TRINKETS,
