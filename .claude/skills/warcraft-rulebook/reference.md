@@ -10,13 +10,13 @@ Then check the sampled encounter has real parse volume on the current partition.
 
 ## WCL token and spec universe (Step 1)
 
-Get one WCL client-credentials token up front and reuse it for the whole session - one OAuth handshake, never one per spec or per dispatch. Credentials: the embedded public pair in `frontend/src/app/domains/raid-analysis/data/http/wcl-public-client.ts`. POST `grant_type=client_credentials` to `https://www.warcraftlogs.com/oauth/token`, then POST GraphQL to `https://www.warcraftlogs.com/api/v2/client` with `Authorization: ****** the spec universe live from WCL:
+Get one WCL client-credentials token up front and reuse it for the whole session. Credentials: the embedded public pair in `frontend/src/app/domains/raid-analysis/data/http/wcl-public-client.ts`. POST `grant_type=client_credentials` to `https://www.warcraftlogs.com/oauth/token`, then POST GraphQL to `https://www.warcraftlogs.com/api/v2/client` with `Authorization: ****** the spec universe live from WCL:
 
 ```
 query { gameData { classes { name slug specs { name slug } } } }
 ```
 
-Each `spec.slug + class.slug` is the folder key (e.g. `Subtlety` + `Rogue` -> `SubtletyRogue`; `Devourer` + `DemonHunter` -> `DevourerDemonHunter`). Ask the user which specs to do - accept "all", a class, a role ("healers"), or explicit names - resolve to folder keys, and confirm the list before starting the prep.
+Each `spec.slug + class.slug` is the folder key (e.g. `Subtlety` + `Rogue` -> `SubtletyRogue`; `Devourer` + `DemonHunter` -> `DevourerDemonHunter`).
 
 Steps 1 and 3 (of the SKILL.md flow) both need one **rankable encounter id**, so resolve it once per session. Query `worldData{expansions{id name zones{id name encounters{id name}}}}` and read the current expansion's zones; never dump `worldData{zones{...}}`, which returns every zone ever. The newest raid zone usually has no fight data yet and a zone can appear two or three times (live, PTR, beta) with different ids, so probe a few encounter ids for a non-empty `rankings` array and take the first that answers, falling back to the previous tier's zone. Record which encounter you used: the parse counts in the notes are counted against it.
 
@@ -98,7 +98,7 @@ Join `SpellIconFileID` to `ID` and lowercase the filename without its extension.
 
 ## 2d. `<spec>.abilities.tsv` - the WCL-verified ability-id table
 
-Build one `name <tab> spell_id <tab> icon <tab> base_cd_s <tab> note` table per spec; the agent picks **every** id it writes from this table, so grounding happens here, once, at prep time - ingestion does not re-check ids.
+Build one `name <tab> spell_id <tab> icon <tab> base_cd_s <tab> note` table per spec; grounding happens here, once, at prep time.
 
 The `note` column is what makes the table usable rather than merely correct. A spec routinely has several live ids sharing one name, and the agent cannot tell them apart from the name: the cast id and the aura id differ (Improved Garrote casts nothing and its logged buff is not its talent id), a reworked ability keeps its old id alive alongside the new one (both Crimson Tempest ids return "Crimson Tempest"), and a talent id is not what shows up in a log. Write the note in the vocabulary the agent's Inputs section defines (`CAST` / `SELF AURA` / `TARGET AURA` / `NOT observed` / `SAME NAME as id(s) X,Y`), with the sampled-parse count.
 
@@ -133,20 +133,18 @@ The `note` column is what makes the table usable rather than merely correct. A s
 Run the checks as **one script over all the files**, not a command per file per check:
 
 - schema check: `python3 -c "import json,jsonschema; jsonschema.validate(json.load(open('<file>')), json.load(open('.claude/skills/warcraft-rulebook/rulebook.schema.json')))"` (`pip install jsonschema` first if the import fails).
-- dash scan: no U+2014 / U+2013 / U+2212 anywhere in the file.
+- dash scan: no U+2014 / U+2013 / U+2212 / U+00B7 anywhere in the file.
 - **id cross-check**: walk every `spell_id` in `major_cooldowns`, `defensives` and each condition's id fields (including the `spell_ids` / `spend_spell_ids` / `alternative_spell_ids` / `except_buff_spell_ids` arrays) and assert the id is in that spec's table **and** that the name written beside it matches the table's name for that id. This catches a transposed pair that the schema cannot see, since both fields are individually well-typed. Compare with any trailing parenthetical stripped: WCL suffixes multi-part spells (`Stasis (Store)`) where the in-game name, which is what the player is shown, has no suffix.
-- **no magnitudes in conditions**: assert no numeric value in any condition outside the id fields, `resource_type`, `health_pct` and `max_stacks`, and no `rules[].description` over 60 characters. Those three are game constants read from a tooltip, not field behaviour the encounter has to measure.
+- **no magnitudes in conditions**: assert no numeric value in any condition outside the id fields, `resource_type`, `health_pct` and `max_stacks`. Those three are game constants read from a tooltip, not field behaviour the encounter has to measure.
 - unresolved-name follow-up: for any ability name an agent reported as missing from its table, find the id (Wowhead spell search), verify it with a WCL `ability(id:...)` query, and patch it in.
 
 Then read the file. The mechanical checks pass on a rulebook whose coaching copy is wrong, so spot-check that each number in a `usage_rule` or `action` traces to an APL line or a guide sentence, and run the top-parse sanity check from the rulebook-author agent's quality bar over the rules.
 
 **Replay every `filler_in_buff` rule against the sampled parses before keeping it** - its defects are invisible on the page. For each parse count the coached filler and its alternatives cast inside the state and outside every `except_buff_spell_ids` window, take the share, bench it the way the engine does (median, band `max(stddev, 0.1 * median)`), and check no parse falls under `median - band`. A failing parse means a state is missing from the exclusions: read that parse's violating casts, find the buff they all sit under, and add it. A rule measurable on under half the parses is not a defect - the encounter declines to bench it and the runtime drops it, the right outcome for a hero-talent build the field does not play.
 
-When a rule fails these, send the defect back to that spec's dispatch if it still holds context - fixing one rule in-place is far cheaper than a cold re-run. Otherwise re-dispatch `rulebook-author` for that spec alone with the defect appended to its prompt; reserve a fresh dispatch for output that misses the bar broadly.
-
 ## Publish recipe (Step 5)
 
-`frontend/public/data/specs/**` is **gitignored on every code branch** - rulebooks are never committed to a `main`-based branch. Their source of truth is the **`gh-pages`** branch, at `data/specs/{spec}/rulebook.json` (the shared dataset the site serves). Publish with a worktree based on `gh-pages`:
+Publish with a worktree based on `gh-pages`:
 
 ```bash
 git fetch origin gh-pages
@@ -160,9 +158,9 @@ git worktree remove <scratch>/ghpages-wt
 git branch -D <temp-branch>
 ```
 
-Open the PR with **base `gh-pages`** (push to `gh-pages` directly only when the user explicitly says so). Once merged, the hourly ingest overlays `data/specs` from `gh-pages` before each run and rebuilds that spec's benches over its next passes; the site reads the same tree directly. The gh-pages writers publish tree-based single commits, so the file content persists across their force-pushes.
+Open the PR with **base `gh-pages`** (push to `gh-pages` directly only when the user explicitly says so). Once merged, the hourly ingest overlays `data/specs` from `gh-pages` before each run; the site reads the same tree directly. The gh-pages writers publish tree-based single commits, so the file content persists across their force-pushes.
 
-**A publish is two PRs.** The skip check keys on `INGEST_VERSION` plus the top-parse set, never on the rulebook, so on a settled encounter the new file is overlaid and then skipped and the benches keep serving the old rules. Open a second PR against `main` bumping `INGEST_VERSION` (`frontend/src/app/domains/raid-analysis/data/ingest/ingest-version.ts`); one bump covers every spec in the run. Order does not matter, but the publish is not done until both land.
+**A publish is two PRs** (SKILL.md step 5 has the why). The second is against `main`, bumping `INGEST_VERSION` (`frontend/src/app/domains/raid-analysis/data/ingest/ingest-version.ts`); one bump covers every spec in the run. Order does not matter, but the publish is not done until both land.
 
 The worktree commits on a **temp branch pushed to the publish branch's remote ref** because the publish branch name is often already checked out on `main` history and `git worktree add -b` fails outright on the collision. Pushing a temp branch to `refs/heads/<publish-branch>` sidesteps it; the local pointer is irrelevant since the PR reads the remote. Verify with `git log origin/<publish-branch> -1`, not the local ref - it still sits on `main` history and makes history-checking tooling report the repo's merge commits as yours.
 
