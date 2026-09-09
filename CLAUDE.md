@@ -14,11 +14,16 @@ The layout is domain-oriented: module types over the Angular style guide's featu
 
 Behavior is implemented as methods on `@Injectable` services - stateless, data in, data out (eslint-enforced); exactly **two pass-through API services** (`WclApiService`, `DataFileApiService`) do IO. Ingestion is the same Angular app booted with the `ingest` configuration (`feature-ingest`), driving the same `*TransformService`s and persisting through a micro file server to `frontend/public/data/specs/**`:
 
-```
-INGEST (browser, ingest env)                RUNTIME (browser, Angular)
-WclApiService -> *TransformService          data/specs/** -> DataFileApiService
-  -> DataFileApiService -> file server            -> *DataSource (token swap)
-     (:3000) -> data/specs/**                     -> *FeatureService -> *Component
+```mermaid
+flowchart LR
+  subgraph ingest ["Ingest (browser, ingest configuration)"]
+    wcl[WclApiService] --> transform["*TransformService"] --> ingestFiles[DataFileApiService] --> server["file server :3000"]
+  end
+  server --> specs["data/specs/**"]
+  subgraph runtime ["Runtime (browser, Angular)"]
+    runtimeFiles[DataFileApiService] --> source["*DataSource (token swap)"] --> feature["*FeatureService"] --> component["*Component"]
+  end
+  specs --> runtimeFiles
 ```
 
 Bench data and rulebooks live only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
