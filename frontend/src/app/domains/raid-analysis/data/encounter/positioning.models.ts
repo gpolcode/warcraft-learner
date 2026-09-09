@@ -1,4 +1,4 @@
-// Coordinates are raw WCL units (x/y in hundredths of a yard, facing in milliradians); the frontend scales them in `map-draw.ts`.
+// Coordinates are raw WCL units: x/y in hundredths of a yard, facing in milliradians.
 
 /** A resampled enemy position row: [t_s, x, y, facing | null, mapID | null]. */
 export type PosRow = [number, number, number, number | null, number | null];

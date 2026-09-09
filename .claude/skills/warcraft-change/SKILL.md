@@ -17,7 +17,7 @@ Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences
 
 ### New rule-engine kind
 
-Deliver: the kind's class in `data/rotation/rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`data/rotation/rotation-rules/rule-kinds.ts`), declared in the rulebook schema (`.claude/skills/warcraft-rulebook/rulebook.schema.json`), per-instance `occurrences` on the finding, boundary-paired specs. Bump `INGEST_VERSION`.
+Deliver: the kind's class in `data/rotation/rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`data/rotation/rotation-rules/rule-kinds.ts`), declared in the rulebook schema (`.claude/skills/warcraft-rulebook/rulebook.schema.json`), a row in the agent's kind table (`.claude/agents/rulebook-author.md`), per-instance `occurrences` on the finding, boundary-paired specs. Bump `INGEST_VERSION`.
 
 ### New feature
 
