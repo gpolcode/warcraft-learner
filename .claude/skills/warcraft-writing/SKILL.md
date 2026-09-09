@@ -1,22 +1,22 @@
 ---
 name: warcraft-writing
-description: warcraft-learner user-facing writing and branding rules. Covers the plain-spoken coaching UI copy voice for all finding messages, remedies, card subtitles, empty states and microcopy, plus the product branding/naming rules (the warcraft-learner wordmark, never conflating it with Warcraft Logs/WCL) and the logo/favicon source of truth. Load this before writing or editing any string a user sees - findings, remedies, labels, empty states, page titles, nav wordmark, CLI banners, READMEs - or before touching the logo/favicon.
+description: warcraft-learner writing and branding - the plain-spoken coaching voice for every string a user sees, plus the product naming and the logo source of truth. Load this before writing or editing any user-visible string, or before touching the logo or favicon.
 ---
 
 # warcraft-learner writing and branding
 
-**Deliverable:** every string a user sees follows the voice rules below - count then target, plain words, one actionable number, quiet success states - and the product name stays exactly `warcraft-learner`.
+**What good looks like:** a raider reads any string once and knows what to change, and the product name is exactly `warcraft-learner`.
 
 ## Branding & naming
 
 - **The product name is always `warcraft-learner`** - lowercase, hyphenated, exactly that casing. Never "Warcraft Learner", "WarcraftLearner", or any other variant. This applies to the page `<title>`, nav wordmark, CLI banners, READMEs, and any new user-facing copy.
 - **Do not confuse it with "Warcraft Logs"** (a.k.a. WCL) - that is the external data provider, a separate product. Leave "Warcraft Logs" / "WCL" strings as-is; only our own app name is normalized to `warcraft-learner`.
-- **Logo / favicon** - gold shield with an ascending bar chart. Single source of truth: `frontend/public/favicon.svg`, which drives the `.ico` (regenerated at 16/32/48px via `sharp` + `png-to-ico`, never hand-edited) and the nav-bar mark. `index.html` references the SVG first (`type="image/svg+xml"`) with the `.ico` as legacy fallback. The nav-bar logo (`src/app/page-nav`) is the same artwork inlined as SVG so it themes with CSS vars - set its fills via Tailwind classes (`fill-gold` / `fill-surface`), **not** `fill="var(--…)"` attributes (browsers don't reliably honor them). Brand gold `--color-gold` (`#e5cc80`) is the WCL 100-parse "Astounding" gold; the favicon's literal hex must track the `styles.scss` tokens.
-- **Share card** - `frontend/public/og-image.png` (1200x630): the shield over the wordmark, a tagline, and one gold call to action, a favicon derivative to regenerate with the logo. Backs `og:image` in `frontend/src/index.html` and `.github/pages-root/index.html`, which carry identical tags. The GitHub repo card is the same artwork at 1280x640, uploaded in repo settings rather than tracked here.
+- **Logo / favicon** - gold shield with an ascending bar chart. `frontend/public/favicon.svg` is the single source of truth; the `.ico` and the nav-bar mark derive from it, never hand-edited. The nav mark (`src/app/page-nav`) inlines the same artwork as SVG so it themes, with fills set through the `fill-gold` / `fill-surface` classes, **not** `fill="var(--...)"` attributes, which browsers do not reliably honor. The favicon SVG's literal gold hex tracks `--color-gold` in `frontend/src/styles.scss`.
+- **Share card** - `frontend/public/og-image.png` is a logo derivative regenerated with it, backing `og:image` in `frontend/src/index.html` and `.github/pages-root/index.html`.
 
 ## UI copy voice (plain-spoken coach)
 
-All user-facing copy - finding messages, remedies, card subtitles, empty states, microcopy - is written so a raider reads it once and knows what to change. Plain words over jargon, and never a number whose meaning the reader has to infer. This is enforced by convention (no linter), so apply it whenever you add or edit any string a user sees. The reference implementations are the finding messages in the rotation rule kinds and `rotation-feature-service.ts` / `defensive-feature-service.ts`, and the gear notes in `domain/gear/gear-comparison-service.ts`.
+All user-facing copy - finding messages, remedies, card subtitles, empty states, microcopy - is written so a raider reads it once and knows what to change. Plain words over jargon, and never a number whose meaning the reader has to infer. The reference implementations, under `frontend/src/app/domains/raid-analysis/`, are the finding messages in the rotation rule kinds and `data/rotation/rotation-feature-service.ts` / `data/defensive/defensive-feature-service.ts`, and the gear notes in `data/gear/gear-comparison-service.ts`.
 
 - **Count first, target second, in one sentence each.** A finding reads `<what happened>. <what to hit>.` `"4 of 12 Black Powders hit fewer than 3 targets. Wait for 3 or more."` Never staple two fragments together with a colon or a trailing label.
 - **Name the comparison group `top raiders` in prose, `top logs` in data labels.** `"Top raiders average 12s."`, `"of top logs"`. `parse` names a Warcraft Logs ranking, so it appears only where the benchmark itself is defined.
@@ -32,8 +32,6 @@ All user-facing copy - finding messages, remedies, card subtitles, empty states,
 - **State facts, not praise.** A clean result is `"Standard build."` / `"On plan"`, never `"Matches top parsers"` / `"On a top-parse build"` / a celebratory tone. Empty states are neutral (`"Nothing flagged."`, `"No talent data."`) - never `"No issues detected!"` and never the optimistic `"... yet."` that implies the system is still filling in.
 - **No decorative glyphs or emoji in copy.** No `✓`/`✗`/`⚠`/emoji as inline text; use words (`Kill` / `Wipe #3`) or a themed `mat-icon` where a glyph is genuinely needed.
 - **Plain verbs, and address the player as `you` where it reads naturally.** `"You refreshed Rupture early 4 of 9 times."` Avoid filler verbs like `Deploy`, `leverage`, `utilize` - prefer `Use`, `Press`, `Hold`, `Spend`, `Wait for`, `Aim for`.
-- **Sentence case everywhere a human reads it.** Card titles, section headings, nav items, buttons, form labels and options capitalize only the first word and proper nouns: `Burst windows`, `Pre-fight`, `Warcraft Logs report URL or code`. Uppercase exists only as the CSS effect of the `text-label` role, and their source strings are still written in sentence case (`Top raiders average`, `Your build`) so they read the same in a screen reader.
+- **Sentence case everywhere a human reads it.** Card titles, section headings, nav items, buttons, form labels and options capitalize only the first word and proper nouns: `Burst windows`, `Pre-fight`, `Warcraft Logs report URL or code`. Strings rendered uppercase through `text-label` are still written in sentence case (`Top raiders average`, `Your build`) so a screen reader reads them the same.
 - **A status word is a tag, never lowercase running text.** `Passive`, `Not used`, `Waiting`, `Your build`, `Bloodlust` render through `text-label` or as a sentence-cased value; no all-lowercase words and no italics.
 - **"On plan" success states are quiet.** Use the neutral `.chip-onplan` tag (defined in `styles.scss`), not a green pill with a `check_circle`. A correct result should read as calm, not celebrated.
-
-> Note: the repo-wide ban on em-dashes/en-dashes/Unicode-minus (ASCII hyphen only) lives in the always-on `CLAUDE.md` because it governs every file and commit, not just user-facing copy. It applies here too.
