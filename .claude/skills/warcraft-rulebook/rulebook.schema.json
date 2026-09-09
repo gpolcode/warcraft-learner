@@ -170,17 +170,7 @@
         "required_spell_id": { "type": "integer", "description": "The companion ability that must accompany it. Under the default position 'before' the companion is the one cast FIRST, so for 'Secret Technique always inside Shadow Dance' the companion is Shadow Dance." },
         "required_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
         "position": { "type": "string", "enum": ["before", "after", "either"], "default": "before", "description": "Which side the companion sits on. 'before' (the default) is what most rules mean. 'after' when the sources say the companion follows. 'either' only when they say pair or sync without naming an order. Read the rule's own action text back against this before writing it." }
-      },
-      "examples": [
-        {
-          "kind": "cast_without_prior",
-          "spell_id": 280719,
-          "spell_name": "Secret Technique",
-          "required_spell_id": 185313,
-          "required_spell_name": "Shadow Dance",
-          "position": "before"
-        }
-      ]
+      }
     },
     "holdCooldownForAnchor": {
       "type": "object",
@@ -193,16 +183,7 @@
         "spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of spell_ids and in the same order." },
         "anchor_spell_id": { "type": "integer", "description": "The bigger cooldown they are being saved for." },
         "anchor_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." }
-      },
-      "examples": [
-        {
-          "kind": "hold_cooldown_for_anchor",
-          "spell_ids": [185313, 280719],
-          "spell_names": ["Shadow Dance", "Secret Technique"],
-          "anchor_spell_id": 121471,
-          "anchor_spell_name": "Shadow Blades"
-        }
-      ]
+      }
     },
     "castOutsideBuff": {
       "type": "object",
@@ -216,17 +197,7 @@
         "buff_spell_id": { "type": "integer", "description": "The buff or form whose presence decides each cast. Use the aura's own id, which is often not the id of the ability that applies it." },
         "buff_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
         "require": { "type": "string", "enum": ["inside", "outside"], "description": "'inside' for 'only cast it while the buff is up', which flags casts made while it is down. 'outside' for 'never cast it while the buff is up'." }
-      },
-      "examples": [
-        {
-          "kind": "cast_outside_buff",
-          "spell_id": 1943,
-          "spell_name": "Rupture",
-          "buff_spell_id": 457058,
-          "buff_spell_name": "Darkest Night",
-          "require": "outside"
-        }
-      ]
+      }
     },
     "auraUptimeBelow": {
       "type": "object",
@@ -238,15 +209,7 @@
         "aura_spell_id": { "type": "integer", "description": "The buff or damage-over-time effect that must stay up. Use the aura's own id, not the id of a different ability that refreshes it." },
         "aura_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
         "on": { "type": "string", "enum": ["self", "target"], "description": "'self' for a buff on the player. 'target' for anything the player keeps on enemies, which covers almost every damage-over-time rule." }
-      },
-      "examples": [
-        {
-          "kind": "aura_uptime_below",
-          "aura_spell_id": 980,
-          "aura_spell_name": "Agony",
-          "on": "target"
-        }
-      ]
+      }
     },
     "openingSequence": {
       "type": "object",
@@ -257,14 +220,7 @@
         "kind": { "const": "opening_sequence" },
         "spell_ids": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "description": "The opener abilities, in the order the sources say to cast them." },
         "spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of spell_ids and in the same order." }
-      },
-      "examples": [
-        {
-          "kind": "opening_sequence",
-          "spell_ids": [121471, 185313, 280719],
-          "spell_names": ["Shadow Blades", "Shadow Dance", "Secret Technique"]
-        }
-      ]
+      }
     },
     "castAtTargetCount": {
       "type": "object",
@@ -276,15 +232,7 @@
         "spell_id": { "type": "integer", "description": "The ability whose use depends on how many enemies are up." },
         "spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
         "bound": { "type": "string", "enum": ["min", "max"], "description": "'min' for an ability only worth pressing on several targets, which flags using it on too few. 'max' for a single-target ability that should give way to a cleave, which flags using it on too many." }
-      },
-      "examples": [
-        {
-          "kind": "cast_at_target_count",
-          "spell_id": 53385,
-          "spell_name": "Divine Storm",
-          "bound": "min"
-        }
-      ]
+      }
     },
     "resourceAtCast": {
       "type": "object",
@@ -298,17 +246,7 @@
         "resource_type": { "type": "integer", "description": "The resource's numeric power type: 0 mana, 1 rage, 2 focus, 3 energy, 4 combo points, 6 runic power, 7 soul shards, 8 astral power, 9 holy power, 11 maelstrom, 12 chi, 13 insanity, 17 fury, 18 pain, 19 essence." },
         "resource_name": { "type": "string", "description": "The resource's name in lower case, used in the coaching copy the player reads, e.g. 'combo points'." },
         "bound": { "type": "string", "enum": ["min", "max"], "description": "'min' for a spender that should only go off at a high resource level, which flags spending too low. 'max' for a generator that should not be pressed near the cap, which is how an overcap rule is written." }
-      },
-      "examples": [
-        {
-          "kind": "resource_at_cast",
-          "spell_id": 32645,
-          "spell_name": "Envenom",
-          "resource_type": 4,
-          "resource_name": "combo points",
-          "bound": "min"
-        }
-      ]
+      }
     },
     "procWasted": {
       "type": "object",
@@ -321,16 +259,7 @@
         "buff_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
         "spend_spell_ids": { "type": "array", "items": { "type": "integer" }, "minItems": 1, "description": "The abilities that consume the proc. Casting any one of them while it is up counts as spending it, so list every option the sources name." },
         "spend_spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of spend_spell_ids and in the same order." }
-      },
-      "examples": [
-        {
-          "kind": "proc_wasted",
-          "buff_spell_id": 48108,
-          "buff_spell_name": "Hot Streak!",
-          "spend_spell_ids": [11366, 2120],
-          "spend_spell_names": ["Pyroblast", "Flamestrike"]
-        }
-      ]
+      }
     },
     "fillerInBuff": {
       "type": "object",
@@ -347,20 +276,7 @@
         "buff_spell_name": { "type": "string", "description": "The exact in-game ability name for the id above. Both come from the prepared ability table." },
         "except_buff_spell_ids": { "type": "array", "items": { "type": "integer" }, "description": "REQUIRED; [] is a valid answer. Aura ids for the states that suspend the choice, whose casts drop out of the share entirely. Name every burst window granting both states at once and every proc the sources say to press the other filler under. Write [] only after replaying the rule against the sampled parses and finding none." },
         "except_buff_spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of except_buff_spell_ids and in the same order." }
-      },
-      "examples": [
-        {
-          "kind": "filler_in_buff",
-          "spell_id": 190984,
-          "spell_name": "Wrath",
-          "alternative_spell_ids": [194153],
-          "alternative_spell_names": ["Starfire"],
-          "buff_spell_id": 48517,
-          "buff_spell_name": "Eclipse (Solar)",
-          "except_buff_spell_ids": [102560, 1263363],
-          "except_buff_spell_names": ["Incarnation: Chosen of Elune", "Ascendant Fires"]
-        }
-      ]
+      }
     },
     "spendAtStacks": {
       "type": "object",
@@ -377,18 +293,7 @@
         "max_stacks": { "type": "number", "exclusiveMinimum": 0, "maximum": 100, "description": "The buff's own stack cap, a game constant like a cooldown rather than a field behaviour. Read it from the tooltip; it lets the coaching copy show a spend against its ceiling." },
         "except_buff_spell_ids": { "type": "array", "items": { "type": "integer" }, "description": "Optional. Aura ids for the states that suspend the rule, whose casts are excluded entirely. Name the procs the sources say license a cheap cast, or the rule reads correct play as a violation." },
         "except_buff_spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of except_buff_spell_ids and in the same order." }
-      },
-      "examples": [
-        {
-          "kind": "spend_at_stacks",
-          "spell_id": 188196,
-          "spell_name": "Lightning Bolt",
-          "buff_spell_id": 344179,
-          "buff_spell_name": "Maelstrom Weapon",
-          "bound": "min",
-          "max_stacks": 10
-        }
-      ]
+      }
     },
     "auraClipped": {
       "type": "object",
@@ -404,17 +309,7 @@
         "on": { "enum": ["self", "target"], "description": "target reads the enemy debuff stream, which is where damage-over-time rules live; self reads the player's own buffs." },
         "except_buff_spell_ids": { "type": "array", "items": { "type": "integer" }, "description": "Optional. Aura ids for the states that suspend the rule, whose refreshes are excluded entirely. Name the cooldowns the sources say to re-snapshot the effect under, or the rule reads correct play as a violation." },
         "except_buff_spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of except_buff_spell_ids and in the same order." }
-      },
-      "examples": [
-        {
-          "kind": "aura_clipped",
-          "aura_spell_id": 164812,
-          "aura_spell_name": "Moonfire",
-          "cast_spell_id": 8921,
-          "cast_spell_name": "Moonfire",
-          "on": "target"
-        }
-      ]
+      }
     },
     "fillerBelowHealth": {
       "type": "object",
@@ -430,17 +325,7 @@
         "health_pct": { "type": "number", "exclusiveMinimum": 0, "maximum": 100, "description": "The ability's own execute threshold as a percentage, e.g. 20 or 35 with Massacre. Read it from the tooltip for the build the field plays; it is a game constant like a cooldown, not something to estimate from parses." },
         "except_buff_spell_ids": { "type": "array", "items": { "type": "integer" }, "description": "Optional. Aura ids for the states that suspend the choice, whose casts are excluded entirely. Name the burst windows that override the execute priority, or the rule reads correct play as a violation." },
         "except_buff_spell_names": { "type": "array", "items": { "type": "string" }, "description": "Exact in-game names, one per entry of except_buff_spell_ids and in the same order." }
-      },
-      "examples": [
-        {
-          "kind": "filler_below_health",
-          "spell_id": 5308,
-          "spell_name": "Execute",
-          "alternative_spell_ids": [1464],
-          "alternative_spell_names": ["Slam"],
-          "health_pct": 20
-        }
-      ]
+      }
     }
   }
 }

@@ -60,10 +60,10 @@ flattens it is a failed run.
   (an APL `combo_points<=2` means 2, not 1). `cooldown` values come from a source sentence or the
   table's `base_cd_s`; when a source states an effective (talented) cooldown that differs from the
   base, the source wins and the base goes in `id_note`.
-- **Every rule needs a `condition`**, and the engine renders nothing else, so advice it cannot check
-  is not a rule: leave it out rather than writing a rule around it. Quality over count - two real
-  rules beat eight, and an empty `rules` list is valid. The kinds (field shapes in the schema's
-  `$defs`):
+- **Advice the engine cannot check is not a rule.** The engine judges a rule only through its
+  `condition`, so leave such advice out rather than wrapping it in a condition that does not fit it.
+  Quality over count - two real rules beat eight, and an empty `rules` list is valid. The kinds
+  (field shapes in the schema's `$defs`):
 
   | The rule says | Kind |
   |---|---|
@@ -105,9 +105,6 @@ flattens it is a failed run.
   cast counts, the buff is a lasting state (an execute window, a stacking tracker), not a consumed
   proc. `aura_uptime_below` deserves the same look: if top parses let the aura drop for long
   stretches, it is situational, not a maintenance rule.
-- **Never take a spell id from a schema `examples` block.** Those are illustrative and go stale; an
-  id copied out of one can be a real id for a different ability. Every id comes from the prepared
-  table.
 - **`cast_without_prior` operands are ordered, and getting them backwards inverts the check.**
   `spell_id` is the ability being judged; `required_spell_id` is its companion, which under the
   default `position: "before"` must already have been cast. For "Secret Technique always inside
@@ -139,8 +136,8 @@ condition.
 
 ## Writing rules (project-wide, non-negotiable)
 
-- Never use em-dashes (U+2014), en-dashes (U+2013), or the Unicode minus (U+2212) anywhere in the file.
-  Use a plain ASCII hyphen.
+- Never use em-dashes (U+2014), en-dashes (U+2013), the Unicode minus (U+2212), or the middle dot
+  (U+00B7) anywhere in the file. Use a plain ASCII hyphen.
 - `usage_rule` and `action` are user-facing coaching copy: second person, plain words, one short
   sentence, no hedging ("consider", "try to", "~"). Never put spell-id uncertainty in them; that
   belongs in `id_note`.
