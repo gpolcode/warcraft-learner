@@ -64,7 +64,7 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
   ],
   // Provided here, not app.config: only this page's form fields want dynamic subscript sizing.
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
-  // Live sync and screen recording both hold state a page unload discards for good: warn before either is lost.
+  // Covers only a real navigation away (refresh, close, another site); an in-app route change goes through LeaveLiveSessionGuard instead.
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
   templateUrl: './post-raid.html',
 })
@@ -87,7 +87,7 @@ export class PostRaid {
   }
 
   protected onBeforeUnload(event: BeforeUnloadEvent): void {
-    if (!this.liveCapture.liveEnabled() && !this.liveCapture.isCapturing()) return;
+    if (!this.liveCapture.hasActiveSession()) return;
     event.preventDefault();
   }
 

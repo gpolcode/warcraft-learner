@@ -81,11 +81,14 @@ export class LiveCaptureFeatureService {
   readonly liveEnabled = this.liveActive.asReadonly();
   readonly status = signal('');
 
+  /** Either one discards state a page leave cannot recover, so callers check both through one flag. */
+  readonly hasActiveSession = computed(() => this.liveEnabled() || this.isCapturing());
+
   private readonly pollDeadlineAt = signal<number | null>(null);
   private readonly pollCountdownNow = signal(Date.now());
   private pollCountdownTimer: ReturnType<typeof setInterval> | null = null;
 
-  /** Counts down live while a poll is scheduled; otherwise mirrors `status` unchanged. */
+  // Reads a ticking signal rather than routing through setStatus(), which clears pollDeadlineAt and would cancel the very countdown it renders.
   readonly statusText = computed(() => {
     const deadline = this.pollDeadlineAt();
     if (deadline == null) return this.status();
@@ -106,15 +109,16 @@ export class LiveCaptureFeatureService {
   setLive(on: boolean): void { this.liveActive.set(on); }
 
   setStatus(message: string): void {
+    // Otherwise a running countdown's next tick would keep overwriting this message.
     this._stopPollCountdown();
     this.status.set(message);
   }
 
-  /** Shows a live "Next update in Ns" countdown instead of a fixed message, so the strip reflects real elapsed time. */
   scheduleNextPollIn(seconds: number): void {
     this.status.set('');
     this.pollDeadlineAt.set(Date.now() + seconds * 1_000);
     this.pollCountdownNow.set(Date.now());
+    // Guards against stacking a second tick interval when back-to-back "skip" polls each reschedule.
     this.pollCountdownTimer ??= setInterval(() => { this.pollCountdownNow.set(Date.now()); }, POLL_COUNTDOWN_TICK_MS);
   }
 
