@@ -1,0 +1,149 @@
+{
+  "spec": "ProtectionWarrior",
+  "spec_icon": "ability_warrior_defensivestance",
+  "major_cooldowns": [
+    {
+      "name": "Avatar",
+      "spell_id": 107574,
+      "cooldown": 60,
+      "opener_priority": 1,
+      "usage_rule": "Send it on cooldown for the damage boost and the faster Thunder Clap cadence.",
+      "id_note": "Base cooldown on the table is 90s; the guide says it comes back roughly every minute and the sampled parses average one cast per 58s of combat, so the effective 60s is used here."
+    },
+    {
+      "name": "Demoralizing Shout",
+      "spell_id": 1160,
+      "cooldown": 45,
+      "opener_priority": 2,
+      "usage_rule": "Press it on cooldown for the Booming Voice rage and the damage cut on everything around you.",
+      "id_note": "1160 is the cast id seen in 5/5 parses; 1298899 shares the name and was not observed."
+    },
+    {
+      "name": "Demolish",
+      "spell_id": 436358,
+      "cooldown": 30,
+      "opener_priority": 3,
+      "usage_rule": "Cast it on cooldown once Colossal Might is at 3 stacks.",
+      "id_note": "436358 is the castable Colossus id per its tooltip; the sampled parses ran Mountain Thane and never pressed it, and 440884/440886/440888 share the name.",
+      "talent_gated": true
+    },
+    {
+      "name": "Shield Charge",
+      "spell_id": 385954,
+      "cooldown": 45,
+      "opener_priority": 4,
+      "usage_rule": "Charge in on cooldown for the free Shield Block and the stun.",
+      "id_note": "Logs record the cast as 385954 in 5/5 parses; the same-name id 385952 carries the 45s base cooldown in the table."
+    },
+    {
+      "name": "Ravager",
+      "spell_id": 228920,
+      "cooldown": 90,
+      "usage_rule": "Drop it on cooldown and Thunder Clap under it to keep Rend ticking.",
+      "id_note": "228920 is the castable id per its tooltip; 156287 and 334934 share the name and were not observed.",
+      "talent_gated": true
+    },
+    {
+      "name": "Champion's Spear",
+      "spell_id": 376079,
+      "cooldown": 90,
+      "usage_rule": "Throw it on cooldown to chain the pack in place and add burst damage.",
+      "id_note": "376079 is the castable spear id per its tooltip; 1271980 is the follow-up leap and 376080/376081 share the name.",
+      "talent_gated": true
+    },
+    {
+      "name": "Wrecking Throw",
+      "spell_id": 384110,
+      "cooldown": 45,
+      "usage_rule": "Throw it when Shield Slam, Thunder Clap, and Revenge are all unavailable.",
+      "id_note": "384110 is the cast id seen in 4/5 parses; 394354 shares the name and was not observed. Javelineer builds only.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Shield Block",
+      "spell_id": 2565,
+      "cooldown": 16,
+      "duration": 6,
+      "usage_rule": "Keep it up through melee damage and recast it before the buff falls off.",
+      "id_note": "2565 is the cast id; 132404 is the aura the logs carry."
+    },
+    {
+      "name": "Spell Reflection",
+      "spell_id": 23920,
+      "cooldown": 25,
+      "duration": 5,
+      "usage_rule": "Time it into a cast aimed at you to reflect it and cut the magic damage.",
+      "id_note": "23920 is the cast id; 385391 is the aura twin."
+    },
+    {
+      "name": "Impending Victory",
+      "spell_id": 202168,
+      "cooldown": 25,
+      "usage_rule": "Press it when your health dips to heal for 30% of your maximum.",
+      "id_note": "202168 is the cast id seen in 5/5 parses; 202166 shares the name and was not observed."
+    },
+    {
+      "name": "Demoralizing Shout",
+      "spell_id": 1160,
+      "cooldown": 45,
+      "duration": 8,
+      "usage_rule": "Use it into melee damage windows to weaken everything hitting you."
+    },
+    {
+      "name": "Shield Wall",
+      "spell_id": 871,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Use it to smooth the biggest tank hits rather than saving it for nothing."
+    },
+    {
+      "name": "Rallying Cry",
+      "spell_id": 97462,
+      "cooldown": 180,
+      "duration": 10,
+      "usage_rule": "Pop it ahead of raid-wide damage to give the group a health buffer.",
+      "id_note": "97462 is the cast id; 97463 is the aura."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open with Charge, Avatar, Demo Shout, then Shield Slam",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [100, 107574, 1160, 23922],
+        "spell_names": ["Charge", "Avatar", "Demoralizing Shout", "Shield Slam"]
+      },
+      "action": "Charge in, fire Avatar and Demoralizing Shout, then start the Shield Slam cycle."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Shield Block up on melee damage",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 132404,
+        "aura_spell_name": "Shield Block",
+        "on": "self"
+      },
+      "action": "Recast Shield Block before the buff falls off so you never eat melee swings unblocked."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Dump into Ignore Pain only near the rage cap",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 190456,
+        "spell_name": "Ignore Pain",
+        "resource_type": 1,
+        "resource_name": "rage",
+        "bound": "min"
+      },
+      "action": "Hold Ignore Pain until your rage is about to cap instead of dumping it early."
+    }
+  ]
+}

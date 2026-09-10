@@ -1,0 +1,198 @@
+{
+  "spec": "OutlawRogue",
+  "spec_icon": "ability_rogue_waylay",
+  "major_cooldowns": [
+    {
+      "name": "Adrenaline Rush",
+      "spell_id": 13750,
+      "cooldown": 180,
+      "opener_priority": 1,
+      "usage_rule": "Press it on cooldown at two or fewer combo points and follow it straight into Killing Spree."
+    },
+    {
+      "name": "Roll the Bones",
+      "spell_id": 1214909,
+      "cooldown": 45,
+      "opener_priority": 2,
+      "usage_rule": "Reroll it on cooldown while you are sitting at one buff or none, and keep any roll of two or more.",
+      "id_note": "1214909 is the cast and aura id observed in all five sampled parses; the guide links the older 315508, which was not observed."
+    },
+    {
+      "name": "Between the Eyes",
+      "spell_id": 315341,
+      "cooldown": 45,
+      "opener_priority": 3,
+      "usage_rule": "Spend it at six or more combo points to keep its damage buff rolling, and send it before Killing Spree when both come up together."
+    },
+    {
+      "name": "Killing Spree",
+      "spell_id": 51690,
+      "cooldown": 180,
+      "usage_rule": "Send it right after Adrenaline Rush, and let Between the Eyes go first when both are ready so its damage buff carries into the spree.",
+      "id_note": "51690 is the cast id seen in all five parses; 57841, 57842, 474478, 474483 and 1235074 share the name and were not observed."
+    },
+    {
+      "name": "Blade Rush",
+      "spell_id": 271877,
+      "cooldown": 60,
+      "usage_rule": "Press it on cooldown, and on a single target wait until your energy is off the cap so none of its energy is wasted.",
+      "id_note": "271877 is the cast id, cast in 3 of 5 parses; 271896 is its aura twin.",
+      "talent_gated": true
+    },
+    {
+      "name": "Blade Flurry",
+      "spell_id": 13877,
+      "cooldown": 30,
+      "usage_rule": "Keep it up from two targets on, and recast it at four or fewer combo points once four or more enemies are in range.",
+      "id_note": "13877 is the cast and aura id observed in all five parses; 22482, 426586 and 429951 share the name and were not observed."
+    },
+    {
+      "name": "Keep It Rolling",
+      "spell_id": 381989,
+      "cooldown": 75,
+      "usage_rule": "Cash it in as soon as Roll the Bones is showing three or more buffs, or two or more when you play Fatebound.",
+      "id_note": "Base cooldown is 360s; the guide states an effective in-combat cooldown of about 75s from Restless Blades, which matches the sampled parses."
+    },
+    {
+      "name": "Preparation",
+      "spell_id": 1277933,
+      "cooldown": 240,
+      "usage_rule": "Press it with Between the Eyes, Adrenaline Rush and Killing Spree all on cooldown, aiming the reset at a burn or add phase without holding it long enough to lose a cast."
+    },
+    {
+      "name": "Light's Potential",
+      "spell_id": 1236616,
+      "cooldown": 300,
+      "usage_rule": "Drink it during Adrenaline Rush, on Bloodlust, or inside the last thirty seconds of the fight.",
+      "id_note": "On-use potion cast in all five parses; the APL fills the spec's potion slot with it."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Feint",
+      "spell_id": 1966,
+      "cooldown": 15,
+      "duration": 6,
+      "usage_rule": "Press it just before a raid-wide hit to cut the area damage you take by 40%."
+    },
+    {
+      "name": "Crimson Vial",
+      "spell_id": 185311,
+      "cooldown": 30,
+      "duration": 4,
+      "usage_rule": "Sip it whenever you drop off full health to heal 20% of your maximum over four seconds."
+    },
+    {
+      "name": "Cloak of Shadows",
+      "spell_id": 31224,
+      "cooldown": 120,
+      "duration": 5,
+      "usage_rule": "Pop it to shrug off a heavy magic hit or clear a harmful spell effect."
+    },
+    {
+      "name": "Evasion",
+      "spell_id": 5277,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Use it when melee or physical damage is aimed at you to dodge it outright."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "info",
+      "description": "Open with Adrenaline Rush, Roll the Bones, Between the Eyes",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [13750, 1214909, 315341],
+        "spell_names": ["Adrenaline Rush", "Roll the Bones", "Between the Eyes"]
+      },
+      "action": "Pop Adrenaline Rush and Roll the Bones at the pull, then build up and spend on Between the Eyes."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Adrenaline Rush at low combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 13750,
+        "spell_name": "Adrenaline Rush",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "max"
+      },
+      "action": "Finish first so the combo points it hands you are not wasted."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Killing Spree straight after Adrenaline Rush",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 51690,
+        "spell_name": "Killing Spree",
+        "required_spell_id": 13750,
+        "required_spell_name": "Adrenaline Rush",
+        "position": "before"
+      },
+      "action": "Fire it in the window right after Adrenaline Rush instead of on its own."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Between the Eyes at high combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 315341,
+        "spell_name": "Between the Eyes",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "min"
+      },
+      "action": "Build a near-full combo point bar before spending it."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Sinister Strike without overcapping combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 193315,
+        "spell_name": "Sinister Strike",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "max"
+      },
+      "action": "Finish with Between the Eyes or Dispatch once your bar is nearly full instead of building again."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Pistol Shot as your builder during Opportunity",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 185763,
+        "spell_name": "Pistol Shot",
+        "alternative_spell_ids": [193315],
+        "alternative_spell_names": ["Sinister Strike"],
+        "buff_spell_id": 195627,
+        "buff_spell_name": "Opportunity",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
+      },
+      "action": "Fire Pistol Shot while Opportunity is up and keep Sinister Strike for when it is not."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Blade Flurry only with extra targets in range",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 13877,
+        "spell_name": "Blade Flurry",
+        "bound": "min"
+      },
+      "action": "Save it for packs and let it drop while you are on a lone target."
+    }
+  ]
+}
