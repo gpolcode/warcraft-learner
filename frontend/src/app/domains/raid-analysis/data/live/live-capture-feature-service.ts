@@ -58,6 +58,8 @@ const NO_CLIP_ROLL: ClipRoll = { preMs: 0, postMs: 0 };
 /** Grace period before a downloaded clip's object URL is revoked, so the browser can read the blob. */
 const DOWNLOAD_URL_TTL_MS = 10_000;
 
+const POLL_COUNTDOWN_TICK_MS = 1_000;
+
 @Injectable({ providedIn: 'root' })
 export class LiveCaptureFeatureService {
   private readonly logger = inject(LoggerService);
@@ -79,6 +81,18 @@ export class LiveCaptureFeatureService {
   readonly liveEnabled = this.liveActive.asReadonly();
   readonly status = signal('');
 
+  private readonly pollDeadlineAt = signal<number | null>(null);
+  private readonly pollCountdownNow = signal(Date.now());
+  private pollCountdownTimer: ReturnType<typeof setInterval> | null = null;
+
+  /** Counts down live while a poll is scheduled; otherwise mirrors `status` unchanged. */
+  readonly statusText = computed(() => {
+    const deadline = this.pollDeadlineAt();
+    if (deadline == null) return this.status();
+    const remainingS = Math.max(0, Math.ceil((deadline - this.pollCountdownNow()) / 1_000));
+    return `Next update in ${remainingS}s`;
+  });
+
   readonly open = signal(false);
   readonly handle = signal<ClipHandle | null>(null);
   readonly preparing = signal(false);
@@ -90,7 +104,27 @@ export class LiveCaptureFeatureService {
   private readonly resolved = new Map<string, Promise<ClipHandle | null>>();
 
   setLive(on: boolean): void { this.liveActive.set(on); }
-  setStatus(message: string): void { this.status.set(message); }
+
+  setStatus(message: string): void {
+    this._stopPollCountdown();
+    this.status.set(message);
+  }
+
+  /** Shows a live "Next update in Ns" countdown instead of a fixed message, so the strip reflects real elapsed time. */
+  scheduleNextPollIn(seconds: number): void {
+    this.status.set('');
+    this.pollDeadlineAt.set(Date.now() + seconds * 1_000);
+    this.pollCountdownNow.set(Date.now());
+    this.pollCountdownTimer ??= setInterval(() => { this.pollCountdownNow.set(Date.now()); }, POLL_COUNTDOWN_TICK_MS);
+  }
+
+  private _stopPollCountdown(): void {
+    this.pollDeadlineAt.set(null);
+    if (this.pollCountdownTimer != null) {
+      clearInterval(this.pollCountdownTimer);
+      this.pollCountdownTimer = null;
+    }
+  }
 
   async startRecording(profile: CaptureProfile = DEFAULT_CAPTURE_PROFILE): Promise<void> {
     if (this.isCapturing() || this.isStarting()) return;

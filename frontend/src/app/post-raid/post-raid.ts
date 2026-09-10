@@ -64,6 +64,8 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
   ],
   // Provided here, not app.config: only this page's form fields want dynamic subscript sizing.
   providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
+  // Live sync and screen recording both hold state a page unload discards for good: warn before either is lost.
+  host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
   templateUrl: './post-raid.html',
 })
 export class PostRaid {
@@ -82,6 +84,11 @@ export class PostRaid {
       if (this.liveCapture.liveEnabled()) this.fightControl.disable();
       else this.fightControl.enable();
     });
+  }
+
+  protected onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (!this.liveCapture.liveEnabled() && !this.liveCapture.isCapturing()) return;
+    event.preventDefault();
   }
 
   protected readonly loadingReport = signal(false);
@@ -261,7 +268,7 @@ export class PostRaid {
     const action = this.selection.livePollActionOf(probed.value, this.selectedFightId(), this.ready());
     if (action === 'none') { this.liveCapture.setStatus('No boss pulls found.'); return; }
     if (action === 'skip') {
-      this.liveCapture.setStatus(`Last updated ${new Date().toLocaleTimeString()}, polling every ${POLL_INTERVAL_S}s`);
+      this.liveCapture.scheduleNextPollIn(POLL_INTERVAL_S);
       return;
     }
 
