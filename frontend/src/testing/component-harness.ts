@@ -1,5 +1,5 @@
 import { Type, provideZonelessChangeDetection } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { DeferBlockBehavior, DeferBlockState, TestBed } from '@angular/core/testing';
 
 export interface MountedVm<T> {
   /** The component instance, typed loosely so protected computeds are readable. */
@@ -35,17 +35,21 @@ export interface MountedDom {
   setInput: (name: string, value: unknown) => void;
   on: (name: string) => unknown[];
   detectChanges: () => void;
+  /** Renders every `@defer` block to its complete state. Requires `manualDeferBlocks` on `mountDom`. */
+  completeDeferBlocks: () => Promise<void>;
 }
 
 export function mountDom<T>(
   type: Type<T>,
   inputs: Record<string, unknown> = {},
   providers: unknown[] = [],
+  { manualDeferBlocks = false }: { manualDeferBlocks?: boolean } = {},
 ): MountedDom {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
     imports: [type],
     providers: [provideZonelessChangeDetection(), ...(providers as never[])],
+    ...(manualDeferBlocks ? { deferBlockBehavior: DeferBlockBehavior.Manual } : {}),
   });
   const fixture = TestBed.createComponent(type);
   for (const [name, value] of Object.entries(inputs)) fixture.componentRef.setInput(name, value);
@@ -77,6 +81,10 @@ export function mountDom<T>(
       return emitted;
     },
     detectChanges: () => { fixture.detectChanges(); },
+    completeDeferBlocks: async () => {
+      for (const block of await fixture.getDeferBlocks()) await block.render(DeferBlockState.Complete);
+      fixture.detectChanges();
+    },
   };
 }
 
