@@ -6,50 +6,43 @@
       "name": "Goremaw's Bite",
       "spell_id": 426591,
       "cooldown": 45,
-      "opener_priority": 1,
-      "usage_rule": "Use Goremaw's Bite on cooldown right before Shadow Dance, or as your first cast inside the dance when Ancient Arts is down.",
-      "id_note": "426591 is the cast row; 426593 is the enemy bleed aura and 426592 is unobserved."
-    },
-    {
-      "name": "Shadow Dance",
-      "spell_id": 185313,
-      "cooldown": 20,
-      "opener_priority": 2,
-      "usage_rule": "Dance only when Secret Technique is ready or Darkest Night is up, macro it with Shuriken Storm, and never press it during a global cooldown.",
-      "id_note": "185313 is the cast id; the 185422 twin is the self aura used in rule conditions."
+      "usage_rule": "Press it when Shadow Dance is up and Ancient Arts is down.",
+      "apl_condition": "buff.shadow_dance.up&!buff.ancient_arts.up",
+      "opener_priority": 4,
+      "talent_gated": true
     },
     {
       "name": "Shadow Blades",
       "spell_id": 121471,
       "cooldown": 90,
+      "usage_rule": "Press it when Shadow Dance is ready and Slice and Dice is up.",
+      "apl_condition": "!(buff.shadow_dance.up|buff.stealth.up|buff.vanish.up)&energy>=30&buff.slice_and_dice.up&(combo_points<=2&talent.deathstalkers_mark|combo_points>=6)&cooldown.shadow_dance.charges_fractional>=1+0.8*talent.deathstalkers_mark&(buff.ancient_arts.up|!talent.unseen_blade)",
       "opener_priority": 3,
-      "usage_rule": "Send Shadow Blades with a Shadow Dance charge in hand so two dances fit inside it, and expect the second dance to run without Secret Technique.",
-      "id_note": "121471 carries both the cast and the self aura; the 279043 twin is not observed."
-    },
-    {
-      "name": "Voracious Heart of Ula'tek",
-      "spell_id": 1297761,
-      "cooldown": 90,
-      "opener_priority": 4,
-      "usage_rule": "Pop your on-use trinket in the opener alongside Shadow Blades and keep it lined up with every later Shadow Blades window.",
-      "id_note": "On-use raid trinket named in the guide opener timeline; zero casts is normal for a player wearing different trinkets.",
       "talent_gated": true
     },
     {
-      "name": "Secret Technique",
-      "spell_id": 280719,
-      "cooldown": 25,
-      "opener_priority": 5,
-      "usage_rule": "Fire Secret Technique as your first or second finisher inside Shadow Dance with Ancient Arts up.",
-      "id_note": "280719 is the castable row the guide cites and the only one carrying the cooldown; 280720, 282449 and 1305994 share the name and cover the clone hits and the talent node, and the sampled parses recorded no Secret Technique casts.",
-      "talent_gated": true
+      "name": "Shadow Dance",
+      "spell_id": 185313,
+      "cooldown": 20,
+      "usage_rule": "Press it when Shadow Blades is far from ready and Slice and Dice is up.",
+      "apl_condition": "(!(buff.shadow_dance.up|buff.stealth.up|buff.vanish.up)&energy>=30&buff.slice_and_dice.up&(combo_points<=2&talent.deathstalkers_mark|combo_points>=6)&talent.deathstalkers_mark&(spell_targets.shuriken_storm<=3&(buff.darkest_night.up|cooldown.secret_technique.ready&debuff.deathstalkers_mark.stack<=1)|spell_targets.shuriken_storm>3&debuff.deathstalkers_mark.stack>=2)&cooldown.shadow_blades.remains>=35-cooldown.secret_technique.duration)|(!(buff.shadow_dance.up|buff.stealth.up|buff.vanish.up)&energy>=30&buff.slice_and_dice.up&(combo_points<=2&talent.deathstalkers_mark|combo_points>=6)&talent.unseen_blade&(cooldown.secret_technique.ready&cooldown.shadow_blades.remains>=25-cooldown.secret_technique.duration))|(buff.shadow_blades.up&(talent.unseen_blade|spell_targets.shuriken_storm>=3))",
+      "opener_priority": 2
     },
     {
       "name": "Vanish",
       "spell_id": 1856,
       "cooldown": 120,
-      "usage_rule": "Vanish on cooldown at low combo points and follow it straight into Shadowstrike to cycle your Deathstalker's Mark stacks.",
-      "id_note": "1856 is the cast id; 11327 is the self aura."
+      "usage_rule": "Press it when you have 50 or more energy and you have 2 or fewer combo points.",
+      "apl_condition": "!(buff.shadow_dance.up|buff.stealth.up|buff.vanish.up)&energy>=50&!buff.subterfuge.up&combo_points<=2",
+      "opener_priority": 1
+    },
+    {
+      "name": "Secret Technique",
+      "spell_id": 280719,
+      "cooldown": 25,
+      "usage_rule": "Press it when Shadow Dance is up.",
+      "apl_condition": "((combo_points>=cp_max_spend-!buff.darkest_night.up)&(buff.shadow_dance.up))|((combo_points>=cp_max_spend-!buff.darkest_night.up)&(talent.unseen_blade&cooldown.secret_technique.duration<18&!cooldown.shadow_dance.ready))",
+      "opener_priority": 5
     }
   ],
   "defensives": [
@@ -57,91 +50,317 @@
       "name": "Feint",
       "spell_id": 1966,
       "cooldown": 15,
-      "duration": 6,
-      "usage_rule": "Press Feint just before raid-wide area damage lands for the 40% reduction."
+      "usage_rule": "Press it just before a big hit for 40% less damage.",
+      "duration": 6
     },
     {
       "name": "Crimson Vial",
       "spell_id": 185311,
       "cooldown": 30,
-      "duration": 4,
-      "usage_rule": "Drink Crimson Vial to top yourself off between damage events."
-    },
-    {
-      "name": "Cloak of Shadows",
-      "spell_id": 31224,
-      "cooldown": 120,
-      "duration": 5,
-      "usage_rule": "Save Cloak of Shadows for magic damage spikes and for clearing harmful magic debuffs."
+      "usage_rule": "Press it to heal yourself back up after a hit.",
+      "duration": 4
     },
     {
       "name": "Evasion",
       "spell_id": 5277,
       "cooldown": 120,
+      "usage_rule": "Press it when melee hits are landing on you.",
       "duration": 10,
-      "usage_rule": "Use Evasion when melee or physical damage is landing on you."
+      "talent_gated": true
     }
   ],
   "rules": [
     {
       "type": "opener",
       "severity": "warning",
-      "description": "Open Shadowstrike into Goremaw's Bite then Shadow Dance",
+      "description": "Open with Vanish, Shadow Dance, Shadow Blades",
       "condition": {
         "kind": "opening_sequence",
-        "spell_ids": [185438, 426591, 185313],
-        "spell_names": ["Shadowstrike", "Goremaw's Bite", "Shadow Dance"]
+        "spell_ids": [
+          1856,
+          185313,
+          121471,
+          426591,
+          280719
+        ],
+        "spell_names": [
+          "Vanish",
+          "Shadow Dance",
+          "Shadow Blades",
+          "Goremaw's Bite",
+          "Secret Technique"
+        ]
       },
-      "action": "Pull from Stealth with Shadowstrike, then Goremaw's Bite, then dance with Shadow Blades."
+      "action": "Pull with Vanish, then Shadow Dance, then Shadow Blades, then Goremaw's Bite, then Secret Technique."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Goremaw's Bite only inside Shadow Dance",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 426591,
+        "spell_name": "Goremaw's Bite",
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance",
+        "require": "inside"
+      },
+      "action": "Wait for Shadow Dance before you press Goremaw's Bite."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Goremaw's Bite never inside Ancient Arts",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 426591,
+        "spell_name": "Goremaw's Bite",
+        "buff_spell_id": 1269163,
+        "buff_spell_name": "Ancient Arts",
+        "require": "outside"
+      },
+      "action": "Hold Goremaw's Bite until Ancient Arts has dropped."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Shadow Blades never inside Shadow Dance",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 121471,
+        "spell_name": "Shadow Blades",
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance",
+        "require": "outside"
+      },
+      "action": "Hold Shadow Blades until Shadow Dance has dropped."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Shadow Blades at high energy",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 121471,
+        "spell_name": "Shadow Blades",
+        "resource_type": 3,
+        "resource_name": "energy",
+        "bound": "min"
+      },
+      "action": "Build energy before you spend Shadow Blades."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Shadow Blades only inside Slice and Dice",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 121471,
+        "spell_name": "Shadow Blades",
+        "buff_spell_id": 315496,
+        "buff_spell_name": "Slice and Dice",
+        "require": "inside"
+      },
+      "action": "Wait for Slice and Dice before you press Shadow Blades."
     },
     {
       "type": "cooldown_pairing",
       "severity": "critical",
-      "description": "Shadow Blades paired with Shadow Dance",
+      "description": "Shadow Blades with Shadow Dance ready",
       "condition": {
         "kind": "cast_without_prior",
         "spell_id": 121471,
         "spell_name": "Shadow Blades",
         "required_spell_id": 185313,
         "required_spell_name": "Shadow Dance",
-        "position": "either"
+        "position": "after"
       },
-      "action": "Hold Shadow Blades until a Shadow Dance charge is ready and press them in the same window."
+      "action": "Press Shadow Blades only when Shadow Dance is ready to follow it."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Darkest Night on sight",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 457280,
+        "buff_spell_name": "Darkest Night",
+        "spend_spell_ids": [
+          185313,
+          197835,
+          200758,
+          185438,
+          196819
+        ],
+        "spend_spell_names": [
+          "Shadow Dance",
+          "Shuriken Storm",
+          "Gloomblade",
+          "Shadowstrike",
+          "Eviscerate"
+        ]
+      },
+      "action": "Press Shadow Dance, Shuriken Storm, Gloomblade, Shadowstrike or Eviscerate as soon as Darkest Night procs."
     },
     {
       "type": "cd_hold",
       "severity": "warning",
-      "description": "Bank a Shadow Dance charge for Shadow Blades",
+      "description": "Hold Shadow Dance for Shadow Blades",
       "condition": {
         "kind": "hold_cooldown_for_anchor",
-        "spell_ids": [185313],
-        "spell_names": ["Shadow Dance"],
+        "spell_ids": [
+          185313
+        ],
+        "spell_names": [
+          "Shadow Dance"
+        ],
         "anchor_spell_id": 121471,
         "anchor_spell_name": "Shadow Blades"
       },
-      "action": "Bank the Shadow Dance charge as Shadow Blades comes up so both dances land inside it."
+      "action": "Save Shadow Dance while Shadow Blades is coming up and press it inside that window."
     },
     {
-      "type": "rotation",
-      "severity": "critical",
-      "description": "Shadowstrike as your builder inside Shadow Dance",
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Shadow Dance with Secret Technique ready",
       "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 185438,
-        "spell_name": "Shadowstrike",
-        "alternative_spell_ids": [53, 200758],
-        "alternative_spell_names": ["Backstab", "Gloomblade"],
-        "buff_spell_id": 185422,
-        "buff_spell_name": "Shadow Dance",
-        "except_buff_spell_ids": [],
-        "except_buff_spell_names": []
+        "kind": "cast_without_prior",
+        "spell_id": 185313,
+        "spell_name": "Shadow Dance",
+        "required_spell_id": 280719,
+        "required_spell_name": "Secret Technique",
+        "position": "after"
       },
-      "action": "Build with Shadowstrike while Shadow Dance is up and keep Backstab for outside it."
+      "action": "Press Shadow Dance only when Secret Technique is ready to follow it."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Eviscerate spent at full combo points",
+      "description": "Vanish never inside Shadow Dance",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 1856,
+        "spell_name": "Vanish",
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance",
+        "require": "outside"
+      },
+      "action": "Hold Vanish until Shadow Dance has dropped."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Vanish at high energy",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 1856,
+        "spell_name": "Vanish",
+        "resource_type": 3,
+        "resource_name": "energy",
+        "bound": "min"
+      },
+      "action": "Build energy before you spend Vanish."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Vanish at low combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 1856,
+        "spell_name": "Vanish",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "max"
+      },
+      "action": "Press Vanish only while your combo points are low."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Gloomblade only on few targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 200758,
+        "spell_name": "Gloomblade",
+        "bound": "max"
+      },
+      "action": "Switch away from Gloomblade once several enemies are up."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Gloomblade inside Darkest Night",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 200758,
+        "spell_name": "Gloomblade",
+        "alternative_spell_ids": [
+          185438,
+          197835,
+          53
+        ],
+        "alternative_spell_names": [
+          "Shadowstrike",
+          "Shuriken Storm",
+          "Backstab"
+        ],
+        "buff_spell_id": 457280,
+        "buff_spell_name": "Darkest Night",
+        "except_buff_spell_ids": [
+          185422,
+          343173,
+          1784,
+          11327
+        ],
+        "except_buff_spell_names": [
+          "Shadow Dance",
+          "Premeditation",
+          "Stealth",
+          "Vanish"
+        ]
+      },
+      "action": "Press Gloomblade instead of Shadowstrike, Shuriken Storm or Backstab while Darkest Night is up."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Shadowstrike inside Darkest Night",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 185438,
+        "spell_name": "Shadowstrike",
+        "alternative_spell_ids": [
+          197835,
+          200758,
+          53
+        ],
+        "alternative_spell_names": [
+          "Shuriken Storm",
+          "Gloomblade",
+          "Backstab"
+        ],
+        "buff_spell_id": 457280,
+        "buff_spell_name": "Darkest Night",
+        "except_buff_spell_ids": [
+          185422,
+          343173,
+          1784,
+          11327
+        ],
+        "except_buff_spell_names": [
+          "Shadow Dance",
+          "Premeditation",
+          "Stealth",
+          "Vanish"
+        ]
+      },
+      "action": "Press Shadowstrike instead of Shuriken Storm, Gloomblade or Backstab while Darkest Night is up."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Eviscerate at high combo points",
       "condition": {
         "kind": "resource_at_cast",
         "spell_id": 196819,
@@ -150,88 +369,372 @@
         "resource_name": "combo points",
         "bound": "min"
       },
-      "action": "Keep building until your combo points are full before you spend Eviscerate."
+      "action": "Build combo points before you spend Eviscerate."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Slice and Dice kept up all fight",
+      "description": "Eviscerate inside Darkest Night",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 196819,
+        "spell_name": "Eviscerate",
+        "alternative_spell_ids": [
+          441776,
+          319175
+        ],
+        "alternative_spell_names": [
+          "Coup de Grace",
+          "Black Powder"
+        ],
+        "buff_spell_id": 457280,
+        "buff_spell_name": "Darkest Night",
+        "except_buff_spell_ids": [
+          185422,
+          121471
+        ],
+        "except_buff_spell_names": [
+          "Shadow Dance",
+          "Shadow Blades"
+        ]
+      },
+      "action": "Press Eviscerate instead of Coup de Grace or Black Powder while Darkest Night is up."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Slice and Dice up",
       "condition": {
         "kind": "aura_uptime_below",
         "aura_spell_id": 315496,
         "aura_spell_name": "Slice and Dice",
         "on": "self"
       },
-      "action": "Spend your next Eviscerate the moment Slice and Dice drops."
+      "action": "Refresh Slice and Dice before it falls off."
     },
     {
       "type": "rotation",
       "severity": "warning",
-      "description": "Eviscerate over Black Powder in Darkest Night",
+      "description": "Secret Technique only inside Shadow Dance",
       "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 196819,
-        "spell_name": "Eviscerate",
-        "alternative_spell_ids": [319175],
-        "alternative_spell_names": ["Black Powder"],
-        "buff_spell_id": 457280,
-        "buff_spell_name": "Darkest Night",
-        "except_buff_spell_ids": [],
-        "except_buff_spell_names": []
+        "kind": "cast_outside_buff",
+        "spell_id": 280719,
+        "spell_name": "Secret Technique",
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance",
+        "require": "inside"
       },
-      "action": "Spend Darkest Night on Eviscerate instead of pressing Black Powder."
+      "action": "Wait for Shadow Dance before you press Secret Technique.",
+      "excludes_talents": [
+        117737
+      ]
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Secret Technique at high combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 280719,
+        "spell_name": "Secret Technique",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "min"
+      },
+      "action": "Build combo points before you spend Secret Technique."
     },
     {
       "type": "cooldown_pairing",
       "severity": "warning",
-      "description": "Shadowstrike straight out of Vanish",
+      "description": "Secret Technique after Shadow Dance",
       "condition": {
         "kind": "cast_without_prior",
-        "spell_id": 1856,
-        "spell_name": "Vanish",
-        "required_spell_id": 185438,
-        "required_spell_name": "Shadowstrike",
-        "position": "after"
+        "spell_id": 280719,
+        "spell_name": "Secret Technique",
+        "required_spell_id": 185313,
+        "required_spell_name": "Shadow Dance",
+        "position": "before"
       },
-      "action": "Follow every Vanish with Shadowstrike to put Deathstalker's Mark back on the boss."
+      "action": "Press Shadow Dance before Secret Technique.",
+      "requires_talents": [
+        117737
+      ]
     },
     {
       "type": "rotation",
-      "severity": "info",
-      "description": "Vanish used at low combo points",
+      "severity": "warning",
+      "description": "Coup de Grace at high combo points",
       "condition": {
         "kind": "resource_at_cast",
-        "spell_id": 1856,
-        "spell_name": "Vanish",
+        "spell_id": 441776,
+        "spell_name": "Coup de Grace",
         "resource_type": 4,
         "resource_name": "combo points",
-        "bound": "max"
+        "bound": "min"
       },
-      "action": "Spend your combo points into a finisher before you press Vanish."
+      "action": "Build combo points before you spend Coup de Grace."
     },
     {
-      "type": "aoe_switch",
+      "type": "rotation",
       "severity": "warning",
-      "description": "Backstab gives way to Shuriken Storm in AoE",
+      "description": "Coup de Grace inside Shadow Dance",
       "condition": {
-        "kind": "cast_at_target_count",
-        "spell_id": 53,
-        "spell_name": "Backstab",
-        "bound": "max"
+        "kind": "filler_in_buff",
+        "spell_id": 441776,
+        "spell_name": "Coup de Grace",
+        "alternative_spell_ids": [
+          319175,
+          196819
+        ],
+        "alternative_spell_names": [
+          "Black Powder",
+          "Eviscerate"
+        ],
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance",
+        "except_buff_spell_ids": [
+          121471
+        ],
+        "except_buff_spell_names": [
+          "Shadow Blades"
+        ]
       },
-      "action": "Build with Shuriken Storm instead of Backstab once extra targets are up."
+      "action": "Press Coup de Grace instead of Black Powder or Eviscerate while Shadow Dance is up."
     },
     {
       "type": "aoe_switch",
-      "severity": "warning",
-      "description": "Black Powder as your finisher on packs",
+      "severity": "info",
+      "description": "Black Powder only on several targets",
       "condition": {
         "kind": "cast_at_target_count",
         "spell_id": 319175,
         "spell_name": "Black Powder",
         "bound": "min"
       },
-      "action": "Finish with Black Powder instead of Eviscerate once the pack is up."
+      "action": "Press Black Powder only once several enemies are up."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Black Powder at high combo points",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 319175,
+        "spell_name": "Black Powder",
+        "resource_type": 4,
+        "resource_name": "combo points",
+        "bound": "min"
+      },
+      "action": "Build combo points before you spend Black Powder."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Black Powder inside Shadow Dance",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 319175,
+        "spell_name": "Black Powder",
+        "alternative_spell_ids": [
+          196819
+        ],
+        "alternative_spell_names": [
+          "Eviscerate"
+        ],
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance",
+        "except_buff_spell_ids": [
+          121471
+        ],
+        "except_buff_spell_names": [
+          "Shadow Blades"
+        ]
+      },
+      "action": "Press Black Powder instead of Eviscerate while Shadow Dance is up.",
+      "requires_talents": [
+        117737
+      ]
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Black Powder inside Shadow Blades",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 319175,
+        "spell_name": "Black Powder",
+        "alternative_spell_ids": [
+          196819
+        ],
+        "alternative_spell_names": [
+          "Eviscerate"
+        ],
+        "buff_spell_id": 121471,
+        "buff_spell_name": "Shadow Blades",
+        "except_buff_spell_ids": [
+          185422
+        ],
+        "except_buff_spell_names": [
+          "Shadow Dance"
+        ]
+      },
+      "action": "Press Black Powder instead of Eviscerate while Shadow Blades is up.",
+      "requires_talents": [
+        117737
+      ]
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Shuriken Storm inside Shadow Dance",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 197835,
+        "spell_name": "Shuriken Storm",
+        "alternative_spell_ids": [
+          185438,
+          200758,
+          53
+        ],
+        "alternative_spell_names": [
+          "Shadowstrike",
+          "Gloomblade",
+          "Backstab"
+        ],
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance",
+        "except_buff_spell_ids": [
+          1784,
+          11327
+        ],
+        "except_buff_spell_names": [
+          "Stealth",
+          "Vanish"
+        ]
+      },
+      "action": "Press Shuriken Storm instead of Shadowstrike, Gloomblade or Backstab while Shadow Dance is up."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Shuriken Storm inside Darkest Night",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 197835,
+        "spell_name": "Shuriken Storm",
+        "alternative_spell_ids": [
+          185438,
+          200758,
+          53
+        ],
+        "alternative_spell_names": [
+          "Shadowstrike",
+          "Gloomblade",
+          "Backstab"
+        ],
+        "buff_spell_id": 457280,
+        "buff_spell_name": "Darkest Night",
+        "except_buff_spell_ids": [
+          185422,
+          1784,
+          11327
+        ],
+        "except_buff_spell_names": [
+          "Shadow Dance",
+          "Stealth",
+          "Vanish"
+        ]
+      },
+      "action": "Press Shuriken Storm instead of Shadowstrike, Gloomblade or Backstab while Darkest Night is up."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Shadowstrike inside Shadow Dance",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 185438,
+        "spell_name": "Shadowstrike",
+        "alternative_spell_ids": [
+          200758,
+          53
+        ],
+        "alternative_spell_names": [
+          "Gloomblade",
+          "Backstab"
+        ],
+        "buff_spell_id": 185422,
+        "buff_spell_name": "Shadow Dance",
+        "except_buff_spell_ids": [
+          457280
+        ],
+        "except_buff_spell_names": [
+          "Darkest Night"
+        ]
+      },
+      "action": "Press Shadowstrike instead of Gloomblade or Backstab while Shadow Dance is up."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Keep Deathstalker's Mark on the target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 457129,
+        "aura_spell_name": "Deathstalker's Mark",
+        "on": "target"
+      },
+      "action": "Refresh Deathstalker's Mark before it falls off.",
+      "requires_talents": [
+        117733
+      ]
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Gloomblade at high energy",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 200758,
+        "spell_name": "Gloomblade",
+        "resource_type": 3,
+        "resource_name": "energy",
+        "bound": "min"
+      },
+      "action": "Build energy before you spend Gloomblade."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "info",
+      "description": "Backstab only on few targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 53,
+        "spell_name": "Backstab",
+        "bound": "max"
+      },
+      "action": "Switch away from Backstab once several enemies are up."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Backstab at high energy",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 53,
+        "spell_name": "Backstab",
+        "resource_type": 3,
+        "resource_name": "energy",
+        "bound": "min"
+      },
+      "action": "Build energy before you spend Backstab."
     }
-  ]
+  ],
+  "source": {
+    "builder_version": 1,
+    "simc_tier": "midnight/MID2",
+    "profile_sha256": "7a9447df86826bee50a5ff1c84f69dd1fafd5ece50895574b661d45bfd42951f",
+    "spell_data_sha256": "84136d9decc80c8941ca7aca44c3f18b9a59dfb4f7b325b1851364bca69e5b68",
+    "built_at_s": 1789031242
+  }
 }
