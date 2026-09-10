@@ -3,220 +3,206 @@
   "spec_icon": "ability_warrior_savageblow",
   "major_cooldowns": [
     {
-      "name": "Colossus Smash",
-      "spell_id": 167105,
-      "cooldown": 45,
-      "opener_priority": 2,
-      "usage_rule": "Press it the moment it is up and land Bladestorm or Demolish inside the debuff, and keep spending rage so Anger Management brings it back sooner.",
-      "id_note": "167105 is the cast id; 208086 is the matching self buff and enemy debuff."
+      "name": "Sweeping Strikes",
+      "spell_id": 260708,
+      "cooldown": 30,
+      "usage_rule": "Press it when 3 or more enemies are up.",
+      "apl_condition": "(talent.demolish&active_enemies>2)|((!(talent.demolish&active_enemies>2))&(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20))&(active_enemies=2))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(talent.demolish)&(active_enemies=2))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(talent.slayers_dominance&active_enemies>2))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(!(talent.slayers_dominance&active_enemies>2))&(talent.slayers_dominance&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20))&(active_enemies=2))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(!(talent.slayers_dominance&active_enemies>2))&(!(talent.slayers_dominance&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(talent.slayers_dominance)&(active_enemies=2))"
     },
     {
       "name": "Avatar",
       "spell_id": 107574,
       "cooldown": 90,
+      "usage_rule": "Press it when Colossus Smash is on the target.",
+      "apl_condition": "(talent.demolish&active_enemies>2)|((!(talent.demolish&active_enemies>2))&(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20))&(debuff.colossus_smash.up|cooldown.colossus_smash.remains<10))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(talent.demolish)&(debuff.colossus_smash.up))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(talent.slayers_dominance&active_enemies>2))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(!(talent.slayers_dominance&active_enemies>2))&(talent.slayers_dominance&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20))&(debuff.colossus_smash.up))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(!(talent.slayers_dominance&active_enemies>2))&(!(talent.slayers_dominance&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(talent.slayers_dominance)&(debuff.colossus_smash.up|cooldown.colossus_smash.remains<10))",
+      "opener_priority": 2,
+      "talent_gated": true
+    },
+    {
+      "name": "Colossus Smash",
+      "spell_id": 167105,
+      "cooldown": 45,
+      "usage_rule": "Use it on cooldown.",
+      "apl_condition": "(talent.demolish&active_enemies>2)|((!(talent.demolish&active_enemies>2))&(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(talent.demolish))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(talent.slayers_dominance&active_enemies>2))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(!(talent.slayers_dominance&active_enemies>2))&(talent.slayers_dominance&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(!(talent.slayers_dominance&active_enemies>2))&(!(talent.slayers_dominance&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(talent.slayers_dominance)&(buff.sudden_death.stack<2))",
       "opener_priority": 1,
-      "usage_rule": "Fire it just before or with Colossus Smash, and take it off cooldown rather than holding it for a perfect line up."
+      "talent_gated": true
     },
     {
       "name": "Bladestorm",
       "spell_id": 446035,
       "cooldown": 90,
-      "opener_priority": 3,
-      "usage_rule": "Dump it inside Colossus Smash or Avatar, and do not sit on it waiting for an alignment its own cooldown reduction will never reach.",
-      "id_note": "The guide links Bladestorm as 227847, the Fury version; 446035 is the id cast in the sampled Arms parses.",
-      "talent_gated": true
+      "usage_rule": "Press it when 3 or more enemies are up.",
+      "apl_condition": "(talent.demolish&active_enemies>2)|((!(talent.demolish&active_enemies>2))&(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20))&(active_enemies=2))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(talent.demolish)&(active_enemies=2))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(talent.slayers_dominance&active_enemies>2))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(!(talent.slayers_dominance&active_enemies>2))&(talent.slayers_dominance&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20))&(debuff.colossus_smash.up|cooldown.colossus_smash.remains>25|buff.avatar.up|buff.executioners_precision.stack=2))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(!(talent.slayers_dominance&active_enemies>2))&(!(talent.slayers_dominance&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(talent.slayers_dominance)&(debuff.colossus_smash.up|buff.avatar.up))",
+      "opener_priority": 3
     },
     {
-      "name": "Demolish",
-      "spell_id": 436358,
+      "name": "Storm Bolt",
+      "spell_id": 107570,
       "cooldown": 30,
-      "usage_rule": "Cast it inside every Colossus Smash, either as soon as Colossal Might caps or held to the last seconds of the debuff for extra stacks.",
-      "id_note": "Colossus hero talent; not pressed in the sampled Slayer parses but castable per its tooltip.",
+      "usage_rule": "Press it when Bladestorm is up.",
+      "apl_condition": "((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(talent.slayers_dominance&active_enemies>2)&(buff.bladestorm.up))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(!(talent.slayers_dominance&active_enemies>2))&(talent.slayers_dominance&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20))&(buff.bladestorm.up))|((!(talent.demolish&active_enemies>2))&(!(talent.demolish&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(!talent.demolish)&(!(talent.slayers_dominance&active_enemies>2))&(!(talent.slayers_dominance&(talent.massacre.enabled&target.health.pct<35|target.health.pct<20)))&(talent.slayers_dominance)&(buff.bladestorm.up))",
+      "opener_priority": 4,
       "talent_gated": true
-    },
-    {
-      "name": "Ravager",
-      "spell_id": 228920,
-      "cooldown": 90,
-      "usage_rule": "Throw it out in the last moments before Colossus Smash so its ticks land inside the window.",
-      "id_note": "228920 is the Arms cast row; 156287 and 334934 share the name and were not observed as casts.",
-      "talent_gated": true
-    },
-    {
-      "name": "Sweeping Strikes",
-      "spell_id": 260708,
-      "cooldown": 30,
-      "usage_rule": "Press it as extra targets come up so your single-target hits carry onto another enemy, and precast it ahead of an AoE pull."
-    },
-    {
-      "name": "Champion's Spear",
-      "spell_id": 376079,
-      "cooldown": 90,
-      "usage_rule": "Send it right after Colossus Smash when the pack needs holding in one spot; its own damage is mediocre.",
-      "id_note": "Resolved by name lookup against WCL game data; not pressed in the sampled parses.",
-      "talent_gated": true
-    },
-    {
-      "name": "Potion of Recklessness",
-      "spell_id": 1236994,
-      "cooldown": 300,
-      "usage_rule": "Save it for the execute phase inside a fresh Colossus Smash, and pot on the pull too when the fight is long enough for two."
     }
   ],
   "defensives": [
     {
-      "name": "Die by the Sword",
-      "spell_id": 118038,
-      "cooldown": 120,
-      "duration": 8,
-      "usage_rule": "Pop it into predictable physical damage for 30% less damage taken and a huge parry boost."
-    },
-    {
-      "name": "Rallying Cry",
-      "spell_id": 97462,
-      "cooldown": 180,
-      "duration": 10,
-      "usage_rule": "Call it just before a raid-wide hit so the group takes the damage on a temporary health buffer.",
-      "id_note": "97462 is the cast id; 97463 is the buff the log records."
-    },
-    {
-      "name": "Demoralizing Shout",
-      "spell_id": 1160,
-      "cooldown": 45,
-      "duration": 8,
-      "usage_rule": "Shout before melee damage goes out to cut what nearby enemies deal to you.",
-      "id_note": "Logs carry 1160 as the enemy debuff, and it is also the cast id.",
-      "talent_gated": true
-    },
-    {
       "name": "Spell Reflection",
       "spell_id": 23920,
       "cooldown": 25,
+      "usage_rule": "Press it to shrug off a magic hit or a debuff you cannot avoid.",
       "duration": 5,
-      "usage_rule": "Time it onto a spell aimed at you to bounce it back and take 20% less magic damage.",
-      "id_note": "23920 is the cast id; 385391 is the buff the log records."
+      "talent_gated": true
     },
     {
-      "name": "Impending Victory",
-      "spell_id": 202168,
-      "cooldown": 25,
-      "usage_rule": "Press it when you need a top up, since it heals 30% of your health and still deals damage.",
+      "name": "Die by the Sword",
+      "spell_id": 118038,
+      "cooldown": 120,
+      "usage_rule": "Press it when melee hits are landing on you.",
+      "duration": 8,
       "talent_gated": true
     }
   ],
   "rules": [
     {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open with Colossus Smash, Avatar, Bladestorm",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [
+          167105,
+          107574,
+          446035,
+          107570
+        ],
+        "spell_names": [
+          "Colossus Smash",
+          "Avatar",
+          "Bladestorm",
+          "Storm Bolt"
+        ]
+      },
+      "action": "Pull with Colossus Smash, then Avatar, then Bladestorm, then Storm Bolt."
+    },
+    {
       "type": "rotation",
-      "severity": "warning",
-      "description": "Keep Rend ticking on your target",
+      "severity": "critical",
+      "description": "Execute inside Sudden Death",
       "condition": {
-        "kind": "aura_uptime_below",
-        "aura_spell_id": 388539,
-        "aura_spell_name": "Rend",
-        "on": "target"
+        "kind": "filler_in_buff",
+        "spell_id": 281000,
+        "spell_name": "Execute",
+        "alternative_spell_ids": [
+          12294,
+          845,
+          772,
+          1269383,
+          1464,
+          1680
+        ],
+        "alternative_spell_names": [
+          "Mortal Strike",
+          "Cleave",
+          "Rend",
+          "Heroic Strike",
+          "Slam",
+          "Whirlwind"
+        ],
+        "buff_spell_id": 52437,
+        "buff_spell_name": "Sudden Death",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
       },
-      "action": "Refresh Rend before it drops off, and top it up as Colossus Smash comes back."
+      "action": "Press Execute instead of Mortal Strike, Cleave, Rend, Heroic Strike, Slam or Whirlwind while Sudden Death is up."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Execute inside Sweeping Strikes",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 281000,
+        "spell_name": "Execute",
+        "alternative_spell_ids": [
+          1269383,
+          1464,
+          1680,
+          845,
+          12294,
+          772
+        ],
+        "alternative_spell_names": [
+          "Heroic Strike",
+          "Slam",
+          "Whirlwind",
+          "Cleave",
+          "Mortal Strike",
+          "Rend"
+        ],
+        "buff_spell_id": 260708,
+        "buff_spell_name": "Sweeping Strikes",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
+      },
+      "action": "Press Execute instead of Heroic Strike, Slam, Whirlwind, Cleave, Mortal Strike or Rend while Sweeping Strikes is up.",
+      "requires_talents": [
+        117415
+      ]
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Spend Sudden Death on sight",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 52437,
+        "buff_spell_name": "Sudden Death",
+        "spend_spell_ids": [
+          281000
+        ],
+        "spend_spell_names": [
+          "Execute"
+        ]
+      },
+      "action": "Press Execute as soon as Sudden Death procs."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "critical",
+      "description": "Whirlwind only on several targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 1680,
+        "spell_name": "Whirlwind",
+        "bound": "min"
+      },
+      "action": "Press Whirlwind only once several enemies are up.",
+      "requires_talents": [
+        117415
+      ]
     },
     {
       "type": "cooldown_pairing",
-      "severity": "warning",
-      "description": "Bladestorm inside Colossus Smash",
-      "condition": {
-        "kind": "cast_outside_buff",
-        "spell_id": 446035,
-        "spell_name": "Bladestorm",
-        "buff_spell_id": 208086,
-        "buff_spell_name": "Colossus Smash",
-        "require": "inside"
-      },
-      "action": "Hold Bladestorm for the Colossus Smash window, or spend it under Avatar when the smash is far away."
-    },
-    {
-      "type": "cooldown_pairing",
-      "severity": "warning",
-      "description": "Demolish inside Colossus Smash",
-      "condition": {
-        "kind": "cast_outside_buff",
-        "spell_id": 436358,
-        "spell_name": "Demolish",
-        "buff_spell_id": 208086,
-        "buff_spell_name": "Colossus Smash",
-        "require": "inside"
-      },
-      "action": "Start Demolish while Colossus Smash is on the target, once Colossal Might caps or in the debuff's last seconds."
-    },
-    {
-      "type": "cooldown_pairing",
-      "severity": "warning",
-      "description": "Avatar lined up with Colossus Smash",
+      "severity": "critical",
+      "description": "Avatar with Colossus Smash ready",
       "condition": {
         "kind": "cast_without_prior",
         "spell_id": 107574,
         "spell_name": "Avatar",
         "required_spell_id": 167105,
         "required_spell_name": "Colossus Smash",
-        "position": "either"
+        "position": "after"
       },
-      "action": "Fire Avatar shortly before Colossus Smash or inside the window instead of on its own."
-    },
-    {
-      "type": "opener",
-      "severity": "info",
-      "description": "Open with Charge into Avatar and Colossus Smash",
-      "condition": {
-        "kind": "opening_sequence",
-        "spell_ids": [100, 107574, 167105],
-        "spell_names": ["Charge", "Avatar", "Colossus Smash"]
-      },
-      "action": "Charge in on the pull for the extra rage, then send Avatar and Colossus Smash back to back."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Execute replaces Slam in execute range",
-      "condition": {
-        "kind": "filler_below_health",
-        "spell_id": 281000,
-        "spell_name": "Execute",
-        "alternative_spell_ids": [1464],
-        "alternative_spell_names": ["Slam"],
-        "health_pct": 20
-      },
-      "action": "Drop Slam once the target reaches execute range and put that rage into Execute."
-    },
-    {
-      "type": "rotation",
-      "severity": "warning",
-      "description": "Spend Sudden Death procs on Execute",
-      "condition": {
-        "kind": "filler_in_buff",
-        "spell_id": 281000,
-        "spell_name": "Execute",
-        "alternative_spell_ids": [1464],
-        "alternative_spell_names": ["Slam"],
-        "buff_spell_id": 52437,
-        "buff_spell_name": "Sudden Death",
-        "except_buff_spell_ids": [],
-        "except_buff_spell_names": []
-      },
-      "action": "Turn Sudden Death procs into Executes rather than filling with Slam."
-    },
-    {
-      "type": "aoe_switch",
-      "severity": "info",
-      "description": "Sweeping Strikes for cleave targets",
-      "condition": {
-        "kind": "cast_at_target_count",
-        "spell_id": 260708,
-        "spell_name": "Sweeping Strikes",
-        "bound": "min"
-      },
-      "action": "Save Sweeping Strikes for packs so your single-target hits cleave, and precast it ahead of an AoE pull."
+      "action": "Press Avatar only when Colossus Smash is ready to follow it.",
+      "requires_talents": [
+        117415
+      ]
     },
     {
       "type": "cooldown_pairing",
-      "severity": "info",
-      "description": "Ravager just before Colossus Smash",
+      "severity": "critical",
+      "description": "Ravager with Colossus Smash ready",
       "condition": {
         "kind": "cast_without_prior",
         "spell_id": 228920,
@@ -225,7 +211,196 @@
         "required_spell_name": "Colossus Smash",
         "position": "after"
       },
-      "action": "Throw Ravager down in the last moment before Colossus Smash so its ticks land in the window."
+      "action": "Press Ravager only when Colossus Smash is ready to follow it.",
+      "requires_talents": [
+        117415
+      ]
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "critical",
+      "description": "Heroic Strike only on few targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 1269383,
+        "spell_name": "Heroic Strike",
+        "bound": "max"
+      },
+      "action": "Switch away from Heroic Strike once several enemies are up.",
+      "requires_talents": [
+        117411,
+        135932
+      ],
+      "excludes_talents": [
+        117415
+      ]
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Execute below 35% health",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 281000,
+        "spell_name": "Execute",
+        "alternative_spell_ids": [
+          845,
+          12294,
+          1269383,
+          1464,
+          1680,
+          772
+        ],
+        "alternative_spell_names": [
+          "Cleave",
+          "Mortal Strike",
+          "Heroic Strike",
+          "Slam",
+          "Whirlwind",
+          "Rend"
+        ],
+        "health_pct": 35
+      },
+      "action": "Press Execute instead of Cleave, Mortal Strike, Heroic Strike, Slam, Whirlwind or Rend once the target is below 35% health.",
+      "requires_talents": [
+        112145
+      ]
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Execute below 20% health",
+      "condition": {
+        "kind": "filler_below_health",
+        "spell_id": 281000,
+        "spell_name": "Execute",
+        "alternative_spell_ids": [
+          845,
+          12294,
+          1269383,
+          1464,
+          1680,
+          772
+        ],
+        "alternative_spell_names": [
+          "Cleave",
+          "Mortal Strike",
+          "Heroic Strike",
+          "Slam",
+          "Whirlwind",
+          "Rend"
+        ],
+        "health_pct": 20
+      },
+      "action": "Press Execute instead of Cleave, Mortal Strike, Heroic Strike, Slam, Whirlwind or Rend once the target is below 20% health."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Rend on the target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 388539,
+        "aura_spell_name": "Rend",
+        "on": "target"
+      },
+      "action": "Refresh Rend before it falls off."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Rend only on few targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 772,
+        "spell_name": "Rend",
+        "bound": "max"
+      },
+      "action": "Switch away from Rend once several enemies are up.",
+      "requires_talents": [
+        117415
+      ],
+      "excludes_talents": [
+        112147,
+        117411
+      ]
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Refresh Rend late",
+      "condition": {
+        "kind": "aura_clipped",
+        "aura_spell_id": 388539,
+        "aura_spell_name": "Rend",
+        "cast_spell_id": 772,
+        "cast_spell_name": "Rend",
+        "on": "target",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
+      },
+      "action": "Refresh Rend only inside its last 30%.",
+      "excludes_talents": [
+        112147
+      ]
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Storm Bolt only inside Bladestorm",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 107570,
+        "spell_name": "Storm Bolt",
+        "buff_spell_id": 446035,
+        "buff_spell_name": "Bladestorm",
+        "require": "inside"
+      },
+      "action": "Wait for Bladestorm before you press Storm Bolt.",
+      "requires_talents": [
+        117411
+      ],
+      "excludes_talents": [
+        117415
+      ]
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Execute inside Executioner",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 281000,
+        "spell_name": "Execute",
+        "alternative_spell_ids": [
+          845,
+          772,
+          1464
+        ],
+        "alternative_spell_names": [
+          "Cleave",
+          "Rend",
+          "Slam"
+        ],
+        "buff_spell_id": 445584,
+        "buff_spell_name": "Executioner",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
+      },
+      "action": "Press Execute instead of Cleave, Rend or Slam while Executioner is up.",
+      "requires_talents": [
+        117411
+      ],
+      "excludes_talents": [
+        117415
+      ]
     }
-  ]
+  ],
+  "source": {
+    "builder_version": 1,
+    "simc_tier": "midnight/MID2",
+    "profile_sha256": "847080503d43467467dc6102416f61397f9f2a9cbb2160da614b636a7e088afc",
+    "spell_data_sha256": "c76ae48a2071f9b5cd103a1d6f3b0c776d363587287badc8d32b874ceadcce4b",
+    "built_at_s": 1789031270
+  }
 }
