@@ -127,8 +127,10 @@ export class RuleStateDerivationService {
     return seeds;
   }
 
+  /** Short-lived, not a cooldown's own aura, and not a buff the parses keep up anyway: a maintained state is upkeep, not a proc. */
   private isProc(buff: SpellRecord, token: string, index: AbilityIndex): boolean {
     if (buff.durationS === null || buff.durationS > PROC_MAX_DURATION_S) return false;
+    if ((index.observation.uptimeShare.get(buff.id) ?? 0) >= MAINTAINED_UPTIME_SHARE) return false;
     return !(index.byToken.get(token) ?? []).some(record => this.abilities.isMajorCooldown(record));
   }
 

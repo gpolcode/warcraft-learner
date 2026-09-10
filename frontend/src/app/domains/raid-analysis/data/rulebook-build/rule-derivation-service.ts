@@ -93,7 +93,7 @@ export class RuleDerivationService {
     const keys = new Set(group.lines.flatMap(line => [...line.lineFacts.keys()]));
     for (const key of keys) {
       const withFact = group.lines.filter(line => line.lineFacts.has(key));
-      const gate = this.gates.gateAcrossLines(group.lines, line => line.lineFacts.has(key));
+      const gate = this.gates.gateAcrossLines(group.lines, line => line.lineFacts.has(key), token => this.abilities.heroTree(index, token));
       const fact = withFact[0]?.lineFacts.get(key);
       if (!gate || !fact) continue;
       const condition = this.lineGatedCondition(group, fact, index, aura);
@@ -128,7 +128,7 @@ export class RuleDerivationService {
 
   private buffWindowCondition(record: SpellRecord, atom: Atom & { family: 'aura' }, negated: boolean, index: AbilityIndex, aura: AuraLookup): RuleCondition | null {
     const buff = aura(atom.token, 'self');
-    if (!buff || (index.observation.buffParses.get(buff.id) ?? 0) === 0) return null;
+    if (!buff || (index.observation.buffParses.get(buff.id) ?? 0) === 0 || !this.abilities.stateObserved(index, buff.id)) return null;
     return { kind: 'cast_outside_buff', ...this.gates.named(record), buff_spell_id: buff.id, buff_spell_name: buff.name, require: negated ? 'outside' : 'inside' };
   }
 

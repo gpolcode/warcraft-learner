@@ -55,12 +55,12 @@ export class RulebookBuildService {
     if (opener) {
       rules.unshift({ type: 'opener', severity: 'warning', description: this.copy.description(opener), condition: opener, action: this.copy.action(opener) });
     }
-    const majorIds = new Set(majors.map(entry => entry.record.id));
+    const aplTokens = new Set(resolved.actions.map(action => action.action));
     const rulebook: Rulebook = {
       spec: inputs.spec.spec,
       spec_icon: inputs.spec.specIcon,
       major_cooldowns: majors.map(entry => this.cooldown(entry, index)),
-      defensives: this.cooldowns.defensives(index, majorIds).map(entry => this.defensive(entry)),
+      defensives: this.cooldowns.defensives(index, aplTokens).map(entry => this.defensive(entry)),
       rules,
       source: {
         builder_version: RULEBOOK_BUILDER_VERSION,

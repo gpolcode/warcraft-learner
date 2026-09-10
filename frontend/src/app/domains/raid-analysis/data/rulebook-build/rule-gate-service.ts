@@ -35,27 +35,41 @@ export class RuleGateService {
   }
 
   /** A fact is a rule for the builds on which every line that can fire carries it; the gate names those builds when one talent set does. */
-  gateAcrossLines(lines: ActionLine[], hasFact: (line: ActionLine) => boolean): TalentGate | null {
+  gateAcrossLines(lines: ActionLine[], hasFact: (line: ActionLine) => boolean, heroTree: (token: string) => string | null): TalentGate | null {
     const tokens = [...new Set(lines.flatMap(line => [...line.requires, ...line.excludes]))];
     if (tokens.length > MAX_GATE_TOKENS) return null;
+    const treesReferenced = new Set(tokens.map(heroTree).filter((tree): tree is string => tree !== null));
+    const reachable: Set<string>[] = [];
     const holding: Set<string>[] = [];
-    const builds = 1 << tokens.length;
-    for (let mask = 0; mask < builds; mask += 1) {
+    for (let mask = 0; mask < 1 << tokens.length; mask += 1) {
       const build = new Set(tokens.filter((_, index) => mask & (1 << index)));
-      const applicable = lines.filter(line => [...line.requires].every(token => build.has(token)) && [...line.excludes].every(token => !build.has(token)));
-      if (applicable.length && applicable.every(hasFact)) holding.push(build);
+      if (!this.playable(build, treesReferenced, heroTree)) continue;
+      const applicable = lines.filter(line => this.applies(line, build));
+      if (!applicable.length) continue;
+      reachable.push(build);
+      if (applicable.every(hasFact)) holding.push(build);
     }
     if (!holding.length) return null;
-    if (holding.length === builds) return { requires: new Set(), excludes: new Set() };
-    return this.characterize(holding, tokens);
+    return this.characterize(holding, reachable, tokens);
   }
 
-  /** The builds the fact holds on, as the talents they all take and the ones none takes; null when no such description fits them exactly. */
-  private characterize(holding: Set<string>[], tokens: string[]): TalentGate | null {
+  private applies(line: ActionLine, build: Set<string>): boolean {
+    return [...line.requires].every(token => build.has(token)) && [...line.excludes].every(token => !build.has(token));
+  }
+
+  /** A raider runs exactly one hero tree, so a build mixing two, or taking none where the lines name several, is no build. */
+  private playable(build: Set<string>, treesReferenced: Set<string>, heroTree: (token: string) => string | null): boolean {
+    const trees = new Set([...build].map(heroTree).filter((tree): tree is string => tree !== null));
+    if (trees.size > 1) return false;
+    return treesReferenced.size < 2 || trees.size === 1;
+  }
+
+  /** The builds the fact holds on, as the talents they all take and the ones none takes; null when that description also admits a reachable build the fact fails on. */
+  private characterize(holding: Set<string>[], reachable: Set<string>[], tokens: string[]): TalentGate | null {
     const requires = this.intersection(holding);
     const excludes = new Set(tokens.filter(token => holding.every(build => !build.has(token))));
-    const matching = 1 << (tokens.length - requires.size - excludes.size);
-    return matching === holding.length ? { requires, excludes } : null;
+    const described = reachable.filter(build => [...requires].every(token => build.has(token)) && [...excludes].every(token => !build.has(token)));
+    return described.length === holding.length ? { requires, excludes } : null;
   }
 
   /** A term that needs a state both up and down can never fire; it is a cross-product artefact of a list gate, not a way to choose the line. */

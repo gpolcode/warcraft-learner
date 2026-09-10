@@ -22,6 +22,8 @@ const DANCE_CASTS_AT_FLOOR = 3;
 const OPENER_SAMPLES = 3;
 const BERSERKER_RAGE = 18499;
 const OTHER_SPEC_WALL = 871;
+const OTHER_SPEC_GRANTED = 12975;
+const OTHER_SPEC_GRANT_NODE = 1243659;
 
 const KIT = [
   builder(BACKSTAB, 'Backstab', { className: CLASS }),
@@ -32,6 +34,8 @@ const KIT = [
   spellRecord({ id: CRIMSON_VIAL, name: 'Crimson Vial', className: CLASS, cooldownS: 30, durationS: 4, effects: [selfAura('Periodic Heal%', 10)] }),
   spellRecord({ id: BERSERKER_RAGE, name: 'Berserker Rage', className: CLASS, cooldownS: 60, effects: [selfAura('Mechanic Immunity', 100)] }),
   spellRecord({ id: OTHER_SPEC_WALL, name: 'Shield Wall', className: CLASS, cooldownS: 180, talent: { tree: 'spec', owner: 'Outlaw' }, effects: [selfAura('Modify Damage Taken%', -40)] }),
+  spellRecord({ id: OTHER_SPEC_GRANTED, name: 'Last Stand', className: CLASS, cooldownS: 180, effects: [selfAura('Modify Damage Taken%', -30)] }),
+  spellRecord({ id: OTHER_SPEC_GRANT_NODE, name: 'Last Stand', className: CLASS, passive: true, talent: { tree: 'spec', owner: 'Outlaw' } }),
 ];
 
 const PROFILE = [
@@ -94,8 +98,8 @@ describe('CooldownDerivationService.openingSequence', () => {
 });
 
 describe('CooldownDerivationService.defensives', () => {
-  const { index, majors } = derive();
-  const defensives = cooldowns.defensives(index, new Set(majors.map(entry => entry.record.id)));
+  const { index } = derive();
+  const defensives = cooldowns.defensives(index, new Set(['shadow_blades', 'shadow_dance', 'vanish', 'backstab']));
 
   it('keeps a damage reduction and a heal with magnitude, ordered by cooldown', () => {
     expect(defensives.map(entry => entry.record.id)).toEqual([FEINT, CRIMSON_VIAL]);
@@ -106,5 +110,9 @@ describe('CooldownDerivationService.defensives', () => {
     expect(ids).not.toContain(SHADOW_DANCE);
     expect(ids).not.toContain(BERSERKER_RAGE);
     expect(ids).not.toContain(OTHER_SPEC_WALL);
+  });
+
+  it('drops a class-wide spell whose granting talent node belongs to another spec', () => {
+    expect(defensives.map(entry => entry.record.id)).not.toContain(OTHER_SPEC_GRANTED);
   });
 });

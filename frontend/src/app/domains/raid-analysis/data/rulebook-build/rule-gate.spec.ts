@@ -28,23 +28,32 @@ function line(gate: string, carries: boolean, priority = 0): ActionLine {
 
 const carries = (entry: ActionLine): boolean => entry.lineFacts.has(FACT);
 const tokens = (set: Set<string> | undefined): string[] => [...(set ?? [])].sort();
+/** Demolish and Slayer's Dominance are the keystones of the two Arms hero trees; nothing else is hero-tree bound. */
+const heroTree = (token: string): string | null => (token === DEMOLISH ? 'Colossus' : token === SLAYER ? 'Slayer' : null);
+const gateOf = (lines: ActionLine[]) => gates.gateAcrossLines(lines, carries, heroTree);
 
 describe('RuleGateService.gateAcrossLines', () => {
   it('gates nothing when every line carries the fact', () => {
-    const gate = gates.gateAcrossLines([line(`talent.${DEMOLISH}`, true), line('buff.x.up', true)], carries);
+    const gate = gateOf([line(`talent.${DEMOLISH}`, true), line('buff.x.up', true)]);
     expect(tokens(gate?.requires)).toEqual([]);
     expect(tokens(gate?.excludes)).toEqual([]);
   });
 
   it('excludes the talent whose lines drop the fact', () => {
-    const gate = gates.gateAcrossLines([line('buff.x.up', true), line(`talent.${UNSEEN_BLADE}`, false)], carries);
+    const gate = gateOf([line('buff.x.up', true), line(`talent.${UNSEEN_BLADE}`, false)]);
     expect(tokens(gate?.requires)).toEqual([]);
     expect(tokens(gate?.excludes)).toEqual([UNSEEN_BLADE]);
   });
 
   it('requires the talent whose lines alone carry the fact', () => {
-    const gate = gates.gateAcrossLines([line(`talent.${DEMOLISH}`, true), line(`!talent.${DEMOLISH}`, false)], carries);
+    const gate = gateOf([line(`talent.${DEMOLISH}`, true), line(`!talent.${DEMOLISH}`, false)]);
     expect(tokens(gate?.requires)).toEqual([DEMOLISH]);
+    expect(tokens(gate?.excludes)).toEqual([]);
+  });
+
+  it('gates nothing when both hero trees carry the fact on their own lines', () => {
+    const gate = gateOf([line(`talent.${DEMOLISH}&active_enemies>2`, true), line(`talent.${SLAYER}&active_enemies>=2`, true)]);
+    expect(tokens(gate?.requires)).toEqual([]);
     expect(tokens(gate?.excludes)).toEqual([]);
   });
 
@@ -53,11 +62,16 @@ describe('RuleGateService.gateAcrossLines', () => {
       line(`talent.${DEMOLISH}&active_enemies>2`, true), line(`talent.${DEMOLISH}&active_enemies<=2`, false),
       line(`talent.${SLAYER}&active_enemies>2`, true), line(`talent.${SLAYER}&active_enemies<=2`, false),
     ];
-    expect(gates.gateAcrossLines(lines, carries)).toBeNull();
+    expect(gateOf(lines)).toBeNull();
+  });
+
+  it('yields no rule for a fact only a build with no hero tree would carry', () => {
+    const lines = [line(`talent.${DEMOLISH}`, false), line(`talent.${SLAYER}`, false), line('buff.x.up', true)];
+    expect(gateOf(lines)).toBeNull();
   });
 
   it('yields no rule when an ungated line drops the fact', () => {
-    expect(gates.gateAcrossLines([line(`talent.${DEMOLISH}`, true), line('buff.x.up', false)], carries)).toBeNull();
+    expect(gateOf([line(`talent.${DEMOLISH}`, true), line('buff.x.up', false)])).toBeNull();
   });
 });
 

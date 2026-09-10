@@ -4,8 +4,8 @@ import { NgHttpCachingService } from 'ng-http-caching';
 import { ParseSampleService } from './parse-sample-service';
 import { WclApiService } from '../wcl/wcl-api-service';
 import type { IngestEncounter } from '../ingest/ingest.models';
-import { applyBuff, cast, damage } from '../../../../../testing/builders/events';
-import { BACKSTAB, SHADOW_DANCE_AURA } from '../../../../../testing/spell-ids';
+import { applyBuff, applyDebuff, cast, damage } from '../../../../../testing/builders/events';
+import { BACKSTAB, RUPTURE, SHADOW_DANCE_AURA } from '../../../../../testing/spell-ids';
 
 const SPEC = 'SubtletyRogue';
 const PARTITION = 2;
@@ -42,10 +42,14 @@ function fakeWcl(): WclApiService {
         { id: PLAYER_ID + 1, name: 'Ambiguous', subType: 'Rogue', server: 'Ravencrest' },
       ], abilities: [] },
     }),
-    getAllEvents: async (_code: string, _fight: number, dataType: string) => {
+    getAllEvents: async (_code: string, _fight: number, dataType: string, _start: number, _end: number, sourceId?: number, _resources?: boolean, hostility?: string) => {
       if (dataType === 'Casts') return [cast(BACKSTAB, 2), damage(BACKSTAB, 2.5, 100)];
       if (dataType === 'Buffs') return [applyBuff(SHADOW_DANCE_AURA, 4)];
-      return [];
+      if (sourceId !== undefined || hostility !== 'Enemies') return [];
+      return [
+        { ...applyDebuff(RUPTURE, 5), sourceID: PLAYER_ID },
+        { ...applyDebuff(RUPTURE, 6), sourceID: PLAYER_ID + 1 },
+      ];
     },
   } as unknown as WclApiService;
 }
@@ -70,5 +74,10 @@ describe('ParseSampleService.sample', () => {
     expect(sample?.fightDurationS).toBe(FIGHT_DURATION_S);
     expect(sample?.casts.map(event => event.type)).toEqual(['cast']);
     expect(sample?.buffs[0]?.atS).toBe(4 - FIGHT_START_MS / 1000);
+  });
+
+  it('reads the player\'s dots off the raid-wide enemy stream and drops the other raiders\' debuffs', async () => {
+    const [sample] = await sampler().sample(fakeWcl(), SPEC, ENCOUNTERS);
+    expect(sample?.debuffs.map(event => event.sourceID)).toEqual([PLAYER_ID]);
   });
 });

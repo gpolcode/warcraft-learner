@@ -46,9 +46,13 @@ export class ParseSampleService {
       const fight = report.fights.find(entry => entry.id === ranking.fight_id);
       const player = this.projections.findParseActor(report.masterData?.actors, ranking);
       if (!fight || !player) return null;
-      const stream = async (dataType: 'Casts' | 'Buffs' | 'Debuffs') => this.projections.withRelativeS(
+      const stream = async (dataType: 'Casts' | 'Buffs') => this.projections.withRelativeS(
         await wclApi.getAllEvents(ranking.report_code, fight.id, dataType, fight.startTime, fight.endTime, player.id), fight.startTime);
-      const [casts, buffs, debuffs] = await Promise.all([stream('Casts'), stream('Buffs'), stream('Debuffs')]);
+      // `Enemies` plus a sourceID returns nothing, so the player's dots come off the raid-wide stream, as at runtime.
+      const enemyAuras = async () => this.projections.withRelativeS(
+        (await wclApi.getAllEvents(ranking.report_code, fight.id, 'Debuffs', fight.startTime, fight.endTime, undefined, false, 'Enemies'))
+          .filter(event => event.sourceID === player.id), fight.startTime);
+      const [casts, buffs, debuffs] = await Promise.all([stream('Casts'), stream('Buffs'), enemyAuras()]);
       return {
         reportCode: ranking.report_code, fightId: fight.id, encounterId,
         fightDurationS: this.projections.relativeS(fight.endTime, fight.startTime),

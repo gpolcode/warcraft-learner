@@ -69,13 +69,15 @@ export class CooldownDerivationService {
     return { kind: 'opening_sequence', spell_ids: ordered.map(entry => entry.record.id), spell_names: ordered.map(entry => entry.record.name) };
   }
 
-  /** Class and spec buttons of 15s or more whose own effect reduces, absorbs, or heals what the player takes; the APL never lists them. */
-  defensives(index: AbilityIndex, majorCooldownIds: Set<number>): DefensiveEntry[] {
+  /** Class and spec buttons of 15s or more whose own effect reduces, absorbs, or heals what the player takes; a button the APL presses is rotation, not mitigation. */
+  defensives(index: AbilityIndex, aplTokens: Set<string>): DefensiveEntry[] {
     const entries: DefensiveEntry[] = [];
     for (const [token, records] of index.byToken) {
       const record = this.abilities.cast(index, token);
-      if (!record || !records.includes(record) || majorCooldownIds.has(record.id)) continue;
-      if ((this.abilities.effectiveCooldownS(record) ?? 0) < DEFENSIVE_MIN_COOLDOWN_S || this.abilities.talentOfAnotherSpec(record, index.specLabel)) continue;
+      if (!record || !records.includes(record) || aplTokens.has(token)) continue;
+      if ((this.abilities.effectiveCooldownS(record) ?? 0) < DEFENSIVE_MIN_COOLDOWN_S) continue;
+      // The talent node granting a spell is a passive twin under the same name, so the other-spec check reads every record.
+      if (records.some(candidate => this.abilities.talentOfAnotherSpec(candidate, index.specLabel))) continue;
       const effect = record.effects.find(candidate => this.defensiveEffect(candidate));
       if (effect?.subtype) entries.push({ record, effect: { subtype: effect.subtype, baseValue: effect.baseValue } });
     }

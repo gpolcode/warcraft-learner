@@ -39,6 +39,12 @@ export class AbilityIndexService {
     return talent?.tree === 'hero' && !talent.owner.includes(specLabel);
   }
 
+  /** The hero tree a talent token belongs to, read from the dump's talent entry; null for a class or spec talent. */
+  heroTree(index: AbilityIndex, token: string): string | null {
+    const talent = (index.byToken.get(token) ?? []).find(record => record.talent?.tree === 'hero')?.talent;
+    return talent ? talent.owner.replace(/\s*\(.*$/, '') : null;
+  }
+
   /** Two buttons compete for the same press when they spend the same pools: a builder never stands in for a finisher. */
   sameRole(a: SpellRecord, b: SpellRecord): boolean {
     const pools = (record: SpellRecord) => [...new Set(record.resources.map(resource => resource.powerType))].sort((x, y) => x - y).join(',');
