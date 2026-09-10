@@ -7,6 +7,19 @@
   "additionalProperties": false,
   "required": ["spec", "spec_icon", "major_cooldowns", "defensives", "rules"],
   "properties": {
+    "source": {
+      "type": "object",
+      "description": "Optional. Set by the deterministic builder: the SimulationCraft sources and generator version the file was built from.",
+      "additionalProperties": false,
+      "required": ["builder_version", "simc_tier", "profile_sha256", "spell_data_sha256", "built_at_s"],
+      "properties": {
+        "builder_version": { "type": "integer" },
+        "simc_tier": { "type": "string" },
+        "profile_sha256": { "type": "string" },
+        "spell_data_sha256": { "type": "string" },
+        "built_at_s": { "type": "integer" }
+      }
+    },
     "spec": {
       "type": "string",
       "description": "WCL spec name, e.g. SubtletyRogue. Must match the spec being analysed."
@@ -71,6 +84,11 @@
         "talent_gated": {
           "type": "boolean",
           "description": "Optional. Set to true when this ability requires a specific talent that not all builds take. When true, having zero casts is treated as normal rather than a 'never used' error."
+        },
+        "apl_condition": {
+          "type": "string",
+          "not": { "pattern": "[\u2014\u2013\u2212\u00b7]" },
+          "description": "Optional. The resolved SimulationCraft gate of every line that presses this cooldown, in SimC syntax, kept whole where usage_rule keeps only what fits a card."
         }
       }
     },
@@ -155,6 +173,16 @@
           "type": "string",
           "not": { "pattern": "[\u2014\u2013\u2212\u00b7]" },
           "description": "One short second-person sentence saying HOW to fix it: when to press it, what to press instead, what to line it up with. The finding already states the count and the target, so never restate the target and never describe what the check found. Good: 'Refresh Rupture inside its last 30%.' Bad: 'Get Rupture to 90% uptime.' or 'Rupture uptime was low.'"
+        },
+        "requires_talents": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "description": "Optional. Trait node entry ids the player must have taken for the rule to apply; absent means every build."
+        },
+        "excludes_talents": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "description": "Optional. Trait node entry ids that make the rule not apply."
         }
       }
     },

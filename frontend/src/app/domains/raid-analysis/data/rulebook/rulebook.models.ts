@@ -5,6 +5,8 @@ export interface RulebookCooldown {
   opener_priority?: number;
   usage_rule?: string;
   talent_gated?: boolean;
+  /** The resolved SimulationCraft gate of every line that presses it, kept whole where usage_rule keeps only what fits a card. */
+  apl_condition?: string;
 }
 
 export interface RulebookDefensive {
@@ -165,6 +167,19 @@ export interface RulebookRule {
   description: string;
   condition?: RuleCondition;
   action: string;
+  /** Trait node entry ids the player must have taken for the rule to apply; absent means every build. */
+  requires_talents?: number[];
+  /** Trait node entry ids that make the rule not apply. */
+  excludes_talents?: number[];
+}
+
+/** Where a generated rulebook came from, so a later run can tell whether its sources or its generator moved. */
+interface RulebookSource {
+  builder_version: number;
+  simc_tier: string;
+  profile_sha256: string;
+  spell_data_sha256: string;
+  built_at_s: number;
 }
 
 export interface Rulebook {
@@ -174,4 +189,5 @@ export interface Rulebook {
   major_cooldowns: RulebookCooldown[];
   defensives: RulebookDefensive[];
   rules: RulebookRule[];
+  source?: RulebookSource;
 }

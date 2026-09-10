@@ -20,6 +20,7 @@ import { IngestStampService, type IngestStamp } from '../data/ingest/ingest-stam
 import { IngestStateService, type SpecIngestState } from '../data/ingest/ingest-state-service';
 import { SpecReportService, SELECTED_MARKER, type SpecReportRow } from '../data/ingest/spec-report-service';
 import type { IngestEncounter } from '../data/ingest/ingest.models';
+import { IngestRunSummaryService, type IngestRunSummary } from '../data/ingest/ingest-run-summary-service';
 
 const TOP_N = 10;
 const POINTS_MARGIN = 500;
@@ -33,20 +34,8 @@ const ENCOUNTER_OUTCOME_NOTE: Record<EncounterOutcome, string> = {
   failed: 'bench load failed, retried next run',
 };
 
-/** Published on `globalThis.__INGEST_DONE__` - the headless harness's exit signal. */
-interface IngestRunSummary {
-  succeeded: string[];
-  failed: { spec: string; message: string }[];
-  budgetStopped: boolean;
-  fatal?: string;
-}
-
 function nowS(): number {
   return Math.floor(Date.now() / 1000);
-}
-
-function publishSummary(summary: IngestRunSummary): void {
-  (globalThis as { __INGEST_DONE__?: IngestRunSummary }).__INGEST_DONE__ = summary;
 }
 
 /** Zero-sample encounters stay listed, or a new raid's bosses are not selectable until its first parses land. */
@@ -72,6 +61,7 @@ export class IngestOrchestratorService {
   private readonly wclTransport = inject(WCL_TRANSPORT);
   private readonly wclCache = inject(NgHttpCachingService);
   private readonly benches = inject(BenchRegistryService).benches;
+  private readonly summary = inject(IngestRunSummaryService);
 
   /** Never rejects: the fire-and-forget app initializer must not see an unhandled rejection. */
   async run(): Promise<void> {
@@ -80,7 +70,7 @@ export class IngestOrchestratorService {
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       console.error('\nFatal error:', message);
-      publishSummary({ succeeded: [], failed: [], budgetStopped: false, fatal: message });
+      this.summary.publish({ succeeded: [], failed: [], budgetStopped: false, fatal: message });
     }
   }
 
@@ -103,13 +93,13 @@ export class IngestOrchestratorService {
     const specs = await this.orderedSpecsFromDisk();
     if (!specs.length) {
       console.log('No known specs (no rulebook.json found). Nothing to do.');
-      publishSummary({ succeeded: [], failed: [], budgetStopped: false });
+      this.summary.publish({ succeeded: [], failed: [], budgetStopped: false });
       return;
     }
 
     const summary = await this.ingestEachSpec(specs, encounters, version);
-    this.printRunSummary(summary, specs.length);
-    publishSummary(summary);
+    this.summary.print(summary, specs.length);
+    this.summary.publish(summary);
   }
 
   private async resolveSpecMetas(): Promise<void> {
@@ -169,22 +159,6 @@ export class IngestOrchestratorService {
       }
     }
     return { succeeded, failed, budgetStopped };
-  }
-
-  private printRunSummary({ succeeded, failed, budgetStopped }: IngestRunSummary, specCount: number): void {
-    console.log('\n=== Ingestion summary ===');
-    console.log(`Specs processed: ${succeeded.length} of ${specCount}`);
-    if (budgetStopped) {
-      console.log('Stopped early: WCL point budget exhausted; the remaining specs resume next run.');
-    }
-    if (failed.length) {
-      console.log(`Specs failed (${failed.length}): ${failed.map(entry => entry.spec).join(', ')}`);
-      for (const entry of failed) {
-        console.log(`  ${entry.spec}: ${entry.message}`);
-      }
-    } else {
-      console.log('No spec-level failures.');
-    }
   }
 
   private async orderedSpecsFromDisk(): Promise<string[]> {

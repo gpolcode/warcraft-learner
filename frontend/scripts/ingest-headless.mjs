@@ -80,6 +80,9 @@ function appConsoleLine(message) {
 }
 
 async function launchBrowser() {
+  // A runner whose Playwright and browser versions differ names its Chromium explicitly instead of downloading one.
+  const executablePath = process.env.CHROMIUM_PATH;
+  if (executablePath) return await chromium.launch({ executablePath });
   try {
     return await chromium.launch();
   } catch {
@@ -105,6 +108,12 @@ async function main() {
   const params = new URLSearchParams();
   if (process.env.CURRENT_RAIDS) params.set('currentRaids', process.env.CURRENT_RAIDS);
   if (process.env.PRIORITY_SPECS) params.set('prioritySpecs', process.env.PRIORITY_SPECS);
+  // `--mode rulebooks` builds rulebooks for RULEBOOK_SPECS from the SIMC_TIER profiles instead of benching parses.
+  if (process.argv.includes('--mode')) {
+    params.set('mode', process.argv[process.argv.indexOf('--mode') + 1] ?? '');
+    if (process.env.RULEBOOK_SPECS) params.set('specs', process.env.RULEBOOK_SPECS);
+    if (process.env.SIMC_TIER) params.set('simcTier', process.env.SIMC_TIER);
+  }
   await page.goto(params.size ? `${APP_URL}?${params}` : APP_URL);
 
   // Bound the wait so a bootstrap failure fails fast instead of hanging the job and stalling the shared gh-pages group.

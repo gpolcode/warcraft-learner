@@ -35,3 +35,13 @@ export const SHADOW_BLADES_DAMAGE = 279043;
 export const WCL_MELEE_EVENT_ABILITY_ID = 1;
 export const WOW_AUTO_ATTACK_SPELL_ID = 6603;
 export const WCL_SYNTHETIC_SOURCE_FALLBACK_ID = 291807;
+
+// Rulebook-build fixtures: the Subtlety kit the derivation specs walk through.
+export const BACKSTAB = 53;
+export const SHADOWSTRIKE = 185438;
+export const GLOOMBLADE = 200758;
+export const SLICE_AND_DICE = 315496;
+export const SHADOW_DANCE_AURA = 185422;
+export const DARKEST_NIGHT = 457280;
+export const FEINT = 1966;
+export const CRIMSON_VIAL = 185311;

@@ -12,7 +12,7 @@ A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs c
 
 The layout is domain-oriented: module types over the Angular style guide's feature-area folders. One business domain, `raid-analysis`, plus the technical `shared` domain, each split into the four module types: `feature-*` (a use case's smart components), `ui-*` (presentational components and pipes), `data` (the domain model and every service operating on it: WCL and data-file access, transforms, the per-feature `*FeatureService`s, analysis math, selection state) and `util-*` (technical helpers). Everything directly under `src/app/` outside `domains/` is the shell (the routed pages and the nav) and may reach anything. Access, eslint-enforced (`frontend/eslint.config.js`): feature -> ui, data, util; ui -> ui, data, util; data -> util; util -> util; a domain reaches only itself and `shared`.
 
-Behavior is implemented as methods on `@Injectable` services - stateless, data in, data out (eslint-enforced); exactly **two pass-through API services** (`WclApiService`, `DataFileApiService`) do IO. Ingestion is the same Angular app booted with the `ingest` configuration (`feature-ingest`), driving the same `*TransformService`s and persisting through a micro file server to `frontend/public/data/specs/**`:
+Behavior is implemented as methods on `@Injectable` services - stateless, data in, data out (eslint-enforced); exactly **three pass-through API services** (`WclApiService`, `DataFileApiService`, `SimcDataService`) do IO. Ingestion is the same Angular app booted with the `ingest` configuration (`feature-ingest`), driving the same `*TransformService`s and persisting through a micro file server to `frontend/public/data/specs/**`. The same app in rulebook mode (`mode=rulebooks`) derives each spec's `rulebook.json` deterministically from SimulationCraft's profile and spell data plus sampled top parses (`data/simc`, `data/rulebook-build`):
 
 ```mermaid
 flowchart LR
@@ -42,6 +42,7 @@ Bench data and rulebooks live only on `gh-pages` under `data/specs/`, written by
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |
 | `node scripts/ingest-server.js` | Ingest file server on :3000; interactive ingestion is this plus `ng serve --configuration ingest` in a second terminal |
 | `npm run ingest` | Headless ingestion (CI entry): starts both of the above, then drives the app in a headless browser |
+| `npm run rulebooks` | Headless rulebook build for `RULEBOOK_SPECS` (comma-separated folder keys) from the `SIMC_TIER` profiles (`<branch>/<dir>`, e.g. `midnight/MID2`), sampling `CURRENT_RAIDS` parses; writes `data/specs/{spec}/rulebook.json` |
 
 ## Development workflow router
 

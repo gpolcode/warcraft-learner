@@ -6,6 +6,7 @@ import { DATA_FILE_TRANSPORT } from '../app/domains/raid-analysis/data/data-file
 import { RETRY_MAX_ATTEMPTS } from '../app/domains/shared/util-http/retry-transient-interceptor';
 import { IngestHttpDataFileTransport } from '../app/domains/raid-analysis/data/http/ingest-http-data-file-transport';
 import { IngestOrchestratorService } from '../app/domains/raid-analysis/feature-ingest/ingest-orchestrator-service';
+import { RulebookBuildOrchestratorService } from '../app/domains/raid-analysis/feature-ingest/rulebook-build-orchestrator-service';
 
 // Why 3: see RETRY_MAX_ATTEMPTS - unattended runs must ride out longer blips.
 const INGEST_RETRY_MAX_ATTEMPTS = 3;
@@ -17,7 +18,8 @@ export const environmentProviders: (Provider | EnvironmentProviders)[] = [
   { provide: DATA_FILE_TRANSPORT, useExisting: IngestHttpDataFileTransport },
   { provide: RETRY_MAX_ATTEMPTS, useValue: INGEST_RETRY_MAX_ATTEMPTS },
   provideAppInitializer(() => {
-    // Not awaited: the app shell must render while ingestion runs; run() owns its failures.
-    void inject(IngestOrchestratorService).run();
+    // Not awaited: the app shell must render while the run proceeds; run() owns its failures.
+    const mode = new URLSearchParams(globalThis.location.search).get('mode');
+    void (mode === 'rulebooks' ? inject(RulebookBuildOrchestratorService).run() : inject(IngestOrchestratorService).run());
   }),
 ];
