@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { DataFileApiService } from '../data-files/data-file-api-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../rulebook/rulebook.models';
+import { Rulebook, RulebookCooldown, RulebookDefensive, RulebookRule } from '../rulebook/rulebook.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { group, quantile } from 'd3-array';
 import {
@@ -64,10 +63,9 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
-  private readonly dataFiles = inject(DataFileApiService);
 
-  async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<RotationBench>> {
-    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
+  async getBench(spec: string, encounterId: number, selection?: TopParseSelection, rulebook?: Rulebook | null): Promise<Result<RotationBench>> {
+    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection, rulebook }, {
       logSource: 'RotationTransformService',
       errorId: 'rotation.bench',
       minSamples: MIN_PARSE_COUNT,
@@ -75,15 +73,14 @@ export class RotationTransformService implements DataSource<RotationBench> {
       tooFewParsesMessage: usable =>
         `Only ${usable} usable top log(s) for this encounter; ${MIN_PARSE_COUNT} are needed to bench it.`,
       rulebook: {
-        dataFiles: this.dataFiles,
-        plan: (rulebook): RotationPlan | null => rulebook.major_cooldowns.length
+        plan: (rulebook): RotationPlan | null => rulebook?.major_cooldowns.length
           ? {
             cooldowns: rulebook.major_cooldowns,
             defensives: rulebook.defensives,
             judgeable: this.ruleEngine.judgeableRules(rulebook.rules),
           }
           : null,
-        missingMessage: 'No rulebook cooldowns for this spec.',
+        missingMessage: 'No SimulationCraft cooldowns for this spec.',
       },
       iconSpellIds: bench => Object.values(bench.cd_spell_ids),
       parse: (parse, plan) => this.parseRotation(parse, plan.cooldowns, plan.judgeable),

@@ -1,39 +1,28 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { NgHttpCachingService } from 'ng-http-caching';
 import { ParseSampleService } from './parse-sample-service';
 import { WclApiService } from '../wcl/wcl-api-service';
-import type { IngestEncounter } from '../ingest/ingest.models';
+import type { ParseRanking } from '../wcl/wcl.models';
 import { applyBuff, applyDebuff, cast, damage } from '../../../../../testing/builders/events';
 import { BACKSTAB, RUPTURE, SHADOW_DANCE_AURA } from '../../../../../testing/spell-ids';
 
-const SPEC = 'SubtletyRogue';
-const PARTITION = 2;
 const PLAYER_ID = 7;
 const FIGHT_ID = 3;
 const FIGHT_START_MS = 1_000;
 const FIGHT_END_MS = 301_000;
 const FIGHT_DURATION_S = 300;
-/** More bosses than the sampler keeps, and more parses on the richest boss than it takes from any one. */
-const BOSSES = 4;
-const KEPT_BOSSES = 3;
-const PER_BOSS = 5;
-const RICH_BOSS_RANKINGS = 7;
+const ENCOUNTER_ID = 1;
+/** More rankings than the sampler keeps, so the cap shows. */
+const RANKING_COUNT = 12;
+const KEPT = 10;
 
-const encounter = (id: number): IngestEncounter => ({ id, name: `Boss ${id}`, zone: 'Raid', zoneId: 1, partitionIds: [PARTITION] });
-const ENCOUNTERS = Array.from({ length: BOSSES }, (_, position) => encounter(position + 1));
-
-/** Boss 1 has the most rankings, boss 4 none, so bosses 1 to 3 are sampled. */
-function rankingsFor(encounterId: number): { name: string; server: { name: string }; report: { code: string; fightID: number } }[] {
-  const count = encounterId === 1 ? RICH_BOSS_RANKINGS : encounterId === BOSSES ? 0 : PER_BOSS - 1;
-  return Array.from({ length: count }, (_, position) => ({
-    name: position === 0 ? 'Ambiguous' : `Raider${position}`, server: { name: 'Ravencrest' }, report: { code: `code${encounterId}-${position}`, fightID: FIGHT_ID },
-  }));
-}
+/** The first ranking names an actor two report actors share, so it cannot bind. */
+const RANKINGS: ParseRanking[] = Array.from({ length: RANKING_COUNT }, (_, position) => ({
+  player: position === 0 ? 'Ambiguous' : `Raider${position}`, server: 'Ravencrest', report_code: `code-${position}`, fight_id: FIGHT_ID,
+}));
 
 function fakeWcl(): WclApiService {
   return {
-    getRankings: async (_spec: string, encounterId: number) => ({ rankings: rankingsFor(encounterId) }),
     getReport: async (code: string) => ({
       title: code, startTime: 0,
       fights: [{ id: FIGHT_ID, name: 'Boss', startTime: FIGHT_START_MS, endTime: FIGHT_END_MS }],
@@ -54,30 +43,30 @@ function fakeWcl(): WclApiService {
   } as unknown as WclApiService;
 }
 
-function sampler(): ParseSampleService {
-  TestBed.configureTestingModule({ providers: [{ provide: NgHttpCachingService, useValue: { clearCache: () => undefined } }] });
-  return TestBed.inject(ParseSampleService);
-}
+const sampler = (): ParseSampleService => TestBed.inject(ParseSampleService);
 
 describe('ParseSampleService.sample', () => {
-  it('samples the most-ranked bosses, up to five bindable parses each, dropping the actor it cannot bind', async () => {
-    const samples = await sampler().sample(fakeWcl(), SPEC, ENCOUNTERS);
-    const perBoss = new Map<number, number>();
-    for (const sample of samples) perBoss.set(sample.encounterId, (perBoss.get(sample.encounterId) ?? 0) + 1);
-    expect([...perBoss.keys()].sort()).toEqual([1, 2, 3].slice(0, KEPT_BOSSES));
-    expect(perBoss.get(1)).toBe(PER_BOSS);
-    expect(perBoss.get(2)).toBe(PER_BOSS - 2);
+  it('keeps as many bindable parses as the benches measure, dropping the actor it cannot bind', async () => {
+    const samples = await sampler().sample(fakeWcl(), RANKINGS, ENCOUNTER_ID, true);
+    expect(samples).toHaveLength(KEPT);
+    expect(samples.map(sample => sample.reportCode)).not.toContain('code-0');
+    expect(samples.every(sample => sample.encounterId === ENCOUNTER_ID)).toBe(true);
   });
 
   it('keeps only cast events in the cast stream and stamps fight-relative seconds', async () => {
-    const [sample] = await sampler().sample(fakeWcl(), SPEC, ENCOUNTERS);
+    const [sample] = await sampler().sample(fakeWcl(), RANKINGS, ENCOUNTER_ID, true);
     expect(sample?.fightDurationS).toBe(FIGHT_DURATION_S);
     expect(sample?.casts.map(event => event.type)).toEqual(['cast']);
     expect(sample?.buffs[0]?.atS).toBe(4 - FIGHT_START_MS / 1000);
   });
 
   it('reads the player\'s dots off the raid-wide enemy stream and drops the other raiders\' debuffs', async () => {
-    const [sample] = await sampler().sample(fakeWcl(), SPEC, ENCOUNTERS);
+    const [sample] = await sampler().sample(fakeWcl(), RANKINGS, ENCOUNTER_ID, true);
     expect(sample?.debuffs.map(event => event.sourceID)).toEqual([PLAYER_ID]);
+  });
+
+  it('leaves the enemy stream unfetched for a spec whose rules never read it', async () => {
+    const [sample] = await sampler().sample(fakeWcl(), RANKINGS, ENCOUNTER_ID, false);
+    expect(sample?.debuffs).toEqual([]);
   });
 });

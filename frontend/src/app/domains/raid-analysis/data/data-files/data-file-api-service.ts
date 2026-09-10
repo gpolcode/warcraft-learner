@@ -40,10 +40,6 @@ export class DataFileApiService {
     return this.io.readJson<unknown>(`${spec}/ingest-state.json`);
   }
 
-  writeRulebook(spec: string, rulebook: Rulebook): Promise<void> {
-    return this.io.writeJson(`${spec}/rulebook.json`, rulebook);
-  }
-
   writeIngestState(spec: string, data: unknown): Promise<void> {
     return this.io.writeJson(`${spec}/ingest-state.json`, data);
   }

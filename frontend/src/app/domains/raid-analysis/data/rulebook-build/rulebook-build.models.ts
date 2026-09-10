@@ -1,5 +1,5 @@
 import type { TimedEvent } from '../analysis/wcl-projections-service';
-import type { SpellRecord } from '../simc/simc.models';
+import type { AplUnknownToken, SpellRecord } from '../simc/simc.models';
 import type { RuleCondition } from '../rulebook/rulebook.models';
 
 export interface ParseSample {
@@ -55,4 +55,5 @@ export interface RulebookBuildReport {
   unresolvedAuras: string[];
   unresolvedTalents: string[];
   unresolvedVariables: string[];
+  unknownTokens: AplUnknownToken[];
 }

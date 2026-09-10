@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { SimcExpressionService } from '../simc/simc-expression-service';
+import { RESOURCE_NAMES } from '../simc/apl-vocabulary';
 import type { AplComparisonOp, AplExpr, AplLiteral, GateProvenance } from '../simc/simc.models';
 
 export type AuraField = 'up' | 'stack' | 'refreshable' | 'remains' | 'other';
@@ -29,11 +30,8 @@ interface Read {
   negated: boolean;
 }
 
-const RESOURCE_HEADS = new Set([
-  'mana', 'rage', 'focus', 'energy', 'combo_points', 'rune', 'runic_power', 'soul_shard', 'soul_shards', 'astral_power',
-  'holy_power', 'maelstrom', 'chi', 'insanity', 'fury', 'pain', 'essence', 'arcane_charges',
-]);
-const TARGET_HEADS = new Set(['spell_targets', 'active_enemies', 'enemies']);
+const RESOURCE_HEADS = new Set<string>(RESOURCE_NAMES);
+const TARGET_HEADS = new Set(['spell_targets', 'active_enemies']);
 const AURA_HEADS: Record<string, 'self' | 'target'> = { buff: 'self', debuff: 'target', dot: 'target' };
 const RESOURCE_FIELDS = new Set<ResourceField>(['pct', 'deficit', 'max']);
 const UP_FIELDS = new Set(['', 'up', 'react', 'ticking']);

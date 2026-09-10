@@ -1,27 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { SimcExpressionService, UNKNOWN, type AplResolver } from './simc-expression-service';
-import type { AplExpr, AplLine, ResolvedAction, ResolvedApl } from './simc.models';
+import { AplVocabularyService } from './apl-vocabulary-service';
+import type { AplExpr, AplLine, AplUnknownToken, AplUnknownTokenKind, ResolvedAction, ResolvedApl } from './simc.models';
 
 const ACTION_LINE = /^actions(?:\.([a-z0-9_]+))?\+?=\/?(.*)$/;
 const DEFAULT_LIST = '';
 const PRECOMBAT_LIST = 'precombat';
 const BOOKKEEPING_ACTIONS = new Set(['variable', 'snapshot_stats']);
-
-/** Leaves the builder cannot know: fight length, gear, sim bookkeeping. They erase as the identity of the operator above them. */
-const NEUTRAL_HEADS = new Set([
-  'fight_remains', 'time_to_die', 'raid_event', 'raid_events', 'fight_style', 'time', 'prev_gcd', 'prev', 'prev_off_gcd',
-  'gcd', 'trinket', 'equipped', 'main_hand', 'off_hand', 'desired_targets', 'druid', 'boss', 'expected_combat_length',
-  'cycle_enemies', 'movement', 'spell_haste', 'attack_haste', 'haste', 'toggle', 'level', 'race', 'role', 'action',
-  'cast_time', 'execute_time', 'pet', 'active_dot', 'active_dots', 'stealthed', 'incoming_damage_5s', 'ptr', 'hyperthread_wrapper',
-  'priority_rotation', 'cycle_targets', 'max_energy',
-]);
-
-/** Resource sub-fields the rule kinds can judge; anything else on a resource (regen, time to max) is sim arithmetic. */
-const RESOURCE_FIELDS = new Set(['pct', 'deficit', 'max']);
-const RESOURCE_HEADS = new Set([
-  'mana', 'rage', 'focus', 'energy', 'combo_points', 'rune', 'runic_power', 'soul_shard', 'soul_shards', 'astral_power',
-  'holy_power', 'maelstrom', 'chi', 'insanity', 'fury', 'pain', 'essence', 'arcane_charges',
-]);
 
 /** Bare fields inside an action's own gate refer to that action's dot or aura, or to its own cooldown. */
 const ACTION_RELATIVE_DOT_FIELDS = new Set(['refreshable', 'remains', 'ticking', 'pmultiplier', 'duration', 'in_flight']);
@@ -36,15 +21,23 @@ interface VariableDefinition {
   gate: AplExpr | null;
 }
 
+/** What one resolve could not place, and which heads it touched, for the build report. */
+interface Audit {
+  unknown: Map<string, AplUnknownToken>;
+  heads: Set<string>;
+}
+
 interface Walk {
   byList: Map<string, AplLine[]>;
   actions: ResolvedAction[];
   resolverFor: (action: string) => AplResolver;
+  audit: Audit;
 }
 
 @Injectable({ providedIn: 'root' })
 export class SimcAplService {
   private readonly expressions = inject(SimcExpressionService);
+  private readonly vocabulary = inject(AplVocabularyService);
 
   parseLines(text: string): AplLine[] {
     const lines: AplLine[] = [];
@@ -69,15 +62,17 @@ export class SimcAplService {
 
   /** Flattens the list tree into one priority order with variables inlined; `setBonusToken` names the tier whose bonuses count as worn. */
   resolve(lines: AplLine[], setBonusToken: string): ResolvedApl {
+    const audit: Audit = { unknown: new Map(), heads: new Set() };
     const unresolvedVariables = new Set<string>();
-    const variables = this.variableDefinitions(lines);
+    const variables = this.variableDefinitions(lines, audit);
+    this.auditOptions(lines, audit);
     const inlined = new Map<string, AplExpr>();
     const inlineVariable = (name: string, depth: number): AplExpr => {
       const cached = inlined.get(name);
       if (cached) return cached;
       const definitions = variables.get(name);
       if (!definitions || depth > MAX_INLINE_DEPTH) { unresolvedVariables.add(name); return UNKNOWN; }
-      const resolver = this.resolver(setBonusToken, null, inner => inlineVariable(inner, depth + 1));
+      const resolver = this.resolver(setBonusToken, null, inner => inlineVariable(inner, depth + 1), audit);
       const result = this.inlineDefinitions(definitions, resolver);
       if (result === null) { unresolvedVariables.add(name); return UNKNOWN; }
       inlined.set(name, result);
@@ -89,12 +84,29 @@ export class SimcAplService {
       list.push(line);
       byList.set(line.list, list);
     }
-    const walk: Walk = { byList, actions: [], resolverFor: action => this.resolver(setBonusToken, action, name => inlineVariable(name, 0)) };
+    const walk: Walk = { byList, actions: [], audit, resolverFor: action => this.resolver(setBonusToken, action, name => inlineVariable(name, 0), audit) };
     this.walkList(walk, DEFAULT_LIST, [], []);
     const precombat = (byList.get(PRECOMBAT_LIST) ?? [])
       .filter(line => !BOOKKEEPING_ACTIONS.has(line.action))
       .map(line => line.action);
-    return { actions: walk.actions, precombat, unresolvedVariables: [...unresolvedVariables].sort() };
+    return {
+      actions: walk.actions, precombat, unresolvedVariables: [...unresolvedVariables].sort(),
+      unknownTokens: [...audit.unknown.values()].sort((a, b) => a.kind.localeCompare(b.kind) || a.token.localeCompare(b.token)),
+      referencedHeads: [...audit.heads].sort(),
+    };
+  }
+
+  private note(audit: Audit, kind: AplUnknownTokenKind, token: string): void {
+    const key = `${kind}:${token}`;
+    const existing = audit.unknown.get(key);
+    if (existing) existing.count += 1;
+    else audit.unknown.set(key, { kind, token, count: 1 });
+  }
+
+  private auditOptions(lines: AplLine[], audit: Audit): void {
+    for (const line of lines) {
+      for (const key of Object.keys(line.options)) if (!this.vocabulary.option(key)) this.note(audit, 'option', key);
+    }
   }
 
   /** Later sets override earlier ones under their own gate, so the chain reads as nested if-then-else; null for an op the builder cannot follow. */
@@ -130,7 +142,7 @@ export class SimcAplService {
   /** Bookkeeping lines and lines whose gate folded to false never execute. */
   private reachableGate(walk: Walk, line: AplLine): AplExpr | null | 'skip' {
     if (BOOKKEEPING_ACTIONS.has(line.action)) return 'skip';
-    const gate = this.gateOf(line, walk.resolverFor(line.action));
+    const gate = this.gateOf(line, walk.resolverFor(line.action), walk.audit);
     return gate?.kind === 'num' && gate.value === 0 ? 'skip' : gate;
   }
 
@@ -146,17 +158,18 @@ export class SimcAplService {
     return true;
   }
 
-  private gateOf(line: AplLine, resolver: AplResolver): AplExpr | null {
+  private gateOf(line: AplLine, resolver: AplResolver, audit: Audit): AplExpr | null {
     const source = line.options['if'];
     if (source === undefined) return null;
-    const simplified = this.simplifyOrUnknown(this.parseOrUnknown(source), resolver);
+    const simplified = this.simplifyOrUnknown(this.parseOrUnknown(source, audit), resolver);
     return simplified.kind === 'unknown' ? null : simplified;
   }
 
-  private parseOrUnknown(source: string): AplExpr {
+  private parseOrUnknown(source: string, audit: Audit): AplExpr {
     try {
       return this.expressions.parse(source);
     } catch {
+      this.note(audit, 'syntax', source);
       return UNKNOWN;
     }
   }
@@ -177,21 +190,23 @@ export class SimcAplService {
     return this.expressions.simplify(chosen, () => null);
   }
 
-  private variableDefinitions(lines: AplLine[]): Map<string, VariableDefinition[]> {
+  private variableDefinitions(lines: AplLine[], audit: Audit): Map<string, VariableDefinition[]> {
     const variables = new Map<string, VariableDefinition[]>();
     for (const line of lines) {
       const name = line.options['name'];
       if (line.action !== 'variable' || !name) continue;
+      const op = line.options['op'] ?? 'set';
+      if (!this.vocabulary.variableOp(op)) this.note(audit, 'variable_op', op);
       const parse = (option: string): AplExpr | null => {
         const source = line.options[option];
-        return source === undefined ? null : this.parseOrUnknown(source);
+        return source === undefined ? null : this.parseOrUnknown(source, audit);
       };
       const definitions = variables.get(name) ?? [];
       definitions.push({
-        op: line.options['op'] ?? 'set',
+        op,
         value: parse('value') ?? parse('default'),
         valueElse: parse('value_else'),
-        gate: line.options['op'] === 'setif' ? parse('condition') : parse('if'),
+        gate: op === 'setif' ? parse('condition') : parse('if'),
       });
       variables.set(name, definitions);
     }
@@ -199,27 +214,34 @@ export class SimcAplService {
   }
 
   /** What each reference means at build time; `action` names the line whose bare `refreshable` / `remains` refer to its own dot. */
-  private resolver(setBonusToken: string, action: string | null, inlineVariable: (name: string) => AplExpr): AplResolver {
+  private resolver(setBonusToken: string, action: string | null, inlineVariable: (name: string) => AplExpr, audit: Audit): AplResolver {
     return path => {
       const [head, second] = path;
       if (head === undefined) return UNKNOWN;
       if (head === 'variable') return second === undefined ? UNKNOWN : inlineVariable(second);
       if (head === 'set_bonus') return { kind: 'num', value: (second ?? '').startsWith(setBonusToken) ? 1 : 0 };
-      return this.resolveSymbol(path, action);
+      return this.resolveSymbol(path, action, audit);
     };
   }
 
-  private resolveSymbol(path: readonly string[], action: string | null): AplExpr | null {
-    const [head = '', second] = path;
-    if (NEUTRAL_HEADS.has(head)) return UNKNOWN;
-    if (head === 'target') return second === 'health' ? null : UNKNOWN;
-    if (RESOURCE_HEADS.has(head)) return second === undefined || RESOURCE_FIELDS.has(second) ? null : UNKNOWN;
-    return path.length === 1 ? this.resolveActionRelative(head, action) : null;
+  /** An inventoried leaf is erased or kept symbolic as its entry says; one outside the inventory stays symbolic and is reported. */
+  private resolveSymbol(path: readonly string[], action: string | null, audit: Audit): AplExpr | null {
+    const [head = ''] = path;
+    if (path.length === 1 && (ACTION_RELATIVE_DOT_FIELDS.has(head) || ACTION_RELATIVE_COOLDOWN_FIELDS.has(head))) {
+      audit.heads.add(ACTION_RELATIVE_DOT_FIELDS.has(head) ? 'dot' : 'cooldown');
+      return this.resolveActionRelative(head, action);
+    }
+    audit.heads.add(head);
+    const entry = this.vocabulary.expression(path);
+    if (!entry) {
+      this.note(audit, 'expression', this.vocabulary.shape(path));
+      return null;
+    }
+    return entry.support === 'erased' ? UNKNOWN : null;
   }
 
-  private resolveActionRelative(field: string, action: string | null): AplExpr | null {
-    const family = ACTION_RELATIVE_DOT_FIELDS.has(field) ? 'dot' : ACTION_RELATIVE_COOLDOWN_FIELDS.has(field) ? 'cooldown' : null;
-    if (family === null) return null;
+  private resolveActionRelative(field: string, action: string | null): AplExpr {
+    const family = ACTION_RELATIVE_DOT_FIELDS.has(field) ? 'dot' : 'cooldown';
     return action === null ? UNKNOWN : { kind: 'ref', path: [family, action, field] };
   }
 }

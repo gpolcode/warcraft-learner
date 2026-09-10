@@ -40,11 +40,23 @@ export interface ResolvedAction {
   priority: number;
 }
 
+export type AplUnknownTokenKind = 'expression' | 'option' | 'variable_op' | 'syntax';
+
+/** A token outside the vocabulary inventory: a shape, option or op never seen before, or an expression the parser rejected. */
+export interface AplUnknownToken {
+  kind: AplUnknownTokenKind;
+  token: string;
+  count: number;
+}
+
 export interface ResolvedApl {
   actions: ResolvedAction[];
   precombat: string[];
   /** Variable names whose definitions the resolver could not inline, kept for the build report. */
   unresolvedVariables: string[];
+  unknownTokens: AplUnknownToken[];
+  /** Every reference head the gates touched, so a build knows which event streams the rules can need. */
+  referencedHeads: string[];
 }
 
 export interface AplLiteral {

@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -59,11 +60,14 @@ jobs:
 
       # CURRENT_RAIDS: WCL zone names to bench, comma separated (e.g. "The Venomous Abyss"). Anything else is pruned; unset prunes nothing.
       # PRIORITY_SPECS (repo variable) is optional: unset or malformed falls back safely (see parsePrioritySpecs in ingest-ordering-service.ts).
+      # SIMC_TIER (repo variable): the SimulationCraft branch and profile directory the rules derive from, e.g. "midnight/MID2".
       - name: Run parse ingestion
         working-directory: frontend
         env:
           CURRENT_RAIDS: ${{ vars.CURRENT_RAIDS }}
           PRIORITY_SPECS: ${{ vars.PRIORITY_SPECS }}
+          SIMC_TIER: ${{ vars.SIMC_TIER }}
+          APL_GAPS_FILE: ${{ runner.temp }}/apl-vocabulary-gaps.md
         run: npm run ingest
 
       # Pruning never removes whole spec dirs, so this trips only on an overlay catastrophe, not a quiet hour.
@@ -98,3 +102,31 @@ jobs:
           folder: frontend/public/data/specs
           target-folder: data/specs
           clean: true
+
+      # One open issue carries the gaps: GitHub mails its creation and each change of the set, and a run that finds the same set leaves it alone.
+      - name: Report APL vocabulary gaps as an issue
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          GAPS_FILE: ${{ runner.temp }}/apl-vocabulary-gaps.md
+          TITLE: 'APL vocabulary gaps: SimulationCraft tokens outside the inventory'
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [ ! -s "$GAPS_FILE" ]; then
+            echo "No APL vocabulary gaps."
+            exit 0
+          fi
+          fingerprint() { grep -o 'warcraft-learner-gaps:[0-9a-f]*' <<< "$1" || true; }
+          body="$(cat "$GAPS_FILE")"
+          number="$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
+            --jq "map(select(.title == \"$TITLE\")) | .[0].number // empty")"
+          if [ -z "$number" ]; then
+            gh issue create --title "$TITLE" --body "$body"
+          elif [ "$(fingerprint "$(gh issue view "$number" --json body --jq .body)")" != "$(fingerprint "$body")" ]; then
+            gh issue edit "$number" --body "$body"
+            gh issue comment "$number" --body "The set of tokens outside the inventory changed: $RUN_URL"
+          else
+            echo "Issue #$number already lists these gaps."
+          fi

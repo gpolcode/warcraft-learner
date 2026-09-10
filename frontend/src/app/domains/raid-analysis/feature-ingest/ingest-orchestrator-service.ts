@@ -6,11 +6,19 @@ import { WclApiService } from '../data/wcl/wcl-api-service';
 import { DataFileApiService } from '../data/data-files/data-file-api-service';
 import { WCL_TRANSPORT } from '../data/wcl/wcl-transport';
 import { SpecMetaService } from '../data/data-files/spec-meta-service';
+import type { SpecMeta } from '../data/data-files/spec-meta.models';
 import { LoggerService } from '../../shared/util-logging/logger-service';
-import { type LoadError } from '../../shared/util-http/result';
+import { type LoadError, type Result } from '../../shared/util-http/result';
 import { TopParseSelectionService } from '../data/analysis/top-parse-selection-service';
+import { getOrInsert } from '../data/analysis/analysis-math';
 import type { EncounterEntry, SpecEntry } from '../data/encounter/encounter.models';
 import type { TopParseSelection } from '../data/wcl/wcl.models';
+import type { Rulebook } from '../data/rulebook/rulebook.models';
+import type { AplUnknownToken } from '../data/simc/simc.models';
+import { SimcDataService, type SimcText, type SimcTier } from '../data/http/simc-data-service';
+import { TalentDataService } from '../data/http/talent-data-service';
+import { EncounterRulebookService, type SpecSources } from '../data/rulebook-build/encounter-rulebook-service';
+import { RULEBOOK_BUILDER_VERSION, RulebookBuildService } from '../data/rulebook-build/rulebook-build-service';
 import { BenchRegistryService, LEAD_BENCH, type BenchDescriptor } from './bench-registry';
 import { CurrentRaidsService, BudgetExceededError } from '../data/ingest/current-raids-service';
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
@@ -33,6 +41,16 @@ const ENCOUNTER_OUTCOME_NOTE: Record<EncounterOutcome, string> = {
   empty: 'no parses to bench',
   failed: 'bench load failed, retried next run',
 };
+
+/** The SimulationCraft inputs of one run: every profile up front, spell dumps per class as a spec needs them. */
+interface RunSources {
+  tier: SimcTier;
+  metas: SpecMeta[];
+  profiles: Map<string, Result<SimcText>>;
+  dumps: Map<string, Promise<Result<SimcText>>>;
+  /** Specs whose first derivation was logged, so the rebuild per encounter stays quiet. */
+  reported: Set<string>;
+}
 
 function nowS(): number {
   return Math.floor(Date.now() / 1000);
@@ -62,6 +80,10 @@ export class IngestOrchestratorService {
   private readonly wclCache = inject(NgHttpCachingService);
   private readonly benches = inject(BenchRegistryService).benches;
   private readonly summary = inject(IngestRunSummaryService);
+  private readonly simc = inject(SimcDataService);
+  private readonly talents = inject(TalentDataService);
+  private readonly rulebooks = inject(EncounterRulebookService);
+  private readonly builder = inject(RulebookBuildService);
 
   /** Never rejects: the fire-and-forget app initializer must not see an unhandled rejection. */
   async run(): Promise<void> {
@@ -77,11 +99,14 @@ export class IngestOrchestratorService {
   private async ingestAll(): Promise<void> {
     console.log('warcraft-learner - Parse Ingestion');
     const version = String(INGEST_VERSION);
-    console.log(`Ingest version: ${version}`);
+    const search = new URLSearchParams(globalThis.location.search);
+    const tier = this.simc.parseTier(search.get('simcTier'));
+    if (!tier) throw new Error('SIMC_TIER must read <branch>/<dir>, e.g. midnight/MID2.');
+    console.log(`Ingest version: ${version}; SimulationCraft tier: ${tier.branch}/${tier.dir}`);
 
-    await this.resolveSpecMetas();
+    const metas = await this.resolveSpecMetas();
 
-    const raidNames = this.currentRaids.parseRaidNames(new URLSearchParams(globalThis.location.search).get('currentRaids'));
+    const raidNames = this.currentRaids.parseRaidNames(search.get('currentRaids'));
     console.log(raidNames.length
       ? `Current raids (CURRENT_RAIDS): ${raidNames.join(', ')}`
       : 'CURRENT_RAIDS is unset - nothing to ingest, nothing pruned.');
@@ -90,27 +115,23 @@ export class IngestOrchestratorService {
     await this.pruneRetiredRaids(protectedIds);
     await this.refreshIndices(encounters);
 
-    const specs = await this.orderedSpecsFromDisk();
-    if (!specs.length) {
-      console.log('No known specs (no rulebook.json found). Nothing to do.');
-      this.summary.publish({ succeeded: [], failed: [], budgetStopped: false });
-      return;
-    }
-
-    const summary = await this.ingestEachSpec(specs, encounters, version);
+    const run: RunSources = { tier, metas, profiles: await this.loadProfiles(tier, metas), dumps: new Map(), reported: new Set() };
+    const vocabularyGaps = this.summary.vocabularyGaps(this.unknownTokensBySpec(run));
+    const specs = await this.orderedSpecs(metas.map(meta => meta.spec));
+    const summary: IngestRunSummary = { ...await this.ingestEachSpec(specs, encounters, version, run), vocabularyGaps };
     this.summary.print(summary, specs.length);
     this.summary.publish(summary);
   }
 
-  private async resolveSpecMetas(): Promise<void> {
-    // The spec icon is not on WCL, so enrich each meta from that spec's rulebook (its spec_icon stem).
+  private async resolveSpecMetas(): Promise<SpecMeta[]> {
+    // The spec icon is not on WCL, so the published rulebook's stem supplies it.
     const metas = await this.currentRaids.discoverSpecMetas(this.wclApi);
     for (const meta of metas) {
       const rulebook = await this.dataFile.getRulebook(meta.spec);
       if (rulebook.ok) {
         meta.specIcon = rulebook.value.spec_icon;
       } else {
-        // Only a corrupt file (permanent) is worth logging; a missing rulebook is an un-authored spec.
+        // Only a corrupt file (permanent) is worth logging; a missing rulebook is a spec with no published icon.
         if (rulebook.error.kind === 'permanent') {
           this.logger.logWarn(`ingest ${meta.spec}: corrupt rulebook.json, shipping blank spec icon`, rulebook.error);
         }
@@ -120,6 +141,38 @@ export class IngestOrchestratorService {
     this.specMeta.hydrate(metas);
     await this.dataFile.writeSpecMeta(metas);
     console.log(`Resolved ${metas.length} specs from WCL`);
+    return metas;
+  }
+
+  /** Every profile up front: the vocabulary scan reads them all, and a missing one marks its spec as gear, positions and phases only. */
+  private async loadProfiles(tier: SimcTier, metas: SpecMeta[]): Promise<Map<string, Result<SimcText>>> {
+    const profiles = new Map<string, Result<SimcText>>();
+    for (const meta of metas) profiles.set(meta.spec, await this.simc.getProfile(tier, meta.classLabel, meta.specLabel));
+    const shipped = [...profiles.values()].filter(profile => profile.ok).length;
+    console.log(`SimulationCraft ships ${shipped} of ${metas.length} spec profiles in ${tier.dir}`);
+    return profiles;
+  }
+
+  private unknownTokensBySpec(run: RunSources): Map<string, AplUnknownToken[]> {
+    const tokens = new Map<string, AplUnknownToken[]>();
+    for (const [spec, profile] of run.profiles) {
+      if (profile.ok) tokens.set(spec, this.builder.unknownTokens(profile.value.text, run.tier));
+    }
+    return tokens;
+  }
+
+  /** The spec's build inputs, or null where SimulationCraft ships no profile; a source that failed to load fails the spec instead. */
+  private async specSources(spec: string, run: RunSources): Promise<SpecSources | null> {
+    const profile = run.profiles.get(spec);
+    if (!profile || (!profile.ok && profile.error.kind === 'missing')) return null;
+    if (!profile.ok) throw new Error(profile.error.message);
+    const meta = run.metas.find(entry => entry.spec === spec);
+    if (!meta) throw new Error(`${spec} is not a spec WCL knows.`);
+    const spellData = await getOrInsert(run.dumps, meta.className, () => this.simc.getSpellDataDump(run.tier, meta.className));
+    if (!spellData.ok) throw new Error(spellData.error.message);
+    const talents = await this.talents.getTalents(spec);
+    if (!talents.ok) this.logger.logWarn(`ingest ${spec}: no talent data, rules stay ungated`, talents.error);
+    return { meta, profile: profile.value, spellData: spellData.value, talents: talents.ok ? talents.value : {} };
   }
 
   /** Pruning only the selected specs would leave them at zero data and permanently re-selected. */
@@ -142,7 +195,7 @@ export class IngestOrchestratorService {
   }
 
   private async ingestEachSpec(
-    specs: string[], encounters: IngestEncounter[], version: string,
+    specs: string[], encounters: IngestEncounter[], version: string, run: RunSources,
   ): Promise<IngestRunSummary> {
     // Isolate each spec so one throw drops only that spec, not the whole run.
     const succeeded: string[] = [];
@@ -150,7 +203,7 @@ export class IngestOrchestratorService {
     let budgetStopped = false;
     for (const spec of specs) {
       try {
-        const budgetExhausted = await this.ingestSpec(spec, encounters, version);
+        const budgetExhausted = await this.ingestSpec(spec, encounters, version, run);
         succeeded.push(spec);
         if (budgetExhausted) { budgetStopped = true; break; }
       } catch (err) {
@@ -161,21 +214,9 @@ export class IngestOrchestratorService {
     return { succeeded, failed, budgetStopped };
   }
 
-  private async orderedSpecsFromDisk(): Promise<string[]> {
-    const onDisk = await this.dataFile.listSpecs();
-    const withRulebook: string[] = [];
-    for (const spec of onDisk) {
-      const rulebook = await this.dataFile.getRulebook(spec);
-      if (rulebook.ok) {
-        withRulebook.push(spec);
-      } else if (rulebook.error.kind === 'permanent') {
-        // A corrupt rulebook silently freezes the spec on stale data; log so it is diagnosable.
-        this.logger.logWarn(`ingest ${spec}: corrupt rulebook.json, excluded from this run`, rulebook.error);
-      }
-    }
-    if (!withRulebook.length) return [];
-
-    const orderInputs = await Promise.all(withRulebook.map(async spec => {
+  private async orderedSpecs(specs: string[]): Promise<string[]> {
+    if (!specs.length) return [];
+    const orderInputs = await Promise.all(specs.map(async spec => {
       const benched = await this.benchedIds(spec);
       const state = await this.loadIngestState(spec);
       const emptyIds = state?.empty_encounter_ids ?? [];
@@ -219,9 +260,13 @@ export class IngestOrchestratorService {
   }
 
   private async ingestSpec(
-    spec: string, encounters: IngestEncounter[], version: string,
+    spec: string, encounters: IngestEncounter[], version: string, run: RunSources,
   ): Promise<boolean> {
     console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
+    const sources = await this.specSources(spec, run);
+    if (!sources) console.log('  no SimulationCraft profile: gear, positions and phases only');
+    // The stamp keys on the sources too, so a changed profile or spell dump re-benches an encounter like a changed top parse does.
+    const sourceKey = sources ? `${version}:${RULEBOOK_BUILDER_VERSION}:${sources.profile.sha256}:${sources.spellData.sha256}` : version;
 
     // Feeds the never-checked-first order - a file-server-only signal, zero WCL budget.
     const previousState = await this.loadIngestState(spec);
@@ -231,32 +276,8 @@ export class IngestOrchestratorService {
     try {
       for (const encounter of this.ordering.orderEncountersByMissingFirst(encounters, checkedIds)) {
         await this.currentRaids.assertPointsBudget(this.wclApi, POINTS_MARGIN);
-
-        const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
-        if (!selection.length) {
-          console.log(`  [${encounter.name}] no rankings, skipped`);
-          emptyThisPass.push(encounter.id);
-          continue;
-        }
-
-        const existing = await this.dataFile.getBench(spec, encounter.id, LEAD_BENCH);
-        const { skip, signature: skipKey } = this.stamp.skipDecision(
-          existing.ok ? existing.value : null, selection, version, TOP_N);
-        if (skip) {
-          console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
-          continue;
-        }
-
-        console.log(`  [${encounter.name}] computing benches (signature ${skipKey})...`);
-        let outcome: EncounterOutcome;
-        try {
-          outcome = await this.ingestEncounter(spec, encounter, version, selection);
-        } finally {
-          // Drop this encounter's cached reports/events before the next one to bound memory.
-          this.wclCache.clearCache();
-        }
+        const outcome = await this.ingestOneEncounter(spec, encounter, sourceKey, sources, run);
         if (outcome === 'empty') emptyThisPass.push(encounter.id);
-        console.log(`  [${encounter.name}] ${ENCOUNTER_OUTCOME_NOTE[outcome]}`);
       }
     } catch (err) {
       if (err instanceof BudgetExceededError) {
@@ -270,6 +291,34 @@ export class IngestOrchestratorService {
     await this.finishSpec(spec, encounters, previousState, emptyThisPass);
     console.log(`Ingestion complete for ${spec}.`);
     return false;
+  }
+
+  /** 'skipped' when the stored stamp already covers the current top parses and sources. */
+  private async ingestOneEncounter(
+    spec: string, encounter: IngestEncounter, sourceKey: string, sources: SpecSources | null, run: RunSources,
+  ): Promise<EncounterOutcome | 'skipped'> {
+    const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
+    if (!selection.length) {
+      console.log(`  [${encounter.name}] no rankings, skipped`);
+      return 'empty';
+    }
+
+    const existing = await this.dataFile.getBench(spec, encounter.id, LEAD_BENCH);
+    const { skip, signature: skipKey } = this.stamp.skipDecision(existing.ok ? existing.value : null, selection, sourceKey, TOP_N);
+    if (skip) {
+      console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
+      return 'skipped';
+    }
+
+    console.log(`  [${encounter.name}] computing benches (signature ${skipKey})...`);
+    try {
+      const outcome = await this.ingestEncounter(spec, encounter, sourceKey, selection, sources, run);
+      console.log(`  [${encounter.name}] ${ENCOUNTER_OUTCOME_NOTE[outcome]}`);
+      return outcome;
+    } finally {
+      // Drop this encounter's cached reports/events before the next one to bound memory.
+      this.wclCache.clearCache();
+    }
   }
 
   private benchedIds(spec: string): Promise<number[]> {
@@ -300,19 +349,23 @@ export class IngestOrchestratorService {
 
   /** Compute every bench first, THEN stamp + write: the signature is known only after every transform has fetched. */
   private async ingestEncounter(
-    spec: string, encounter: IngestEncounter, version: string, selection: TopParseSelection,
+    spec: string, encounter: IngestEncounter, sourceKey: string, selection: TopParseSelection,
+    sources: SpecSources | null, run: RunSources,
   ): Promise<EncounterOutcome> {
     const encId = encounter.id;
     const limit = pLimit(BENCH_CONCURRENCY);
     const [burstBench, ...siblings] = this.benches;
-    const compute = (bench: BenchDescriptor) => limit(() => bench.transform.getBench(spec, encId, selection));
-    const { result: [burst, rest], outcomes } = await this.wclTransport.withFetchOutcomes(() => Promise.all([
-      compute(burstBench),
-      Promise.all(siblings.map(async bench => ({ bench, result: await compute(bench) }))),
-    ]));
+    const { result: [burst, rest], outcomes } = await this.wclTransport.withFetchOutcomes(async () => {
+      const rulebook = sources ? await this.deriveRulebook(spec, sources, selection, encId, run) : null;
+      const compute = (bench: BenchDescriptor) => limit(() => bench.transform.getBench(spec, encId, selection, rulebook));
+      return Promise.all([
+        compute(burstBench),
+        Promise.all(siblings.map(async bench => ({ bench, result: await compute(bench) }))),
+      ]);
+    });
 
     const { signature, inaccessibleParses } = this.signature.signatureAfterFetch(
-      selection, outcomes.inaccessibleCodes, outcomes.failedCodes, version, TOP_N);
+      selection, outcomes.inaccessibleCodes, outcomes.failedCodes, sourceKey, TOP_N);
     const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAtS: nowS() };
 
     // Skip on any failure so a bench is never overwritten with partial data.
@@ -336,6 +389,24 @@ export class IngestOrchestratorService {
     if (burst.ok) return 'benched';
     // Marking a transient or permanent failure empty would defeat the retry `stampBurstFile` leaves open.
     return burst.error.kind === 'missing' ? 'empty' : 'failed';
+  }
+
+  /** Derived from the encounter's own top parses, the ones its benches measure, so the stamp's parse set and sources fix the rules. */
+  private async deriveRulebook(
+    spec: string, sources: SpecSources, selection: TopParseSelection, encounterId: number, run: RunSources,
+  ): Promise<Rulebook> {
+    const { rulebook, report } = await this.rulebooks.derive(this.wclApi, {
+      sources, tier: run.tier, rankings: selection.slice(0, TOP_N), encounterId, nowS: nowS(),
+    });
+    if (run.reported.has(spec)) return rulebook;
+    run.reported.add(spec);
+    console.log(`  rulebook: ${rulebook.major_cooldowns.length} cooldowns, ${rulebook.defensives.length} defensives, ${rulebook.rules.length} rules`);
+    const gaps: [string, string[]][] = [
+      ['unresolved actions', report.unresolvedActions], ['unresolved auras', report.unresolvedAuras],
+      ['unresolved talents', report.unresolvedTalents], ['unresolved variables', report.unresolvedVariables],
+    ];
+    for (const [label, names] of gaps) if (names.length) console.log(`  ${label}: ${names.join(', ')}`);
+    return rulebook;
   }
 
   private async rebuildEncountersIndex(spec: string, current: IngestEncounter[]): Promise<void> {

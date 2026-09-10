@@ -1,6 +1,6 @@
 # warcraft-learner
 
-A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs combat data against AI-generated, spec-specific rulebooks and delivers coaching-style feedback benchmarked against top parses. The app is a **fully static Angular SPA** on GitHub Pages - no backend, all analysis client-side, WCL queried directly from the browser with an OAuth2 client-credentials token (no user login).
+A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs combat data against spec-specific rulebooks derived from SimulationCraft and delivers coaching-style feedback benchmarked against top parses. The app is a **fully static Angular SPA** on GitHub Pages - no backend, all analysis client-side, WCL queried directly from the browser with an OAuth2 client-credentials token (no user login).
 
 ## Always-on rules
 
@@ -12,11 +12,12 @@ A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs c
 
 The layout is domain-oriented: module types over the Angular style guide's feature-area folders. One business domain, `raid-analysis`, plus the technical `shared` domain, each split into the four module types: `feature-*` (a use case's smart components), `ui-*` (presentational components and pipes), `data` (the domain model and every service operating on it: WCL and data-file access, transforms, the per-feature `*FeatureService`s, analysis math, selection state) and `util-*` (technical helpers). Everything directly under `src/app/` outside `domains/` is the shell (the routed pages and the nav) and may reach anything. Access, eslint-enforced (`frontend/eslint.config.js`): feature -> ui, data, util; ui -> ui, data, util; data -> util; util -> util; a domain reaches only itself and `shared`.
 
-Behavior is implemented as methods on `@Injectable` services - stateless, data in, data out (eslint-enforced); exactly **three pass-through API services** (`WclApiService`, `DataFileApiService`, `SimcDataService`) do IO. Ingestion is the same Angular app booted with the `ingest` configuration (`feature-ingest`), driving the same `*TransformService`s and persisting through a micro file server to `frontend/public/data/specs/**`. The same app in rulebook mode (`mode=rulebooks`) derives each spec's `rulebook.json` deterministically from SimulationCraft's profile and spell data plus sampled top parses (`data/simc`, `data/rulebook-build`):
+Behavior is implemented as methods on `@Injectable` services - stateless, data in, data out (eslint-enforced); exactly **three pass-through API services** (`WclApiService`, `DataFileApiService`, `SimcDataService`) do IO. Ingestion is the same Angular app booted with the `ingest` configuration (`feature-ingest`), driving the same `*TransformService`s and persisting through a micro file server to `frontend/public/data/specs/**`. Each encounter's rulebook is derived in memory during ingest, deterministically, from SimulationCraft's profile and spell data plus the encounter's own top parses (`data/simc`, `data/rulebook-build`), and is baked into the benches; no `rulebook.json` is written. Every SimulationCraft token the builder understands is inventoried in `data/simc/apl-vocabulary.ts` with what it maps to or why it is dropped; a token outside the inventory is reported by the ingest run as a gap. A spec SimulationCraft ships no profile for gets gear, positions and phases only.
 
 ```mermaid
 flowchart LR
   subgraph ingest ["Ingest (browser, ingest configuration)"]
+    simc[SimcDataService] --> rulebook["rulebook derivation"] --> transform
     wcl[WclApiService] --> transform["*TransformService"] --> ingestFiles[DataFileApiService] --> server["file server :3000"]
   end
   server --> specs["data/specs/**"]
@@ -26,7 +27,7 @@ flowchart LR
   specs --> runtimeFiles
 ```
 
-Bench data and rulebooks live only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
+Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
 
 ## Commands (run from `frontend/`)
 
@@ -41,8 +42,7 @@ Bench data and rulebooks live only on `gh-pages` under `data/specs/`, written by
 | `npm run schema:pull` | Re-introspect the WCL v2 schema and regenerate `wcl-operations.generated.ts` in one run; commit only the regenerated types |
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |
 | `node scripts/ingest-server.js` | Ingest file server on :3000; interactive ingestion is this plus `ng serve --configuration ingest` in a second terminal |
-| `npm run ingest` | Headless ingestion (CI entry): starts both of the above, then drives the app in a headless browser |
-| `npm run rulebooks` | Headless rulebook build for `RULEBOOK_SPECS` (comma-separated folder keys) from the `SIMC_TIER` profiles (`<branch>/<dir>`, e.g. `midnight/MID2`), sampling `CURRENT_RAIDS` parses; writes `data/specs/{spec}/rulebook.json` |
+| `npm run ingest` | Headless ingestion (CI entry): starts both of the above, then drives the app in a headless browser; needs `SIMC_TIER` (`<branch>/<dir>`, e.g. `midnight/MID2`) and `CURRENT_RAIDS` |
 
 ## Development workflow router
 

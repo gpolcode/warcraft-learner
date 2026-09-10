@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { SimcExpressionService } from '../simc/simc-expression-service';
+import { AplVocabularyService } from '../simc/apl-vocabulary-service';
 import type { AplComparisonOp, ResolvedAction, SpellRecord } from '../simc/simc.models';
 import type { RuleCondition } from '../rulebook/rulebook.models';
 import { getOrInsert } from '../analysis/analysis-math';
@@ -31,6 +32,7 @@ export interface RuleDerivation {
 @Injectable({ providedIn: 'root' })
 export class RuleDerivationService {
   private readonly expressions = inject(SimcExpressionService);
+  private readonly vocabulary = inject(AplVocabularyService);
   private readonly literals = inject(AplLiteralService);
   private readonly abilities = inject(AbilityIndexService);
   private readonly gates = inject(RuleGateService);
@@ -62,7 +64,10 @@ export class RuleDerivationService {
     const lines: ActionLine[] = [];
     for (const resolved of actions) {
       const record = this.abilities.cast(index, resolved.action);
-      if (!record) { unresolved.add(resolved.action); continue; }
+      if (!record) {
+        if (!this.vocabulary.actionWord(resolved.action)) unresolved.add(resolved.action);
+        continue;
+      }
       const terms = (this.expressions.termsOf(resolved.own, resolved.context) ?? [this.fallbackTerm(resolved)])
         .map(term => this.literals.facts(term)).filter(term => this.gates.consistent(term));
       if (!terms.length) continue;

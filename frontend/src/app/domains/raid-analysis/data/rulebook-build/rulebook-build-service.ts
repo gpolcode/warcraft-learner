@@ -3,6 +3,7 @@ import type { Rulebook, RulebookCooldown, RulebookDefensive, RulebookRule, RuleS
 import type { SpecMeta } from '../data-files/spec-meta.models';
 import type { SpecTalents } from '../gear/talent.models';
 import type { SimcTier } from '../http/simc-data-service';
+import type { AplUnknownToken, ResolvedApl } from '../simc/simc.models';
 import { SimcAplService } from '../simc/simc-apl-service';
 import { SpellDataDumpService } from '../simc/spell-data-dump-service';
 import { AbilityIndexService } from './ability-index-service';
@@ -38,8 +39,22 @@ export class RulebookBuildService {
   private readonly rules = inject(RuleDerivationService);
   private readonly copy = inject(RulebookCopyService);
 
+  /** The profile's gates resolved against the tier, the step every read of a profile starts from. */
+  resolveProfile(profileText: string, tier: SimcTier): ResolvedApl {
+    return this.apl.resolve(this.apl.parseLines(profileText), this.setBonusToken(tier));
+  }
+
+  /** Whether the rules can need the raid-wide enemy aura stream, so a spec without dots never pays for it. */
+  readsEnemyAuras(resolved: ResolvedApl): boolean {
+    return resolved.referencedHeads.some(head => head === 'dot' || head === 'debuff' || head === 'active_dot');
+  }
+
+  unknownTokens(profileText: string, tier: SimcTier): AplUnknownToken[] {
+    return this.resolveProfile(profileText, tier).unknownTokens;
+  }
+
   build(inputs: RulebookBuildInputs): RulebookBuild {
-    const resolved = this.apl.resolve(this.apl.parseLines(inputs.profile.text), this.setBonusToken(inputs.tier));
+    const resolved = this.resolveProfile(inputs.profile.text, inputs.tier);
     const index = this.abilities.build(this.dump.parse(inputs.spellData.text), inputs.samples, inputs.spec.classLabel, inputs.spec.specLabel);
     const majors = this.cooldowns.majorCooldowns(resolved.actions, index);
     const derivation = this.rules.derive(resolved.actions, index, inputs.samples);
@@ -75,6 +90,7 @@ export class RulebookBuildService {
       unresolvedAuras: derivation.unresolvedAuras,
       unresolvedTalents: [...unresolvedTalents].sort(),
       unresolvedVariables: resolved.unresolvedVariables,
+      unknownTokens: resolved.unknownTokens,
     };
     return { rulebook, report };
   }
