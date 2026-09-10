@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { signal } from '@angular/core';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
-import { whenDeferred } from '../../../../testing/when-stable';
 import { mapFeatureStub } from '../../../../testing/page-stubs';
 import { MapFeatureService } from '../data/map/map-feature-service';
 import { MapPanel } from './map-panel';
@@ -29,9 +28,13 @@ function stub(open: boolean): unknown {
 }
 
 async function render(open: boolean): Promise<MountedDom> {
-  const dom = mountDom(MapPanel, {}, [{ provide: MapFeatureService, useValue: stub(open) }]);
-  await whenDeferred();
-  dom.detectChanges();
+  const dom = mountDom(
+    MapPanel,
+    {},
+    [{ provide: MapFeatureService, useValue: stub(open) }],
+    { manualDeferBlocks: true },
+  );
+  await dom.completeDeferBlocks();
   return dom;
 }
 
