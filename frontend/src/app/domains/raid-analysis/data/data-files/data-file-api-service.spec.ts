@@ -78,12 +78,6 @@ describe('DataFileApiService reads', () => {
     expect(transport.reads).toEqual(['SubtletyRogue/ingest-state.json']);
   });
 
-  it('reads a rulebook at {spec}/rulebook.json', async () => {
-    const transport = new RecordingTransport(Results.ok({ spec: SPEC }));
-    await withTransport(transport).getRulebook(SPEC);
-    expect(transport.reads).toEqual(['SubtletyRogue/rulebook.json']);
-  });
-
   it('reads the spec manifest at index.json, folding a missing file to Results.ok([]) but propagating a transient error', async () => {
     const specs: SpecEntry[] = [{ spec: SPEC, encounter_count: 2 }];
     const present = new RecordingTransport(Results.ok(specs));
@@ -118,7 +112,6 @@ describe('DataFileApiService reads', () => {
       classLabel: 'Rogue',
       specLabel: 'Subtlety',
       classIcon: 'class_rogue',
-      specIcon: 'ability_stealth',
     }];
     const present = new RecordingTransport(Results.ok(metas));
     expect(await withTransport(present).getSpecMeta()).toEqual(Results.ok(metas));
@@ -165,6 +158,19 @@ describe('DataFileApiService writes and listing', () => {
     const files = await withTransport(transport).listBenchFiles(SPEC, BENCH);
     expect(files).toEqual(['3176.json', '3177.json']);
     expect(transport.lists).toEqual(['SubtletyRogue/burst']);
+  });
+
+  it('lists the files at a spec root that no step writes, keeping the index, the state and the bench directories', async () => {
+    const transport = new RecordingTransport(Results.ok(null), ['burst', 'encounters.json', 'ingest-state.json', 'stale.json', 'encounters.json.7.0.tmp']);
+    const stray = await withTransport(transport).listStraySpecFiles(SPEC);
+    expect(stray).toEqual(['stale.json', 'encounters.json.7.0.tmp']);
+    expect(transport.lists).toEqual(['SubtletyRogue']);
+  });
+
+  it('removes a file at {spec}/{file}', async () => {
+    const transport = new RecordingTransport();
+    await withTransport(transport).removeSpecFile(SPEC, 'stale.json');
+    expect(transport.removes).toEqual(['SubtletyRogue/stale.json']);
   });
 
   it('lists spec folders from the root, dropping any name with a dot so index.json is not a spec', async () => {

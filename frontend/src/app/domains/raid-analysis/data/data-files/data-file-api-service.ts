@@ -1,9 +1,13 @@
 import { Injectable, inject } from '@angular/core';
-import type { Rulebook } from '../rulebook/rulebook.models';
 import type { EncounterEntry, SpecEntry } from '../encounter/encounter.models';
 import { SpecMeta } from './spec-meta.models';
 import { DATA_FILE_TRANSPORT } from './data-file-transport';
 import { Result, Results } from '../../../shared/util-http/result';
+
+const ENCOUNTERS_FILE = 'encounters.json';
+const INGEST_STATE_FILE = 'ingest-state.json';
+/** The files written at a spec root; the bench directories beside them belong to the registry. */
+const SPEC_FILES = new Set([ENCOUNTERS_FILE, INGEST_STATE_FILE]);
 
 // A manifest with no file yet is the legitimate empty fresh-tier state; a real read failure must propagate so the UI surfaces it instead of a silently empty list.
 function foldMissingToEmpty<T>(result: Result<T[]>): Result<T[]> {
@@ -19,10 +23,6 @@ export class DataFileApiService {
     return this.io.readJson<T>(`${spec}/${bench}/${encounterId}.json`);
   }
 
-  getRulebook(spec: string): Promise<Result<Rulebook>> {
-    return this.io.readJson<Rulebook>(`${spec}/rulebook.json`);
-  }
-
   async getSpecs(): Promise<Result<SpecEntry[]>> {
     return foldMissingToEmpty(await this.io.readJson<SpecEntry[]>('index.json'));
   }
@@ -32,16 +32,16 @@ export class DataFileApiService {
   }
 
   async getEncounters(spec: string): Promise<Result<EncounterEntry[]>> {
-    return foldMissingToEmpty(await this.io.readJson<EncounterEntry[]>(`${spec}/encounters.json`));
+    return foldMissingToEmpty(await this.io.readJson<EncounterEntry[]>(`${spec}/${ENCOUNTERS_FILE}`));
   }
 
   // Typed `unknown` both ways: the shape belongs to the ingest layer, which core may not import.
   getIngestState(spec: string): Promise<Result<unknown>> {
-    return this.io.readJson<unknown>(`${spec}/ingest-state.json`);
+    return this.io.readJson<unknown>(`${spec}/${INGEST_STATE_FILE}`);
   }
 
   writeIngestState(spec: string, data: unknown): Promise<void> {
-    return this.io.writeJson(`${spec}/ingest-state.json`, data);
+    return this.io.writeJson(`${spec}/${INGEST_STATE_FILE}`, data);
   }
 
   writeBench(spec: string, encounterId: number, bench: string, data: unknown): Promise<void> {
@@ -49,7 +49,7 @@ export class DataFileApiService {
   }
 
   writeEncounters(spec: string, entries: EncounterEntry[]): Promise<void> {
-    return this.io.writeJson(`${spec}/encounters.json`, entries);
+    return this.io.writeJson(`${spec}/${ENCOUNTERS_FILE}`, entries);
   }
 
   writeSpecs(entries: SpecEntry[]): Promise<void> {
@@ -67,6 +67,15 @@ export class DataFileApiService {
 
   listBenchFiles(spec: string, bench: string): Promise<string[]> {
     return this.io.list(`${spec}/${bench}`);
+  }
+
+  // A name with a dot is a file; the rest are bench directories.
+  async listStraySpecFiles(spec: string): Promise<string[]> {
+    return (await this.io.list(spec)).filter(name => name.includes('.') && !SPEC_FILES.has(name));
+  }
+
+  removeSpecFile(spec: string, file: string): Promise<void> {
+    return this.io.remove(`${spec}/${file}`);
   }
 
   removeBench(spec: string, encounterId: number, bench: string): Promise<void> {

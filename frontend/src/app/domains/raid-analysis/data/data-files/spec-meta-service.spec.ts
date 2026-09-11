@@ -10,12 +10,12 @@ const specMeta = Object.create(SpecMetaService.prototype) as SpecMetaService;
 // The spec universe is hydrated at runtime from the WCL-derived spec-meta.json, so these tests seed fixed specs.
 const SUBTLETY = {
   spec: 'SubtletyRogue', className: 'Rogue', specName: 'Subtlety',
-  classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue', specIcon: 'ability_stealth',
+  classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue',
 };
 
 const FROST_MAGE = {
   spec: 'FrostMage', className: 'Mage', specName: 'Frost',
-  classLabel: 'Mage', specLabel: 'Frost', classIcon: 'class_mage', specIcon: 'spell_frost_frostbolt02',
+  classLabel: 'Mage', specLabel: 'Frost', classIcon: 'class_mage',
 };
 
 const UNIVERSE = specMeta.buildUniverse([SUBTLETY]);
@@ -107,8 +107,8 @@ describe('classIconUrl', () => {
 });
 
 describe('specIconUrl', () => {
-  it('builds a spec icon URL from the baked stem', () => {
-    expect(specMeta['specIconUrlOf'](UNIVERSE, 'SubtletyRogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/ability_stealth.jpg');
+  it('builds the spec icon URL from the class and spec slugs', () => {
+    expect(specMeta['specIconUrlOf'](UNIVERSE, 'SubtletyRogue')).toBe('https://assets.rpglogs.com/img/warcraft/icons/Rogue-Subtlety.jpg');
   });
 
   it('returns empty for an unknown spec', () => {

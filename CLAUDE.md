@@ -53,7 +53,7 @@ The detailed conventions live in the `warcraft-*` skills under `.claude/skills/`
 | Building or changing any code (finding, rule kind, feature, page, component) | **warcraft-change** |
 | Writing or changing any string a user sees | **warcraft-writing** |
 | Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
-| Generating or refreshing a spec's `rulebook.json` | **warcraft-rulebook** |
+| Touching the SimulationCraft reading (`data/simc`, `data/rulebook-build`), the APL vocabulary inventory, or closing a vocabulary gap issue | **warcraft-simc** |
 | Reviewing code, a diff, or a PR | **warcraft-change** (the verification section applies) |
 
 On any conflict between a skill and this file, **this file wins**.

@@ -124,20 +124,7 @@ export class IngestOrchestratorService {
   }
 
   private async resolveSpecMetas(): Promise<SpecMeta[]> {
-    // The spec icon is not on WCL, so the published rulebook's stem supplies it.
     const metas = await this.currentRaids.discoverSpecMetas(this.wclApi);
-    for (const meta of metas) {
-      const rulebook = await this.dataFile.getRulebook(meta.spec);
-      if (rulebook.ok) {
-        meta.specIcon = rulebook.value.spec_icon;
-      } else {
-        // Only a corrupt file (permanent) is worth logging; a missing rulebook is a spec with no published icon.
-        if (rulebook.error.kind === 'permanent') {
-          this.logger.logWarn(`ingest ${meta.spec}: corrupt rulebook.json, shipping blank spec icon`, rulebook.error);
-        }
-        meta.specIcon = '';
-      }
-    }
     this.specMeta.hydrate(metas);
     await this.dataFile.writeSpecMeta(metas);
     console.log(`Resolved ${metas.length} specs from WCL`);
@@ -189,9 +176,15 @@ export class IngestOrchestratorService {
   /** Every run, so samples ingested for a spec that is not selected again still surface in its index. */
   private async refreshIndices(encounters: IngestEncounter[]): Promise<void> {
     for (const spec of await this.dataFile.listSpecs()) {
+      await this.pruneStrayFiles(spec);
       await this.rebuildEncountersIndex(spec, encounters);
     }
     await this.rebuildSpecIndex();
+  }
+
+  /** The publish mirrors this tree, so a file no step writes would otherwise be carried forward forever. */
+  private async pruneStrayFiles(spec: string): Promise<void> {
+    for (const file of await this.dataFile.listStraySpecFiles(spec)) await this.dataFile.removeSpecFile(spec, file);
   }
 
   private async ingestEachSpec(

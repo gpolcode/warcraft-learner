@@ -5,6 +5,7 @@ import type { SpecMeta } from './spec-meta.models';
 export type { SpecMeta };
 
 const ZAM = 'https://wow.zamimg.com/images/wow/icons/small';
+const WCL_ICONS = 'https://assets.rpglogs.com/img/warcraft/icons';
 
 export interface SpecUniverse {
   metas: Record<string, SpecMeta>;
@@ -88,8 +89,9 @@ export class SpecMetaService {
     return universe.classIcons.has(stem) ? `${ZAM}/${stem}.jpg` : '';
   }
 
+  // WCL's asset host keys spec art by the class and spec slugs the rankings query already carries; its API has no icon field.
   protected specIconUrlOf(universe: SpecUniverse, spec: string): string {
     const meta = universe.metas[spec];
-    return meta?.specIcon ? `${ZAM}/${meta.specIcon}.jpg` : '';
+    return meta ? `${WCL_ICONS}/${meta.className}-${meta.specName}.jpg` : '';
   }
 }

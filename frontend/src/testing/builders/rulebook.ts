@@ -5,14 +5,12 @@ type DefensiveSeed = Pick<RulebookDefensive, 'name' | 'spell_id' | 'cooldown'> &
 
 export function rulebook(partial: {
   spec?: string;
-  spec_icon?: string;
   cooldowns?: CooldownSeed[];
   defensives?: DefensiveSeed[];
   rules?: RulebookRule[];
 } = {}): Rulebook {
   return {
     spec: partial.spec ?? 'TestSpec',
-    spec_icon: partial.spec_icon ?? 'ability_stealth',
     major_cooldowns: partial.cooldowns ?? [],
     defensives: (partial.defensives ?? []).map((d) => ({ duration: 5, ...d })),
     rules: partial.rules ?? [],

@@ -15,7 +15,7 @@ const WAITING: EncounterEntry = { id: 3146, name: 'Boss C', sample_count: 0 };
 
 const SUBTLETY: SpecMeta = {
   spec: SPEC, className: ROGUE, specName: 'Subtlety',
-  classLabel: ROGUE, specLabel: 'Subtlety', classIcon: 'class_rogue', specIcon: 'ability_stealth',
+  classLabel: ROGUE, specLabel: 'Subtlety', classIcon: 'class_rogue',
 };
 
 const ROGUE_CLASS = { className: ROGUE, classLabel: ROGUE, classIcon: 'class_rogue' };

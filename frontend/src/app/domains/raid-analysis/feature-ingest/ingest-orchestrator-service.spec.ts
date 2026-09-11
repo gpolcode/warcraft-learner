@@ -165,9 +165,9 @@ function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string, over: 
 const published = (): PublishedRunSummary | undefined => (globalThis as { __INGEST_DONE__?: PublishedRunSummary }).__INGEST_DONE__;
 
 describe('IngestOrchestratorService.run', () => {
-  const RULEBOOK_ONLY = { [`${SPEC}/rulebook.json`]: { spec_icon: 'ability_rogue_shadowdance' } };
+  const SPEC_ON_DISK = { [`${SPEC}/encounters.json`]: [] };
   const RETIRED_ON_DISK = {
-    ...RULEBOOK_ONLY,
+    ...SPEC_ON_DISK,
     [benchPath(RETIRED_BOSS.id)]: {
       encounter_id: RETIRED_BOSS.id, encounter_name: RETIRED_BOSS.name,
       sample_count: STORED_SAMPLES, ingest_version: INGEST_VERSION,
@@ -222,7 +222,7 @@ describe('IngestOrchestratorService.run', () => {
 
   it('leaves a benched encounter untouched when its stored signature covers the current top parses and sources', async () => {
     const stored = storedBench(signatureOf(RANKED));
-    const disk = fakeDisk({ ...RULEBOOK_ONLY, [benchPath(CURRENT_BOSS.id)]: stored });
+    const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: stored });
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 
@@ -230,7 +230,7 @@ describe('IngestOrchestratorService.run', () => {
   });
 
   it('re-benches that encounter once one of the top parses changes', async () => {
-    const disk = fakeDisk({ ...RULEBOOK_ONLY, [benchPath(CURRENT_BOSS.id)]: storedBench(signatureOf(RANKED)) });
+    const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: storedBench(signatureOf(RANKED)) });
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RERANKED }), RAID);
 
@@ -240,7 +240,7 @@ describe('IngestOrchestratorService.run', () => {
   });
 
   it('re-benches that encounter once the SimulationCraft profile it was built from changes', async () => {
-    const disk = fakeDisk({ ...RULEBOOK_ONLY, [benchPath(CURRENT_BOSS.id)]: storedBench(signatureOf(RANKED, OLDER_PROFILE)) });
+    const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: storedBench(signatureOf(RANKED, OLDER_PROFILE)) });
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 
@@ -249,10 +249,20 @@ describe('IngestOrchestratorService.run', () => {
     });
   });
 
+  it('removes a file at the spec root that no step writes and keeps the index and state files', async () => {
+    const disk = fakeDisk({ ...SPEC_ON_DISK, [`${SPEC}/stale.json`]: {} });
+
+    await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
+
+    expect(disk.files.has(`${SPEC}/stale.json`)).toBe(false);
+    expect(disk.files.has(`${SPEC}/encounters.json`)).toBe(true);
+    expect(disk.files.has(`${SPEC}/ingest-state.json`)).toBe(true);
+  });
+
   it('hands every bench the rulebook derived for the encounter', async () => {
     const received: (Rulebook | null)[] = [];
 
-    await ingest(fakeDisk(RULEBOOK_ONLY), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { onBench: entry => received.push(entry) });
+    await ingest(fakeDisk(SPEC_ON_DISK), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { onBench: entry => received.push(entry) });
 
     expect(received).toHaveLength(TRANSFORMS.length);
     expect(received.every(entry => entry === DERIVED)).toBe(true);
@@ -260,7 +270,7 @@ describe('IngestOrchestratorService.run', () => {
 
   it('benches a spec SimulationCraft ships no profile for with no rulebook, stamped on the version alone', async () => {
     const received: (Rulebook | null)[] = [];
-    const disk = fakeDisk(RULEBOOK_ONLY);
+    const disk = fakeDisk(SPEC_ON_DISK);
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID,
       { profile: Results.missing('no profile'), onBench: entry => received.push(entry) });
@@ -270,7 +280,7 @@ describe('IngestOrchestratorService.run', () => {
   });
 
   it('reports the tokens outside the vocabulary inventory over every profile the tier ships', async () => {
-    await ingest(fakeDisk(RULEBOOK_ONLY), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { profile: Results.ok(PROFILE_WITH_GAP) });
+    await ingest(fakeDisk(SPEC_ON_DISK), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { profile: Results.ok(PROFILE_WITH_GAP) });
 
     expect(published()?.vocabularyGaps).toEqual([{ kind: 'expression', token: UNKNOWN_SHAPE, specs: [SPEC] }]);
     expect(published()?.gapWarnings).toEqual([`Expression "${UNKNOWN_SHAPE}" is outside the APL vocabulary inventory (${SPEC})`]);
@@ -278,14 +288,14 @@ describe('IngestOrchestratorService.run', () => {
   });
 
   it('renders no gap report for a tier the inventory covers', async () => {
-    await ingest(fakeDisk(RULEBOOK_ONLY), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
+    await ingest(fakeDisk(SPEC_ON_DISK), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 
     expect(published()?.vocabularyGaps).toEqual([]);
     expect(published()?.gapReport).toBeNull();
   });
 
   it('stops before any WCL work when SIMC_TIER is unset', async () => {
-    const disk = fakeDisk(RULEBOOK_ONLY);
+    const disk = fakeDisk(SPEC_ON_DISK);
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { simcTier: null });
 
@@ -294,7 +304,7 @@ describe('IngestOrchestratorService.run', () => {
   });
 
   it('lists an encounter with no Mythic parses yet in the index, at zero samples', async () => {
-    const disk = fakeDisk(RULEBOOK_ONLY);
+    const disk = fakeDisk(SPEC_ON_DISK);
 
     await ingest(disk, fakeWcl([CURRENT_BOSS, NEW_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 

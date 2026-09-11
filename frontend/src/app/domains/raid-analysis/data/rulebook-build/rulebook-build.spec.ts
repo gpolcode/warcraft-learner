@@ -8,7 +8,7 @@ const builder = TestBed.inject(RulebookBuildService);
 
 const SPEC: SpecMeta = {
   spec: 'SubtletyRogue', className: 'Rogue', specName: 'Subtlety', classLabel: 'Rogue', specLabel: 'Subtlety',
-  classIcon: 'class_rogue', specIcon: 'ability_stealth',
+  classIcon: 'class_rogue',
 };
 const TIER = { branch: 'midnight', dir: 'MID2' };
 const UNSEEN_BLADE_ENTRY = 125_700;
@@ -59,9 +59,8 @@ function build(over: Partial<RulebookBuildInputs> = {}) {
 describe('RulebookBuildService.build', () => {
   const { rulebook, report } = build();
 
-  it('carries the spec key and icon and lists the cooldowns in APL order with their full gate', () => {
+  it('carries the spec key and lists the cooldowns in APL order with their full gate', () => {
     expect(rulebook.spec).toBe(SPEC.spec);
-    expect(rulebook.spec_icon).toBe(SPEC.specIcon);
     expect(rulebook.major_cooldowns.map(cooldown => cooldown.spell_id)).toEqual([SHADOW_BLADES, SHADOW_DANCE, VANISH]);
     expect(rulebook.major_cooldowns[1]?.apl_condition).toBe('cooldown.shadow_blades.remains>=35');
     expect(rulebook.major_cooldowns[1]?.cooldown).toBe(20);

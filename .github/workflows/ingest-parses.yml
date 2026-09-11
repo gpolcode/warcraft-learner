@@ -79,17 +79,8 @@ jobs:
           remote_specs=$( { git ls-tree -d --name-only "origin/gh-pages:data/specs" 2>/dev/null || true; } | wc -l | tr -d ' ')
           echo "Working tree has $local_specs spec dir(s); gh-pages has $remote_specs."
           if [ "$remote_specs" -gt 0 ] && [ "$local_specs" -eq 0 ]; then
-            echo "::error::Refusing to publish: the working tree has no spec data while gh-pages has $remote_specs spec dir(s). A clean:true publish would wipe the published data and rulebooks."
+            echo "::error::Refusing to publish: the working tree has no spec data while gh-pages has $remote_specs spec dir(s). A clean:true publish would wipe the published data."
             exit 1
-          fi
-
-      # Ingestion never writes a rulebook, so the published copy wins; runs after the guard it would defeat by making dirs.
-      - name: Refresh rulebooks from gh-pages before publishing
-        run: |
-          set -euo pipefail
-          git fetch origin gh-pages || true
-          if git ls-tree "origin/gh-pages:data/specs" >/dev/null 2>&1; then
-            git archive origin/gh-pages 'data/specs/*/rulebook.json' | tar -x -C frontend/public
           fi
 
       # clean:true is scoped to target-folder, so it replaces data/specs/ only and never touches main/ or pr-* previews.
