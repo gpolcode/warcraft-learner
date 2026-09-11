@@ -12,7 +12,7 @@ beforeAll(() => {
     providers: [{ provide: DataFileApiService, useValue: { getSpecMeta: () => new Promise(() => undefined) } }],
   });
   TestBed.inject(SpecMetaService).hydrate([
-    { spec: 'SubtletyRogue', className: 'Rogue', specName: 'Subtlety', classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue', specIcon: 'ability_stealth' },
+    { spec: 'SubtletyRogue', className: 'Rogue', specName: 'Subtlety', classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue' },
   ]);
   pipe = TestBed.runInInjectionContext(() => new ClassIconPipe());
 });

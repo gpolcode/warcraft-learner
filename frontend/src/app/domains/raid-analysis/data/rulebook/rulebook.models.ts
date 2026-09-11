@@ -5,6 +5,8 @@ export interface RulebookCooldown {
   opener_priority?: number;
   usage_rule?: string;
   talent_gated?: boolean;
+  /** The resolved SimulationCraft gate of every line that presses it, kept whole where usage_rule keeps only what fits a card. */
+  apl_condition?: string;
 }
 
 export interface RulebookDefensive {
@@ -141,7 +143,7 @@ export interface FillerBelowHealthCondition {
   except_buff_spell_names?: string[];
 }
 
-/** Spell ids drive every check; a `*_names` field the engine never renders is there for the rulebook generator's offline id/name cross-check. */
+/** Spell ids drive every check; the `*_name` fields carry the words a finding prints, so no kind looks a spell up. */
 export type RuleCondition =
   | CastWithoutPriorCondition
   | HoldCooldownForAnchorCondition
@@ -165,12 +167,14 @@ export interface RulebookRule {
   description: string;
   condition?: RuleCondition;
   action: string;
+  /** Trait node entry ids the player must have taken for the rule to apply; absent means every build. */
+  requires_talents?: number[];
+  /** Trait node entry ids that make the rule not apply. */
+  excludes_talents?: number[];
 }
 
 export interface Rulebook {
   spec: string;
-  /** Required. zamimg spec-icon file stem, e.g. 'ability_stealth'; read from the guide, used for dropdown art. */
-  spec_icon: string;
   major_cooldowns: RulebookCooldown[];
   defensives: RulebookDefensive[];
   rules: RulebookRule[];

@@ -29,7 +29,7 @@ const ASSASSINATION_ROGUE = 'AssassinationRogue';
 export const FROST_MAGE = 'FrostMage';
 
 const meta = (spec: string, className: string, specLabel: string): SpecMeta => ({
-  spec, className, specName: specLabel, classLabel: className, specLabel, classIcon: 'icon', specIcon: 'icon',
+  spec, className, specName: specLabel, classLabel: className, specLabel, classIcon: 'icon',
 });
 
 // Two Rogue specs so a spec change is reachable without also changing class.

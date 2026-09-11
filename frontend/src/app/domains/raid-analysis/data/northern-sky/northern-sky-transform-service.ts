@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { NorthernSkyPhaseDataService } from '../http/northern-sky-phase-data-service';
-import { DataFileApiService } from '../data-files/data-file-api-service';
 import { TopParseSelection } from '../wcl/wcl.models';
 import { Rulebook } from '../rulebook/rulebook.models';
 import { Result } from '../../../shared/util-http/result';
@@ -26,20 +25,19 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
   private readonly phaseData = inject(NorthernSkyPhaseDataService);
-  private readonly dataFiles = inject(DataFileApiService);
 
-  async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<NorthernSkyBench>> {
+  async getBench(spec: string, encounterId: number, selection?: TopParseSelection, rulebook?: Rulebook | null): Promise<Result<NorthernSkyBench>> {
     const phases = await this.phaseData.getPhases();
     // Baking empty phases over a failed read would stamp the bench complete and freeze the export pull-relative until the top parses change.
     if (!phases.ok && phases.error.kind !== 'missing') return phases;
-    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
+    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection, rulebook }, {
       logSource: 'NorthernSkyTransformService',
       errorId: 'northern-sky.bench',
       candidatePoolCount: CANDIDATE_POOL_COUNT,
       sampleTarget: EXPORTED_PARSE_COUNT,
       noRankingsMessage: NO_EXPORT_MESSAGE,
       header: 'identity',
-      rulebook: { dataFiles: this.dataFiles, plan: rulebook => this.exportAbilities(rulebook), missingMessage: NO_EXPORT_MESSAGE },
+      rulebook: { plan: rulebook => (rulebook ? this.exportAbilities(rulebook) : null), missingMessage: NO_EXPORT_MESSAGE },
       parse: (parse, abilities) => this.parseCastTimes(parse, abilities),
       bench: async ({ parses }) => {
         const built = parses[0] ?? [];

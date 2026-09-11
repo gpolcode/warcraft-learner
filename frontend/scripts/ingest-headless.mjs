@@ -1,6 +1,7 @@
 // All ingestion logic lives in the Angular app; this file must never grow any.
 import { spawn } from 'child_process';
 import { once } from 'events';
+import { appendFileSync, writeFileSync } from 'fs';
 import { chromium } from 'playwright';
 
 const APP_URL = 'http://localhost:4200';
@@ -80,12 +81,21 @@ function appConsoleLine(message) {
 }
 
 async function launchBrowser() {
+  // A runner whose Playwright and browser versions differ names its Chromium explicitly instead of downloading one.
+  const executablePath = process.env.CHROMIUM_PATH;
+  if (executablePath) return await chromium.launch({ executablePath });
   try {
     return await chromium.launch();
   } catch {
     console.log('[harness] no Playwright-managed Chromium; falling back to the system Chrome channel');
     return await chromium.launch({ channel: 'chrome' });
   }
+}
+
+// The app renders the gap report; the workflow names the files that carry it to the run summary and the issue step.
+function relayGapReport(report) {
+  if (process.env.APL_GAPS_FILE) writeFileSync(process.env.APL_GAPS_FILE, report);
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## APL vocabulary gaps\n\n${report}\n`);
 }
 
 async function main() {
@@ -105,6 +115,7 @@ async function main() {
   const params = new URLSearchParams();
   if (process.env.CURRENT_RAIDS) params.set('currentRaids', process.env.CURRENT_RAIDS);
   if (process.env.PRIORITY_SPECS) params.set('prioritySpecs', process.env.PRIORITY_SPECS);
+  if (process.env.SIMC_TIER) params.set('simcTier', process.env.SIMC_TIER);
   await page.goto(params.size ? `${APP_URL}?${params}` : APP_URL);
 
   // Bound the wait so a bootstrap failure fails fast instead of hanging the job and stalling the shared gh-pages group.
@@ -124,6 +135,8 @@ async function main() {
   if (summary.failed.length) {
     console.error(`[harness] failed specs: ${summary.failed.map(entry => entry.spec).join(', ')}`);
   }
+  for (const warning of summary.gapWarnings) console.log(`::warning title=APL vocabulary::${warning}`);
+  if (summary.gapReport) relayGapReport(summary.gapReport);
   // Partial per-spec failure is deliberately tolerated; only an all-failed run is a broken build.
   const allSpecsFailed = summary.failed.length > 0 && summary.succeeded.length === 0;
   await shutdown(allSpecsFailed ? 1 : 0);

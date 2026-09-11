@@ -17,7 +17,7 @@ export const environmentProviders: (Provider | EnvironmentProviders)[] = [
   { provide: DATA_FILE_TRANSPORT, useExisting: IngestHttpDataFileTransport },
   { provide: RETRY_MAX_ATTEMPTS, useValue: INGEST_RETRY_MAX_ATTEMPTS },
   provideAppInitializer(() => {
-    // Not awaited: the app shell must render while ingestion runs; run() owns its failures.
+    // Not awaited: the app shell must render while the run proceeds; run() owns its failures.
     void inject(IngestOrchestratorService).run();
   }),
 ];

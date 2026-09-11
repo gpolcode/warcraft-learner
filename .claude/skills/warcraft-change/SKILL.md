@@ -7,7 +7,7 @@ description: warcraft-learner change contract - what a code change must deliver,
 
 **What good looks like:** a change is playable end to end - the analysis computes it, ingestion bakes it, the page renders it, the copy coaches it, and a spec pins it. Testing is not a phase; it is part of the deliverable.
 
-Layer access, the two HTTP chokepoints, method shape, styling syntax, and file naming are eslint-enforced (`frontend/eslint.config.js`); this skill holds only what no tool checks. Two sibling skills govern parts of a change: **warcraft-writing** for every string a user sees, **warcraft-wcl-data** before reading a new event stream or gear/talent/position field.
+Layer access, the two HTTP chokepoints, method shape, styling syntax, and file naming are eslint-enforced (`frontend/eslint.config.js`); this skill holds only what no tool checks. Three sibling skills govern parts of a change: **warcraft-writing** for every string a user sees, **warcraft-wcl-data** before reading a new event stream or gear/talent/position field, **warcraft-simc** before touching the SimulationCraft reading, the vocabulary inventory or the rulebook derivation.
 
 ## Change kinds
 
@@ -17,7 +17,7 @@ Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences
 
 ### New rule-engine kind
 
-Deliver: the kind's class in `data/rotation/rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`data/rotation/rotation-rules/rule-kinds.ts`), declared in the rulebook schema (`.claude/skills/warcraft-rulebook/rulebook.schema.json`), a row in the agent's kind table (`.claude/agents/rulebook-author.md`), per-instance `occurrences` on the finding, boundary-paired specs. Bump `INGEST_VERSION`.
+Deliver: the kind's class in `data/rotation/rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`data/rotation/rotation-rules/rule-kinds.ts`), its condition in the `RuleCondition` union (`data/rulebook/rulebook.models.ts`), the derivation that emits it in `data/rulebook-build/` (a line-gated literal in `rule-derivation-service.ts`, a state read off the parses in `rule-state-derivation-service.ts`) with its card copy in `rulebook-copy-service.ts`, the inventory rows it consumes moved to `rule` naming the kind (`data/simc/apl-vocabulary.ts`, see warcraft-simc), per-instance `occurrences` on the finding, boundary-paired specs. Bump `RULEBOOK_BUILDER_VERSION`.
 
 ### New feature
 
@@ -29,7 +29,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 
 ## Ingest version
 
-`INGEST_VERSION` (`data/ingest/ingest-version.ts`) bumps exactly when what ingestion bakes changes: a feature's `*Bench` interface in its `data/<feature>/*-data-source.ts`, measured values, or a republished rulebook.
+`INGEST_VERSION` (`data/ingest/ingest-version.ts`) bumps exactly when what ingestion bakes from the same rulebook changes: a feature's `*Bench` interface in its `data/<feature>/*-data-source.ts` or measured values. A change to what the same SimulationCraft sources derive bumps `RULEBOOK_BUILDER_VERSION` instead (warcraft-simc); it sits in the encounter stamp, so the benches rebuild without a bench-shape bump.
 
 ## Architecture roles
 
@@ -77,6 +77,6 @@ npm test
 npm run build
 ```
 
-Then check what no tool does: every new behavior has a spec at the lowest altitude, every "triggers" case has its boundary partner, `INGEST_VERSION` bumped exactly per the ingest-version rule, every finding populates `occurrences`.
+Then check what no tool does: every new behavior has a spec at the lowest altitude, every "triggers" case has its boundary partner, `INGEST_VERSION` or `RULEBOOK_BUILDER_VERSION` bumped exactly per the ingest-version rule, every finding populates `occurrences`.
 
 E2e runs in the PR's E2E workflow and spends one WCL analysis per run - read the check there; never run `npm run e2e` locally.
