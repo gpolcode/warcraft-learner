@@ -3,15 +3,13 @@ import { TestBed } from '@angular/core/testing';
 import { AbilityIndexService } from './ability-index-service';
 import { builder, finisher, parseSample, selfAura, spellRecord } from '../../../../../testing/builders/simc';
 import { applyBuff, buffWindow, cast } from '../../../../../testing/builders/events';
-import { BACKSTAB, EVISCERATE, SHADOW_DANCE, SHADOW_DANCE_AURA, SHADOW_BLADES, VANISH } from '../../../../../testing/spell-ids';
+import { BACKSTAB, DISPATCH, EVISCERATE, SHADOW_DANCE, SHADOW_DANCE_AURA, SHADOW_DANCE_ENERGIZE, SHADOW_BLADES, VANISH } from '../../../../../testing/spell-ids';
 import type { ParseSample } from './rulebook-build.models';
 
 const abilities = TestBed.inject(AbilityIndexService);
 
 const CLASS = 'Rogue';
 const SPEC = 'Subtlety';
-const OTHER_SPEC_ID = 2098;
-const CLASS_WIDE_TWIN = 394029;
 const MAJOR_FLOOR_S = 20;
 const FILLER_CEILING_S = 10;
 const FIGHT_S = 100;
@@ -21,10 +19,10 @@ const VANISH_CD_S = 120;
 const KIT = [
   builder(BACKSTAB, 'Backstab', { className: CLASS }),
   finisher(EVISCERATE, 'Eviscerate', { className: `${SPEC} ${CLASS}` }),
-  spellRecord({ id: OTHER_SPEC_ID, name: 'Dispatch', className: `Outlaw ${CLASS}`, resources: [{ powerType: 3, amount: 35 }] }),
-  spellRecord({ id: SHADOW_DANCE, name: 'Shadow Dance', className: `${SPEC} ${CLASS}`, cooldownS: 6, charges: { count: 1, rechargeS: MAJOR_FLOOR_S }, durationS: 6, effects: [selfAura()] }),
+  spellRecord({ id: DISPATCH, name: 'Dispatch', className: `Outlaw ${CLASS}`, resources: [{ powerType: 3, amount: 35 }] }),
+  spellRecord({ id: SHADOW_DANCE, name: 'Shadow Dance', className: `${SPEC} ${CLASS}`, cooldownS: 6, rechargeS: MAJOR_FLOOR_S, durationS: 6, effects: [selfAura()] }),
   spellRecord({ id: SHADOW_DANCE_AURA, name: 'Shadow Dance', className: CLASS, durationS: 6, effects: [selfAura()] }),
-  spellRecord({ id: CLASS_WIDE_TWIN, name: 'Shadow Dance', className: CLASS, effects: [{ type: 'Energize Power', subtype: null, target: 'self', baseValue: 4, triggerSpellId: null, periodic: false }] }),
+  spellRecord({ id: SHADOW_DANCE_ENERGIZE, name: 'Shadow Dance', className: CLASS, effects: [{ type: 'Energize Power', subtype: null, target: 'self', baseValue: 4, }] }),
   spellRecord({ id: SHADOW_BLADES, name: 'Shadow Blades', className: `${SPEC} ${CLASS}`, cooldownS: 90, durationS: 20, effects: [selfAura()] }),
   spellRecord({ id: VANISH, name: 'Vanish', className: CLASS, cooldownS: VANISH_CD_S }),
 ];
@@ -35,10 +33,10 @@ function index(samples: ParseSample[] = []) {
 
 describe('AbilityIndexService.build', () => {
   it('keeps class-wide and own-spec records and drops another spec\'s', () => {
-    const built = index();
-    expect(built.byId.has(BACKSTAB)).toBe(true);
-    expect(built.byId.has(EVISCERATE)).toBe(true);
-    expect(built.byId.has(OTHER_SPEC_ID)).toBe(false);
+    const ids = (token: string): number[] | undefined => index().byToken.get(token)?.map(record => record.id);
+    expect(ids('backstab')).toEqual([BACKSTAB]);
+    expect(ids('eviscerate')).toEqual([EVISCERATE]);
+    expect(ids('dispatch')).toBeUndefined();
   });
 });
 
@@ -48,10 +46,10 @@ describe('AbilityIndexService.cast', () => {
   });
 
   it('prefers the record the sampled parses cast', () => {
-    const sample = parseSample({ casts: [cast(CLASS_WIDE_TWIN, 5)] });
-    const twinAsCast = KIT.map(record => (record.id === CLASS_WIDE_TWIN ? { ...record, cooldownS: 1 } : record));
+    const sample = parseSample({ casts: [cast(SHADOW_DANCE_ENERGIZE, 5)] });
+    const twinAsCast = KIT.map(record => (record.id === SHADOW_DANCE_ENERGIZE ? { ...record, cooldownS: 1 } : record));
     const built = abilities.build(twinAsCast, [sample], CLASS, SPEC);
-    expect(abilities.cast(built, 'shadow_dance')?.id).toBe(CLASS_WIDE_TWIN);
+    expect(abilities.cast(built, 'shadow_dance')?.id).toBe(SHADOW_DANCE_ENERGIZE);
   });
 
   it('returns null for a token the dump does not carry', () => {
@@ -72,8 +70,8 @@ describe('AbilityIndexService.aura', () => {
 
 describe('AbilityIndexService.isMajorCooldown', () => {
   it('counts a charge recharge at the floor and not one just under it', () => {
-    const atFloor = spellRecord({ id: 1, name: 'A', gcd: false, charges: { count: 1, rechargeS: MAJOR_FLOOR_S } });
-    const under = spellRecord({ id: 2, name: 'B', gcd: false, charges: { count: 1, rechargeS: MAJOR_FLOOR_S - 1 } });
+    const atFloor = spellRecord({ id: 1, name: 'A', gcd: false, rechargeS: MAJOR_FLOOR_S });
+    const under = spellRecord({ id: 2, name: 'B', gcd: false, rechargeS: MAJOR_FLOOR_S - 1 });
     expect(abilities.isMajorCooldown(atFloor)).toBe(true);
     expect(abilities.isMajorCooldown(under)).toBe(false);
   });
@@ -96,7 +94,7 @@ describe('AbilityIndexService.sameRole', () => {
 
 describe('AbilityIndexService.observe', () => {
   const first = parseSample({ casts: [cast(VANISH, 3), cast(VANISH, 80)], buffs: [applyBuff(SHADOW_BLADES, 1), ...buffWindow(SHADOW_DANCE_AURA, 0, 50)], fightDurationS: FIGHT_S });
-  const second = parseSample({ reportCode: 'def', casts: [cast(VANISH, 7)], buffs: buffWindow(SHADOW_DANCE_AURA, 0, 100), fightDurationS: FIGHT_S });
+  const second = parseSample({ casts: [cast(VANISH, 7)], buffs: buffWindow(SHADOW_DANCE_AURA, 0, 100), fightDurationS: FIGHT_S });
   const observation = abilities.observe([first, second]);
 
   it('counts the samples an id was cast in, its casts per sample, and each first cast', () => {
@@ -116,10 +114,10 @@ describe('AbilityIndexService.usageShare', () => {
   it('is a full share without samples and the median share of possible casts with them', () => {
     const built = index([
       parseSample({ casts: [cast(VANISH, 3)], fightDurationS: FIGHT_S }),
-      parseSample({ reportCode: 'def', casts: [], fightDurationS: FIGHT_S }),
-      parseSample({ reportCode: 'ghi', casts: [cast(VANISH, 3)], fightDurationS: FIGHT_S }),
+      parseSample({ casts: [], fightDurationS: FIGHT_S }),
+      parseSample({ casts: [cast(VANISH, 3)], fightDurationS: FIGHT_S }),
     ]);
-    const vanish = built.byId.get(VANISH);
+    const vanish = KIT.find(record => record.id === VANISH);
     expect(vanish && abilities.usageShare(index(), vanish)).toBe(1);
     // Shares 1, 0, 1 across the three samples, median 1; a fight shorter than the cooldown counts one possible cast.
     expect(vanish && abilities.usageShare(built, vanish)).toBe(1);

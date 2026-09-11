@@ -332,14 +332,4 @@ export class SimcExpressionService {
     }
     return terms;
   }
-
-  /** Every reference in the tree, for the report of names the builder could not place. */
-  references(expr: AplExpr): string[][] {
-    switch (expr.kind) {
-      case 'ref': return [[...expr.path]];
-      case 'not': case 'neg': case 'abs': case 'call': return this.references(expr.arg);
-      case 'bin': return [...this.references(expr.left), ...this.references(expr.right)];
-      case 'num': case 'unknown': return [];
-    }
-  }
 }

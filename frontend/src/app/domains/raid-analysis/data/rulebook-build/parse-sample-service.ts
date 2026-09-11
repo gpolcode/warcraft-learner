@@ -12,10 +12,10 @@ export class ParseSampleService {
   private readonly logger = inject(LoggerService);
 
   /** The rankings in order, each as the player's own cast, buff and, when asked for, enemy aura streams, up to the benches' own parse count. */
-  async sample(wclApi: WclApiService, rankings: ParseRanking[], encounterId: number, enemyAuras: boolean): Promise<ParseSample[]> {
+  async sample(wclApi: WclApiService, rankings: ParseRanking[], enemyAuras: boolean): Promise<ParseSample[]> {
     const samples: ParseSample[] = [];
     for (const ranking of rankings) {
-      const sample = await this.sampleOne(wclApi, ranking, encounterId, enemyAuras);
+      const sample = await this.sampleOne(wclApi, ranking, enemyAuras);
       if (sample) samples.push(sample);
       if (samples.length >= TOP_PARSE_COUNT) break;
     }
@@ -23,7 +23,7 @@ export class ParseSampleService {
   }
 
   // An unfetchable or unbindable parse drops out; the next ranking backfills it.
-  private async sampleOne(wclApi: WclApiService, ranking: ParseRanking, encounterId: number, enemyAuras: boolean): Promise<ParseSample | null> {
+  private async sampleOne(wclApi: WclApiService, ranking: ParseRanking, enemyAuras: boolean): Promise<ParseSample | null> {
     try {
       const report = await wclApi.getReport(ranking.report_code);
       const fight = report.fights.find(entry => entry.id === ranking.fight_id);
@@ -38,7 +38,6 @@ export class ParseSampleService {
           .filter(event => event.sourceID === player.id), fight.startTime);
       const [casts, buffs, debuffs] = await Promise.all([stream('Casts'), stream('Buffs'), enemyAuras ? enemyStream() : []]);
       return {
-        reportCode: ranking.report_code, fightId: fight.id, encounterId,
         fightDurationS: this.projections.relativeS(fight.endTime, fight.startTime),
         casts: casts.filter(event => event.type === 'cast'), buffs, debuffs,
       };

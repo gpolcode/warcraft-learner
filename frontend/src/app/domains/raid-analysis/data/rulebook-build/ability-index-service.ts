@@ -23,7 +23,7 @@ export class AbilityIndexService {
     const owned = records.filter(record => this.owned(record, classLabel, specLabel));
     const byToken = new Map<string, SpellRecord[]>();
     for (const record of owned) getOrInsert(byToken, this.dump.token(record.name), () => []).push(record);
-    return { classLabel, specLabel, byToken, byId: new Map(owned.map(record => [record.id, record])), observation: this.observe(samples) };
+    return { classLabel, specLabel, byToken, observation: this.observe(samples) };
   }
 
   /** Another spec's spells share the class dump; they are dropped so a same-named ability cannot resolve to the wrong spec's id. */
@@ -104,7 +104,7 @@ export class AbilityIndexService {
   /** A record the player can press, as opposed to the aura, the passive or the hidden twin sharing its name. */
   castable(record: SpellRecord): boolean {
     if (record.passive || record.hidden) return false;
-    return record.resources.length > 0 || record.cooldownS !== null || record.charges !== null || record.gcd || record.castTimeS !== null;
+    return record.resources.length > 0 || record.cooldownS !== null || record.rechargeS !== null || record.gcd || record.castTimeS !== null;
   }
 
   private auraLike(record: SpellRecord): boolean {
@@ -112,7 +112,7 @@ export class AbilityIndexService {
   }
 
   effectiveCooldownS(record: SpellRecord): number | null {
-    const recharge = record.charges?.rechargeS ?? null;
+    const recharge = record.rechargeS;
     if (recharge !== null && (record.cooldownS === null || recharge > record.cooldownS)) return recharge;
     return record.cooldownS;
   }

@@ -173,15 +173,6 @@ export interface RulebookRule {
   excludes_talents?: number[];
 }
 
-/** Where a generated rulebook came from, so a later run can tell whether its sources or its generator moved. */
-interface RulebookSource {
-  builder_version: number;
-  simc_tier: string;
-  profile_sha256: string;
-  spell_data_sha256: string;
-  built_at_s: number;
-}
-
 export interface Rulebook {
   spec: string;
   /** Required. zamimg spec-icon file stem, e.g. 'ability_stealth'; read from the guide, used for dropdown art. */
@@ -189,5 +180,4 @@ export interface Rulebook {
   major_cooldowns: RulebookCooldown[];
   defensives: RulebookDefensive[];
   rules: RulebookRule[];
-  source?: RulebookSource;
 }

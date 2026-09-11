@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { RulebookBuildService, RULEBOOK_BUILDER_VERSION, type RulebookBuildInputs } from './rulebook-build-service';
+import { RulebookBuildService, type RulebookBuildInputs } from './rulebook-build-service';
 import type { SpecMeta } from '../data-files/spec-meta.models';
 import { SHADOW_BLADES, SHADOW_DANCE, VANISH } from '../../../../../testing/spell-ids';
 
@@ -11,7 +11,6 @@ const SPEC: SpecMeta = {
   classIcon: 'class_rogue', specIcon: 'ability_stealth',
 };
 const TIER = { branch: 'midnight', dir: 'MID2' };
-const NOW_S = 1_700_000_000;
 const UNSEEN_BLADE_ENTRY = 125_700;
 const PROFILE_SHA = 'p'.repeat(64);
 const DUMP_SHA = 'd'.repeat(64);
@@ -53,18 +52,12 @@ const DUMP = [
 function build(over: Partial<RulebookBuildInputs> = {}) {
   return builder.build({
     spec: SPEC, tier: TIER, profile: { text: PROFILE, sha256: PROFILE_SHA }, spellData: { text: DUMP, sha256: DUMP_SHA },
-    samples: [], talents: { [UNSEEN_BLADE_ENTRY]: { name: 'Unseen Blade', icon: 'x', spellId: 1 } }, nowS: NOW_S, ...over,
+    samples: [], talents: { [UNSEEN_BLADE_ENTRY]: { name: 'Unseen Blade', icon: 'x', spellId: 1 } }, ...over,
   });
 }
 
 describe('RulebookBuildService.build', () => {
   const { rulebook, report } = build();
-
-  it('stamps the sources and the builder version so a later run can tell what moved', () => {
-    expect(rulebook.source).toEqual({
-      builder_version: RULEBOOK_BUILDER_VERSION, simc_tier: 'midnight/MID2', profile_sha256: PROFILE_SHA, spell_data_sha256: DUMP_SHA, built_at_s: NOW_S,
-    });
-  });
 
   it('carries the spec key and icon and lists the cooldowns in APL order with their full gate', () => {
     expect(rulebook.spec).toBe(SPEC.spec);

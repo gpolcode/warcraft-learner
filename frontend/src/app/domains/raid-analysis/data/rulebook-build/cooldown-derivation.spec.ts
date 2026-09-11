@@ -5,7 +5,9 @@ import { CooldownDerivationService } from './cooldown-derivation-service';
 import { SimcAplService } from '../simc/simc-apl-service';
 import { builder, parseSample, selfAura, spellRecord } from '../../../../../testing/builders/simc';
 import { cast } from '../../../../../testing/builders/events';
-import { BACKSTAB, CRIMSON_VIAL, FEINT, SHADOW_BLADES, SHADOW_DANCE, VANISH } from '../../../../../testing/spell-ids';
+import {
+  BACKSTAB, BERSERKER_RAGE, CLOAK_OF_SHADOWS, CRIMSON_VIAL, FEINT, LAST_STAND, LAST_STAND_NODE, SHADOW_BLADES, SHADOW_DANCE, SHIELD_WALL, VANISH,
+} from '../../../../../testing/spell-ids';
 import type { ParseSample } from './rulebook-build.models';
 
 const abilities = TestBed.inject(AbilityIndexService);
@@ -20,22 +22,21 @@ const VANISH_CD_S = 120;
 /** Three casts in 200s against a 20s recharge is 3 of 10 possible uses: the usage floor. */
 const DANCE_CASTS_AT_FLOOR = 3;
 const OPENER_SAMPLES = 3;
-const BERSERKER_RAGE = 18499;
-const OTHER_SPEC_WALL = 871;
-const OTHER_SPEC_GRANTED = 12975;
-const OTHER_SPEC_GRANT_NODE = 1243659;
+/** Feint recharges in 15s, the shortest cooldown a defensive can have; Cloak of Shadows sits one second under it here. */
+const DEFENSIVE_FLOOR_S = 15;
 
 const KIT = [
   builder(BACKSTAB, 'Backstab', { className: CLASS }),
-  spellRecord({ id: SHADOW_DANCE, name: 'Shadow Dance', className: `${SPEC} ${CLASS}`, gcd: false, cooldownS: 6, charges: { count: 1, rechargeS: 20 }, durationS: 6, effects: [selfAura('Periodic Heal%', 0)] }),
+  spellRecord({ id: SHADOW_DANCE, name: 'Shadow Dance', className: `${SPEC} ${CLASS}`, gcd: false, cooldownS: 6, rechargeS: 20, durationS: 6, effects: [selfAura('Periodic Heal%', 0)] }),
   spellRecord({ id: SHADOW_BLADES, name: 'Shadow Blades', className: `${SPEC} ${CLASS}`, gcd: false, cooldownS: 90, durationS: 20, talent: { tree: 'spec', owner: SPEC } }),
   spellRecord({ id: VANISH, name: 'Vanish', className: CLASS, gcd: false, cooldownS: VANISH_CD_S }),
-  spellRecord({ id: FEINT, name: 'Feint', className: CLASS, cooldownS: 1, charges: { count: 1, rechargeS: 15 }, durationS: 6, effects: [selfAura('Modify AoE Damage Taken%', -40)] }),
+  spellRecord({ id: FEINT, name: 'Feint', className: CLASS, cooldownS: 1, rechargeS: DEFENSIVE_FLOOR_S, durationS: 6, effects: [selfAura('Modify AoE Damage Taken%', -40)] }),
+  spellRecord({ id: CLOAK_OF_SHADOWS, name: 'Cloak of Shadows', className: CLASS, cooldownS: DEFENSIVE_FLOOR_S - 1, durationS: 5, effects: [selfAura('Modify Damage Taken%', -20)] }),
   spellRecord({ id: CRIMSON_VIAL, name: 'Crimson Vial', className: CLASS, cooldownS: 30, durationS: 4, effects: [selfAura('Periodic Heal%', 10)] }),
   spellRecord({ id: BERSERKER_RAGE, name: 'Berserker Rage', className: CLASS, cooldownS: 60, effects: [selfAura('Mechanic Immunity', 100)] }),
-  spellRecord({ id: OTHER_SPEC_WALL, name: 'Shield Wall', className: CLASS, cooldownS: 180, talent: { tree: 'spec', owner: 'Outlaw' }, effects: [selfAura('Modify Damage Taken%', -40)] }),
-  spellRecord({ id: OTHER_SPEC_GRANTED, name: 'Last Stand', className: CLASS, cooldownS: 180, effects: [selfAura('Modify Damage Taken%', -30)] }),
-  spellRecord({ id: OTHER_SPEC_GRANT_NODE, name: 'Last Stand', className: CLASS, passive: true, talent: { tree: 'spec', owner: 'Outlaw' } }),
+  spellRecord({ id: SHIELD_WALL, name: 'Shield Wall', className: CLASS, cooldownS: 180, talent: { tree: 'spec', owner: 'Outlaw' }, effects: [selfAura('Modify Damage Taken%', -40)] }),
+  spellRecord({ id: LAST_STAND, name: 'Last Stand', className: CLASS, cooldownS: 180, effects: [selfAura('Modify Damage Taken%', -30)] }),
+  spellRecord({ id: LAST_STAND_NODE, name: 'Last Stand', className: CLASS, passive: true, talent: { tree: 'spec', owner: 'Outlaw' } }),
 ];
 
 const PROFILE = [
@@ -52,8 +53,8 @@ function derive(samples: ParseSample[] = []) {
 }
 
 function danceSamples(castsPerSample: number, firstCastS: number[]): ParseSample[] {
-  return firstCastS.map((atS, position) => parseSample({
-    reportCode: `r${position}`, fightDurationS: FIGHT_S,
+  return firstCastS.map(atS => parseSample({
+    fightDurationS: FIGHT_S,
     casts: [
       ...Array.from({ length: castsPerSample }, (_, cast_index) => cast(SHADOW_DANCE, atS + cast_index * 30)),
       cast(SHADOW_BLADES, atS + 1), cast(VANISH, 200),
@@ -109,10 +110,14 @@ describe('CooldownDerivationService.defensives', () => {
     const ids = defensives.map(entry => entry.record.id);
     expect(ids).not.toContain(SHADOW_DANCE);
     expect(ids).not.toContain(BERSERKER_RAGE);
-    expect(ids).not.toContain(OTHER_SPEC_WALL);
+    expect(ids).not.toContain(SHIELD_WALL);
+  });
+
+  it('drops a mitigation that comes back under the defensive floor', () => {
+    expect(defensives.map(entry => entry.record.id)).not.toContain(CLOAK_OF_SHADOWS);
   });
 
   it('drops a class-wide spell whose granting talent node belongs to another spec', () => {
-    expect(defensives.map(entry => entry.record.id)).not.toContain(OTHER_SPEC_GRANTED);
+    expect(defensives.map(entry => entry.record.id)).not.toContain(LAST_STAND);
   });
 });

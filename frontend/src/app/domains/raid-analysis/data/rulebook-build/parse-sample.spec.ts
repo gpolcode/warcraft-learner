@@ -11,7 +11,6 @@ const FIGHT_ID = 3;
 const FIGHT_START_MS = 1_000;
 const FIGHT_END_MS = 301_000;
 const FIGHT_DURATION_S = 300;
-const ENCOUNTER_ID = 1;
 /** More rankings than the sampler keeps, so the cap shows. */
 const RANKING_COUNT = 12;
 const KEPT = 10;
@@ -47,26 +46,24 @@ const sampler = (): ParseSampleService => TestBed.inject(ParseSampleService);
 
 describe('ParseSampleService.sample', () => {
   it('keeps as many bindable parses as the benches measure, dropping the actor it cannot bind', async () => {
-    const samples = await sampler().sample(fakeWcl(), RANKINGS, ENCOUNTER_ID, true);
+    const samples = await sampler().sample(fakeWcl(), RANKINGS, true);
     expect(samples).toHaveLength(KEPT);
-    expect(samples.map(sample => sample.reportCode)).not.toContain('code-0');
-    expect(samples.every(sample => sample.encounterId === ENCOUNTER_ID)).toBe(true);
   });
 
   it('keeps only cast events in the cast stream and stamps fight-relative seconds', async () => {
-    const [sample] = await sampler().sample(fakeWcl(), RANKINGS, ENCOUNTER_ID, true);
+    const [sample] = await sampler().sample(fakeWcl(), RANKINGS, true);
     expect(sample?.fightDurationS).toBe(FIGHT_DURATION_S);
     expect(sample?.casts.map(event => event.type)).toEqual(['cast']);
     expect(sample?.buffs[0]?.atS).toBe(4 - FIGHT_START_MS / 1000);
   });
 
   it('reads the player\'s dots off the raid-wide enemy stream and drops the other raiders\' debuffs', async () => {
-    const [sample] = await sampler().sample(fakeWcl(), RANKINGS, ENCOUNTER_ID, true);
+    const [sample] = await sampler().sample(fakeWcl(), RANKINGS, true);
     expect(sample?.debuffs.map(event => event.sourceID)).toEqual([PLAYER_ID]);
   });
 
   it('leaves the enemy stream unfetched for a spec whose rules never read it', async () => {
-    const [sample] = await sampler().sample(fakeWcl(), RANKINGS, ENCOUNTER_ID, false);
+    const [sample] = await sampler().sample(fakeWcl(), RANKINGS, false);
     expect(sample?.debuffs).toEqual([]);
   });
 });

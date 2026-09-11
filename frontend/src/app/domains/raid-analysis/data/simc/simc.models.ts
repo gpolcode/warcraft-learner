@@ -22,7 +22,6 @@ export interface AplLine {
   list: string;
   action: string;
   options: Record<string, string>;
-  index: number;
 }
 
 /** Where a gate came from: the action's own `if=`, or a list gate it inherited from a `call_action_list` / `run_action_list`. */
@@ -30,8 +29,6 @@ export type GateProvenance = 'own' | 'context';
 
 export interface ResolvedAction {
   action: string;
-  list: string;
-  options: Record<string, string>;
   /** The action's own gate with variables inlined and escape hatches erased; null when unconditional. */
   own: AplExpr | null;
   /** The list gates that reach this line, outermost first. */
@@ -51,7 +48,6 @@ export interface AplUnknownToken {
 
 export interface ResolvedApl {
   actions: ResolvedAction[];
-  precombat: string[];
   /** Variable names whose definitions the resolver could not inline, kept for the build report. */
   unresolvedVariables: string[];
   unknownTokens: AplUnknownToken[];
@@ -74,8 +70,6 @@ export interface SpellEffect {
   subtype: string | null;
   target: 'self' | 'enemy' | 'other';
   baseValue: number | null;
-  triggerSpellId: number | null;
-  periodic: boolean;
 }
 
 export interface SpellResource {
@@ -99,7 +93,8 @@ export interface SpellRecord {
   className: string | null;
   talent: SpellTalentEntry | null;
   cooldownS: number | null;
-  charges: { count: number; rechargeS: number } | null;
+  /** The recharge of a charged spell, the cooldown that actually gates it. */
+  rechargeS: number | null;
   durationS: number | null;
   maxStacks: number | null;
   resources: SpellResource[];

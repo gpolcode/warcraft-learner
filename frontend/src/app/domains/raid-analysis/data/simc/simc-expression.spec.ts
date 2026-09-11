@@ -5,6 +5,9 @@ import type { AplExpr } from './simc.models';
 
 const expressions = TestBed.inject(SimcExpressionService);
 
+/** Six two-way pairs cross into 64 terms, the cap. */
+const TERM_CAP_PAIRS = 6;
+
 const keepEverything: AplResolver = () => null;
 const eraseTime: AplResolver = path => (path[0] === 'fight_remains' ? UNKNOWN : null);
 const roundTrip = (source: string): string => expressions.print(expressions.parse(source));
@@ -82,9 +85,10 @@ describe('SimcExpressionService.dnf', () => {
     expect(expressions.dnf({ kind: 'num', value: 0 }, 'own')).toEqual([]);
   });
 
-  it('gives up past the term cap', () => {
-    const wide = Array.from({ length: 7 }, (_, index) => `(buff.a${index}.up|buff.b${index}.up)`).join('&');
-    expect(expressions.dnf(expressions.parse(wide), 'own')).toBeNull();
+  it('expands a gate at the term cap and gives up one pair past it', () => {
+    const pairs = (count: number): string => Array.from({ length: count }, (_, index) => `(buff.a${index}.up|buff.b${index}.up)`).join('&');
+    expect(expressions.dnf(expressions.parse(pairs(TERM_CAP_PAIRS)), 'own')).toHaveLength(2 ** TERM_CAP_PAIRS);
+    expect(expressions.dnf(expressions.parse(pairs(TERM_CAP_PAIRS + 1)), 'own')).toBeNull();
   });
 });
 

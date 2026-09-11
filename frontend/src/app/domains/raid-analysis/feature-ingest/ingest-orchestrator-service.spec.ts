@@ -22,6 +22,7 @@ import { RULEBOOK_BUILDER_VERSION } from '../data/rulebook-build/rulebook-build-
 import type { PublishedRunSummary } from '../data/ingest/ingest-run-summary-service';
 import type { Rulebook } from '../data/rulebook/rulebook.models';
 import { rulebook } from '../../../../testing/builders/rulebook';
+import { SHADOW_BLADES } from '../../../../testing/spell-ids';
 
 const signatures = TestBed.inject(IngestSignatureService);
 TestBed.resetTestingModule();
@@ -123,7 +124,7 @@ interface RunOptions {
   onBench: (received: Rulebook | null) => void;
 }
 
-const DERIVED = rulebook({ spec: SPEC, cooldowns: [{ name: 'Shadow Blades', spell_id: 121_471, cooldown: 90 }] });
+const DERIVED = rulebook({ spec: SPEC, cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }] });
 const NO_GAPS = { unresolvedActions: [], unresolvedAuras: [], unresolvedTalents: [], unresolvedVariables: [], unknownTokens: [] };
 
 function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string, over: Partial<RunOptions> = {}): Promise<void> {

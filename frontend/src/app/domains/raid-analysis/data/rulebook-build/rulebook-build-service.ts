@@ -12,7 +12,7 @@ import { RuleDerivationService } from './rule-derivation-service';
 import { RulebookCopyService } from './rulebook-copy-service';
 import type { AbilityIndex, ParseSample, RuleDraft, RulebookBuildReport } from './rulebook-build.models';
 
-/** Bumps when the derivation changes, so a rebuild is not skipped for sources that did not move. */
+/** Part of the encounter stamp, so a changed derivation re-benches sources that did not move. */
 export const RULEBOOK_BUILDER_VERSION = 1;
 
 export interface RulebookBuildInputs {
@@ -22,7 +22,6 @@ export interface RulebookBuildInputs {
   spellData: { text: string; sha256: string };
   samples: ParseSample[];
   talents: SpecTalents;
-  nowS: number;
 }
 
 export interface RulebookBuild {
@@ -77,13 +76,6 @@ export class RulebookBuildService {
       major_cooldowns: majors.map(entry => this.cooldown(entry, index)),
       defensives: this.cooldowns.defensives(index, aplTokens).map(entry => this.defensive(entry)),
       rules,
-      source: {
-        builder_version: RULEBOOK_BUILDER_VERSION,
-        simc_tier: `${inputs.tier.branch}/${inputs.tier.dir}`,
-        profile_sha256: inputs.profile.sha256,
-        spell_data_sha256: inputs.spellData.sha256,
-        built_at_s: inputs.nowS,
-      },
     };
     const report: RulebookBuildReport = {
       unresolvedActions: derivation.unresolvedActions,

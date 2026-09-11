@@ -3,9 +3,6 @@ import type { AplUnknownToken, SpellRecord } from '../simc/simc.models';
 import type { RuleCondition } from '../rulebook/rulebook.models';
 
 export interface ParseSample {
-  reportCode: string;
-  fightId: number;
-  encounterId: number;
   fightDurationS: number;
   casts: TimedEvent[];
   buffs: TimedEvent[];
@@ -36,7 +33,6 @@ export interface AbilityIndex {
   classLabel: string;
   specLabel: string;
   byToken: Map<string, SpellRecord[]>;
-  byId: Map<number, SpellRecord>;
   observation: ParseObservation;
 }
 

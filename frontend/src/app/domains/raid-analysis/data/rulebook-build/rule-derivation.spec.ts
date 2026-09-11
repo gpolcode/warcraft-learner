@@ -24,7 +24,9 @@ const FIGHT_S = 100;
 /** Slice and Dice up for 70 of 100 seconds sits exactly on the maintained-aura floor. */
 const MAINTAINED_S = 70;
 const COMBO_POINTS = 4;
-const RUPTURE_DOT = 1943;
+/** Darkest Night lasts 30s in the kit, the longest a buff can be and still count as a proc; the sample applies it the floor three times. */
+const PROC_MAX_DURATION_S = 30;
+const MIN_PROC_APPLICATIONS = 3;
 
 const KIT = [
   builder(SHADOWSTRIKE, 'Shadowstrike', { className: `${SPEC} ${CLASS}` }),
@@ -33,13 +35,13 @@ const KIT = [
   finisher(EVISCERATE, 'Eviscerate', { className: CLASS }),
   finisher(BLACK_POWDER, 'Black Powder', { className: `${SPEC} ${CLASS}` }),
   finisher(RUPTURE, 'Rupture', { className: CLASS, effects: [enemyDot()], durationS: 24 }),
-  finisher(SECRET_TECHNIQUE, 'Secret Technique', { className: `${SPEC} ${CLASS}`, charges: { count: 1, rechargeS: 25 } }),
-  spellRecord({ id: SHADOW_DANCE, name: 'Shadow Dance', className: `${SPEC} ${CLASS}`, gcd: false, charges: { count: 1, rechargeS: 20 }, durationS: 6, effects: [selfAura()] }),
+  finisher(SECRET_TECHNIQUE, 'Secret Technique', { className: `${SPEC} ${CLASS}`, rechargeS: 25 }),
+  spellRecord({ id: SHADOW_DANCE, name: 'Shadow Dance', className: `${SPEC} ${CLASS}`, gcd: false, rechargeS: 20, durationS: 6, effects: [selfAura()] }),
   spellRecord({ id: SHADOW_DANCE_AURA, name: 'Shadow Dance', className: CLASS, durationS: 6, effects: [selfAura()] }),
   spellRecord({ id: SHADOW_BLADES, name: 'Shadow Blades', className: `${SPEC} ${CLASS}`, gcd: false, cooldownS: 90, durationS: 20, effects: [selfAura()] }),
   spellRecord({ id: VANISH, name: 'Vanish', className: CLASS, gcd: false, cooldownS: 120 }),
   spellRecord({ id: SLICE_AND_DICE, name: 'Slice and Dice', className: CLASS, durationS: 30, effects: [selfAura()] }),
-  spellRecord({ id: DARKEST_NIGHT, name: 'Darkest Night', className: CLASS, durationS: 30, effects: [selfAura()] }),
+  spellRecord({ id: DARKEST_NIGHT, name: 'Darkest Night', className: CLASS, durationS: PROC_MAX_DURATION_S, effects: [selfAura()] }),
 ];
 
 const PROFILE = [
@@ -70,12 +72,12 @@ function sample(sliceAndDiceS = MAINTAINED_S): ParseSample {
       applyBuff(DARKEST_NIGHT, 10), removeBuff(DARKEST_NIGHT, 14), applyBuff(DARKEST_NIGHT, 40), removeBuff(DARKEST_NIGHT, 44),
       applyBuff(DARKEST_NIGHT, 70), removeBuff(DARKEST_NIGHT, 74),
     ],
-    debuffs: buffWindow(RUPTURE_DOT, 5, 95),
+    debuffs: buffWindow(RUPTURE, 5, 95),
   });
 }
 
-function drafts(samples: ParseSample[] = [sample()], profile = PROFILE): RuleDraft[] {
-  const index = abilities.build(KIT, samples, CLASS, SPEC);
+function drafts(samples: ParseSample[] = [sample()], profile = PROFILE, kit = KIT): RuleDraft[] {
+  const index = abilities.build(kit, samples, CLASS, SPEC);
   const resolved = apl.resolve(apl.parseLines(profile), TIER);
   return rules.derive(resolved.actions, index, samples).drafts;
 }
@@ -131,7 +133,7 @@ describe('RuleDerivationService.derive', () => {
 
   it('reads a refreshable gate on the action\'s own dot as a clip rule', () => {
     const [clip] = ofKind(all, 'aura_clipped');
-    expect(clip?.condition).toMatchObject({ aura_spell_id: RUPTURE_DOT, cast_spell_id: RUPTURE, on: 'target' });
+    expect(clip?.condition).toMatchObject({ aura_spell_id: RUPTURE, cast_spell_id: RUPTURE, on: 'target' });
   });
 
   it('keeps an aura the parses hold up for the floor share and drops one just under it', () => {
@@ -142,6 +144,17 @@ describe('RuleDerivationService.derive', () => {
   it('reads a short buff spent inside most of its windows as a proc to spend on sight', () => {
     const [proc] = ofKind(all, 'proc_wasted');
     expect(proc?.condition).toMatchObject({ buff_spell_id: DARKEST_NIGHT, spend_spell_ids: [EVISCERATE] });
+  });
+
+  it('drops the proc once the buff outlasts the proc ceiling', () => {
+    const lasting = KIT.map(record => (record.id === DARKEST_NIGHT ? { ...record, durationS: PROC_MAX_DURATION_S + 1 } : record));
+    expect(ofKind(drafts([sample()], PROFILE, lasting), 'proc_wasted')).toEqual([]);
+  });
+
+  it('drops the proc when the parses saw it applied fewer than three times', () => {
+    const rare = { ...sample(), buffs: sample().buffs.filter(event => !(event.abilityGameID === DARKEST_NIGHT && event.atS >= 70)) };
+    expect(sample().buffs.filter(event => event.abilityGameID === DARKEST_NIGHT && event.type === 'applybuff')).toHaveLength(MIN_PROC_APPLICATIONS);
+    expect(ofKind(drafts([rare]), 'proc_wasted')).toEqual([]);
   });
 
   it('drops the proc when the parses spend it in fewer than half its windows', () => {

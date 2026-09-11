@@ -18,7 +18,7 @@ const LONG_NAME = 'Incarnation: Chosen of Elune';
 const KIT = [
   builder(SHADOWSTRIKE, 'Shadowstrike', { className: 'Rogue' }),
   builder(BACKSTAB, 'Backstab', { className: 'Rogue' }),
-  spellRecord({ id: SHADOW_DANCE, name: 'Shadow Dance', className: 'Rogue', gcd: false, charges: { count: 1, rechargeS: 20 }, durationS: 6, effects: [selfAura()] }),
+  spellRecord({ id: SHADOW_DANCE, name: 'Shadow Dance', className: 'Rogue', gcd: false, rechargeS: 20, durationS: 6, effects: [selfAura()] }),
   spellRecord({ id: SHADOW_BLADES, name: 'Shadow Blades', className: 'Rogue', gcd: false, cooldownS: 90, durationS: 20, effects: [selfAura()] }),
   spellRecord({ id: SLICE_AND_DICE, name: 'Slice and Dice', className: 'Rogue', durationS: 30, effects: [selfAura()] }),
 ];

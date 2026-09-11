@@ -10,11 +10,10 @@ const CHARGES = /^(\d+)\s\((\d+(?:\.\d+)?)\s(seconds|minutes|hours)\scooldown\)/
 const STACKS = /(\d+)\smaximum/;
 const RESOURCE = /^(?:(\d+(?:\.\d+)?)(?:\s-\s(\d+(?:\.\d+)?))?)\s.*?\((\d+)\)/;
 const TALENT = /^(.*?)\s\[.*?tree=(class|spec|hero)/;
-const NUMBERED = /^(.*?)\s\(\d+\)(?::\s?(.*))?$/;
+const NUMBERED = /^(.*?)\s\(\d+\)(?::|$)/;
 const EXECUTE_HEALTH = /(?:below|less than|under)\s(?:(\d+)|\$s(\d))%\s(?:of\s(?:their\s)?)?health/i;
 const EFFECT_TARGET = /Target:\s([A-Za-z ]+?)\s\(\d+\)/;
 const EFFECT_BASE_VALUE = /Base Value:\s(-?\d+(?:\.\d+)?)/;
-const EFFECT_TRIGGER = /Trigger Spell:\s(\d+)/;
 
 const SECONDS_PER: Record<string, number> = { second: 1, seconds: 1, minute: 60, minutes: 60, hour: 3600, hours: 3600 };
 
@@ -61,7 +60,7 @@ export class SpellDataDumpService {
   private emptyRecord(id: number, name: string, flags: string): SpellRecord {
     return {
       id, name, passive: flags.includes('Passive'), hidden: flags.includes('Hidden'),
-      className: null, talent: null, cooldownS: null, charges: null, durationS: null, maxStacks: null,
+      className: null, talent: null, cooldownS: null, rechargeS: null, durationS: null, maxStacks: null,
       resources: [], gcd: false, castTimeS: null, executeHealthPct: null, effects: [],
     };
   }
@@ -94,7 +93,7 @@ export class SpellDataDumpService {
       case 'Duration': record.durationS = this.seconds(value); return true;
       case 'Cast Time': record.castTimeS = this.seconds(value); return true;
       case 'GCD': record.gcd = true; return true;
-      case 'Charges': record.charges = this.chargesOf(value); return true;
+      case 'Charges': record.rechargeS = this.rechargeOf(value); return true;
       default: return false;
     }
   }
@@ -114,10 +113,9 @@ export class SpellDataDumpService {
     return { owner: match[1] ?? '', tree: match[2] as SpellTalentEntry['tree'] };
   }
 
-  private chargesOf(value: string): SpellRecord['charges'] {
+  private rechargeOf(value: string): number | null {
     const match = CHARGES.exec(value);
-    if (!match) return null;
-    return { count: Number(match[1]), rechargeS: Number(match[2]) * (SECONDS_PER[match[3] ?? ''] ?? 1) };
+    return match ? Number(match[2]) * (SECONDS_PER[match[3] ?? ''] ?? 1) : null;
   }
 
   private stacksOf(value: string): number | null {
@@ -132,25 +130,14 @@ export class SpellDataDumpService {
     return { amount: Number(match[1]), powerType: Number(match[3]) };
   }
 
-  /** `Apply Aura (6) | Periodic Damage (3): nature every 2 seconds` splits into a type, a subtype and their trailing detail. */
-  private numbered(text: string): { label: string; detail: string } {
-    const match = NUMBERED.exec(text);
-    return match ? { label: match[1] ?? '', detail: match[2] ?? '' } : { label: text.trim(), detail: '' };
+  /** `Apply Aura (6) | Periodic Damage (3): nature every 2 seconds` is a type and a subtype, each named before its number. */
+  private label(text: string): string {
+    return NUMBERED.exec(text)?.[1] ?? text.trim();
   }
 
   private effectOf(text: string): SpellEffect {
     const [head = '', sub] = text.split(' | ');
-    const type = this.numbered(head);
-    const subtype = sub === undefined ? null : this.numbered(sub);
-    const detail = `${type.detail} ${subtype?.detail ?? ''}`;
-    return {
-      type: type.label,
-      subtype: subtype?.label ?? null,
-      target: 'other',
-      baseValue: null,
-      triggerSpellId: null,
-      periodic: (subtype?.label ?? '').startsWith('Periodic') || detail.includes(' every '),
-    };
+    return { type: this.label(head), subtype: sub === undefined ? null : this.label(sub), target: 'other', baseValue: null };
   }
 
   private applyEffectDetail(effect: SpellEffect, text: string): void {
@@ -161,8 +148,6 @@ export class SpellDataDumpService {
     }
     const base = EFFECT_BASE_VALUE.exec(text);
     if (base) effect.baseValue = Number(base[1]);
-    const trigger = EFFECT_TRIGGER.exec(text);
-    if (trigger) effect.triggerSpellId = Number(trigger[1]);
   }
 
   /** SimC's action token for a spell name: lower case, runs of anything but letters and digits become one underscore. */

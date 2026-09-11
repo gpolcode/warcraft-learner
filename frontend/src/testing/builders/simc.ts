@@ -9,17 +9,17 @@ const COMBO_POINTS = 4;
 
 export function spellRecord(over: Partial<SpellRecord> & Pick<SpellRecord, 'id' | 'name'>): SpellRecord {
   return {
-    passive: false, hidden: false, className: null, talent: null, cooldownS: null, charges: null, durationS: null,
+    passive: false, hidden: false, className: null, talent: null, cooldownS: null, rechargeS: null, durationS: null,
     maxStacks: null, resources: [], gcd: true, castTimeS: null, executeHealthPct: null, effects: [], ...over,
   };
 }
 
 export function selfAura(subtype = 'Dummy', baseValue: number | null = null): SpellEffect {
-  return { type: 'Apply Aura', subtype, target: 'self', baseValue, triggerSpellId: null, periodic: false };
+  return { type: 'Apply Aura', subtype, target: 'self', baseValue };
 }
 
 export function enemyDot(): SpellEffect {
-  return { type: 'Apply Aura', subtype: 'Periodic Damage', target: 'enemy', baseValue: 0, triggerSpellId: null, periodic: true };
+  return { type: 'Apply Aura', subtype: 'Periodic Damage', target: 'enemy', baseValue: 0 };
 }
 
 /** A builder costs energy; a finisher spends combo points too. */
@@ -39,7 +39,6 @@ type SampleSeed = Omit<Partial<ParseSample>, 'casts' | 'buffs' | 'debuffs'> & { 
 
 export function parseSample(over: SampleSeed = {}): ParseSample {
   return {
-    reportCode: over.reportCode ?? 'abc', fightId: over.fightId ?? 1, encounterId: over.encounterId ?? 100,
     fightDurationS: over.fightDurationS ?? 100,
     casts: timed(over.casts ?? []), buffs: timed(over.buffs ?? []), debuffs: timed(over.debuffs ?? []),
   };

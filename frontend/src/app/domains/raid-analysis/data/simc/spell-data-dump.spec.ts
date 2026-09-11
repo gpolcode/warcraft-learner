@@ -1,12 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { SpellDataDumpService } from './spell-data-dump-service';
+import { DOUBLE_DANCE, FEINT, RUPTURE, SHADOW_DANCE_AURA } from '../../../../../testing/spell-ids';
 
 const dump = TestBed.inject(SpellDataDumpService);
-
-const FEINT = 1966;
-const SHADOW_DANCE_AURA = 185422;
-const DOUBLE_DANCE = 394930;
 
 const DUMP = [
   'SimulationCraft 1210-01 for World of Warcraft 12.1.0.69587 Live',
@@ -54,19 +51,19 @@ const DUMP = [
 const byId = (id: number) => dump.parse(DUMP).find(record => record.id === id);
 
 describe('SpellDataDumpService.parse', () => {
-  it('reads the id, class, cost, duration, cooldown and charges of a cast', () => {
+  it('reads the id, class, cost, duration, cooldown and recharge of a cast', () => {
     const feint = byId(FEINT);
     expect(feint?.name).toBe('Feint');
     expect(feint?.className).toBe('Rogue');
     expect(feint?.resources).toEqual([{ amount: 35, powerType: 3 }]);
     expect(feint?.durationS).toBe(6);
     expect(feint?.cooldownS).toBe(1);
-    expect(feint?.charges).toEqual({ count: 1, rechargeS: 15 });
+    expect(feint?.rechargeS).toBe(15);
   });
 
   it('reads each effect with its subtype, target and base value', () => {
     const [reduction, energize] = byId(FEINT)?.effects ?? [];
-    expect(reduction).toEqual({ type: 'Apply Aura', subtype: 'Modify AoE Damage Taken%', target: 'self', baseValue: -40, triggerSpellId: null, periodic: false });
+    expect(reduction).toEqual({ type: 'Apply Aura', subtype: 'Modify AoE Damage Taken%', target: 'self', baseValue: -40 });
     expect(energize?.type).toBe('Energize Power');
     expect(energize?.subtype).toBeNull();
   });
@@ -84,9 +81,9 @@ describe('SpellDataDumpService.parse', () => {
     expect(aura?.resources).toEqual([]);
   });
 
-  it('reads a periodic enemy effect and a ranged combo point cost', () => {
-    const rupture = byId(1943);
-    expect(rupture?.effects[0]).toMatchObject({ subtype: 'Periodic Damage', target: 'enemy', periodic: true });
+  it('reads an enemy-facing effect and a ranged combo point cost', () => {
+    const rupture = byId(RUPTURE);
+    expect(rupture?.effects[0]).toMatchObject({ subtype: 'Periodic Damage', target: 'enemy' });
     expect(rupture?.resources.map(resource => resource.powerType)).toEqual([3, 4]);
   });
 

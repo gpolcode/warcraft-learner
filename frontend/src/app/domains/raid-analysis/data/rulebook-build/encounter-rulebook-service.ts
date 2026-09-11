@@ -19,8 +19,6 @@ export interface EncounterRulebookInputs {
   sources: SpecSources;
   tier: SimcTier;
   rankings: ParseRanking[];
-  encounterId: number;
-  nowS: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -32,9 +30,9 @@ export class EncounterRulebookService {
   async derive(wclApi: WclApiService, inputs: EncounterRulebookInputs): Promise<RulebookBuild> {
     const { sources, tier } = inputs;
     const enemyAuras = this.builder.readsEnemyAuras(this.builder.resolveProfile(sources.profile.text, tier));
-    const samples = await this.samples.sample(wclApi, inputs.rankings, inputs.encounterId, enemyAuras);
+    const samples = await this.samples.sample(wclApi, inputs.rankings, enemyAuras);
     return this.builder.build({
-      spec: sources.meta, tier, profile: sources.profile, spellData: sources.spellData, samples, talents: sources.talents, nowS: inputs.nowS,
+      spec: sources.meta, tier, profile: sources.profile, spellData: sources.spellData, samples, talents: sources.talents,
     });
   }
 }

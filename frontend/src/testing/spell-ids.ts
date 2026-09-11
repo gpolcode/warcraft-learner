@@ -45,3 +45,12 @@ export const SHADOW_DANCE_AURA = 185422;
 export const DARKEST_NIGHT = 457280;
 export const FEINT = 1966;
 export const CRIMSON_VIAL = 185311;
+export const DISPATCH = 2098;
+/** The class-wide twin of Shadow Dance that only energizes, sharing the name of the spec's own button. */
+export const SHADOW_DANCE_ENERGIZE = 394029;
+export const DOUBLE_DANCE = 394930;
+export const BERSERKER_RAGE = 18499;
+export const SHIELD_WALL = 871;
+export const LAST_STAND = 12975;
+/** The passive talent node that grants Last Stand, a twin under the same name. */
+export const LAST_STAND_NODE = 1243659;

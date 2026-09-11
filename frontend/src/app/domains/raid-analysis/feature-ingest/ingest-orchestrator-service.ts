@@ -10,6 +10,7 @@ import type { SpecMeta } from '../data/data-files/spec-meta.models';
 import { LoggerService } from '../../shared/util-logging/logger-service';
 import { type LoadError, type Result } from '../../shared/util-http/result';
 import { TopParseSelectionService } from '../data/analysis/top-parse-selection-service';
+import { TOP_PARSE_COUNT } from '../data/analysis/bench-pipeline-service';
 import { getOrInsert } from '../data/analysis/analysis-math';
 import type { EncounterEntry, SpecEntry } from '../data/encounter/encounter.models';
 import type { TopParseSelection } from '../data/wcl/wcl.models';
@@ -30,7 +31,6 @@ import { SpecReportService, SELECTED_MARKER, type SpecReportRow } from '../data/
 import type { IngestEncounter } from '../data/ingest/ingest.models';
 import { IngestRunSummaryService, type IngestRunSummary } from '../data/ingest/ingest-run-summary-service';
 
-const TOP_N = 10;
 const POINTS_MARGIN = 500;
 const BENCH_CONCURRENCY = 3;
 
@@ -262,7 +262,7 @@ export class IngestOrchestratorService {
   private async ingestSpec(
     spec: string, encounters: IngestEncounter[], version: string, run: RunSources,
   ): Promise<boolean> {
-    console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
+    console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_PARSE_COUNT})`);
     const sources = await this.specSources(spec, run);
     if (!sources) console.log('  no SimulationCraft profile: gear, positions and phases only');
     // The stamp keys on the sources too, so a changed profile or spell dump re-benches an encounter like a changed top parse does.
@@ -304,7 +304,7 @@ export class IngestOrchestratorService {
     }
 
     const existing = await this.dataFile.getBench(spec, encounter.id, LEAD_BENCH);
-    const { skip, signature: skipKey } = this.stamp.skipDecision(existing.ok ? existing.value : null, selection, sourceKey, TOP_N);
+    const { skip, signature: skipKey } = this.stamp.skipDecision(existing.ok ? existing.value : null, selection, sourceKey, TOP_PARSE_COUNT);
     if (skip) {
       console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
       return 'skipped';
@@ -356,7 +356,7 @@ export class IngestOrchestratorService {
     const limit = pLimit(BENCH_CONCURRENCY);
     const [burstBench, ...siblings] = this.benches;
     const { result: [burst, rest], outcomes } = await this.wclTransport.withFetchOutcomes(async () => {
-      const rulebook = sources ? await this.deriveRulebook(spec, sources, selection, encId, run) : null;
+      const rulebook = sources ? await this.deriveRulebook(spec, sources, selection, run) : null;
       const compute = (bench: BenchDescriptor) => limit(() => bench.transform.getBench(spec, encId, selection, rulebook));
       return Promise.all([
         compute(burstBench),
@@ -365,7 +365,7 @@ export class IngestOrchestratorService {
     });
 
     const { signature, inaccessibleParses } = this.signature.signatureAfterFetch(
-      selection, outcomes.inaccessibleCodes, outcomes.failedCodes, sourceKey, TOP_N);
+      selection, outcomes.inaccessibleCodes, outcomes.failedCodes, sourceKey, TOP_PARSE_COUNT);
     const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAtS: nowS() };
 
     // Skip on any failure so a bench is never overwritten with partial data.
@@ -392,11 +392,9 @@ export class IngestOrchestratorService {
   }
 
   /** Derived from the encounter's own top parses, the ones its benches measure, so the stamp's parse set and sources fix the rules. */
-  private async deriveRulebook(
-    spec: string, sources: SpecSources, selection: TopParseSelection, encounterId: number, run: RunSources,
-  ): Promise<Rulebook> {
+  private async deriveRulebook(spec: string, sources: SpecSources, selection: TopParseSelection, run: RunSources): Promise<Rulebook> {
     const { rulebook, report } = await this.rulebooks.derive(this.wclApi, {
-      sources, tier: run.tier, rankings: selection.slice(0, TOP_N), encounterId, nowS: nowS(),
+      sources, tier: run.tier, rankings: selection.slice(0, TOP_PARSE_COUNT),
     });
     if (run.reported.has(spec)) return rulebook;
     run.reported.add(spec);

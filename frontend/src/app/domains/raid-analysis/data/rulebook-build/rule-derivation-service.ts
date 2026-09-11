@@ -15,10 +15,9 @@ import type { AbilityIndex, ParseSample, RuleDraft } from './rulebook-build.mode
 const POWER_TYPES: Record<string, { type: number; label: string }> = {
   mana: { type: 0, label: 'mana' }, rage: { type: 1, label: 'rage' }, focus: { type: 2, label: 'focus' },
   energy: { type: 3, label: 'energy' }, combo_points: { type: 4, label: 'combo points' }, rune: { type: 5, label: 'runes' },
-  runic_power: { type: 6, label: 'runic power' }, soul_shard: { type: 7, label: 'soul shards' }, soul_shards: { type: 7, label: 'soul shards' },
+  runic_power: { type: 6, label: 'runic power' }, soul_shard: { type: 7, label: 'soul shards' },
   astral_power: { type: 8, label: 'astral power' }, holy_power: { type: 9, label: 'holy power' }, maelstrom: { type: 11, label: 'maelstrom' },
-  chi: { type: 12, label: 'chi' }, insanity: { type: 13, label: 'insanity' }, fury: { type: 17, label: 'fury' },
-  pain: { type: 18, label: 'pain' }, essence: { type: 19, label: 'essence' },
+  chi: { type: 12, label: 'chi' }, insanity: { type: 13, label: 'insanity' }, fury: { type: 17, label: 'fury' }, essence: { type: 19, label: 'essence' },
 };
 
 const SINGLE_TARGET = 1;

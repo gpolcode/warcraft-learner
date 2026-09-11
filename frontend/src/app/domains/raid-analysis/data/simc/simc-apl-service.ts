@@ -5,7 +5,6 @@ import type { AplExpr, AplLine, AplUnknownToken, AplUnknownTokenKind, ResolvedAc
 
 const ACTION_LINE = /^actions(?:\.([a-z0-9_]+))?\+?=\/?(.*)$/;
 const DEFAULT_LIST = '';
-const PRECOMBAT_LIST = 'precombat';
 const BOOKKEEPING_ACTIONS = new Set(['variable', 'snapshot_stats']);
 
 /** Bare fields inside an action's own gate refer to that action's dot or aura, or to its own cooldown. */
@@ -45,7 +44,7 @@ export class SimcAplService {
       const match = ACTION_LINE.exec(raw.trim());
       if (!match) continue;
       const [action, ...rest] = (match[2] ?? '').split(',');
-      lines.push({ list: match[1] ?? DEFAULT_LIST, action: action ?? '', options: this.optionsOf(rest), index: lines.length });
+      lines.push({ list: match[1] ?? DEFAULT_LIST, action: action ?? '', options: this.optionsOf(rest) });
     }
     return lines;
   }
@@ -86,11 +85,8 @@ export class SimcAplService {
     }
     const walk: Walk = { byList, actions: [], audit, resolverFor: action => this.resolver(setBonusToken, action, name => inlineVariable(name, 0), audit) };
     this.walkList(walk, DEFAULT_LIST, [], []);
-    const precombat = (byList.get(PRECOMBAT_LIST) ?? [])
-      .filter(line => !BOOKKEEPING_ACTIONS.has(line.action))
-      .map(line => line.action);
     return {
-      actions: walk.actions, precombat, unresolvedVariables: [...unresolvedVariables].sort(),
+      actions: walk.actions, unresolvedVariables: [...unresolvedVariables].sort(),
       unknownTokens: [...audit.unknown.values()].sort((a, b) => a.kind.localeCompare(b.kind) || a.token.localeCompare(b.token)),
       referencedHeads: [...audit.heads].sort(),
     };
@@ -134,7 +130,7 @@ export class SimcAplService {
         this.walkList(walk, line.options['name'] ?? '', gate ? [...carried, gate] : carried, [...visiting, list]);
         if (!this.reachableAfter(line, gate, carried)) return;
       } else {
-        walk.actions.push({ action: line.action, list, options: line.options, own: gate, context: [...carried], priority: walk.actions.length });
+        walk.actions.push({ action: line.action, own: gate, context: [...carried], priority: walk.actions.length });
       }
     }
   }

@@ -8,6 +8,8 @@ const apl = TestBed.inject(SimcAplService);
 const expressions = TestBed.inject(SimcExpressionService);
 
 const CURRENT_TIER = 'midnight_season_2';
+/** A variable referencing a variable inlines this many levels down before the resolver gives up. */
+const INLINE_DEPTH_CAP = 6;
 
 const PROFILE = [
   'rogue="MID2_Rogue_Subtlety"',
@@ -73,15 +75,23 @@ describe('SimcAplService.resolve', () => {
     expect(printed(line('rupture'))).toBe('dot.rupture.refreshable&dot.rupture.remains<4');
   });
 
-  it('lists the precombat actions in order without the bookkeeping lines', () => {
-    expect(apl.resolve(apl.parseLines(PROFILE), CURRENT_TIER).precombat).toEqual(['apply_poison', 'stealth']);
-  });
-
   it('reports a variable it cannot inline and treats it as unknown', () => {
     const profile = 'actions=variable,name=count,op=add,value=1\nactions+=/backstab,if=variable.count>2&buff.x.up';
     const result = apl.resolve(apl.parseLines(profile), CURRENT_TIER);
     expect(result.unresolvedVariables).toEqual(['count']);
     expect(result.actions.map(printed)).toEqual(['buff.x.up']);
+  });
+
+  it('inlines a chain of variables to the depth cap and reports the one past it', () => {
+    const chain = (length: number): string => [
+      ...Array.from({ length }, (_, index) => `actions${index ? '+=/' : '='}variable,name=v${index},value=${index + 1 < length ? `variable.v${index + 1}` : 'buff.x.up'}`),
+      'actions+=/backstab,if=variable.v0',
+    ].join('\n');
+    const atCap = apl.resolve(apl.parseLines(chain(INLINE_DEPTH_CAP + 1)), CURRENT_TIER);
+    const pastCap = apl.resolve(apl.parseLines(chain(INLINE_DEPTH_CAP + 2)), CURRENT_TIER);
+    expect(atCap.unresolvedVariables).toEqual([]);
+    expect(atCap.actions.map(printed)).toEqual(['buff.x.up']);
+    expect(pastCap.unresolvedVariables).toEqual([`v${INLINE_DEPTH_CAP + 1}`]);
   });
 
   it('chains conditional sets of a flag variable into the gate that makes it true', () => {

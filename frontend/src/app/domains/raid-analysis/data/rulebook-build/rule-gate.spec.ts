@@ -15,6 +15,8 @@ const DEMOLISH = 'demolish';
 const SLAYER = 'slayers_dominance';
 const UNSEEN_BLADE = 'unseen_blade';
 const FACT = 'aoe';
+/** Past this many talents across the lines the build space is not enumerated. */
+const GATE_TOKEN_CAP = 8;
 
 const record = { id: 1, name: 'Mortal Strike' } as SpellRecord;
 
@@ -68,6 +70,12 @@ describe('RuleGateService.gateAcrossLines', () => {
   it('yields no rule for a fact only a build with no hero tree would carry', () => {
     const lines = [line(`talent.${DEMOLISH}`, false), line(`talent.${SLAYER}`, false), line('buff.x.up', true)];
     expect(gateOf(lines)).toBeNull();
+  });
+
+  it('enumerates a gate over the token cap of talents and gives up one talent past it', () => {
+    const gated = (count: number): ActionLine[] => Array.from({ length: count }, (_, index) => line(`talent.t${index}`, true));
+    expect(gateOf(gated(GATE_TOKEN_CAP))).toEqual({ requires: new Set(), excludes: new Set() });
+    expect(gateOf(gated(GATE_TOKEN_CAP + 1))).toBeNull();
   });
 
   it('yields no rule when an ungated line drops the fact', () => {

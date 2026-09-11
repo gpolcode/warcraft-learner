@@ -7,19 +7,6 @@
   "additionalProperties": false,
   "required": ["spec", "spec_icon", "major_cooldowns", "defensives", "rules"],
   "properties": {
-    "source": {
-      "type": "object",
-      "description": "Optional. Set by the deterministic builder: the SimulationCraft sources and generator version the file was built from.",
-      "additionalProperties": false,
-      "required": ["builder_version", "simc_tier", "profile_sha256", "spell_data_sha256", "built_at_s"],
-      "properties": {
-        "builder_version": { "type": "integer" },
-        "simc_tier": { "type": "string" },
-        "profile_sha256": { "type": "string" },
-        "spell_data_sha256": { "type": "string" },
-        "built_at_s": { "type": "integer" }
-      }
-    },
     "spec": {
       "type": "string",
       "description": "WCL spec name, e.g. SubtletyRogue. Must match the spec being analysed."
