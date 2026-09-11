@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClipRoll, ClipWindow, Segment, LiveCaptureFeatureService } from './live-capture-feature-service';
 import { ClipAnchor } from '../capture/capture.models';
 import { TestBed } from '@angular/core/testing';
@@ -149,5 +149,45 @@ describe('saveSegments', () => {
 describe('downloadFullPull', () => {
   it('reports no footage while no fight is prepared, rather than saving an empty file', async () => {
     expect(await svc.downloadFullPull()).toBe('no-footage');
+  });
+});
+
+describe('statusText', () => {
+  const POLL_S = 12;
+
+  function setup(): LiveCaptureFeatureService {
+    TestBed.configureTestingModule({ providers: [LiveCaptureFeatureService] });
+    return TestBed.inject(LiveCaptureFeatureService);
+  }
+
+  beforeEach(() => { vi.useFakeTimers(); });
+  afterEach(() => { vi.useRealTimers(); });
+
+  it('mirrors a plain status message while no poll is scheduled', () => {
+    const service = setup();
+    service.setStatus('Checking for new pulls…');
+    expect(service.statusText()).toBe('Checking for new pulls…');
+  });
+
+  it('counts down to the scheduled poll in real time', () => {
+    const service = setup();
+    service.scheduleNextPollIn(POLL_S);
+    expect(service.statusText()).toBe('Next update in 12s');
+
+    vi.advanceTimersByTime(5_000);
+    expect(service.statusText()).toBe('Next update in 7s');
+
+    vi.advanceTimersByTime(7_000);
+    expect(service.statusText()).toBe('Next update in 0s');
+  });
+
+  it('drops the countdown once a new status message replaces it', () => {
+    const service = setup();
+    service.scheduleNextPollIn(POLL_S);
+    vi.advanceTimersByTime(5_000);
+
+    service.setStatus('Updated 1:00:00 PM - Boss');
+
+    expect(service.statusText()).toBe('Updated 1:00:00 PM - Boss');
   });
 });
