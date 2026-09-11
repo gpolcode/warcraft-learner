@@ -23,7 +23,7 @@ export function postRaidProviders(wclApi: unknown, prepareMap = vi.fn(() => Prom
     PostRaid,
     { provide: WclApiService, useValue: wclApi },
     { provide: MapFeatureService, useValue: { clear: vi.fn(), prepare: prepareMap, ready: () => false, openAt: vi.fn() } },
-    { provide: LiveCaptureFeatureService, useValue: { liveEnabled: signal(false), clear: vi.fn(), prepare: vi.fn(), setStatus: vi.fn(), clipReady: () => false, openClip: vi.fn() } },
+    { provide: LiveCaptureFeatureService, useValue: { liveEnabled: signal(false), isCapturing: () => false, hasActiveSession: () => false, clear: vi.fn(), prepare: vi.fn(), setStatus: vi.fn(), scheduleNextPollIn: vi.fn(), clipReady: () => false, openClip: vi.fn() } },
     { provide: LiveReportSyncService, useValue: { pollTriggers: () => EMPTY } },
     { provide: SelectionStore, useValue: { loadPostRaid: () => null, savePostRaid: vi.fn() } },
   ];

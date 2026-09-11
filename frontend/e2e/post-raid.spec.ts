@@ -8,9 +8,6 @@ const PLAYER_NAME = 'Pudders';
 // Mirrors POST_RAID_KEY in src/app/domains/raid-analysis/data/selection/selection-store.ts.
 const STICKY_PLAYER_KEY = 'wl.sel.postRaid';
 
-// Mirrors POLL_INTERVAL_S in src/app/domains/raid-analysis/data/wcl/live-report-sync-service.ts.
-const POLL_INTERVAL_S = 12;
-
 const ANALYZE_TIMEOUT_MS = 120_000;
 // The map trails load unawaited after the cards reveal.
 const MAP_READY_TIMEOUT_MS = 60_000;
@@ -61,8 +58,8 @@ test('following the latest pull hands the fight selection to the live poll', asy
   await follow.click();
   await expect(follow).toBeChecked();
   await expect(fight).toHaveAttribute('aria-disabled', 'true');
-  // The poll stamps its own clock time, so only the interval beside it is pinned.
-  const settled = new RegExp(`Last updated .+, polling every ${POLL_INTERVAL_S}s`);
+  // The countdown ticks every second, so only its shape is pinned.
+  const settled = /Next update in \d+s/;
   await expect(controls.getByText(settled)).toBeVisible({ timeout: LIVE_TIMEOUT_MS });
 
   // Left on, the poll keeps hitting Warcraft Logs under every later test.

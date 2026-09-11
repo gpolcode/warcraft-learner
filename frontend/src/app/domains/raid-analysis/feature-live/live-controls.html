@@ -4,9 +4,9 @@
       Follow latest pull
     </mat-slide-toggle>
     @if (capture.liveEnabled()) {
-      @if (capture.status()) {
+      @if (capture.statusText()) {
         <span class="ml-auto flex items-center gap-2 text-body text-muted">
-          <span class="h-[9px] w-[9px] rounded-full bg-accent"></span>{{ capture.status() }}
+          <span class="h-[9px] w-[9px] rounded-full bg-accent"></span>{{ capture.statusText() }}
         </span>
       }
     } @else {
