@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
-import { sha256 } from '@noble/hashes/sha2.js';
-import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
-import type { AplUnknownToken, AplUnknownTokenKind } from '../simc/simc.models';
+import { Injectable, inject } from '@angular/core';
+import type { RulebookGap, RulebookGapKind } from '../simc/simc.models';
+import { HashService } from '../../../shared/util-hash/hash-service';
 import { getOrInsert } from '../analysis/analysis-math';
 
-/** One SimulationCraft token outside the vocabulary inventory, with the specs whose profiles carry it. */
-export interface VocabularyGap {
-  kind: AplUnknownTokenKind;
+/** One name or token the rulebook builder could not read, with the specs whose sources carry it. */
+export interface RunGap {
+  kind: RulebookGapKind;
   token: string;
   specs: string[];
 }
@@ -16,7 +15,7 @@ export interface IngestRunSummary {
   failed: { spec: string; message: string }[];
   budgetStopped: boolean;
   fatal?: string;
-  vocabularyGaps?: VocabularyGap[];
+  gaps?: RunGap[];
 }
 
 /** Published on `globalThis.__INGEST_DONE__`, the headless harness's exit signal, with the gap report rendered so the harness only relays it. */
@@ -25,17 +24,22 @@ export interface PublishedRunSummary extends IngestRunSummary {
   gapReport: string | null;
 }
 
-const GAP_LABEL: Record<AplUnknownTokenKind, string> = {
+const GAP_LABEL: Record<RulebookGapKind, string> = {
   expression: 'Expression', option: 'Action option', variable_op: 'Variable op', syntax: 'Unparsed expression',
+  line: 'Unparsed line', list: 'Missing list', variable: 'Undefined variable',
+  action: 'Unresolved action', aura: 'Unresolved aura', talent: 'Unresolved talent',
 };
 const INVENTORY_PATH = 'frontend/src/app/domains/raid-analysis/data/simc/apl-vocabulary.ts';
 /** The issue step compares this line alone, so an edit of the surrounding prose never reads as a new set of gaps. */
 const FINGERPRINT = 'warcraft-learner-gaps';
+const FINGERPRINT_LENGTH = 16;
 
 @Injectable({ providedIn: 'root' })
 export class IngestRunSummaryService {
-  publish(summary: IngestRunSummary): void {
-    const published: PublishedRunSummary = { ...summary, gapWarnings: this.gapWarnings(summary), gapReport: this.gapReport(summary) };
+  private readonly hash = inject(HashService);
+
+  async publish(summary: IngestRunSummary): Promise<void> {
+    const published: PublishedRunSummary = { ...summary, gapWarnings: this.gapWarnings(summary), gapReport: await this.gapReport(summary) };
     (globalThis as { __INGEST_DONE__?: PublishedRunSummary }).__INGEST_DONE__ = published;
   }
 
@@ -52,32 +56,32 @@ export class IngestRunSummaryService {
       console.log('No spec-level failures.');
     }
     const warnings = this.gapWarnings(summary);
-    console.log(warnings.length ? `APL vocabulary gaps (${warnings.length}):` : 'No APL vocabulary gaps.');
+    console.log(warnings.length ? `SimulationCraft gaps (${warnings.length}):` : 'No SimulationCraft gaps.');
     for (const warning of warnings) console.log(`  ${warning}`);
   }
 
   /** One gap per token over every spec, so the report reads the same whichever specs a run ingested. */
-  vocabularyGaps(tokensBySpec: Map<string, AplUnknownToken[]>): VocabularyGap[] {
-    const gaps = new Map<string, VocabularyGap>();
-    for (const [spec, tokens] of tokensBySpec) {
-      for (const token of tokens) getOrInsert(gaps, `${token.kind}:${token.token}`, () => ({ kind: token.kind, token: token.token, specs: [] })).specs.push(spec);
+  gaps(gapsBySpec: Map<string, RulebookGap[]>): RunGap[] {
+    const gaps = new Map<string, RunGap>();
+    for (const [spec, entries] of gapsBySpec) {
+      for (const gap of entries) getOrInsert(gaps, `${gap.kind}:${gap.token}`, () => ({ kind: gap.kind, token: gap.token, specs: [] })).specs.push(spec);
     }
     return [...gaps.values()].sort((a, b) => a.kind.localeCompare(b.kind) || a.token.localeCompare(b.token));
   }
 
   gapWarnings(summary: IngestRunSummary): string[] {
-    return (summary.vocabularyGaps ?? []).map(gap => `${GAP_LABEL[gap.kind]} "${gap.token}" is outside the APL vocabulary inventory (${gap.specs.join(', ')})`);
+    return (summary.gaps ?? []).map(gap => `${GAP_LABEL[gap.kind]} "${gap.token}" is outside what the rulebook builder reads (${gap.specs.join(', ')})`);
   }
 
-  /** The issue body: a table of the gaps plus a fingerprint of the set, or null when the inventory covers every profile. */
-  gapReport(summary: IngestRunSummary): string | null {
-    const gaps = summary.vocabularyGaps ?? [];
+  /** The issue body: a table of the gaps plus a fingerprint of the set, or null when the builder reads every source whole. */
+  async gapReport(summary: IngestRunSummary): Promise<string | null> {
+    const gaps = summary.gaps ?? [];
     if (!gaps.length) return null;
     const rows = gaps.map(gap => `| ${GAP_LABEL[gap.kind]} | \`${gap.token}\` | ${gap.specs.join(', ')} |`);
-    const fingerprint = bytesToHex(sha256(utf8ToBytes(rows.join('\n')))).slice(0, 16);
+    const fingerprint = (await this.hash.sha256Hex(rows.join('\n'))).slice(0, FINGERPRINT_LENGTH);
     return [
-      `SimulationCraft tokens outside the APL vocabulary inventory (\`${INVENTORY_PATH}\`).`,
-      'Add each to the inventory with its support level and note, or extend the builder to read it.',
+      `SimulationCraft tokens and names the rulebook builder cannot read; the inventory is \`${INVENTORY_PATH}\`.`,
+      'A shape, option or op closes with an inventory row and its support level; an action or aura with an alias or an unrecorded-name note; a talent by its Raidbots name; a line or list by extending the reader.',
       '',
       '| Kind | Token | Specs |',
       '|---|---|---|',

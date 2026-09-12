@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { SimcExpressionService } from '../simc/simc-expression-service';
 import { AplVocabularyService } from '../simc/apl-vocabulary-service';
-import type { AplComparisonOp, ResolvedAction, SpellRecord } from '../simc/simc.models';
+import type { AplComparisonOp, ResolvedAction, RulebookGap, SpellRecord } from '../simc/simc.models';
 import type { RuleCondition } from '../rulebook/rulebook.models';
 import { getOrInsert } from '../analysis/analysis-math';
 import { AbilityIndexService } from './ability-index-service';
@@ -24,8 +24,8 @@ const SINGLE_TARGET = 1;
 
 export interface RuleDerivation {
   drafts: RuleDraft[];
-  unresolvedActions: string[];
-  unresolvedAuras: string[];
+  /** Action and aura names no record answers to, the inventory's unrecorded names left out. */
+  gaps: RulebookGap[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -44,7 +44,7 @@ export class RuleDerivationService {
     const groups = this.groups(lines);
     const aura: AuraLookup = (token, scope) => {
       const record = this.abilities.aura(index, token, scope);
-      if (!record) unresolvedAuras.add(token);
+      if (!record && !this.vocabulary.unrecorded(token)) unresolvedAuras.add(token);
       return record;
     };
     const seeds: DraftSeed[] = [
@@ -56,7 +56,11 @@ export class RuleDerivationService {
       ...this.states.clipRules(groups, aura),
       ...this.states.cooldownPairingRules(groups, index),
     ];
-    return { drafts: this.merge(seeds), unresolvedActions: [...unresolvedActions].sort(), unresolvedAuras: [...unresolvedAuras].sort() };
+    const gaps: RulebookGap[] = [
+      ...[...unresolvedActions].sort().map((token): RulebookGap => ({ kind: 'action', token })),
+      ...[...unresolvedAuras].sort().map((token): RulebookGap => ({ kind: 'aura', token })),
+    ];
+    return { drafts: this.merge(seeds), gaps };
   }
 
   private actionLines(actions: ResolvedAction[], index: AbilityIndex, unresolved: Set<string>): ActionLine[] {
@@ -64,7 +68,7 @@ export class RuleDerivationService {
     for (const resolved of actions) {
       const record = this.abilities.cast(index, resolved.action);
       if (!record) {
-        if (!this.vocabulary.actionWord(resolved.action)) unresolved.add(resolved.action);
+        if (!this.vocabulary.actionWord(resolved.action) && !this.vocabulary.unrecorded(resolved.action)) unresolved.add(resolved.action);
         continue;
       }
       const terms = (this.expressions.termsOf(resolved.own, resolved.context) ?? [this.fallbackTerm(resolved)])

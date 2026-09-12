@@ -30,7 +30,7 @@ const fillerInBuff: RuleCondition = {
 };
 
 function linesOf(profile: string) {
-  return apl.resolve(apl.parseLines(profile), TIER).actions;
+  return apl.resolve(apl.parse(profile), TIER).actions;
 }
 
 describe('RulebookCopyService.description', () => {
@@ -74,18 +74,6 @@ describe('RulebookCopyService.usageRule', () => {
 
   it('falls back to an unconditional sentence', () => {
     expect(copy.usageRule(linesOf('actions=shadow_blades'), index)).toBe('Use it on cooldown.');
-  });
-});
-
-describe('RulebookCopyService.aplCondition', () => {
-  it('joins every line\'s inherited and own gates in SimC syntax', () => {
-    const lines = linesOf([
-      'actions=call_action_list,name=cds,if=combo_points>=5',
-      'actions.cds=shadow_blades,if=buff.slice_and_dice.up',
-      'actions.cds+=/shadow_blades,if=buff.shadow_dance.up',
-    ].join('\n'));
-    expect(copy.aplCondition(lines)).toBe('((combo_points>=5)&(buff.slice_and_dice.up))|((combo_points>=5)&(buff.shadow_dance.up))');
-    expect(copy.aplCondition(linesOf('actions=shadow_blades'))).toBe('1');
   });
 });
 

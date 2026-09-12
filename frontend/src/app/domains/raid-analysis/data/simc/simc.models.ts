@@ -37,20 +37,25 @@ export interface ResolvedAction {
   priority: number;
 }
 
-export type AplUnknownTokenKind = 'expression' | 'option' | 'variable_op' | 'syntax';
+/** One `.simc` text split into the action lines it declares and the `actions` lines the reader could not split. */
+export interface AplSource {
+  lines: AplLine[];
+  unparsed: string[];
+}
 
-/** A token outside the vocabulary inventory: a shape, option or op never seen before, or an expression the parser rejected. */
-export interface AplUnknownToken {
-  kind: AplUnknownTokenKind;
+export type RulebookGapKind =
+  | 'expression' | 'option' | 'variable_op' | 'syntax' | 'line' | 'list' | 'variable'
+  | 'action' | 'aura' | 'talent';
+
+/** What the builder could not read or resolve: a token outside the inventory, a line or list it could not follow, or a name no source carries. */
+export interface RulebookGap {
+  kind: RulebookGapKind;
   token: string;
-  count: number;
 }
 
 export interface ResolvedApl {
   actions: ResolvedAction[];
-  /** Variable names whose definitions the resolver could not inline, kept for the build report. */
-  unresolvedVariables: string[];
-  unknownTokens: AplUnknownToken[];
+  gaps: RulebookGap[];
   /** Every reference head the gates touched, so a build knows which event streams the rules can need. */
   referencedHeads: string[];
 }

@@ -18,7 +18,7 @@ const NAME = 'x';
 const sample = (shape: string): string => shape.split('.').map(segment => (segment === '*' ? NAME : segment)).join('.');
 
 function gateOf(expression: string) {
-  const [action] = apl.resolve(apl.parseLines(`actions=${NAME},if=${expression}`), CURRENT_TIER).actions;
+  const [action] = apl.resolve(apl.parse(`actions=${NAME},if=${expression}`), CURRENT_TIER).actions;
   return action?.own ?? null;
 }
 
@@ -82,10 +82,10 @@ describe('the vocabulary inventory against the resolver and the reader', () => {
   });
 });
 
-describe('SimcAplService.resolve unknown tokens', () => {
-  it('reports a shape outside the inventory once, with how often it appears, and keeps it as a literal', () => {
-    const result = apl.resolve(apl.parseLines(`actions=${NAME},if=buff.a.new_field&buff.b.new_field`), CURRENT_TIER);
-    expect(result.unknownTokens).toEqual([{ kind: 'expression', token: 'buff.*.new_field', count: 2 }]);
+describe('SimcAplService.resolve gaps', () => {
+  it('reports a shape outside the inventory once and keeps it as a literal', () => {
+    const result = apl.resolve(apl.parse(`actions=${NAME},if=buff.a.new_field&buff.b.new_field`), CURRENT_TIER);
+    expect(result.gaps).toEqual([{ kind: 'expression', token: 'buff.*.new_field' }]);
     expect(result.actions[0]?.own ? expressions.print(result.actions[0].own) : null).toBe('buff.a.new_field&buff.b.new_field');
   });
 
@@ -94,15 +94,15 @@ describe('SimcAplService.resolve unknown tokens', () => {
       `actions=variable,name=n,op=average,value=1`,
       `actions+=/${NAME},strange_option=1,if=buff.a.up`,
     ].join('\n');
-    expect(apl.resolve(apl.parseLines(profile), CURRENT_TIER).unknownTokens).toEqual([
-      { kind: 'option', token: 'strange_option', count: 1 },
-      { kind: 'variable_op', token: 'average', count: 1 },
+    expect(apl.resolve(apl.parse(profile), CURRENT_TIER).gaps).toEqual([
+      { kind: 'option', token: 'strange_option' },
+      { kind: 'variable_op', token: 'average' },
     ]);
   });
 
   it('reports an expression the parser rejects as a syntax token and drops the gate', () => {
-    const result = apl.resolve(apl.parseLines(`actions=${NAME},if=buff.a.remains~=1`), CURRENT_TIER);
-    expect(result.unknownTokens).toEqual([{ kind: 'syntax', token: 'buff.a.remains~=1', count: 1 }]);
+    const result = apl.resolve(apl.parse(`actions=${NAME},if=buff.a.remains~=1`), CURRENT_TIER);
+    expect(result.gaps).toEqual([{ kind: 'syntax', token: 'buff.a.remains~=1' }]);
     expect(result.actions[0]?.own).toBeNull();
   });
 
@@ -111,11 +111,11 @@ describe('SimcAplService.resolve unknown tokens', () => {
       `actions=variable,name=n,op=reset,default=0`,
       `actions+=/${NAME},if=buff.a.up&cooldown.b.remains>10&fight_remains<30&energy.deficit>20,target_if=min:dot.c.remains,line_cd=5`,
     ].join('\n');
-    expect(apl.resolve(apl.parseLines(profile), CURRENT_TIER).unknownTokens).toEqual([]);
+    expect(apl.resolve(apl.parse(profile), CURRENT_TIER).gaps).toEqual([]);
   });
 
   it('names the heads the gates touched, counting a bare dot field as a dot', () => {
     const profile = `actions=${NAME},if=refreshable&buff.a.up&fight_remains>10`;
-    expect(apl.resolve(apl.parseLines(profile), CURRENT_TIER).referencedHeads).toEqual(['buff', 'dot', 'fight_remains']);
+    expect(apl.resolve(apl.parse(profile), CURRENT_TIER).referencedHeads).toEqual(['buff', 'dot', 'fight_remains']);
   });
 });

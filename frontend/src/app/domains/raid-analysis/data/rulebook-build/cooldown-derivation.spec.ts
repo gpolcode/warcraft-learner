@@ -48,7 +48,7 @@ const PROFILE = [
 
 function derive(samples: ParseSample[] = []) {
   const index = abilities.build(KIT, samples, CLASS, SPEC);
-  const resolved = apl.resolve(apl.parseLines(PROFILE), TIER);
+  const resolved = apl.resolve(apl.parse(PROFILE), TIER);
   return { index, majors: cooldowns.majorCooldowns(resolved.actions, index) };
 }
 

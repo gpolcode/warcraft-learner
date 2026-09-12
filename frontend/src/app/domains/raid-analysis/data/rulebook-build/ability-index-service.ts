@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { median } from 'd3-array';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { SpellDataDumpService } from '../simc/spell-data-dump-service';
+import { AplVocabularyService } from '../simc/apl-vocabulary-service';
 import type { SpellRecord } from '../simc/simc.models';
 import { getOrInsert } from '../analysis/analysis-math';
 import type { AbilityIndex, ParseObservation, ParseSample } from './rulebook-build.models';
@@ -17,19 +18,29 @@ const STATE_MIN_UPTIME_SHARE = 0.05;
 @Injectable({ providedIn: 'root' })
 export class AbilityIndexService {
   private readonly dump = inject(SpellDataDumpService);
+  private readonly vocabulary = inject(AplVocabularyService);
   private readonly auraWindows = inject(AuraWindowsService);
 
   build(records: SpellRecord[], samples: ParseSample[], classLabel: string, specLabel: string): AbilityIndex {
-    const owned = records.filter(record => this.owned(record, classLabel, specLabel));
     const byToken = new Map<string, SpellRecord[]>();
-    for (const record of owned) getOrInsert(byToken, this.dump.token(record.name), () => []).push(record);
+    for (const record of this.ownedRecords(records, classLabel, specLabel)) getOrInsert(byToken, this.dump.token(record.name), () => []).push(record);
     return { classLabel, specLabel, byToken, observation: this.observe(samples) };
   }
 
   /** Another spec's spells share the class dump; they are dropped so a same-named ability cannot resolve to the wrong spec's id. */
-  private owned(record: SpellRecord, classLabel: string, specLabel: string): boolean {
-    const className = record.className;
-    return className === null || className === classLabel || className === `${specLabel} ${classLabel}`;
+  ownedRecords(records: SpellRecord[], classLabel: string, specLabel: string): SpellRecord[] {
+    return records.filter(record => {
+      const className = record.className;
+      return className === null || className === classLabel || className === `${specLabel} ${classLabel}`;
+    });
+  }
+
+  /** The records behind a token: the token's own, else the ones behind the module name the inventory maps it to. */
+  private recordsOf(index: AbilityIndex, token: string): SpellRecord[] {
+    const own = index.byToken.get(token);
+    if (own) return own;
+    const alias = this.vocabulary.alias(token);
+    return (alias === null ? undefined : index.byToken.get(alias)) ?? [];
   }
 
   /** The dump names one owning spec per talent even when several take it, so this reads only as a hint for buttons the APL never presses. */
@@ -127,7 +138,7 @@ export class AbilityIndexService {
 
   /** The id the logs record for a pressed action: the observed cast wins, then the spec's own record, then the class one. */
   cast(index: AbilityIndex, token: string): SpellRecord | null {
-    const candidates = (index.byToken.get(token) ?? []).filter(record => this.castable(record));
+    const candidates = this.recordsOf(index, token).filter(record => this.castable(record));
     return this.best(candidates, [
       record => index.observation.castParses.get(record.id) ?? 0,
       record => (record.className === `${index.specLabel} ${index.classLabel}` ? 1 : 0),
@@ -136,7 +147,8 @@ export class AbilityIndexService {
 
   /** The id the logs record for an aura: the observed one wins, then a record whose effect faces the right way. */
   aura(index: AbilityIndex, token: string, scope: 'self' | 'target'): SpellRecord | null {
-    const candidates = (index.byToken.get(token) ?? index.byToken.get(token.replace(/_dot$/, '')) ?? []).filter(record => this.auraLike(record));
+    const own = this.recordsOf(index, token);
+    const candidates = (own.length ? own : this.recordsOf(index, token.replace(/_dot$/, ''))).filter(record => this.auraLike(record));
     const observed = scope === 'self' ? index.observation.buffParses : index.observation.debuffParses;
     const wanted = scope === 'self' ? 'self' : 'enemy';
     return this.best(candidates, [

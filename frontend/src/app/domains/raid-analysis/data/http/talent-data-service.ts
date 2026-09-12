@@ -21,10 +21,16 @@ export class TalentDataService {
   private readonly http = inject(HttpClient);
 
   async getTalents(spec: string): Promise<Result<SpecTalents>> {
+    const index = await this.getTalentIndex();
+    if (!index.ok) return index;
+    const talents = index.value.get(spec);
+    return talents ? Results.ok(talents) : Results.missing('No talent data for this spec.');
+  }
+
+  /** Every spec's talents from the one dump Raidbots ships, for a run that reads many specs. */
+  async getTalentIndex(): Promise<Result<Map<string, SpecTalents>>> {
     try {
-      const trees = await firstValueFrom(this.http.get<RaidbotsTree[]>(DUMP_URL));
-      const talents = this.indexTalentTrees(trees).get(spec);
-      return talents ? Results.ok(talents) : Results.missing('No talent data for this spec.');
+      return Results.ok(this.indexTalentTrees(await firstValueFrom(this.http.get<RaidbotsTree[]>(DUMP_URL))));
     } catch (cause) {
       this.logger.logWarn('TalentDataService dump fetch', cause);
       return HttpLoadErrors.toLoadError(cause, 'talent-data.dump');

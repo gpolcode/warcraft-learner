@@ -89,6 +89,46 @@ describe('RotationFeatureService', () => {
     }
   });
 
+  it('judges a talent-gated rule only when the player\'s build fits it, reading the log\'s talents', async () => {
+    const UNSEEN_BLADE = 125_700;
+    const TALENTED_CODE = 'rT';
+    const reads: string[] = [];
+    const wcl = {
+      getReport: async () => REPORT,
+      getAllEvents: async (_c: string, _f: number, dataType: string) => (dataType === 'Casts' ? [cast(SECRET_TECHNIQUE, 30)] : []),
+      getCombatantInfo: async (code: string, _f: number, playerId: number) => {
+        reads.push(code);
+        return [{ sourceID: playerId, talentTree: code === TALENTED_CODE ? [{ id: UNSEEN_BLADE, rank: 1 }] : [] }];
+      },
+    };
+    const gated: RulebookRule = {
+      type: 'cooldown_pairing', severity: 'critical', description: 'Secret Technique inside Shadow Dance',
+      condition: SECRET_TECH_NEEDS_DANCE, action: 'Open Shadow Dance, then spend Secret Technique inside it.', requires_talents: [[UNSEEN_BLADE]],
+    };
+    const service = withSource(Results.ok(bench({ rules: [benched(gated)] })), wcl);
+    const rows = async (code: string) => {
+      const result = await service.loadPlayerView('SubtletyRogue', 1, code, 1, 10);
+      return result.ok ? result.value.ruleRows.filter(row => row.what === gated.description) : [];
+    };
+    expect(await rows(TALENTED_CODE)).toHaveLength(1);
+    expect(await rows('rU')).toHaveLength(0);
+    expect(reads).toEqual([TALENTED_CODE, 'rU']);
+  });
+
+  it('reads no talents for a bench whose rules carry no gate', async () => {
+    const wcl = {
+      getReport: async () => REPORT,
+      getAllEvents: async (_c: string, _f: number, dataType: string) => (dataType === 'Casts' ? [cast(SECRET_TECHNIQUE, 30)] : []),
+      getCombatantInfo: async () => { throw new Error('the build was read for an ungated bench'); },
+    };
+    const rule: RulebookRule = {
+      type: 'cooldown_pairing', severity: 'critical', description: 'Secret Technique inside Shadow Dance',
+      condition: SECRET_TECH_NEEDS_DANCE, action: 'Open Shadow Dance, then spend Secret Technique inside it.',
+    };
+    const result = await withSource(Results.ok(bench({ rules: [benched(rule)] })), wcl).loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
+    expect(result.ok && result.value.ruleRows.filter(row => row.what === rule.description)).toHaveLength(1);
+  });
+
   it('computes player findings from the player log', async () => {
     const wcl = {
       getReport: async () => wclReport({

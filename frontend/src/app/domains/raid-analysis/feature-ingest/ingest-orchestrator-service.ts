@@ -8,18 +8,20 @@ import { WCL_TRANSPORT } from '../data/wcl/wcl-transport';
 import { SpecMetaService } from '../data/data-files/spec-meta-service';
 import type { SpecMeta } from '../data/data-files/spec-meta.models';
 import { LoggerService } from '../../shared/util-logging/logger-service';
-import { type LoadError, type Result } from '../../shared/util-http/result';
+import { type LoadError, type Result, Results } from '../../shared/util-http/result';
 import { TopParseSelectionService } from '../data/analysis/top-parse-selection-service';
 import { TOP_PARSE_COUNT } from '../data/analysis/bench-pipeline-service';
 import { getOrInsert } from '../data/analysis/analysis-math';
 import type { EncounterEntry, SpecEntry } from '../data/encounter/encounter.models';
 import type { TopParseSelection } from '../data/wcl/wcl.models';
 import type { Rulebook } from '../data/rulebook/rulebook.models';
-import type { AplUnknownToken } from '../data/simc/simc.models';
-import { SimcDataService, type SimcText, type SimcTier } from '../data/http/simc-data-service';
+import type { RulebookGap } from '../data/simc/simc.models';
+import type { SpecTalents } from '../data/gear/talent.models';
+import { SimcDataService, type SimcTier } from '../data/http/simc-data-service';
 import { TalentDataService } from '../data/http/talent-data-service';
-import { EncounterRulebookService, type SpecSources } from '../data/rulebook-build/encounter-rulebook-service';
-import { RULEBOOK_BUILDER_VERSION, RulebookBuildService } from '../data/rulebook-build/rulebook-build-service';
+import { EncounterRulebookService } from '../data/rulebook-build/encounter-rulebook-service';
+import { RulebookBuildService } from '../data/rulebook-build/rulebook-build-service';
+import type { RulebookSources } from '../data/rulebook-build/rulebook-build.models';
 import { BenchRegistryService, LEAD_BENCH, type BenchDescriptor } from './bench-registry';
 import { CurrentRaidsService, BudgetExceededError } from '../data/ingest/current-raids-service';
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
@@ -42,15 +44,16 @@ const ENCOUNTER_OUTCOME_NOTE: Record<EncounterOutcome, string> = {
   failed: 'bench load failed, retried next run',
 };
 
-/** The SimulationCraft inputs of one run: every profile up front, spell dumps per class as a spec needs them. */
+/** The SimulationCraft inputs of one run, read up front for every spec: null where SimulationCraft ships no profile, an error where a source failed to load. */
 interface RunSources {
   tier: SimcTier;
   metas: SpecMeta[];
-  profiles: Map<string, Result<SimcText>>;
-  dumps: Map<string, Promise<Result<SimcText>>>;
+  sources: Map<string, Result<RulebookSources | null>>;
   /** Specs whose first derivation was logged, so the rebuild per encounter stays quiet. */
   reported: Set<string>;
 }
+
+type ClassDumps = Map<string, Promise<Result<string>>>;
 
 function nowS(): number {
   return Math.floor(Date.now() / 1000);
@@ -92,7 +95,7 @@ export class IngestOrchestratorService {
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       console.error('\nFatal error:', message);
-      this.summary.publish({ succeeded: [], failed: [], budgetStopped: false, fatal: message });
+      await this.summary.publish({ succeeded: [], failed: [], budgetStopped: false, fatal: message });
     }
   }
 
@@ -115,12 +118,12 @@ export class IngestOrchestratorService {
     await this.pruneRetiredRaids(protectedIds);
     await this.refreshIndices(encounters);
 
-    const run: RunSources = { tier, metas, profiles: await this.loadProfiles(tier, metas), dumps: new Map(), reported: new Set() };
-    const vocabularyGaps = this.summary.vocabularyGaps(this.unknownTokensBySpec(run));
+    const run: RunSources = { tier, metas, sources: await this.prepareSources(tier, metas), reported: new Set() };
+    const gaps = this.summary.gaps(this.gapsBySpec(run));
     const specs = await this.orderedSpecs(metas.map(meta => meta.spec));
-    const summary: IngestRunSummary = { ...await this.ingestEachSpec(specs, encounters, version, run), vocabularyGaps };
+    const summary: IngestRunSummary = { ...await this.ingestEachSpec(specs, encounters, version, run), gaps };
     this.summary.print(summary, specs.length);
-    this.summary.publish(summary);
+    await this.summary.publish(summary);
   }
 
   private async resolveSpecMetas(): Promise<SpecMeta[]> {
@@ -131,35 +134,32 @@ export class IngestOrchestratorService {
     return metas;
   }
 
-  /** Every profile up front: the vocabulary scan reads them all, and a missing one marks its spec as gear, positions and phases only. */
-  private async loadProfiles(tier: SimcTier, metas: SpecMeta[]): Promise<Map<string, Result<SimcText>>> {
-    const profiles = new Map<string, Result<SimcText>>();
-    for (const meta of metas) profiles.set(meta.spec, await this.simc.getProfile(tier, meta.classLabel, meta.specLabel));
-    const shipped = [...profiles.values()].filter(profile => profile.ok).length;
+  /** Every spec's sources up front: the gap report reads them all, and a missing profile marks its spec as gear, positions and phases only. */
+  private async prepareSources(tier: SimcTier, metas: SpecMeta[]): Promise<Map<string, Result<RulebookSources | null>>> {
+    const talents = await this.talents.getTalentIndex();
+    if (!talents.ok) this.logger.logWarn('ingest: no talent data, rules stay ungated', talents.error);
+    const dumps: ClassDumps = new Map();
+    const sources = new Map<string, Result<RulebookSources | null>>();
+    for (const meta of metas) sources.set(meta.spec, await this.prepareSpec(meta, tier, dumps, talents.ok ? talents.value : new Map<string, SpecTalents>()));
+    const shipped = [...sources.values()].filter(prepared => prepared.ok && prepared.value !== null).length;
     console.log(`SimulationCraft ships ${shipped} of ${metas.length} spec profiles in ${tier.dir}`);
-    return profiles;
+    return sources;
   }
 
-  private unknownTokensBySpec(run: RunSources): Map<string, AplUnknownToken[]> {
-    const tokens = new Map<string, AplUnknownToken[]>();
-    for (const [spec, profile] of run.profiles) {
-      if (profile.ok) tokens.set(spec, this.builder.unknownTokens(profile.value.text, run.tier));
+  private async prepareSpec(meta: SpecMeta, tier: SimcTier, dumps: ClassDumps, talents: Map<string, SpecTalents>): Promise<Result<RulebookSources | null>> {
+    const profile = await this.simc.getProfile(tier, meta.classLabel, meta.specLabel);
+    if (!profile.ok) return profile.error.kind === 'missing' ? Results.ok(null) : profile;
+    const spellData = await getOrInsert(dumps, meta.className, () => this.simc.getSpellDataDump(tier, meta.className));
+    if (!spellData.ok) return spellData;
+    return Results.ok(await this.builder.prepare({ spec: meta, tier, profile: profile.value, spellData: spellData.value, talents: talents.get(meta.spec) ?? {} }));
+  }
+
+  private gapsBySpec(run: RunSources): Map<string, RulebookGap[]> {
+    const gaps = new Map<string, RulebookGap[]>();
+    for (const [spec, prepared] of run.sources) {
+      if (prepared.ok && prepared.value) gaps.set(spec, prepared.value.gaps);
     }
-    return tokens;
-  }
-
-  /** The spec's build inputs, or null where SimulationCraft ships no profile; a source that failed to load fails the spec instead. */
-  private async specSources(spec: string, run: RunSources): Promise<SpecSources | null> {
-    const profile = run.profiles.get(spec);
-    if (!profile || (!profile.ok && profile.error.kind === 'missing')) return null;
-    if (!profile.ok) throw new Error(profile.error.message);
-    const meta = run.metas.find(entry => entry.spec === spec);
-    if (!meta) throw new Error(`${spec} is not a spec WCL knows.`);
-    const spellData = await getOrInsert(run.dumps, meta.className, () => this.simc.getSpellDataDump(run.tier, meta.className));
-    if (!spellData.ok) throw new Error(spellData.error.message);
-    const talents = await this.talents.getTalents(spec);
-    if (!talents.ok) this.logger.logWarn(`ingest ${spec}: no talent data, rules stay ungated`, talents.error);
-    return { meta, profile: profile.value, spellData: spellData.value, talents: talents.ok ? talents.value : {} };
+    return gaps;
   }
 
   /** Pruning only the selected specs would leave them at zero data and permanently re-selected. */
@@ -256,10 +256,9 @@ export class IngestOrchestratorService {
     spec: string, encounters: IngestEncounter[], version: string, run: RunSources,
   ): Promise<boolean> {
     console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_PARSE_COUNT})`);
-    const sources = await this.specSources(spec, run);
-    if (!sources) console.log('  no SimulationCraft profile: gear, positions and phases only');
-    // The stamp keys on the sources too, so a changed profile or spell dump re-benches an encounter like a changed top parse does.
-    const sourceKey = sources ? `${version}:${RULEBOOK_BUILDER_VERSION}:${sources.profile.sha256}:${sources.spellData.sha256}` : version;
+    const sources = this.preparedSources(spec, run);
+    // The stamp keys on what the rules read, so a SimulationCraft change they can see re-benches an encounter like a changed top parse does.
+    const sourceKey = sources ? `${version}:${sources.key}` : version;
 
     // Feeds the never-checked-first order - a file-server-only signal, zero WCL budget.
     const previousState = await this.loadIngestState(spec);
@@ -286,9 +285,17 @@ export class IngestOrchestratorService {
     return false;
   }
 
+  /** The spec's prepared sources, null where SimulationCraft ships no profile; a source that failed to load fails the spec instead. */
+  private preparedSources(spec: string, run: RunSources): RulebookSources | null {
+    const prepared = run.sources.get(spec) ?? Results.ok(null);
+    if (!prepared.ok) throw new Error(prepared.error.message);
+    if (!prepared.value) console.log('  no SimulationCraft profile: gear, positions and phases only');
+    return prepared.value;
+  }
+
   /** 'skipped' when the stored stamp already covers the current top parses and sources. */
   private async ingestOneEncounter(
-    spec: string, encounter: IngestEncounter, sourceKey: string, sources: SpecSources | null, run: RunSources,
+    spec: string, encounter: IngestEncounter, sourceKey: string, sources: RulebookSources | null, run: RunSources,
   ): Promise<EncounterOutcome | 'skipped'> {
     const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
     if (!selection.length) {
@@ -297,7 +304,7 @@ export class IngestOrchestratorService {
     }
 
     const existing = await this.dataFile.getBench(spec, encounter.id, LEAD_BENCH);
-    const { skip, signature: skipKey } = this.stamp.skipDecision(existing.ok ? existing.value : null, selection, sourceKey, TOP_PARSE_COUNT);
+    const { skip, signature: skipKey } = await this.stamp.skipDecision(existing.ok ? existing.value : null, selection, sourceKey, TOP_PARSE_COUNT);
     if (skip) {
       console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
       return 'skipped';
@@ -343,7 +350,7 @@ export class IngestOrchestratorService {
   /** Compute every bench first, THEN stamp + write: the signature is known only after every transform has fetched. */
   private async ingestEncounter(
     spec: string, encounter: IngestEncounter, sourceKey: string, selection: TopParseSelection,
-    sources: SpecSources | null, run: RunSources,
+    sources: RulebookSources | null, run: RunSources,
   ): Promise<EncounterOutcome> {
     const encId = encounter.id;
     const limit = pLimit(BENCH_CONCURRENCY);
@@ -357,7 +364,7 @@ export class IngestOrchestratorService {
       ]);
     });
 
-    const { signature, inaccessibleParses } = this.signature.signatureAfterFetch(
+    const { signature, inaccessibleParses } = await this.signature.signatureAfterFetch(
       selection, outcomes.inaccessibleCodes, outcomes.failedCodes, sourceKey, TOP_PARSE_COUNT);
     const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAtS: nowS() };
 
@@ -385,18 +392,15 @@ export class IngestOrchestratorService {
   }
 
   /** Derived from the encounter's own top parses, the ones its benches measure, so the stamp's parse set and sources fix the rules. */
-  private async deriveRulebook(spec: string, sources: SpecSources, selection: TopParseSelection, run: RunSources): Promise<Rulebook> {
-    const { rulebook, report } = await this.rulebooks.derive(this.wclApi, {
-      sources, tier: run.tier, rankings: selection.slice(0, TOP_PARSE_COUNT),
-    });
+  private async deriveRulebook(spec: string, sources: RulebookSources, selection: TopParseSelection, run: RunSources): Promise<Rulebook> {
+    const { rulebook, report } = await this.rulebooks.derive(this.wclApi, { sources, rankings: selection.slice(0, TOP_PARSE_COUNT) });
     if (run.reported.has(spec)) return rulebook;
     run.reported.add(spec);
-    console.log(`  rulebook: ${rulebook.major_cooldowns.length} cooldowns, ${rulebook.defensives.length} defensives, ${rulebook.rules.length} rules`);
-    const gaps: [string, string[]][] = [
-      ['unresolved actions', report.unresolvedActions], ['unresolved auras', report.unresolvedAuras],
-      ['unresolved talents', report.unresolvedTalents], ['unresolved variables', report.unresolvedVariables],
-    ];
-    for (const [label, names] of gaps) if (names.length) console.log(`  ${label}: ${names.join(', ')}`);
+    const names = (entries: { name: string }[]): string => (entries.length ? entries.map(entry => entry.name).join(', ') : 'none');
+    console.log(`  cooldowns: ${names(rulebook.major_cooldowns)}`);
+    console.log(`  defensives: ${names(rulebook.defensives)}`);
+    console.log(`  rules: ${rulebook.rules.length}`);
+    if (report.gaps.length) console.log(`  gaps: ${report.gaps.map(gap => `${gap.kind} ${gap.token}`).join(', ')}`);
     return rulebook;
   }
 

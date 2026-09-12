@@ -249,6 +249,28 @@ describe('RotationTransformService (live, in-browser)', () => {
     }
   });
 
+  it('measures a talent-gated rule on the parses whose build fits it, reading each log\'s talents', async () => {
+    const UNSEEN_BLADE = 125_700;
+    const rule: RulebookRule = {
+      type: 'rotation', severity: 'warning', description: 'Keep Bloodlust up', action: 'Refresh it.',
+      condition: { kind: 'aura_uptime_below', aura_spell_id: BLOODLUST, aura_spell_name: 'Bloodlust', on: 'self' },
+      requires_talents: [[UNSEEN_BLADE]],
+    };
+    const untalentedCodes = new Set(['r1', 'r2']);
+    const wcl = {
+      ...wclFake,
+      getCombatantInfo: async (code: string, _fightId: number, playerId: number) =>
+        [{ sourceID: playerId, talentTree: untalentedCodes.has(code) ? [] : [{ id: UNSEEN_BLADE, rank: 1 }] }],
+    };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl }) });
+    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1, undefined, rulebook({ cooldowns: RULEBOOK.major_cooldowns, rules: [rule] }));
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.rules[0]?.sample_count).toBe(MIN_SAMPLE_COUNT - untalentedCodes.size);
+      expect(result.value.rules[0]?.band).toBeNull();
+    }
+  });
+
   it('propagates a missing error when the spec has no rulebook cooldowns', async () => {
     // A rulebook with no cooldowns is nothing to analyze - the transform reports missing.
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake }) });

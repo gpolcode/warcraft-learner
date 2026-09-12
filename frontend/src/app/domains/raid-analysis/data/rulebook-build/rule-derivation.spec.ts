@@ -78,7 +78,7 @@ function sample(sliceAndDiceS = MAINTAINED_S): ParseSample {
 
 function drafts(samples: ParseSample[] = [sample()], profile = PROFILE, kit = KIT): RuleDraft[] {
   const index = abilities.build(kit, samples, CLASS, SPEC);
-  const resolved = apl.resolve(apl.parseLines(profile), TIER);
+  const resolved = apl.resolve(apl.parse(profile), TIER);
   return rules.derive(resolved.actions, index, samples).drafts;
 }
 
@@ -185,7 +185,7 @@ describe('RuleDerivationService.derive on an execute', () => {
 
   it('writes one execute rule per threshold, gated on the talent that moves it', () => {
     const index = abilities.build(WARRIOR_KIT, [], 'Warrior', 'Arms');
-    const resolved = apl.resolve(apl.parseLines(profile), TIER);
+    const resolved = apl.resolve(apl.parse(profile), TIER);
     const executes = ofKind(rules.derive(resolved.actions, index, []).drafts, 'filler_below_health');
     expect(executes.map(draft => draft.condition.health_pct).sort((a, b) => a - b)).toEqual([EXECUTE_PCT, MASSACRE_PCT]);
     expect([...(executes.find(draft => draft.condition.health_pct === MASSACRE_PCT)?.requires ?? [])]).toEqual([MASSACRE]);

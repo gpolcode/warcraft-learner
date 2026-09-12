@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { AnalysisFinding, FindingOccurrence, FindingTimeline, CAT_LABEL } from '../analysis/analysis.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
-import { RulebookCooldown } from '../rulebook/rulebook.models';
+import { RulebookCooldown, RulebookRule } from '../rulebook/rulebook.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import {
   isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
@@ -18,6 +18,8 @@ import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
+import { GearExtractService } from '../gear/gear-extract-service';
+import { TalentKeyService } from '../gear/talent-key-service';
 
 export interface RotationFindingRow {
   severity: 'critical' | 'warning' | 'info';
@@ -118,6 +120,8 @@ export class RotationFeatureService {
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(ROTATION_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
+  private readonly gearExtract = inject(GearExtractService);
+  private readonly talentKeys = inject(TalentKeyService);
 
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
@@ -139,7 +143,7 @@ export class RotationFeatureService {
   ): Promise<RotationPlayerView> {
     const { reportCode, fightId } = pull;
     const { fight, fightDurationS } = context;
-    const rules = this.ruleEngine.benchedRules(bench.rules);
+    const rules = await this.rulesForBuild(this.ruleEngine.benchedRules(bench.rules), reportCode, fightId, playerId);
     const conditions = rules.map(entry => entry.rule);
     const [casts, buffs, enemyAuras, damage] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
@@ -173,6 +177,14 @@ export class RotationFeatureService {
       this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
     const ruleOnPlan = this.ruleEngine.rulesFollowed(rules, ruleCtx);
     return { ruleRows, ruleOnPlan, offensiveRows, onPlan };
+  }
+
+  /** The benched rules the player's build can be judged by; the log's talents are read only when a rule carries a gate. */
+  private async rulesForBuild<T extends { rule: RulebookRule }>(rules: T[], reportCode: string, fightId: number, playerId: number): Promise<T[]> {
+    if (!this.ruleEngine.rulesGated(rules.map(entry => entry.rule))) return rules;
+    const event = this.gearExtract.selectCombatantInfo(await this.wclApi.getCombatantInfo(reportCode, fightId, playerId), playerId);
+    const taken = this.talentKeys.takenEntryIds(event?.talentTree);
+    return rules.filter(entry => this.ruleEngine.ruleFitsBuild(entry.rule, taken));
   }
 
   async loadPlanView(spec: string, encounterId: number): Promise<Result<RotationPlanView>> {

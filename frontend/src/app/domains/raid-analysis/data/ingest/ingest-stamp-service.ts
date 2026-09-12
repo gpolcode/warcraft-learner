@@ -36,11 +36,11 @@ export class IngestStampService {
     return { version, ingestedAtS };
   }
 
-  skipDecision(
+  async skipDecision(
     file: unknown, rows: SignatureRanking[], version: string, topN: number,
-  ): { skip: boolean; signature: string } {
+  ): Promise<{ skip: boolean; signature: string }> {
     const stored = this.readStamp(file);
-    const signature = this.signatures.encounterSkipKey(rows, stored.inaccessibleParses, version, topN);
+    const signature = await this.signatures.encounterSkipKey(rows, stored.inaccessibleParses, version, topN);
     return { skip: stored.signature === signature, signature };
   }
 

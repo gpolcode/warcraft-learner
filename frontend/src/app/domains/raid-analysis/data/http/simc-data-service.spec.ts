@@ -9,8 +9,6 @@ const PROFILE_URL = 'https://raw.githubusercontent.com/simulationcraft/simc/midn
 const DUMP_URL = 'https://raw.githubusercontent.com/simulationcraft/simc/midnight/SpellDataDump/deathknight.txt';
 const HTTP_NOT_FOUND = 404;
 const PROFILE_TEXT = 'actions=obliterate';
-// sha256 of PROFILE_TEXT, pinned so a changed hashing scheme fails here rather than in a silent rebuild.
-const PROFILE_SHA = '2dc29a4b0d5a2b0c5ed5fbb05a4bd6b0bb5fd2ba3a37f3eaa39c3b34a9a1b1ab';
 
 function setup(): { service: SimcDataService; httpMock: HttpTestingController } {
   TestBed.configureTestingModule({ providers: [SimcDataService, provideHttpClient(), provideHttpClientTesting()] });
@@ -30,13 +28,11 @@ describe('SimcDataService.parseTier', () => {
 describe('SimcDataService', () => {
   afterEach(() => { TestBed.inject(HttpTestingController).verify(); });
 
-  it('fetches a profile by its underscored class and spec labels and hashes the text', async () => {
+  it('fetches a profile by its underscored class and spec labels', async () => {
     const { service, httpMock } = setup();
     const pending = service.getProfile(TIER, 'Death Knight', 'Frost');
     httpMock.expectOne(PROFILE_URL).flush(PROFILE_TEXT);
-    const result = await pending;
-    expect(result.ok && result.value.text).toBe(PROFILE_TEXT);
-    expect(result.ok && result.value.sha256).toHaveLength(PROFILE_SHA.length);
+    expect(await pending).toEqual({ ok: true, value: PROFILE_TEXT });
   });
 
   it('reports a missing profile as missing rather than as a failure', async () => {

@@ -67,7 +67,7 @@ jobs:
           CURRENT_RAIDS: ${{ vars.CURRENT_RAIDS }}
           PRIORITY_SPECS: ${{ vars.PRIORITY_SPECS }}
           SIMC_TIER: ${{ vars.SIMC_TIER }}
-          APL_GAPS_FILE: ${{ runner.temp }}/apl-vocabulary-gaps.md
+          RULEBOOK_GAPS_FILE: ${{ runner.temp }}/rulebook-gaps.md
         run: npm run ingest
 
       # Pruning never removes whole spec dirs, so this trips only on an overlay catastrophe, not a quiet hour.
@@ -95,18 +95,18 @@ jobs:
           clean: true
 
       # One open issue carries the gaps: GitHub mails its creation and each change of the set, and a run that finds the same set leaves it alone.
-      - name: Report APL vocabulary gaps as an issue
+      - name: Report SimulationCraft gaps as an issue
         if: ${{ !cancelled() }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          GAPS_FILE: ${{ runner.temp }}/apl-vocabulary-gaps.md
-          TITLE: 'APL vocabulary gaps: SimulationCraft tokens outside the inventory'
+          GAPS_FILE: ${{ runner.temp }}/rulebook-gaps.md
+          TITLE: 'SimulationCraft gaps: what the rulebook builder cannot read'
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
           if [ ! -s "$GAPS_FILE" ]; then
-            echo "No APL vocabulary gaps."
+            echo "No SimulationCraft gaps."
             exit 0
           fi
           fingerprint() { grep -o 'warcraft-learner-gaps:[0-9a-f]*' <<< "$1" || true; }
@@ -117,7 +117,7 @@ jobs:
             gh issue create --title "$TITLE" --body "$body"
           elif [ "$(fingerprint "$(gh issue view "$number" --json body --jq .body)")" != "$(fingerprint "$body")" ]; then
             gh issue edit "$number" --body "$body"
-            gh issue comment "$number" --body "The set of tokens outside the inventory changed: $RUN_URL"
+            gh issue comment "$number" --body "The set of gaps changed: $RUN_URL"
           else
             echo "Issue #$number already lists these gaps."
           fi

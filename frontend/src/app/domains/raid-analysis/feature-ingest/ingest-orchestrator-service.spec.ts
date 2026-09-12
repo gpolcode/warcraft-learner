@@ -15,16 +15,18 @@ import { MapTransformService } from '../data/map/map-transform-service';
 import { NorthernSkyTransformService } from '../data/northern-sky/northern-sky-transform-service';
 import { IngestSignatureService } from '../data/ingest/ingest-signature-service';
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
-import { SimcDataService, type SimcText } from '../data/http/simc-data-service';
+import { SimcDataService } from '../data/http/simc-data-service';
+import type { SpecMeta } from '../data/data-files/spec-meta.models';
 import { TalentDataService } from '../data/http/talent-data-service';
 import { EncounterRulebookService } from '../data/rulebook-build/encounter-rulebook-service';
-import { RULEBOOK_BUILDER_VERSION } from '../data/rulebook-build/rulebook-build-service';
+import { RulebookBuildService } from '../data/rulebook-build/rulebook-build-service';
 import type { PublishedRunSummary } from '../data/ingest/ingest-run-summary-service';
 import type { Rulebook } from '../data/rulebook/rulebook.models';
 import { rulebook } from '../../../../testing/builders/rulebook';
 import { SHADOW_BLADES } from '../../../../testing/spell-ids';
 
 const signatures = TestBed.inject(IngestSignatureService);
+const builder = TestBed.inject(RulebookBuildService);
 TestBed.resetTestingModule();
 
 const SPEC = 'SubtletyRogue';
@@ -42,15 +44,20 @@ const STORED_SAMPLES = 3;
 const FRESH_SAMPLES = 7;
 const HOURLY_POINT_LIMIT = 18_000;
 
-const PROFILE: SimcText = { text: 'actions=backstab,if=buff.shadow_dance.up', sha256: 'p'.repeat(64) };
-const OLDER_PROFILE: SimcText = { text: 'actions=backstab', sha256: 'o'.repeat(64) };
-const DUMP: SimcText = { text: '', sha256: 'd'.repeat(64) };
+const PROFILE = 'actions=backstab,if=buff.shadow_dance.up';
+const OLDER_PROFILE = 'actions=backstab';
+const DUMP = '';
 const UNKNOWN_SHAPE = 'buff.*.brand_new_field';
-const PROFILE_WITH_GAP: SimcText = { text: 'actions=backstab,if=buff.shadow_dance.brand_new_field', sha256: 'g'.repeat(64) };
+const PROFILE_WITH_GAP = 'actions=backstab,if=buff.shadow_dance.brand_new_field';
+const META: SpecMeta = { spec: SPEC, className: 'Rogue', specName: 'Subtlety', classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue' };
+const TIER_PARTS = { branch: 'midnight', dir: 'MID2' };
 
-/** The stamp keys on the sources too, so the expected signature names the profile and spell dump a bench was built from. */
-const sourceKey = (profile: SimcText | null): string =>
-  profile ? `${INGEST_VERSION}:${RULEBOOK_BUILDER_VERSION}:${profile.sha256}:${DUMP.sha256}` : String(INGEST_VERSION);
+/** The stamp keys on what the rules read, so the expected signature carries the key the builder derives from the profile and dump. */
+const sourceKey = async (profile: string | null): Promise<string> => {
+  if (profile === null) return String(INGEST_VERSION);
+  const sources = await builder.prepare({ spec: META, tier: TIER_PARTS, profile, spellData: DUMP, talents: {} });
+  return `${INGEST_VERSION}:${sources.key}`;
+};
 
 const rankedRow = (player: string, code: string, fightID: number) =>
   ({ name: player, server: { name: 'Ravencrest' }, report: { code, fightID } });
@@ -63,9 +70,9 @@ const RANKED = [TOP_PARSE, RUNNER_UP];
 const RERANKED = [TOP_PARSE, NEWCOMER];
 
 // Fewer rows than the orchestrator's top-N cap: past it, signatureOf stops matching the signature the run stamps.
-const signatureOf = (rows: RankedRow[], profile: SimcText | null = PROFILE): string => signatures.encounterSkipKey(
+const signatureOf = async (rows: RankedRow[], profile: string | null = PROFILE): Promise<string> => signatures.encounterSkipKey(
   rows.map(row => ({ report_code: row.report.code, fight_id: row.report.fightID })),
-  new Set(), sourceKey(profile), rows.length);
+  new Set(), await sourceKey(profile), rows.length);
 
 const benchPath = (encId: number, bench = LEAD_BENCH): string => `${SPEC}/${bench}/${encId}.json`;
 const bossName = (encId: number): string => BOSSES.find(boss => boss.id === encId)?.name ?? '';
@@ -119,13 +126,13 @@ const cleanTransport: Pick<WclTransport, 'withFetchOutcomes'> = {
 
 interface RunOptions {
   simcTier: string | null;
-  profile: Result<SimcText>;
+  profile: Result<string>;
   /** Sees the rulebook every bench received, so a test can tell a derived one from none. */
   onBench: (received: Rulebook | null) => void;
 }
 
 const DERIVED = rulebook({ spec: SPEC, cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }] });
-const NO_GAPS = { unresolvedActions: [], unresolvedAuras: [], unresolvedTalents: [], unresolvedVariables: [], unknownTokens: [] };
+const NO_GAPS = { gaps: [] };
 
 function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string, over: Partial<RunOptions> = {}): Promise<void> {
   const options: RunOptions = { simcTier: TIER, profile: Results.ok(PROFILE), onBench: () => undefined, ...over };
@@ -154,7 +161,7 @@ function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string, over: 
       { provide: WCL_TRANSPORT, useValue: cleanTransport },
       { provide: NgHttpCachingService, useValue: { clearCache: () => undefined } },
       { provide: SimcDataService, useValue: simcFake },
-      { provide: TalentDataService, useValue: { getTalents: async () => Results.ok({}) } },
+      { provide: TalentDataService, useValue: { getTalentIndex: async () => Results.ok(new Map()) } },
       { provide: EncounterRulebookService, useValue: { derive: async () => ({ rulebook: DERIVED, report: NO_GAPS }) } },
       ...TRANSFORMS.map(transform => ({ provide: transform, useValue: stubTransform })),
     ],
@@ -221,7 +228,7 @@ describe('IngestOrchestratorService.run', () => {
   });
 
   it('leaves a benched encounter untouched when its stored signature covers the current top parses and sources', async () => {
-    const stored = storedBench(signatureOf(RANKED));
+    const stored = storedBench(await signatureOf(RANKED));
     const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: stored });
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
@@ -230,23 +237,32 @@ describe('IngestOrchestratorService.run', () => {
   });
 
   it('re-benches that encounter once one of the top parses changes', async () => {
-    const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: storedBench(signatureOf(RANKED)) });
+    const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: storedBench(await signatureOf(RANKED)) });
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RERANKED }), RAID);
 
     expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toMatchObject({
-      sample_count: FRESH_SAMPLES, source_signature: signatureOf(RERANKED),
+      sample_count: FRESH_SAMPLES, source_signature: await signatureOf(RERANKED),
     });
   });
 
-  it('re-benches that encounter once the SimulationCraft profile it was built from changes', async () => {
-    const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: storedBench(signatureOf(RANKED, OLDER_PROFILE)) });
+  it('re-benches that encounter once the SimulationCraft gates it was built from change', async () => {
+    const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: storedBench(await signatureOf(RANKED, OLDER_PROFILE)) });
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 
     expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toMatchObject({
-      sample_count: FRESH_SAMPLES, source_signature: signatureOf(RANKED),
+      sample_count: FRESH_SAMPLES, source_signature: await signatureOf(RANKED),
     });
+  });
+
+  it('leaves that encounter alone when the profile changed outside what the rules read', async () => {
+    const stored = storedBench(await signatureOf(RANKED));
+    const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: stored });
+
+    await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { profile: Results.ok(`# gear edit\n${PROFILE}`) });
+
+    expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toEqual(stored);
   });
 
   it('removes a file at the spec root that no step writes and keeps the index and state files', async () => {
@@ -276,21 +292,24 @@ describe('IngestOrchestratorService.run', () => {
       { profile: Results.missing('no profile'), onBench: entry => received.push(entry) });
 
     expect(received.every(entry => entry === null)).toBe(true);
-    expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toMatchObject({ source_signature: signatureOf(RANKED, null) });
+    expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toMatchObject({ source_signature: await signatureOf(RANKED, null) });
   });
 
-  it('reports the tokens outside the vocabulary inventory over every profile the tier ships', async () => {
+  it('reports what the builder cannot read over every profile the tier ships, before any parse is sampled', async () => {
     await ingest(fakeDisk(SPEC_ON_DISK), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { profile: Results.ok(PROFILE_WITH_GAP) });
 
-    expect(published()?.vocabularyGaps).toEqual([{ kind: 'expression', token: UNKNOWN_SHAPE, specs: [SPEC] }]);
-    expect(published()?.gapWarnings).toEqual([`Expression "${UNKNOWN_SHAPE}" is outside the APL vocabulary inventory (${SPEC})`]);
+    expect(published()?.gaps).toEqual([
+      { kind: 'action', token: 'backstab', specs: [SPEC] },
+      { kind: 'expression', token: UNKNOWN_SHAPE, specs: [SPEC] },
+    ]);
+    expect(published()?.gapWarnings[1]).toBe(`Expression "${UNKNOWN_SHAPE}" is outside what the rulebook builder reads (${SPEC})`);
     expect(published()?.gapReport).toContain(`| Expression | \`${UNKNOWN_SHAPE}\` | ${SPEC} |`);
   });
 
-  it('renders no gap report for a tier the inventory covers', async () => {
-    await ingest(fakeDisk(SPEC_ON_DISK), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
+  it('renders no gap report for a tier the builder reads whole', async () => {
+    await ingest(fakeDisk(SPEC_ON_DISK), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { profile: Results.ok('actions=variable,name=n,value=1') });
 
-    expect(published()?.vocabularyGaps).toEqual([]);
+    expect(published()?.gaps).toEqual([]);
     expect(published()?.gapReport).toBeNull();
   });
 

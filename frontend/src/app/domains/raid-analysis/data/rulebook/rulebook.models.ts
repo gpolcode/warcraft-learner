@@ -5,8 +5,6 @@ export interface RulebookCooldown {
   opener_priority?: number;
   usage_rule?: string;
   talent_gated?: boolean;
-  /** The resolved SimulationCraft gate of every line that presses it, kept whole where usage_rule keeps only what fits a card. */
-  apl_condition?: string;
 }
 
 export interface RulebookDefensive {
@@ -167,10 +165,10 @@ export interface RulebookRule {
   description: string;
   condition?: RuleCondition;
   action: string;
-  /** Trait node entry ids the player must have taken for the rule to apply; absent means every build. */
-  requires_talents?: number[];
-  /** Trait node entry ids that make the rule not apply. */
-  excludes_talents?: number[];
+  /** One group per talent the rule needs, each listing every trait entry that carries the talent's name; a build satisfies a group by taking any entry of it. Absent means every build. */
+  requires_talents?: number[][];
+  /** Talents that make the rule not apply, in the same groups. */
+  excludes_talents?: number[][];
 }
 
 export interface Rulebook {

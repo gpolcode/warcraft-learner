@@ -1,5 +1,7 @@
 import type { TimedEvent } from '../analysis/wcl-projections-service';
-import type { AplUnknownToken, SpellRecord } from '../simc/simc.models';
+import type { ResolvedApl, RulebookGap, SpellRecord } from '../simc/simc.models';
+import type { SpecMeta } from '../data-files/spec-meta.models';
+import type { SpecTalents } from '../gear/talent.models';
 import type { RuleCondition } from '../rulebook/rulebook.models';
 
 export interface ParseSample {
@@ -47,9 +49,17 @@ export interface RuleDraft {
 }
 
 export interface RulebookBuildReport {
-  unresolvedActions: string[];
-  unresolvedAuras: string[];
-  unresolvedTalents: string[];
-  unresolvedVariables: string[];
-  unknownTokens: AplUnknownToken[];
+  gaps: RulebookGap[];
+}
+
+/** Everything a spec's rules derive from besides the parses, read once per run: the profile resolved against the tier and the records the spec owns, both with the exclusions applied. */
+export interface RulebookSources {
+  spec: SpecMeta;
+  apl: ResolvedApl;
+  records: SpellRecord[];
+  talents: SpecTalents;
+  /** SHA-256 of what the rules read, part of the encounter stamp, so a SimulationCraft edit the rules never see re-benches nothing. */
+  key: string;
+  /** What the sources alone leave unread or unresolved, before any parse is sampled. */
+  gaps: RulebookGap[];
 }

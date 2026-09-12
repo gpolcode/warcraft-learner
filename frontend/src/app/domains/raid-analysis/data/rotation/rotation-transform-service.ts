@@ -18,6 +18,8 @@ import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { RotationBench } from './rotation-data-source';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
+import { GearExtractService } from '../gear/gear-extract-service';
+import { TalentKeyService } from '../gear/talent-key-service';
 
 /** The rule engine's own floor, so an encounter never benches a parse count every rule band would then reject. */
 const MIN_PARSE_COUNT = MIN_MEASURED_PARSES;
@@ -63,6 +65,8 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
+  private readonly gearExtract = inject(GearExtractService);
+  private readonly talentKeys = inject(TalentKeyService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection, rulebook?: Rulebook | null): Promise<Result<RotationBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection, rulebook }, {
@@ -111,7 +115,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private async parseRotation(
     { ranking, fight, player }: BenchParse, cooldowns: RulebookCooldown[], rules: RulebookRule[],
   ): Promise<ParseRotation> {
-    const [casts, buffs, enemyAuras, damage] = await Promise.all([
+    const [casts, buffs, enemyAuras, damage, taken] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
       // Same shape and cost as the runtime fetch: raid-wide, so only for a spec that reads enemy auras.
@@ -123,6 +127,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
         ? this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id,
           this.ruleEngine.rulesNeed(rules, 'targetHealth'))
         : Promise.resolve([]),
+      this.ruleEngine.rulesGated(rules) ? this.takenTalents(ranking.report_code, fight.id, player.id) : Promise.resolve(null),
     ]);
 
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
@@ -138,8 +143,15 @@ export class RotationTransformService implements DataSource<RotationBench> {
       summaries: this.summarizeCooldownCasts(castsTimed, cooldowns, fightDurS, blTimeS),
       gapListS: this.castGapListS(castsTimed),
       durationS: fightDurS,
-      ruleSamples: rules.map(rule => (rule.condition ? this.ruleEngine.sampleRule(rule.condition, ruleCtx) : { values: [], unmeasuredOut: 0 })),
+      // A parse whose build a gated rule does not cover measures nothing for it, so the band comes from the builds the rule judges.
+      ruleSamples: rules.map(rule => (rule.condition && this.ruleEngine.ruleFitsBuild(rule, taken)
+        ? this.ruleEngine.sampleRule(rule.condition, ruleCtx) : { values: [], unmeasuredOut: 0 })),
     };
+  }
+
+  private async takenTalents(reportCode: string, fightId: number, playerId: number): Promise<Set<number> | null> {
+    const event = this.gearExtract.selectCombatantInfo(await this.wclApi.getCombatantInfo(reportCode, fightId, playerId), playerId);
+    return this.talentKeys.takenEntryIds(event?.talentTree);
   }
 
   protected summarizeCooldownCasts(

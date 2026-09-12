@@ -3,24 +3,24 @@ import type { Rulebook, RulebookCooldown, RulebookDefensive, RulebookRule, RuleS
 import type { SpecMeta } from '../data-files/spec-meta.models';
 import type { SpecTalents } from '../gear/talent.models';
 import type { SimcTier } from '../http/simc-data-service';
-import type { AplUnknownToken, ResolvedApl } from '../simc/simc.models';
+import type { ResolvedApl, RulebookGap, SpellRecord } from '../simc/simc.models';
 import { SimcAplService } from '../simc/simc-apl-service';
+import { SimcExpressionService } from '../simc/simc-expression-service';
 import { SpellDataDumpService } from '../simc/spell-data-dump-service';
+import { HashService } from '../../../shared/util-hash/hash-service';
 import { AbilityIndexService } from './ability-index-service';
 import { CooldownDerivationService, type DefensiveEntry, type MajorCooldownEntry } from './cooldown-derivation-service';
 import { RuleDerivationService } from './rule-derivation-service';
 import { RulebookCopyService } from './rulebook-copy-service';
-import type { AbilityIndex, ParseSample, RuleDraft, RulebookBuildReport } from './rulebook-build.models';
+import { RULEBOOK_EXCLUSIONS } from './rulebook-exclusions';
+import type { AbilityIndex, ParseSample, RuleDraft, RulebookBuildReport, RulebookSources } from './rulebook-build.models';
 
-/** Part of the encounter stamp, so a changed derivation re-benches sources that did not move. */
-export const RULEBOOK_BUILDER_VERSION = 1;
-
-export interface RulebookBuildInputs {
+/** The raw texts one spec's sources are read from. */
+export interface RulebookSourceTexts {
   spec: SpecMeta;
   tier: SimcTier;
-  profile: { text: string; sha256: string };
-  spellData: { text: string; sha256: string };
-  samples: ParseSample[];
+  profile: string;
+  spellData: string;
   talents: SpecTalents;
 }
 
@@ -29,10 +29,18 @@ export interface RulebookBuild {
   report: RulebookBuildReport;
 }
 
+const HERO_PREFIX = 'hero:';
+/** SimulationCraft numbers a talent name shared by several entries: `ancient_arts_3`. */
+const ORDINAL = /_(\d+)$/;
+/** The stamp's own signature length, so the key reads like the parse-set half beside it. */
+const KEY_LENGTH = 16;
+
 @Injectable({ providedIn: 'root' })
 export class RulebookBuildService {
   private readonly apl = inject(SimcAplService);
+  private readonly expressions = inject(SimcExpressionService);
   private readonly dump = inject(SpellDataDumpService);
+  private readonly hash = inject(HashService);
   private readonly abilities = inject(AbilityIndexService);
   private readonly cooldowns = inject(CooldownDerivationService);
   private readonly rules = inject(RuleDerivationService);
@@ -40,50 +48,60 @@ export class RulebookBuildService {
 
   /** The profile's gates resolved against the tier, the step every read of a profile starts from. */
   resolveProfile(profileText: string, tier: SimcTier): ResolvedApl {
-    return this.apl.resolve(this.apl.parseLines(profileText), this.setBonusToken(tier));
+    return this.apl.resolve(this.apl.parse(profileText), this.setBonusToken(tier));
+  }
+
+  /** One spec's sources read once per run: the exclusions applied, the key hashed from what the rules read, and the gaps the sources alone leave. */
+  async prepare(texts: RulebookSourceTexts): Promise<RulebookSources> {
+    const excluded = new Set(RULEBOOK_EXCLUSIONS[texts.spec.spec] ?? []);
+    const resolved = this.resolveProfile(texts.profile, texts.tier);
+    const actions = resolved.actions.filter(action => !excluded.has(action.action)).map((action, priority) => ({ ...action, priority }));
+    const records = this.abilities.ownedRecords(this.dump.parse(texts.spellData), texts.spec.classLabel, texts.spec.specLabel)
+      .filter(record => !excluded.has(this.dump.token(record.name)));
+    const apl: ResolvedApl = { ...resolved, actions };
+    const key = (await this.hash.sha256Hex(this.readable(apl, records))).slice(0, KEY_LENGTH);
+    const sources: RulebookSources = { spec: texts.spec, apl, records, talents: texts.talents, key, gaps: [] };
+    return { ...sources, gaps: this.build(sources, []).report.gaps };
+  }
+
+  /** Each line's action and printed gates, then every owned record: a change to either is one the rules can see, and nothing else is. */
+  private readable(apl: ResolvedApl, records: SpellRecord[]): string {
+    const lines = apl.actions.map(action =>
+      [action.action, ...action.context.map(gate => this.expressions.print(gate)), action.own ? this.expressions.print(action.own) : ''].join('|'));
+    return `${lines.join('\n')}\n${JSON.stringify(records)}`;
   }
 
   /** Whether the rules can need the raid-wide enemy aura stream, so a spec without dots never pays for it. */
-  readsEnemyAuras(resolved: ResolvedApl): boolean {
-    return resolved.referencedHeads.some(head => head === 'dot' || head === 'debuff' || head === 'active_dot');
+  readsEnemyAuras(apl: ResolvedApl): boolean {
+    return apl.referencedHeads.some(head => head === 'dot' || head === 'debuff' || head === 'active_dot');
   }
 
-  unknownTokens(profileText: string, tier: SimcTier): AplUnknownToken[] {
-    return this.resolveProfile(profileText, tier).unknownTokens;
-  }
-
-  build(inputs: RulebookBuildInputs): RulebookBuild {
-    const resolved = this.resolveProfile(inputs.profile.text, inputs.tier);
-    const index = this.abilities.build(this.dump.parse(inputs.spellData.text), inputs.samples, inputs.spec.classLabel, inputs.spec.specLabel);
-    const majors = this.cooldowns.majorCooldowns(resolved.actions, index);
-    const derivation = this.rules.derive(resolved.actions, index, inputs.samples);
+  build(sources: RulebookSources, samples: ParseSample[]): RulebookBuild {
+    const { apl, spec } = sources;
+    const index = this.abilities.build(sources.records, samples, spec.classLabel, spec.specLabel);
+    const majors = this.cooldowns.majorCooldowns(apl.actions, index);
+    const derivation = this.rules.derive(apl.actions, index, samples);
     const unresolvedTalents = new Set<string>();
-    const talentIds = (tokens: Set<string>): number[] => [...tokens].flatMap(token => {
-      const id = this.talentEntryId(inputs.talents, token);
-      if (id === null) unresolvedTalents.add(token);
-      return id === null ? [] : [id];
+    const talentGroups = (tokens: Set<string>): number[][] => [...tokens].flatMap(token => {
+      const ids = this.talentEntryIds(sources.talents, token);
+      if (!ids.length) unresolvedTalents.add(token);
+      return ids.length ? [ids] : [];
     });
-    const lineCount = Math.max(1, resolved.actions.length);
-    const rules: RulebookRule[] = derivation.drafts.map(draft => this.rule(draft, lineCount, talentIds));
+    const lineCount = Math.max(1, apl.actions.length);
+    const rules: RulebookRule[] = derivation.drafts.map(draft => this.rule(draft, lineCount, talentGroups));
     const opener = this.cooldowns.openingSequence(majors);
     if (opener) {
       rules.unshift({ type: 'opener', severity: 'warning', description: this.copy.description(opener), condition: opener, action: this.copy.action(opener) });
     }
-    const aplTokens = new Set(resolved.actions.map(action => action.action));
+    const aplTokens = new Set(apl.actions.map(action => action.action));
     const rulebook: Rulebook = {
-      spec: inputs.spec.spec,
+      spec: spec.spec,
       major_cooldowns: majors.map(entry => this.cooldown(entry, index)),
       defensives: this.cooldowns.defensives(index, aplTokens).map(entry => this.defensive(entry)),
       rules,
     };
-    const report: RulebookBuildReport = {
-      unresolvedActions: derivation.unresolvedActions,
-      unresolvedAuras: derivation.unresolvedAuras,
-      unresolvedTalents: [...unresolvedTalents].sort(),
-      unresolvedVariables: resolved.unresolvedVariables,
-      unknownTokens: resolved.unknownTokens,
-    };
-    return { rulebook, report };
+    const talentGaps = [...unresolvedTalents].sort().map((token): RulebookGap => ({ kind: 'talent', token }));
+    return { rulebook, report: { gaps: [...apl.gaps, ...derivation.gaps, ...talentGaps] } };
   }
 
   /** `midnight/MID2` wears `midnight_season_2`: the branch names the expansion, the directory's digits the season. */
@@ -92,9 +110,9 @@ export class RulebookBuildService {
     return `${tier.branch.toLowerCase()}_season_${season}`;
   }
 
-  private rule(draft: RuleDraft, lineCount: number, talentIds: (tokens: Set<string>) => number[]): RulebookRule {
-    const requires = talentIds(draft.requires);
-    const excludes = talentIds(draft.excludes);
+  private rule(draft: RuleDraft, lineCount: number, talentGroups: (tokens: Set<string>) => number[][]): RulebookRule {
+    const requires = talentGroups(draft.requires);
+    const excludes = talentGroups(draft.excludes);
     return {
       type: draft.type,
       severity: this.severity(draft.priority, lineCount),
@@ -120,7 +138,6 @@ export class RulebookBuildService {
       spell_id: entry.record.id,
       cooldown: this.abilities.effectiveCooldownS(entry.record) ?? 0,
       usage_rule: this.copy.usageRule(entry.lines, index),
-      apl_condition: this.copy.aplCondition(entry.lines),
     };
     if (entry.openerPriority !== null) cooldown.opener_priority = entry.openerPriority;
     if (entry.talentGated) cooldown.talent_gated = true;
@@ -139,13 +156,21 @@ export class RulebookBuildService {
     return defensive;
   }
 
-  /** A SimC talent token names the trait; the lowest matching entry id stands for a name shared by a choice node's siblings. */
-  private talentEntryId(talents: SpecTalents, token: string): number | null {
-    const wanted = token.startsWith('hero:') ? token.slice('hero:'.length) : token;
-    const matches = Object.entries(talents)
-      .filter(([, talent]) => this.dump.token(talent.name) === wanted)
+  /** Every trait entry carrying the talent's name, so a build taking any of them satisfies the gate; a numbered token covers the name it numbers. */
+  private talentEntryIds(talents: SpecTalents, token: string): number[] {
+    const wanted = token.startsWith(HERO_PREFIX) ? token.slice(HERO_PREFIX.length) : token;
+    const exact = this.entriesNamed(talents, wanted);
+    if (exact.length) return exact;
+    const ordinal = ORDINAL.exec(wanted);
+    if (!ordinal) return [];
+    const shared = this.entriesNamed(talents, wanted.slice(0, -ordinal[0].length));
+    return shared.length >= Number(ordinal[1]) ? shared : [];
+  }
+
+  private entriesNamed(talents: SpecTalents, token: string): number[] {
+    return Object.entries(talents)
+      .filter(([, talent]) => this.dump.token(talent.name) === token)
       .map(([id]) => Number(id))
       .sort((a, b) => a - b);
-    return matches[0] ?? null;
   }
 }

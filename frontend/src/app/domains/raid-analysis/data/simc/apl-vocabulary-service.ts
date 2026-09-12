@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ACTION_OPTIONS, ACTION_WORDS, EXPRESSION_SHAPES, VARIABLE_OPS, type AplVocabularyEntry } from './apl-vocabulary';
+import { ACTION_OPTIONS, ACTION_WORDS, EXPRESSION_SHAPES, TOKEN_ALIASES, UNRECORDED_NAMES, VARIABLE_OPS, type AplVocabularyEntry } from './apl-vocabulary';
 
 /** Heads whose second segment names a spell, list, item, event or variable rather than a field. */
 const NAMED_HEADS = new Set([
@@ -42,5 +42,14 @@ export class AplVocabularyService {
 
   variableOp(op: string): AplVocabularyEntry | null {
     return VARIABLE_OPS[op] ?? null;
+  }
+
+  /** The spell token behind a module's own name for it, or null when the token is the spell's. */
+  alias(token: string): string | null {
+    return TOKEN_ALIASES[token] ?? null;
+  }
+
+  unrecorded(token: string): boolean {
+    return token in UNRECORDED_NAMES;
   }
 }

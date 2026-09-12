@@ -116,16 +116,6 @@ export class RulebookCopyService {
     return clauses.length ? `Press it when ${clauses.join(' and ')}.` : 'Use it on cooldown.';
   }
 
-  /** Every line's resolved gate in SimC syntax, so the card sentence never has to carry the whole condition. */
-  aplCondition(lines: ResolvedAction[]): string {
-    const gates = lines.map(line => {
-      const parts = [...line.context, ...(line.own ? [line.own] : [])].map(gate => this.expressions.print(gate));
-      return parts.length ? parts.map(part => (parts.length > 1 ? `(${part})` : part)).join('&') : '1';
-    });
-    const distinct = [...new Set(gates)];
-    return distinct.length > 1 ? distinct.map(gate => `(${gate})`).join('|') : distinct[0] ?? '1';
-  }
-
   /** Every line's gate as the one term a raider meets first: on one target and outside execute where the line allows it, else its first term. */
   private usageTerm(lines: ResolvedAction[]): Fact[] {
     const candidates = lines.map(line => {

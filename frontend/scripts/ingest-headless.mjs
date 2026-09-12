@@ -94,8 +94,8 @@ async function launchBrowser() {
 
 // The app renders the gap report; the workflow names the files that carry it to the run summary and the issue step.
 function relayGapReport(report) {
-  if (process.env.APL_GAPS_FILE) writeFileSync(process.env.APL_GAPS_FILE, report);
-  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## APL vocabulary gaps\n\n${report}\n`);
+  if (process.env.RULEBOOK_GAPS_FILE) writeFileSync(process.env.RULEBOOK_GAPS_FILE, report);
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## SimulationCraft gaps\n\n${report}\n`);
 }
 
 async function main() {
@@ -135,7 +135,7 @@ async function main() {
   if (summary.failed.length) {
     console.error(`[harness] failed specs: ${summary.failed.map(entry => entry.spec).join(', ')}`);
   }
-  for (const warning of summary.gapWarnings) console.log(`::warning title=APL vocabulary::${warning}`);
+  for (const warning of summary.gapWarnings) console.log(`::warning title=SimulationCraft::${warning}`);
   if (summary.gapReport) relayGapReport(summary.gapReport);
   // Partial per-spec failure is deliberately tolerated; only an all-failed run is a broken build.
   const allSpecsFailed = summary.failed.length > 0 && summary.succeeded.length === 0;

@@ -1,17 +1,22 @@
 import { Injectable, inject } from '@angular/core';
 import { SimcExpressionService, UNKNOWN, type AplResolver } from './simc-expression-service';
 import { AplVocabularyService } from './apl-vocabulary-service';
-import type { AplExpr, AplLine, AplUnknownToken, AplUnknownTokenKind, ResolvedAction, ResolvedApl } from './simc.models';
+import type { AplExpr, AplLine, AplSource, ResolvedAction, ResolvedApl, RulebookGap, RulebookGapKind } from './simc.models';
 
-const ACTION_LINE = /^actions(?:\.([a-z0-9_]+))?\+?=\/?(.*)$/;
+const ACTION_LINE = /^actions(?:\.([A-Za-z0-9_]+))?\+?=\/?(.*)$/;
+const ACTION_PREFIX = 'actions';
 const DEFAULT_LIST = '';
-const BOOKKEEPING_ACTIONS = new Set(['variable', 'snapshot_stats']);
+/** How the gap report names the unnamed default list. */
+const DEFAULT_LIST_LABEL = 'default';
+const VARIABLE_ACTIONS = new Set(['variable', 'cycling_variable']);
+const BOOKKEEPING_ACTIONS = new Set([...VARIABLE_ACTIONS, 'snapshot_stats']);
 
 /** Bare fields inside an action's own gate refer to that action's dot or aura, or to its own cooldown. */
 const ACTION_RELATIVE_DOT_FIELDS = new Set(['refreshable', 'remains', 'ticking', 'pmultiplier', 'duration', 'in_flight']);
 const ACTION_RELATIVE_COOLDOWN_FIELDS = new Set(['charges', 'charges_fractional', 'full_recharge_time', 'recharge_time']);
 
-const MAX_INLINE_DEPTH = 6;
+/** Lists calling each other deeper than this are a cycle the visited check missed, not a rotation. */
+const MAX_LIST_DEPTH = 6;
 
 interface VariableDefinition {
   op: string;
@@ -22,7 +27,7 @@ interface VariableDefinition {
 
 /** What one resolve could not place, and which heads it touched, for the build report. */
 interface Audit {
-  unknown: Map<string, AplUnknownToken>;
+  gaps: Map<string, RulebookGap>;
   heads: Set<string>;
 }
 
@@ -38,15 +43,20 @@ export class SimcAplService {
   private readonly expressions = inject(SimcExpressionService);
   private readonly vocabulary = inject(AplVocabularyService);
 
-  parseLines(text: string): AplLine[] {
-    const lines: AplLine[] = [];
+  /** Every `actions` line as written; one the reader cannot split is kept whole so the resolve can report it. */
+  parse(text: string): AplSource {
+    const source: AplSource = { lines: [], unparsed: [] };
     for (const raw of text.split('\n')) {
-      const match = ACTION_LINE.exec(raw.trim());
-      if (!match) continue;
-      const [action, ...rest] = (match[2] ?? '').split(',');
-      lines.push({ list: match[1] ?? DEFAULT_LIST, action: action ?? '', options: this.optionsOf(rest) });
+      const line = raw.trim();
+      const match = ACTION_LINE.exec(line);
+      if (match) {
+        const [action, ...rest] = (match[2] ?? '').split(',');
+        source.lines.push({ list: match[1] ?? DEFAULT_LIST, action: action ?? '', options: this.optionsOf(rest) });
+      } else if (line.startsWith(ACTION_PREFIX)) {
+        source.unparsed.push(line);
+      }
     }
-    return lines;
+    return source;
   }
 
   private optionsOf(entries: string[]): Record<string, string> {
@@ -60,43 +70,42 @@ export class SimcAplService {
   }
 
   /** Flattens the list tree into one priority order with variables inlined; `setBonusToken` names the tier whose bonuses count as worn. */
-  resolve(lines: AplLine[], setBonusToken: string): ResolvedApl {
-    const audit: Audit = { unknown: new Map(), heads: new Set() };
-    const unresolvedVariables = new Set<string>();
-    const variables = this.variableDefinitions(lines, audit);
-    this.auditOptions(lines, audit);
+  resolve(source: AplSource, setBonusToken: string): ResolvedApl {
+    const audit: Audit = { gaps: new Map(), heads: new Set() };
+    for (const line of source.unparsed) this.note(audit, 'line', line);
+    const variables = this.variableDefinitions(source.lines, audit);
+    this.auditOptions(source.lines, audit);
     const inlined = new Map<string, AplExpr>();
-    const inlineVariable = (name: string, depth: number): AplExpr => {
+    // A definition that reads its own earlier value, directly or through a cycle, is a running value: unknown, like a running op.
+    const inlineVariable = (name: string, visiting: readonly string[]): AplExpr => {
       const cached = inlined.get(name);
       if (cached) return cached;
       const definitions = variables.get(name);
-      if (!definitions || depth > MAX_INLINE_DEPTH) { unresolvedVariables.add(name); return UNKNOWN; }
-      const resolver = this.resolver(setBonusToken, null, inner => inlineVariable(inner, depth + 1), audit);
+      if (!definitions) { this.note(audit, 'variable', name); return UNKNOWN; }
+      if (visiting.includes(name)) return UNKNOWN;
+      const resolver = this.resolver(setBonusToken, null, inner => inlineVariable(inner, [...visiting, name]), audit);
       const result = this.inlineDefinitions(definitions, resolver);
-      if (result === null) { unresolvedVariables.add(name); return UNKNOWN; }
+      if (result === null) return UNKNOWN;
       inlined.set(name, result);
       return result;
     };
     const byList = new Map<string, AplLine[]>();
-    for (const line of lines) {
+    for (const line of source.lines) {
       const list = byList.get(line.list) ?? [];
       list.push(line);
       byList.set(line.list, list);
     }
-    const walk: Walk = { byList, actions: [], audit, resolverFor: action => this.resolver(setBonusToken, action, name => inlineVariable(name, 0), audit) };
+    const walk: Walk = { byList, actions: [], audit, resolverFor: action => this.resolver(setBonusToken, action, name => inlineVariable(name, []), audit) };
     this.walkList(walk, DEFAULT_LIST, [], []);
     return {
-      actions: walk.actions, unresolvedVariables: [...unresolvedVariables].sort(),
-      unknownTokens: [...audit.unknown.values()].sort((a, b) => a.kind.localeCompare(b.kind) || a.token.localeCompare(b.token)),
+      actions: walk.actions,
+      gaps: [...audit.gaps.values()].sort((a, b) => a.kind.localeCompare(b.kind) || a.token.localeCompare(b.token)),
       referencedHeads: [...audit.heads].sort(),
     };
   }
 
-  private note(audit: Audit, kind: AplUnknownTokenKind, token: string): void {
-    const key = `${kind}:${token}`;
-    const existing = audit.unknown.get(key);
-    if (existing) existing.count += 1;
-    else audit.unknown.set(key, { kind, token, count: 1 });
+  private note(audit: Audit, kind: RulebookGapKind, token: string): void {
+    audit.gaps.set(`${kind}:${token}`, { kind, token });
   }
 
   private auditOptions(lines: AplLine[], audit: Audit): void {
@@ -105,7 +114,7 @@ export class SimcAplService {
     }
   }
 
-  /** Later sets override earlier ones under their own gate, so the chain reads as nested if-then-else; null for an op the builder cannot follow. */
+  /** Later sets override earlier ones under their own gate, so the chain reads as nested if-then-else; null for a running op, which the inventory lists as read as unknown. */
   private inlineDefinitions(definitions: VariableDefinition[], resolver: AplResolver): AplExpr | null {
     let result: AplExpr = { kind: 'num', value: 0 };
     for (const definition of definitions) {
@@ -121,18 +130,25 @@ export class SimcAplService {
   }
 
   private walkList(walk: Walk, list: string, context: AplExpr[], visiting: string[]): void {
-    if (visiting.includes(list) || visiting.length > MAX_INLINE_DEPTH) return;
+    if (visiting.includes(list) || visiting.length > MAX_LIST_DEPTH) return;
+    const lines = walk.byList.get(list);
+    if (!lines) { this.note(walk.audit, 'list', list || DEFAULT_LIST_LABEL); return; }
     const carried = [...context];
-    for (const line of walk.byList.get(list) ?? []) {
-      const gate = this.reachableGate(walk, line);
-      if (gate === 'skip') continue;
-      if (this.isListCall(line)) {
-        this.walkList(walk, line.options['name'] ?? '', gate ? [...carried, gate] : carried, [...visiting, list]);
-        if (!this.reachableAfter(line, gate, carried)) return;
-      } else {
-        walk.actions.push({ action: line.action, own: gate, context: [...carried], priority: walk.actions.length });
-      }
+    for (const line of lines) {
+      if (!this.walkLine(walk, line, carried, [...visiting, list])) return;
     }
+  }
+
+  /** False once a line ends the list: nothing after an unconditional run_action_list is reachable. */
+  private walkLine(walk: Walk, line: AplLine, carried: AplExpr[], visiting: string[]): boolean {
+    const gate = this.reachableGate(walk, line);
+    if (gate === 'skip') return true;
+    if (!this.isListCall(line)) {
+      walk.actions.push({ action: line.action, own: gate, context: [...carried], priority: walk.actions.length });
+      return true;
+    }
+    this.walkList(walk, line.options['name'] ?? '', gate ? [...carried, gate] : carried, visiting);
+    return this.reachableAfter(line, gate, carried);
   }
 
   /** Bookkeeping lines and lines whose gate folded to false never execute. */
@@ -190,7 +206,7 @@ export class SimcAplService {
     const variables = new Map<string, VariableDefinition[]>();
     for (const line of lines) {
       const name = line.options['name'];
-      if (line.action !== 'variable' || !name) continue;
+      if (!VARIABLE_ACTIONS.has(line.action) || !name) continue;
       const op = line.options['op'] ?? 'set';
       if (!this.vocabulary.variableOp(op)) this.note(audit, 'variable_op', op);
       const parse = (option: string): AplExpr | null => {

@@ -49,6 +49,7 @@ export const DISPATCH = 2098;
 /** The class-wide twin of Shadow Dance that only energizes, sharing the name of the spec's own button. */
 export const SHADOW_DANCE_ENERGIZE = 394029;
 export const DOUBLE_DANCE = 394930;
+export const GOREMAWS_BITE = 426591;
 export const BERSERKER_RAGE = 18499;
 export const SHIELD_WALL = 871;
 export const LAST_STAND = 12975;

@@ -4,7 +4,8 @@ import type { SpellEffect, SpellRecord, SpellResource, SpellTalentEntry } from '
 const NAME_LINE = /^Name\s+:\s(.*?)(?: \(desc=[^)]*\))? \(id=(\d+)\)(?: \[([^\]]*)\])?/;
 const FIELD_LINE = /^([A-Z][A-Za-z ]+?)\s+:\s?(.*)$/;
 const EFFECT_LINE = /^#\d+\s+\(id=\d+\)\s+:\s(.*)$/;
-const EFFECT_DETAIL = /^\s{10,}(.*)$/;
+/** Continuation lines are indented; a field starts at the margin with a capital, so any indent inside an effect is its detail. */
+const EFFECT_DETAIL = /^\s+(\S.*)$/;
 const TIME_SPAN = /(-?\d+(?:\.\d+)?)\s(seconds|minutes|hours|second|minute|hour)/;
 const CHARGES = /^(\d+)\s\((\d+(?:\.\d+)?)\s(seconds|minutes|hours)\scooldown\)/;
 const STACKS = /(\d+)\smaximum/;
@@ -150,8 +151,8 @@ export class SpellDataDumpService {
     if (base) effect.baseValue = Number(base[1]);
   }
 
-  /** SimC's action token for a spell name: lower case, runs of anything but letters and digits become one underscore. */
+  /** SimulationCraft's own tokenizer: letters lower-cased, a space an underscore, digits and `_+.%` kept, everything else dropped, so `Anti-Magic Shell` is `antimagic_shell`. */
   token(name: string): string {
-    return name.toLowerCase().replace(/'/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    return name.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_+.%]/g, '');
   }
 }

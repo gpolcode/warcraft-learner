@@ -50,6 +50,19 @@ export class RotationRuleEngineService {
     return rules.filter((rule): rule is RulebookRule & { condition: RuleCondition } => rule.condition != null);
   }
 
+  /** Whether any rule needs the build before it can be judged, so a log's talents are read only then. */
+  rulesGated(rules: RulebookRule[]): boolean {
+    return rules.some(rule => (rule.requires_talents?.length ?? 0) > 0 || (rule.excludes_talents?.length ?? 0) > 0);
+  }
+
+  /** Whether the build the log ran can be judged by the rule: one entry of every required talent taken, none of an excluded one. An unknown build fits only an ungated rule. */
+  ruleFitsBuild(rule: RulebookRule, taken: ReadonlySet<number> | null): boolean {
+    const requires = rule.requires_talents ?? [];
+    const excludes = rule.excludes_talents ?? [];
+    if (taken === null) return !requires.length && !excludes.length;
+    return requires.every(group => group.some(id => taken.has(id))) && !excludes.some(group => group.some(id => taken.has(id)));
+  }
+
   sampleRule(cond: RuleCondition, ctx: RuleContext): RuleSample {
     const spec = this.specFor(cond);
     return { values: spec.sample(cond, ctx), unmeasuredOut: spec.unmeasured(cond, ctx) };

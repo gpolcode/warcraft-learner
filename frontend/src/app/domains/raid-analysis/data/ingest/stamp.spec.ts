@@ -17,8 +17,8 @@ const ranking = (rank: number): SignatureRanking => ({ report_code: `report${ran
 const ROWS = [PRIVATE_RANK, 2, 3].map(ranking);
 // Spelled out rather than imported: baked files carry this key, so importing its producer would let a format change pass.
 const PRIVATE_PARSE = `report${PRIVATE_RANK}:${PRIVATE_RANK}`;
-const SIGNATURE = signatures.encounterSkipKey(ROWS, new Set(), VERSION, TOP_N);
-const WITHOUT_PRIVATE = signatures.encounterSkipKey(ROWS, new Set([PRIVATE_PARSE]), VERSION, TOP_N);
+const SIGNATURE = await signatures.encounterSkipKey(ROWS, new Set(), VERSION, TOP_N);
+const WITHOUT_PRIVATE = await signatures.encounterSkipKey(ROWS, new Set([PRIVATE_PARSE]), VERSION, TOP_N);
 const DATA = { spec: 'SubtletyRogue', encounter_id: 3470 };
 const NO_INACCESSIBLE: string[] = [];
 
@@ -26,63 +26,63 @@ const NO_INACCESSIBLE: string[] = [];
 const OK: Result<unknown> = Results.ok('bench');
 const ALL_OK: Result<unknown>[] = [OK, OK, OK, OK, OK];
 const withSibling = (sibling: Result<unknown>): Result<unknown>[] => [OK, sibling, OK, OK, OK];
-const nextRun = (file: unknown): { skip: boolean; signature: string } => stamps.skipDecision(file, ROWS, VERSION, TOP_N);
+const nextRun = (file: unknown): Promise<{ skip: boolean; signature: string }> => stamps.skipDecision(file, ROWS, VERSION, TOP_N);
 
 describe('write then read', () => {
-  it('skips an encounter whose file this run stamped for the same parse set', () => {
+  it('skips an encounter whose file this run stamped for the same parse set', async () => {
     const file = stamps.stampSignature(DATA, SIGNATURE, STAMP);
 
-    expect(nextRun(file)).toEqual({ skip: true, signature: SIGNATURE });
+    expect(await nextRun(file)).toEqual({ skip: true, signature: SIGNATURE });
   });
 
-  it('skips an encounter whose burst every bench completed', () => {
+  it('skips an encounter whose burst every bench completed', async () => {
     const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, ALL_OK);
 
-    expect(nextRun(file)).toEqual({ skip: true, signature: SIGNATURE });
+    expect(await nextRun(file)).toEqual({ skip: true, signature: SIGNATURE });
   });
 
-  it('still skips when a sibling bench is legitimately empty (missing is not a failure)', () => {
+  it('still skips when a sibling bench is legitimately empty (missing is not a failure)', async () => {
     const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, withSibling(Results.missing('No top parses')));
 
-    expect(nextRun(file)).toEqual({ skip: true, signature: SIGNATURE });
+    expect(await nextRun(file)).toEqual({ skip: true, signature: SIGNATURE });
   });
 
-  it('ingests an encounter with no file yet', () => {
-    expect(nextRun(null)).toEqual({ skip: false, signature: SIGNATURE });
-    expect(nextRun(undefined)).toEqual({ skip: false, signature: SIGNATURE });
-    expect(nextRun({})).toEqual({ skip: false, signature: SIGNATURE });
+  it('ingests an encounter with no file yet', async () => {
+    expect(await nextRun(null)).toEqual({ skip: false, signature: SIGNATURE });
+    expect(await nextRun(undefined)).toEqual({ skip: false, signature: SIGNATURE });
+    expect(await nextRun({})).toEqual({ skip: false, signature: SIGNATURE });
   });
 
-  it('ingests an encounter whose burst a transiently failed bench left unstamped', () => {
+  it('ingests an encounter whose burst a transiently failed bench left unstamped', async () => {
     const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, withSibling(Results.transient('WCL request failed')));
 
-    expect(nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
+    expect(await nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
   });
 
-  it('ingests an encounter whose burst a permanently failed bench left unstamped', () => {
+  it('ingests an encounter whose burst a permanently failed bench left unstamped', async () => {
     const failed = withSibling(Results.permanent('bad shape', 'burst.bench'));
     const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, failed);
 
-    expect(nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
+    expect(await nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
   });
 
-  it('ingests an encounter whose parse set gained a parse', () => {
+  it('ingests an encounter whose parse set gained a parse', async () => {
     const file = stamps.stampSignature(DATA, SIGNATURE, STAMP);
     const grown = [...ROWS, ranking(4)];
 
-    expect(stamps.skipDecision(file, grown, VERSION, TOP_N).skip).toBe(false);
+    expect((await stamps.skipDecision(file, grown, VERSION, TOP_N)).skip).toBe(false);
   });
 
-  it('skips a burst stamped without a parse it recorded as inaccessible', () => {
+  it('skips a burst stamped without a parse it recorded as inaccessible', async () => {
     const file = stamps.stampBurstFile(DATA, WITHOUT_PRIVATE, STAMP, [PRIVATE_PARSE], ALL_OK);
 
-    expect(nextRun(file)).toEqual({ skip: true, signature: WITHOUT_PRIVATE });
+    expect(await nextRun(file)).toEqual({ skip: true, signature: WITHOUT_PRIVATE });
   });
 
-  it('ingests a file carrying that same signature without the inaccessible parse recorded', () => {
+  it('ingests a file carrying that same signature without the inaccessible parse recorded', async () => {
     const file = stamps.stampSignature(DATA, WITHOUT_PRIVATE, STAMP);
 
-    expect(nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
+    expect(await nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
   });
 
   it('writes the field names the files already on disk carry', () => {
