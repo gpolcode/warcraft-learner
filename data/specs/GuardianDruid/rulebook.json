@@ -1,0 +1,129 @@
+{
+  "spec": "GuardianDruid",
+  "spec_icon": "ability_racial_bearform",
+  "major_cooldowns": [
+    {
+      "name": "Incarnation: Guardian of Ursoc",
+      "spell_id": 102558,
+      "cooldown": 180,
+      "opener_priority": 1,
+      "usage_rule": "Send it right after your opening Thrash, then fill the window with Thrash, Mangle and as many Maul or Raze casts as your rage allows without capping.",
+      "id_note": "102558 is the cast and self aura id seen in 3 of 5 sampled parses; 394786 shares the name and was not observed, so it is the talent node.",
+      "talent_gated": true
+    },
+    {
+      "name": "Berserk",
+      "spell_id": 50334,
+      "cooldown": 180,
+      "usage_rule": "Cram Thrash and Mangle into its 15 seconds and dump the rage they build into Maul or Raze.",
+      "id_note": "Berserk and Incarnation: Guardian of Ursoc share a talent slot; 2 of 5 sampled parses cast Berserk, 3 cast Incarnation.",
+      "talent_gated": true
+    },
+    {
+      "name": "Red Moon",
+      "spell_id": 1252871,
+      "cooldown": 30,
+      "opener_priority": 2,
+      "usage_rule": "Cast it on cooldown, and work it into the opener once your first Thrash is bleeding.",
+      "id_note": "1252871 is the cast and enemy aura id in all 5 sampled parses; 1253582 shares the name and was not observed."
+    },
+    {
+      "name": "Lunar Beam",
+      "spell_id": 204066,
+      "cooldown": 60,
+      "opener_priority": 3,
+      "usage_rule": "Drop it on cooldown, and open with it right after your first Mangle.",
+      "id_note": "204066 is the cast id in all 5 sampled parses; 1270292 is the enemy aura and 204069/414613 were not observed."
+    },
+    {
+      "name": "Convoke the Spirits",
+      "spell_id": 391528,
+      "cooldown": 120,
+      "usage_rule": "Channel it in Bear Form on cooldown so its four seconds fire off your bear abilities for free.",
+      "id_note": "Cast in 2 of 5 sampled parses; the rotation guide does not cover it, so the usage note comes from the tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Heart of the Wild",
+      "spell_id": 1261867,
+      "cooldown": 120,
+      "usage_rule": "Press it in Cat Form for the free Feral Frenzy, or out of form for a group Wild Growth when the raid is hurting.",
+      "id_note": "1261867 is castable per its tooltip but no casts appeared in the sampled parses; Feral Frenzy (274838) debuffs in all 5 confirm the Cat Form use the guide describes.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Barkskin",
+      "spell_id": 22812,
+      "cooldown": 60,
+      "duration": 8,
+      "usage_rule": "Press it as often as it comes up to smooth your damage intake, holding it briefly only for a spike you know is coming."
+    },
+    {
+      "name": "Survival Instincts",
+      "spell_id": 61336,
+      "cooldown": 180,
+      "duration": 6,
+      "usage_rule": "Save this 50% reduction for the most dangerous moments of a pull rather than trading it for chip damage."
+    },
+    {
+      "name": "Frenzied Regeneration",
+      "spell_id": 22842,
+      "cooldown": 36,
+      "duration": 3,
+      "usage_rule": "Press it when your health dips low, and use it freely inside Berserk or Incarnation where its cooldown is removed."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Moonfire up on your primary target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 164812,
+        "aura_spell_name": "Moonfire",
+        "on": "target"
+      },
+      "action": "Reapply Moonfire as soon as the dot expires, and spend Galactic Guardian procs on it."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep the Thrash bleed rolling",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 192090,
+        "aura_spell_name": "Thrash",
+        "on": "target"
+      },
+      "action": "Press Thrash on cooldown so the bleed never drops and stays stacked."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Maul only at 80 rage or above",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 6807,
+        "spell_name": "Maul",
+        "resource_type": 1,
+        "resource_name": "rage",
+        "bound": "min"
+      },
+      "action": "Hold Maul until you are at 80 rage so Harnessed Rage doubles its Gore chance."
+    },
+    {
+      "type": "opener",
+      "severity": "info",
+      "description": "Open Thrash into Mangle into Lunar Beam",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [77758, 33917, 204066],
+        "spell_names": ["Thrash", "Mangle", "Lunar Beam"]
+      },
+      "action": "Get Thrash bleeding first, then Mangle, then drop Lunar Beam."
+    }
+  ]
+}
