@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { DataFileApiService } from '../data-files/data-file-api-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { RulebookCooldown, RulebookDefensive } from '../rulebook/rulebook.models';
+import { Rulebook, RulebookCooldown, RulebookDefensive } from '../rulebook/rulebook.models';
 import { BurstWindow } from '../analysis/analysis.models';
 import { Result } from '../../../shared/util-http/result';
 import { mean, median, deviation, extent, greatest, quantile, rollup, rollups } from 'd3-array';
@@ -88,18 +87,15 @@ export class BurstTransformService implements DataSource<BurstBench> {
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
-  private readonly dataFiles = inject(DataFileApiService);
 
-  async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<BurstBench>> {
-    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
+  async getBench(spec: string, encounterId: number, selection?: TopParseSelection, rulebook?: Rulebook | null): Promise<Result<BurstBench>> {
+    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection, rulebook }, {
       logSource: 'BurstTransformService',
       errorId: 'burst.bench',
       noRankingsMessage: 'Not yet ingested.',
+      // The lead bench is written for every spec, cooldowns or not, so the encounter stamp and index never depend on the rulebook.
       rulebook: {
-        dataFiles: this.dataFiles,
-        plan: (rulebook): BurstPlan | null => rulebook.major_cooldowns.length
-          ? { cooldowns: rulebook.major_cooldowns, defensives: rulebook.defensives }
-          : null,
+        plan: (rulebook): BurstPlan => ({ cooldowns: rulebook?.major_cooldowns ?? [], defensives: rulebook?.defensives ?? [] }),
         missingMessage: 'Not yet ingested.',
       },
       iconSpellIds: bench => [

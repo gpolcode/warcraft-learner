@@ -38,6 +38,35 @@ describe('rule engine', () => {
   });
 });
 
+describe('ruleFitsBuild', () => {
+  const UNSEEN_BLADE = 125_700;
+  const ANCIENT_ARTS = [137_062, 137_063, 137_064];
+  const requiring = ruleFor(SECRET_TECH_NEEDS_DANCE, { requires_talents: [[UNSEEN_BLADE], ANCIENT_ARTS] });
+  const excluding = ruleFor(SECRET_TECH_NEEDS_DANCE, { excludes_talents: [ANCIENT_ARTS] });
+  const ungated = ruleFor(SECRET_TECH_NEEDS_DANCE);
+
+  it('fits a build that took one entry of every required talent', () => {
+    expect(engine.ruleFitsBuild(requiring, new Set([UNSEEN_BLADE, ANCIENT_ARTS[1] ?? 0]))).toBe(true);
+    expect(engine.ruleFitsBuild(requiring, new Set([UNSEEN_BLADE]))).toBe(false);
+  });
+
+  it('does not fit a build that took any entry of an excluded talent', () => {
+    expect(engine.ruleFitsBuild(excluding, new Set([ANCIENT_ARTS[2] ?? 0]))).toBe(false);
+    expect(engine.ruleFitsBuild(excluding, new Set([UNSEEN_BLADE]))).toBe(true);
+  });
+
+  it('fits an unknown build only with an ungated rule', () => {
+    expect(engine.ruleFitsBuild(ungated, null)).toBe(true);
+    expect(engine.ruleFitsBuild(requiring, null)).toBe(false);
+    expect(engine.ruleFitsBuild(excluding, null)).toBe(false);
+  });
+
+  it('asks for the build only when a rule carries a gate', () => {
+    expect(engine.rulesGated([ungated])).toBe(false);
+    expect(engine.rulesGated([ungated, excluding])).toBe(true);
+  });
+});
+
 describe('rule severity', () => {
   it.each(['critical', 'warning', 'info'] as RuleSeverity[])('carries an authored %s onto the finding', severity => {
     const rule = ruleFor(SECRET_TECH_NEEDS_DANCE, { severity });

@@ -114,6 +114,6 @@ describe('encounterIdsFromFiles', () => {
   });
 
   it('skips a crashed temp write, a non-numeric name, and a non-json file', () => {
-    expect(ingestState.encounterIdsFromFiles([`${NEKZALI}.json.7.0.tmp`, 'rulebook.json', '.gitkeep'])).toEqual([]);
+    expect(ingestState.encounterIdsFromFiles([`${NEKZALI}.json.7.0.tmp`, 'notes.json', '.gitkeep'])).toEqual([]);
   });
 });
