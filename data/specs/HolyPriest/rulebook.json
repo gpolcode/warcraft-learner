@@ -1,0 +1,112 @@
+{
+  "spec": "HolyPriest",
+  "spec_icon": "spell_holy_guardianspirit",
+  "major_cooldowns": [
+    {
+      "name": "Holy Word: Serenity",
+      "spell_id": 2050,
+      "cooldown": 60,
+      "usage_rule": "Spend it on your lowest ally as it comes back, pooling a charge only for known incoming single-target damage and never sitting on two.",
+      "id_note": "Cast id, 5/5 sampled parses (343 casts). Table base_cd_s is 60; healing casts and Apotheosis cut the real cadence far below that."
+    },
+    {
+      "name": "Holy Word: Sanctify",
+      "spell_id": 34861,
+      "cooldown": 60,
+      "usage_rule": "Drop it on the stacked group as raid damage lands, and do not sit on two charges.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; talent gated so zero casts is not read as a miss.",
+      "talent_gated": true
+    },
+    {
+      "name": "Halo",
+      "spell_id": 120517,
+      "cooldown": 60,
+      "usage_rule": "Fire it as raid damage begins so it expands and contracts through the hit, and pair every cast with Apotheosis on Archon.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; the sampled field plays the Oracle build, hence talent gated.",
+      "talent_gated": true
+    },
+    {
+      "name": "Apotheosis",
+      "spell_id": 200183,
+      "cooldown": 120,
+      "usage_rule": "Enter it holding a Holy Word: Serenity charge, then spend every global on a spell that casts or builds a Holy Word."
+    },
+    {
+      "name": "Power Infusion",
+      "spell_id": 10060,
+      "cooldown": 120,
+      "usage_rule": "Press it as heavy damage lands so the haste buys you extra casts inside the window."
+    },
+    {
+      "name": "Divine Hymn",
+      "spell_id": 64843,
+      "cooldown": 180,
+      "usage_rule": "Channel it into raid-wide damage; it puts Guardian Spirit on you, so you can finish the channel standing in a swirl or out of line of sight.",
+      "id_note": "64843 is the cast id; 64844 is the aura twin of the same name."
+    },
+    {
+      "name": "Guardian Spirit",
+      "spell_id": 47788,
+      "cooldown": 180,
+      "usage_rule": "Put it on the tank ahead of a lethal hit for the cheat death, and self-cast it when the tanks are not using it.",
+      "id_note": "47788 is the cast id; 48153 is the unobserved twin of the same name."
+    },
+    {
+      "name": "Holy Word: Chastise",
+      "spell_id": 88625,
+      "cooldown": 60,
+      "usage_rule": "Weave it into downtime for free damage whenever nobody needs a heal.",
+      "id_note": "Cast in 3 of 5 sampled parses; class-tree talent, so zero casts is not read as a miss.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Desperate Prayer",
+      "spell_id": 19236,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Press it the moment a hit drops you low; it raises your maximum health and heals you for that amount."
+    },
+    {
+      "name": "Fade",
+      "spell_id": 586,
+      "cooldown": 30,
+      "duration": 10,
+      "usage_rule": "Press it into unavoidable raid damage or the instant you pull threat."
+    },
+    {
+      "name": "Concentrated Silvermoon Health Potion",
+      "spell_id": 1295247,
+      "cooldown": 300,
+      "usage_rule": "Drink it when you are low and Desperate Prayer is still on cooldown."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Surge of Light on Flash Heal or Prayer of Healing",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 114255,
+        "buff_spell_name": "Surge of Light",
+        "spend_spell_ids": [596, 2061, 1262763],
+        "spend_spell_names": ["Prayer of Healing", "Flash Heal", "Benediction"]
+      },
+      "action": "Fire a Prayer of Healing or an instant Flash Heal while the proc is up, and hold at most two stacks."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Keep Protective Light up with Flash Heal",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 193065,
+        "aura_spell_name": "Protective Light",
+        "on": "self"
+      },
+      "action": "Cast Flash Heal on any ally to keep the damage reduction rolling on yourself."
+    }
+  ]
+}

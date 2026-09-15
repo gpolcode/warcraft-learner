@@ -1,0 +1,128 @@
+{
+  "spec": "RestorationShaman",
+  "spec_icon": "spell_nature_magicimmunity",
+  "major_cooldowns": [
+    {
+      "name": "Ascendance",
+      "spell_id": 114052,
+      "cooldown": 180,
+      "usage_rule": "Bank two Tidal Waves stacks with Riptide and get your rain down before pressing it, then fill the window with Chain Heal for spread damage and Healing Wave for one or two targets.",
+      "id_note": "114052 is the Restoration Water Ascendant cast id; 114050, 114051, 344548 and 1219480 are the Elemental and Enhancement versions of the same name. Deeply Rooted Elements activates it without a cast, so log aura uptime runs far above the hard cast count."
+    },
+    {
+      "name": "Spirit Link Totem",
+      "spell_id": 98008,
+      "cooldown": 180,
+      "usage_rule": "Drop it just before a big raid hit so the damage reduction lands, and treat the health redistribution as your emergency save when nothing else reaches in time.",
+      "id_note": "98008 is the cast id; 325174 is the aura the totem applies and is the only id with uptime in the sampled parses."
+    },
+    {
+      "name": "Healing Tide Totem",
+      "spell_id": 108280,
+      "cooldown": 180,
+      "usage_rule": "Save it for planned raid-wide damage where your whole group needs healing at once.",
+      "id_note": "Not pressed in the sampled parses, which all took the Ascendance side of the choice node; castable per its tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Spiritwalker's Grace",
+      "spell_id": 79206,
+      "cooldown": 120,
+      "usage_rule": "Press it for forced movement so your casts keep going, and start a cast on its last second to finish that one on the move."
+    },
+    {
+      "name": "Nature's Swiftness",
+      "spell_id": 378081,
+      "cooldown": 60,
+      "usage_rule": "Press it on cooldown for the guaranteed Stormstream Totem and spend the free instant cast immediately, since the cooldown only starts once you consume the buff.",
+      "id_note": "378081 is the Shaman cast id seen in every sampled parse; 132158 shares the name but its tooltip lists druid spells. Farseer builds press Ancestral Swiftness (443454) instead, so this id shows zero casts on those logs.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ancestral Swiftness",
+      "spell_id": 443454,
+      "cooldown": 30,
+      "usage_rule": "As Farseer press it every 30 seconds for the Stormstream Totem proc and the ancestor, and consume it with Chain Heal.",
+      "id_note": "Not pressed in the sampled parses, which all played Totemic with Nature's Swiftness; castable per its tooltip.",
+      "talent_gated": true
+    },
+    {
+      "name": "Stormstream Totem",
+      "spell_id": 1267068,
+      "cooldown": 30,
+      "usage_rule": "Cast it as soon as damage goes out and never sit at two stacks, because holding the proc also costs you Healing Stream Totem casts.",
+      "id_note": "1267068 is the cast id and 1267089 is the proc aura. The proc restores a Healing Stream Totem charge, so cast frequency tracks Swiftness usage rather than the 30 second cooldown."
+    },
+    {
+      "name": "Healing Stream Totem",
+      "spell_id": 5394,
+      "cooldown": 30,
+      "usage_rule": "Spend its charges freely as Totemic, and as Farseer only skip a cast when you are lining a held Stormstream Totem up with incoming damage.",
+      "id_note": "5394 is the cast id; 52042 and 1267745 are the heal events that share the name."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Astral Shift",
+      "spell_id": 108271,
+      "cooldown": 120,
+      "duration": 12,
+      "usage_rule": "Press it into damage you know is coming for you rather than saving it for an emergency you cannot predict."
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend every Stormstream Totem proc",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 1267089,
+        "buff_spell_name": "Stormstream Totem",
+        "spend_spell_ids": [1267068],
+        "spend_spell_names": ["Stormstream Totem"]
+      },
+      "action": "Drop the totem while the proc is still up, and hold it only long enough to catch the next damage event."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Healing Rain down on the group",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 1307888,
+        "aura_spell_name": "Healing Rain",
+        "on": "self"
+      },
+      "action": "Recast it the moment it drops, and as Totemic keep Surging Totem rolling and move it with Totemic Projection."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Ascendance with Healing Rain already down",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 114052,
+        "spell_name": "Ascendance",
+        "buff_spell_id": 1307888,
+        "buff_spell_name": "Healing Rain",
+        "require": "inside"
+      },
+      "action": "Place Surging Totem or Healing Rain on the group in the global before you press Ascendance."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Chain Heal only while your mana holds up",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 1064,
+        "spell_name": "Chain Heal",
+        "resource_type": 0,
+        "resource_name": "mana",
+        "bound": "min"
+      },
+      "action": "Fall back on Healing Wave once your mana runs low and keep Chain Heal for spread damage."
+    }
+  ]
+}
