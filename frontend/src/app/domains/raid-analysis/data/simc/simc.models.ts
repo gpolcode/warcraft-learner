@@ -19,8 +19,47 @@ export type AplExpr =
 
 export type AplComparisonOp = '=' | '!=' | '<' | '<=' | '>' | '>=';
 
+/** One `actions...=` line as written, before any list is resolved. */
+export interface AplLine {
+  /** '' for the default list; otherwise the sub-list name (`precombat`, `cds`). */
+  list: string;
+  action: string;
+  options: Record<string, string>;
+}
+
 /** Where a gate came from: the action's own `if=`, or a list gate it inherited from a `call_action_list` / `run_action_list`. */
 export type GateProvenance = 'own' | 'context';
+
+export interface ResolvedAction {
+  action: string;
+  /** The action's own gate with variables inlined and escape hatches erased; null when unconditional. */
+  own: AplExpr | null;
+  /** The list gates that reach this line, outermost first. */
+  context: AplExpr[];
+  /** Position in the flattened priority order, 0 first. */
+  priority: number;
+}
+
+/** One `.simc` text split into the action lines it declares and the `actions` lines the reader could not split. */
+export interface AplSource {
+  lines: AplLine[];
+  unparsed: string[];
+}
+
+export type AplGapKind = 'expression' | 'option' | 'variable_op' | 'syntax' | 'line' | 'list' | 'variable';
+
+/** What the reader could not read: a token outside the inventory, or a line, list or variable it could not follow. */
+export interface AplGap {
+  kind: AplGapKind;
+  token: string;
+}
+
+export interface ResolvedApl {
+  actions: ResolvedAction[];
+  gaps: AplGap[];
+  /** Every reference head the gates touched, so a build knows which event streams the rules can need. */
+  referencedHeads: string[];
+}
 
 export interface AplLiteral {
   /** A comparison, a bare reference, or a call; never `&`, `|`, `^` or `not`. */
