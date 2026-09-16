@@ -1,9 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { WclApiService } from '../wcl/wcl-api-service';
-import type { DataFileApiService } from '../data-files/data-file-api-service';
 import { WclTransportError } from '../wcl/wcl-transport';
-import { Rulebook } from '../rulebook/rulebook.models';
-import { Result, Results } from '../../../shared/util-http/result';
+import { Results } from '../../../shared/util-http/result';
 import { TopParseSelection } from '../wcl/wcl.models';
 import { SHADOW_BLADES, CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { rulebook } from '../../../../../testing/builders/rulebook';
@@ -39,10 +37,6 @@ function wclFake(over: WclOverrides = {}): WclApiService {
     getReport: over.getReport ?? reportsByCode(),
     getAbilities: over.getAbilities ?? abilityLookup(),
   } as unknown as WclApiService;
-}
-
-function filesFake(read: Result<Rulebook>): DataFileApiService {
-  return { getRulebook: async () => read } as unknown as DataFileApiService;
 }
 
 interface CodeBench extends BenchHeader { codes: string[] }
@@ -222,17 +216,14 @@ describe('benchFromTopParses header', () => {
 const PLANNED_COOLDOWN = 'Shadow Blades';
 const PLANNED_RULEBOOK = rulebook({ cooldowns: [{ name: PLANNED_COOLDOWN, spell_id: SHADOW_BLADES, cooldown: 90 }] });
 
-function planRecipe(
-  dataFiles: DataFileApiService, over: Partial<BenchRecipe<string, CodeBench, string>> = {},
-): BenchRecipe<string, CodeBench, string> {
+function planRecipe(over: Partial<BenchRecipe<string, CodeBench, string>> = {}): BenchRecipe<string, CodeBench, string> {
   return {
     logSource: 'PlanRecipe',
     errorId: BENCH_ERROR_ID,
     sampleTarget: 1,
     noRankingsMessage: NO_RANKINGS_MESSAGE,
     rulebook: {
-      dataFiles,
-      plan: read => read.major_cooldowns[0]?.name ?? null,
+      plan: read => read?.major_cooldowns[0]?.name ?? null,
       missingMessage: NO_PLAN_MESSAGE,
     },
     parse: ({ ranking }, plan) => Promise.resolve(`${plan}/${ranking.report_code}`),
@@ -244,18 +235,17 @@ function planRecipe(
 describe('benchFromTopParses rulebook step', () => {
   it('stops with the recipe\'s own message when the rulebook plans nothing, before any WCL call', async () => {
     const wcl = wclFake({ getRankings: async () => { throw new Error('WCL must not be asked'); } });
-    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, planRecipe(filesFake(Results.ok(rulebook()))));
+    const result = await benchPipeline.benchFromTopParses(wcl, { ...QUERY, rulebook: rulebook() }, planRecipe());
     expect(result).toEqual(Results.missing(NO_PLAN_MESSAGE));
   });
 
-  it('propagates a failed rulebook read unchanged, so a spec with no data file reads as its own error', async () => {
-    const NOT_INGESTED = 'Not yet ingested.';
-    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, planRecipe(filesFake(Results.missing(NOT_INGESTED))));
-    expect(result).toEqual(Results.missing(NOT_INGESTED));
+  it('hands a null rulebook to the plan for a spec without sources, which stops with the same message', async () => {
+    const result = await benchPipeline.benchFromTopParses(wclFake(), { ...QUERY, rulebook: null }, planRecipe());
+    expect(result).toEqual(Results.missing(NO_PLAN_MESSAGE));
   });
 
   it('hands the plan to every parse and to the bench callback', async () => {
-    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, planRecipe(filesFake(Results.ok(PLANNED_RULEBOOK))));
+    const result = await benchPipeline.benchFromTopParses(wclFake(), { ...QUERY, rulebook: PLANNED_RULEBOOK }, planRecipe());
     expect(result).toEqual(Results.ok({
       spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, sample_count: 1,
       codes: [`${PLANNED_COOLDOWN}/r1`, `bench/${PLANNED_COOLDOWN}`],

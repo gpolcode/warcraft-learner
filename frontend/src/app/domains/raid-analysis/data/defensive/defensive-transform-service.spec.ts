@@ -7,7 +7,6 @@ import { abilityLookup, parseRankings, reportsByCode } from '../../../../../test
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
-import { Results } from '../../../shared/util-http/result';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
@@ -252,14 +251,12 @@ const wclFake = {
   },
   getAbilities: abilityLookup({ 700: { icon: 'hit', name: 'Boss Hit' }, [CLOAK_OF_SHADOWS]: { icon: 'cloak', name: 'Cloak of Shadows' } }),
 };
-const filesFake = {
-  getRulebook: async () => Results.ok(rulebook({ defensives: [CLOAK] })),
-};
+const RULEBOOK = rulebook({ defensives: [CLOAK] });
 
 describe('DefensiveTransformService (live, in-browser)', () => {
   it('computes a clustered defensive bench from the top parses', async () => {
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake }) });
-    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake }) });
+    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1, undefined, RULEBOOK);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
     expect(bench.value.sample_count).toBe(2);
@@ -272,10 +269,8 @@ describe('DefensiveTransformService (live, in-browser)', () => {
   });
 
   it('reports missing when the spec has no rulebook defensives', async () => {
-    TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok({ spec: 'X', defensives: [] }) } }),
-    });
-    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake }) });
+    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1, undefined, rulebook());
     expect(bench.ok).toBe(false);
     if (!bench.ok) expect(bench.error.kind).toBe('missing');
   });
