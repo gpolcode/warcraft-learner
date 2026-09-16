@@ -35,3 +35,8 @@ export const SHADOW_BLADES_DAMAGE = 279043;
 export const WCL_MELEE_EVENT_ABILITY_ID = 1;
 export const WOW_AUTO_ATTACK_SPELL_ID = 6603;
 export const WCL_SYNTHETIC_SOURCE_FALLBACK_ID = 291807;
+
+export const SHADOW_DANCE_AURA = 185422;
+export const FEINT = 1966;
+export const DOUBLE_DANCE = 394930;
+export const GOREMAWS_BITE = 426591;
