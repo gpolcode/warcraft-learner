@@ -38,8 +38,11 @@ export const WCL_SYNTHETIC_SOURCE_FALLBACK_ID = 291807;
 
 // Rulebook-build fixtures: the Subtlety kit the derivation specs walk through, plus the Warrior and Mage buttons the defensive and exclusion cases need.
 export const BACKSTAB = 53;
+export const SHADOWSTRIKE = 185438;
 export const GLOOMBLADE = 200758;
+export const SLICE_AND_DICE = 315496;
 export const SHADOW_DANCE_AURA = 185422;
+export const DARKEST_NIGHT = 457280;
 export const FEINT = 1966;
 export const DISPATCH = 2098;
 // The class-wide twin of Shadow Dance that only energizes, sharing the name of the spec's own button.

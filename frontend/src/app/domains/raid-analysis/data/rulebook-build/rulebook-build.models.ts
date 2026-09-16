@@ -1,5 +1,6 @@
 import type { TimedEvent } from '../analysis/wcl-projections-service';
-import type { SpellRecord } from '../simc/simc.models';
+import type { AplGapKind, SpellRecord } from '../simc/simc.models';
+import type { RuleCondition } from '../rulebook/rulebook.models';
 
 export interface ParseSample {
   fightDurationS: number;
@@ -33,4 +34,22 @@ export interface AbilityIndex {
   specLabel: string;
   byToken: Map<string, SpellRecord[]>;
   observation: ParseObservation;
+}
+
+/** A rule before copy and talent ids: the gates are still SimC talent tokens. */
+export interface RuleDraft {
+  condition: RuleCondition;
+  type: string;
+  /** The priority of the highest APL line that produced it, 0 first. */
+  priority: number;
+  requires: Set<string>;
+  excludes: Set<string>;
+}
+
+/** The reader's own gaps plus the names no record or talent entry answers to. */
+type RulebookGapKind = AplGapKind | 'action' | 'aura' | 'talent';
+
+export interface RulebookGap {
+  kind: RulebookGapKind;
+  token: string;
 }
