@@ -36,7 +36,13 @@ export const WCL_MELEE_EVENT_ABILITY_ID = 1;
 export const WOW_AUTO_ATTACK_SPELL_ID = 6603;
 export const WCL_SYNTHETIC_SOURCE_FALLBACK_ID = 291807;
 
+// Rulebook-build fixtures: the Subtlety kit the derivation specs walk through, plus the Warrior and Mage buttons the defensive and exclusion cases need.
+export const BACKSTAB = 53;
+export const GLOOMBLADE = 200758;
 export const SHADOW_DANCE_AURA = 185422;
 export const FEINT = 1966;
+export const DISPATCH = 2098;
+// The class-wide twin of Shadow Dance that only energizes, sharing the name of the spec's own button.
+export const SHADOW_DANCE_ENERGIZE = 394029;
 export const DOUBLE_DANCE = 394930;
 export const GOREMAWS_BITE = 426591;

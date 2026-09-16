@@ -17,7 +17,7 @@ export interface AplVocabularyEntry {
 }
 
 /** Resource names as SimC spells them, each read as `<name>`, `.pct`, `.deficit` and `.max`. */
-const RESOURCE_NAMES = [
+export const RESOURCE_NAMES = [
   'mana', 'rage', 'focus', 'energy', 'combo_points', 'rune', 'runic_power', 'soul_shard', 'astral_power',
   'holy_power', 'maelstrom', 'chi', 'insanity', 'fury', 'essence',
 ] as const;
