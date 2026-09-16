@@ -9,7 +9,7 @@ description: warcraft-learner SimulationCraft (SimC) integration - where the pro
 
 ## Sources
 
-`SimcDataService` (`data/http/simc-data-service.ts`) reads two raw files from `github.com/simulationcraft/simc` during ingest, never at runtime: a profile per spec and a dump per class, shared by its specs. `SIMC_TIER` (`<branch>/<dir>`, e.g. `midnight/MID2`, a repository variable) names both. The base profile is `<dir>_<Class>_<Spec>.simc`; the hero-tree variants beside it are not read.
+`SimcDataService` (`data/http/simc-data-service.ts`) reads two raw files from `github.com/simulationcraft/simc`: a profile per spec and a dump per class, shared by its specs. An ingest run reads them for every spec it ships; the development configuration reads them for the spec on screen, through `LiveRulebookService`, which derives that analysis its own rulebook. A deployed build reads neither: its rules come baked into the benches. `SIMC_TIER` (`<branch>/<dir>`, e.g. `midnight/MID2`, a repository variable) names both for a run; the development configuration names its own in `src/environments/live-data-sources.ts`, which `?simcTier=<branch>/<dir>` overrides. The base profile is `<dir>_<Class>_<Spec>.simc`; the hero-tree variants beside it are not read.
 
 | File | What it is | How it is read |
 |---|---|---|

@@ -1,8 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { DataFileApiService } from '../data/data-files/data-file-api-service';
-import { type Result } from '../../shared/util-http/result';
-import type { TopParseSelection } from '../data/wcl/wcl.models';
-import type { Rulebook } from '../data/rulebook/rulebook.models';
+import type { RulebookDataSource } from '../data/data-source/data-source';
 import { BurstTransformService } from '../data/burst-windows/burst-transform-service';
 import { RotationTransformService } from '../data/rotation/rotation-transform-service';
 import { DefensiveTransformService } from '../data/defensive/defensive-transform-service';
@@ -12,7 +10,7 @@ import { NorthernSkyTransformService } from '../data/northern-sky/northern-sky-t
 
 export interface BenchDescriptor {
   readonly file: string;
-  readonly transform: { getBench(spec: string, encId: number, selection: TopParseSelection, rulebook: Rulebook | null): Promise<Result<object>> };
+  readonly transform: RulebookDataSource<object>;
   readonly write: (spec: string, encId: number, data: object) => Promise<void>;
 }
 
