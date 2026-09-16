@@ -31,3 +31,38 @@ export interface AplLiteral {
 
 /** One way the action can be chosen: every literal holds at once. */
 export type AplTerm = AplLiteral[];
+
+export interface SpellEffect {
+  type: string;
+  subtype: string | null;
+  target: 'self' | 'enemy' | 'other';
+  baseValue: number | null;
+}
+
+export interface SpellTalentEntry {
+  tree: 'class' | 'spec' | 'hero';
+  /** The spec, `Generic` for the class tree, or the hero tree name with its specs. */
+  owner: string;
+}
+
+export interface SpellRecord {
+  id: number;
+  name: string;
+  passive: boolean;
+  hidden: boolean;
+  /** `Rogue` for a class-wide spell, `Subtlety Rogue` for a spec spell; null when the dump names none. */
+  className: string | null;
+  talent: SpellTalentEntry | null;
+  cooldownS: number | null;
+  /** The recharge of a charged spell, the cooldown that actually gates it. */
+  rechargeS: number | null;
+  durationS: number | null;
+  maxStacks: number | null;
+  /** The WCL power type ids of the pools the cast spends, read from the dump's `(N)` markers. */
+  powerTypes: number[];
+  gcd: boolean;
+  castTimeS: number | null;
+  /** The health threshold the tooltip names for an execute, a game constant the rulebook may carry. */
+  executeHealthPct: number | null;
+  effects: SpellEffect[];
+}
