@@ -6,11 +6,22 @@ import { WclApiService } from '../data/wcl/wcl-api-service';
 import { DataFileApiService } from '../data/data-files/data-file-api-service';
 import { WCL_TRANSPORT } from '../data/wcl/wcl-transport';
 import { SpecMetaService } from '../data/data-files/spec-meta-service';
+import type { SpecMeta } from '../data/data-files/spec-meta.models';
 import { LoggerService } from '../../shared/util-logging/logger-service';
-import { type LoadError } from '../../shared/util-http/result';
+import { type LoadError, type Result, Results } from '../../shared/util-http/result';
 import { TopParseSelectionService } from '../data/analysis/top-parse-selection-service';
+import { TOP_PARSE_COUNT } from '../data/analysis/bench-pipeline-service';
+import { getOrInsert } from '../data/analysis/analysis-math';
 import type { EncounterEntry, SpecEntry } from '../data/encounter/encounter.models';
 import type { TopParseSelection } from '../data/wcl/wcl.models';
+import type { Rulebook } from '../data/rulebook/rulebook.models';
+import type { SpecTalents } from '../data/gear/talent.models';
+import type { SimcTier } from '../data/simc/simc.models';
+import { SimcDataService } from '../data/http/simc-data-service';
+import { TalentDataService } from '../data/http/talent-data-service';
+import { EncounterRulebookService } from '../data/rulebook-build/encounter-rulebook-service';
+import { RulebookBuildService } from '../data/rulebook-build/rulebook-build-service';
+import type { RulebookGap, RulebookSources } from '../data/rulebook-build/rulebook-build.models';
 import { BenchRegistryService, LEAD_BENCH, type BenchDescriptor } from './bench-registry';
 import { CurrentRaidsService, BudgetExceededError } from '../data/ingest/current-raids-service';
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
@@ -20,8 +31,8 @@ import { IngestStampService, type IngestStamp } from '../data/ingest/ingest-stam
 import { IngestStateService, type SpecIngestState } from '../data/ingest/ingest-state-service';
 import { SpecReportService, SELECTED_MARKER, type SpecReportRow } from '../data/ingest/spec-report-service';
 import type { IngestEncounter } from '../data/ingest/ingest.models';
+import { IngestRunSummaryService, type IngestRunSummary, type PublishedRunSummary } from '../data/ingest/ingest-run-summary-service';
 
-const TOP_N = 10;
 const POINTS_MARGIN = 500;
 const BENCH_CONCURRENCY = 3;
 
@@ -33,20 +44,22 @@ const ENCOUNTER_OUTCOME_NOTE: Record<EncounterOutcome, string> = {
   failed: 'bench load failed, retried next run',
 };
 
-/** Published on `globalThis.__INGEST_DONE__` - the headless harness's exit signal. */
-interface IngestRunSummary {
-  succeeded: string[];
-  failed: { spec: string; message: string }[];
-  budgetStopped: boolean;
-  fatal?: string;
+/** The SimulationCraft inputs of one run, read up front for every spec: null where SimulationCraft ships no profile, an error where a source failed to load. */
+interface RunSources {
+  sources: Map<string, Result<RulebookSources | null>>;
+  /** Specs whose first derivation was logged, so the rebuild per encounter stays quiet. */
+  reported: Set<string>;
 }
+
+type ClassDumps = Map<string, Promise<Result<string>>>;
 
 function nowS(): number {
   return Math.floor(Date.now() / 1000);
 }
 
-function publishSummary(summary: IngestRunSummary): void {
-  (globalThis as { __INGEST_DONE__?: IngestRunSummary }).__INGEST_DONE__ = summary;
+/** Published on `globalThis.__INGEST_DONE__`, the headless harness's exit signal. */
+function publishSummary(summary: PublishedRunSummary): void {
+  (globalThis as { __INGEST_DONE__?: PublishedRunSummary }).__INGEST_DONE__ = summary;
 }
 
 /** Zero-sample encounters stay listed, or a new raid's bosses are not selectable until its first parses land. */
@@ -72,6 +85,11 @@ export class IngestOrchestratorService {
   private readonly wclTransport = inject(WCL_TRANSPORT);
   private readonly wclCache = inject(NgHttpCachingService);
   private readonly benches = inject(BenchRegistryService).benches;
+  private readonly summary = inject(IngestRunSummaryService);
+  private readonly simc = inject(SimcDataService);
+  private readonly talents = inject(TalentDataService);
+  private readonly rulebooks = inject(EncounterRulebookService);
+  private readonly builder = inject(RulebookBuildService);
 
   /** Never rejects: the fire-and-forget app initializer must not see an unhandled rejection. */
   async run(): Promise<void> {
@@ -80,18 +98,21 @@ export class IngestOrchestratorService {
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       console.error('\nFatal error:', message);
-      publishSummary({ succeeded: [], failed: [], budgetStopped: false, fatal: message });
+      publishSummary(await this.summary.published({ succeeded: [], failed: [], budgetStopped: false, fatal: message }));
     }
   }
 
   private async ingestAll(): Promise<void> {
     console.log('warcraft-learner - Parse Ingestion');
     const version = String(INGEST_VERSION);
-    console.log(`Ingest version: ${version}`);
+    const search = new URLSearchParams(globalThis.location.search);
+    const tier = this.builder.parseTier(search.get('simcTier'));
+    if (!tier) throw new Error('SIMC_TIER must read <branch>/<dir>, e.g. midnight/MID2.');
+    console.log(`Ingest version: ${version}; SimulationCraft tier: ${tier.branch}/${tier.dir}`);
 
-    await this.resolveSpecMetas();
+    const metas = await this.resolveSpecMetas();
 
-    const raidNames = this.currentRaids.parseRaidNames(new URLSearchParams(globalThis.location.search).get('currentRaids'));
+    const raidNames = this.currentRaids.parseRaidNames(search.get('currentRaids'));
     console.log(raidNames.length
       ? `Current raids (CURRENT_RAIDS): ${raidNames.join(', ')}`
       : 'CURRENT_RAIDS is unset - nothing to ingest, nothing pruned.');
@@ -100,36 +121,49 @@ export class IngestOrchestratorService {
     await this.pruneRetiredRaids(protectedIds);
     await this.refreshIndices(encounters);
 
-    const specs = await this.orderedSpecsFromDisk();
-    if (!specs.length) {
-      console.log('No known specs (no rulebook.json found). Nothing to do.');
-      publishSummary({ succeeded: [], failed: [], budgetStopped: false });
-      return;
-    }
-
-    const summary = await this.ingestEachSpec(specs, encounters, version);
-    this.printRunSummary(summary, specs.length);
-    publishSummary(summary);
+    const run: RunSources = { sources: await this.prepareSources(tier, metas), reported: new Set() };
+    const gaps = this.summary.gaps(this.gapsBySpec(run));
+    const specs = await this.orderedSpecs(metas.map(meta => meta.spec));
+    const summary: IngestRunSummary = { ...await this.ingestEachSpec(specs, encounters, version, run), gaps };
+    console.log(this.summary.formatRunSummary(summary, specs.length));
+    publishSummary(await this.summary.published(summary));
   }
 
-  private async resolveSpecMetas(): Promise<void> {
-    // The spec icon is not on WCL, so enrich each meta from that spec's rulebook (its spec_icon stem).
+  private async resolveSpecMetas(): Promise<SpecMeta[]> {
     const metas = await this.currentRaids.discoverSpecMetas(this.wclApi);
-    for (const meta of metas) {
-      const rulebook = await this.dataFile.getRulebook(meta.spec);
-      if (rulebook.ok) {
-        meta.specIcon = rulebook.value.spec_icon;
-      } else {
-        // Only a corrupt file (permanent) is worth logging; a missing rulebook is an un-authored spec.
-        if (rulebook.error.kind === 'permanent') {
-          this.logger.logWarn(`ingest ${meta.spec}: corrupt rulebook.json, shipping blank spec icon`, rulebook.error);
-        }
-        meta.specIcon = '';
-      }
-    }
     this.specMeta.hydrate(metas);
     await this.dataFile.writeSpecMeta(metas);
     console.log(`Resolved ${metas.length} specs from WCL`);
+    return metas;
+  }
+
+  /** Every spec's sources up front: the gap report reads them all, and a missing profile marks its spec as gear, positions and burst windows only. */
+  private async prepareSources(tier: SimcTier, metas: SpecMeta[]): Promise<Map<string, Result<RulebookSources | null>>> {
+    const index = await this.talents.getTalentIndex();
+    if (!index.ok) this.logger.logWarn('ingest: no talent data, rules stay ungated', index.error);
+    const talents = index.ok ? index.value : new Map<string, SpecTalents>();
+    const dumps: ClassDumps = new Map();
+    const sources = new Map<string, Result<RulebookSources | null>>();
+    for (const meta of metas) sources.set(meta.spec, await this.prepareSpec(meta, tier, dumps, talents));
+    const shipped = [...sources.values()].filter(prepared => prepared.ok && prepared.value !== null).length;
+    console.log(`SimulationCraft ships ${shipped} of ${metas.length} spec profiles in ${tier.dir}`);
+    return sources;
+  }
+
+  private async prepareSpec(meta: SpecMeta, tier: SimcTier, dumps: ClassDumps, talents: Map<string, SpecTalents>): Promise<Result<RulebookSources | null>> {
+    const profile = await this.simc.getProfile(tier, meta.classLabel, meta.specLabel);
+    if (!profile.ok) return profile.error.kind === 'missing' ? Results.ok(null) : profile;
+    const spellData = await getOrInsert(dumps, meta.className, () => this.simc.getSpellDataDump(tier, meta.className));
+    if (!spellData.ok) return spellData;
+    return Results.ok(this.builder.prepare({ spec: meta, tier, profile: profile.value, spellData: spellData.value, talents: talents.get(meta.spec) ?? {} }));
+  }
+
+  private gapsBySpec(run: RunSources): Map<string, RulebookGap[]> {
+    const gaps = new Map<string, RulebookGap[]>();
+    for (const [spec, prepared] of run.sources) {
+      if (prepared.ok && prepared.value) gaps.set(spec, prepared.value.gaps);
+    }
+    return gaps;
   }
 
   /** Pruning only the selected specs would leave them at zero data and permanently re-selected. */
@@ -146,13 +180,19 @@ export class IngestOrchestratorService {
   /** Every run, so samples ingested for a spec that is not selected again still surface in its index. */
   private async refreshIndices(encounters: IngestEncounter[]): Promise<void> {
     for (const spec of await this.dataFile.listSpecs()) {
+      await this.pruneStrayFiles(spec);
       await this.rebuildEncountersIndex(spec, encounters);
     }
     await this.rebuildSpecIndex();
   }
 
+  /** The publish mirrors this tree, so a file no step writes would otherwise be carried forward forever. */
+  private async pruneStrayFiles(spec: string): Promise<void> {
+    for (const file of await this.dataFile.listStraySpecFiles(spec)) await this.dataFile.removeSpecFile(spec, file);
+  }
+
   private async ingestEachSpec(
-    specs: string[], encounters: IngestEncounter[], version: string,
+    specs: string[], encounters: IngestEncounter[], version: string, run: RunSources,
   ): Promise<IngestRunSummary> {
     // Isolate each spec so one throw drops only that spec, not the whole run.
     const succeeded: string[] = [];
@@ -160,7 +200,7 @@ export class IngestOrchestratorService {
     let budgetStopped = false;
     for (const spec of specs) {
       try {
-        const budgetExhausted = await this.ingestSpec(spec, encounters, version);
+        const budgetExhausted = await this.ingestSpec(spec, encounters, version, run);
         succeeded.push(spec);
         if (budgetExhausted) { budgetStopped = true; break; }
       } catch (err) {
@@ -171,37 +211,9 @@ export class IngestOrchestratorService {
     return { succeeded, failed, budgetStopped };
   }
 
-  private printRunSummary({ succeeded, failed, budgetStopped }: IngestRunSummary, specCount: number): void {
-    console.log('\n=== Ingestion summary ===');
-    console.log(`Specs processed: ${succeeded.length} of ${specCount}`);
-    if (budgetStopped) {
-      console.log('Stopped early: WCL point budget exhausted; the remaining specs resume next run.');
-    }
-    if (failed.length) {
-      console.log(`Specs failed (${failed.length}): ${failed.map(entry => entry.spec).join(', ')}`);
-      for (const entry of failed) {
-        console.log(`  ${entry.spec}: ${entry.message}`);
-      }
-    } else {
-      console.log('No spec-level failures.');
-    }
-  }
-
-  private async orderedSpecsFromDisk(): Promise<string[]> {
-    const onDisk = await this.dataFile.listSpecs();
-    const withRulebook: string[] = [];
-    for (const spec of onDisk) {
-      const rulebook = await this.dataFile.getRulebook(spec);
-      if (rulebook.ok) {
-        withRulebook.push(spec);
-      } else if (rulebook.error.kind === 'permanent') {
-        // A corrupt rulebook silently freezes the spec on stale data; log so it is diagnosable.
-        this.logger.logWarn(`ingest ${spec}: corrupt rulebook.json, excluded from this run`, rulebook.error);
-      }
-    }
-    if (!withRulebook.length) return [];
-
-    const orderInputs = await Promise.all(withRulebook.map(async spec => {
+  private async orderedSpecs(specs: string[]): Promise<string[]> {
+    if (!specs.length) return [];
+    const orderInputs = await Promise.all(specs.map(async spec => {
       const benched = await this.benchedIds(spec);
       const state = await this.loadIngestState(spec);
       const emptyIds = state?.empty_encounter_ids ?? [];
@@ -245,9 +257,12 @@ export class IngestOrchestratorService {
   }
 
   private async ingestSpec(
-    spec: string, encounters: IngestEncounter[], version: string,
+    spec: string, encounters: IngestEncounter[], version: string, run: RunSources,
   ): Promise<boolean> {
-    console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
+    console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_PARSE_COUNT})`);
+    const sources = this.preparedSources(spec, run);
+    // The stamp keys on what the rules read, so a SimulationCraft change they can see re-benches an encounter like a changed top parse does.
+    const sourceKey = sources ? `${version}:${await this.builder.sourceKey(sources)}` : version;
 
     // Feeds the never-checked-first order - a file-server-only signal, zero WCL budget.
     const previousState = await this.loadIngestState(spec);
@@ -257,32 +272,8 @@ export class IngestOrchestratorService {
     try {
       for (const encounter of this.ordering.orderEncountersByMissingFirst(encounters, checkedIds)) {
         await this.currentRaids.assertPointsBudget(this.wclApi, POINTS_MARGIN);
-
-        const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
-        if (!selection.length) {
-          console.log(`  [${encounter.name}] no rankings, skipped`);
-          emptyThisPass.push(encounter.id);
-          continue;
-        }
-
-        const existing = await this.dataFile.getBench(spec, encounter.id, LEAD_BENCH);
-        const { skip, signature: skipKey } = this.stamp.skipDecision(
-          existing.ok ? existing.value : null, selection, version, TOP_N);
-        if (skip) {
-          console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
-          continue;
-        }
-
-        console.log(`  [${encounter.name}] computing benches (signature ${skipKey})...`);
-        let outcome: EncounterOutcome;
-        try {
-          outcome = await this.ingestEncounter(spec, encounter, version, selection);
-        } finally {
-          // Drop this encounter's cached reports/events before the next one to bound memory.
-          this.wclCache.clearCache();
-        }
+        const outcome = await this.ingestOneEncounter(spec, encounter, sourceKey, sources, run);
         if (outcome === 'empty') emptyThisPass.push(encounter.id);
-        console.log(`  [${encounter.name}] ${ENCOUNTER_OUTCOME_NOTE[outcome]}`);
       }
     } catch (err) {
       if (err instanceof BudgetExceededError) {
@@ -296,6 +287,42 @@ export class IngestOrchestratorService {
     await this.finishSpec(spec, encounters, previousState, emptyThisPass);
     console.log(`Ingestion complete for ${spec}.`);
     return false;
+  }
+
+  /** The spec's prepared sources, null where SimulationCraft ships no profile; a source that failed to load fails the spec instead. */
+  private preparedSources(spec: string, run: RunSources): RulebookSources | null {
+    const prepared = run.sources.get(spec) ?? Results.ok(null);
+    if (!prepared.ok) throw new Error(prepared.error.message);
+    if (!prepared.value) console.log('  no SimulationCraft profile: gear, positions and burst windows only');
+    return prepared.value;
+  }
+
+  /** 'skipped' when the stored stamp already covers the current top parses and sources. */
+  private async ingestOneEncounter(
+    spec: string, encounter: IngestEncounter, sourceKey: string, sources: RulebookSources | null, run: RunSources,
+  ): Promise<EncounterOutcome | 'skipped'> {
+    const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
+    if (!selection.length) {
+      console.log(`  [${encounter.name}] no rankings, skipped`);
+      return 'empty';
+    }
+
+    const existing = await this.dataFile.getBench(spec, encounter.id, LEAD_BENCH);
+    const { skip, signature: skipKey } = await this.stamp.skipDecision(existing.ok ? existing.value : null, selection, sourceKey, TOP_PARSE_COUNT);
+    if (skip) {
+      console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
+      return 'skipped';
+    }
+
+    console.log(`  [${encounter.name}] computing benches (signature ${skipKey})...`);
+    try {
+      const outcome = await this.ingestEncounter(spec, encounter, sourceKey, selection, sources, run);
+      console.log(`  [${encounter.name}] ${ENCOUNTER_OUTCOME_NOTE[outcome]}`);
+      return outcome;
+    } finally {
+      // Drop this encounter's cached reports/events before the next one to bound memory.
+      this.wclCache.clearCache();
+    }
   }
 
   private benchedIds(spec: string): Promise<number[]> {
@@ -326,19 +353,23 @@ export class IngestOrchestratorService {
 
   /** Compute every bench first, THEN stamp + write: the signature is known only after every transform has fetched. */
   private async ingestEncounter(
-    spec: string, encounter: IngestEncounter, version: string, selection: TopParseSelection,
+    spec: string, encounter: IngestEncounter, sourceKey: string, selection: TopParseSelection,
+    sources: RulebookSources | null, run: RunSources,
   ): Promise<EncounterOutcome> {
     const encId = encounter.id;
     const limit = pLimit(BENCH_CONCURRENCY);
     const [burstBench, ...siblings] = this.benches;
-    const compute = (bench: BenchDescriptor) => limit(() => bench.transform.getBench(spec, encId, selection));
-    const { result: [burst, rest], outcomes } = await this.wclTransport.withFetchOutcomes(() => Promise.all([
-      compute(burstBench),
-      Promise.all(siblings.map(async bench => ({ bench, result: await compute(bench) }))),
-    ]));
+    const { result: [burst, rest], outcomes } = await this.wclTransport.withFetchOutcomes(async () => {
+      const rulebook = sources ? await this.deriveRulebook(spec, encId, sources, selection, run) : null;
+      const compute = (bench: BenchDescriptor) => limit(() => bench.transform.getBench(spec, encId, selection, rulebook));
+      return Promise.all([
+        compute(burstBench),
+        Promise.all(siblings.map(async bench => ({ bench, result: await compute(bench) }))),
+      ]);
+    });
 
-    const { signature, inaccessibleParses } = this.signature.signatureAfterFetch(
-      selection, outcomes.inaccessibleCodes, outcomes.failedCodes, version, TOP_N);
+    const { signature, inaccessibleParses } = await this.signature.signatureAfterFetch(
+      selection, outcomes.inaccessibleCodes, outcomes.failedCodes, sourceKey, TOP_PARSE_COUNT);
     const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAtS: nowS() };
 
     // Skip on any failure so a bench is never overwritten with partial data.
@@ -362,6 +393,19 @@ export class IngestOrchestratorService {
     if (burst.ok) return 'benched';
     // Marking a transient or permanent failure empty would defeat the retry `stampBurstFile` leaves open.
     return burst.error.kind === 'missing' ? 'empty' : 'failed';
+  }
+
+  /** Derived from the encounter's own top parses, the ones its benches measure, so the stamp's parse set and sources fix the rules. */
+  private async deriveRulebook(spec: string, encounterId: number, sources: RulebookSources, selection: TopParseSelection, run: RunSources): Promise<Rulebook> {
+    const { rulebook, gaps } = await this.rulebooks.derive(this.wclApi, { sources, encounterId, selection });
+    if (run.reported.has(spec)) return rulebook;
+    run.reported.add(spec);
+    const names = (entries: { name: string }[]): string => (entries.length ? entries.map(entry => entry.name).join(', ') : 'none');
+    console.log(`  cooldowns: ${names(rulebook.major_cooldowns)}`);
+    console.log(`  defensives: ${names(rulebook.defensives)}`);
+    console.log(`  rules: ${rulebook.rules.length}`);
+    if (gaps.length) console.log(`  gaps: ${gaps.map(gap => `${gap.kind} ${gap.token}`).join(', ')}`);
+    return rulebook;
   }
 
   private async rebuildEncountersIndex(spec: string, current: IngestEncounter[]): Promise<void> {

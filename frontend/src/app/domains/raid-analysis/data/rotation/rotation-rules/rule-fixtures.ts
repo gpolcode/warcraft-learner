@@ -63,5 +63,6 @@ export const HOLD_DANCE_FOR_BLADES: HoldCooldownForAnchorCondition = {
 };
 
 export const DANCE_START_S = 20, DANCE_END_S = 28;
+export const ENERGY_TYPE = 3;
 export const COMBO_POINT_TYPE = 4;
 export const MAX_COMBO_POINTS = 5;

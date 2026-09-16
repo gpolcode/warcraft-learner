@@ -6,7 +6,7 @@ import {
 } from '../rulebook/rulebook.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, RUPTURE, EVISCERATE, BLACK_POWDER,
-  LIGHTNING_BOLT, MAELSTROM_WEAPON,
+  LIGHTNING_BOLT, MAELSTROM_WEAPON, UNSEEN_BLADE_ENTRY, ANCIENT_ARTS_ENTRIES,
 } from '../../../../../testing/spell-ids';
 import { cast } from '../../../../../testing/builders/events';
 import {
@@ -35,6 +35,34 @@ describe('rule engine', () => {
     const findings = engine.evaluateRules([benched(rule)], ruleCtx([cast(SECRET_TECHNIQUE, 10)]));
     assert.exists(findings[0]);
     expect(findings[0].rule_type).toBe('cooldown_pairing');
+  });
+});
+
+describe('ruleFitsBuild', () => {
+  const [, ANCIENT_ARTS_SECOND = 0, ANCIENT_ARTS_THIRD = 0] = ANCIENT_ARTS_ENTRIES;
+  const requiring = ruleFor(SECRET_TECH_NEEDS_DANCE, { requires_talents: [[UNSEEN_BLADE_ENTRY], ANCIENT_ARTS_ENTRIES] });
+  const excluding = ruleFor(SECRET_TECH_NEEDS_DANCE, { excludes_talents: [ANCIENT_ARTS_ENTRIES] });
+  const ungated = ruleFor(SECRET_TECH_NEEDS_DANCE);
+
+  it('fits a build that took one entry of every required talent', () => {
+    expect(engine.ruleFitsBuild(requiring, new Set([UNSEEN_BLADE_ENTRY, ANCIENT_ARTS_SECOND]))).toBe(true);
+    expect(engine.ruleFitsBuild(requiring, new Set([UNSEEN_BLADE_ENTRY]))).toBe(false);
+  });
+
+  it('does not fit a build that took any entry of an excluded talent', () => {
+    expect(engine.ruleFitsBuild(excluding, new Set([ANCIENT_ARTS_THIRD]))).toBe(false);
+    expect(engine.ruleFitsBuild(excluding, new Set([UNSEEN_BLADE_ENTRY]))).toBe(true);
+  });
+
+  it('fits an unknown build only with an ungated rule', () => {
+    expect(engine.ruleFitsBuild(ungated, null)).toBe(true);
+    expect(engine.ruleFitsBuild(requiring, null)).toBe(false);
+    expect(engine.ruleFitsBuild(excluding, null)).toBe(false);
+  });
+
+  it('asks for the build only when a rule carries a gate', () => {
+    expect(engine.rulesGated([ungated])).toBe(false);
+    expect(engine.rulesGated([ungated, excluding])).toBe(true);
   });
 });
 
@@ -92,7 +120,7 @@ describe('rulesFollowed', () => {
 });
 
 describe('judgeableRules', () => {
-  // A deployed rulebook file carrying rules the types alone cannot rule out.
+  // A bench file carrying a rule with no condition, which the types alone cannot rule out.
   const unconformed = [{ description: 'no condition' }, { description: 'null condition', condition: null }] as unknown as RulebookRule[];
 
   it('drops rules the engine cannot judge, so a non-conforming file cannot crash it', () => {

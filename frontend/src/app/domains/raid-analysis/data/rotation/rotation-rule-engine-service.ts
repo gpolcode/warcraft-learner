@@ -8,6 +8,9 @@ import {
 } from './rotation-rules/rule-kind';
 import { RULE_KINDS } from './rotation-rules/rule-kinds';
 import { RuleContext } from './rotation-rules/rule-context-service';
+import type { WclApiService } from '../wcl/wcl-api-service';
+import { GearExtractService } from '../gear/gear-extract-service';
+import { TalentKeyService } from '../gear/talent-key-service';
 
 export type { RuleBand, BenchedRule, RuleSample } from './rotation-rules/rule-kind';
 
@@ -33,6 +36,8 @@ const MIN_POOLED_INSTANCES = 20;
 
 @Injectable({ providedIn: 'root' })
 export class RotationRuleEngineService {
+  private readonly gearExtract = inject(GearExtractService);
+  private readonly talentKeys = inject(TalentKeyService);
   private readonly byKind = new Map(inject(RULE_KINDS).map(kind => [kind.kind, kind]));
 
   private specFor<C extends RuleCondition>(cond: C): RuleKind<C> {
@@ -45,9 +50,28 @@ export class RotationRuleEngineService {
     return this.judgeableRules(rules).some(rule => this.specFor(rule.condition).streams(rule.condition).includes(stream));
   }
 
-  /** A deployed rulebook file can still carry a rule with no condition, which the engine has nothing to judge. */
+  /** A bench file on gh-pages can carry a rule with no condition until its encounter re-benches; the engine has nothing to judge it by. */
   judgeableRules(rules: RulebookRule[]): (RulebookRule & { condition: RuleCondition })[] {
     return rules.filter((rule): rule is RulebookRule & { condition: RuleCondition } => rule.condition != null);
+  }
+
+  /** Whether any rule needs the build before it can be judged, so a log's talents are read only then. */
+  rulesGated(rules: RulebookRule[]): boolean {
+    return rules.some(rule => (rule.requires_talents?.length ?? 0) > 0 || (rule.excludes_talents?.length ?? 0) > 0);
+  }
+
+  /** The trait entries the log's build took; null for a log with no combatant info. */
+  async takenTalents(wclApi: WclApiService, reportCode: string, fightId: number, playerId: number): Promise<Set<number> | null> {
+    const event = this.gearExtract.selectCombatantInfo(await wclApi.getCombatantInfo(reportCode, fightId, playerId), playerId);
+    return this.talentKeys.takenEntryIds(event?.talentTree);
+  }
+
+  /** Whether the build the log ran can be judged by the rule: one entry of every required talent taken, none of an excluded one. An unknown build fits only an ungated rule. */
+  ruleFitsBuild(rule: RulebookRule, taken: ReadonlySet<number> | null): boolean {
+    const requires = rule.requires_talents ?? [];
+    const excludes = rule.excludes_talents ?? [];
+    if (taken === null) return !requires.length && !excludes.length;
+    return requires.every(group => group.some(id => taken.has(id))) && !excludes.some(group => group.some(id => taken.has(id)));
   }
 
   sampleRule(cond: RuleCondition, ctx: RuleContext): RuleSample {

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { AnalysisFinding, FindingOccurrence, FindingTimeline, CAT_LABEL } from '../analysis/analysis.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
-import { RulebookCooldown } from '../rulebook/rulebook.models';
+import { RulebookCooldown, RulebookRule } from '../rulebook/rulebook.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import {
   isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
@@ -139,7 +139,7 @@ export class RotationFeatureService {
   ): Promise<RotationPlayerView> {
     const { reportCode, fightId } = pull;
     const { fight, fightDurationS } = context;
-    const rules = this.ruleEngine.benchedRules(bench.rules);
+    const rules = await this.rulesForBuild(this.ruleEngine.benchedRules(bench.rules), reportCode, fightId, playerId);
     const conditions = rules.map(entry => entry.rule);
     const [casts, buffs, enemyAuras, damage] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
@@ -173,6 +173,13 @@ export class RotationFeatureService {
       this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
     const ruleOnPlan = this.ruleEngine.rulesFollowed(rules, ruleCtx);
     return { ruleRows, ruleOnPlan, offensiveRows, onPlan };
+  }
+
+  /** The benched rules the player's build can be judged by. */
+  private async rulesForBuild<T extends { rule: RulebookRule }>(rules: T[], reportCode: string, fightId: number, playerId: number): Promise<T[]> {
+    if (!this.ruleEngine.rulesGated(rules.map(entry => entry.rule))) return rules;
+    const taken = await this.ruleEngine.takenTalents(this.wclApi, reportCode, fightId, playerId);
+    return rules.filter(entry => this.ruleEngine.ruleFitsBuild(entry.rule, taken));
   }
 
   async loadPlanView(spec: string, encounterId: number): Promise<Result<RotationPlanView>> {

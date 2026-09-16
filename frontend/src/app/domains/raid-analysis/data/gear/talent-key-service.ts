@@ -16,6 +16,12 @@ export class TalentKeyService {
     return `${KEY_PREFIX}:${body}`;
   }
 
+  /** The entries a log's build took, the ids a rule's talent gate names; null when the log carries no combatant info to read them from. */
+  takenEntryIds(tree: WclTalentNode[] | undefined): Set<number> | null {
+    if (!tree) return null;
+    return new Set(tree.flatMap(node => (node.id == null ? [] : [node.id])));
+  }
+
   parseTalentKey(key: string): TalentPick[] {
     const [prefix, body] = key.split(':');
     if (prefix !== KEY_PREFIX || !body) return [];

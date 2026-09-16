@@ -170,9 +170,6 @@ mat-sidenav.nav-drawer-rail .mdc-list-item__content { display: none; }
 /* Top-align the trigger so a custom icon+text trigger's bottom-edge baseline does not leave line-height strut space below the value, floating it above the field center. Element+class (0,1,1) beats Material's rule without !important. */
 mat-select .mat-mdc-select-trigger { vertical-align: top; }
 
-/* A checkbox's label wraps projected content in a block line box, so a flex-row label (icon + name) sits on the baseline instead of centered against the checkmark. Element+class (0,1,1) beats Material's unlayered rule without !important. */
-mat-checkbox .mat-internal-form-field-label { display: flex; align-items: center; }
-
 mat-icon.icon-16 { font-size: 16px; width: 16px; height: 16px; line-height: 16px; }
 mat-icon.icon-18 { font-size: 18px; width: 18px; height: 18px; line-height: 18px; }
 

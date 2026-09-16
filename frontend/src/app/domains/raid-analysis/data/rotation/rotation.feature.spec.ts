@@ -2,7 +2,7 @@ import { assert, describe, it, expect } from 'vitest';
 import { Result, Results } from '../../../shared/util-http/result';
 import { RulebookRule, CastWithoutPriorCondition } from '../rulebook/rulebook.models';
 import {
-  SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, BLOODLUST, RUPTURE, BLACK_POWDER,
+  SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, BLOODLUST, RUPTURE, BLACK_POWDER, UNSEEN_BLADE_ENTRY,
 } from '../../../../../testing/spell-ids';
 import { cast, applyBuff, applyDebuff, removeDebuff } from '../../../../../testing/builders/events';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
@@ -87,6 +87,47 @@ describe('RotationFeatureService', () => {
       const ruleRows = result.value.ruleRows.filter(row => row.what === 'Secret Technique inside Shadow Dance');
       expect(ruleRows).toHaveLength(1);
     }
+  });
+
+  it('judges a talent-gated rule only when the player\'s build fits it, reading the log\'s talents', async () => {
+    const TALENTED_CODE = 'rT';
+    const UNTALENTED_CODE = 'rU';
+    const reads: string[] = [];
+    const wcl = {
+      getReport: async () => REPORT,
+      getAllEvents: async (_c: string, _f: number, dataType: string) => (dataType === 'Casts' ? [cast(SECRET_TECHNIQUE, 30)] : []),
+      getCombatantInfo: async (code: string, _f: number, playerId: number) => {
+        reads.push(code);
+        return [{ sourceID: playerId, talentTree: code === TALENTED_CODE ? [{ id: UNSEEN_BLADE_ENTRY, rank: 1 }] : [] }];
+      },
+    };
+    const gated: RulebookRule = {
+      type: 'cooldown_pairing', severity: 'critical', description: 'Secret Technique inside Shadow Dance',
+      condition: SECRET_TECH_NEEDS_DANCE, action: 'Open Shadow Dance, then spend Secret Technique inside it.', requires_talents: [[UNSEEN_BLADE_ENTRY]],
+    };
+    const service = withSource(Results.ok(bench({ rules: [benched(gated)] })), wcl);
+    const rows = async (code: string) => {
+      const result = await service.loadPlayerView('SubtletyRogue', 1, code, 1, 10);
+      return result.ok ? result.value.ruleRows.filter(row => row.what === gated.description) : [];
+    };
+    expect(await rows(TALENTED_CODE)).toHaveLength(1);
+    expect(await rows(UNTALENTED_CODE)).toHaveLength(0);
+    expect(reads).toEqual([TALENTED_CODE, UNTALENTED_CODE]);
+  });
+
+  it('reads no talents for a bench whose rules carry no gate', async () => {
+    const wcl = {
+      getReport: async () => REPORT,
+      getAllEvents: async (_c: string, _f: number, dataType: string) => (dataType === 'Casts' ? [cast(SECRET_TECHNIQUE, 30)] : []),
+      getCombatantInfo: async () => { throw new Error('the build was read for an ungated bench'); },
+    };
+    const rule: RulebookRule = {
+      type: 'cooldown_pairing', severity: 'critical', description: 'Secret Technique inside Shadow Dance',
+      condition: SECRET_TECH_NEEDS_DANCE, action: 'Open Shadow Dance, then spend Secret Technique inside it.',
+    };
+    const result = await withSource(Results.ok(bench({ rules: [benched(rule)] })), wcl).loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value.ruleRows.filter(row => row.what === rule.description)).toHaveLength(1);
   });
 
   it('computes player findings from the player log', async () => {
