@@ -59,5 +59,6 @@ export const ICE_BARRIER = 11426;
 
 // Raidbots trait entry ids, the numbers a rule's talent gate names.
 export const UNSEEN_BLADE_ENTRY = 125700;
+export const DEATHSTALKER_ENTRY = 123373;
 // Ancient Arts is an apex talent: three entries share the name, and SimulationCraft numbers them.
 export const ANCIENT_ARTS_ENTRIES = [137062, 137063, 137064];
