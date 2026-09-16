@@ -118,7 +118,6 @@ describe('DataFileApiService reads', () => {
       classLabel: 'Rogue',
       specLabel: 'Subtlety',
       classIcon: 'class_rogue',
-      specIcon: 'ability_stealth',
     }];
     const present = new RecordingTransport(Results.ok(metas));
     expect(await withTransport(present).getSpecMeta()).toEqual(Results.ok(metas));
