@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HashService } from '../../../shared/util-hash/hash-service';
 
 @Injectable({ providedIn: 'root' })
 export class IngestSignatureService {
+  private readonly hash = inject(HashService);
 
   /** `report_code:fight_id` key - the unit of the parse-set fingerprint and the inaccessible set. */
   private parseKey(ranking: SignatureRanking): string {
@@ -16,33 +18,31 @@ export class IngestSignatureService {
       .join('|');
   }
 
-  private encounterSignature(version: string, rankings: SignatureRanking[]): string {
-    return bytesToHex(sha256(utf8ToBytes(`${version}\n${this.rankingFingerprint(rankings)}`))).slice(0, 16);
+  private encounterSignature(sourceKey: string, rankings: SignatureRanking[]): Promise<string> {
+    return this.hash.shortHash(`${sourceKey}\n${this.rankingFingerprint(rankings)}`);
   }
 
   /** The signature over the top-`topN` ACCESSIBLE parses - the one rule both the cheap pre-check and the post-fetch stamp key on, so they can never diverge. */
   encounterSkipKey(
-    poolRows: SignatureRanking[], inaccessible: ReadonlySet<string>, version: string, topN: number,
-  ): string {
+    poolRows: SignatureRanking[], inaccessible: ReadonlySet<string>, sourceKey: string, topN: number,
+  ): Promise<string> {
     const usedRows = poolRows.filter(row => !inaccessible.has(this.parseKey(row))).slice(0, topN);
-    return this.encounterSignature(version, usedRows);
+    return this.encounterSignature(sourceKey, usedRows);
   }
 
   /** Persist only permission-denied `inaccessibleCodes`; sign the top-N minus every `failedCodes` fetch, so a backfilled bench is stamped as the set it used. */
-  signatureAfterFetch(
+  async signatureAfterFetch(
     poolRows: SignatureRanking[], inaccessibleCodes: ReadonlySet<string>, failedCodes: ReadonlySet<string>,
-    version: string, topN: number,
-  ): { signature: string; inaccessibleParses: string[] } {
+    sourceKey: string, topN: number,
+  ): Promise<{ signature: string; inaccessibleParses: string[] }> {
     const inaccessibleParses = poolRows.filter(row => inaccessibleCodes.has(row.report_code)).map(row => this.parseKey(row));
     const failedParses = poolRows.filter(row => failedCodes.has(row.report_code)).map(row => this.parseKey(row));
-    const signature = this.encounterSkipKey(poolRows, new Set(failedParses), version, topN);
+    const signature = await this.encounterSkipKey(poolRows, new Set(failedParses), sourceKey, topN);
     return { signature, inaccessibleParses };
   }
 }
 
-// A tailored file is fresh when the ingest version AND the exact top-parse set that produced it are unchanged, folded into one short hash.
-import { sha256 } from '@noble/hashes/sha2.js';
-import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
+// A tailored file is fresh when the source key (the ingest version and the SimulationCraft sources the rules read) AND the exact top-parse set that produced it are unchanged, folded into one short hash.
 
 /** Satisfied by the shared `toParseRankings` selection's rows, so the signature keys on exactly the parses that feed the transforms. */
 export interface SignatureRanking {

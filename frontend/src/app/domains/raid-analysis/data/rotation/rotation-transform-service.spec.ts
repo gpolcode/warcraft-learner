@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { RotationTransformService, CdSummary, ParseRuleSamples } from './rotation-transform-service';
-import { SHADOW_BLADES, BLOODLUST, RUPTURE } from '../../../../../testing/spell-ids';
+import { SHADOW_BLADES, BLOODLUST, RUPTURE, UNSEEN_BLADE_ENTRY } from '../../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../../testing/builders/events';
 import { rulebook } from '../../../../../testing/builders/rulebook';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
@@ -230,16 +230,12 @@ const wclFake = {
     dataType === 'Casts' ? [cast(SHADOW_BLADES, 5), cast(UNTRACKED_SPELL_ID, 8)] : [applyBuff(BLOODLUST, 6)],
   getAbilities: abilityLookup({ [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' } }),
 };
-const filesFake = {
-  getRulebook: async () => Results.ok(rulebook({
-    cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }],
-  })),
-};
+const RULEBOOK = rulebook({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }] });
 
 describe('RotationTransformService (live, in-browser)', () => {
   it('computes a rotation bench from the top parses', async () => {
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake }) });
-    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake }) });
+    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1, undefined, RULEBOOK);
     expect(result.ok).toBe(true);
     if (result.ok) {
       const bench = result.value;
@@ -253,12 +249,31 @@ describe('RotationTransformService (live, in-browser)', () => {
     }
   });
 
+  it('measures a talent-gated rule on the parses whose build fits it, reading each log\'s talents', async () => {
+    const rule: RulebookRule = {
+      type: 'rotation', severity: 'warning', description: 'Keep Bloodlust up', action: 'Refresh it.',
+      condition: { kind: 'aura_uptime_below', aura_spell_id: BLOODLUST, aura_spell_name: 'Bloodlust', on: 'self' },
+      requires_talents: [[UNSEEN_BLADE_ENTRY]],
+    };
+    const untalentedCodes = new Set(['r1', 'r2']);
+    const wcl = {
+      ...wclFake,
+      getCombatantInfo: async (code: string, _fightId: number, playerId: number) =>
+        [{ sourceID: playerId, talentTree: untalentedCodes.has(code) ? [] : [{ id: UNSEEN_BLADE_ENTRY, rank: 1 }] }],
+    };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl }) });
+    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1, undefined, rulebook({ cooldowns: RULEBOOK.major_cooldowns, rules: [rule] }));
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.rules[0]?.sample_count).toBe(MIN_SAMPLE_COUNT - untalentedCodes.size);
+      expect(result.value.rules[0]?.band).toBeNull();
+    }
+  });
+
   it('propagates a missing error when the spec has no rulebook cooldowns', async () => {
     // A rulebook with no cooldowns is nothing to analyze - the transform reports missing.
-    TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok(rulebook()) } }),
-    });
-    expect(await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(Results.missing('No rulebook cooldowns for this spec.'));
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake }) });
+    expect(await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1, undefined, rulebook()))
+      .toEqual(Results.missing('No SimulationCraft cooldowns for this spec.'));
   });
 });

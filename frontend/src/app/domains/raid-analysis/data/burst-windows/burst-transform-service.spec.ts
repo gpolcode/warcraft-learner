@@ -1,7 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclEvent } from '../wcl/wcl.models';
-import { Results } from '../../../shared/util-http/result';
 import { BurstTransformService, ParseWindow, BurstDetectorTuning, DEFAULT_BURST_TUNING } from './burst-transform-service';
 import {
   SHADOW_BLADES, SHADOW_BLADES_DAMAGE, EVISCERATE, BLACK_POWDER, CLOAK_OF_SHADOWS, WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
@@ -407,17 +406,12 @@ const wclFake = {
     dataType === 'Casts' ? [cast(SHADOW_BLADES, 10)] : burstDamage,
   getAbilities: abilityLookup(),
 };
-const filesFake = {
-  getRulebook: async () => Results.ok(rulebook({
-    spec: 'SubtletyRogue',
-    cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }],
-  })),
-};
+const RULEBOOK = rulebook({ spec: 'SubtletyRogue', cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }] });
 
 describe('BurstTransformService (live, in-browser)', () => {
   it('computes a clustered burst bench from the top parses', async () => {
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake }) });
-    const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake }) });
+    const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1, undefined, RULEBOOK);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
     expect(bench.value.sample_count).toBe(2);
@@ -431,11 +425,13 @@ describe('BurstTransformService (live, in-browser)', () => {
     expect(bench.value.ability_icons[SHADOW_BLADES_DAMAGE]).toEqual({ icon: `icon_${SHADOW_BLADES_DAMAGE}`, name: `name_${SHADOW_BLADES_DAMAGE}` });
   });
 
-  it('returns missing when the spec rulebook has no cooldowns', async () => {
-    TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok(rulebook({ spec: 'SubtletyRogue', cooldowns: [] })) } }),
-    });
-    expect(await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(Results.missing('Not yet ingested.'));
+  it('still benches the damage windows of a spec with no rulebook, attributed to no cooldown, so the lead file stamps the encounter', async () => {
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake }) });
+    const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1, undefined, null);
+    expect(bench.ok).toBe(true);
+    if (!bench.ok) return;
+    expect(bench.value.sample_count).toBe(2);
+    expect(bench.value.cd_spell_ids).toEqual({});
+    expect(bench.value.windows.map(window => window.common_cds)).toEqual([[]]);
   });
 });

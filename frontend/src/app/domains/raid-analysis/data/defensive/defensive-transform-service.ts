@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { DataFileApiService } from '../data-files/data-file-api-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { RulebookDefensive } from '../rulebook/rulebook.models';
+import { Rulebook, RulebookDefensive } from '../rulebook/rulebook.models';
 import { BurstWindow } from '../analysis/analysis.models';
 import { PerDefensiveBenchmark } from '../encounter/encounter.models';
 import { Result } from '../../../shared/util-http/result';
@@ -55,16 +54,14 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
-  private readonly dataFiles = inject(DataFileApiService);
 
-  async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<DefensiveBench>> {
-    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
+  async getBench(spec: string, encounterId: number, selection?: TopParseSelection, rulebook?: Rulebook | null): Promise<Result<DefensiveBench>> {
+    return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection, rulebook }, {
       logSource: 'DefensiveTransformService',
       errorId: 'defensive.bench',
       noRankingsMessage: NO_DEFENSIVE_BENCH_MESSAGE,
       rulebook: {
-        dataFiles: this.dataFiles,
-        plan: (rulebook): RulebookDefensive[] | null => rulebook.defensives.length ? rulebook.defensives : null,
+        plan: (rulebook): RulebookDefensive[] | null => rulebook?.defensives.length ? rulebook.defensives : null,
         missingMessage: NO_DEFENSIVE_BENCH_MESSAGE,
       },
       iconSpellIds: bench => [

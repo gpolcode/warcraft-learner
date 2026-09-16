@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import type { DataFileApiService } from '../data-files/data-file-api-service';
 import { ParseRanking, TopParseSelection, WclFight, WclReport } from '../wcl/wcl.models';
 import { Rulebook } from '../rulebook/rulebook.models';
 import { Result, Results } from '../../../shared/util-http/result';
@@ -24,11 +23,11 @@ export class BenchPipelineService {
 
   async benchFromTopParses<TParse, TBench, TPlan = undefined>(
     wclApi: WclApiService,
-    query: { spec: string; encounterId: number; selection?: TopParseSelection },
+    query: BenchQuery,
     recipe: BenchRecipe<TParse, TBench, TPlan>,
   ): Promise<Result<TBench>> {
     const { spec, encounterId } = query;
-    const planned = await this.benchPlan(recipe.rulebook, spec);
+    const planned = this.benchPlan(recipe, query.rulebook ?? null);
     if (!planned.ok) return planned;
     try {
       const limits = this.recipeLimits(recipe);
@@ -47,12 +46,11 @@ export class BenchPipelineService {
     }
   }
 
-  private async benchPlan<TPlan>(step: BenchRulebookStep<TPlan> | undefined, spec: string): Promise<Result<TPlan>> {
+  private benchPlan<TParse, TBench, TPlan>(recipe: BenchRecipe<TParse, TBench, TPlan>, rulebook: Rulebook | null): Result<TPlan> {
+    const step = recipe.rulebook;
     if (!step) return Results.ok(undefined as TPlan);
-    const rulebook = await step.dataFiles.getRulebook(spec);
-    if (!rulebook.ok) return rulebook;
-    const plan = step.plan(rulebook.value);
-    return plan === null ? Results.missing(step.missingMessage) : Results.ok(plan);
+    const plan = step.plan(rulebook);
+    return plan === null ? Results.missing(step.missingMessage ?? recipe.noRankingsMessage) : Results.ok(plan);
   }
 
   private async benchEnvelope<TParse, TBench, TPlan>(
@@ -115,7 +113,7 @@ export class BenchPipelineService {
   }
 }
 
-const TOP_PARSE_COUNT = 10;
+export const TOP_PARSE_COUNT = 10;
 const MIN_SAMPLE_COUNT = 1;
 
 export interface BenchParse {
@@ -143,11 +141,19 @@ export interface BenchHeader extends BenchIdentity {
 /** What a recipe's bench callback returns: the pipeline spreads the header before it and bakes the icon map after it. */
 type BenchBody<TBench> = Omit<TBench, keyof BenchHeader | 'ability_icons'>;
 
+interface BenchQuery {
+  spec: string;
+  encounterId: number;
+  selection?: TopParseSelection;
+  /** The rulebook derived for this encounter; null for a spec SimulationCraft ships no profile for. */
+  rulebook?: Rulebook | null;
+}
+
 interface BenchRulebookStep<TPlan> {
-  dataFiles: DataFileApiService;
   /** Returning null stops the bench with `missingMessage`, for a spec whose rulebook names nothing this recipe benches. */
-  plan: (rulebook: Rulebook) => TPlan | null;
-  missingMessage: string;
+  plan: (rulebook: Rulebook | null) => TPlan | null;
+  /** Left out by a step whose plan never returns null. */
+  missingMessage?: string;
 }
 
 export interface BenchRecipe<TParse, TBench, TPlan = undefined> {

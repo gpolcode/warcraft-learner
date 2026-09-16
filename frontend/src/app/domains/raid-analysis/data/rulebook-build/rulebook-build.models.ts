@@ -49,7 +49,7 @@ export interface RuleDraft {
 }
 
 /** The reader's own gaps plus the names no record or talent entry answers to. */
-type RulebookGapKind = AplGapKind | 'action' | 'aura' | 'talent';
+export type RulebookGapKind = AplGapKind | 'action' | 'aura' | 'talent';
 
 export interface RulebookGap {
   kind: RulebookGapKind;
