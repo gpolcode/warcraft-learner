@@ -7,6 +7,10 @@ type AuraField = 'up' | 'stack' | 'refreshable' | 'remains' | 'other';
 type CooldownField = 'ready' | 'remains' | 'charges' | 'other';
 type ResourceField = 'amount' | 'pct' | 'deficit' | 'max';
 
+/** The enemy counts a rule is judged under: alone on the boss, or on a pack. */
+export const SINGLE_TARGET = 1;
+export const CLEAVE = 3;
+
 /** An APL literal read in the vocabulary the rule kinds judge: which aura, cooldown, resource or count, and which way. */
 export type Atom =
   | { family: 'aura'; scope: 'self' | 'target'; token: string; field: AuraField; op: AplComparisonOp | null; value: number | null }
