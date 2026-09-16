@@ -44,8 +44,20 @@ export const SLICE_AND_DICE = 315496;
 export const SHADOW_DANCE_AURA = 185422;
 export const DARKEST_NIGHT = 457280;
 export const FEINT = 1966;
+export const CRIMSON_VIAL = 185311;
 export const DISPATCH = 2098;
 // The class-wide twin of Shadow Dance that only energizes, sharing the name of the spec's own button.
 export const SHADOW_DANCE_ENERGIZE = 394029;
 export const DOUBLE_DANCE = 394930;
 export const GOREMAWS_BITE = 426591;
+export const BERSERKER_RAGE = 18499;
+export const SHIELD_WALL = 871;
+export const LAST_STAND = 12975;
+// The passive talent node that grants Last Stand, a twin under the same name.
+export const LAST_STAND_NODE = 1243659;
+export const ICE_BARRIER = 11426;
+
+// Raidbots trait entry ids, the numbers a rule's talent gate names.
+export const UNSEEN_BLADE_ENTRY = 125700;
+// Ancient Arts is an apex talent: three entries share the name, and SimulationCraft numbers them.
+export const ANCIENT_ARTS_ENTRIES = [137062, 137063, 137064];
