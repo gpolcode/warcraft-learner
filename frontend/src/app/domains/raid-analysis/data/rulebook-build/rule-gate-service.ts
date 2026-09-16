@@ -7,7 +7,7 @@ import type { ActionLine, DraftSeed, FactSite, TalentGate, TermSite } from './ru
 /** Past this many talents the build space is too wide to enumerate, and a gate that wide is not a rule. */
 const MAX_GATE_TOKENS = 8;
 /** Marks a hero tree pick among the talent tokens of a gate. */
-const HERO_PREFIX = 'hero:';
+export const HERO_PREFIX = 'hero:';
 
 /** The bookkeeping every rule kind shares: talent gates, term walking, identity keys. */
 @Injectable({ providedIn: 'root' })

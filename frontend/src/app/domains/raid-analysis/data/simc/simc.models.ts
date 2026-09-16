@@ -1,3 +1,9 @@
+/** `midnight/MID2`: the SimC branch that carries the live expansion and the profile directory of the live tier. */
+export interface SimcTier {
+  branch: string;
+  dir: string;
+}
+
 export type AplBinaryOp =
   | '&' | '|' | '^'
   | '=' | '!=' | '<' | '<=' | '>' | '>=' | '~' | '!~'
