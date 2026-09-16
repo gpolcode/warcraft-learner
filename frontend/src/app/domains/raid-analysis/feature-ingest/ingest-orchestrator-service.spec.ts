@@ -55,8 +55,8 @@ const TIER_PARTS = { branch: 'midnight', dir: 'MID2' };
 /** The stamp keys on what the rules read, so the expected signature carries the key the builder derives from the profile and dump. */
 const sourceKey = async (profile: string | null): Promise<string> => {
   if (profile === null) return String(INGEST_VERSION);
-  const sources = await builder.prepare({ spec: META, tier: TIER_PARTS, profile, spellData: DUMP, talents: {} });
-  return `${INGEST_VERSION}:${sources.key}`;
+  const sources = builder.prepare({ spec: META, tier: TIER_PARTS, profile, spellData: DUMP, talents: {} });
+  return `${INGEST_VERSION}:${await builder.sourceKey(sources)}`;
 };
 
 const rankedRow = (player: string, code: string, fightID: number) =>
