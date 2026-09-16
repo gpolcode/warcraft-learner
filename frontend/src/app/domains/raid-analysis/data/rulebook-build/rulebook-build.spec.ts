@@ -67,41 +67,41 @@ function texts(over: Partial<RulebookSourceTexts> = {}): RulebookSourceTexts {
   return { spec: SPEC, tier: TIER, profile: PROFILE, spellData: DUMP, talents: TALENTS, ...over };
 }
 
-async function build(over: Partial<RulebookSourceTexts> = {}) {
-  return builder.build(await builder.prepare(texts(over)), []);
+function build(over: Partial<RulebookSourceTexts> = {}) {
+  return builder.build(builder.prepare(texts(over)), []);
 }
 
 describe('RulebookBuildService.build', () => {
-  it('carries the spec key and lists the cooldowns in APL order', async () => {
-    const { rulebook } = await build();
+  it('carries the spec key and lists the cooldowns in APL order', () => {
+    const { rulebook } = build();
     expect(rulebook.spec).toBe(SPEC.spec);
     expect(rulebook.major_cooldowns.map(cooldown => cooldown.spell_id)).toEqual([SHADOW_BLADES, SHADOW_DANCE, VANISH]);
     expect(rulebook.major_cooldowns[1]?.cooldown).toBe(SHADOW_DANCE_RECHARGE_S);
   });
 
-  it('grades severity by the third of the priority list the rule came from', async () => {
-    const { rulebook } = await build();
+  it('grades severity by the third of the priority list the rule came from', () => {
+    const { rulebook } = build();
     const severities = rulebook.rules.map(rule => `${rule.condition?.kind}:${rule.severity}`);
     expect(severities).toEqual(['cast_without_prior:critical', 'hold_cooldown_for_anchor:warning', 'resource_at_cast:info']);
   });
 
-  it('maps a talent gate to the group of trait entries carrying its name', async () => {
-    const { rulebook, gaps } = await build();
+  it('maps a talent gate to the group of trait entries carrying its name', () => {
+    const { rulebook, gaps } = build();
     const gated = rulebook.rules.find(rule => rule.condition?.kind === 'resource_at_cast');
     expect(gated?.requires_talents).toEqual([[UNSEEN_BLADE_ENTRY]]);
     expect(gaps).toEqual([]);
   });
 
-  it('reads a numbered talent token as the name it numbers when that many entries share it', async () => {
+  it('reads a numbered talent token as the name it numbers when that many entries share it', () => {
     const talents = Object.fromEntries(ANCIENT_ARTS_ENTRIES.map(id => [id, { name: 'Ancient Arts', icon: 'x' }]));
-    const numbered = await build({ profile: 'actions=vanish,if=talent.ancient_arts_3&combo_points<=2', talents });
+    const numbered = build({ profile: 'actions=vanish,if=talent.ancient_arts_3&combo_points<=2', talents });
     expect(numbered.rulebook.rules[0]?.requires_talents).toEqual([ANCIENT_ARTS_ENTRIES]);
-    const short = await build({ profile: 'actions=vanish,if=talent.ancient_arts_4&combo_points<=2', talents });
+    const short = build({ profile: 'actions=vanish,if=talent.ancient_arts_4&combo_points<=2', talents });
     expect(short.gaps).toEqual([{ kind: 'talent', token: 'ancient_arts_4' }]);
   });
 
-  it('reports a talent the data does not name and leaves the rule ungated', async () => {
-    const missing = await build({ talents: {} });
+  it('reports a talent the data does not name and leaves the rule ungated', () => {
+    const missing = build({ talents: {} });
     expect(missing.gaps).toEqual([{ kind: 'talent', token: 'unseen_blade' }]);
     expect(missing.rulebook.rules.find(rule => rule.condition?.kind === 'resource_at_cast')?.requires_talents).toBeUndefined();
   });
@@ -121,32 +121,34 @@ describe('RulebookBuildService.parseTier', () => {
   });
 });
 
-describe('RulebookBuildService.prepare', () => {
+describe('RulebookBuildService.sourceKey', () => {
   it('keys the sources on what the rules read, so a profile edit outside the gates leaves the key alone', async () => {
-    const prepared = await builder.prepare(texts());
-    const reworded = await builder.prepare(texts({ profile: `rogue="MID2_Rogue_Subtlety"\n# a comment\n${PROFILE}` }));
-    const regated = await builder.prepare(texts({ profile: PROFILE.replace('remains>=35', 'remains>=40') }));
-    expect(prepared.key).toMatch(/^[0-9a-f]+$/);
-    expect(prepared.key).toHaveLength(KEY_LENGTH);
-    expect(reworded.key).toBe(prepared.key);
-    expect(regated.key).not.toBe(prepared.key);
+    const prepared = await builder.sourceKey(builder.prepare(texts()));
+    const reworded = await builder.sourceKey(builder.prepare(texts({ profile: `rogue="MID2_Rogue_Subtlety"\n# a comment\n${PROFILE}` })));
+    const regated = await builder.sourceKey(builder.prepare(texts({ profile: PROFILE.replace('remains>=35', 'remains>=40') })));
+    expect(prepared).toMatch(/^[0-9a-f]+$/);
+    expect(prepared).toHaveLength(KEY_LENGTH);
+    expect(reworded).toBe(prepared);
+    expect(regated).not.toBe(prepared);
   });
 
   it('changes the key when a record the spec owns changes', async () => {
-    const prepared = await builder.prepare(texts());
-    const recharged = await builder.prepare(texts({ spellData: DUMP.replace(`1 (${SHADOW_DANCE_RECHARGE_S} seconds cooldown)`, `1 (${SHADOW_DANCE_RECHARGE_S + 10} seconds cooldown)`) }));
-    expect(recharged.key).not.toBe(prepared.key);
+    const prepared = await builder.sourceKey(builder.prepare(texts()));
+    const recharged = await builder.sourceKey(builder.prepare(texts({ spellData: DUMP.replace(`1 (${SHADOW_DANCE_RECHARGE_S} seconds cooldown)`, `1 (${SHADOW_DANCE_RECHARGE_S + 10} seconds cooldown)`) })));
+    expect(recharged).not.toBe(prepared);
   });
+});
 
-  it('leaves out the names the exclusion overlay lists for the spec, actions and records alike', async () => {
-    const prepared = await builder.prepare(texts({ spec: EXCLUDED_SPEC, profile: 'actions=ice_barrier\nactions+=/vanish', spellData: `${MAGE_DUMP}\n${DUMP}` }));
+describe('RulebookBuildService.prepare', () => {
+  it('leaves out the names the exclusion overlay lists for the spec, actions and records alike', () => {
+    const prepared = builder.prepare(texts({ spec: EXCLUDED_SPEC, profile: 'actions=ice_barrier\nactions+=/vanish', spellData: `${MAGE_DUMP}\n${DUMP}` }));
     expect(prepared.apl.actions.map(action => action.action)).toEqual(['vanish']);
     expect(prepared.records.some(record => record.id === ICE_BARRIER)).toBe(false);
     expect(prepared.gaps.some(gap => gap.token === 'ice_barrier')).toBe(false);
   });
 
-  it('collects the gaps the sources alone leave, before any parse is sampled', async () => {
-    const prepared = await builder.prepare(texts({ profile: `${PROFILE}\nactions+=/goremaws_bite,if=buff.shadow_dance.brand_new_field` }));
+  it('collects the gaps the sources alone leave, before any parse is sampled', () => {
+    const prepared = builder.prepare(texts({ profile: `${PROFILE}\nactions+=/goremaws_bite,if=buff.shadow_dance.brand_new_field` }));
     expect(prepared.gaps).toEqual([{ kind: 'expression', token: 'buff.*.brand_new_field' }, { kind: 'action', token: 'goremaws_bite' }]);
   });
 });

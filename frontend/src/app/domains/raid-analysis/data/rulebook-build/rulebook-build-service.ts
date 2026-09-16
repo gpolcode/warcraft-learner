@@ -58,17 +58,21 @@ export class RulebookBuildService {
     return `${tier.branch.toLowerCase()}_season_${season}`;
   }
 
-  /** One spec's sources read once per run: the exclusions applied, the key hashed from what the rules read, and the gaps the sources alone leave. */
-  async prepare(texts: RulebookSourceTexts): Promise<RulebookSources> {
+  /** One spec's sources read once per run: the exclusions applied and the gaps the sources alone leave. */
+  prepare(texts: RulebookSourceTexts): RulebookSources {
     const excluded = new Set(RULEBOOK_EXCLUSIONS[texts.spec.spec] ?? []);
     const resolved = this.apl.resolve(this.apl.parse(texts.profile), this.setBonusToken(texts.tier));
     const actions = resolved.actions.filter(action => !excluded.has(action.action)).map((action, priority) => ({ ...action, priority }));
     const records = this.abilities.ownedRecords(this.dump.parse(texts.spellData), texts.spec.classLabel, texts.spec.specLabel)
       .filter(record => !excluded.has(this.dump.token(record.name)));
     const apl: ResolvedApl = { ...resolved, actions };
-    const key = await this.hash.shortHash(this.readable(apl, records));
-    const sources: RulebookSources = { spec: texts.spec, apl, records, talents: texts.talents, key, gaps: [] };
+    const sources: RulebookSources = { spec: texts.spec, apl, records, talents: texts.talents, gaps: [] };
     return { ...sources, gaps: this.build(sources, []).gaps };
+  }
+
+  /** The half of the encounter stamp the sources carry, so a SimulationCraft edit the rules never see re-benches nothing. */
+  sourceKey(sources: RulebookSources): Promise<string> {
+    return this.hash.shortHash(this.readable(sources.apl, sources.records));
   }
 
   /** Each line's action and printed gates, then every owned record: a change to either is one the rules can see, and nothing else is. */

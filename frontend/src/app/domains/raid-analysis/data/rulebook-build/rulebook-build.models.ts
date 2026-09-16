@@ -62,8 +62,6 @@ export interface RulebookSources {
   apl: ResolvedApl;
   records: SpellRecord[];
   talents: SpecTalents;
-  /** The short hash of what the rules read, part of the encounter stamp, so a SimulationCraft edit the rules never see re-benches nothing. */
-  key: string;
   /** What the sources alone leave unread or unresolved, before any parse is sampled. */
   gaps: RulebookGap[];
 }

@@ -17,7 +17,7 @@ const BUILT: RulebookBuild = { rulebook: rulebook({ spec: SPEC.spec }), gaps: []
 const WCL = {} as WclApiService;
 
 function sources(referencedHeads: string[]): RulebookSources {
-  return { spec: SPEC, apl: { actions: [], gaps: [], referencedHeads }, records: [], talents: {}, key: 'k', gaps: [] };
+  return { spec: SPEC, apl: { actions: [], gaps: [], referencedHeads }, records: [], talents: {}, gaps: [] };
 }
 
 function derive(referencedHeads: string[]) {

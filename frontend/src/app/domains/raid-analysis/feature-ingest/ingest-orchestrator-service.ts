@@ -155,7 +155,7 @@ export class IngestOrchestratorService {
     if (!profile.ok) return profile.error.kind === 'missing' ? Results.ok(null) : profile;
     const spellData = await getOrInsert(dumps, meta.className, () => this.simc.getSpellDataDump(tier, meta.className));
     if (!spellData.ok) return spellData;
-    return Results.ok(await this.builder.prepare({ spec: meta, tier, profile: profile.value, spellData: spellData.value, talents: talents.get(meta.spec) ?? {} }));
+    return Results.ok(this.builder.prepare({ spec: meta, tier, profile: profile.value, spellData: spellData.value, talents: talents.get(meta.spec) ?? {} }));
   }
 
   private gapsBySpec(run: RunSources): Map<string, RulebookGap[]> {
@@ -262,7 +262,7 @@ export class IngestOrchestratorService {
     console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_PARSE_COUNT})`);
     const sources = this.preparedSources(spec, run);
     // The stamp keys on what the rules read, so a SimulationCraft change they can see re-benches an encounter like a changed top parse does.
-    const sourceKey = sources ? `${version}:${sources.key}` : version;
+    const sourceKey = sources ? `${version}:${await this.builder.sourceKey(sources)}` : version;
 
     // Feeds the never-checked-first order - a file-server-only signal, zero WCL budget.
     const previousState = await this.loadIngestState(spec);
