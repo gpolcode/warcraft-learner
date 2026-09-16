@@ -113,20 +113,7 @@ export class IngestOrchestratorService {
   }
 
   private async resolveSpecMetas(): Promise<void> {
-    // The spec icon is not on WCL, so enrich each meta from that spec's rulebook (its spec_icon stem).
     const metas = await this.currentRaids.discoverSpecMetas(this.wclApi);
-    for (const meta of metas) {
-      const rulebook = await this.dataFile.getRulebook(meta.spec);
-      if (rulebook.ok) {
-        meta.specIcon = rulebook.value.spec_icon;
-      } else {
-        // Only a corrupt file (permanent) is worth logging; a missing rulebook is an un-authored spec.
-        if (rulebook.error.kind === 'permanent') {
-          this.logger.logWarn(`ingest ${meta.spec}: corrupt rulebook.json, shipping blank spec icon`, rulebook.error);
-        }
-        meta.specIcon = '';
-      }
-    }
     this.specMeta.hydrate(metas);
     await this.dataFile.writeSpecMeta(metas);
     console.log(`Resolved ${metas.length} specs from WCL`);

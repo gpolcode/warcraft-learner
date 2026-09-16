@@ -7,5 +7,4 @@ export interface SpecMeta {
   classLabel: string;
   specLabel: string;
   classIcon: string;
-  specIcon: string;
 }
