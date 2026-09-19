@@ -1,0 +1,161 @@
+{
+  "spec": "SurvivalHunter",
+  "spec_icon": "ability_hunter_camouflage",
+  "major_cooldowns": [
+    {
+      "name": "Takedown",
+      "spell_id": 1250646,
+      "cooldown": 90,
+      "opener_priority": 1,
+      "usage_rule": "Press it with a Tip of the Spear stack to spend, or at 0 stacks when you run Twin Fangs so it generates three.",
+      "id_note": "1250646 is both the cast and the self buff in the sampled parses; 1253859, 1253862 and 1258571 share the name and are talent nodes."
+    },
+    {
+      "name": "Boomstick",
+      "spell_id": 1261193,
+      "cooldown": 45,
+      "opener_priority": 2,
+      "usage_rule": "Channel it with a Tip of the Spear stack up, and hold it for adds that are about to spawn since its cone hits everything in front of you.",
+      "id_note": "Table base_cd_s is 60; the guide states it is functionally a 45 second cooldown in single target and as low as 15 seconds in AoE with Lethal Calibration. 1261215 shares the name and was not observed."
+    },
+    {
+      "name": "Moonlight Chakram",
+      "spell_id": 1264949,
+      "cooldown": 90,
+      "usage_rule": "Throw it with a Tip of the Spear stack inside the window Takedown opens, once you have room for the 10 second Wildfire Bomb cooldown reduction from Stalk and Strike.",
+      "id_note": "Sentinel talent; cast id observed in 3/5 parses. It carries no cooldown of its own and replaces Takedown for 15 sec after Takedown is cast, so the listed cooldown mirrors Takedown's.",
+      "talent_gated": true
+    },
+    {
+      "name": "Flamefang Pitch",
+      "spell_id": 1251592,
+      "cooldown": 60,
+      "usage_rule": "Slot it below your other Tip of the Spear spenders, and in AoE wait until Wildfire Bomb has a full charge of cooldown reduction to absorb.",
+      "id_note": "Not pressed in any of the 5 sampled parses but castable per its tooltip; the guide lists it in every priority.",
+      "talent_gated": true
+    },
+    {
+      "name": "Potion of Recklessness",
+      "spell_id": 1236994,
+      "cooldown": 300,
+      "usage_rule": "Drink it as Takedown comes up so the stat buff covers the burst, and use the second one inside the last 25 seconds of the fight.",
+      "id_note": "CAST in 4/5 parses; the guide's opener timeline names Tempered Potion (431932) instead, which no sampled parse pressed."
+    },
+    {
+      "name": "Primal Rage",
+      "spell_id": 264667,
+      "cooldown": 360,
+      "usage_rule": "Keep a Ferocity pet out and fire it when your group calls for Bloodlust.",
+      "id_note": "Requires a Ferocity pet; not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Survival of the Fittest",
+      "spell_id": 264735,
+      "cooldown": 90,
+      "duration": 6,
+      "usage_rule": "Press it just before a telegraphed hit lands, because its 30% reduction only covers 6 seconds."
+    },
+    {
+      "name": "Exhilaration",
+      "spell_id": 109304,
+      "cooldown": 120,
+      "usage_rule": "Press it after a hit drops you low to heal 30% of your health and top your pet back up."
+    },
+    {
+      "name": "Roar of Sacrifice",
+      "spell_id": 53480,
+      "cooldown": 120,
+      "duration": 10,
+      "usage_rule": "Point it at yourself or a raider taking a spike and let your pet soak half of that damage."
+    },
+    {
+      "name": "Aspect of the Turtle",
+      "spell_id": 186265,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Save it for a hit that would otherwise kill you and accept the 8 seconds of not attacking."
+    },
+    {
+      "name": "Master's Call",
+      "spell_id": 53271,
+      "cooldown": 45,
+      "duration": 4,
+      "usage_rule": "With a Cunning pet out, use it to shrug off roots and slows, including damage abilities that carry a snare.",
+      "id_note": "Requires a Cunning pet; not pressed in the sampled parses but castable per its tooltip.",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Kill Command before Tip of the Spear caps",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 259489,
+        "spell_name": "Kill Command",
+        "buff_spell_id": 260286,
+        "buff_spell_name": "Tip of the Spear",
+        "bound": "max",
+        "max_stacks": 3,
+        "except_buff_spell_ids": [1250646, 1258338],
+        "except_buff_spell_names": ["Takedown", "Stampede!"]
+      },
+      "action": "Spend a stack on Wildfire Bomb, Boomstick or Raptor Strike between Kill Commands."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Wildfire Bomb spends a Tip of the Spear stack",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 259495,
+        "spell_name": "Wildfire Bomb",
+        "buff_spell_id": 260286,
+        "buff_spell_name": "Tip of the Spear",
+        "require": "inside"
+      },
+      "action": "Take a stack from Kill Command first, and throw it untipped only to stop a charge capping."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Boomstick spends a Tip of the Spear stack",
+      "condition": {
+        "kind": "cast_outside_buff",
+        "spell_id": 1261193,
+        "spell_name": "Boomstick",
+        "buff_spell_id": 260286,
+        "buff_spell_name": "Tip of the Spear",
+        "require": "inside"
+      },
+      "action": "Hold the channel until a Kill Command has handed you a stack to spend."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Hunter's Mark stays up on your target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 257284,
+        "aura_spell_name": "Hunter's Mark",
+        "on": "target"
+      },
+      "action": "Mark the boss before the pull and reapply it whenever you swap to a new priority target."
+    },
+    {
+      "type": "opener",
+      "severity": "info",
+      "description": "Open with Takedown before Boomstick",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [1250646, 1261193],
+        "spell_names": ["Takedown", "Boomstick"]
+      },
+      "action": "Pre-cast Wildfire Bomb one GCD before the pull, then send Takedown before you channel Boomstick."
+    }
+  ]
+}

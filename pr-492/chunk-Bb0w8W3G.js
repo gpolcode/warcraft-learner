@@ -1,0 +1,3 @@
+import{Tn as g,tt as N}from"./chunk-DMkS-zvR.js";import{C as zr,p as j}from"./chunk-Dqh0DiF6.js";import{t as a}from"./chunk-CzUk2p85.js";import{n as h}from"./chunk-ByEcEIW-.js";var u=class o{logger=g(a);projections=g(h);async analyzePull(l,i,e){let{reportCode:a,fightId:p}=i;try{let r=await l.getReport(a),t=r.fights.find(d=>d.id===p);return t?j.ok(await e.analyze({report:r,fight:t,fightDurationS:this.projections.relativeS(t.endTime,t.startTime)})):j.ok(e.emptyView())}catch(r){return this.logger.logWarn(`${e.logSource} ${a}:${p}`,r),zr.toLoadError(r,e.errorId)}}static ɵfac=function(i){return new(i||o)};static ɵprov=N({token:o,factory:o.ɵfac,providedIn:`root`})};export{u as t};
+//# debugId=98d5e1fe-3c7c-5646-a436-beaa6164eff1
+//# sourceMappingURL=chunk-Bb0w8W3G.js.map

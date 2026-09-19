@@ -1,0 +1,139 @@
+{
+  "spec": "WindwalkerMonk",
+  "spec_icon": "spell_monk_windwalker_spec",
+  "major_cooldowns": [
+    {
+      "name": "Invoke Xuen, the White Tiger",
+      "spell_id": 123904,
+      "cooldown": 120,
+      "opener_priority": 1,
+      "usage_rule": "Summon it when Zenith is ready and no Heart of the Jade Serpent is running, then use the window it opens to channel Celestial Conduit.",
+      "id_note": "Cast id, seen in 4/5 sampled parses; the Shado-pan build skips it, hence talent_gated.",
+      "talent_gated": true
+    },
+    {
+      "name": "Zenith",
+      "spell_id": 1249625,
+      "cooldown": 90,
+      "opener_priority": 2,
+      "usage_rule": "It holds two charges, so time one for a burst window with your stat buffs and then fill with free Blackout Kicks to pull Rising Sun Kick and Fists of Fury back faster.",
+      "id_note": "Cast and self aura share id 1249625. Base cooldown 90s with two charges; talents can bring it to 60, 70 or 80s."
+    },
+    {
+      "name": "Celestial Conduit",
+      "spell_id": 443028,
+      "cooldown": 90,
+      "usage_rule": "Channel it only once the Heart of the Jade Serpent from Strike of the Windlord or Whirling Dragon Punch has faded, and cancel the channel with your next global.",
+      "id_note": "Cast id 443028; 1248992 is the self aura that opens the post-Xuen cast window. Conduit of the Celestials hero talent only.",
+      "talent_gated": true
+    },
+    {
+      "name": "Whirling Dragon Punch",
+      "spell_id": 152175,
+      "cooldown": 35,
+      "usage_rule": "Fire it the moment Rising Sun Kick and Fists of Fury are both on cooldown, and delay it when Invoke Xuen is about to come up.",
+      "id_note": "Cast id 152175; 196742 is the self aura that marks it as available."
+    },
+    {
+      "name": "Strike of the Windlord",
+      "spell_id": 392983,
+      "cooldown": 35,
+      "usage_rule": "Press it on cooldown unless Invoke Xuen is about to come up or Celestial Conduit already has Heart of the Jade Serpent running.",
+      "id_note": "Castable per tooltip but not pressed in the sampled parses, so no top parse ran this talent.",
+      "talent_gated": true
+    },
+    {
+      "name": "Touch of Death",
+      "spell_id": 322109,
+      "cooldown": 180,
+      "usage_rule": "Press it as soon as it is up whenever you can fit it without delaying a rotational ability, and keep it out of your Zenith window.",
+      "id_note": "Table base cooldown is 180s; Fatal Touch (394123) cuts it by 90s when talented."
+    },
+    {
+      "name": "Slicing Winds",
+      "spell_id": 1217413,
+      "cooldown": 30,
+      "usage_rule": "Pre-cast it just before the pull and then send it whenever nothing higher on the priority is ready.",
+      "id_note": "Castable per tooltip but not pressed in the sampled parses; it is a build variant.",
+      "talent_gated": true
+    },
+    {
+      "name": "Potion of Recklessness",
+      "spell_id": 1236994,
+      "cooldown": 300,
+      "usage_rule": "Drink it just before Zenith so the stats are already up for the window, and spend the second one as the fight ends.",
+      "id_note": "Consumable cast id, used in 5/5 sampled parses; the guide times stat buffs ahead of Zenith."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Touch of Karma",
+      "spell_id": 122470,
+      "cooldown": 90,
+      "duration": 10,
+      "usage_rule": "Drop it on your target for a hit you can absorb, and press it anyway when nothing is incoming for the damage it redirects.",
+      "id_note": "Cast id 122470; 125174 is the self aura and 124280 the enemy debuff."
+    },
+    {
+      "name": "Fortifying Brew",
+      "spell_id": 115203,
+      "cooldown": 360,
+      "duration": 15,
+      "usage_rule": "Use it before Touch of Death or Touch of Karma so the extra maximum health is snapshot into both.",
+      "id_note": "Cast id 115203; 120954 is the self aura."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Tiger Palm, Zenith, Fists of Fury, Rising Sun Kick",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [100780, 1249625, 113656, 107428],
+        "spell_names": ["Tiger Palm", "Zenith", "Fists of Fury", "Rising Sun Kick"]
+      },
+      "action": "Lead with Tiger Palm, fire Zenith alongside your stat buffs, then Fists of Fury into Rising Sun Kick."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "warning",
+      "description": "Hold Whirling Dragon Punch and Windlord for Xuen",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [152175, 392983],
+        "spell_names": ["Whirling Dragon Punch", "Strike of the Windlord"],
+        "anchor_spell_id": 123904,
+        "anchor_spell_name": "Invoke Xuen, the White Tiger"
+      },
+      "action": "Sit on both once Invoke Xuen is close and send them after the summon."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Tiger Palm without overcapping Chi",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 100780,
+        "spell_name": "Tiger Palm",
+        "resource_type": 12,
+        "resource_name": "chi",
+        "bound": "max"
+      },
+      "action": "Dump Chi on a spender first so both Chi from Tiger Palm have room to land."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Dance of Chi-Ji on Spinning Crane Kick",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 325202,
+        "buff_spell_name": "Dance of Chi-Ji",
+        "spend_spell_ids": [101546],
+        "spend_spell_names": ["Spinning Crane Kick"]
+      },
+      "action": "Work Spinning Crane Kick into your next global while the proc is live."
+    }
+  ]
+}
