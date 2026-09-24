@@ -154,10 +154,14 @@ test('defensives flag the mistimed cooldowns and benchmark the damage taken', as
   const table = defensives.locator('wl-finding-table');
   await showsFindingRows(table, CD_CHIP);
   await showsOnPlan(table);
-  await shows(defensives, 'Damage taken in each defensive window vs top logs.');
-  await shows(defensives, /\d+:\d{2} - \d+:\d{2}/);
-  await shows(defensives, DAMAGE);
-  await shows(defensives, PERCENT);
+  // A bench keeps only the windows its top logs share, so a re-ingest can leave an encounter with none and the section hidden.
+  const windows = defensives.locator('wl-window-comparison');
+  if (await windows.count()) {
+    await shows(windows, 'Damage taken in each defensive window vs top logs.');
+    await shows(windows, /\d+:\d{2} - \d+:\d{2}/);
+    await shows(windows, DAMAGE);
+    await shows(windows, PERCENT);
+  }
 });
 
 test('gear lists the top-parse talent builds and how a lower-ranked build differs, plus trinkets and enchants', async () => {
