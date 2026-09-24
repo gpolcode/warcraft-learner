@@ -67,6 +67,7 @@ export const EXPRESSION_SHAPES: Record<string, AplVocabularyEntry> = {
   'dot.*.duration': { support: 'read', note: 'base duration; no kind reads it' },
   'dot.*.active_dots': { support: 'read', note: 'targets carrying the dot; the debuff stream has it, no kind counts it' },
   'dot.*.in_flight': { support: 'read', note: 'the projectile that applies the dot; no log counterpart' },
+  'dot.*.stack': { support: 'read', note: 'target aura stacks; spend_at_stacks reads self auras only' },
   'cooldown.*.ready': { support: 'rule', note: 'cast_without_prior against a major cooldown' },
   'cooldown.*.up': { support: 'rule', note: 'reads as cooldown.*.ready' },
   'cooldown.*.remains': { support: 'rule', note: 'bare reads as not ready; above a number holds the cast for a major cooldown, below one pairs after it' },
@@ -80,6 +81,7 @@ export const EXPRESSION_SHAPES: Record<string, AplVocabularyEntry> = {
   'cooldown_react': { support: 'opaque', note: 'the line\'s own cooldown ready within reaction time; an alias to cooldown.*.ready would read it' },
   'max_charges': { support: 'opaque', note: 'the line\'s own charge cap' },
   'cost': { support: 'opaque', note: 'the line\'s resource cost; the spell dump carries it' },
+  'energize_amount': { support: 'opaque', note: 'the line\'s resource gain; the spell dump carries it' },
   'tick_time': { support: 'opaque', note: 'the line\'s own periodic timing' },
   'ticks': { support: 'opaque', note: 'the line\'s own periodic timing' },
   'ticks_remain': { support: 'opaque', note: 'the line\'s own periodic timing' },
@@ -107,6 +109,7 @@ export const EXPRESSION_SHAPES: Record<string, AplVocabularyEntry> = {
   'target.is_boss': { support: 'erased', note: 'sim scenario' },
   'target.has_absorb': { support: 'erased', note: 'absorbs; no kind reads them' },
   'target.debuff.casting.react': { support: 'erased', note: 'interrupt logic' },
+  'target.cooldown': { support: 'erased', note: 'the sim enemy\'s scripted actions, such as the pause that stands in for a tank swap', subtree: true },
   'target': { support: 'opaque', note: 'the current target as a value' },
   'self': { support: 'opaque', note: 'the player as a value', subtree: true },
   'time': { support: 'erased', note: 'fight elapsed; the log has it, no kind reads an opener by time' },
@@ -126,11 +129,13 @@ export const EXPRESSION_SHAPES: Record<string, AplVocabularyEntry> = {
   'action.*': { support: 'erased', note: 'sim state of another action: in flight, executing, cast time', subtree: true },
   'pet.*': { support: 'erased', note: 'pet state; a summon aura could stand in', subtree: true },
   'active_dot.*': { support: 'erased', note: 'targets carrying a dot; the debuff stream has it, no kind counts it' },
+  'active_dots.*': { support: 'erased', note: 'as active_dot.*, in the druid module\'s spelling' },
   'trinket.*': { support: 'erased', note: 'gear; the runtime knows gear, a gear gate like the talent gate would carry it', subtree: true },
   'this_trinket.*': { support: 'erased', note: 'gear', subtree: true },
   'other_trinket.*': { support: 'erased', note: 'gear', subtree: true },
   'equipped.*': { support: 'erased', note: 'gear' },
   'potion.*': { support: 'erased', note: 'consumable' },
+  'consumable.*': { support: 'erased', note: 'whether the sim uses the named consumable' },
   'main_hand': { support: 'erased', note: 'weapon type', subtree: true },
   'off_hand': { support: 'erased', note: 'weapon type', subtree: true },
   'stat': { support: 'erased', note: 'secondary stat ratings; gear', subtree: true },
@@ -164,8 +169,12 @@ export const EXPRESSION_SHAPES: Record<string, AplVocabularyEntry> = {
   'ti_chain_lightning': { support: 'opaque', note: 'Elemental: the Tempest-empowered cast' },
   'ti_lightning_bolt': { support: 'opaque', note: 'Elemental: the Tempest-empowered cast' },
   'dot_refreshable_count.*': { support: 'opaque', note: 'Warlock: targets whose dot is refreshable' },
+  'eclipse.lunar': { support: 'opaque', note: 'Balance: the next Eclipse is Lunar; the hidden Lunar Eclipse Override aura carries it' },
+  'eclipse.solar': { support: 'opaque', note: 'Balance: the next Eclipse is Solar, as eclipse.lunar negated' },
   'death_knight': { support: 'opaque', note: 'class module state', subtree: true },
   'priest': { support: 'opaque', note: 'class module state', subtree: true },
+  'evoker': { support: 'opaque', note: 'class module state, such as the allies carrying Ebon Might or Shifting Sands', subtree: true },
+  'druid': { support: 'erased', note: 'the druid module\'s sim options and tick arithmetic', subtree: true },
 };
 
 export const ACTION_OPTIONS: Record<string, AplVocabularyEntry> = {
@@ -294,17 +303,24 @@ export const VARIABLE_OPS: Record<string, AplVocabularyEntry> = {
   ceil: { support: 'ignored', note: 'a running value; the variable reads as unknown' },
 };
 
-/** Action and aura tokens SimulationCraft's class modules name differently from the spell, each mapped to the spell's own token; consulted only when the token itself names no record. */
-export const TOKEN_ALIASES: Record<string, string> = {
+/** Action and aura tokens SimulationCraft's class modules name differently from the spell, each mapped to the spell's own token, or to its id where the module binds one of several spells the dump names alike; consulted only when the token itself names no record. */
+export const TOKEN_ALIASES: Record<string, string | number> = {
   swipe_cat: 'swipe',
   moonfire_cat: 'moonfire',
   invoke_niuzao: 'invoke_niuzao_the_black_ox',
   reapers_mark_debuff: 'reapers_mark',
   supercharge_1: 'supercharge',
   supercharge_2: 'supercharge',
+  swipe_bear: 213771,
+  gory_fur_ironfur: 201671,
+  gory_fur_maul: 1307881,
+  ebon_might_self: 395296,
+  time_convergence_intellect: 431991,
+  fire_breath_damage: 357209,
+  mass_disintegrate_stacks: 436336,
 };
 
-/** Names no class dump records under a castable or aura record, with why: a raid or racial buff, a spell the dump ships without cast data, or the sim's own bookkeeping state. A gate on one keeps its literal and shapes no rule; consulted only when the token names no record. */
+/** Names no class dump records under a castable or aura record, with why: a raid or racial buff, a spell the dump ships without cast data, a name for whichever of two spells is talented, or the sim's own bookkeeping state. A gate on one keeps its literal and shapes no rule; consulted only when the token names no record. */
 export const UNRECORDED_NAMES: Record<string, string> = {
   bloodlust: 'the raid haste buff, cast by another raider under one of several names',
   power_infusion: 'a Priest buff on another raider',
@@ -313,6 +329,8 @@ export const UNRECORDED_NAMES: Record<string, string> = {
   holy_armaments: 'Lightsmith: the armament cast is a hidden override spell',
   lustrous_gleam: 'Arcane: a sim-side counter of the Lustrous Gleam stacks',
   bs_inc: 'Feral: Berserk or Incarnation, whichever is talented',
+  ca_inc: 'Balance: Celestial Alignment or Incarnation, whichever is talented',
+  eclipse: 'Balance: the button casts Solar Eclipse, or Lunar Eclipse with Lunar Calling; the dump\'s Eclipse is the passive talent',
   primal_wrath: 'Feral: the sim tracks the Rip it applies as its own dot',
   wild_imps: 'Demonology: the sim\'s count of active imps',
   bonegrinder_frost: 'Frost Death Knight: the sim splits Bonegrinder into its two effects',

@@ -35,11 +35,12 @@ export class AbilityIndexService {
     });
   }
 
-  /** The records behind a token: the token's own, else the ones behind the module name the inventory maps it to. */
+  /** The records behind a token: the token's own, else the ones behind the spell token or id the inventory maps the module name to. */
   private recordsOf(index: AbilityIndex, token: string): SpellRecord[] {
     const own = index.byToken.get(token);
     if (own) return own;
     const alias = this.vocabulary.alias(token);
+    if (typeof alias === 'number') return [...index.byToken.values()].flat().filter(record => record.id === alias);
     return (alias === null ? undefined : index.byToken.get(alias)) ?? [];
   }
 

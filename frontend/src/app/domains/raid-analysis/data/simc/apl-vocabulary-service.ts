@@ -7,6 +7,7 @@ import {
 const NAMED_HEADS = new Set([
   'buff', 'debuff', 'dot', 'cooldown', 'talent', 'hero_tree', 'variable', 'set_bonus', 'action', 'pet', 'active_dot', 'trinket',
   'equipped', 'raid_event', 'prev', 'prev_gcd', 'prev_off_gcd', 'this_trinket', 'other_trinket', 'potion', 'spell_targets', 'dot_refreshable_count', 'apex',
+  'active_dots', 'consumable',
 ]);
 const NUMBER = /^\d+$/;
 
@@ -54,8 +55,8 @@ export class AplVocabularyService {
     return VARIABLE_OPS[op] ?? null;
   }
 
-  /** The spell token behind a module's own name for it, or null when the token is the spell's. */
-  alias(token: string): string | null {
+  /** The spell token or id behind a module's own name for it, or null when the token is the spell's. */
+  alias(token: string): string | number | null {
     return TOKEN_ALIASES[token] ?? null;
   }
 

@@ -45,7 +45,7 @@ Six tables: `EXPRESSION_SHAPES`, `ACTION_OPTIONS`, `ACTION_WORDS`, `VARIABLE_OPS
 | `opaque` | A literal no kind reads. | Stays symbolic and gates nothing. |
 | `ignored` | Parsed and skipped (sim options). | Nothing. |
 
-`TOKEN_ALIASES` maps a module's own name to the spell's token; `UNRECORDED_NAMES` lists names no dump records (a raid or racial buff, a spell shipped without cast data, the sim's own bookkeeping state) with why. Both are consulted only when the token itself names no record, so an entry can never hide a real one.
+`TOKEN_ALIASES` maps a module's own name to the spell's token, or to the spell's id where the module binds one of several spells the dump names alike (`gory_fur_ironfur` and `gory_fur_maul` are two buffs both named Gory Fur); `UNRECORDED_NAMES` lists names no dump records (a raid or racial buff, a spell shipped without cast data, a name for whichever of two spells is talented, the sim's own bookkeeping state) with why. Both are consulted only when the token itself names no record, so an entry can never hide a real one.
 
 `apl-vocabulary.spec.ts` cross-checks the tables against the resolver: every `rule` and `read` shape reads into a fact family, every `erased` shape resolves to no gate, every `opaque` shape stays `other`. Add a row and the spec tells you whether the resolver agrees with the level.
 
@@ -61,7 +61,7 @@ Each ingest run prepares every action list SimulationCraft writes, not only the 
 |---|---|
 | `Expression`, `Action option`, `Variable op` | An inventory row with the level it deserves and a note that says what it maps to or why it is dropped. A token the builder should read but no kind consumes yet is `read`; one that should shape a rule is a new rule-engine kind (warcraft-change). |
 | `Unparsed expression`, `Unparsed line`, `Missing list` | Extending the parser or the reader; the list is right, the reader is behind. A list cycle is walked once and is no gap. |
-| `Unresolved action`, `Unresolved aura` | A `TOKEN_ALIASES` row when the dump carries the spell under its own name, else an `UNRECORDED_NAMES` row with why. |
+| `Unresolved action`, `Unresolved aura` | A `TOKEN_ALIASES` row when the dump carries the spell under its own name, mapped to the id when other spells share that name, else an `UNRECORDED_NAMES` row with why. |
 | `Unresolved talent` | No Raidbots entry name tokenizes to the token, and no numbered form covers it: the trees are the source, so it waits for upstream data; a name that differs only in form is a reader change in `talentEntryIds`. |
 | `Undefined variable` | A typo in SimulationCraft's list; nothing to do but wait for upstream. |
 

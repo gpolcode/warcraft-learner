@@ -5,7 +5,7 @@ import { builder, finisher, selfAura, spellRecord } from '../../../../../testing
 import { parseSample } from '../../../../../testing/builders/parse-sample';
 import { applyBuff, buffWindow, cast } from '../../../../../testing/builders/events';
 import {
-  BACKSTAB, DISPATCH, EVISCERATE, GLOOMBLADE, SHADOW_DANCE, SHADOW_DANCE_AURA, SHADOW_DANCE_ENERGIZE, SHADOW_BLADES, VANISH,
+  BACKSTAB, DISPATCH, EVISCERATE, GLOOMBLADE, GORY_FUR_IRONFUR, GORY_FUR_MAUL, SHADOW_DANCE, SHADOW_DANCE_AURA, SHADOW_DANCE_ENERGIZE, SHADOW_BLADES, VANISH,
 } from '../../../../../testing/spell-ids';
 import { ENERGY_TYPE } from '../rotation/rotation-rules/rule-fixtures';
 import type { ParseSample } from './rulebook-build.models';
@@ -69,6 +69,13 @@ describe('AbilityIndexService.aura', () => {
 
   it('falls back to the record whose effect faces the player when nothing was sampled', () => {
     expect(abilities.aura(index(), 'shadow_blades', 'self')?.id).toBe(SHADOW_BLADES);
+  });
+
+  it('resolves a module name the inventory maps to an id to that record, not to another sharing its name', () => {
+    const goryFur = (id: number) => spellRecord({ id, name: 'Gory Fur', className: 'Druid', durationS: 15, effects: [selfAura()] });
+    const guardian = abilities.build([goryFur(GORY_FUR_IRONFUR), goryFur(GORY_FUR_MAUL)], [], 'Druid', 'Guardian');
+    expect(abilities.aura(guardian, 'gory_fur_ironfur', 'self')?.id).toBe(GORY_FUR_IRONFUR);
+    expect(abilities.aura(guardian, 'gory_fur_maul', 'self')?.id).toBe(GORY_FUR_MAUL);
   });
 });
 

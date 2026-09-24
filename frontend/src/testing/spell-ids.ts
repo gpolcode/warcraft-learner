@@ -25,6 +25,10 @@ export const MAELSTROM_WEAPON = 344179;
 export const MOONFIRE = 8921;
 export const MOONFIRE_DOT = 164812;
 
+// Gory Fur: two buffs under one name, which SimulationCraft's druid module tells apart by id.
+export const GORY_FUR_IRONFUR = 201671;
+export const GORY_FUR_MAUL = 1307881;
+
 export const EXECUTE = 5308;
 export const SLAM = 1464;
 
