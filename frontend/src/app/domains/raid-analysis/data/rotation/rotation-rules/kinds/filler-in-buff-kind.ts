@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AnalysisFinding } from '../../../analysis/analysis.models';
-import { FillerInBuffCondition, RuleSeverity } from '../../../rulebook/rulebook.models';
+import { FillerInBuffCondition, RuleSeverity } from '../../../plan/plan.models';
 import { RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleStream } from '../rule-kind';
 import { FillerKind, FillerSplit } from '../filler-kind';

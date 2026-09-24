@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import type { RuleCondition } from '../../rulebook/rulebook.models';
+import type { RuleCondition } from '../../plan/plan.models';
 import { BLADESTORM } from '../../../../../../testing/spell-ids';
 import { RuleCopyService } from './rule-copy-service';
 

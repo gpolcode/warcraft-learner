@@ -1,6 +1,6 @@
 import { round } from '../../analysis/analysis-math';
 import { AnalysisFinding, FindingOccurrence } from '../../analysis/analysis.models';
-import { RuleCondition, RuleSeverity } from '../../rulebook/rulebook.models';
+import { RuleCondition, RuleSeverity } from '../../plan/plan.models';
 import { RuleBand, RuleJudging, RuleKind } from './rule-kind';
 
 /** Tracks PERCENT: whole points print a filler target and the share that missed it as the same number. */

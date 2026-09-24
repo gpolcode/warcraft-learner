@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { ProcWastedCondition } from '../../../rulebook/rulebook.models';
+import { ProcWastedCondition } from '../../../plan/plan.models';
 import { SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../../testing/spell-ids';
 import { cast, applyBuff, buffWindow } from '../../../../../../../testing/builders/events';
 import {

@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { Result, Results } from '../../../shared/util-http/result';
-import { RulebookRule, CastWithoutPriorCondition } from '../rulebook/rulebook.models';
+import { PlanRule, CastWithoutPriorCondition } from '../plan/plan.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, BLOODLUST, RUPTURE, BLACK_POWDER,
 } from '../../../../../testing/spell-ids';
@@ -20,11 +20,11 @@ function band(lo: number, hi = lo, tolerance = 0): RuleBand {
 }
 
 // A rule whose band this encounter measured, so fixtures about something else are not gated on it.
-function benched(rule: RulebookRule, ruleBand: RuleBand | null = band(PAIR_WINDOW_S)): BenchedRule {
+function benched(rule: PlanRule, ruleBand: RuleBand | null = band(PAIR_WINDOW_S)): BenchedRule {
   return { rule, band: ruleBand, sample_count: ruleBand == null ? 0 : 10 };
 }
 
-// A real Subtlety rule, so the feature-service fixtures exercise a shape the rulebooks actually carry.
+// A real Subtlety rule, so the feature-service fixtures exercise a shape the benches actually carry.
 const SECRET_TECH_NEEDS_DANCE: CastWithoutPriorCondition = {
   kind: 'cast_without_prior',
   spell_id: SECRET_TECHNIQUE, spell_name: 'Secret Technique',
@@ -75,7 +75,7 @@ describe('RotationFeatureService', () => {
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
         dataType === 'Casts' ? [cast(SHADOW_DANCE, 10), cast(SECRET_TECHNIQUE, 30)] : [],
     };
-    const rule: RulebookRule = {
+    const rule: PlanRule = {
       type: 'cooldown_pairing', severity: 'critical', description: 'Secret Technique inside Shadow Dance',
       condition: SECRET_TECH_NEEDS_DANCE, action: 'Open Shadow Dance, then spend Secret Technique inside it.',
     };
@@ -127,12 +127,12 @@ describe('RotationFeatureService', () => {
 
 describe('RotationFeatureService fetch shape', () => {
   const PLAYER_ID = 10;
-  const dotUptime: RulebookRule = {
+  const dotUptime: PlanRule = {
     type: 'rotation', severity: 'warning', description: 'Keep Rupture up on the boss',
     condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target' },
     action: 'Refresh it inside its pandemic window.',
   };
-  const aoeSwitch: RulebookRule = {
+  const aoeSwitch: PlanRule = {
     type: 'aoe_switch', severity: 'warning', description: 'Black Powder only into a pack',
     condition: { kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min' },
     action: 'Save it for the count the field cleaves at.',

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { round } from '../../analysis/analysis-math';
 import { AnalysisFinding, FindingOccurrence } from '../../analysis/analysis.models';
-import { RulebookRule, RuleCondition, RuleSeverity } from '../../rulebook/rulebook.models';
+import { PlanRule, RuleCondition, RuleSeverity } from '../../plan/plan.models';
 import { AuraWindowsService } from '../../analysis/aura-windows-service';
 import { RuleContext } from './rule-context-service';
 
@@ -17,7 +17,7 @@ export interface RuleBand {
 }
 
 export interface BenchedRule {
-  rule: RulebookRule;
+  rule: PlanRule;
   /** Null when the pool was too thin, the field too scattered, or the authored edge unviolatable, which drops the rule rather than judging against a guess. */
   band: RuleBand | null;
   sample_count: number;
@@ -62,7 +62,7 @@ export abstract class RuleKind<C extends RuleCondition> {
   abstract streams(cond: C): RuleStream[];
   /** The one declaration of which way this metric is judged: the evaluator is handed this, never its own copy. */
   abstract judging(cond: C): RuleJudging;
-  /** Null where the rulebook has not declared the bounds this kind needs, which drops the rule rather than reading unknown as unbounded. */
+  /** Null where the condition has not declared the bounds this kind needs, which drops the rule rather than reading unknown as unbounded. */
   abstract domain(cond: C): RuleDomain | null;
   /** Every instance this parse measured, pooled across parses to build the band. Empty when the pull never produced one. */
   abstract sample(cond: C, ctx: RuleContext): number[];

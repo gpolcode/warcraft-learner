@@ -8,7 +8,7 @@ import { abilityLookup, parseRankings, reportsByCode } from '../../../../../test
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { Results } from '../../../shared/util-http/result';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
-import { RuleCondition } from '../rulebook/rulebook.models';
+import { RuleCondition } from '../plan/plan.models';
 import { RuleCopyService } from './rotation-rules/rule-copy-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { RuleSample } from './rotation-rule-engine-service';
@@ -210,7 +210,7 @@ const reportShape = {
   abilities: [{ gameID: SHADOW_BLADES, name: 'Shadow Blades', icon: 'sb' }],
 };
 
-// An id outside the rulebook cooldowns; exercises the cooldown-cast filter.
+// An id outside the plan's cooldowns; exercises the cooldown-cast filter.
 const UNTRACKED_SPELL_ID = 99;
 
 // The floor the transform benches at (MIN_PARSE_COUNT in the service, which tracks the rule engine's own MIN_MEASURED_PARSES).

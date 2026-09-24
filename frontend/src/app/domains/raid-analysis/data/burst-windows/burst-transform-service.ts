@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { RulebookCooldown, RulebookDefensive } from '../rulebook/rulebook.models';
+import { PlanCooldown, PlanDefensive } from '../plan/plan.models';
 import { BurstWindow } from '../analysis/analysis.models';
 import { Result } from '../../../shared/util-http/result';
 import { mean, median, deviation, extent, greatest, quantile, rollup, rollups } from 'd3-array';
@@ -79,8 +79,8 @@ interface RunWindowContext {
 }
 
 interface BurstPlan {
-  cooldowns: RulebookCooldown[];
-  defensives: RulebookDefensive[];
+  cooldowns: PlanCooldown[];
+  defensives: PlanDefensive[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -116,7 +116,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
     });
   }
 
-  private async parseWindows({ ranking, report, fight, player }: BenchParse, cooldowns: RulebookCooldown[]): Promise<ParseWindow[]> {
+  private async parseWindows({ ranking, report, fight, player }: BenchParse, cooldowns: PlanCooldown[]): Promise<ParseWindow[]> {
     // Names only, to attribute casts by ability name inside a parse window.
     const abilityNames = new Map<number, string>(
       (report.masterData?.abilities ?? []).map(ability => [ability.gameID, ability.name]),
@@ -133,7 +133,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
     });
   }
 
-  protected cdTimings(casts: TimedEvent[], cooldowns: RulebookCooldown[]): CdTiming[] {
+  protected cdTimings(casts: TimedEvent[], cooldowns: PlanCooldown[]): CdTiming[] {
     return cooldowns.map(cooldown => ({
       name: cooldown.name,
       castTimesS: casts

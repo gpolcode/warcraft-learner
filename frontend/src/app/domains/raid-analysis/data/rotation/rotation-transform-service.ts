@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { RulebookCooldown, RuleCondition } from '../rulebook/rulebook.models';
+import { PlanCooldown, RuleCondition } from '../plan/plan.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { greatest, group, median, quantile } from 'd3-array';
 import {
@@ -164,7 +164,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
   }
 
   protected summarizeCooldownCasts(
-    castEvents: TimedEvent[], cooldowns: RulebookCooldown[],
+    castEvents: TimedEvent[], cooldowns: PlanCooldown[],
     fightDurS: number, blTimeS: number | null,
   ): CdSummary[] {
     return cooldowns.map(cooldown => {
@@ -246,7 +246,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
   }
 
   protected aggregateCdBenchmarks(
-    perParse: CdSummary[][], cooldowns: RulebookCooldown[],
+    perParse: CdSummary[][], cooldowns: PlanCooldown[],
   ): Record<string, PerCdBenchmark> {
     const cdSecondsByName = new Map(cooldowns.map(cooldown => [cooldown.name, cooldown.cooldown]));
     const byCd = group(perParse.flat(), summary => summary.name);

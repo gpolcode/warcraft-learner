@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { ResourceAtCastCondition } from '../../../rulebook/rulebook.models';
+import { ResourceAtCastCondition } from '../../../plan/plan.models';
 import { BLACK_POWDER, EVISCERATE } from '../../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../../testing/builders/events';
 import {

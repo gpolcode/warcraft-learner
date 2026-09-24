@@ -76,7 +76,7 @@ export class RuleContextService {
     return castTimes;
   }
 
-  /** Built on first call and kept, so a stream no rulebook asks about costs nothing. */
+  /** Built on first call and kept, so a stream no rule asks about costs nothing. */
   private lazy<T extends object>(build: () => T): () => T {
     let value: T | undefined;
     return () => (value ??= build());

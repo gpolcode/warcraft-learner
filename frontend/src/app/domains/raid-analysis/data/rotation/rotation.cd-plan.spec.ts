@@ -36,7 +36,7 @@ describe('buildCdPlan', () => {
     expect(plan[0].bloodlustPct).toBe(100);
   });
 
-  it('drives the Bloodlust badge from bl_pct, not the rulebook flag', () => {
+  it('drives the Bloodlust badge from bl_pct, not the plan flag', () => {
     const cooldowns = [
       { name: 'Aligned', spell_id: SHADOW_BLADES, cooldown: 90 },
       { name: 'Unaligned', spell_id: VANISH, cooldown: 120 },

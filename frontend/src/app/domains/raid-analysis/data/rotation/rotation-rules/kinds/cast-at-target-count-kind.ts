@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AnalysisFinding } from '../../../analysis/analysis.models';
-import { CastAtTargetCountCondition, RuleSeverity } from '../../../rulebook/rulebook.models';
+import { CastAtTargetCountCondition, RuleSeverity } from '../../../plan/plan.models';
 import { DamageRow, RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleStream } from '../rule-kind';
 import { BoundedPerCastKind } from '../bounded-per-cast-kind';

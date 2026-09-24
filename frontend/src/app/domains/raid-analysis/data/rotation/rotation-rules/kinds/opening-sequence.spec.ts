@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { OpeningSequenceCondition } from '../../../rulebook/rulebook.models';
+import { OpeningSequenceCondition } from '../../../plan/plan.models';
 import { SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, EVISCERATE } from '../../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../../testing/builders/events';
 import { band, benched, judged, ruleCtx, ruleFor } from '../rule-fixtures';

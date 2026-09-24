@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { round } from '../../../analysis/analysis-math';
 import { AnalysisFinding, FindingOccurrence } from '../../../analysis/analysis.models';
-import { AuraUptimeBelowCondition, RuleSeverity } from '../../../rulebook/rulebook.models';
+import { AuraUptimeBelowCondition, RuleSeverity } from '../../../plan/plan.models';
 import { AuraWindows } from '../../../analysis/aura-windows-service';
 import { RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleKind, RuleStream } from '../rule-kind';

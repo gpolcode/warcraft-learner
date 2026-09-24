@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { round } from '../../../analysis/analysis-math';
 import { AnalysisFinding, FindingOccurrence } from '../../../analysis/analysis.models';
-import { CastWithoutPriorCondition, RuleSeverity } from '../../../rulebook/rulebook.models';
+import { CastWithoutPriorCondition, RuleSeverity } from '../../../plan/plan.models';
 import { CastTimes, RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleKind, RuleStream } from '../rule-kind';
 

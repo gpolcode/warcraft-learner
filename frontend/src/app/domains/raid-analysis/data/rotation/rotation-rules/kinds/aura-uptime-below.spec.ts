@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { AuraUptimeBelowCondition } from '../../../rulebook/rulebook.models';
+import { AuraUptimeBelowCondition } from '../../../plan/plan.models';
 import { RUPTURE } from '../../../../../../../testing/spell-ids';
 import { applyBuff, removeBuff, applyDebuff, removeDebuff } from '../../../../../../../testing/builders/events';
 import {

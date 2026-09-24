@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { AnalysisFinding, FindingOccurrence, FindingTimeline, CAT_LABEL } from '../analysis/analysis.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
-import { RulebookCooldown } from '../rulebook/rulebook.models';
+import { PlanCooldown } from '../plan/plan.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import {
   isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
@@ -86,7 +86,7 @@ export interface RotationScanInput {
   fightDurationS: number;
   castEvents: TimedEvent[];
   buffEvents: TimedEvent[];
-  cooldowns: RulebookCooldown[];
+  cooldowns: PlanCooldown[];
   bench: RotationBench;
 }
 
@@ -248,7 +248,7 @@ export class RotationFeatureService {
 
   /** `castTimesS` are fight-relative seconds, ascending. Null when the cooldown is talent-gated and unused. */
   protected analyzeOneCooldown(
-    cd: RulebookCooldown, castTimesS: number[], cdBench: PerCdBenchmark | undefined,
+    cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark | undefined,
     fightDurS: number, blTimeS: number | null,
   ): { success: AnalysisFinding | null; scan: CooldownScan } | null {
     const cdName = cd.name;
@@ -415,7 +415,7 @@ export class RotationFeatureService {
     };
   }
 
-  private cdPlanRow(cd: RulebookCooldown, cdBench: PerCdBenchmark | undefined, abilities: AbilityIcons): CdPlanRow {
+  private cdPlanRow(cd: PlanCooldown, cdBench: PerCdBenchmark | undefined, abilities: AbilityIcons): CdPlanRow {
     const ability = abilities[cd.spell_id];
     if (!ability) this.logger.logWarn('buildCdPlan: ability id missing from ability map', cd.spell_id);
     return {
@@ -425,7 +425,7 @@ export class RotationFeatureService {
   }
 
   protected buildCdPlan(
-    cooldowns: RulebookCooldown[], benchmarks: Record<string, PerCdBenchmark>, abilities: AbilityIcons,
+    cooldowns: PlanCooldown[], benchmarks: Record<string, PerCdBenchmark>, abilities: AbilityIcons,
   ): CdPlanRow[] {
     const ordered = [...cooldowns].sort((a, b) => {
       const pa = a.opener_priority ?? 99;

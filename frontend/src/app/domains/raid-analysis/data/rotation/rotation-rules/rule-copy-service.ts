@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { RuleCondition, RulebookRule } from '../../rulebook/rulebook.models';
+import type { RuleCondition, PlanRule } from '../../plan/plan.models';
 
 type Kind = RuleCondition['kind'];
 type Of<K extends Kind> = Extract<RuleCondition, { kind: K }>;
@@ -69,7 +69,7 @@ const TYPE: Record<Kind, string> = {
 /** The title, fix and chip a finding row prints, written from the condition alone. */
 @Injectable({ providedIn: 'root' })
 export class RuleCopyService {
-  rule(condition: RuleCondition): RulebookRule {
+  rule(condition: RuleCondition): PlanRule {
     return {
       type: TYPE[condition.kind],
       severity: 'warning',

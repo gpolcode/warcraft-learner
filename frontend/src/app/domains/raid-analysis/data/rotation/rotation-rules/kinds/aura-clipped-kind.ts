@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { median } from 'd3-array';
 import { round } from '../../../analysis/analysis-math';
 import { AnalysisFinding, FindingOccurrence } from '../../../analysis/analysis.models';
-import { AuraClippedCondition, RuleSeverity } from '../../../rulebook/rulebook.models';
+import { AuraClippedCondition, RuleSeverity } from '../../../plan/plan.models';
 import { AuraSpan, AuraSpansByTarget } from '../../../analysis/aura-windows-service';
 import { RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleKind, RuleStream } from '../rule-kind';

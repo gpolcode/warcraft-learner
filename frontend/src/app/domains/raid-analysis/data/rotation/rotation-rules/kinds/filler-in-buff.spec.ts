@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { FillerInBuffCondition } from '../../../rulebook/rulebook.models';
+import { FillerInBuffCondition } from '../../../plan/plan.models';
 import { WRATH, STARFIRE, ECLIPSE_SOLAR, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
 import { cast, buffWindow } from '../../../../../../../testing/builders/events';
 import {

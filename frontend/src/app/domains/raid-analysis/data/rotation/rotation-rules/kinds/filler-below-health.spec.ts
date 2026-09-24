@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { FillerBelowHealthCondition } from '../../../rulebook/rulebook.models';
+import { FillerBelowHealthCondition } from '../../../plan/plan.models';
 import { EXECUTE, SLAM, SHADOW_BLADES_DAMAGE } from '../../../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../../../testing/builders/events';
 import {

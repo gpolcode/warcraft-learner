@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { SpendAtStacksCondition } from '../../../rulebook/rulebook.models';
+import { SpendAtStacksCondition } from '../../../plan/plan.models';
 import { LIGHTNING_BOLT, MAELSTROM_WEAPON, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
 import { cast, applyBuff, removeBuff, applyBuffStack, buffWindow } from '../../../../../../../testing/builders/events';
 import {

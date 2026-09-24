@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AnalysisFinding } from '../../../analysis/analysis.models';
-import { SpendAtStacksCondition, RuleSeverity } from '../../../rulebook/rulebook.models';
+import { SpendAtStacksCondition, RuleSeverity } from '../../../plan/plan.models';
 import { RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleStream, Scale } from '../rule-kind';
 import { BoundedPerCastKind } from '../bounded-per-cast-kind';

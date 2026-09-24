@@ -3,7 +3,7 @@ import {
   RuleCondition, RuleSeverity,
   CastWithoutPriorCondition, AuraUptimeBelowCondition,
   CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition, SpendAtStacksCondition,
-} from '../rulebook/rulebook.models';
+} from '../plan/plan.models';
 import {
   SHADOW_BLADES, SHADOW_DANCE, SECRET_TECHNIQUE, RUPTURE, EVISCERATE, BLACK_POWDER,
   LIGHTNING_BOLT, MAELSTROM_WEAPON,
@@ -137,7 +137,7 @@ describe('ruleBand', () => {
     expect(engine.ruleBand(parseCond, samples([[1], [2], [3], [4], [5]])).band).not.toBeNull();
   });
 
-  it('drops a rule whose kind needs bounds the rulebook never declared, rather than reading unknown as unbounded', () => {
+  it('drops a rule whose kind needs bounds the condition never declared, rather than reading unknown as unbounded', () => {
     const noCap = { ...instanceCond, max_stacks: undefined } as unknown as SpendAtStacksCondition;
     const perParse = samples(Array.from({ length: 5 }, () => [1, 2, 3, 4, 5]));
     expect(engine.ruleBand(noCap, perParse).band).toBeNull();

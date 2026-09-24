@@ -102,7 +102,7 @@ test('rotation rules count the casts that broke each rule, name the ones followe
     .filter({ hasText: 'How your casts held up against the rules the top Mythic logs follow for your spec.' });
   await shows(rotationRules, 'Rotation rules');
   await showsFindingRows(rotationRules);
-  // A rule the pull followed shows as a chip rather than a row, so only both together cover the rulebook.
+  // A rule the pull followed shows as a chip rather than a row, so only both together cover the spec's rules.
   await showsOnPlan(rotationRules);
 
   // The button's accessible name flips to "Hide instances" once clicked, so the filter matches either name.

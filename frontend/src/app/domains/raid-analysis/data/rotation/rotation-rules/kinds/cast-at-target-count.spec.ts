@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { CastAtTargetCountCondition } from '../../../rulebook/rulebook.models';
+import { CastAtTargetCountCondition } from '../../../plan/plan.models';
 import { BLACK_POWDER, EVISCERATE, RUPTURE } from '../../../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../../../testing/builders/events';
 import { band, judged, ruleCtx } from '../rule-fixtures';

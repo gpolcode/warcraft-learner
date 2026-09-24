@@ -108,7 +108,7 @@ describe('buildStackTimeline and stacksAt', () => {
     expect(auraWindows.stacksAt(stacks, FIRST_S + 1)).toBe(1);
   });
 
-  it('builds only the aura it was asked for, so a pull pays for what its rulebook names', () => {
+  it('builds only the aura it was asked for, so a pull pays for what its rules name', () => {
     expect(auraWindows.buildStackTimeline(events, RUPTURE)).toEqual({ groundedFromStart: false, entries: [] });
     expect(auraWindows.stacksAt(auraWindows.buildStackTimeline(events, RUPTURE), DROP_S)).toBeNull();
   });

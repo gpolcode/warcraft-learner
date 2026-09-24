@@ -1,10 +1,10 @@
-import { RulebookCooldown, RulebookDefensive, RuleCondition } from '../../app/domains/raid-analysis/data/rulebook/rulebook.models';
+import { PlanCooldown, PlanDefensive, RuleCondition } from '../../app/domains/raid-analysis/data/plan/plan.models';
 import type { PlanSpell, SpecPlan } from '../../app/domains/raid-analysis/data/simc/spec-plan-service';
 import type { SpecPlanLoaderService } from '../../app/domains/raid-analysis/data/simc/spec-plan-loader-service';
 import { Result, Results } from '../../app/domains/shared/util-http/result';
 
-type CooldownSeed = Pick<RulebookCooldown, 'name' | 'spell_id' | 'cooldown'> & Partial<RulebookCooldown>;
-type DefensiveSeed = Pick<RulebookDefensive, 'name' | 'spell_id' | 'cooldown'> & Partial<RulebookDefensive>;
+type CooldownSeed = Pick<PlanCooldown, 'name' | 'spell_id' | 'cooldown'> & Partial<PlanCooldown>;
+type DefensiveSeed = Pick<PlanDefensive, 'name' | 'spell_id' | 'cooldown'> & Partial<PlanDefensive>;
 
 export const PLAN_KEY = 'plan-key';
 

@@ -1,6 +1,6 @@
 import {
-  RulebookRule, RuleCondition, RuleSeverity, CastWithoutPriorCondition, HoldCooldownForAnchorCondition,
-} from '../../rulebook/rulebook.models';
+  PlanRule, RuleCondition, RuleSeverity, CastWithoutPriorCondition, HoldCooldownForAnchorCondition,
+} from '../../plan/plan.models';
 import { WclEvent } from '../../wcl/wcl.models';
 import { AnalysisFinding } from '../../analysis/analysis.models';
 import { TestBed } from '@angular/core/testing';
@@ -29,12 +29,12 @@ export function band(lo: number, hi = lo, tolerance = 0): RuleBand {
 // The share kinds judge a violation share against [lo, hi]; a field that never breaks the rule flags any nonzero share.
 export const FIELD_NEVER = band(0);
 
-export function ruleFor(condition: RuleCondition, over: Partial<RulebookRule> = {}): RulebookRule {
+export function ruleFor(condition: RuleCondition, over: Partial<PlanRule> = {}): PlanRule {
   return { type: 'rotation', severity: 'warning', description: 'authored rule', action: 'authored fix', condition, ...over };
 }
 
 // A rule whose band this encounter measured, so fixtures about something else are not gated on it.
-export function benched(rule: RulebookRule, ruleBandValue: RuleBand | null = band(PAIR_WINDOW_S)): BenchedRule {
+export function benched(rule: PlanRule, ruleBandValue: RuleBand | null = band(PAIR_WINDOW_S)): BenchedRule {
   return { rule, band: ruleBandValue, sample_count: ruleBandValue == null ? 0 : 10 };
 }
 

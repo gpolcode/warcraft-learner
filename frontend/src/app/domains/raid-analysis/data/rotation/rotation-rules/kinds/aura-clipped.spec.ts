@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { AuraClippedCondition } from '../../../rulebook/rulebook.models';
+import { AuraClippedCondition } from '../../../plan/plan.models';
 import { MOONFIRE, MOONFIRE_DOT, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
 import { cast, applyDebuff, refreshDebuff, buffWindow } from '../../../../../../../testing/builders/events';
 import {

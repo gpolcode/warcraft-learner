@@ -140,7 +140,7 @@ describe('version trust', () => {
     expect(stamps.isFutureVersion(stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, ALL_OK))).toBe(false);
   });
 
-  it('trusts a file with no version stamp (manifest / rulebook)', () => {
+  it('trusts a file with no version stamp (a manifest)', () => {
     expect(stamps.isFutureVersion({ spec: 'SubtletyRogue' })).toBe(false);
     expect(stamps.isFutureVersion([{ spec: 'SubtletyRogue' }])).toBe(false);
   });

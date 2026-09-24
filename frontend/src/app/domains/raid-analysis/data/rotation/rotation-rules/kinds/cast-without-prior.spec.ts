@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { CastWithoutPriorCondition } from '../../../rulebook/rulebook.models';
+import { CastWithoutPriorCondition } from '../../../plan/plan.models';
 import { SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../../testing/builders/events';
 import {

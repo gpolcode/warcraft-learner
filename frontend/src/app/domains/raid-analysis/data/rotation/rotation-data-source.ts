@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { DataSource } from '../data-source/data-source';
 import { PerCdBenchmark } from '../encounter/encounter.models';
-import { RulebookCooldown } from '../rulebook/rulebook.models';
+import { PlanCooldown } from '../plan/plan.models';
 import { BenchHeader } from '../analysis/bench-pipeline-service';
 import { BenchedRule } from './rotation-rule-engine-service';
 
@@ -10,8 +10,8 @@ export interface RotationBench extends BenchHeader {
   top_avg_efficiency: number;
   top_efficiency_stddev: number;
   per_cd_benchmarks: Record<string, PerCdBenchmark>;
-  major_cooldowns: RulebookCooldown[];
-  /** Rulebook rules with the band this encounter measured, so the runtime never re-measures the field. */
+  major_cooldowns: PlanCooldown[];
+  /** Plan rules with the band this encounter measured, so the runtime never re-measures the field. */
   rules: BenchedRule[];
   cd_spell_ids: Record<string, number>;
   ability_icons: Record<number, { icon: string; name: string }>;

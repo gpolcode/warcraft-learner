@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import type jsep from 'jsep';
 import { group } from 'd3-array';
-import type { RuleCondition } from '../rulebook/rulebook.models';
+import type { RuleCondition } from '../plan/plan.models';
 import { AplLine, AplNode, AplProfile, SimcAplService } from './simc-apl-service';
 import type { SpellRecord } from './spell-dump-service';
 

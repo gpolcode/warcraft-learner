@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { CastOutsideBuffCondition } from '../../../rulebook/rulebook.models';
+import { CastOutsideBuffCondition } from '../../../plan/plan.models';
 import { SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../../testing/spell-ids';
 import { cast, buffWindow, removeBuff } from '../../../../../../../testing/builders/events';
 import {

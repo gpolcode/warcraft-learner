@@ -2,7 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { quantile } from 'd3-array';
 import { AnalysisFinding } from '../analysis/analysis.models';
-import { RulebookRule, RuleCondition, RuleSeverity } from '../rulebook/rulebook.models';
+import { PlanRule, RuleCondition, RuleSeverity } from '../plan/plan.models';
 import {
   RuleKind, RuleBand, RuleDomain, RuleJudging, RuleSample, RuleStream, BenchedRule,
 } from './rotation-rules/rule-kind';
@@ -58,7 +58,7 @@ export class RotationRuleEngineService {
     const pooled = contributing.flatMap(sample => sample.values).sort((a, b) => a - b);
     const counts = { sample_count: pooled.length };
     const domain = spec.domain(cond);
-    // A domain the rulebook never declared is not an unbounded one; with no cap there is no far edge to judge against.
+    // A domain the condition never declared is not an unbounded one; with no cap there is no far edge to judge against.
     if (domain == null || contributing.length < MIN_MEASURED_PARSES) return { band: null, ...counts };
 
     const judging = spec.judging(cond);
@@ -111,9 +111,9 @@ export class RotationRuleEngineService {
 
   benchedRules(
     benched: BenchedRule[],
-  ): (BenchedRule & { rule: RulebookRule & { condition: RuleCondition }; band: RuleBand })[] {
+  ): (BenchedRule & { rule: PlanRule & { condition: RuleCondition }; band: RuleBand })[] {
     return benched.filter(
-      (entry): entry is BenchedRule & { rule: RulebookRule & { condition: RuleCondition }; band: RuleBand } =>
+      (entry): entry is BenchedRule & { rule: PlanRule & { condition: RuleCondition }; band: RuleBand } =>
         entry.rule.condition != null && entry.band != null,
     );
   }

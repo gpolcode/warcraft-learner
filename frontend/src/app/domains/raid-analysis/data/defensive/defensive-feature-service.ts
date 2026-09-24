@@ -163,7 +163,7 @@ export class DefensiveFeatureService {
     return Results.ok({ rows: this.buildDefensivePlanRows(bench.value) });
   }
 
-  // Falls back to point casts (zero span) when there is no self-buff; never invents a rulebook-duration span.
+  // Falls back to point casts (zero span) when there is no self-buff; never invents a fixed-duration span.
   protected buildDefensiveUsageWindows(
     spellId: number,
     buffSpans: [number, number | null][],
@@ -171,7 +171,7 @@ export class DefensiveFeatureService {
     fightEndS: number,
   ): DefensiveUsageWindow[] {
     const windows = buffSpans.map(([windowStartS, windowEndS]) => {
-      // An open buff (no remove) runs to fight end, never a rulebook duration.
+      // An open buff (no remove) runs to fight end, never a fixed duration.
       const end = windowEndS ?? fightEndS;
       return { start_s: Math.round(windowStartS * 10) / 10, end_s: Math.round(end * 10) / 10 };
     });

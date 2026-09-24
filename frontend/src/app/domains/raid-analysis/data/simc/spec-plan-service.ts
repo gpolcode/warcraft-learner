@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { greatest, group, mode, rollup } from 'd3-array';
 import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
-import type { RuleCondition, RulebookCooldown, RulebookDefensive } from '../rulebook/rulebook.models';
+import type { RuleCondition, PlanCooldown, PlanDefensive } from '../plan/plan.models';
 import type { WclEvent } from '../wcl/wcl.models';
 import { AplProfile, SimcAplService } from './simc-apl-service';
 import { AplRuleService } from './apl-rule-service';
@@ -24,8 +24,8 @@ export interface PlanSpell {
 export interface SpecPlan {
   /** Spell ids are 0 and spell names are SimC tokens until `resolveRule` names them from one log. */
   rules: RuleCondition[];
-  cooldowns: RulebookCooldown[];
-  defensives: RulebookDefensive[];
+  cooldowns: PlanCooldown[];
+  defensives: PlanDefensive[];
   spells: Record<string, PlanSpell | undefined>;
   /** Changes exactly when a derived part changes, so ingest re-benches an encounter only then. */
   key: string;
@@ -117,7 +117,7 @@ export class SpecPlanService {
   }
 
   /** APL buttons Blizzard labels major or that hold a long cooldown, in APL order; with no APL, the labelled ones alone. */
-  private cooldowns(profile: AplProfile | null, byToken: Map<string, SpellRecord[]>): RulebookCooldown[] {
+  private cooldowns(profile: AplProfile | null, byToken: Map<string, SpellRecord[]>): PlanCooldown[] {
     const tokens = profile ? new Set(profile.lines.map(line => line.action)) : byToken.keys();
     return [...tokens].flatMap(token => {
       const records = byToken.get(token) ?? [];
@@ -128,7 +128,7 @@ export class SpecPlanService {
     }).map((cooldown, index) => (profile ? { ...cooldown, opener_priority: index + 1 } : cooldown));
   }
 
-  private defensives(records: SpellRecord[], byToken: Map<string, SpellRecord[]>): RulebookDefensive[] {
+  private defensives(records: SpellRecord[], byToken: Map<string, SpellRecord[]>): PlanDefensive[] {
     return [...new Set(records.filter(record => record.defensive).map(record => record.token))].flatMap(token => {
       const named = byToken.get(token) ?? [];
       const button = greatest(named, record => record.cooldown);
@@ -136,7 +136,7 @@ export class SpecPlanService {
     });
   }
 
-  private button(record: SpellRecord, named: SpellRecord[]): RulebookCooldown {
+  private button(record: SpellRecord, named: SpellRecord[]): PlanCooldown {
     return { name: record.name, spell_id: record.id, cooldown: record.cooldown, talent_gated: named.some(entry => entry.talented) };
   }
 }

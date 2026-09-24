@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { group } from 'd3-array';
-import type { RuleCondition } from '../rulebook/rulebook.models';
+import type { RuleCondition } from '../plan/plan.models';
 import { AplRuleService } from './apl-rule-service';
 import { SimcAplService } from './simc-apl-service';
 import type { SpellRecord } from './spell-dump-service';

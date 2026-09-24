@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { RulebookCooldown } from '../rulebook/rulebook.models';
+import { PlanCooldown } from '../plan/plan.models';
 import { SHADOW_BLADES, BLOODLUST } from '../../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../../testing/builders/events';
 import { WclEvent } from '../wcl/wcl.models';
@@ -25,7 +25,7 @@ const svc = TestBed.inject(RotationFeatureService);
 TestBed.resetTestingModule();
 
 function scan(over: {
-  bench: RotationBench; fightDurationS?: number; castEvents?: WclEvent[]; buffEvents?: WclEvent[]; cooldowns?: RulebookCooldown[];
+  bench: RotationBench; fightDurationS?: number; castEvents?: WclEvent[]; buffEvents?: WclEvent[]; cooldowns?: PlanCooldown[];
 }): RotationScanInput {
   return {
     bench: over.bench,

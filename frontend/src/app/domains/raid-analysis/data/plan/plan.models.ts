@@ -1,4 +1,4 @@
-export interface RulebookCooldown {
+export interface PlanCooldown {
   name: string;
   spell_id: number;
   cooldown: number;
@@ -7,7 +7,7 @@ export interface RulebookCooldown {
   talent_gated?: boolean;
 }
 
-export interface RulebookDefensive {
+export interface PlanDefensive {
   name: string;
   spell_id: number;
   cooldown: number;
@@ -159,7 +159,7 @@ export type RuleCondition =
 /** The tiers the findings table renders, authored directly so nothing translates between vocabularies. */
 export type RuleSeverity = 'critical' | 'warning' | 'info';
 
-export interface RulebookRule {
+export interface PlanRule {
   type: string;
   severity: RuleSeverity;
   description: string;

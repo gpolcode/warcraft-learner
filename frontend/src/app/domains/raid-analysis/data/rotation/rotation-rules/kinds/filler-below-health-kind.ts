@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { AnalysisFinding } from '../../../analysis/analysis.models';
-import { FillerBelowHealthCondition, RuleSeverity } from '../../../rulebook/rulebook.models';
+import { FillerBelowHealthCondition, RuleSeverity } from '../../../plan/plan.models';
 import { TimedEvent } from '../../../analysis/wcl-projections-service';
 import { HealthRow, RuleContext } from '../rule-context-service';
 import { RuleBand, RuleDomain, RuleJudging, RuleStream } from '../rule-kind';

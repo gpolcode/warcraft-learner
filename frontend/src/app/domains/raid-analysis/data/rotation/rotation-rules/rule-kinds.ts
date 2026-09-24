@@ -1,5 +1,5 @@
 import { InjectionToken, Type, inject } from '@angular/core';
-import { RuleCondition } from '../../rulebook/rulebook.models';
+import { RuleCondition } from '../../plan/plan.models';
 import { RuleKind } from './rule-kind';
 import { CastWithoutPriorKind } from './kinds/cast-without-prior-kind';
 import { HoldCooldownForAnchorKind } from './kinds/hold-cooldown-for-anchor-kind';

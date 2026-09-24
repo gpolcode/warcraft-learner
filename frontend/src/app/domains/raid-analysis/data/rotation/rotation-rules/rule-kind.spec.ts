@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { CastAtTargetCountCondition, ResourceAtCastCondition } from '../../rulebook/rulebook.models';
+import { CastAtTargetCountCondition, ResourceAtCastCondition } from '../../plan/plan.models';
 import { BLACK_POWDER, EVISCERATE } from '../../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../../testing/builders/events';
 import { TestBed } from '@angular/core/testing';
