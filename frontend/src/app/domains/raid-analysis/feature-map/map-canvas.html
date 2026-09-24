@@ -34,7 +34,7 @@
       <mat-icon>{{ playing() ? 'pause' : 'play_arrow' }}</mat-icon>
     </button>
     <div class="min-w-0 flex-1">
-      <input type="range" class="block w-full accent-gold"
+      <input type="range" class="block w-full cursor-pointer accent-gold"
         [min]="windowStart()" [max]="windowEnd()" step="0.25"
         [value]="scrubT()" (input)="onScrub($any($event.target).valueAsNumber)" />
       <div class="mt-1 flex justify-between text-caption text-muted">
