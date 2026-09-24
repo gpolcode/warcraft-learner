@@ -1,6 +1,6 @@
 # warcraft-learner
 
-A web-based diagnostic tool for Mythic WoW raiders. It fetches your combat data from Warcraft Logs, evaluates it against spec-specific rulebooks, and delivers coaching-style feedback benchmarked against the top raiders on your spec.
+A web-based diagnostic tool for Mythic WoW raiders. It fetches your combat data from Warcraft Logs, evaluates it against a plan for your spec read from SimulationCraft's rotation and Blizzard's own spell labels, and delivers coaching-style feedback benchmarked against the top raiders on your spec.
 
 Live site: https://warcraft-learner.com/
 
@@ -8,7 +8,7 @@ Live site: https://warcraft-learner.com/
 
 Before the pull, pick a class, spec and boss to see the plan top raiders run there: when they press each offensive and defensive cooldown, the talent builds, trinket pairs and enchants they bring, and the burst windows they hold for. Those timings export as a note for the Northern Sky raid addon.
 
-After the pull, paste a Warcraft Logs report and pick a fight and a player. A rulebook drives the grading instead of hardcoded spec logic, covering aura uptime, clipped refreshes, wasted procs, capped resources, opener order, target counts, buff windows and filler choice. On top of that it finds lost casts, poor Bloodlust alignment and slow openers, and flags the cooldowns you spend early where top raiders hold them.
+After the pull, paste a Warcraft Logs report and pick a fight and a player. Rules read from SimulationCraft's action priority list drive the grading instead of hardcoded spec logic, covering aura uptime, clipped refreshes, wasted procs, capped resources, target counts, buff windows, cooldown pairing and filler choice. On top of that it finds lost casts, poor Bloodlust alignment and slow openers, and flags the cooldowns you spend early where top raiders hold them.
 
 Your damage in each burst window and the damage you took in each defensive window go against the range top raiders manage there, and your talents, trinkets and enchants against their consensus for that boss. The pull itself gets read back to you as well: every death and the ability that landed it, your DPS, the duration, and the boss health you ended on.
 
@@ -32,7 +32,7 @@ The app is a fully static Angular SPA. It talks directly to the Warcraft Logs AP
 
 ## Documentation
 
-See [`CLAUDE.md`](./CLAUDE.md) for the development entry point: architecture at a glance, commands, and the router into the on-demand skills under [`.claude/skills/`](./.claude/skills/) that hold the detailed conventions (change contract, writing, WCL/data, rulebook generation).
+See [`CLAUDE.md`](./CLAUDE.md) for the development entry point: architecture at a glance, commands, and the router into the on-demand skills under [`.claude/skills/`](./.claude/skills/) that hold the detailed conventions (change contract, writing, WCL/data).
 
 ## License
 

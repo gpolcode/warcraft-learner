@@ -17,7 +17,7 @@ Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences
 
 ### New rule-engine kind
 
-Deliver: the kind's class in `data/rotation/rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`data/rotation/rotation-rules/rule-kinds.ts`), declared in the rulebook schema (`.claude/skills/warcraft-rulebook/rulebook.schema.json`), a row in the agent's kind table (`.claude/agents/rulebook-author.md`), per-instance `occurrences` on the finding, boundary-paired specs. Bump `INGEST_VERSION`.
+Deliver: the kind's class in `data/rotation/rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`data/rotation/rotation-rules/rule-kinds.ts`), its title, fix and chip in `rule-copy-service.ts`, the APL shape that states it as a pattern in `data/simc/apl-rule-service.ts`, per-instance `occurrences` on the finding, boundary-paired specs. Bump `INGEST_VERSION`.
 
 ### New feature
 
@@ -29,7 +29,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 
 ## Ingest version
 
-`INGEST_VERSION` (`data/ingest/ingest-version.ts`) bumps exactly when what ingestion bakes changes: a feature's `*Bench` interface in its `data/<feature>/*-data-source.ts`, measured values, or a republished rulebook.
+`INGEST_VERSION` (`data/ingest/ingest-version.ts`) bumps exactly when what ingestion bakes changes: a feature's `*Bench` interface in its `data/<feature>/*-data-source.ts`, measured values, or the rule copy. A change to what a spec's plan derives needs no bump: the plan key in each bench's signature re-benches it.
 
 ## Architecture roles
 
