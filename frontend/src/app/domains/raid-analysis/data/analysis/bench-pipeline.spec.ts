@@ -253,7 +253,8 @@ describe('benchFromTopParses plan step', () => {
   });
 
   it('hands the plan to every parse and to the bench callback', async () => {
-    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, planRecipe(planLoader(PLANNED)));
+    const wcl = wclFake({ getAllEvents: async () => [cast(SHADOW_BLADES, 1)] });
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, planRecipe(planLoader(PLANNED)));
     expect(result).toEqual(Results.ok({
       spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, sample_count: 1,
       codes: [`${PLANNED_COOLDOWN}/r1`, `bench/${PLANNED_COOLDOWN}`],
@@ -271,7 +272,7 @@ describe('benchFromTopParses button ids', () => {
   });
   const idRecipe = planRecipe(planLoader(bladestorm), {
     sampleTarget: TOP_LOGS,
-    plan: { plans: planLoader(bladestorm), pick: plan => String(plan.cooldowns[0]?.spell_id), missingMessage: NO_PLAN_MESSAGE },
+    plan: { plans: planLoader(bladestorm), pick: plan => (plan.cooldowns[0] ? String(plan.cooldowns[0].spell_id) : null), missingMessage: NO_PLAN_MESSAGE },
   });
   const wcl = wclFake({ getAllEvents: async code => [cast(castsBy[code] ?? 0, 1)] });
 
@@ -285,6 +286,11 @@ describe('benchFromTopParses button ids', () => {
     const result = await benchPipeline.benchFromTopParses(wcl, QUERY, idRecipe);
     assert(result.ok);
     expect(result.value.codes[TOP_LOGS]).toBe(`bench/${BLADESTORM_HERO}`);
+  });
+
+  it('stops with the recipe\'s own message when no top log cast what its plan names', async () => {
+    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, idRecipe);
+    expect(result).toEqual(Results.missing(NO_PLAN_MESSAGE));
   });
 });
 

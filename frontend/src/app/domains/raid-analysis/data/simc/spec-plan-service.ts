@@ -42,28 +42,41 @@ export class SpecPlanService {
 
   /** A null profile is a spec SimulationCraft writes no APL for: it gets cooldowns and defensives from the labels alone. */
   build(sources: { profile: string | null; dump: string; specLabel: string }): SpecPlan {
-    const own = this.dumps.readDump(sources.dump).filter(record => !record.specs || record.specs.includes(sources.specLabel));
+    const own = this.ownRecords(this.dumps.readDump(sources.dump), sources.specLabel, new Set(sources.profile?.match(/\w+/g)));
     return this.assemble(sources.profile === null ? null : this.apl.readProfile(sources.profile), own);
+  }
+
+  /** A name only other specs' talents carry belongs to them, untalented records under it included, unless this spec's APL names it. */
+  private ownRecords(records: SpellRecord[], specLabel: string, aplWords: Set<string>): SpellRecord[] {
+    const talentedHere = rollup(records.filter(record => record.specs), named => named.some(record => record.specs?.includes(specLabel)), record => record.token);
+    const ownName = (token: string): boolean => aplWords.has(token) || talentedHere.get(token) !== false;
+    return records.filter(record => ownName(record.token) && (!record.specs || record.specs.includes(specLabel)));
   }
 
   /** The id each button was cast under in one log, keyed by name; a button the log never cast is absent. */
   castIds(plan: SpecPlan, casts: WclEvent[]): Record<string, number> {
     const counts = rollup(casts.filter(event => event.type === 'cast'), events => events.length, event => event.abilityGameID);
     const ids: Record<string, number> = {};
-    for (const { name } of [...plan.cooldowns, ...plan.defensives]) {
-      const cast = greatest(this.spell(plan, name)?.ids ?? [], id => counts.get(id) ?? 0);
+    for (const { name, spell_id } of [...plan.cooldowns, ...plan.defensives]) {
+      const cast = greatest(this.spell(plan, name)?.ids ?? [spell_id], id => counts.get(id) ?? 0);
       if (cast !== undefined && counts.has(cast)) ids[name] = cast;
     }
     return ids;
   }
 
-  /** The plan with each button under the id most of the given logs cast it with. */
-  withCastIds(plan: SpecPlan, perLog: Record<string, number>[]): SpecPlan {
-    const castAs = <T extends { name: string; spell_id: number }>(button: T): T => {
-      const cast = perLog.flatMap(ids => ids[button.name] ?? []);
-      return { ...button, spell_id: cast.length ? mode(cast) : button.spell_id };
-    };
+  /** The plan as one log played it: each button under the id that log cast it with. */
+  inLog(plan: SpecPlan, ids: Record<string, number>): SpecPlan {
+    const castAs = <T extends { name: string; spell_id: number }>(button: T): T => ({ ...button, spell_id: ids[button.name] ?? button.spell_id });
     return { ...plan, cooldowns: plan.cooldowns.map(castAs), defensives: plan.defensives.map(castAs) };
+  }
+
+  /** The plan as the top logs played it: each button under the id most of them cast it with, and a button none cast left out. */
+  inTopLogs(plan: SpecPlan, perLog: Record<string, number>[]): SpecPlan {
+    const castAs = <T extends { name: string; spell_id: number }>(button: T): T[] => {
+      const cast = perLog.flatMap(ids => ids[button.name] ?? []);
+      return cast.length ? [{ ...button, spell_id: mode(cast) }] : [];
+    };
+    return { ...plan, cooldowns: plan.cooldowns.flatMap(castAs), defensives: plan.defensives.flatMap(castAs) };
   }
 
   /** The rule under one log's ids and in-game names; null when a spell it needs never shows in that log. */

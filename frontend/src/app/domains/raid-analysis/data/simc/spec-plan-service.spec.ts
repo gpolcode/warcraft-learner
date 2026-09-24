@@ -27,6 +27,8 @@ const DUMP = [
   record('Enraged Regeneration', ENRAGED_REGENERATION, 'Cooldown         : 120 seconds', 'Attributes       : Big Defensive (512)'),
   record('Spell Reflection', SPELL_REFLECTION, 'Cooldown         : 25 seconds', 'Attributes       : External Defensive (499)'),
   record('Die by the Sword', DIE_BY_THE_SWORD, 'Talent Entry     : Arms [tree=spec, row=3]', 'Cooldown         : 120 seconds', 'Attributes       : Big Defensive (512)'),
+  // The spell record beside Arms' talent, untalented, as the dump lists many a spec's buttons.
+  record('Die by the Sword', DIE_BY_THE_SWORD + 1, 'Cooldown         : 120 seconds', 'Attributes       : Big Defensive (512)'),
   record('Enrage', ENRAGE, 'Duration         : 4 seconds'),
 ].join('\n\n');
 const PROFILE = [
@@ -54,8 +56,13 @@ describe('SpecPlanService.build', () => {
     expect(fury(null).hasProfile).toBe(false);
   });
 
-  it('plans the spec\'s own big and external defensives, leaving another spec\'s talents out', () => {
+  it('plans the spec\'s own big and external defensives, leaving out a name only another spec\'s talent carries', () => {
     expect(fury().defensives.map(defensive => defensive.name)).toEqual(['Enraged Regeneration', 'Spell Reflection']);
+  });
+
+  it('keeps a button another spec\'s talent carries when the spec\'s own APL presses it', () => {
+    const armsPressesIt = `${PROFILE}\nactions+=/die_by_the_sword`;
+    expect(fury(armsPressesIt).defensives.map(defensive => defensive.name)).toContain('Die by the Sword');
   });
 
   it('derives the APL\'s rules and every id the dump holds under each name they use', () => {
@@ -88,13 +95,22 @@ describe('SpecPlanService button ids', () => {
     expect(specPlans.castIds(plan, [])).toEqual({});
   });
 
-  it('plans each button under the id most logs cast it with', () => {
-    const perLog = [{ Bladestorm: BLADESTORM_HERO }, { Bladestorm: BLADESTORM }, { Bladestorm: BLADESTORM_HERO }];
-    expect(specPlans.withCastIds(plan, perLog).cooldowns[0]?.spell_id).toBe(BLADESTORM_HERO);
+  it('plans a log\'s buttons under the ids that log cast them with', () => {
+    expect(specPlans.inLog(plan, { Bladestorm: BLADESTORM_HERO }).cooldowns[0]?.spell_id).toBe(BLADESTORM_HERO);
   });
 
-  it('keeps the plan\'s own id for a button no log cast', () => {
-    expect(specPlans.withCastIds(plan, [{}, {}]).cooldowns[0]?.spell_id).toBe(BLADESTORM);
+  it('keeps the plan\'s own id for a button the log never cast', () => {
+    expect(specPlans.inLog(plan, {}).cooldowns[0]?.spell_id).toBe(BLADESTORM);
+  });
+
+  it('plans the top logs\' buttons under the id most of them cast it with', () => {
+    const perLog = [{ Bladestorm: BLADESTORM_HERO }, { Bladestorm: BLADESTORM }, { Bladestorm: BLADESTORM_HERO }];
+    expect(specPlans.inTopLogs(plan, perLog).cooldowns[0]?.spell_id).toBe(BLADESTORM_HERO);
+  });
+
+  it('leaves out a button no top log cast, but keeps one a single log cast', () => {
+    expect(specPlans.inTopLogs(plan, [{}, {}]).cooldowns).toEqual([]);
+    expect(specPlans.inTopLogs(plan, [{}, { Bladestorm: BLADESTORM }]).cooldowns).toHaveLength(1);
   });
 });
 

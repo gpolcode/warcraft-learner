@@ -41,7 +41,7 @@ export class BenchPipelineService {
       const accepted = payload.parses.length;
       if (accepted < limits.minSamples) return Results.missing(recipe.tooFewParsesMessage?.(accepted) ?? recipe.noRankingsMessage);
 
-      return Results.ok(await this.benchEnvelope(wclApi, recipe, planned.value, { spec, encounterId }, payload));
+      return await this.benchEnvelope(wclApi, recipe, planned.value, { spec, encounterId }, payload);
     } catch (cause) {
       this.logger.logWarn(`${recipe.logSource}.getBench ${spec}:${encounterId}`, cause);
       return HttpLoadErrors.toLoadError(cause, recipe.errorId);
@@ -55,11 +55,18 @@ export class BenchPipelineService {
     return step.pick(plan.value) === null ? Results.missing(step.missingMessage) : plan;
   }
 
-  /** The recipe's slice of the plan, under the ids the given logs cast its buttons with. */
-  private recipePlan<TParse, TBench, TPlan>(
-    recipe: BenchRecipe<TParse, TBench, TPlan>, plan: SpecPlan | null, castIds: Record<string, number>[],
+  /** The recipe's slice of the plan as one log played it; the full plan already passed `pick`, so it names something. */
+  private logPlan<TParse, TBench, TPlan>(
+    recipe: BenchRecipe<TParse, TBench, TPlan>, plan: SpecPlan | null, castIds: Record<string, number>,
   ): TPlan {
-    return (plan && recipe.plan ? recipe.plan.pick(this.specPlans.withCastIds(plan, castIds)) : undefined) as TPlan;
+    return (plan && recipe.plan ? recipe.plan.pick(this.specPlans.inLog(plan, castIds)) : undefined) as TPlan;
+  }
+
+  /** The recipe's slice as the top logs played it; null when they cast none of what it names. */
+  private topLogPlan<TParse, TBench, TPlan>(
+    recipe: BenchRecipe<TParse, TBench, TPlan>, plan: SpecPlan | null, castIds: Record<string, number>[],
+  ): TPlan | null {
+    return plan && recipe.plan ? recipe.plan.pick(this.specPlans.inTopLogs(plan, castIds)) : undefined as TPlan;
   }
 
   private async benchEnvelope<TParse, TBench, TPlan>(
@@ -68,8 +75,10 @@ export class BenchPipelineService {
     plan: SpecPlan | null,
     query: { spec: string; encounterId: number },
     { castIds, ...payload }: CollectedParses<TParse>,
-  ): Promise<TBench> {
-    const body = await recipe.bench(payload, this.recipePlan(recipe, plan, castIds));
+  ): Promise<Result<TBench>> {
+    const benchPlan = this.topLogPlan(recipe, plan, castIds);
+    if (benchPlan === null) return Results.missing(recipe.plan?.missingMessage ?? recipe.noRankingsMessage);
+    const body = await recipe.bench(payload, benchPlan);
     const identity: BenchIdentity = {
       spec: query.spec, encounter_id: query.encounterId, encounter_name: payload.encounterName,
     };
@@ -77,7 +86,7 @@ export class BenchPipelineService {
     const icons = recipe.iconSpellIds
       ? { ability_icons: this.projections.abilityIcons(await wclApi.getAbilities(recipe.iconSpellIds(body))) }
       : {};
-    return { ...header, ...body, ...icons } as TBench;
+    return Results.ok({ ...header, ...body, ...icons } as TBench);
   }
 
   private recipeLimits<TParse, TBench, TPlan>(recipe: BenchRecipe<TParse, TBench, TPlan>): RecipeLimits {
@@ -116,7 +125,7 @@ export class BenchPipelineService {
       const castIds = plan
         ? this.specPlans.castIds(plan, await wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id))
         : {};
-      const parse = await recipe.parse({ ranking, report, fight, player }, this.recipePlan(recipe, plan, [castIds]));
+      const parse = await recipe.parse({ ranking, report, fight, player }, this.logPlan(recipe, plan, castIds));
       return parse === null ? null : { parse, encounterName: fight.name, castIds };
     } catch (cause) {
       this.logger.logWarn(`${recipe.logSource} parse ${ranking.report_code}:${ranking.fight_id}`, cause);
