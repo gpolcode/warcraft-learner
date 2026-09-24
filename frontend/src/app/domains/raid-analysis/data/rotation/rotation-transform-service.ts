@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { DataFileApiService } from '../data-files/data-file-api-service';
+import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../rulebook/rulebook.models';
+import { RulebookCooldown, RuleCondition } from '../rulebook/rulebook.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
-import { group, quantile } from 'd3-array';
+import { greatest, group, median, quantile } from 'd3-array';
 import {
   round, avgOr, stddevOr, castEfficiencyPct, closestToZero,
 } from '../analysis/analysis-math';
@@ -14,7 +14,9 @@ import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-ser
 import { DataSource } from '../data-source/data-source';
 import { Result } from '../../../shared/util-http/result';
 import { RotationRuleEngineService, BenchedRule, RuleSample, MIN_MEASURED_PARSES } from './rotation-rule-engine-service';
-import { RuleContextService } from './rotation-rules/rule-context-service';
+import { RuleContext, RuleContextService } from './rotation-rules/rule-context-service';
+import { RuleCopyService } from './rotation-rules/rule-copy-service';
+import { SpecPlan, SpecPlanService, SpellScope } from '../simc/spec-plan-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { RotationBench } from './rotation-data-source';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
@@ -26,6 +28,8 @@ const BL_WINDOW_BEFORE_S = 30;
 const BL_WINDOW_AFTER_S = 55;
 const DOWNTIME_PERCENTILE = 0.9;
 const DEFAULT_DOWNTIME_THRESHOLD_S = 1.5;
+/** An aura top raiders keep up for less of the fight than this is a window they open, not one they maintain. */
+const UPKEEP_MIN_UPTIME_PCT = 70;
 
 export interface CdSummary {
   name: string;
@@ -39,19 +43,14 @@ export interface CdSummary {
   fight_duration_s: number;
 }
 
-export type ParseRuleSamples = RuleSample[];
+/** One plan rule as one log resolved and measured it; null where a spell it names never showed in that log. */
+export type ParseRuleSamples = ({ condition: RuleCondition; sample: RuleSample } | null)[];
 
 interface ParseRotation {
   summaries: CdSummary[];
   gapListS: number[];
   durationS: number;
   ruleSamples: ParseRuleSamples;
-}
-
-interface RotationPlan {
-  cooldowns: RulebookCooldown[];
-  defensives: RulebookDefensive[];
-  judgeable: RulebookRule[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -64,7 +63,9 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
-  private readonly dataFiles = inject(DataFileApiService);
+  private readonly specPlanLoader = inject(SpecPlanLoaderService);
+  private readonly specPlans = inject(SpecPlanService);
+  private readonly ruleCopy = inject(RuleCopyService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<RotationBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
@@ -74,19 +75,13 @@ export class RotationTransformService implements DataSource<RotationBench> {
       noRankingsMessage: 'No top logs for this encounter.',
       tooFewParsesMessage: usable =>
         `Only ${usable} usable top log(s) for this encounter; ${MIN_PARSE_COUNT} are needed to bench it.`,
-      rulebook: {
-        dataFiles: this.dataFiles,
-        plan: (rulebook): RotationPlan | null => rulebook.major_cooldowns.length
-          ? {
-            cooldowns: rulebook.major_cooldowns,
-            defensives: rulebook.defensives,
-            judgeable: this.ruleEngine.judgeableRules(rulebook.rules),
-          }
-          : null,
-        missingMessage: 'No rulebook cooldowns for this spec.',
+      plan: {
+        plans: this.specPlanLoader,
+        pick: plan => (plan.cooldowns.length || plan.rules.length ? plan : null),
+        missingMessage: 'No cooldowns or rules for this spec.',
       },
       iconSpellIds: bench => Object.values(bench.cd_spell_ids),
-      parse: (parse, plan) => this.parseRotation(parse, plan.cooldowns, plan.judgeable),
+      parse: (parse, plan) => this.parseRotation(parse, plan),
       bench: ({ parses }, plan) => {
         const { downtimeThresholdS, topAvgEfficiency, topEfficiencyStddev } = this.computeEfficiencyThresholds(parses);
         return {
@@ -95,25 +90,45 @@ export class RotationTransformService implements DataSource<RotationBench> {
           top_efficiency_stddev: topEfficiencyStddev,
           per_cd_benchmarks: this.aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
-          rules: this.benchRules(plan.judgeable, parses.map(parse => parse.ruleSamples)),
+          rules: this.benchRules(parses.map(parse => parse.ruleSamples)),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
         };
       },
     });
   }
 
-  protected benchRules(rules: RulebookRule[], perParse: ParseRuleSamples[]): BenchedRule[] {
-    return rules.map((rule, i) => ({
-      rule,
-      ...(rule.condition
-        ? this.ruleEngine.ruleBand(rule.condition, perParse.map(samples => samples[i] ?? { values: [], unmeasuredOut: 0 }))
-        : { band: null, sample_count: 0 }),
-    }));
+  /** Each rule under the ids most logs resolved it to, measured on those logs; a rule the field gives no band to is left out. */
+  protected benchRules(perParse: ParseRuleSamples[]): BenchedRule[] {
+    const benched = new Map<string, BenchedRule>();
+    for (let i = 0; i < (perParse[0]?.length ?? 0); i++) {
+      const resolved = perParse.flatMap(samples => samples[i] ?? []);
+      const agreed = greatest([...group(resolved, entry => JSON.stringify(entry.condition)).values()], entries => entries.length) ?? [];
+      const condition = agreed[0]?.condition;
+      if (!condition || !this.upkept(condition, agreed.map(entry => entry.sample))) continue;
+      const { band, sample_count } = this.ruleEngine.ruleBand(condition, agreed.map(entry => entry.sample));
+      if (band) benched.set(JSON.stringify(condition), { rule: this.ruleCopy.rule(condition), band, sample_count });
+    }
+    return [...benched.values()];
   }
 
-  private async parseRotation(
-    { ranking, fight, player }: BenchParse, cooldowns: RulebookCooldown[], rules: RulebookRule[],
-  ): Promise<ParseRotation> {
+  /** The APL refreshes some auras it only opens as a window; the field's own uptime tells an upkeep apart. */
+  private upkept(condition: RuleCondition, samples: RuleSample[]): boolean {
+    return condition.kind !== 'aura_uptime_below' || (median(samples.flatMap(sample => sample.values)) ?? 0) >= UPKEEP_MIN_UPTIME_PCT;
+  }
+
+  /** The id among a spell's records that this log shows most in the stream the rule reads. */
+  private idIn(ctx: RuleContext): (ids: number[], scope: SpellScope) => number | null {
+    const seen = (id: number, scope: SpellScope): number => (scope === 'cast'
+      ? ctx.castTimes[id]?.length
+      : (scope === 'self' ? ctx.selfAuras : ctx.targetAuras).get(id)?.length) ?? 0;
+    return (ids, scope) => {
+      const id = greatest(ids, candidate => seen(candidate, scope));
+      return id !== undefined && seen(id, scope) > 0 ? id : null;
+    };
+  }
+
+  private async parseRotation({ ranking, fight, player }: BenchParse, plan: SpecPlan): Promise<ParseRotation> {
+    const rules = plan.rules;
     const [casts, buffs, enemyAuras, damage] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
@@ -138,10 +153,13 @@ export class RotationTransformService implements DataSource<RotationBench> {
       fightDurationS: fightDurS,
     });
     return {
-      summaries: this.summarizeCooldownCasts(castsTimed, cooldowns, fightDurS, blTimeS),
+      summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, blTimeS),
       gapListS: this.castGapListS(castsTimed),
       durationS: fightDurS,
-      ruleSamples: rules.map(rule => (rule.condition ? this.ruleEngine.sampleRule(rule.condition, ruleCtx) : { values: [], unmeasuredOut: 0 })),
+      ruleSamples: rules.map(rule => {
+        const condition = this.specPlans.resolveRule(plan, rule, this.idIn(ruleCtx));
+        return condition && { condition, sample: this.ruleEngine.sampleRule(condition, ruleCtx) };
+      }),
     };
   }
 

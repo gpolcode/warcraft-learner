@@ -1,12 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { assert, describe, it, expect } from 'vitest';
 import { WclApiService } from '../wcl/wcl-api-service';
-import type { DataFileApiService } from '../data-files/data-file-api-service';
 import { WclTransportError } from '../wcl/wcl-transport';
-import { Rulebook } from '../rulebook/rulebook.models';
-import { Result, Results } from '../../../shared/util-http/result';
+import { Results } from '../../../shared/util-http/result';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { SHADOW_BLADES, CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
-import { rulebook } from '../../../../../testing/builders/rulebook';
+import { SHADOW_BLADES, CLOAK_OF_SHADOWS, BLADESTORM, BLADESTORM_HERO } from '../../../../../testing/spell-ids';
+import { cast } from '../../../../../testing/builders/events';
+import { planLoader, specPlan } from '../../../../../testing/builders/spec-plan';
+import type { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { FixtureRanking, abilityLookup, parseRankings, wclReport, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { AbilityIcons, WclProjectionsService } from './wcl-projections-service';
 import { BenchHeader, BenchRecipe, BenchPipelineService } from './bench-pipeline-service';
@@ -21,7 +21,7 @@ const QUERY = { spec: SPEC, encounterId: ENCOUNTER_ID };
 const BOSS_NAME = 'Boss';
 const NO_RANKINGS_MESSAGE = 'No top parses for this encounter.';
 const TOO_FEW_MESSAGE = 'No fetchable top parses for this encounter.';
-const NO_PLAN_MESSAGE = 'No rulebook cooldowns for this spec.';
+const NO_PLAN_MESSAGE = 'No cooldowns for this spec.';
 const BENCH_ERROR_ID = 'recipe.bench';
 const CANDIDATE_POOL_COUNT = 20;
 const SAMPLE_TARGET = 10;
@@ -31,6 +31,7 @@ interface WclOverrides {
   getRankings?: (spec: string, encounterId: number, partition: number | null) => Promise<unknown>;
   getReport?: (code: string) => Promise<unknown>;
   getAbilities?: (ids: number[]) => Promise<unknown>;
+  getAllEvents?: (code: string) => Promise<unknown>;
 }
 
 function wclFake(over: WclOverrides = {}): WclApiService {
@@ -38,11 +39,8 @@ function wclFake(over: WclOverrides = {}): WclApiService {
     getRankings: over.getRankings ?? (async () => ({ rankings: over.rankings ?? parseRankings(CANDIDATE_POOL_COUNT) })),
     getReport: over.getReport ?? reportsByCode(),
     getAbilities: over.getAbilities ?? abilityLookup(),
+    getAllEvents: over.getAllEvents ?? (async () => []),
   } as unknown as WclApiService;
-}
-
-function filesFake(read: Result<Rulebook>): DataFileApiService {
-  return { getRulebook: async () => read } as unknown as DataFileApiService;
 }
 
 interface CodeBench extends BenchHeader { codes: string[] }
@@ -220,19 +218,19 @@ describe('benchFromTopParses header', () => {
 });
 
 const PLANNED_COOLDOWN = 'Shadow Blades';
-const PLANNED_RULEBOOK = rulebook({ cooldowns: [{ name: PLANNED_COOLDOWN, spell_id: SHADOW_BLADES, cooldown: 90 }] });
+const PLANNED = specPlan({ cooldowns: [{ name: PLANNED_COOLDOWN, spell_id: SHADOW_BLADES, cooldown: 90 }] });
 
 function planRecipe(
-  dataFiles: DataFileApiService, over: Partial<BenchRecipe<string, CodeBench, string>> = {},
+  plans: SpecPlanLoaderService, over: Partial<BenchRecipe<string, CodeBench, string>> = {},
 ): BenchRecipe<string, CodeBench, string> {
   return {
     logSource: 'PlanRecipe',
     errorId: BENCH_ERROR_ID,
     sampleTarget: 1,
     noRankingsMessage: NO_RANKINGS_MESSAGE,
-    rulebook: {
-      dataFiles,
-      plan: read => read.major_cooldowns[0]?.name ?? null,
+    plan: {
+      plans,
+      pick: plan => plan.cooldowns[0]?.name ?? null,
       missingMessage: NO_PLAN_MESSAGE,
     },
     parse: ({ ranking }, plan) => Promise.resolve(`${plan}/${ranking.report_code}`),
@@ -241,25 +239,52 @@ function planRecipe(
   };
 }
 
-describe('benchFromTopParses rulebook step', () => {
-  it('stops with the recipe\'s own message when the rulebook plans nothing, before any WCL call', async () => {
+describe('benchFromTopParses plan step', () => {
+  it('stops with the recipe\'s own message when the plan names nothing it benches, before any WCL call', async () => {
     const wcl = wclFake({ getRankings: async () => { throw new Error('WCL must not be asked'); } });
-    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, planRecipe(filesFake(Results.ok(rulebook()))));
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, planRecipe(planLoader(specPlan())));
     expect(result).toEqual(Results.missing(NO_PLAN_MESSAGE));
   });
 
-  it('propagates a failed rulebook read unchanged, so a spec with no data file reads as its own error', async () => {
-    const NOT_INGESTED = 'Not yet ingested.';
-    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, planRecipe(filesFake(Results.missing(NOT_INGESTED))));
-    expect(result).toEqual(Results.missing(NOT_INGESTED));
+  it('propagates a failed plan load unchanged, so a spec with no sources reads as its own error', async () => {
+    const UNREACHABLE = 'WCL is unreachable right now.';
+    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, planRecipe(planLoader(Results.transient(UNREACHABLE))));
+    expect(result).toEqual(Results.transient(UNREACHABLE));
   });
 
   it('hands the plan to every parse and to the bench callback', async () => {
-    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, planRecipe(filesFake(Results.ok(PLANNED_RULEBOOK))));
+    const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, planRecipe(planLoader(PLANNED)));
     expect(result).toEqual(Results.ok({
       spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, sample_count: 1,
       codes: [`${PLANNED_COOLDOWN}/r1`, `bench/${PLANNED_COOLDOWN}`],
     }));
+  });
+});
+
+describe('benchFromTopParses button ids', () => {
+  // Two logs cast the hero-talent record and one the other, so the bench carries the record most logs cast.
+  const castsBy: Record<string, number> = { r1: BLADESTORM_HERO, r2: BLADESTORM, r3: BLADESTORM_HERO };
+  const TOP_LOGS = 3;
+  const bladestorm = specPlan({
+    cooldowns: [{ name: 'Bladestorm', spell_id: BLADESTORM, cooldown: 90 }],
+    spells: { bladestorm: { name: 'Bladestorm', ids: [BLADESTORM, BLADESTORM_HERO] } },
+  });
+  const idRecipe = planRecipe(planLoader(bladestorm), {
+    sampleTarget: TOP_LOGS,
+    plan: { plans: planLoader(bladestorm), pick: plan => String(plan.cooldowns[0]?.spell_id), missingMessage: NO_PLAN_MESSAGE },
+  });
+  const wcl = wclFake({ getAllEvents: async code => [cast(castsBy[code] ?? 0, 1)] });
+
+  it('hands each parse the plan under the ids its own log cast', async () => {
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, idRecipe);
+    assert(result.ok);
+    expect(result.value.codes.slice(0, TOP_LOGS)).toEqual([`${BLADESTORM_HERO}/r1`, `${BLADESTORM}/r2`, `${BLADESTORM_HERO}/r3`]);
+  });
+
+  it('hands the bench callback the ids most logs cast', async () => {
+    const result = await benchPipeline.benchFromTopParses(wcl, QUERY, idRecipe);
+    assert(result.ok);
+    expect(result.value.codes[TOP_LOGS]).toBe(`bench/${BLADESTORM_HERO}`);
   });
 });
 

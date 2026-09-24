@@ -1,6 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import {
-  RulebookRule, RuleSeverity,
+  RuleCondition, RuleSeverity,
   CastWithoutPriorCondition, AuraUptimeBelowCondition,
   CastAtTargetCountCondition, ResourceAtCastCondition, ProcWastedCondition, SpendAtStacksCondition,
 } from '../rulebook/rulebook.models';
@@ -88,20 +88,6 @@ describe('rulesFollowed', () => {
 
   it('omits the rule with only a single Shadow Blades cast', () => {
     expect(engine.rulesFollowed([benched(holdDanceForBlades, band(HOLD_WINDOW_S))], ruleCtx([cast(SHADOW_BLADES, 10), cast(SHADOW_DANCE, 5)]))).toEqual([]);
-  });
-});
-
-describe('judgeableRules', () => {
-  // A deployed rulebook file carrying rules the types alone cannot rule out.
-  const unconformed = [{ description: 'no condition' }, { description: 'null condition', condition: null }] as unknown as RulebookRule[];
-
-  it('drops rules the engine cannot judge, so a non-conforming file cannot crash it', () => {
-    expect(engine.judgeableRules(unconformed)).toEqual([]);
-  });
-
-  it('keeps every rule that carries a condition', () => {
-    const rule = ruleFor(SECRET_TECH_NEEDS_DANCE, { description: 'real' });
-    expect(engine.judgeableRules([...unconformed, rule])).toEqual([rule]);
   });
 });
 
@@ -257,16 +243,16 @@ describe('benchedRules', () => {
 });
 
 describe('rulesNeed', () => {
-  const uptime = (on: 'self' | 'target') =>
-    ruleFor({ kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on });
-  const targetCount = ruleFor({ kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min' });
+  const uptime = (on: 'self' | 'target'): RuleCondition =>
+    ({ kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on });
+  const targetCount: RuleCondition = { kind: 'cast_at_target_count', spell_id: BLACK_POWDER, spell_name: 'Black Powder', bound: 'min' };
 
-  const cases: { name: string; rules: RulebookRule[]; stream: RuleStream; needed: boolean }[] = [
+  const cases: { name: string; rules: RuleCondition[]; stream: RuleStream; needed: boolean }[] = [
     { name: 'an on-target uptime rule reads enemy auras', rules: [uptime('target')], stream: 'enemyAuras', needed: true },
     { name: 'an on-self uptime rule leaves them unfetched', rules: [uptime('self')], stream: 'enemyAuras', needed: false },
     { name: 'a target-count rule reads damage', rules: [targetCount], stream: 'damage', needed: true },
-    { name: 'a rulebook with no rules leaves damage unfetched', rules: [], stream: 'damage', needed: false },
-    { name: 'a rulebook with no rules leaves enemy auras unfetched', rules: [], stream: 'enemyAuras', needed: false },
+    { name: 'a plan with no rules leaves damage unfetched', rules: [], stream: 'damage', needed: false },
+    { name: 'a plan with no rules leaves enemy auras unfetched', rules: [], stream: 'enemyAuras', needed: false },
   ];
 
   it.each(cases)('$name', ({ rules, stream, needed }) => {

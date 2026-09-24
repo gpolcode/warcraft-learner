@@ -35,3 +35,7 @@ export const SHADOW_BLADES_DAMAGE = 279043;
 export const WCL_MELEE_EVENT_ABILITY_ID = 1;
 export const WOW_AUTO_ATTACK_SPELL_ID = 6603;
 export const WCL_SYNTHETIC_SOURCE_FALLBACK_ID = 291807;
+
+// Bladestorm: SimC's spell data holds both records under the button's name, and a log casts only one of them.
+export const BLADESTORM = 227847;
+export const BLADESTORM_HERO = 446035;

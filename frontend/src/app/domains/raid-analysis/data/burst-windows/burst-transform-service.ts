@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { DataFileApiService } from '../data-files/data-file-api-service';
+import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
 import { RulebookCooldown, RulebookDefensive } from '../rulebook/rulebook.models';
 import { BurstWindow } from '../analysis/analysis.models';
@@ -88,18 +88,16 @@ export class BurstTransformService implements DataSource<BurstBench> {
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
-  private readonly dataFiles = inject(DataFileApiService);
+  private readonly specPlanLoader = inject(SpecPlanLoaderService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<BurstBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'BurstTransformService',
       errorId: 'burst.bench',
       noRankingsMessage: 'Not yet ingested.',
-      rulebook: {
-        dataFiles: this.dataFiles,
-        plan: (rulebook): BurstPlan | null => rulebook.major_cooldowns.length
-          ? { cooldowns: rulebook.major_cooldowns, defensives: rulebook.defensives }
-          : null,
+      plan: {
+        plans: this.specPlanLoader,
+        pick: (plan): BurstPlan | null => plan.cooldowns.length ? { cooldowns: plan.cooldowns, defensives: plan.defensives } : null,
         missingMessage: 'Not yet ingested.',
       },
       iconSpellIds: bench => [

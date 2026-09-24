@@ -3,12 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { RotationTransformService, CdSummary, ParseRuleSamples } from './rotation-transform-service';
 import { SHADOW_BLADES, BLOODLUST, RUPTURE } from '../../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../../testing/builders/events';
-import { rulebook } from '../../../../../testing/builders/rulebook';
+import { planLoader, specPlan } from '../../../../../testing/builders/spec-plan';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { Results } from '../../../shared/util-http/result';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
-import { RulebookRule } from '../rulebook/rulebook.models';
+import { RuleCondition } from '../rulebook/rulebook.models';
+import { RuleCopyService } from './rotation-rules/rule-copy-service';
+import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { RuleSample } from './rotation-rule-engine-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
@@ -18,6 +20,7 @@ TestBed.resetTestingModule();
 TestBed.configureTestingModule({ providers: [
   { provide: WCL_TRANSPORT, useValue: {} },
   { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+  { provide: SpecPlanLoaderService, useValue: {} },
 ] });
 const svc = TestBed.inject(RotationTransformService);
 TestBed.resetTestingModule();
@@ -162,52 +165,43 @@ const transform = () => {
 };
 
 describe('benchRules', () => {
-  const sample = (values: number[], unmeasuredOut = 0): RuleSample => ({ values, unmeasuredOut });
-  const dotUptime = (): RulebookRule => ({
-    type: 'rotation', severity: 'warning', description: 'Keep Rupture up on the boss',
-    condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target' },
-    action: 'Refresh it inside its pandemic window.',
-  });
-  const ruleA = dotUptime(), ruleB = dotUptime(), ruleC = dotUptime();
+  const sample = (values: number[]): RuleSample => ({ values, unmeasuredOut: 0 });
+  const rupture: RuleCondition = { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target' };
+  // The same plan rule as a log that showed Rupture under another of its records resolves it.
+  const ruptureElsewhere: RuleCondition = { ...rupture, aura_spell_id: RUPTURE + 1 };
+  const measured = (condition: RuleCondition, uptimePct: number) => ({ condition, sample: sample([uptimePct]) });
+  const TOP_UPTIMES_PCT = [90, 92, 94, 96, 98];
+  // The transform's own upkeep floor: the field's median uptime at or above it makes the aura an upkeep.
+  const UPKEEP_FLOOR_PCT = 70;
 
-  it('pools each rule\'s instances across parses at its own index; an empty sample leaves that parse out of the rule\'s pool and count while other rules still see its other samples', () => {
-    const perParse: ParseRuleSamples[] = [
-      [sample([10]), sample([]), sample([1])],
-      [sample([20]), sample([30]), sample([])],
-      [sample([30]), sample([]), sample([])],
-      [sample([40]), sample([]), sample([])],
-      [sample([50]), sample([]), sample([])],
-    ];
-    const benched = transform()['benchRules']([ruleA, ruleB, ruleC], perParse);
-
-    // Rule A: every one of the 5 parses contributed its own instance.
-    assert.exists(benched[0]);
-    expect(benched[0].rule).toBe(ruleA);
-    assert.exists(benched[0]);
-    expect(benched[0].sample_count).toBe(5);
-    assert.exists(benched[0]);
-    expect(benched[0].band).not.toBeNull();
-
-    // Rule B: only the second parse's sample was non-empty, below the parse floor.
-    assert.exists(benched[1]);
-    expect(benched[1].sample_count).toBe(1);
-    assert.exists(benched[1]);
-    expect(benched[1].band).toBeNull();
-
-    // Rule C: only the first parse's sample was non-empty.
-    assert.exists(benched[2]);
-    expect(benched[2].sample_count).toBe(1);
-    assert.exists(benched[2]);
-    expect(benched[2].band).toBeNull();
+  it('benches a rule under the condition most logs resolved it to, measured on those logs alone', () => {
+    const perParse: ParseRuleSamples[] = [...TOP_UPTIMES_PCT.map(pct => [measured(rupture, pct)]), [measured(ruptureElsewhere, 10)]];
+    const [entry] = transform()['benchRules'](perParse);
+    assert.exists(entry);
+    expect(entry.rule.condition).toEqual(rupture);
+    expect(entry.sample_count).toBe(TOP_UPTIMES_PCT.length);
   });
 
-  it('returns a null band, with no contributing parses, for a rule index with no samples anywhere', () => {
-    const perParse: ParseRuleSamples[] = [[sample([])], [sample([])], [sample([])], [sample([])], [sample([])]];
-    const [entry] = transform()['benchRules']([ruleA], perParse);
-    assert.exists(entry);
-    expect(entry.band).toBeNull();
-    assert.exists(entry);
-    expect(entry.sample_count).toBe(0);
+  it('writes the rule\'s title, fix and chip from its condition', () => {
+    const [entry] = transform()['benchRules'](TOP_UPTIMES_PCT.map(pct => [measured(rupture, pct)]));
+    expect(entry?.rule).toEqual(TestBed.inject(RuleCopyService).rule(rupture));
+  });
+
+  it('leaves out a rule too few logs resolved for the field to give it a band', () => {
+    const perParse: ParseRuleSamples[] = [...TOP_UPTIMES_PCT.slice(1).map(pct => [measured(rupture, pct)]), [null]];
+    expect(transform()['benchRules'](perParse)).toEqual([]);
+  });
+
+  it('leaves out an uptime rule whose aura the field keeps up under the upkeep floor, but keeps one at the floor', () => {
+    const at = (pct: number): ParseRuleSamples[] => TOP_UPTIMES_PCT.map(() => [measured(rupture, pct)]);
+    const rotation = transform();
+    expect(rotation['benchRules'](at(UPKEEP_FLOOR_PCT - 1))).toEqual([]);
+    expect(rotation['benchRules'](at(UPKEEP_FLOOR_PCT))).toHaveLength(1);
+  });
+
+  it('benches two plan rules that resolve to one condition once', () => {
+    const perParse: ParseRuleSamples[] = TOP_UPTIMES_PCT.map(pct => [measured(rupture, pct), measured(rupture, pct)]);
+    expect(transform()['benchRules'](perParse)).toHaveLength(1);
   });
 });
 
@@ -230,15 +224,23 @@ const wclFake = {
     dataType === 'Casts' ? [cast(SHADOW_BLADES, 5), cast(UNTRACKED_SPELL_ID, 8)] : [applyBuff(BLOODLUST, 6)],
   getAbilities: abilityLookup({ [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' } }),
 };
-const filesFake = {
-  getRulebook: async () => Results.ok(rulebook({
-    cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }],
-  })),
+const COOLDOWNS = [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }];
+// A template as the plan carries it: SimC tokens for names and ids left at 0 until a log resolves them.
+const bladesOutsideLust: RuleCondition = {
+  kind: 'cast_outside_buff', spell_id: 0, spell_name: 'shadow_blades', buff_spell_id: 0, buff_spell_name: 'bloodlust', require: 'outside',
+};
+const unseenProc: RuleCondition = {
+  kind: 'proc_wasted', buff_spell_id: 0, buff_spell_name: 'unseen_proc', spend_spell_ids: [0], spend_spell_names: ['shadow_blades'],
+};
+const SPELLS = {
+  shadow_blades: { name: 'Shadow Blades', ids: [SHADOW_BLADES] },
+  bloodlust: { name: 'Bloodlust', ids: [BLOODLUST] },
+  unseen_proc: { name: 'Unseen Proc', ids: [UNTRACKED_SPELL_ID + 1] },
 };
 
 describe('RotationTransformService (live, in-browser)', () => {
   it('computes a rotation bench from the top parses', async () => {
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan({ cooldowns: COOLDOWNS })) }) });
     const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -253,12 +255,28 @@ describe('RotationTransformService (live, in-browser)', () => {
     }
   });
 
-  it('propagates a missing error when the spec has no rulebook cooldowns', async () => {
-    // A rulebook with no cooldowns is nothing to analyze - the transform reports missing.
-    TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok(rulebook()) } }),
-    });
+  it('benches a plan rule under the ids and in-game names the top logs show it with', async () => {
+    const plan = specPlan({ cooldowns: COOLDOWNS, rules: [bladesOutsideLust], spells: SPELLS });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(plan) }) });
+    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
+    assert(result.ok);
+    expect(result.value.rules.map(entry => entry.rule.condition)).toEqual([{
+      kind: 'cast_outside_buff', spell_id: SHADOW_BLADES, spell_name: 'Shadow Blades',
+      buff_spell_id: BLOODLUST, buff_spell_name: 'Bloodlust', require: 'outside',
+    }]);
+  });
+
+  it('leaves out a plan rule naming a spell no top log shows', async () => {
+    const plan = specPlan({ cooldowns: COOLDOWNS, rules: [unseenProc], spells: SPELLS });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(plan) }) });
+    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
+    assert(result.ok);
+    expect(result.value.rules).toEqual([]);
+  });
+
+  it('propagates a missing error when the spec\'s plan has neither cooldowns nor rules', async () => {
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan()) }) });
     expect(await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(Results.missing('No rulebook cooldowns for this spec.'));
+      .toEqual(Results.missing('No cooldowns or rules for this spec.'));
   });
 });

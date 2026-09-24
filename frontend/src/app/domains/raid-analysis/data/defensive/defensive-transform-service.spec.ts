@@ -2,12 +2,11 @@ import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DefensiveTransformService, ParseDefWindow, ParseDefensiveSummary } from './defensive-transform-service';
 import { applyBuff, removeBuff, damageTaken, cast } from '../../../../../testing/builders/events';
-import { rulebook } from '../../../../../testing/builders/rulebook';
+import { planLoader, specPlan } from '../../../../../testing/builders/spec-plan';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
-import { Results } from '../../../shared/util-http/result';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
@@ -88,7 +87,7 @@ describe('findParseDefensiveWindows', () => {
     expect(result[0].ability_breakdown[0]).toMatchObject({ spell_id: BOSS_HIT, damage: 750 });
   });
 
-  it('runs an open buff to fight end (no rulebook duration)', () => {
+  it('runs an open buff to fight end (no plan duration)', () => {
     const windows = auraWindows.buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, 10)], 0)); // no remove
     const result = svc['findParseDefensiveWindows'](
       timed([damageTaken(BOSS_HIT, 50, 400, { source: BOSS_ACTOR })], 0), 300, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]),
@@ -252,13 +251,11 @@ const wclFake = {
   },
   getAbilities: abilityLookup({ 700: { icon: 'hit', name: 'Boss Hit' }, [CLOAK_OF_SHADOWS]: { icon: 'cloak', name: 'Cloak of Shadows' } }),
 };
-const filesFake = {
-  getRulebook: async () => Results.ok(rulebook({ defensives: [CLOAK] })),
-};
+const plansFake = planLoader(specPlan({ defensives: [CLOAK] }));
 
 describe('DefensiveTransformService (live, in-browser)', () => {
   it('computes a clustered defensive bench from the top parses', async () => {
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: plansFake }) });
     const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
@@ -271,9 +268,9 @@ describe('DefensiveTransformService (live, in-browser)', () => {
     expect(bench.value.ability_icons[700]).toEqual({ icon: 'hit', name: 'Boss Hit' });
   });
 
-  it('reports missing when the spec has no rulebook defensives', async () => {
+  it('reports missing when the spec\'s plan has no defensives', async () => {
     TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok({ spec: 'X', defensives: [] }) } }),
+      providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan()) }),
     });
     const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(false);

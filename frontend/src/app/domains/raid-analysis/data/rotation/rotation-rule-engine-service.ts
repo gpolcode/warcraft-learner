@@ -41,13 +41,8 @@ export class RotationRuleEngineService {
     return spec as RuleKind<C>;
   }
 
-  rulesNeed(rules: RulebookRule[], stream: RuleStream): boolean {
-    return this.judgeableRules(rules).some(rule => this.specFor(rule.condition).streams(rule.condition).includes(stream));
-  }
-
-  /** A deployed rulebook file can still carry a rule with no condition, which the engine has nothing to judge. */
-  judgeableRules(rules: RulebookRule[]): (RulebookRule & { condition: RuleCondition })[] {
-    return rules.filter((rule): rule is RulebookRule & { condition: RuleCondition } => rule.condition != null);
+  rulesNeed(conditions: RuleCondition[], stream: RuleStream): boolean {
+    return conditions.some(condition => this.specFor(condition).streams(condition).includes(stream));
   }
 
   sampleRule(cond: RuleCondition, ctx: RuleContext): RuleSample {

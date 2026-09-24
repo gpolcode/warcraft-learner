@@ -140,7 +140,7 @@ export class RotationFeatureService {
     const { reportCode, fightId } = pull;
     const { fight, fightDurationS } = context;
     const rules = this.ruleEngine.benchedRules(bench.rules);
-    const conditions = rules.map(entry => entry.rule);
+    const conditions = rules.map(entry => entry.rule.condition);
     const [casts, buffs, enemyAuras, damage] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
