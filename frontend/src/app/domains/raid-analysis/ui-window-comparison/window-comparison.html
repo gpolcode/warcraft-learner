@@ -39,7 +39,7 @@
                 role="option"
                 tabindex="-1"
                 [id]="optionId(cell.index)"
-                [class]="'relative flex items-center justify-center w-10 h-10 rounded-lg overflow-hidden bg-bg border border-line ' + iconTone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
+                [class]="'relative flex items-center justify-center cursor-pointer w-10 h-10 rounded-lg overflow-hidden bg-bg border border-line ' + iconTone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
                 [attr.aria-selected]="active"
                 [attr.aria-label]="(w.timeStartS | formatDuration)"
                 (click)="select(cell.index)">
