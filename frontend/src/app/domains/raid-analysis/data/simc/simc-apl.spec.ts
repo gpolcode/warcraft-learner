@@ -11,7 +11,7 @@ const CURRENT_TIER = 'midnight_season_2';
 /** Longer than any cap a reader might guess at: a chain inlines whole. */
 const LONG_CHAIN = 12;
 
-const PROFILE = [
+const APL_TEXT = [
   'rogue="MID2_Rogue_Subtlety"',
   'actions.precombat=apply_poison',
   'actions.precombat+=/snapshot_stats',
@@ -28,7 +28,7 @@ const PROFILE = [
 ].join('\n');
 
 function resolved(): ResolvedAction[] {
-  return apl.resolve(apl.parse(PROFILE), CURRENT_TIER).actions;
+  return apl.resolve(apl.parse(APL_TEXT), CURRENT_TIER).actions;
 }
 
 function line(action: string): ResolvedAction {
@@ -41,14 +41,14 @@ const printed = (action: ResolvedAction): string | null => (action.own ? express
 
 describe('SimcAplService.parse', () => {
   it('reads the list name, the action and every option of an action line', () => {
-    const { lines } = apl.parse(PROFILE);
+    const { lines } = apl.parse(APL_TEXT);
     const shadowBlades = lines.find(entry => entry.action === 'shadow_blades');
     expect(shadowBlades?.list).toBe('cds');
     expect(shadowBlades?.options).toEqual({ if: 'variable.stealth&set_bonus.midnight_season_2_2pc' });
   });
 
   it('ignores lines that are not action lines', () => {
-    expect(apl.parse(PROFILE).lines.every(entry => entry.action !== 'rogue')).toBe(true);
+    expect(apl.parse(APL_TEXT).lines.every(entry => entry.action !== 'rogue')).toBe(true);
   });
 
   it('reads a list whose name carries capitals, as SimulationCraft does', () => {
@@ -87,8 +87,8 @@ describe('SimcAplService.resolve', () => {
   });
 
   it('treats a running-op variable as unknown without reporting it, since the inventory lists the op', () => {
-    const profile = 'actions=variable,name=count,op=add,value=1\nactions+=/backstab,if=variable.count>2&buff.x.up';
-    const result = apl.resolve(apl.parse(profile), CURRENT_TIER);
+    const text = 'actions=variable,name=count,op=add,value=1\nactions+=/backstab,if=variable.count>2&buff.x.up';
+    const result = apl.resolve(apl.parse(text), CURRENT_TIER);
     expect(result.gaps).toEqual([]);
     expect(result.actions.map(printed)).toEqual(['buff.x.up']);
   });
@@ -100,17 +100,17 @@ describe('SimcAplService.resolve', () => {
   });
 
   it('reports an unparsed line and a call to a list with no lines, and walks the rest', () => {
-    const profile = [
+    const text = [
       'actions.cds-if=buff.x.up',
       'actions=call_action_list,name=cds',
       'actions+=/backstab',
     ].join('\n');
-    const result = apl.resolve(apl.parse(profile), CURRENT_TIER);
+    const result = apl.resolve(apl.parse(text), CURRENT_TIER);
     expect(result.gaps).toEqual([{ kind: 'line', token: 'actions.cds-if=buff.x.up' }, { kind: 'list', token: 'cds' }]);
     expect(result.actions.map(entry => entry.action)).toEqual(['backstab']);
   });
 
-  it('reports a profile with no default list', () => {
+  it('reports lines that never write the default list', () => {
     expect(apl.resolve(apl.parse('actions.precombat=stealth'), CURRENT_TIER).gaps).toEqual([{ kind: 'list', token: 'default' }]);
   });
 
@@ -121,11 +121,11 @@ describe('SimcAplService.resolve', () => {
   });
 
   it('reports an option and a variable op outside the inventory', () => {
-    const profile = [
+    const text = [
       'actions=variable,name=n,op=average,value=1',
       'actions+=/backstab,strange_option=1,if=buff.a.up',
     ].join('\n');
-    expect(apl.resolve(apl.parse(profile), CURRENT_TIER).gaps).toEqual([
+    expect(apl.resolve(apl.parse(text), CURRENT_TIER).gaps).toEqual([
       { kind: 'option', token: 'strange_option' },
       { kind: 'variable_op', token: 'average' },
     ]);
@@ -137,28 +137,28 @@ describe('SimcAplService.resolve', () => {
     expect(result.actions[0]?.own).toBeNull();
   });
 
-  it('reports nothing for a profile written in the inventory alone', () => {
-    const profile = [
+  it('reports nothing for lines written in the inventory alone', () => {
+    const text = [
       'actions=variable,name=n,op=reset,default=0',
       'actions+=/backstab,if=buff.a.up&cooldown.b.remains>10&fight_remains<30&energy.deficit>20,target_if=min:dot.c.remains,line_cd=5',
     ].join('\n');
-    expect(apl.resolve(apl.parse(profile), CURRENT_TIER).gaps).toEqual([]);
+    expect(apl.resolve(apl.parse(text), CURRENT_TIER).gaps).toEqual([]);
   });
 
   it('names the heads the gates touched, counting a bare dot field as a dot', () => {
-    const profile = 'actions=backstab,if=refreshable&buff.a.up&fight_remains>10';
-    expect(apl.resolve(apl.parse(profile), CURRENT_TIER).referencedHeads).toEqual(['buff', 'dot', 'fight_remains']);
+    const text = 'actions=backstab,if=refreshable&buff.a.up&fight_remains>10';
+    expect(apl.resolve(apl.parse(text), CURRENT_TIER).referencedHeads).toEqual(['buff', 'dot', 'fight_remains']);
   });
 
   it('walks two lists that call each other once each, without reporting a gap', () => {
-    const profile = [
+    const text = [
       'actions=call_action_list,name=a',
       'actions.a=backstab',
       'actions.a+=/call_action_list,name=b',
       'actions.b=eviscerate',
       'actions.b+=/call_action_list,name=a',
     ].join('\n');
-    const result = apl.resolve(apl.parse(profile), CURRENT_TIER);
+    const result = apl.resolve(apl.parse(text), CURRENT_TIER);
     expect(result.gaps).toEqual([]);
     expect(result.actions.map(entry => entry.action)).toEqual(['backstab', 'eviscerate']);
   });
@@ -174,30 +174,30 @@ describe('SimcAplService.resolve', () => {
   });
 
   it('reads a variable that refers to its own earlier value as unknown, without reporting it', () => {
-    const profile = [
+    const text = [
       'actions=variable,name=hold,op=set,value=buff.a.up',
       'actions+=/variable,name=hold,op=set,value=buff.b.up,if=variable.hold&buff.c.up',
       'actions+=/backstab,if=variable.hold&buff.x.up',
     ].join('\n');
-    const result = apl.resolve(apl.parse(profile), CURRENT_TIER);
+    const result = apl.resolve(apl.parse(text), CURRENT_TIER);
     expect(result.gaps).toEqual([]);
     expect(result.actions.map(printed)).toEqual(['(buff.c.up&buff.b.up|!buff.c.up&buff.a.up)&buff.x.up']);
   });
 
   it('reads a cycling variable as defined and unknown', () => {
-    const profile = 'actions=cycling_variable,name=ttd,op=max,value=target.time_to_die\nactions+=/backstab,if=variable.ttd>10&buff.x.up';
-    const result = apl.resolve(apl.parse(profile), CURRENT_TIER);
+    const text = 'actions=cycling_variable,name=ttd,op=max,value=target.time_to_die\nactions+=/backstab,if=variable.ttd>10&buff.x.up';
+    const result = apl.resolve(apl.parse(text), CURRENT_TIER);
     expect(result.gaps).toEqual([]);
     expect(result.actions.map(printed)).toEqual(['buff.x.up']);
   });
 
   it('chains conditional sets of a flag variable into the gate that makes it true', () => {
-    const profile = [
+    const text = [
       'actions=variable,name=cds,op=set,value=1,if=buff.a.up',
       'actions+=/variable,name=cds,op=set,value=0,if=buff.b.up',
       'actions+=/backstab,if=variable.cds',
     ].join('\n');
-    const result = apl.resolve(apl.parse(profile), CURRENT_TIER);
+    const result = apl.resolve(apl.parse(text), CURRENT_TIER);
     expect(result.actions.map(printed)).toEqual(['!buff.b.up&buff.a.up']);
   });
 });

@@ -145,7 +145,7 @@ interface BenchQuery {
   spec: string;
   encounterId: number;
   selection?: TopParseSelection;
-  /** The rulebook derived for this encounter; null for a spec SimulationCraft ships no profile for. */
+  /** The rulebook derived for this encounter; null for a spec SimulationCraft writes no action list for. */
   rulebook?: Rulebook | null;
 }
 

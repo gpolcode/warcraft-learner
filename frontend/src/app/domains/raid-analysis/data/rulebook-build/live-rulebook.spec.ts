@@ -20,22 +20,22 @@ const META: SpecMeta = {
 const TIER = { branch: 'midnight', dir: 'MID2' };
 const NEXUS_KING = 3129;
 const DIMENSIUS = 3131;
-const PROFILE = 'actions=backstab';
+const APL = 'actions=backstab';
 const DUMP = '';
 const SELECTION: TopParseSelection = [{ player: 'Raider', server: 'Ravencrest', report_code: 'r1', fight_id: 1 }];
 const DERIVED = rulebook({ spec: SPEC });
 const WCL = {} as WclApiService;
-/** One profile and one class dump: what preparing a spec's sources costs. */
-const SOURCE_FETCHES = ['profile', 'dump'];
+/** One action list and one class dump: what preparing a spec's sources costs. */
+const SOURCE_FETCHES = ['apl', 'dump'];
 
-function setup(profile: Result<string> = Results.ok(PROFILE), selection: TopParseSelection = SELECTION) {
+function setup(apl: Result<string> = Results.ok(APL), selection: TopParseSelection = SELECTION) {
   const fetched: string[] = [];
   const derived: EncounterRulebookInputs[] = [];
   const warnings: string[] = [];
   TestBed.configureTestingModule({
     providers: [
       { provide: SimcDataService, useValue: {
-        getProfile: async () => { fetched.push('profile'); return profile; },
+        getApl: async () => { fetched.push('apl'); return apl; },
         getSpellDataDump: async () => { fetched.push('dump'); return Results.ok(DUMP); },
       } },
       { provide: TalentDataService, useValue: { getTalents: async () => Results.ok({}) } },
@@ -74,8 +74,8 @@ describe('LiveRulebookService.rulebookFor', () => {
     expect(derived[0]?.selection).toBe(SELECTION);
   });
 
-  it('reads no rules for a spec SimulationCraft ships no profile for, and says nothing about it', async () => {
-    const { rulebooks, derived, warnings } = setup(Results.missing('no profile'));
+  it('reads no rules for a spec SimulationCraft writes no action list for, and says nothing about it', async () => {
+    const { rulebooks, derived, warnings } = setup(Results.missing('no action list'));
     expect(await rulebooks.rulebookFor(WCL, SPEC, NEXUS_KING, TIER)).toBeNull();
     expect(derived).toEqual([]);
     expect(warnings).toEqual([]);
@@ -88,7 +88,7 @@ describe('LiveRulebookService.rulebookFor', () => {
   });
 
   it('reads no rules for an encounter with no ranked parses', async () => {
-    const { rulebooks, derived } = setup(Results.ok(PROFILE), []);
+    const { rulebooks, derived } = setup(Results.ok(APL), []);
     expect(await rulebooks.rulebookFor(WCL, SPEC, NEXUS_KING, TIER)).toBeNull();
     expect(derived).toEqual([]);
   });

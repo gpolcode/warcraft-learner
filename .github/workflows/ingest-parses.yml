@@ -62,7 +62,7 @@ jobs:
 
       # CURRENT_RAIDS: WCL zone names to bench, comma separated (e.g. "The Venomous Abyss"). Anything else is pruned; unset prunes nothing.
       # PRIORITY_SPECS (repo variable) is optional: unset or malformed falls back safely (see parsePrioritySpecs in ingest-ordering-service.ts).
-      # SIMC_TIER (repo variable): the SimulationCraft branch and profile directory the rules derive from, e.g. "midnight/MID2".
+      # SIMC_TIER (repo variable): the SimulationCraft branch the action lists and class dumps are read from, and the tier directory that names the set bonus season, e.g. "midnight/MID2".
       - name: Run parse ingestion
         working-directory: frontend
         env:

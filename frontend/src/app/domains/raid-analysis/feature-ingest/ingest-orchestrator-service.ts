@@ -44,7 +44,7 @@ const ENCOUNTER_OUTCOME_NOTE: Record<EncounterOutcome, string> = {
   failed: 'bench load failed, retried next run',
 };
 
-/** The SimulationCraft inputs of one run, read up front for every spec: null where SimulationCraft ships no profile, an error where a source failed to load. */
+/** The SimulationCraft inputs of one run, read up front for every spec: null where SimulationCraft writes no action list, an error where a source failed to load. */
 interface RunSources {
   sources: Map<string, Result<RulebookSources | null>>;
   /** Specs whose first derivation was logged, so the rebuild per encounter stays quiet. */
@@ -137,7 +137,7 @@ export class IngestOrchestratorService {
     return metas;
   }
 
-  /** Every spec's sources up front: the gap report reads them all, and a missing profile marks its spec as gear, positions and burst windows only. */
+  /** Every spec's sources up front: the gap report reads them all, and a missing action list marks its spec as gear, positions and burst windows only. */
   private async prepareSources(tier: SimcTier, metas: SpecMeta[]): Promise<Map<string, Result<RulebookSources | null>>> {
     const index = await this.talents.getTalentIndex();
     if (!index.ok) this.logger.logWarn('ingest: no talent data, rules stay ungated', index.error);
@@ -146,16 +146,16 @@ export class IngestOrchestratorService {
     const sources = new Map<string, Result<RulebookSources | null>>();
     for (const meta of metas) sources.set(meta.spec, await this.prepareSpec(meta, tier, dumps, talents));
     const shipped = [...sources.values()].filter(prepared => prepared.ok && prepared.value !== null).length;
-    console.log(`SimulationCraft ships ${shipped} of ${metas.length} spec profiles in ${tier.dir}`);
+    console.log(`SimulationCraft writes ${shipped} of ${metas.length} spec action lists on ${tier.branch}`);
     return sources;
   }
 
   private async prepareSpec(meta: SpecMeta, tier: SimcTier, dumps: ClassDumps, talents: Map<string, SpecTalents>): Promise<Result<RulebookSources | null>> {
-    const profile = await this.simc.getProfile(tier, meta.classLabel, meta.specLabel);
-    if (!profile.ok) return profile.error.kind === 'missing' ? Results.ok(null) : profile;
+    const apl = await this.simc.getApl(tier, meta.className, meta.specLabel);
+    if (!apl.ok) return apl.error.kind === 'missing' ? Results.ok(null) : apl;
     const spellData = await getOrInsert(dumps, meta.className, () => this.simc.getSpellDataDump(tier, meta.className));
     if (!spellData.ok) return spellData;
-    return Results.ok(this.builder.prepare({ spec: meta, tier, profile: profile.value, spellData: spellData.value, talents: talents.get(meta.spec) ?? {} }));
+    return Results.ok(this.builder.prepare({ spec: meta, tier, apl: apl.value, spellData: spellData.value, talents: talents.get(meta.spec) ?? {} }));
   }
 
   private gapsBySpec(run: RunSources): Map<string, RulebookGap[]> {
@@ -289,11 +289,11 @@ export class IngestOrchestratorService {
     return false;
   }
 
-  /** The spec's prepared sources, null where SimulationCraft ships no profile; a source that failed to load fails the spec instead. */
+  /** The spec's prepared sources, null where SimulationCraft writes no action list; a source that failed to load fails the spec instead. */
   private preparedSources(spec: string, run: RunSources): RulebookSources | null {
     const prepared = run.sources.get(spec) ?? Results.ok(null);
     if (!prepared.ok) throw new Error(prepared.error.message);
-    if (!prepared.value) console.log('  no SimulationCraft profile: gear, positions and burst windows only');
+    if (!prepared.value) console.log('  no SimulationCraft action list: gear, positions and burst windows only');
     return prepared.value;
   }
 

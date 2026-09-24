@@ -40,7 +40,7 @@ const KIT = [
   spellRecord({ id: LAST_STAND_NODE, name: 'Last Stand', className: CLASS, passive: true, talent: { tree: 'spec', owner: 'Outlaw' } }),
 ];
 
-const PROFILE = [
+const APL_TEXT = [
   'actions=shadow_blades',
   'actions+=/shadow_dance,if=!buff.shadow_dance.up',
   'actions+=/vanish',
@@ -49,7 +49,7 @@ const PROFILE = [
 
 function derive(samples: ParseSample[] = []) {
   const index = abilities.build(KIT, samples, CLASS, SPEC);
-  const resolved = apl.resolve(apl.parse(PROFILE), TIER);
+  const resolved = apl.resolve(apl.parse(APL_TEXT), TIER);
   return { index, majors: cooldowns.majorCooldowns(resolved.actions, index) };
 }
 

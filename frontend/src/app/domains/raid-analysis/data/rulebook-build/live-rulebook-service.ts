@@ -27,7 +27,7 @@ export class LiveRulebookService {
   private readonly prepared = new Map<string, Promise<RulebookSources | null>>();
   private readonly derived = new Map<string, Promise<Rulebook | null>>();
 
-  /** Null where SimulationCraft ships no profile for the spec, a source cannot be read, or the encounter has no ranked parses. */
+  /** Null where SimulationCraft writes no action list for the spec, a source cannot be read, or the encounter has no ranked parses. */
   rulebookFor(wclApi: WclApiService, spec: string, encounterId: number, tier: SimcTier): Promise<Rulebook | null> {
     return getOrInsert(this.derived, `${spec}:${encounterId}`, () => this.derive(wclApi, spec, encounterId, tier));
   }
@@ -44,15 +44,15 @@ export class LiveRulebookService {
   private async prepare(wclApi: WclApiService, spec: string, tier: SimcTier): Promise<RulebookSources | null> {
     const meta = (await this.currentRaids.discoverSpecMetas(wclApi)).find(entry => entry.spec === spec);
     if (!meta) return null;
-    const profile = await this.simc.getProfile(tier, meta.classLabel, meta.specLabel);
-    if (!profile.ok) return this.unread(spec, profile.error);
+    const apl = await this.simc.getApl(tier, meta.className, meta.specLabel);
+    if (!apl.ok) return this.unread(spec, apl.error);
     const spellData = await this.simc.getSpellDataDump(tier, meta.className);
     if (!spellData.ok) return this.unread(spec, spellData.error);
     const talents = await this.talents.getTalents(spec);
-    return this.builder.prepare({ spec: meta, tier, profile: profile.value, spellData: spellData.value, talents: talents.ok ? talents.value : {} });
+    return this.builder.prepare({ spec: meta, tier, apl: apl.value, spellData: spellData.value, talents: talents.ok ? talents.value : {} });
   }
 
-  /** A profile SimulationCraft does not ship is a spec with no rules; anything else is worth a line in the console. */
+  /** A list SimulationCraft does not write is a spec with no rules; anything else is worth a line in the console. */
   private unread(spec: string, error: LoadError): null {
     if (error.kind !== 'missing') this.logger.logWarn(`LiveRulebookService ${spec}`, error);
     return null;

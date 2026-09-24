@@ -44,18 +44,18 @@ const STORED_SAMPLES = 3;
 const FRESH_SAMPLES = 7;
 const HOURLY_POINT_LIMIT = 18_000;
 
-const PROFILE = 'actions=backstab,if=buff.shadow_dance.up';
-const OLDER_PROFILE = 'actions=backstab';
+const APL = 'actions=backstab,if=buff.shadow_dance.up';
+const OLDER_APL = 'actions=backstab';
 const DUMP = '';
 const UNKNOWN_SHAPE = 'buff.*.brand_new_field';
-const PROFILE_WITH_GAP = 'actions=backstab,if=buff.shadow_dance.brand_new_field';
+const APL_WITH_GAP = 'actions=backstab,if=buff.shadow_dance.brand_new_field';
 const META: SpecMeta = { spec: SPEC, className: 'Rogue', specName: 'Subtlety', classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue' };
 const TIER_PARTS = { branch: 'midnight', dir: 'MID2' };
 
-/** The stamp keys on what the rules read, so the expected signature carries the key the builder derives from the profile and dump. */
-const sourceKey = async (profile: string | null): Promise<string> => {
-  if (profile === null) return String(INGEST_VERSION);
-  const sources = builder.prepare({ spec: META, tier: TIER_PARTS, profile, spellData: DUMP, talents: {} });
+/** The stamp keys on what the rules read, so the expected signature carries the key the builder derives from the action list and dump. */
+const sourceKey = async (apl: string | null): Promise<string> => {
+  if (apl === null) return String(INGEST_VERSION);
+  const sources = builder.prepare({ spec: META, tier: TIER_PARTS, apl, spellData: DUMP, talents: {} });
   return `${INGEST_VERSION}:${await builder.sourceKey(sources)}`;
 };
 
@@ -70,9 +70,9 @@ const RANKED = [TOP_PARSE, RUNNER_UP];
 const RERANKED = [TOP_PARSE, NEWCOMER];
 
 // Fewer rows than the orchestrator's top-N cap: past it, signatureOf stops matching the signature the run stamps.
-const signatureOf = async (rows: RankedRow[], profile: string | null = PROFILE): Promise<string> => signatures.encounterSkipKey(
+const signatureOf = async (rows: RankedRow[], apl: string | null = APL): Promise<string> => signatures.encounterSkipKey(
   rows.map(row => ({ report_code: row.report.code, fight_id: row.report.fightID })),
-  new Set(), await sourceKey(profile), rows.length);
+  new Set(), await sourceKey(apl), rows.length);
 
 const benchPath = (encId: number, bench = LEAD_BENCH): string => `${SPEC}/${bench}/${encId}.json`;
 const bossName = (encId: number): string => BOSSES.find(boss => boss.id === encId)?.name ?? '';
@@ -126,7 +126,7 @@ const cleanTransport: Pick<WclTransport, 'withFetchOutcomes'> = {
 
 interface RunOptions {
   simcTier: string | null;
-  profile: Result<string>;
+  apl: Result<string>;
   /** Sees the rulebook every bench received, so a test can tell a derived one from none. */
   onBench: (received: Rulebook | null) => void;
 }
@@ -134,7 +134,7 @@ interface RunOptions {
 const DERIVED = rulebook({ spec: SPEC, cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }] });
 
 function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string, over: Partial<RunOptions> = {}): Promise<void> {
-  const options: RunOptions = { simcTier: TIER, profile: Results.ok(PROFILE), onBench: () => undefined, ...over };
+  const options: RunOptions = { simcTier: TIER, apl: Results.ok(APL), onBench: () => undefined, ...over };
   const params = new URLSearchParams();
   if (currentRaids) params.set('currentRaids', currentRaids);
   if (options.simcTier) params.set('simcTier', options.simcTier);
@@ -146,7 +146,7 @@ function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string, over: 
     },
   };
   const simcFake = {
-    getProfile: async () => options.profile,
+    getApl: async () => options.apl,
     getSpellDataDump: async () => Results.ok(DUMP),
   };
   TestBed.configureTestingModule({
@@ -242,7 +242,7 @@ describe('IngestOrchestratorService.run', () => {
   });
 
   it('re-benches that encounter once the SimulationCraft gates it was built from change', async () => {
-    const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: storedBench(await signatureOf(RANKED, OLDER_PROFILE)) });
+    const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: storedBench(await signatureOf(RANKED, OLDER_APL)) });
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 
@@ -251,11 +251,11 @@ describe('IngestOrchestratorService.run', () => {
     });
   });
 
-  it('leaves that encounter alone when the profile changed outside what the rules read', async () => {
+  it('leaves that encounter alone when the action list changed outside what the rules read', async () => {
     const stored = storedBench(await signatureOf(RANKED));
     const disk = fakeDisk({ ...SPEC_ON_DISK, [benchPath(CURRENT_BOSS.id)]: stored });
 
-    await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { profile: Results.ok(`# gear edit\n${PROFILE}`) });
+    await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { apl: Results.ok(`# a reworded comment\n${APL}`) });
 
     expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toEqual(stored);
   });
@@ -279,19 +279,19 @@ describe('IngestOrchestratorService.run', () => {
     expect(received.every(entry => entry === DERIVED)).toBe(true);
   });
 
-  it('benches a spec SimulationCraft ships no profile for with no rulebook, stamped on the version alone', async () => {
+  it('benches a spec SimulationCraft writes no action list for with no rulebook, stamped on the version alone', async () => {
     const received: (Rulebook | null)[] = [];
     const disk = fakeDisk(SPEC_ON_DISK);
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID,
-      { profile: Results.missing('no profile'), onBench: entry => received.push(entry) });
+      { apl: Results.missing('no action list'), onBench: entry => received.push(entry) });
 
     expect(received.every(entry => entry === null)).toBe(true);
     expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toMatchObject({ source_signature: await signatureOf(RANKED, null) });
   });
 
-  it('reports what the builder cannot read over every profile the tier ships, before any parse is sampled', async () => {
-    await ingest(fakeDisk(SPEC_ON_DISK), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { profile: Results.ok(PROFILE_WITH_GAP) });
+  it('reports what the builder cannot read over every action list SimulationCraft writes, before any parse is sampled', async () => {
+    await ingest(fakeDisk(SPEC_ON_DISK), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { apl: Results.ok(APL_WITH_GAP) });
 
     expect(published()?.gaps).toEqual([
       { kind: 'action', token: 'backstab', specs: [SPEC] },
@@ -302,7 +302,7 @@ describe('IngestOrchestratorService.run', () => {
   });
 
   it('renders no gap report for a tier the builder reads whole', async () => {
-    await ingest(fakeDisk(SPEC_ON_DISK), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { profile: Results.ok('actions=variable,name=n,value=1') });
+    await ingest(fakeDisk(SPEC_ON_DISK), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, { apl: Results.ok('actions=variable,name=n,value=1') });
 
     expect(published()?.gaps).toEqual([]);
     expect(published()?.gapReport).toBeNull();

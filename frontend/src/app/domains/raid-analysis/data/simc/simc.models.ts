@@ -1,4 +1,4 @@
-/** `midnight/MID2`: the SimC branch that carries the live expansion and the profile directory of the live tier. */
+/** `midnight/MID2`: the SimC branch the action lists and class dumps are read from, and the tier directory whose digits name the season of the worn set bonus. */
 export interface SimcTier {
   branch: string;
   dir: string;

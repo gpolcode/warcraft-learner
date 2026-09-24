@@ -18,7 +18,7 @@ const KEY_LENGTH = 16;
 const SHADOW_DANCE_RECHARGE_S = 20;
 
 /** Three cooldown lines in priority order, so severity walks critical, warning, info. */
-const PROFILE = [
+const APL = [
   'actions=shadow_blades,if=cooldown.shadow_dance.ready',
   'actions+=/shadow_dance,if=cooldown.shadow_blades.remains>=35',
   'actions+=/vanish,if=talent.unseen_blade&combo_points<=2',
@@ -64,7 +64,7 @@ const MAGE_DUMP = [
 const TALENTS = { [UNSEEN_BLADE_ENTRY]: { name: 'Unseen Blade', icon: 'x', spellId: 1 } };
 
 function texts(over: Partial<RulebookSourceTexts> = {}): RulebookSourceTexts {
-  return { spec: SPEC, tier: TIER, profile: PROFILE, spellData: DUMP, talents: TALENTS, ...over };
+  return { spec: SPEC, tier: TIER, apl: APL, spellData: DUMP, talents: TALENTS, ...over };
 }
 
 function build(over: Partial<RulebookSourceTexts> = {}) {
@@ -94,9 +94,9 @@ describe('RulebookBuildService.build', () => {
 
   it('reads a numbered talent token as the name it numbers when that many entries share it', () => {
     const talents = Object.fromEntries(ANCIENT_ARTS_ENTRIES.map(id => [id, { name: 'Ancient Arts', icon: 'x' }]));
-    const numbered = build({ profile: 'actions=vanish,if=talent.ancient_arts_3&combo_points<=2', talents });
+    const numbered = build({ apl: 'actions=vanish,if=talent.ancient_arts_3&combo_points<=2', talents });
     expect(numbered.rulebook.rules[0]?.requires_talents).toEqual([ANCIENT_ARTS_ENTRIES]);
-    const short = build({ profile: 'actions=vanish,if=talent.ancient_arts_4&combo_points<=2', talents });
+    const short = build({ apl: 'actions=vanish,if=talent.ancient_arts_4&combo_points<=2', talents });
     expect(short.gaps).toEqual([{ kind: 'talent', token: 'ancient_arts_4' }]);
   });
 
@@ -122,10 +122,10 @@ describe('RulebookBuildService.parseTier', () => {
 });
 
 describe('RulebookBuildService.sourceKey', () => {
-  it('keys the sources on what the rules read, so a profile edit outside the gates leaves the key alone', async () => {
+  it('keys the sources on what the rules read, so an edit outside the gates leaves the key alone', async () => {
     const prepared = await builder.sourceKey(builder.prepare(texts()));
-    const reworded = await builder.sourceKey(builder.prepare(texts({ profile: `rogue="MID2_Rogue_Subtlety"\n# a comment\n${PROFILE}` })));
-    const regated = await builder.sourceKey(builder.prepare(texts({ profile: PROFILE.replace('remains>=35', 'remains>=40') })));
+    const reworded = await builder.sourceKey(builder.prepare(texts({ apl: `# Subtlety APL can be found at https://example.invalid/subtlety.txt\n${APL}` })));
+    const regated = await builder.sourceKey(builder.prepare(texts({ apl: APL.replace('remains>=35', 'remains>=40') })));
     expect(prepared).toMatch(/^[0-9a-f]+$/);
     expect(prepared).toHaveLength(KEY_LENGTH);
     expect(reworded).toBe(prepared);
@@ -141,14 +141,14 @@ describe('RulebookBuildService.sourceKey', () => {
 
 describe('RulebookBuildService.prepare', () => {
   it('leaves out the names the exclusion overlay lists for the spec, actions and records alike', () => {
-    const prepared = builder.prepare(texts({ spec: EXCLUDED_SPEC, profile: 'actions=ice_barrier\nactions+=/vanish', spellData: `${MAGE_DUMP}\n${DUMP}` }));
+    const prepared = builder.prepare(texts({ spec: EXCLUDED_SPEC, apl: 'actions=ice_barrier\nactions+=/vanish', spellData: `${MAGE_DUMP}\n${DUMP}` }));
     expect(prepared.apl.actions.map(action => action.action)).toEqual(['vanish']);
     expect(prepared.records.some(record => record.id === ICE_BARRIER)).toBe(false);
     expect(prepared.gaps.some(gap => gap.token === 'ice_barrier')).toBe(false);
   });
 
   it('collects the gaps the sources alone leave, before any parse is sampled', () => {
-    const prepared = builder.prepare(texts({ profile: `${PROFILE}\nactions+=/goremaws_bite,if=buff.shadow_dance.brand_new_field` }));
+    const prepared = builder.prepare(texts({ apl: `${APL}\nactions+=/goremaws_bite,if=buff.shadow_dance.brand_new_field` }));
     expect(prepared.gaps).toEqual([{ kind: 'expression', token: 'buff.*.brand_new_field' }, { kind: 'action', token: 'goremaws_bite' }]);
   });
 });

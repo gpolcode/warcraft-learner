@@ -32,8 +32,8 @@ const fillerInBuff: RuleCondition = {
   buff_spell_id: SHADOW_DANCE, buff_spell_name: 'Shadow Dance', except_buff_spell_ids: [], except_buff_spell_names: [],
 };
 
-function linesOf(profile: string) {
-  return apl.resolve(apl.parse(profile), TIER).actions;
+function linesOf(text: string) {
+  return apl.resolve(apl.parse(text), TIER).actions;
 }
 
 describe('RulebookCopyService.description', () => {

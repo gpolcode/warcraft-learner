@@ -56,7 +56,7 @@ export interface RulebookGap {
   token: string;
 }
 
-/** Everything a spec's rules derive from besides the parses, read once per run: the profile resolved against the tier and the records the spec owns, both with the exclusions applied. */
+/** Everything a spec's rules derive from besides the parses, read once per run: the action list resolved against the tier and the records the spec owns, both with the exclusions applied. */
 export interface RulebookSources {
   spec: SpecMeta;
   apl: ResolvedApl;

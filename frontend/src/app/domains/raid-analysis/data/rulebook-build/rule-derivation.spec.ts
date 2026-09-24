@@ -45,7 +45,7 @@ const KIT = [
   spellRecord({ id: DARKEST_NIGHT, name: 'Darkest Night', className: CLASS, durationS: 30, effects: [selfAura()] }),
 ];
 
-const PROFILE = [
+const APL_TEXT = [
   'actions=call_action_list,name=cds',
   'actions+=/call_action_list,name=finish,if=combo_points>=5',
   'actions+=/call_action_list,name=build',
@@ -74,9 +74,9 @@ const SAMPLE: ParseSample = parseSample({
   debuffs: buffWindow(RUPTURE, 5, 95),
 });
 
-function drafts(profile = PROFILE, kit = KIT, samples: ParseSample[] = [SAMPLE]): RuleDraft[] {
+function drafts(text = APL_TEXT, kit = KIT, samples: ParseSample[] = [SAMPLE]): RuleDraft[] {
   const index = abilities.build(kit, samples, CLASS, SPEC);
-  const resolved = apl.resolve(apl.parse(profile), TIER);
+  const resolved = apl.resolve(apl.parse(text), TIER);
   return rules.derive(resolved.actions, index, samples).drafts;
 }
 
@@ -121,12 +121,12 @@ describe('RuleDerivationService.derive', () => {
   });
 
   it('merges the same rule from two lines into one draft carrying the union of their lists', () => {
-    const profile = [
+    const text = [
       'actions=shadowstrike,if=buff.shadow_dance.up',
       'actions+=/backstab,if=!buff.shadow_dance.up',
       'actions+=/gloomblade,if=!buff.shadow_dance.up',
     ].join('\n');
-    const inDance = ofKind(drafts(profile, KIT, []), 'filler_in_buff');
+    const inDance = ofKind(drafts(text, KIT, []), 'filler_in_buff');
     expect(inDance).toHaveLength(1);
     expect(inDance[0]?.condition.alternative_spell_ids.sort((a, b) => a - b)).toEqual([BACKSTAB, GLOOMBLADE]);
   });
@@ -146,7 +146,7 @@ describe('RuleDerivationService.derive on an execute', () => {
     spellRecord({ id: EXECUTE, name: 'Execute', className: 'Warrior', powerTypes: [RAGE_TYPE], cooldownS: 6, executeHealthPct: EXECUTE_PCT }),
     spellRecord({ id: SLAM, name: 'Slam', className: 'Warrior', powerTypes: [RAGE_TYPE] }),
   ];
-  const profile = [
+  const text = [
     `actions=run_action_list,name=execute,if=talent.${MASSACRE}&target.health.pct<${MASSACRE_PCT}|target.health.pct<${EXECUTE_PCT}`,
     'actions+=/slam',
     'actions.execute=execute',
@@ -155,7 +155,7 @@ describe('RuleDerivationService.derive on an execute', () => {
 
   it('writes one execute rule per threshold, gated on the talent that moves it', () => {
     const index = abilities.build(WARRIOR_KIT, [], 'Warrior', 'Arms');
-    const resolved = apl.resolve(apl.parse(profile), TIER);
+    const resolved = apl.resolve(apl.parse(text), TIER);
     const executes = ofKind(rules.derive(resolved.actions, index, []).drafts, 'filler_below_health');
     expect(executes.map(draft => draft.condition.health_pct).sort((a, b) => a - b)).toEqual([EXECUTE_PCT, MASSACRE_PCT]);
     expect([...(executes.find(draft => draft.condition.health_pct === MASSACRE_PCT)?.requires ?? [])]).toEqual([MASSACRE]);

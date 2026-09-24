@@ -76,7 +76,7 @@ export class IngestRunSummaryService {
     const rows = gaps.map(gap => `| ${GAP_LABEL[gap.kind]} | \`${gap.token}\` | ${gap.specs.join(', ')} |`);
     return [
       `SimulationCraft tokens and names the rulebook builder cannot read; the inventory is \`${INVENTORY_PATH}\`.`,
-      'A shape, option or op closes with an inventory row and its support level; an action or aura with an alias or an unrecorded-name note; a talent by its Raidbots name; a line or list by extending the reader; an undefined variable is a profile typo that waits for upstream.',
+      'A shape, option or op closes with an inventory row and its support level; an action or aura with an alias or an unrecorded-name note; a talent by its Raidbots name; a line or list by extending the reader; an undefined variable is a typo in the action list that waits for upstream.',
       '',
       '| Kind | Token | Specs |',
       '|---|---|---|',

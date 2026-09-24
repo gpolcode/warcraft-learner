@@ -15,11 +15,11 @@ import { RulebookCopyService } from './rulebook-copy-service';
 import { RULEBOOK_EXCLUSIONS } from './rulebook-exclusions';
 import type { AbilityIndex, ParseSample, RuleDraft, RulebookGap, RulebookSources } from './rulebook-build.models';
 
-/** The raw texts one spec's sources are read from. */
+/** The raw texts one spec's sources are read from: SimulationCraft's action priority list and class dump. */
 export interface RulebookSourceTexts {
   spec: SpecMeta;
   tier: SimcTier;
-  profile: string;
+  apl: string;
   spellData: string;
   talents: SpecTalents;
 }
@@ -61,7 +61,7 @@ export class RulebookBuildService {
   /** One spec's sources read once per run: the exclusions applied and the gaps the sources alone leave. */
   prepare(texts: RulebookSourceTexts): RulebookSources {
     const excluded = new Set(RULEBOOK_EXCLUSIONS[texts.spec.spec] ?? []);
-    const resolved = this.apl.resolve(this.apl.parse(texts.profile), this.setBonusToken(texts.tier));
+    const resolved = this.apl.resolve(this.apl.parse(texts.apl), this.setBonusToken(texts.tier));
     const actions = resolved.actions.filter(action => !excluded.has(action.action)).map((action, priority) => ({ ...action, priority }));
     const records = this.abilities.ownedRecords(this.dump.parse(texts.spellData), texts.spec.classLabel, texts.spec.specLabel)
       .filter(record => !excluded.has(this.dump.token(record.name)));

@@ -13,19 +13,19 @@ export class SimcDataService {
   private readonly logger = inject(LoggerService);
   private readonly http = inject(HttpClient);
 
-  /** The profile of one spec in one tier; a missing file is the "SimC ships no profile for this spec" answer, not an error. */
-  getProfile(tier: SimcTier, classLabel: string, specLabel: string): Promise<Result<string>> {
-    const file = `${tier.dir}_${this.fileToken(classLabel)}_${this.fileToken(specLabel)}.simc`;
-    return this.getText(`${SIMC_RAW}/${tier.branch}/profiles/${tier.dir}/${file}`, 'simc.profile');
+  /** The full list every tier profile embeds, read here because a tier ships profiles for only some specs; a missing file means SimC writes none. */
+  getApl(tier: SimcTier, className: string, specLabel: string): Promise<Result<string>> {
+    const file = `${className.toLowerCase()}_${this.specToken(specLabel)}.simc`;
+    return this.getText(`${SIMC_RAW}/${tier.branch}/ActionPriorityLists/default/${file}`, 'simc.apl');
   }
 
   getSpellDataDump(tier: SimcTier, classSlug: string): Promise<Result<string>> {
     return this.getText(`${SIMC_RAW}/${tier.branch}/SpellDataDump/${classSlug.toLowerCase()}.txt`, 'simc.spell-data');
   }
 
-  /** SimC writes `MID2_Hunter_Beast_Mastery`: every space of the display label becomes an underscore. */
-  private fileToken(label: string): string {
-    return label.trim().replace(/\s+/g, '_');
+  /** SimC names the file after the class module: `hunter_beast_mastery`, every space of the spec label an underscore. */
+  private specToken(label: string): string {
+    return label.trim().toLowerCase().replace(/\s+/g, '_');
   }
 
   private async getText(url: string, id: string): Promise<Result<string>> {
