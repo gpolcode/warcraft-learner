@@ -4,7 +4,7 @@ import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 import type { RuleCondition, PlanCooldown, PlanDefensive } from '../plan/plan.models';
 import type { WclEvent } from '../wcl/wcl.models';
-import { AplProfile, SimcAplService } from './simc-apl-service';
+import { AplLine, SimcAplService } from './simc-apl-service';
 import { AplRuleService } from './apl-rule-service';
 import { SpellDumpService, SpellRecord } from './spell-dump-service';
 
@@ -29,8 +29,6 @@ export interface SpecPlan {
   spells: Record<string, PlanSpell | undefined>;
   /** Changes exactly when a derived part changes, so ingest re-benches an encounter only then. */
   key: string;
-  hasProfile: boolean;
-  unreadableLines: number;
 }
 
 /** Builds a spec's plan from its SimC profile and class spell dump, and fits it to each log's own spell ids. */
@@ -111,7 +109,7 @@ export class SpecPlanService {
     return plan.spells[this.dumps.tokenize(name)];
   }
 
-  private assemble(profile: AplProfile | null, records: SpellRecord[]): SpecPlan {
+  private assemble(profile: AplLine[] | null, records: SpellRecord[]): SpecPlan {
     const byToken = group(records, record => record.token);
     const rules = profile ? this.aplRules.derive(profile, byToken) : [];
     const cooldowns = this.cooldowns(profile, byToken);
@@ -125,13 +123,12 @@ export class SpecPlanService {
       return named[0] ? [[token, { name: named[0].name, ids: named.map(record => record.id) }]] : [];
     }));
     const derived = { rules, cooldowns, defensives, spells };
-    const key = bytesToHex(sha256(utf8ToBytes(JSON.stringify(derived)))).slice(0, KEY_LENGTH);
-    return { ...derived, key, hasProfile: !!profile, unreadableLines: profile?.unreadable ?? 0 };
+    return { ...derived, key: bytesToHex(sha256(utf8ToBytes(JSON.stringify(derived)))).slice(0, KEY_LENGTH) };
   }
 
   /** APL buttons Blizzard labels major or that hold a long cooldown, in APL order; with no APL, the labelled ones alone. */
-  private cooldowns(profile: AplProfile | null, byToken: Map<string, SpellRecord[]>): PlanCooldown[] {
-    const tokens = profile ? new Set(profile.lines.map(line => line.action)) : byToken.keys();
+  private cooldowns(profile: AplLine[] | null, byToken: Map<string, SpellRecord[]>): PlanCooldown[] {
+    const tokens = profile ? new Set(profile.map(line => line.action)) : byToken.keys();
     return [...tokens].flatMap(token => {
       const records = byToken.get(token) ?? [];
       const button = greatest(records, record => record.cooldown);

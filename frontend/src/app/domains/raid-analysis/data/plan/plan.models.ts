@@ -3,7 +3,6 @@ export interface PlanCooldown {
   spell_id: number;
   cooldown: number;
   opener_priority?: number;
-  usage_rule?: string;
   talent_gated?: boolean;
 }
 
@@ -11,8 +10,6 @@ export interface PlanDefensive {
   name: string;
   spell_id: number;
   cooldown: number;
-  duration?: number;
-  usage_rule?: string;
   talent_gated?: boolean;
 }
 
@@ -22,8 +19,6 @@ export interface CastWithoutPriorCondition {
   spell_name: string;
   required_spell_id: number;
   required_spell_name: string;
-  /** Where the required cast must sit relative to the judged one; defaults to `before`. */
-  position?: 'before' | 'after' | 'either';
 }
 
 export interface HoldCooldownForAnchorCondition {
@@ -50,12 +45,6 @@ export interface AuraUptimeBelowCondition {
   aura_spell_name: string;
   /** `target` reads the enemy debuff stream, which is where damage-over-time rules live. */
   on: 'self' | 'target';
-}
-
-export interface OpeningSequenceCondition {
-  kind: 'opening_sequence';
-  spell_ids: number[];
-  spell_names: string[];
 }
 
 export interface CastAtTargetCountCondition {
@@ -93,9 +82,6 @@ export interface FillerInBuffCondition {
   alternative_spell_names: string[];
   buff_spell_id: number;
   buff_spell_name: string;
-  /** States that suspend the choice, so a burst window or proc that makes the other filler correct is not counted against it. */
-  except_buff_spell_ids?: number[];
-  except_buff_spell_names?: string[];
 }
 
 export interface SpendAtStacksCondition {
@@ -107,10 +93,7 @@ export interface SpendAtStacksCondition {
   /** `min` flags spending below the field's level, `max` flags generating near the cap. */
   bound: 'min' | 'max';
   /** The buff's own stack cap, a game constant like a cooldown rather than a field behaviour. */
-  max_stacks?: number;
-  /** States that suspend the rule, so a proc that licenses a cheap cast is not counted against it. */
-  except_buff_spell_ids?: number[];
-  except_buff_spell_names?: string[];
+  max_stacks: number;
 }
 
 export interface AuraClippedCondition {
@@ -122,9 +105,6 @@ export interface AuraClippedCondition {
   cast_spell_name: string;
   /** `target` reads the enemy debuff stream, which is where damage-over-time rules live. */
   on: 'self' | 'target';
-  /** States that suspend the rule, so a cooldown the sources say to re-snapshot under is not counted against it. */
-  except_buff_spell_ids?: number[];
-  except_buff_spell_names?: string[];
 }
 
 export interface FillerBelowHealthCondition {
@@ -136,9 +116,6 @@ export interface FillerBelowHealthCondition {
   alternative_spell_names: string[];
   /** The ability's own execute threshold, a game constant like a cooldown rather than a field behaviour. */
   health_pct: number;
-  /** States that suspend the choice, so a burst window that overrides the priority is not counted against it. */
-  except_buff_spell_ids?: number[];
-  except_buff_spell_names?: string[];
 }
 
 /** Spell ids drive every check; the `*_name` fields carry the words a finding prints, so no kind looks a spell up. */
@@ -147,7 +124,6 @@ export type RuleCondition =
   | HoldCooldownForAnchorCondition
   | CastOutsideBuffCondition
   | AuraUptimeBelowCondition
-  | OpeningSequenceCondition
   | CastAtTargetCountCondition
   | ResourceAtCastCondition
   | ProcWastedCondition
@@ -163,6 +139,6 @@ export interface PlanRule {
   type: string;
   severity: RuleSeverity;
   description: string;
-  condition?: RuleCondition;
+  condition: RuleCondition;
   action: string;
 }

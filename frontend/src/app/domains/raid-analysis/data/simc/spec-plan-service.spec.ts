@@ -53,7 +53,6 @@ describe('SpecPlanService.build', () => {
   it('plans only the labelled cooldowns, in no order, for a spec SimC writes no APL for', () => {
     expect(fury(null).cooldowns.map(cooldown => [cooldown.name, cooldown.opener_priority])).toEqual([['Recklessness', undefined], ['Bladestorm', undefined]]);
     expect(fury(null).rules).toEqual([]);
-    expect(fury(null).hasProfile).toBe(false);
   });
 
   it('plans the spec\'s own big and external defensives, leaving out a name only another spec\'s talent carries', () => {

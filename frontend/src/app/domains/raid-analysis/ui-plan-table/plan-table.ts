@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { GameIcon } from '../ui-game-icon/game-icon';
-import { Collapsible } from '../../shared/ui-collapsible/collapsible';
 import { LoadState, RenderableLoadError } from '../../shared/ui-load-state/load-state';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 
@@ -14,7 +13,6 @@ export interface PlanTableRow {
   usedSampleCount: number;
   sampleCount: number;
   holds: { castIndex: number; targetS: number }[];
-  rule: string | null;
   bloodlust?: boolean;
 }
 
@@ -23,7 +21,7 @@ type PlanTableState = 'unavailable' | 'rows' | 'empty';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-plan-table',
-  imports: [DecimalPipe, GameIcon, Collapsible, LoadState, FormatDurationPipe],
+  imports: [DecimalPipe, GameIcon, LoadState, FormatDurationPipe],
   templateUrl: './plan-table.html',
 })
 export class PlanTable {

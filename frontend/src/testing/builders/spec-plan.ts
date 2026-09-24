@@ -17,11 +17,9 @@ export function specPlan(partial: {
   return {
     rules: partial.rules ?? [],
     cooldowns: partial.cooldowns ?? [],
-    defensives: (partial.defensives ?? []).map((d) => ({ duration: 5, ...d })),
+    defensives: partial.defensives ?? [],
     spells: partial.spells ?? {},
     key: PLAN_KEY,
-    hasProfile: true,
-    unreadableLines: 0,
   };
 }
 

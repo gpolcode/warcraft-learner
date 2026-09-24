@@ -47,7 +47,6 @@ export interface DefensivePlanRow {
   firstCastS: number | null;
   windowsS: number[];
   holds: { castIndex: number; targetS: number }[];
-  rule: string | null;
 }
 
 export interface DefensivePlanView {
@@ -341,7 +340,6 @@ export class DefensiveFeatureService {
       ...this.castCadence.cadencePlanUsage(benchmark),
       windowsS,
       holds: this.castCadence.holdsOf(benchmark),
-      rule: defensive.usage_rule ?? null,
     };
   }
 
@@ -353,6 +351,6 @@ export class DefensiveFeatureService {
       bench.per_defensive_benchmarks[defensive.name],
       windows.filter(window => window.defensive_name === defensive.name).map(window => window.time_s).sort((a, b) => a - b),
       bench.ability_icons,
-    )).filter(row => row.typicalUses != null || row.firstCastS != null || row.windowsS.length || row.holds.length || row.rule);
+    ));
   }
 }

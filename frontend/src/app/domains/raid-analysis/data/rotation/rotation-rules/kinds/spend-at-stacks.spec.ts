@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { SpendAtStacksCondition } from '../../../plan/plan.models';
-import { LIGHTNING_BOLT, MAELSTROM_WEAPON, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
-import { cast, applyBuff, removeBuff, applyBuffStack, buffWindow } from '../../../../../../../testing/builders/events';
+import { LIGHTNING_BOLT, MAELSTROM_WEAPON } from '../../../../../../../testing/spell-ids';
+import { cast, applyBuff, removeBuff, applyBuffStack } from '../../../../../../../testing/builders/events';
 import {
  band, benched, judged, ruleCtx, ruleFor, sampleRule,
 } from '../rule-fixtures';
@@ -63,16 +63,6 @@ describe('evaluateSpendAtStacks', () => {
     expect(evaluateSpendAtStacks(generateAtCap, ctx, band(0, FIELD_GENERATES_AT), 'warning')?.message)
       .toContain('overcapping');
     expect(evaluateSpendAtStacks(spendAtStacks, ctx, band(FIELD_GENERATES_AT, MAELSTROM_WEAPON_MAX_STACKS), 'warning')).toBeNull();
-  });
-
-  it('drops casts made in a state that suspends the rule', () => {
-    const suspended: SpendAtStacksCondition = {
-      ...spendAtStacks, except_buff_spell_ids: [SHADOW_DANCE], except_buff_spell_names: ['Ascendance'],
-    };
-    const buffs = [...climbing, ...buffWindow(SHADOW_DANCE, 3, 6)];
-    const ctx = ruleCtx([cast(LIGHTNING_BOLT, holding(3))], { buffs });
-    expect(evaluateSpendAtStacks(suspended, ctx, band(FIELD_STACKS), 'warning')).toBeNull();
-    expect(evaluateSpendAtStacks(spendAtStacks, ctx, band(FIELD_STACKS), 'warning')).not.toBeNull();
   });
 
   it('is not applicable on a build where the buff never appeared', () => {

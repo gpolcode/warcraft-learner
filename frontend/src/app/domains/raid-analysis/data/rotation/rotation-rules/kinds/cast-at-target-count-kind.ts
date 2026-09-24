@@ -22,7 +22,7 @@ export class CastAtTargetCountKind extends BoundedPerCastKind<CastAtTargetCountC
     return { primary: cond.bound === 'min' ? 'below' : 'above', twoSided: false };
   }
 
-  domain(): RuleDomain | null {
+  domain(): RuleDomain {
     return { min: 1, max: null, step: 1 };
   }
 

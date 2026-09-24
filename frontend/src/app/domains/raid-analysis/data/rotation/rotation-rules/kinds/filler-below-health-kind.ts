@@ -26,7 +26,7 @@ export class FillerBelowHealthKind extends FillerKind<FillerBelowHealthCondition
     return { primary: 'below', twoSided: false };
   }
 
-  domain(): RuleDomain | null {
+  domain(): RuleDomain {
     return { min: 0, max: 1 };
   }
 
@@ -61,7 +61,6 @@ export class FillerBelowHealthKind extends FillerKind<FillerBelowHealthCondition
     return spellId => ctx.castEvents
       .filter(event => {
         if (event.type !== 'cast' || event.abilityGameID !== spellId) return false;
-        if (this.suspendedAt(cond.except_buff_spell_ids, ctx, event.atS)) return false;
         const frac = this.targetHealthFracAt(ctx, event);
         return frac != null && frac <= gate;
       })

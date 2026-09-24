@@ -5,13 +5,9 @@ import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from './http-load-error';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 
-const SIMC_RAW = 'https://raw.githubusercontent.com/simulationcraft/simc';
-
-export interface SimcTier {
-  branch: string;
-  /** The profiles folder, which also prefixes every profile file name. */
-  dir: string;
-}
+/** The SimulationCraft branch and profiles folder every plan reads; it moves with each raid tier. */
+const SIMC_TIER = { branch: 'midnight', dir: 'MID2' };
+const SIMC_RAW = `https://raw.githubusercontent.com/simulationcraft/simc/${SIMC_TIER.branch}`;
 
 @Injectable({ providedIn: 'root' })
 export class SimcDataService {
@@ -19,13 +15,13 @@ export class SimcDataService {
   private readonly http = inject(HttpClient);
 
   /** A 404 is SimulationCraft shipping no profile for the spec, which reads as `missing`. */
-  getProfile(tier: SimcTier, classLabel: string, specLabel: string): Promise<Result<string>> {
-    const file = `${tier.dir}_${classLabel.replace(/ /g, '_')}_${specLabel.replace(/ /g, '_')}.simc`;
-    return this.getText(`${SIMC_RAW}/${tier.branch}/profiles/${tier.dir}/${file}`, 'simc.profile');
+  getProfile(classLabel: string, specLabel: string): Promise<Result<string>> {
+    const file = `${SIMC_TIER.dir}_${classLabel.replace(/ /g, '_')}_${specLabel.replace(/ /g, '_')}.simc`;
+    return this.getText(`${SIMC_RAW}/profiles/${SIMC_TIER.dir}/${file}`, 'simc.profile');
   }
 
-  getSpellDump(tier: SimcTier, className: string): Promise<Result<string>> {
-    return this.getText(`${SIMC_RAW}/${tier.branch}/SpellDataDump/${className.toLowerCase()}.txt`, 'simc.spell-dump');
+  getSpellDump(className: string): Promise<Result<string>> {
+    return this.getText(`${SIMC_RAW}/SpellDataDump/${className.toLowerCase()}.txt`, 'simc.spell-dump');
   }
 
   private async getText(url: string, id: string): Promise<Result<string>> {

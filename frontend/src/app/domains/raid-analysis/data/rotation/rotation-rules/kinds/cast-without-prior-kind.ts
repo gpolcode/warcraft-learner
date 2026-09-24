@@ -19,7 +19,7 @@ export class CastWithoutPriorKind extends RuleKind<CastWithoutPriorCondition> {
     return { primary: 'above', twoSided: false };
   }
 
-  domain(): RuleDomain | null {
+  domain(): RuleDomain {
     return { min: 0, max: null };
   }
 
@@ -41,14 +41,11 @@ export class CastWithoutPriorKind extends RuleKind<CastWithoutPriorCondition> {
     return `${cond.spell_name} with ${cond.required_spell_name}`;
   }
 
-  /** The tightest lead each cast achieved on the required side, or null when a cast never paired at all. */
+  /** The tightest lead each cast achieved over a required cast before it, or null when none came before. */
   private leadPerCast(cond: CastWithoutPriorCondition, castTimes: CastTimes): (number | null)[] {
-    const position = cond.position ?? 'before';
     const required = castTimes[cond.required_spell_id] ?? [];
     return [...(castTimes[cond.spell_id] ?? [])].sort((a, b) => a - b).map(time => {
-      const leads = required.map(rt => time - rt)
-        .filter(lead => position === 'either' || (position === 'before' ? lead >= 0 : lead <= 0))
-        .map(Math.abs);
+      const leads = required.map(rt => time - rt).filter(lead => lead >= 0);
       return leads.length ? Math.min(...leads) : null;
     });
   }

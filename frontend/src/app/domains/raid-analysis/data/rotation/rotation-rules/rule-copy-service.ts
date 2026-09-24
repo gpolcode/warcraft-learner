@@ -17,7 +17,6 @@ const TITLE: Copy = {
   hold_cooldown_for_anchor: c => `Hold ${list(c.spell_names)} for ${c.anchor_spell_name}`,
   cast_outside_buff: c => `${c.spell_name} ${c.require === 'inside' ? 'only inside' : 'never inside'} ${c.buff_spell_name}`,
   aura_uptime_below: c => (c.on === 'target' ? `Keep ${c.aura_spell_name} on the target` : `Keep ${c.aura_spell_name} up`),
-  opening_sequence: c => `Open with ${c.spell_names.join(', ')}`,
   cast_at_target_count: c => (c.bound === 'min' ? `${c.spell_name} only on several targets` : `${c.spell_name} only on a few targets`),
   resource_at_cast: c => (c.bound === 'min' ? `${c.spell_name} at high ${c.resource_name}` : `${c.spell_name} at low ${c.resource_name}`),
   proc_wasted: c => `Spend ${c.buff_spell_name} on sight`,
@@ -34,7 +33,6 @@ const ACTION: Copy = {
     ? `Wait for ${c.buff_spell_name} before you press ${c.spell_name}.`
     : `Hold ${c.spell_name} until ${c.buff_spell_name} has dropped.`),
   aura_uptime_below: c => `Refresh ${c.aura_spell_name} before it falls off.`,
-  opening_sequence: c => `Pull with ${c.spell_names.join(', then ')}.`,
   cast_at_target_count: c => (c.bound === 'min'
     ? `Press ${c.spell_name} only once several enemies are up.`
     : `Switch away from ${c.spell_name} once several enemies are up.`),
@@ -56,7 +54,6 @@ const TYPE: Record<Kind, string> = {
   hold_cooldown_for_anchor: 'cd_hold',
   cast_outside_buff: 'cooldown_pairing',
   aura_uptime_below: 'rotation',
-  opening_sequence: 'opener',
   cast_at_target_count: 'aoe_switch',
   resource_at_cast: 'rotation',
   proc_wasted: 'rotation',

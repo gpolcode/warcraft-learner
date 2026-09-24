@@ -29,7 +29,7 @@ export class AuraUptimeBelowKind extends RuleKind<AuraUptimeBelowCondition> {
     return { primary: 'below', twoSided: false };
   }
 
-  domain(): RuleDomain | null {
+  domain(): RuleDomain {
     return { min: 0, max: 100 };
   }
 

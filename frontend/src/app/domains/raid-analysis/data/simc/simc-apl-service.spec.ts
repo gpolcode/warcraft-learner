@@ -6,7 +6,7 @@ const apl = TestBed.inject(SimcAplService);
 
 /** A line's terms as the SimC source reads, so a case states its expectation in APL syntax. */
 const source = (line: AplLine | undefined): string[] => (line?.terms ?? []).map(term => apl.identifiers(term).join(' '));
-const lines = (...entries: string[]): AplLine[] => apl.readProfile(entries.join('\n')).lines;
+const lines = (...entries: string[]): AplLine[] => apl.readProfile(entries.join('\n'));
 const keys = (line: AplLine | undefined): string[] => (line?.terms ?? []).map(term => apl.termKey(term));
 
 describe('SimcAplService.readProfile', () => {
@@ -70,10 +70,8 @@ describe('SimcAplService.readProfile', () => {
     expect(lines('actions=auto_attack', 'actions+=/potion', 'actions+=/use_item,name=trinket').map(line => line.action)).toEqual([]);
   });
 
-  it('counts a condition jsep cannot read and keeps its line with unknown terms', () => {
-    const profile = apl.readProfile('actions=rampage,if=rage>=(80');
-    expect(profile.unreadable).toBe(1);
-    expect(profile.lines).toEqual([{ action: 'rampage', terms: [], readable: false }]);
+  it('keeps a line under a condition jsep cannot read, with its terms marked unknown', () => {
+    expect(lines('actions=rampage,if=rage>=(80')).toEqual([{ action: 'rampage', terms: [], readable: false }]);
   });
 });
 

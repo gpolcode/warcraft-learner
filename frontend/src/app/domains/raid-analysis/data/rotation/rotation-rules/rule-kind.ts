@@ -62,8 +62,7 @@ export abstract class RuleKind<C extends RuleCondition> {
   abstract streams(cond: C): RuleStream[];
   /** The one declaration of which way this metric is judged: the evaluator is handed this, never its own copy. */
   abstract judging(cond: C): RuleJudging;
-  /** Null where the condition has not declared the bounds this kind needs, which drops the rule rather than reading unknown as unbounded. */
-  abstract domain(cond: C): RuleDomain | null;
+  abstract domain(cond: C): RuleDomain;
   /** Every instance this parse measured, pooled across parses to build the band. Empty when the pull never produced one. */
   abstract sample(cond: C, ctx: RuleContext): number[];
   abstract applicable(cond: C, ctx: RuleContext): boolean;
@@ -123,11 +122,6 @@ export abstract class RuleKind<C extends RuleCondition> {
 
   protected castCount(ctx: RuleContext, spellId: number): number {
     return ctx.castTimes[spellId]?.length ?? 0;
-  }
-
-  /** A state the rule agreed not to judge under, so a window the sources say to press the other button in is not counted against the player. */
-  protected suspendedAt(exceptIds: number[] | undefined, ctx: RuleContext, timeS: number): boolean {
-    return (exceptIds ?? []).some(spellId => this.auraWindows.auraUpAt(ctx.selfAuras, spellId, timeS));
   }
 
   /** Targets and stacks come in whole units, and a fractional bar donates a full unit of slack that fires the rule a unit late. */

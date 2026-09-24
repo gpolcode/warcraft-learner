@@ -19,7 +19,6 @@ import { IngestSignatureService } from '../data/ingest/ingest-signature-service'
 import { IngestStampService, type IngestStamp } from '../data/ingest/ingest-stamp-service';
 import { IngestStateService, type SpecIngestState } from '../data/ingest/ingest-state-service';
 import { SpecReportService, SELECTED_MARKER, type SpecReportRow } from '../data/ingest/spec-report-service';
-import type { SpecPlan } from '../data/simc/spec-plan-service';
 import { SpecPlanLoaderService } from '../data/simc/spec-plan-loader-service';
 import type { IngestEncounter } from '../data/ingest/ingest.models';
 
@@ -283,14 +282,9 @@ export class IngestOrchestratorService {
   private async planVersion(spec: string, ingestVersion: string): Promise<string> {
     const plan = await this.specPlans.planFor(spec);
     if (!plan.ok) throw new Error(`no plan for ${spec}: ${plan.error.message}`);
-    this.logPlan(spec, plan.value);
-    return `${ingestVersion}:${plan.value.key}`;
-  }
-
-  private logPlan(spec: string, plan: SpecPlan): void {
-    const source = plan.hasProfile ? `${plan.rules.length} candidate rules, ${plan.unreadableLines} unreadable APL lines` : 'no SimC profile, so no rules';
-    console.log(`  plan ${plan.key}: ${source}, ${plan.cooldowns.length} cooldowns, ${plan.defensives.length} defensives`);
-    if (plan.hasProfile && !plan.rules.length) this.logger.logWarn(`ingest ${spec}`, 'its SimC profile derived no rules; check the APL reader against the profile');
+    const { key, rules, cooldowns, defensives } = plan.value;
+    console.log(`  plan ${key}: ${rules.length} candidate rules, ${cooldowns.length} cooldowns, ${defensives.length} defensives`);
+    return `${ingestVersion}:${key}`;
   }
 
   private benchedIds(spec: string): Promise<number[]> {

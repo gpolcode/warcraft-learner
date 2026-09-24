@@ -19,7 +19,7 @@ export class ProcWastedKind extends RuleKind<ProcWastedCondition> {
     return { primary: 'above', twoSided: false };
   }
 
-  domain(): RuleDomain | null {
+  domain(): RuleDomain {
     return { min: 0, max: 1 };
   }
 

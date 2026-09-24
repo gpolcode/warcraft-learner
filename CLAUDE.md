@@ -26,7 +26,7 @@ flowchart LR
   specs --> runtimeFiles
 ```
 
-Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it. The benches embed each spec's plan (rotation rules, cooldowns, defensives), which ingest and the dev build derive from SimulationCraft's profile and spell dump (`data/simc/`) for the tier `SIMC_TIER` names; a new raid tier moves that constant.
+Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it. The benches embed each spec's plan (rotation rules, cooldowns, defensives), which ingest and the dev build derive from SimulationCraft's profile and spell dump (`data/simc/`) for the tier `SIMC_TIER` (`data/http/simc-data-service.ts`) names; a new raid tier moves that constant.
 
 ## Commands (run from `frontend/`)
 

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { FillerInBuffCondition } from '../../../plan/plan.models';
-import { WRATH, STARFIRE, ECLIPSE_SOLAR, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
+import { WRATH, STARFIRE, ECLIPSE_SOLAR } from '../../../../../../../testing/spell-ids';
 import { cast, buffWindow } from '../../../../../../../testing/builders/events';
 import {
  band, judged, ruleCtx, sampleRule,
@@ -66,32 +66,6 @@ describe('evaluateFillerInBuff', () => {
     // The removal millisecond stays inside: a cast that consumes the state was made under it.
     const closing = ruleCtx([cast(STARFIRE, SOLAR_END_S)], { buffs: solar });
     expect(kind.applicable(wrathInSolar, closing)).toBe(true);
-  });
-
-  it('drops casts made in a state that suspends the choice, so a burst window is not a violation', () => {
-    const CELESTIAL_START_S = 15, CELESTIAL_END_S = 25;
-    const suspendedByCelestial: FillerInBuffCondition = {
-      ...wrathInSolar,
-      except_buff_spell_ids: [SHADOW_DANCE], except_buff_spell_names: ['Celestial Alignment'],
-    };
-    const buffs = [...solar, ...buffWindow(SHADOW_DANCE, CELESTIAL_START_S, CELESTIAL_END_S)];
-    // Three Starfire inside the suspending window, one Wrath outside it.
-    const ctx = ruleCtx([
-      cast(WRATH, 12), cast(STARFIRE, 16), cast(STARFIRE, 18), cast(STARFIRE, 20),
-    ], { buffs });
-    expect(evaluateFillerInBuff(suspendedByCelestial, ctx, fieldFloor, 'warning')).toBeNull();
-    expect(evaluateFillerInBuff(wrathInSolar, ctx, fieldFloor, 'warning')).not.toBeNull();
-  });
-
-  it('is not applicable when every filler inside the buff sat in a suspending state', () => {
-    const suspendedThroughout: FillerInBuffCondition = {
-      ...wrathInSolar,
-      except_buff_spell_ids: [SHADOW_DANCE], except_buff_spell_names: ['Celestial Alignment'],
-    };
-    const buffs = [...solar, ...buffWindow(SHADOW_DANCE, SOLAR_START_S, SOLAR_END_S)];
-    const ctx = ruleCtx([cast(WRATH, 12), cast(STARFIRE, 16)], { buffs });
-    expect(kind.applicable(suspendedThroughout, ctx)).toBe(false);
-    expect(sampleRule(kind, suspendedThroughout, ctx).values).toEqual([]);
   });
 
   it('samples the share the pull ran, and nothing when it never filled inside the buff', () => {

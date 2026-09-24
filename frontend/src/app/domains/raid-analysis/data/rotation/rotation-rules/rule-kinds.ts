@@ -5,7 +5,6 @@ import { CastWithoutPriorKind } from './kinds/cast-without-prior-kind';
 import { HoldCooldownForAnchorKind } from './kinds/hold-cooldown-for-anchor-kind';
 import { CastOutsideBuffKind } from './kinds/cast-outside-buff-kind';
 import { AuraUptimeBelowKind } from './kinds/aura-uptime-below-kind';
-import { OpeningSequenceKind } from './kinds/opening-sequence-kind';
 import { CastAtTargetCountKind } from './kinds/cast-at-target-count-kind';
 import { ResourceAtCastKind } from './kinds/resource-at-cast-kind';
 import { ProcWastedKind } from './kinds/proc-wasted-kind';
@@ -20,7 +19,6 @@ const KIND_CLASSES: { [K in RuleCondition['kind']]: Type<RuleKind<Extract<RuleCo
   hold_cooldown_for_anchor: HoldCooldownForAnchorKind,
   cast_outside_buff: CastOutsideBuffKind,
   aura_uptime_below: AuraUptimeBelowKind,
-  opening_sequence: OpeningSequenceKind,
   cast_at_target_count: CastAtTargetCountKind,
   resource_at_cast: ResourceAtCastKind,
   proc_wasted: ProcWastedKind,

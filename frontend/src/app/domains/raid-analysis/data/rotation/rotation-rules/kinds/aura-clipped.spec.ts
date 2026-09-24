@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { AuraClippedCondition } from '../../../plan/plan.models';
-import { MOONFIRE, MOONFIRE_DOT, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
-import { cast, applyDebuff, refreshDebuff, buffWindow } from '../../../../../../../testing/builders/events';
+import { MOONFIRE, MOONFIRE_DOT } from '../../../../../../../testing/spell-ids';
+import { cast, applyDebuff, refreshDebuff } from '../../../../../../../testing/builders/events';
 import {
  band, judged, ruleCtx, sampleRule,
 } from '../rule-fixtures';
@@ -57,18 +57,6 @@ describe('evaluateAuraClipped', () => {
     const LATER_S = 0.1;
     const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S + LATER_S)], { debuffs: reapplied(CLIPPED_ELAPSED_S) });
     expect(kind.applicable(moonfireClipped, ctx)).toBe(false);
-  });
-
-  it('drops a refresh made in a state that suspends the rule', () => {
-    const suspended: AuraClippedCondition = {
-      ...moonfireClipped, except_buff_spell_ids: [SHADOW_DANCE], except_buff_spell_names: ['Celestial Alignment'],
-    };
-    const ctx = ruleCtx([cast(MOONFIRE, APPLY_AT_S + CLIPPED_ELAPSED_S)], {
-      debuffs: reapplied(CLIPPED_ELAPSED_S),
-      buffs: buffWindow(SHADOW_DANCE, APPLY_AT_S, APPLY_AT_S + 10),
-    });
-    expect(kind.applicable(suspended, ctx)).toBe(false);
-    expect(kind.applicable(moonfireClipped, ctx)).toBe(true);
   });
 
   it('keeps each enemy on its own clock, so a second target is not measured against the first', () => {

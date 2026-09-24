@@ -5,7 +5,6 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Results } from '../../../shared/util-http/result';
 import { SimcDataService } from './simc-data-service';
 
-const TIER = { branch: 'midnight', dir: 'MID2' };
 const SIMC_RAW = 'https://raw.githubusercontent.com/simulationcraft/simc/midnight';
 const HTTP_NOT_FOUND = 404;
 
@@ -19,21 +18,21 @@ describe('SimcDataService', () => {
 
   it('reads a spec\'s profile under its class and spec labels, spaces as underscores', async () => {
     const { service, httpMock } = setup();
-    const pending = service.getProfile(TIER, 'Death Knight', 'Unholy');
+    const pending = service.getProfile('Death Knight', 'Unholy');
     httpMock.expectOne(`${SIMC_RAW}/profiles/MID2/MID2_Death_Knight_Unholy.simc`).flush('actions=festering_strike');
     expect(await pending).toEqual(Results.ok('actions=festering_strike'));
   });
 
   it('reads a class\'s spell dump under its lowercased class slug', async () => {
     const { service, httpMock } = setup();
-    const pending = service.getSpellDump(TIER, 'DeathKnight');
+    const pending = service.getSpellDump('DeathKnight');
     httpMock.expectOne(`${SIMC_RAW}/SpellDataDump/deathknight.txt`).flush('Name : Death Coil (id=47541)');
     expect((await pending).ok).toBe(true);
   });
 
   it('reads a profile SimC does not ship as missing', async () => {
     const { service, httpMock } = setup();
-    const pending = service.getProfile(TIER, 'Evoker', 'Augmentation');
+    const pending = service.getProfile('Evoker', 'Augmentation');
     httpMock.expectOne(`${SIMC_RAW}/profiles/MID2/MID2_Evoker_Augmentation.simc`)
       .flush('404: Not Found', { status: HTTP_NOT_FOUND, statusText: 'Not Found' });
     expect(await pending).toMatchObject({ error: { kind: 'missing' } });

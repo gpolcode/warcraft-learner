@@ -23,7 +23,7 @@ describe('buildDefensivePlanRows', () => {
 
   it('builds plan rows with window times, typical uses and the adoption counts', () => {
     const bench = benchWith({
-      defensives: [{ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, usage_rule: 'Use it', talent_gated: false }],
+      defensives: [{ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, talent_gated: false }],
       ability_icons: { [CLOAK_OF_SHADOWS]: { icon: 'cloak', name: 'Cloak of Shadows' } },
       per_defensive_benchmarks: {
         'Cloak of Shadows': defBench({ avg_first_cast_s: 12, avg_gap_s: null, stddev_gap_s: null, median_uses: 2, sample_count: 5, used_sample_count: 5 }),
@@ -36,14 +36,14 @@ describe('buildDefensivePlanRows', () => {
       name: 'Cloak of Shadows', spellId: CLOAK_OF_SHADOWS, icon: 'cloak',
       // The adoption counts reaching the row are the raw sample counts, not a precomputed "5/5" string.
       typicalUses: 2, usedSampleCount: 5, sampleCount: 5,
-      firstCastS: 12, windowsS: [30], rule: 'Use it',
+      firstCastS: 12, windowsS: [30],
     });
   });
 
   it('falls back to an empty icon for a defensive whose spell id is not in the ability map', () => {
     // CLOAK_OF_SHADOWS is intentionally absent from ability_icons, so the guarded lookup must not throw.
     const bench = benchWith({
-      defensives: [{ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, usage_rule: 'Use it', talent_gated: false }],
+      defensives: [{ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, talent_gated: false }],
       ability_icons: {},
     });
     const rows = svc['buildDefensivePlanRows'](bench);

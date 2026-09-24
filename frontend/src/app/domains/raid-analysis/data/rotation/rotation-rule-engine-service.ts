@@ -2,7 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { quantile } from 'd3-array';
 import { AnalysisFinding } from '../analysis/analysis.models';
-import { PlanRule, RuleCondition, RuleSeverity } from '../plan/plan.models';
+import { RuleCondition, RuleSeverity } from '../plan/plan.models';
 import {
   RuleKind, RuleBand, RuleDomain, RuleJudging, RuleSample, RuleStream, BenchedRule,
 } from './rotation-rules/rule-kind';
@@ -14,7 +14,6 @@ export type { RuleBand, BenchedRule, RuleSample } from './rotation-rules/rule-ki
 export const RULE_TYPE_LABEL: Record<string, string> = {
   cooldown_pairing: 'pairing',
   cd_hold: 'cd hold',
-  opener: 'opener',
   rotation: 'rotation',
   aoe_switch: 'aoe',
 };
@@ -58,8 +57,7 @@ export class RotationRuleEngineService {
     const pooled = contributing.flatMap(sample => sample.values).sort((a, b) => a - b);
     const counts = { sample_count: pooled.length };
     const domain = spec.domain(cond);
-    // A domain the condition never declared is not an unbounded one; with no cap there is no far edge to judge against.
-    if (domain == null || contributing.length < MIN_MEASURED_PARSES) return { band: null, ...counts };
+    if (contributing.length < MIN_MEASURED_PARSES) return { band: null, ...counts };
 
     const judging = spec.judging(cond);
     const { lo, hi } = this.bandEdges(pooled);
@@ -109,13 +107,8 @@ export class RotationRuleEngineService {
     return judging.primary === 'below' ? lowLive : domain.max == null || highLive;
   }
 
-  benchedRules(
-    benched: BenchedRule[],
-  ): (BenchedRule & { rule: PlanRule & { condition: RuleCondition }; band: RuleBand })[] {
-    return benched.filter(
-      (entry): entry is BenchedRule & { rule: PlanRule & { condition: RuleCondition }; band: RuleBand } =>
-        entry.rule.condition != null && entry.band != null,
-    );
+  benchedRules(benched: BenchedRule[]): (BenchedRule & { band: RuleBand })[] {
+    return benched.filter((entry): entry is BenchedRule & { band: RuleBand } => entry.band != null);
   }
 
   private evaluateCondition(
@@ -135,7 +128,7 @@ export class RotationRuleEngineService {
     for (const { rule, band } of benched) {
       const cond = rule.condition;
       // The gate rulesFollowed uses, so a rule the pull never tested lands in neither state instead of reading as broken.
-      if (cond == null || !this.ruleApplicable(cond, ctx)) continue;
+      if (!this.ruleApplicable(cond, ctx)) continue;
       const finding = this.evaluateCondition(cond, ctx, band, rule.severity, rule.action);
       // One authored name in both states, so a rule does not read as two different rules.
       if (finding) findings.push({ ...finding, rule_type: rule.type, label: rule.description });
@@ -151,7 +144,7 @@ export class RotationRuleEngineService {
     const followed: string[] = [];
     for (const { rule, band } of benched) {
       const cond = rule.condition;
-      if (cond == null || !this.ruleApplicable(cond, ctx)) continue;
+      if (!this.ruleApplicable(cond, ctx)) continue;
       if (!this.evaluateCondition(cond, ctx, band, rule.severity)) {
         followed.push(this.ruleLabel(cond, rule.description));
       }

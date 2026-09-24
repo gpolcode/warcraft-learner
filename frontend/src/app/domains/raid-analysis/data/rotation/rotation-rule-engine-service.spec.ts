@@ -137,13 +137,6 @@ describe('ruleBand', () => {
     expect(engine.ruleBand(parseCond, samples([[1], [2], [3], [4], [5]])).band).not.toBeNull();
   });
 
-  it('drops a rule whose kind needs bounds the condition never declared, rather than reading unknown as unbounded', () => {
-    const noCap = { ...instanceCond, max_stacks: undefined } as unknown as SpendAtStacksCondition;
-    const perParse = samples(Array.from({ length: 5 }, () => [1, 2, 3, 4, 5]));
-    expect(engine.ruleBand(noCap, perParse).band).toBeNull();
-    expect(engine.ruleBand(instanceCond, perParse).band).not.toBeNull();
-  });
-
   it('keeps a two-sided rule whose near edge is degenerate, since its far edge still judges', () => {
     // Every spend at zero stacks: the floor has nothing under it, but the cap above it is still reachable.
     const perParse = samples(Array.from({ length: 5 }, () => [0, 0, 0, 0, 0]));
@@ -229,11 +222,6 @@ describe('benchedRules', () => {
   it('drops an unbenched share rule too, since every kind is now judged against the field', () => {
     expect(engine.benchedRules([benched(procRule, null)])).toEqual([]);
     expect(engine.benchedRules([benched(procRule, FIELD_NEVER)]).map(entry => entry.rule)).toEqual([procRule]);
-  });
-
-  it('drops a rule with no condition before a band is even considered', () => {
-    const unconformed = { rule: { description: 'none' }, band: null, sample_count: 0, parse_count: 0 } as unknown as BenchedRule;
-    expect(engine.benchedRules([unconformed])).toEqual([]);
   });
 
   it('drops a row still carrying the shape a residual deployed file bakes, since entry.band reads undefined on it', () => {

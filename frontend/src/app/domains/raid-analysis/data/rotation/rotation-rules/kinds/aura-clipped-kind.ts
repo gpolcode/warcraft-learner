@@ -26,7 +26,7 @@ export class AuraClippedKind extends RuleKind<AuraClippedCondition> {
     return { primary: 'below', twoSided: false };
   }
 
-  domain(): RuleDomain | null {
+  domain(): RuleDomain {
     return { min: 0, max: null };
   }
 
@@ -57,8 +57,7 @@ export class AuraClippedKind extends RuleKind<AuraClippedCondition> {
     // One-sided: a cast after the refresh cannot have caused it.
     const cast = (atS: number) => castTimes.some(time => atS - time >= 0 && atS - time <= HARD_CAST_WINDOW_S);
     return this.closedSpans(this.clipSpans(cond, ctx))
-      .filter(span => span.endedByRefresh && cast(span.endS)
-        && !this.suspendedAt(cond.except_buff_spell_ids, ctx, span.endS));
+      .filter(span => span.endedByRefresh && cast(span.endS));
   }
 
   /** Needs no authored duration, so neither a death-truncated span nor a pandemic-extended one can skew it. */

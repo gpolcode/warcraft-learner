@@ -32,13 +32,13 @@ const ADD_ACTOR = 8;
 const BOSS_GAME_ID = 6666;
 const ADD_GAME_ID = 5555;
 
-const CLOAK = { name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, duration: 5 };
+const CLOAK = { name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120 };
 const FIGHT_DUR_S = 300;
 
 describe('defensivePlanMeta', () => {
   it('carries metadata with nullable defaults', () => {
     expect(svc['defensivePlanMeta']([{ name: 'Evasion', spell_id: EVASION, cooldown: 120 }]))
-      .toEqual([{ name: 'Evasion', spell_id: EVASION, cooldown: 120, usage_rule: null, talent_gated: false }]);
+      .toEqual([{ name: 'Evasion', spell_id: EVASION, cooldown: 120, talent_gated: false }]);
   });
 });
 

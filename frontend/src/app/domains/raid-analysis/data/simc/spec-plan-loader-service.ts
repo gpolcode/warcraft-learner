@@ -4,11 +4,8 @@ import { Result, Results } from '../../../shared/util-http/result';
 import { getOrInsert } from '../analysis/analysis-math';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { CurrentRaidsService } from '../ingest/current-raids-service';
-import { SimcDataService, SimcTier } from '../http/simc-data-service';
+import { SimcDataService } from '../http/simc-data-service';
 import { SpecPlan, SpecPlanService } from './spec-plan-service';
-
-/** The SimulationCraft branch and profiles folder every plan reads; it moves with each raid tier. */
-const SIMC_TIER: SimcTier = { branch: 'midnight', dir: 'MID2' };
 
 /** Fetches a spec's SimulationCraft sources and keeps its plan for the session, so ingest and the dev build share one path. */
 @Injectable({ providedIn: 'root' })
@@ -34,11 +31,13 @@ export class SpecPlanLoaderService {
     const meta = (await this.metas).find(entry => entry.spec === spec);
     if (!meta) return Results.missing(`No spec metadata for ${spec}.`);
     const [profile, dump] = await Promise.all([
-      this.simc.getProfile(SIMC_TIER, meta.classLabel, meta.specLabel),
-      getOrInsert(this.dumps, meta.className, () => this.simc.getSpellDump(SIMC_TIER, meta.className)),
+      this.simc.getProfile(meta.classLabel, meta.specLabel),
+      getOrInsert(this.dumps, meta.className, () => this.simc.getSpellDump(meta.className)),
     ]);
-    if (!dump.ok) this.dumps.delete(meta.className);
-    if (!dump.ok) return dump;
+    if (!dump.ok) {
+      this.dumps.delete(meta.className);
+      return dump;
+    }
     if (!profile.ok && profile.error.kind !== 'missing') return profile;
     return Results.ok(this.specPlans.build({ profile: profile.ok ? profile.value : null, dump: dump.value, specLabel: meta.specLabel }));
   }

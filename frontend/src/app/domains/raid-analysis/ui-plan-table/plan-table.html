@@ -9,7 +9,6 @@
 
     <div class="hidden md:grid grid-cols-(--cols-plan) gap-(--gap-card) px-4 pb-1">
       <div class="col-start-2 text-label text-muted text-right">Plan</div>
-      <div class="text-label text-muted pl-(--gap-card)">How to use</div>
     </div>
 
     @for (row of orderedRows(); track row.name) {
@@ -55,11 +54,6 @@
               <span class="text-body text-muted">None</span>
             }
           </div>
-        </div>
-
-        <div class="text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2.5 md:pt-0 pl-0 md:pl-(--gap-card)">
-          <span class="md:hidden block text-label text-muted mb-1">How to use</span>
-          <wl-collapsible>{{ row.rule }}</wl-collapsible>
         </div>
       </div>
     }

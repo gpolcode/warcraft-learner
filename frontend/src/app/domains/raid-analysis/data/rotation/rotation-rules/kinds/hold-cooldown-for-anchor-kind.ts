@@ -21,7 +21,7 @@ export class HoldCooldownForAnchorKind extends RuleKind<HoldCooldownForAnchorCon
     return { primary: 'below', twoSided: false };
   }
 
-  domain(): RuleDomain | null {
+  domain(): RuleDomain {
     return { min: 0, max: null };
   }
 

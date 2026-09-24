@@ -12,12 +12,6 @@ export interface AplLine {
   readable: boolean;
 }
 
-export interface AplProfile {
-  /** Every button line reachable from the default list, in priority order. */
-  lines: AplLine[];
-  unreadable: number;
-}
-
 interface AplEntry {
   action: string;
   options: Record<string, string>;
@@ -26,7 +20,7 @@ interface AplEntry {
 interface AplWalk {
   lists: Map<string, AplEntry[]>;
   variables: Map<string, string>;
-  profile: AplProfile;
+  lines: AplLine[];
 }
 
 // SimulationCraft's own table (engine/sim/expressions.cpp): `%` divides, `%%` is the remainder, `<?` and `>?` are max and min.
@@ -55,12 +49,12 @@ const MAX_VARIABLE_DEPTH = 3;
 /** Reads a SimulationCraft action priority list into button lines whose conditions are jsep trees. */
 @Injectable({ providedIn: 'root' })
 export class SimcAplService {
-  readProfile(simc: string): AplProfile {
+  /** Every button line reachable from the default list, in priority order. */
+  readProfile(simc: string): AplLine[] {
     const lists = this.parseLists(simc);
-    const variables = this.variableExpressions([...lists.values()].flat());
-    const profile: AplProfile = { lines: [], unreadable: 0 };
-    this.walk({ lists, variables, profile }, 'default', [], new Set());
-    return profile;
+    const context: AplWalk = { lists, variables: this.variableExpressions([...lists.values()].flat()), lines: [] };
+    this.walk(context, 'default', [], new Set());
+    return context.lines;
   }
 
   /** The terms on every line of one button: a term every line agrees on is a requirement of pressing it. */
@@ -147,10 +141,9 @@ export class SimcAplService {
   /** A null term list is a line under a condition jsep could not read: its terms are unknown, not absent. */
   private visit(context: AplWalk, { action, options }: AplEntry, inherited: AplNode[] | null, seen: Set<string>): void {
     const own = this.gateTerms(options['if'], context.variables);
-    if (own === null) context.profile.unreadable++;
     const terms = own && inherited ? [...inherited, ...own] : null;
     if (LIST_CALLS.has(action)) this.walk(context, options['name'] ?? '', terms, seen);
-    else if (!NON_SPELL.has(action)) context.profile.lines.push({ action, terms: terms ?? [], readable: terms !== null });
+    else if (!NON_SPELL.has(action)) context.lines.push({ action, terms: terms ?? [], readable: terms !== null });
   }
 
   private gateTerms(gate: string | undefined, variables: Map<string, string>): AplNode[] | null {

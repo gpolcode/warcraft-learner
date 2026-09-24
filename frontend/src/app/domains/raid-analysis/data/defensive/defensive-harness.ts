@@ -8,7 +8,7 @@ import { DefensiveBench } from './defensive-data-source';
 export const timed: WclProjectionsService['withRelativeS'] = (events, fightStartMs) =>
   TestBed.inject(WclProjectionsService).withRelativeS(events, fightStartMs);
 
-export const CLOAK_META = { name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, usage_rule: 'Use on big hits', talent_gated: false };
+export const CLOAK_META = { name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, cooldown: 120, talent_gated: false };
 
 export function defBench(overrides: Partial<PerDefensiveBenchmark> = {}): PerDefensiveBenchmark {
   return {

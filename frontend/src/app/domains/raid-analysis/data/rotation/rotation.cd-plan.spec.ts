@@ -19,8 +19,8 @@ describe('buildCdPlan', () => {
   const abilities = { [VANISH]: { icon: 'vanish', name: 'Vanish' }, [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' } };
   it('orders by opener priority and surfaces holds for majority-hold cds', () => {
     const cooldowns = [
-      { name: 'Vanish', spell_id: VANISH, cooldown: 120, opener_priority: 2, usage_rule: 'late' },
-      { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90, opener_priority: 1, usage_rule: 'open' },
+      { name: 'Vanish', spell_id: VANISH, cooldown: 120, opener_priority: 2 },
+      { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90, opener_priority: 1 },
     ];
     const benchmarks = {
       'Shadow Blades': cdBench({ majority_hold: true, hold_targets: { '2': { target_s: 100, delay_s: 10, band_s: 5, effective_cd_s: 90, count: 4, total_samples: 5 } } }),

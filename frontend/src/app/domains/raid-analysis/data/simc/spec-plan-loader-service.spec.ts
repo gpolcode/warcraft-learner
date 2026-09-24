@@ -20,11 +20,11 @@ function simcFake(answers: { profile?: Result<string>[]; dump?: Result<string>[]
   const next = (queue: Result<string>[] | undefined, fallback: Result<string>) => (queue && queue.length > 1 ? queue.shift() : queue?.[0]) ?? fallback;
   const fake = {
     reads,
-    getProfile: async (_tier: unknown, classLabel: string, specLabel: string) => {
+    getProfile: async (classLabel: string, specLabel: string) => {
       reads.push(`profile ${classLabel} ${specLabel}`);
       return next(answers.profile, Results.ok(PROFILE));
     },
-    getSpellDump: async (_tier: unknown, className: string) => {
+    getSpellDump: async (className: string) => {
       reads.push(`dump ${className}`);
       return next(answers.dump, Results.ok(DUMP));
     },
@@ -50,7 +50,7 @@ describe('SpecPlanLoaderService.planFor', () => {
 
   it('plans a spec SimC ships no profile for from the dump\'s labels alone', async () => {
     const plan = await loader(simcFake({ profile: [Results.missing('Not yet ingested.')] })).planFor('UnholyDeathKnight');
-    expect(plan.ok && plan.value.hasProfile).toBe(false);
+    expect(plan.ok && plan.value.rules).toEqual([]);
     expect(plan.ok && plan.value.cooldowns).toHaveLength(1);
   });
 

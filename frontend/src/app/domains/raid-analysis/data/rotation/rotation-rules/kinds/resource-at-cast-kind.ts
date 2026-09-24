@@ -29,7 +29,7 @@ export class ResourceAtCastKind extends BoundedPerCastKind<ResourceAtCastConditi
 
   // Declares no step on purpose: the real one is 1/max of the player's own pool, which bake cannot know, so tolerance carries up to one display step of slack rather than snapping to a cap the field cannot supply.
 
-  domain(): RuleDomain | null {
+  domain(): RuleDomain {
     return { min: 0, max: 1 };
   }
 

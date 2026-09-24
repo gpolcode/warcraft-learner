@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import type jsep from 'jsep';
 import { group } from 'd3-array';
 import type { RuleCondition } from '../plan/plan.models';
-import { AplLine, AplNode, AplProfile, SimcAplService } from './simc-apl-service';
+import { AplLine, AplNode, SimcAplService } from './simc-apl-service';
 import type { SpellRecord } from './spell-dump-service';
 
 /** Spell ids stay 0 and spell names hold SimC tokens until a top log resolves them. */
@@ -49,8 +49,8 @@ interface Button {
 export class AplRuleService {
   private readonly apl = inject(SimcAplService);
 
-  derive(profile: AplProfile, spells: ReadonlyMap<string, SpellRecord[]>): RuleCondition[] {
-    const byAction = group(profile.lines, line => line.action);
+  derive(lines: AplLine[], spells: ReadonlyMap<string, SpellRecord[]>): RuleCondition[] {
+    const byAction = group(lines, line => line.action);
     const fillers = [...byAction]
       .filter(([action, lines]) => this.cooldown(spells, action) === 0 && spells.has(action)
         && lines.some(line => line.readable && !line.terms.length))
@@ -61,7 +61,7 @@ export class AplRuleService {
       for (const term of this.apl.sharedTerms(lines)) rules.push(...this.termRules(button, term));
       for (const term of lines.flatMap(line => line.terms)) rules.push(...this.stateRules(action, term));
     }
-    rules.push(...this.procRules(profile.lines, new Set(byAction.keys())));
+    rules.push(...this.procRules(lines, new Set(byAction.keys())));
     return [...new Map(rules.map(rule => [JSON.stringify(rule), rule])).values()];
   }
 

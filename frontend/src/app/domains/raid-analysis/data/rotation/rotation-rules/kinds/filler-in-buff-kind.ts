@@ -19,7 +19,7 @@ export class FillerInBuffKind extends FillerKind<FillerInBuffCondition> {
     return { primary: 'below', twoSided: false };
   }
 
-  domain(): RuleDomain | null {
+  domain(): RuleDomain {
     return { min: 0, max: 1 };
   }
 
@@ -37,9 +37,7 @@ export class FillerInBuffKind extends FillerKind<FillerInBuffCondition> {
   }
 
   private fillerInBuffTimesFor(cond: FillerInBuffCondition, ctx: RuleContext): (spellId: number) => number[] {
-    return spellId => (ctx.castTimes[spellId] ?? []).filter(time =>
-      this.auraWindows.auraAlreadyUpAt(ctx.selfAuras, cond.buff_spell_id, time)
-      && !this.suspendedAt(cond.except_buff_spell_ids, ctx, time));
+    return spellId => (ctx.castTimes[spellId] ?? []).filter(time => this.auraWindows.auraAlreadyUpAt(ctx.selfAuras, cond.buff_spell_id, time));
   }
 
   private fillerCastsInBuff(cond: FillerInBuffCondition, ctx: RuleContext): FillerSplit {

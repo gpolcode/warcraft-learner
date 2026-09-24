@@ -19,7 +19,7 @@ export class CastOutsideBuffKind extends RuleKind<CastOutsideBuffCondition> {
     return { primary: 'above', twoSided: false };
   }
 
-  domain(): RuleDomain | null {
+  domain(): RuleDomain {
     return { min: 0, max: 1 };
   }
 

@@ -53,7 +53,6 @@ export interface CdPlanRow {
   bloodlust: boolean;
   bloodlustPct: number | null;
   holds: { castIndex: number; targetS: number }[];
-  rule: string | null;
 }
 
 /** An `ok` result implies the top-parse bench exists. */
@@ -420,7 +419,7 @@ export class RotationFeatureService {
     if (!ability) this.logger.logWarn('buildCdPlan: ability id missing from ability map', cd.spell_id);
     return {
       name: cd.name, spellId: cd.spell_id, icon: ability?.icon ?? '', ...this.cdPlanUsageOf(cdBench),
-      holds: this.castCadence.holdsOf(cdBench), rule: cd.usage_rule ?? null,
+      holds: this.castCadence.holdsOf(cdBench),
     };
   }
 

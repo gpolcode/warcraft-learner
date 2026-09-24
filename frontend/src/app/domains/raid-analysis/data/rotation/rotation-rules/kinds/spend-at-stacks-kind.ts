@@ -21,8 +21,8 @@ export class SpendAtStacksKind extends BoundedPerCastKind<SpendAtStacksCondition
     return { primary: cond.bound === 'min' ? 'below' : 'above', twoSided: cond.bound === 'min' };
   }
 
-  domain(cond: SpendAtStacksCondition): RuleDomain | null {
-    return cond.max_stacks == null ? null : { min: 0, max: cond.max_stacks, step: 1 };
+  domain(cond: SpendAtStacksCondition): RuleDomain {
+    return { min: 0, max: cond.max_stacks, step: 1 };
   }
 
   sample(cond: SpendAtStacksCondition, ctx: RuleContext): number[] {
@@ -41,7 +41,6 @@ export class SpendAtStacksKind extends BoundedPerCastKind<SpendAtStacksCondition
   private stackCountsPerCast(cond: SpendAtStacksCondition, ctx: RuleContext): { timeS: number; stacks: number }[] {
     const timeline = ctx.stacks(cond.buff_spell_id);
     return [...(ctx.castTimes[cond.spell_id] ?? [])].sort((a, b) => a - b)
-      .filter(timeS => !this.suspendedAt(cond.except_buff_spell_ids, ctx, timeS))
       .map(timeS => ({ timeS, stacks: this.auraWindows.stacksAt(timeline, timeS) }))
       .filter((entry): entry is { timeS: number; stacks: number } => entry.stacks !== null);
   }
@@ -49,13 +48,10 @@ export class SpendAtStacksKind extends BoundedPerCastKind<SpendAtStacksCondition
   protected evaluateBanded(
     cond: SpendAtStacksCondition, ctx: RuleContext, band: RuleBand, judging: RuleJudging, severity: RuleSeverity, remedy?: string,
   ): AnalysisFinding | null {
-    // No declared cap means no domain and no band, so the rule was already dropped; bail rather than judge on a guess.
-    const maxStacks = cond.max_stacks;
-    if (maxStacks == null) return null;
     // Over the bar is overcapping, which is what a player sees; under it is spending cheap.
     const wording = cond.bound === 'min' ? 'under' : 'over';
     // Keep WHOLE_STEPS's own rounding: rawCountScale's quantize multiplies by max, which is only valid for a fractional threshold, not this measure's raw stack count.
-    const capScale = this.rawCountScale(maxStacks);
+    const capScale = this.rawCountScale(cond.max_stacks);
     const scale: Scale = { quantize: this.WHOLE_STEPS.quantize, format: capScale.format, span: capScale.span };
     return this.evaluateBoundedPerCast({
       values: this.stackCountsPerCast(cond, ctx).map(({ timeS, stacks }) => ({ timeS, value: stacks })),

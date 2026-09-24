@@ -1,6 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { CastWithoutPriorCondition } from '../../../plan/plan.models';
 import { SHADOW_DANCE, SECRET_TECHNIQUE } from '../../../../../../../testing/spell-ids';
 import { cast } from '../../../../../../../testing/builders/events';
 import {
@@ -27,25 +26,9 @@ describe('rule engine', () => {
     expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, band(PAIR_WINDOW_S), 'warning')).toBeNull();
   });
 
-  it('flags a required cast that only follows the judged one, because position defaults to before', () => {
+  it('flags a required cast that only follows the judged one', () => {
     const ctx = ruleCtx([cast(SECRET_TECHNIQUE, 10), cast(SHADOW_DANCE, 12)]);
     expect(evaluateCastWithoutPrior(SECRET_TECH_NEEDS_DANCE, ctx, band(PAIR_WINDOW_S), 'warning')).not.toBeNull();
-  });
-
-  it('accepts a required cast on either side when position is either', () => {
-    const paired: CastWithoutPriorCondition = { ...SECRET_TECH_NEEDS_DANCE, position: 'either' };
-    const danceAfter = ruleCtx([cast(SECRET_TECHNIQUE, 10), cast(SHADOW_DANCE, 12)]);
-    const danceBefore = ruleCtx([cast(SHADOW_DANCE, 8), cast(SECRET_TECHNIQUE, 10)]);
-    expect(evaluateCastWithoutPrior(paired, danceAfter, band(PAIR_WINDOW_S), 'warning')).toBeNull();
-    expect(evaluateCastWithoutPrior(paired, danceBefore, band(PAIR_WINDOW_S), 'warning')).toBeNull();
-  });
-
-  it('requires the companion to follow when position is after', () => {
-    const followUp: CastWithoutPriorCondition = { ...SECRET_TECH_NEEDS_DANCE, position: 'after' };
-    const danceAfter = ruleCtx([cast(SECRET_TECHNIQUE, 10), cast(SHADOW_DANCE, 12)]);
-    const danceBefore = ruleCtx([cast(SHADOW_DANCE, 8), cast(SECRET_TECHNIQUE, 10)]);
-    expect(evaluateCastWithoutPrior(followUp, danceAfter, band(PAIR_WINDOW_S), 'warning')).toBeNull();
-    expect(evaluateCastWithoutPrior(followUp, danceBefore, band(PAIR_WINDOW_S), 'warning')).not.toBeNull();
   });
 
   it('accepts a companion exactly on the window edge but not past it', () => {
