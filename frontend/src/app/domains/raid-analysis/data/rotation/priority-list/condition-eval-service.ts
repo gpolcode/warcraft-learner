@@ -106,7 +106,7 @@ export class ConditionEvalService {
     return settled ? (settled[0] ? TRUE : settled[1] ? FALSE : EITHER) : null;
   }
 
-  private arithmetic(operator: string, a: Range, b: Range): Range {
+  arithmetic(operator: string, a: Range, b: Range): Range {
     const range = ARITHMETIC[operator]?.(a, b) ?? UNKNOWN;
     return range.some(Number.isNaN) ? this.clean(range) : range;
   }

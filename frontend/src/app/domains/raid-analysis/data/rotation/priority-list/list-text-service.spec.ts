@@ -31,10 +31,10 @@ const phrase = (term: string, holds = true, action = 'black_powder'): string => 
   if (!node) throw new Error(`unreadable ${term}`);
   return text.phrase(list, node, holds, action);
 };
-const value = (term: string, range: Range): string => {
+const value = (term: string, range: Range, flag = false): string => {
   const node = apl.parse(term);
   if (!node) throw new Error(`unreadable ${term}`);
-  return text.value(node, range);
+  return text.value(node, range, flag);
 };
 const lineOf = (action: string) => {
   const [line] = lines.get(action) ?? [];
@@ -103,8 +103,32 @@ describe('ListTextService phrases', () => {
     expect(phrase('!hero_tree.trickster')).toBe('without the Trickster hero tree');
   });
 
-  it('reads a term no phrase covers as SimC wrote it', () => {
-    expect(phrase('raid_event.adds.in>20')).toBe('when raid_event.adds.in>20');
+  it('reads the adds a fight brings, a move to come and whether the target is casting', () => {
+    expect(phrase('raid_event.adds.in>20')).toBe('when adds are over 20 s away');
+    expect(phrase('raid_event.adds.in<10')).toBe('when adds come within 10 s');
+    expect(phrase('!raid_event.adds.exists')).toBe('in a fight without adds');
+    expect(phrase('raid_event.adds.remains<5')).toBe('with under 5 s of adds left');
+    expect(phrase('raid_event.movement.in<3')).toBe('when you must move within 3 s');
+    expect(phrase('target.debuff.casting.react')).toBe('while the target is casting');
+  });
+
+  it('reads a variable the list keeps by its own name', () => {
+    expect(phrase('variable.pool_energy')).toBe('when pool energy holds');
+    expect(phrase('variable.targets>2')).toBe('with targets over 2');
+  });
+
+  it('reads a term no phrase covers as another condition, never as SimC wrote it', () => {
+    expect(phrase('movement.distance>20')).toBe('when another condition holds');
+    expect(phrase('movement.distance>20', false)).toBe('unless another condition holds');
+  });
+
+  it('names a miss only where a phrase covers it', () => {
+    const miss = (term: string) => {
+      const node = apl.parse(term);
+      return node && text.failure(list, node, 'black_powder');
+    };
+    expect(miss('combo_points>=6')).toBe('at under 6 combo points');
+    expect(miss('movement.distance>20')).toBeNull();
   });
 });
 
@@ -116,11 +140,12 @@ describe('ListTextService values', () => {
 
   it('reads a flag and a talent in words', () => {
     expect(value('buff.shadow_dance.up', [0, 0])).toBe('no');
+    expect(value('variable.pool', [1, 1], true)).toBe('yes');
     expect(value('talent.deathstalkers_mark', [1, 1])).toBe('picked');
   });
 
   it('reads a bounded value as its span and an unknown one as such', () => {
     expect(value('cooldown.shadow_dance.remains', [2, 6])).toBe('2 to 6 s away');
-    expect(value('raid_event.adds.in', [-Infinity, Infinity])).toBe('not in the log');
+    expect(value('raid_event.movement.in', [-Infinity, Infinity])).toBe('not in the log');
   });
 });

@@ -23,12 +23,15 @@ export type ResourceRow = readonly [atS: number, before: number, left: number, m
 /** A gain past the cap counts only up to it; a drain is negative. */
 export type ResourceChange = readonly [atS: number, amount: number];
 
+export type AddSpan = readonly [startS: number, endS: number];
+
 export interface CastMoment {
   atS: number;
   event: TimedEvent;
   /** The cast's place in the context's `casts`, so the casts before it are a slice. */
   index: number;
   target: string | null;
+  variables?: ReadonlyMap<string, Range>;
 }
 
 export interface FactContext {
@@ -50,6 +53,8 @@ export interface FactContext {
   targetStacks: (spellId: number, target: string) => StackTimeline;
   damageIndex: () => readonly DamageRow[];
   targetHealth: (target: string) => readonly HealthRow[];
+  /** Null when the log carries no enemy health to tell adds from the boss. */
+  addSpans: () => readonly AddSpan[] | null;
   resourcePool: (resourceType: number) => readonly ResourceRow[];
   resourceChanges: (resourceType: number) => readonly ResourceChange[];
   /** The global cooldown a cast id spends by the list's spell data, null for an id the list never names. */

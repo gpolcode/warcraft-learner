@@ -116,7 +116,7 @@ export class RotationFeatureService {
   /** A bench an older ingest wrote carries no list, and judges no button until the next ingest re-benches it. */
   private withList(bench: RotationBench): RotationBench {
     const stored: Partial<RotationBench> = bench;
-    return stored.list && stored.buttons ? bench : { ...bench, list: { lines: [], spells: {}, talents: {} }, buttons: [] };
+    return stored.list && stored.buttons ? bench : { ...bench, list: { lines: [], variables: [], spells: {}, talents: {} }, buttons: [] };
   }
 
   private async playerView(

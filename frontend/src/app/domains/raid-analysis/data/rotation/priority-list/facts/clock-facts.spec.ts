@@ -22,6 +22,10 @@ describe('ClockFacts', () => {
     expect(read('time')).toEqual([CAST_S, CAST_S]);
   });
 
+  it('reads every cast of the pull as in combat', () => {
+    expect(read('in_combat')).toEqual([1, 1]);
+  });
+
   it('reads the fight\'s end exactly on a kill and only from below on a wipe', () => {
     expect(read('fight_remains')).toEqual([FIGHT_S - CAST_S, FIGHT_S - CAST_S]);
     expect(read('fight_remains', { kill: false })).toEqual([FIGHT_S - CAST_S, Infinity]);

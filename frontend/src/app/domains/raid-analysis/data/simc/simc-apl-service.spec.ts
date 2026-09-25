@@ -5,7 +5,7 @@ import { SimcAplService } from './simc-apl-service';
 
 const apl = TestBed.inject(SimcAplService);
 
-const lines = (...entries: string[]): PlanLine[] => apl.readApl(entries.join('\n'));
+const lines = (...entries: string[]): PlanLine[] => apl.readApl(entries.join('\n')).lines;
 
 describe('SimcAplService.readApl', () => {
   it('reads each button line of the default list with its top-level & terms', () => {
@@ -67,12 +67,52 @@ describe('SimcAplService.readApl', () => {
     expect(line?.terms).toEqual(['variable.pool']);
   });
 
+  it('stands an expression in for a name SimC computes, its & terms joining the line\'s own', () => {
+    const [line] = apl.readApl('actions=rampage,if=scorch_execute.active&rage>=80', new Map([['scorch_execute.active', 'talent.scorch&target.health.pct<=30']])).lines;
+    expect(line?.terms).toEqual(['talent.scorch', 'target.health.pct<=30', 'rage>=80']);
+  });
+
   it('skips actions that press no spell of the spec', () => {
     expect(lines('actions=auto_attack', 'actions+=/potion', 'actions+=/use_item,name=trinket').map(line => line.action)).toEqual([]);
   });
 
   it('keeps a line under a condition jsep cannot read, with no terms to read', () => {
     expect(lines('actions=rampage,if=rage>=(80')).toEqual([{ action: 'rampage', terms: null }]);
+  });
+});
+
+describe('SimcAplService.readApl variables', () => {
+  const variables = (...entries: string[]) => apl.readApl(entries.join('\n')).variables;
+
+  it('keeps a variable set more than once for replay, each action in list order under its own and its list\'s condition', () => {
+    expect(variables(
+      'actions=call_action_list,name=cds,if=active_enemies>=2',
+      'actions.cds=variable,name=pool,op=setif,value=1,value_else=0,condition=rage<50,if=buff.enrage.up',
+      'actions+=/variable,name=pool,op=reset',
+      'actions+=/rampage,if=variable.pool',
+    )).toEqual([
+      { name: 'pool', op: 'setif', value: '1', value_else: '0', condition: 'rage<50', terms: ['active_enemies>=2', 'buff.enrage.up'] },
+      { name: 'pool', op: 'reset', terms: [] },
+    ]);
+  });
+
+  it('marks a variable set before the pull', () => {
+    expect(variables('actions.precombat=variable,name=pool,value=1', 'actions=variable,name=pool,value=0,if=rage>50', 'actions+=/rampage,if=variable.pool')[0])
+      .toMatchObject({ name: 'pool', value: '1', precombat: true });
+  });
+
+  it('keeps a variable a kept variable reads, and none that no line reaches', () => {
+    expect(variables(
+      'actions=variable,name=base,value=1,if=rage>50', 'actions+=/variable,name=base,value=0',
+      'actions+=/variable,name=pool,value=variable.base,if=rage>80', 'actions+=/variable,name=pool,value=0',
+      'actions+=/variable,name=unread,value=1,if=rage>80', 'actions+=/variable,name=unread,value=0',
+      'actions+=/rampage,if=variable.pool',
+    ).map(variable => variable.name)).toEqual(['base', 'base', 'pool', 'pool']);
+  });
+
+  it('replays a cycling variable as one read on the cast\'s own target', () => {
+    expect(variables('actions=cycling_variable,name=ttd,op=reset', 'actions+=/cycling_variable,name=ttd,op=max,value=target.time_to_die', 'actions+=/rampage,if=variable.ttd>10'))
+      .toEqual([{ name: 'ttd', op: 'reset', terms: [] }, { name: 'ttd', op: 'max', value: 'target.time_to_die', terms: [] }]);
   });
 });
 

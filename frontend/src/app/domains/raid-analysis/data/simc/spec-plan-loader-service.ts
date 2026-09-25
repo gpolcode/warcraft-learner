@@ -18,6 +18,7 @@ export class SpecPlanLoaderService {
   // Every bench of a spec asks for the same plan, and every spec of a class reads the same 1 MB dump.
   private readonly plans = new Map<string, Promise<Result<SpecPlan>>>();
   private readonly dumps = new Map<string, Promise<Result<string>>>();
+  private readonly sources = new Map<string, Promise<Result<string>>>();
   private metas: Promise<SpecMeta[]> | null = null;
   // One Raidbots file names every spec's talents.
   private trees: Promise<Result<Map<string, TalentTree>>> | null = null;
@@ -33,10 +34,11 @@ export class SpecPlanLoaderService {
     this.metas ??= this.currentRaids.discoverSpecMetas(this.wclApi);
     const meta = (await this.metas).find(entry => entry.spec === spec);
     if (!meta) return Results.missing(`No spec metadata for ${spec}.`);
-    const [apl, dump, trees] = await Promise.all([
+    const [apl, dump, trees, code] = await Promise.all([
       this.simc.getApl(meta.className, meta.specLabel),
       getOrInsert(this.dumps, meta.className, () => this.simc.getSpellDump(meta.className)),
       (this.trees ??= this.talentData.getTalentTrees()),
+      this.code(meta.className),
     ]);
     if (!dump.ok) {
       this.dumps.delete(meta.className);
@@ -48,7 +50,13 @@ export class SpecPlanLoaderService {
     }
     if (!apl.ok && apl.error.kind !== 'missing') return apl;
     return Results.ok(this.specPlans.build({
-      apl: apl.ok ? apl.value : null, dump: dump.value, specLabel: meta.specLabel, talents: trees.value.get(spec) ?? null,
+      apl: apl.ok ? apl.value : null, dump: dump.value, specLabel: meta.specLabel, talents: trees.value.get(spec) ?? null, code,
     }));
+  }
+
+  /** A source that fails to load leaves only the names it declares unread, so the plan builds without it. */
+  private async code(className: string): Promise<string> {
+    const files = await Promise.all(this.simc.sourcePaths(className).map(path => getOrInsert(this.sources, path, () => this.simc.getSource(path))));
+    return files.map(file => (file.ok ? file.value : '')).join('\n');
   }
 }

@@ -83,7 +83,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
           top_efficiency_stddev: topEfficiencyStddev,
           per_cd_benchmarks: this.aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
-          list: { lines: plan.lines, spells: plan.spells, talents: plan.talents },
+          list: { lines: plan.lines, variables: plan.variables, spells: plan.spells, talents: plan.talents },
           buttons: this.listBench.bench(plan, parses.map(parse => parse.reading)),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
         };

@@ -180,6 +180,7 @@ const COOLDOWNS = [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 9
 // Shadow Blades outside Bloodlust: every fixture log casts it at 5 s, before the lust the log applies at 6 s.
 const LIST = {
   lines: [{ action: 'shadow_blades', terms: ['!buff.bloodlust.up'] }],
+  variables: [],
   spells: { shadow_blades: planSpell('Shadow Blades', [SHADOW_BLADES], { cooldown: 90 }) },
   talents: {},
 };

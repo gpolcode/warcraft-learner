@@ -8,7 +8,7 @@ import type { Truth } from './priority-list.models';
 
 const CAST_AT_S = 30;
 /** No reader answers it, so it stands for any fact the log does not record. */
-const SIM_ONLY = 'raid_event.adds.in>20';
+const SIM_ONLY = 'raid_event.movement.in>20';
 
 const evaluator = TestBed.inject(ConditionEvalService);
 const apl = TestBed.inject(SimcAplService);
@@ -43,8 +43,8 @@ describe('ConditionEvalService', () => {
   });
 
   it('carries an unknown through arithmetic, but multiplies it by zero to zero', () => {
-    expect(truth(`time+raid_event.adds.in>${CAST_AT_S}`)).toBe('unknown');
-    expect(truth('0*raid_event.adds.in=0')).toBe('true');
+    expect(truth(`time+raid_event.movement.in>${CAST_AT_S}`)).toBe('unknown');
+    expect(truth('0*raid_event.movement.in=0')).toBe('true');
   });
 
   it('reads SimC\'s own operators: % divides, <? takes the larger, >? the smaller, ^ is exclusive', () => {
@@ -55,7 +55,7 @@ describe('ConditionEvalService', () => {
   });
 
   it('settles nothing on a division by a value that may be zero', () => {
-    expect(truth('time%raid_event.adds.in>0')).toBe('unknown');
+    expect(truth('time%raid_event.movement.in>0')).toBe('unknown');
   });
 
   it('reads any non-zero value as true, a negative one included', () => {

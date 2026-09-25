@@ -55,7 +55,8 @@ export class ListFindingService {
   private offTitle(list: PriorityList, action: string, line: ReadLine | undefined, termAt: number): string {
     const failed = line?.terms?.[termAt];
     const name = this.text.name(list, action);
-    return failed ? `${name} ${this.text.phrase(list, failed, false, action)}` : `${name} at the wrong time`;
+    const words = failed && this.text.failure(list, failed, action);
+    return words ? `${name} ${words}` : `${name} at the wrong time`;
   }
 
   private orderRow(list: PriorityList, entry: ButtonBench, lines: ReadLine[], reading: LogReading): Judged {
@@ -119,7 +120,7 @@ export class ListFindingService {
       return {
         text: this.text.capitalized(this.text.phrase(list, term, true, line.action)),
         truth: reading?.truth ?? 'unknown',
-        value: reading?.value && subject ? this.text.value(subject, reading.value) : '',
+        value: reading?.value && subject ? this.text.value(subject, reading.value, term.type !== 'BinaryExpression') : '',
       };
     });
   }

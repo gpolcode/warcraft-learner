@@ -5,7 +5,8 @@ import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 import type { PlanCooldown, PlanDefensive, PlanLine, PlanSpell, PlanTalent, PriorityList } from '../plan/plan.models';
 import type { WclEvent } from '../wcl/wcl.models';
 import type { TalentName, TalentTree } from '../http/talent-data-service';
-import { SimcAplService } from './simc-apl-service';
+import { AplRead, SimcAplService } from './simc-apl-service';
+import { SimcNameService } from './simc-name-service';
 import { SpellDumpService, SpellRecord } from './spell-dump-service';
 
 /** A button pressed from the APL with a cooldown this long is a major cooldown even without Blizzard's label. */
@@ -14,6 +15,20 @@ const KEY_LENGTH = 16;
 
 const SPELL_NAME = /^(?:target\.)?(?:buff|debuff|dot|cooldown|action|active_dot|prev|prev_off_gcd|pet)\.(\w+)|^prev_gcd\.\d+\.(\w+)/;
 const TALENT_NAME = /^(talent|hero_tree|apex)\.\w+/;
+/** An id SimC's code names with no record in the class spell data (a racial) carries no cooldown or duration, so only aura reads may use it. */
+const AURA_READ = /^(?:target\.)?(?:buff|debuff|dot)\./;
+
+type EffectOf = (token: string, effect: number) => number | undefined;
+const healthGate = (talent: string, op: string, pct: number | undefined): string | null => (pct === undefined ? null : `${talent}&target.health.pct${op}${pct}`);
+/** Names SimC computes in class code, each as the same test over names a log answers, with its threshold from the spell data. */
+const EXPRESSIONS: Record<string, (effect: EffectOf) => string | null> = {
+  soul_fragments: () => 'buff.soul_fragments.stack',
+  'soul_fragments.active': () => 'buff.soul_fragments.stack',
+  // Fragments still spawning count towards SimC's total but sit on no aura yet, so the total reads as the ones already out.
+  'soul_fragments.total': () => 'buff.soul_fragments.stack',
+  'scorch_execute.active': effect => healthGate('talent.scorch', '<=', effect('scorch', 2)),
+  'firestarter.active': effect => healthGate('talent.firestarter', '>=', effect('firestarter', 1)),
+};
 
 /** A `pet.x` is out while the button that summons it lasts, named for the pet itself or with one of these. */
 export const SUMMON_PREFIXES = ['', 'summon_', 'invoke_'];
@@ -29,11 +44,22 @@ export interface SpecPlan extends PriorityList {
 export class SpecPlanService {
   private readonly dumps = inject(SpellDumpService);
   private readonly apl = inject(SimcAplService);
+  private readonly simcNames = inject(SimcNameService);
 
   /** A null list is a spec SimulationCraft writes no APL for: it gets cooldowns and defensives from the labels alone. */
-  build(sources: { apl: string | null; dump: string; specLabel: string; talents: TalentTree | null }): SpecPlan {
-    const own = this.ownRecords(this.dumps.readDump(sources.dump), sources.specLabel, new Set(sources.apl?.match(/\w+/g)));
-    return this.assemble(sources.apl === null ? null : this.apl.readApl(sources.apl), own, sources.talents);
+  build(sources: { apl: string | null; dump: string; specLabel: string; talents: TalentTree | null; code: string }): SpecPlan {
+    const records = this.dumps.readDump(sources.dump);
+    const own = this.ownRecords(records, sources.specLabel, new Set(sources.apl?.match(/\w+/g)));
+    const read = sources.apl === null ? null : this.apl.readApl(sources.apl, this.expressions(group(own, record => record.token)));
+    return this.assemble(read, own, { records, code: sources.code, tree: sources.talents });
+  }
+
+  private expressions(byToken: Map<string, SpellRecord[]>): Map<string, string> {
+    const effect: EffectOf = (token, index) => (byToken.get(token) ?? []).map(record => record.effects[index - 1]).find(value => value !== undefined);
+    return new Map(Object.entries(EXPRESSIONS).flatMap(([name, expression]) => {
+      const text = expression(effect);
+      return text ? [[name, text] as const] : [];
+    }));
   }
 
   /** A name only other specs' talents carry belongs to them, untalented records under it included, unless this spec's APL names it. */
@@ -72,25 +98,46 @@ export class SpecPlanService {
     return plan.spells[this.dumps.tokenize(name)];
   }
 
-  private assemble(lines: PlanLine[] | null, records: SpellRecord[], tree: TalentTree | null): SpecPlan {
+  private assemble(read: AplRead | null, records: SpellRecord[], sources: { records: SpellRecord[]; code: string; tree: TalentTree | null }): SpecPlan {
+    const lines = read?.lines ?? null;
     const byToken = group(records, record => record.token);
     const cooldowns = this.cooldowns(lines, byToken);
     const defensives = this.defensives(records, byToken);
-    const names = (lines ?? []).flatMap(line => (line.terms ?? []).flatMap(term => {
-      const node = this.apl.parse(term);
+    const texts = [...(lines ?? []).flatMap(line => line.terms ?? []), ...(read?.variables ?? []).flatMap(({ value, value_else, condition, terms }) => [value, value_else, condition, ...(terms ?? [])])];
+    const names = texts.flatMap(text => {
+      const node = text === undefined ? null : this.apl.parse(text);
       return node ? this.apl.identifiers(node) : [];
-    }));
+    });
     const tokens = new Set([
       ...(lines ?? []).map(line => line.action),
       ...names.flatMap(name => this.spellTokens(name)),
       ...[...cooldowns, ...defensives].map(button => this.dumps.tokenize(button.name)),
     ]);
     const spells = Object.fromEntries([...tokens].flatMap(token => {
-      const named = byToken.get(token);
-      return named ? [[token, this.planSpell(named)]] : [];
+      const spell = this.spellOf(token, byToken, sources, names);
+      return spell ? [[token, spell]] : [];
     }));
-    const derived = { lines: lines ?? [], spells, talents: this.talents(names, tree), cooldowns, defensives };
+    const derived = { lines: lines ?? [], variables: read?.variables ?? [], spells, talents: this.talents(names, sources.tree), cooldowns, defensives };
     return { ...derived, key: bytesToHex(sha256(utf8ToBytes(JSON.stringify(derived)))).slice(0, KEY_LENGTH) };
+  }
+
+  /** A name the spell data does not hold, SimC's code declares: `voidfall_spending` is spell 1256302, `ca_inc` whichever of two buttons the build takes. */
+  private spellOf(token: string, byToken: Map<string, SpellRecord[]>, sources: { records: SpellRecord[]; code: string }, names: string[]): PlanSpell | null {
+    const named = byToken.get(token);
+    if (named) return this.planSpell(named);
+    const declared = this.simcNames.resolve(token, sources.code);
+    if (!declared) return null;
+    const records = [
+      ...sources.records.filter(record => declared.ids.includes(record.id)),
+      ...declared.tokens.flatMap(name => byToken.get(this.dumps.tokenize(name)) ?? []),
+    ];
+    if (records.length) return this.planSpell(records);
+    const auraOnly = names.filter(name => this.spellTokens(name).includes(token)).every(name => AURA_READ.test(name));
+    return declared.ids.length && auraOnly ? { ...this.planSpell([]), name: this.spoken(token), ids: declared.ids } : null;
+  }
+
+  private spoken(token: string): string {
+    return token.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
   private spellTokens(name: string): string[] {

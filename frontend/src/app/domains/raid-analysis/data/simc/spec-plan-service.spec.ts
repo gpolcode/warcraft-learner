@@ -19,6 +19,8 @@ const SUMMON_RAVAGER = 228920;
 const ANGER_MANAGEMENT_ENTRY = 90371;
 const SLAYER_ENTRY = 123389;
 const APEX_TIER_ENTRIES = [137004, 137003, 137002];
+const SHADOWMELD = 58984;
+const SCORCH_EXECUTE_PCT = 30;
 
 const record = (name: string, id: number, ...fields: string[]): string =>
   [`Name             : ${name} (id=${id}) [Spell Family (4)] `, ...fields].join('\n');
@@ -36,7 +38,14 @@ const DUMP = [
   record('Enrage', ENRAGE, 'Duration         : 4 seconds', 'Stacks           : 1 initial, 3 maximum'),
   record('Rampage', 184367, 'GCD              : 1.5 seconds', 'Resource         : 80 Rage (1) (id=1)', 'Cast Time        : 0.5 seconds'),
   record('Summon Ravager', SUMMON_RAVAGER, 'Duration         : 12 seconds', 'Cooldown         : 30 seconds', 'Charges          : 2 (30 seconds cooldown)'),
+  record('Scorch', 2948, '#2 (id=1154626)  : Dummy (3)', `                   Base Value: ${SCORCH_EXECUTE_PCT} | Scaled Value: ${SCORCH_EXECUTE_PCT}`),
 ].join('\n\n');
+/** Declarations shaped like SimC's class modules. */
+const CODE = [
+  'buff.enraged = make_buff( this, "enraged", find_spell( 184362 ) );',
+  'buffs.shadowmeld = make_buff( this, "shadowmeld", find_spell( 58984 ) );',
+  'racial_spell_t( p, "berserking", p->find_spell( 26297 ) )',
+].join('\n');
 const TREE: TalentTree = {
   talents: [{ id: ANGER_MANAGEMENT_ENTRY, name: 'Anger Management' }],
   heroTrees: [{ id: SLAYER_ENTRY, name: 'Slayer' }],
@@ -50,7 +59,7 @@ const APL = [
   'actions+=/rampage,if=buff.enrage.remains<1.5',
 ].join('\n');
 
-const fury = (apl: string | null = APL) => specPlans.build({ apl, dump: DUMP, specLabel: 'Fury', talents: TREE });
+const fury = (apl: string | null = APL, code = '') => specPlans.build({ apl, dump: DUMP, specLabel: 'Fury', talents: TREE, code });
 
 describe('SpecPlanService.build', () => {
   it('plans the APL buttons Blizzard labels major or that hold a minute or longer, in APL order', () => {
@@ -97,6 +106,28 @@ describe('SpecPlanService.build', () => {
 
   it('leaves out a talent the tree does not carry, which the list then reads as unknown', () => {
     expect(fury(`${APL}\nactions+=/execute,if=talent.massacre`).talents).toEqual({});
+  });
+
+  it('reads a name the spell data does not hold through the SimC code that declares it', () => {
+    expect(fury(`${APL}\nactions+=/execute,if=buff.enraged.up`, CODE).spells['enraged']).toMatchObject({ name: 'Enrage', ids: [ENRAGE], duration: 4 });
+  });
+
+  it('reads an id the code names without spell data for an aura, but never for a cooldown it would have to guess', () => {
+    const plan = fury(`${APL}\nactions+=/execute,if=buff.shadowmeld.up&cooldown.berserking.remains>10`, CODE);
+    expect(plan.spells['shadowmeld']).toMatchObject({ name: 'Shadowmeld', ids: [SHADOWMELD] });
+    expect(plan.spells['berserking']).toBeUndefined();
+  });
+
+  it('reads a name SimC computes in class code as the same test over what a log shows, with its threshold from the spell data', () => {
+    const plan = fury(`${APL}\nactions+=/execute,if=scorch_execute.active\nactions+=/whirlwind,if=soul_fragments.total>=4`);
+    expect(plan.lines.at(-2)?.terms).toEqual(['talent.scorch', `target.health.pct<=${SCORCH_EXECUTE_PCT}`]);
+    expect(plan.lines.at(-1)?.terms).toEqual(['buff.soul_fragments.stack>=4']);
+  });
+
+  it('carries the variables its lines read, and the spell data of the names they use', () => {
+    const plan = fury(`${APL}\nactions+=/variable,name=pool,value=1,if=buff.enrage.up\nactions+=/variable,name=pool,value=0\nactions+=/execute,if=variable.pool`);
+    expect(plan.variables.map(variable => variable.name)).toEqual(['pool', 'pool']);
+    expect(plan.spells['enrage']).toBeDefined();
   });
 
   it('keys a plan on what it derived: an APL edit changes the key', () => {

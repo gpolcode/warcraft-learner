@@ -99,9 +99,8 @@ export function damage(
   spellId: number,
   atS: number,
   amount: number,
-  opts?: { source?: number; target?: number; absorbed?: number; targetHealthPct?: number },
+  opts?: { source?: number; target?: number; absorbed?: number; targetHealthPct?: number; targetMaxHp?: number },
 ): WclEvent {
-  const MAX_HP = 1_000_000;
   return {
     type: 'damage',
     timestamp: atS * MS_PER_SECOND,
@@ -110,11 +109,13 @@ export function damage(
     ...(opts?.absorbed !== undefined && { absorbed: opts.absorbed }),
     ...(opts?.source !== undefined && { sourceID: opts.source }),
     ...(opts?.target !== undefined && { targetID: opts.target }),
-    // What `includeResources: true` flattens on for the struck actor, which is where target health lives.
-    ...(opts?.targetHealthPct !== undefined && {
-      resourceActor: 2, maxHitPoints: MAX_HP, hitPoints: Math.round(MAX_HP * opts.targetHealthPct / 100),
-    }),
+    ...(opts?.targetHealthPct !== undefined && struckHealth(opts.targetHealthPct, opts.targetMaxHp)),
   };
+}
+
+/** What `includeResources: true` flattens on for the struck actor, which is where target health lives. */
+function struckHealth(pct: number, maxHp = 1_000_000): Pick<WclEvent, 'resourceActor' | 'maxHitPoints' | 'hitPoints'> {
+  return { resourceActor: 2, maxHitPoints: maxHp, hitPoints: Math.round(maxHp * pct / 100) };
 }
 
 /** Damage dealt TO the player (`type: 'damage'`): `source` is the attacker, and no target actor is set. */

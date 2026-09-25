@@ -53,7 +53,7 @@ describe('ListCheckService cast check', () => {
   });
 
   it('leaves a cast not judged when no line holds and one may', () => {
-    const lines: PlanLine[] = [{ action: 'eviscerate', terms: ['combo_points>=5|raid_event.adds.in>20'] }];
+    const lines: PlanLine[] = [{ action: 'eviscerate', terms: ['combo_points>=5|raid_event.movement.in>20'] }];
     const [check] = read(lines, [pooled(EVISCERATE, 10, 3)]).casts.get('eviscerate') ?? [];
     expect(check?.verdict).toBe('unjudged');
   });
@@ -89,7 +89,7 @@ describe('ListCheckService order check', () => {
   });
 
   it('decides nothing while a line above may or may not hold', () => {
-    const lines: PlanLine[] = [{ action: 'shadowstrike', terms: ['raid_event.adds.in>20'] }, ...ORDER];
+    const lines: PlanLine[] = [{ action: 'shadowstrike', terms: ['raid_event.movement.in>20'] }, ...ORDER];
     const casts = [cast(SHADOWSTRIKE, 1), pooled(BACKSTAB, 10, 5), EVISCERATE_PRESSED];
     expect(orderAt(read(lines, casts), 10)).toBeUndefined();
   });
@@ -113,5 +113,19 @@ describe('ListCheckService.streams', () => {
     const streams = (terms: string[]) => [...checks.streams(list([{ action: 'eviscerate', terms }]))];
     expect(streams(['active_enemies>=2'])).toEqual(['damage']);
     expect(streams(['buff.shadow_dance.up'])).toEqual([]);
+  });
+
+  it('asks for what a replayed variable reads', () => {
+    const replayed = priorityList({ lines: [{ action: 'eviscerate', terms: ['variable.spread'] }], variables: [{ name: 'spread', op: 'set', value: 'active_enemies', terms: [] }] });
+    expect([...checks.streams(replayed)]).toEqual(['damage']);
+  });
+});
+
+describe('ListCheckService variables', () => {
+  it('judges a line on a variable by its value at the cast', () => {
+    const variables = [{ name: 'ready', op: 'set', value: 'combo_points>=5', terms: [] }];
+    const lines: PlanLine[] = [{ action: 'eviscerate', terms: ['variable.ready'] }];
+    const reading = checks.read(factContext({ ...list(lines), variables }, { casts: [pooled(EVISCERATE, 10, 5), pooled(EVISCERATE, 20, 3)], talents: [] }));
+    expect(reading.casts.get('eviscerate')?.map(check => check.verdict)).toEqual(['on', 'off']);
   });
 });

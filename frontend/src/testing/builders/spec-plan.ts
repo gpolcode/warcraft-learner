@@ -12,9 +12,10 @@ export function specPlan(partial: {
   cooldowns?: CooldownSeed[];
   defensives?: DefensiveSeed[];
   spells?: Record<string, PlanSpell>;
-} & Partial<Pick<SpecPlan, 'lines' | 'talents'>> = {}): SpecPlan {
+} & Partial<Pick<SpecPlan, 'lines' | 'variables' | 'talents'>> = {}): SpecPlan {
   return {
     lines: partial.lines ?? [],
+    variables: partial.variables ?? [],
     talents: partial.talents ?? {},
     cooldowns: partial.cooldowns ?? [],
     defensives: partial.defensives ?? [],

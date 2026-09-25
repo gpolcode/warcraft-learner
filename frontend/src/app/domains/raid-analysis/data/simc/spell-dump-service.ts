@@ -15,6 +15,8 @@ export interface SpellRecord {
   castTime: number;
   costs: SpellCost[];
   maxStacks: number;
+  /** Each effect's base value, `#1` first. */
+  effects: number[];
   /** Blizzard's own `Major Cooldowns` label. */
   major: boolean;
   /** Blizzard's `Big Defensive` or `External Defensive` attribute. */
@@ -35,8 +37,9 @@ export class SpellDumpService {
     return name.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, '');
   }
 
+  /** SimC commits the dump with Windows line endings, which a `.` stops short of. */
   readDump(text: string): SpellRecord[] {
-    return text.split(/^(?=Name {2,}: )/m).flatMap(block => this.record(block) ?? []);
+    return text.replace(/\r\n?/g, '\n').split(/^(?=Name {2,}: )/m).flatMap(block => this.record(block) ?? []);
   }
 
   private record(block: string): SpellRecord | null {
@@ -52,15 +55,19 @@ export class SpellDumpService {
       castTime: this.seconds(block, 'Cast Time'),
       costs: this.costs(block),
       maxStacks: Number(/^Stacks +: (?:\d+ initial, )?(\d+) maximum/m.exec(block)?.[1] ?? 0),
+      effects: this.effects(block),
       major: block.includes(': 690: Major Cooldowns'),
       defensive: /(Big|External) Defensive \(\d+\)/.test(block),
       ...this.talent(block),
     };
   }
 
+  /** A talent several specs share lists one tree per line: `Fury [tree=spec, ...]`, then `: Arms [tree=spec, ...]` below it. */
   private talent(block: string): Pick<SpellRecord, 'talented' | 'specs'> {
-    const talent = /^Talent Entry +: (.+?) \[tree=(\w+)/m.exec(block);
-    return { talented: !!talent, specs: talent ? this.talentSpecs(talent[1] ?? '', talent[2] ?? '') : null };
+    const entry = /^Talent Entry +: .*(?:\n +: .*)*/m.exec(block)?.[0];
+    if (!entry) return { talented: false, specs: null };
+    const trees = [...entry.matchAll(/: (.+?) \[tree=(\w+)/g)].map(([, name = '', tree = '']) => this.talentSpecs(name, tree));
+    return { talented: true, specs: trees.some(specs => specs === null) ? null : trees.flatMap(specs => specs ?? []) };
   }
 
   private cooldown(block: string): number {
@@ -76,6 +83,12 @@ export class SpellDumpService {
   private costs(block: string): SpellCost[] {
     return [...block.matchAll(/^Resource +: (\d+)(?: - \d+)? [A-Z][A-Za-z ]+ \((\d+)\)/gm)]
       .map(([, amount, type]) => ({ type: Number(type), amount: Number(amount) }));
+  }
+
+  private effects(block: string): number[] {
+    const effects: number[] = [];
+    for (const [, index, value] of block.matchAll(/^#(\d+) \(id=\d+\)[^\n]*\n +Base Value: (-?\d+(?:\.\d+)?)/gm)) effects[Number(index) - 1] = Number(value);
+    return effects;
   }
 
   /** A spec-tree talent names its spec; a hero tree lists its specs in parentheses, `Colossus (Arms, Protection)`. */

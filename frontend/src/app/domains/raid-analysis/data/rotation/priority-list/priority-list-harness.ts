@@ -8,7 +8,7 @@ import type { CastMoment, FactContext } from './priority-list.models';
 const FIGHT_S = 300;
 
 export function priorityList(over: Partial<PriorityList> = {}): PriorityList {
-  return { lines: [], spells: {}, talents: {}, ...over };
+  return { lines: [], variables: [], spells: {}, talents: {}, ...over };
 }
 
 export interface LogEvents {

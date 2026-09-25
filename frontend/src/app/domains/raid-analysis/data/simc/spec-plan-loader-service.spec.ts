@@ -12,7 +12,9 @@ const DUMP = [
   'Cooldown         : 45 seconds',
   'Labels           : 690: Major Cooldowns',
 ].join('\n');
-const APL = 'actions=dark_transformation,if=talent.unholy_assault';
+const APL = 'actions=dark_transformation,if=talent.unholy_assault&buff.dark_empowerment.up';
+const SOURCES = ['class_modules/sc_death_knight.cpp', 'player/player.cpp'];
+const CODE = 'buff.dark_empowerment = make_buff( this, "dark_empowerment", find_spell( 63560 ) );';
 const UNHOLY_ASSAULT_ENTRY = 96304;
 const TREE: TalentTree = { talents: [{ id: UNHOLY_ASSAULT_ENTRY, name: 'Unholy Assault' }], heroTrees: [], apex: [] };
 const UNREACHABLE = Results.transient('WCL is unreachable right now.');
@@ -20,7 +22,7 @@ const UNREACHABLE = Results.transient('WCL is unreachable right now.');
 const next = <T>(queue: Result<T>[] | undefined, fallback: Result<T>): Result<T> => (queue && queue.length > 1 ? queue.shift() : queue?.[0]) ?? fallback;
 
 /** Records every SimC and Raidbots read and answers each from the queue given for it, repeating the last answer. */
-function simcFake(answers: { apl?: Result<string>[]; dump?: Result<string>[]; trees?: Result<Map<string, TalentTree>>[] } = {}) {
+function simcFake(answers: { apl?: Result<string>[]; dump?: Result<string>[]; trees?: Result<Map<string, TalentTree>>[]; source?: Result<string>[] } = {}) {
   const reads: string[] = [];
   const fake = {
     reads,
@@ -35,6 +37,11 @@ function simcFake(answers: { apl?: Result<string>[]; dump?: Result<string>[]; tr
     getTalentTrees: async () => {
       reads.push('talents');
       return next(answers.trees, Results.ok(new Map([['UnholyDeathKnight', TREE]])));
+    },
+    sourcePaths: () => SOURCES,
+    getSource: async (path: string) => {
+      reads.push(`source ${path}`);
+      return next(answers.source, Results.ok(CODE));
     },
   };
   return fake;
@@ -53,7 +60,7 @@ describe('SpecPlanLoaderService.planFor', () => {
   it('builds a spec\'s plan from the list under its WCL class slug and spec label, its class\'s dump and its talent tree', async () => {
     const simc = simcFake();
     const plan = await loader(simc).planFor('UnholyDeathKnight');
-    expect(simc.reads).toEqual(['apl DeathKnight Unholy', 'dump DeathKnight', 'talents']);
+    expect(simc.reads).toEqual(['apl DeathKnight Unholy', 'dump DeathKnight', 'talents', ...SOURCES.map(path => `source ${path}`)]);
     expect(plan.ok && plan.value.cooldowns.map(cooldown => cooldown.name)).toEqual(['Dark Transformation']);
     expect(plan.ok && plan.value.talents['talent.unholy_assault']?.entries).toEqual([UNHOLY_ASSAULT_ENTRY]);
   });
@@ -64,13 +71,24 @@ describe('SpecPlanLoaderService.planFor', () => {
     expect(plan.ok && plan.value.cooldowns).toHaveLength(1);
   });
 
-  it('keeps each plan, each class dump and the talent file for the session', async () => {
+  it('keeps each plan, each class dump, each source file and the talent file for the session', async () => {
     const simc = simcFake();
     const plans = loader(simc);
     await plans.planFor('UnholyDeathKnight');
     await plans.planFor('UnholyDeathKnight');
     await plans.planFor('FrostDeathKnight');
-    expect(simc.reads).toEqual(['apl DeathKnight Unholy', 'dump DeathKnight', 'talents', 'apl DeathKnight Frost']);
+    expect(simc.reads).toEqual(['apl DeathKnight Unholy', 'dump DeathKnight', 'talents', ...SOURCES.map(path => `source ${path}`), 'apl DeathKnight Frost']);
+  });
+
+  it('reads a name the dump does not hold through the class\'s SimC code', async () => {
+    const plan = await loader(simcFake()).planFor('UnholyDeathKnight');
+    expect(plan.ok && plan.value.spells['dark_empowerment']?.ids).toEqual([63560]);
+  });
+
+  it('builds the plan without a source that fails to load, leaving only the names it declares unread', async () => {
+    const plan = await loader(simcFake({ source: [UNREACHABLE] })).planFor('UnholyDeathKnight');
+    expect(plan.ok && plan.value.cooldowns).toHaveLength(1);
+    expect(plan.ok && plan.value.spells['dark_empowerment']).toBeUndefined();
   });
 
   it('reads a talent the file does not name for the spec as unknown rather than failing the plan', async () => {

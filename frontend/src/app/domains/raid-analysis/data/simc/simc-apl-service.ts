@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import jsep from 'jsep';
 import { getOrInsert } from '../analysis/analysis-math';
-import type { PlanLine } from '../plan/plan.models';
+import type { PlanLine, PlanVariable } from '../plan/plan.models';
 
 export type AplNode = jsep.Expression;
 
@@ -10,10 +10,17 @@ interface AplEntry {
   options: Record<string, string>;
 }
 
+export interface AplRead {
+  lines: PlanLine[];
+  variables: PlanVariable[];
+}
+
 interface AplWalk {
   lists: Map<string, AplEntry[]>;
-  variables: Map<string, string>;
+  substitutes: ReadonlyMap<string, AplNode>;
   lines: PlanLine[];
+  variables: PlanVariable[];
+  precombat: boolean;
 }
 
 // SimulationCraft's own table (engine/sim/expressions.cpp): `%` divides, `%%` is the remainder, `<?` and `>?` are max and min.
@@ -38,12 +45,15 @@ const MAX_VARIABLE_DEPTH = 3;
 
 @Injectable({ providedIn: 'root' })
 export class SimcAplService {
-  /** Every button line reachable from the default list, in priority order. */
-  readApl(simc: string): PlanLine[] {
+  /** `expressions` stand in for names SimC's class code computes, as SimC text over names a log can answer. */
+  readApl(simc: string, expressions: ReadonlyMap<string, string> = new Map()): AplRead {
     const lists = this.parseLists(simc);
-    const context: AplWalk = { lists, variables: this.variableExpressions([...lists.values()].flat()), lines: [] };
-    this.walk(context, 'default', [], new Set());
-    return context.lines;
+    const substitutes = this.substitutes(this.variableExpressions([...lists.values()].flat()), expressions);
+    const precombat: AplWalk = { lists, substitutes, lines: [], variables: [], precombat: true };
+    const combat: AplWalk = { ...precombat, variables: [], precombat: false };
+    this.walk(precombat, 'precombat', [], new Set());
+    this.walk(combat, 'default', [], new Set());
+    return { lines: combat.lines, variables: this.referenced([...precombat.variables, ...combat.variables], combat.lines) };
   }
 
   /** A term as the plan stores it; null for one jsep cannot read, which then reads as unknown. */
@@ -127,22 +137,46 @@ export class SimcAplService {
     return flags === '1/0' ? condition : flags === '0/1' ? `!(${condition})` : null;
   }
 
-  private inline(gate: string, variables: Map<string, string>): string {
-    let text = gate;
-    for (let depth = 0; depth < MAX_VARIABLE_DEPTH; depth++) {
-      text = text.replace(/variable\.(\w+)/g, (term, name: string) => {
-        const expression = variables.get(name);
-        return expression ? `(${expression})` : term;
-      });
+  private substitutes(variables: Map<string, string>, expressions: ReadonlyMap<string, string>): Map<string, AplNode> {
+    const texts = [...[...variables].map(([name, text]) => [`variable.${name}`, text] as const), ...expressions];
+    return new Map(texts.flatMap(([name, text]) => {
+      const node = this.parse(this.normalized(text));
+      return node ? [[name, node] as const] : [];
+    }));
+  }
+
+  private substitute(node: AplNode, substitutes: ReadonlyMap<string, AplNode>, depth = 0): AplNode {
+    const swap = node.type === 'Identifier' ? substitutes.get((node as jsep.Identifier).name) : undefined;
+    if (swap) return depth < MAX_VARIABLE_DEPTH ? this.substitute(swap, substitutes, depth + 1) : node;
+    if (node.type === 'BinaryExpression') {
+      const binary = node as jsep.BinaryExpression;
+      return { ...binary, left: this.substitute(binary.left, substitutes, depth), right: this.substitute(binary.right, substitutes, depth) };
     }
-    return text;
+    if (node.type !== 'UnaryExpression') return node;
+    return { ...node, argument: this.substitute((node as jsep.UnaryExpression).argument, substitutes, depth) };
+  }
+
+  private normalized(text: string): string {
+    return text.replace(/&&/g, '&').replace(/\|\|/g, '|').replace(/\^\^/g, '^');
+  }
+
+  /** Only a variable a line reads, or one such a variable reads, needs replaying. */
+  private referenced(variables: PlanVariable[], lines: PlanLine[]): PlanVariable[] {
+    const reads = (texts: (string | undefined)[]): string[] => texts.flatMap(text => [...(text ?? '').matchAll(/variable\.(\w+)/g)].map(([, name = '']) => name));
+    const wanted = new Set(reads(lines.flatMap(line => line.terms ?? [])));
+    for (let size = -1; size !== wanted.size;) {
+      size = wanted.size;
+      const reached = variables.filter(variable => wanted.has(variable.name));
+      for (const name of reads(reached.flatMap(({ value, value_else, condition, terms }) => [value, value_else, condition, ...(terms ?? [])]))) wanted.add(name);
+    }
+    return variables.filter(variable => wanted.has(variable.name));
   }
 
   private walk(context: AplWalk, list: string, inherited: AplNode[] | null, seen: Set<string>): void {
     if (seen.has(list)) return;
     let reached = inherited;
     for (const entry of context.lists.get(list) ?? []) {
-      const own = this.gateTerms(entry.options['if'], context.variables);
+      const own = this.gateTerms(entry.options['if'], context.substitutes);
       this.visit(context, entry, own && reached && [...reached, ...own], new Set([...seen, list]));
       if (entry.action !== 'run_action_list') continue;
       if (own?.length === 0) return;
@@ -152,7 +186,23 @@ export class SimcAplService {
 
   private visit(context: AplWalk, { action, options }: AplEntry, terms: AplNode[] | null, seen: Set<string>): void {
     if (LIST_CALLS.has(action)) this.walk(context, options['name'] ?? '', terms, seen);
-    else if (!NON_SPELL.has(action)) context.lines.push(this.line(action, terms, options['line_cd']));
+    else if (action === 'variable' || action === 'cycling_variable') this.variable(context, options, terms);
+    else if (!NON_SPELL.has(action) && !context.precombat) context.lines.push(this.line(action, terms, options['line_cd']));
+  }
+
+  private variable(context: AplWalk, options: Record<string, string>, terms: AplNode[] | null): void {
+    const { name = '', op = 'set', value, value_else, condition } = options;
+    if (!name || context.substitutes.has(`variable.${name}`)) return;
+    const expression = (text: string | undefined): string | undefined => {
+      const node = text === undefined ? null : this.parse(this.normalized(text));
+      return node ? this.printed([this.substitute(node, context.substitutes)])?.[0] : undefined;
+    };
+    context.variables.push({
+      name, op, value: expression(value), value_else: expression(value_else), condition: expression(condition),
+      terms: terms && this.printed(terms),
+      ...(options['default'] ? { default: Number(options['default']) } : {}),
+      ...(context.precombat ? { precombat: true as const } : {}),
+    });
   }
 
   /** SimC never returns from a list it runs, so the lines after the call hold only while its condition does not. */
@@ -179,10 +229,9 @@ export class SimcAplService {
     }
   }
 
-  private gateTerms(gate: string | undefined, variables: Map<string, string>): AplNode[] | null {
+  private gateTerms(gate: string | undefined, substitutes: ReadonlyMap<string, AplNode>): AplNode[] | null {
     if (!gate) return [];
-    const text = this.inline(gate, variables).replace(/&&/g, '&').replace(/\|\|/g, '|').replace(/\^\^/g, '^');
-    const node = this.parse(text);
-    return node && this.operands(node, '&');
+    const node = this.parse(this.normalized(gate));
+    return node && this.operands(this.substitute(node, substitutes), '&');
   }
 }

@@ -6,7 +6,7 @@ import type { WclEvent } from '../../wcl/wcl.models';
 import { WclProjectionsService, TimedEvent } from '../../analysis/wcl-projections-service';
 import { AuraWindowsService } from '../../analysis/aura-windows-service';
 import { BLOODLUST_IDS } from '../rotation-bloodlust-service';
-import type { DamageRow, FactContext, HealthRow, ResourceChange, ResourceRow } from './priority-list.models';
+import type { AddSpan, DamageRow, FactContext, HealthRow, ResourceChange, ResourceRow } from './priority-list.models';
 
 /** WCL flattens one actor's pools onto the event; 1 means they belong to the caster, 2 to whoever was hit. */
 const RESOURCE_ACTOR_SOURCE = 1;
@@ -16,6 +16,8 @@ const MANA = 0;
 const SMALL_POOL_CAP = 10;
 const LARGE_POOL_CAP = 200;
 const SMALL_POOLS = new Set([4, 5, 7, 9, 12, 19]);
+/** An enemy with at least this share of the toughest one's health is a boss, so a council's members are not each other's adds. */
+const BOSS_HEALTH_SHARE = 0.5;
 /** Latency only ever lengthens a logged cast, so a factor past these reads as noise rather than haste. */
 const HASTE_FACTOR_MIN = 0.4;
 const HASTE_FACTOR_MAX = 1;
@@ -49,6 +51,8 @@ export class FactContextService {
     const casts = input.casts.filter(event => event.type === 'cast').sort((a, b) => a.atS - b.atS);
     const idsOf = this.perKey((token: string) => new Set(list.spells[token]?.ids ?? []));
     const health = this.lazy(() => this.healthIndex(damage));
+    const damageIndex = this.lazy(() => damage.map((event): DamageRow => [event.atS, this.projections.targetKey(event)]).sort((a, b) => a[0] - b[0]));
+    const adds = this.lazy(() => ({ spans: this.addSpans(damage, damageIndex()) }));
     const auraIds = this.perKey((key: string) => this.shownMost(list, key, key.startsWith('self:') ? buffs : debuffs));
     const gcds = this.lazy(() => new Map(Object.values(list.spells).flatMap(spell => spell.ids.map(id => [id, spell.gcd] as const))));
     return {
@@ -62,8 +66,9 @@ export class FactContextService {
       selfStacks: this.perKey((id: number) => this.auraWindows.buildStackTimeline(buffs, id)),
       targetSpans: this.perKey((id: number) => this.auraWindows.buildAuraSpansByTarget(debuffs, id)),
       targetStacks: (id, target) => this.auraWindows.buildStackTimeline(debuffs.filter(event => this.projections.targetKey(event) === target), id),
-      damageIndex: this.lazy(() => damage.map((event): DamageRow => [event.atS, this.projections.targetKey(event)]).sort((a, b) => a[0] - b[0])),
+      damageIndex,
       targetHealth: target => health().get(target) ?? [],
+      addSpans: () => adds().spans,
       resourcePool: this.perKey((type: number) => this.resourceIndex(casts, type)),
       resourceChanges: this.perKey((type: number) => this.changeIndex(input.resources, type)),
       gcd: id => gcds().get(id) ?? null,
@@ -131,6 +136,24 @@ export class FactContextService {
     }
     for (const rows of index.values()) rows.sort((a, b) => a[0] - b[0]);
     return index;
+  }
+
+  private addSpans(damage: TimedEvent[], rows: readonly DamageRow[]): AddSpan[] | null {
+    const toughest = new Map<string, number>();
+    for (const event of damage) {
+      if (event.resourceActor !== RESOURCE_ACTOR_TARGET || !event.maxHitPoints) continue;
+      const key = this.projections.targetKey(event);
+      toughest.set(key, Math.max(toughest.get(key) ?? 0, event.maxHitPoints));
+    }
+    const boss = Math.max(0, ...toughest.values());
+    if (!boss) return null;
+    const spans = new Map<string, [number, number]>();
+    for (const [atS, target] of rows) {
+      if ((toughest.get(target) ?? 0) >= boss * BOSS_HEALTH_SHARE) continue;
+      const span = getOrInsert(spans, target, (): [number, number] => [atS, atS]);
+      span[1] = atS;
+    }
+    return [...spans.values()];
   }
 
   private hasteFactors(list: PriorityList, events: TimedEvent[]): [number, number][] {

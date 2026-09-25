@@ -35,6 +35,19 @@ const DUMP = [
   ),
   record('Name             : Death Coil (id=47541)', 'Resource         : -30 Runic Power (6) (id=1)', 'Resource         : 2% Base Mana (0) (id=2)', 'Cast Time        : 1.5 seconds'),
   record('Name             : Demolish (id=436358)', 'Talent Entry     : Colossus (Arms, Protection) [tree=hero, row=1, col=1]'),
+  record(
+    'Name             : Avatar (id=107574) [Spell Family (4)] ',
+    'Talent Entry     : Fury [tree=spec, row=10, col=6, max_rank=1, req_points=20, select_idx=100]',
+    '                 : Arms [tree=spec, row=10, col=6, max_rank=1, req_points=20]',
+  ),
+  record(
+    'Name             : Scorch (id=2948) [Spell Family (3)] ',
+    'Effects          :',
+    '#1 (id=882)      : School Damage (2): fire',
+    '                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | SP Coefficient: 1',
+    '#2 (id=1154626)  : Dummy (3)',
+    '                   Base Value: 30 | Scaled Value: 30 | Target: Self (1)',
+  ),
 ].join('\n\n');
 
 const records = dumps.readDump(DUMP);
@@ -42,7 +55,7 @@ const named = (name: string) => records.find(entry => entry.name === name);
 
 describe('SpellDumpService.readDump', () => {
   it('reads one record per Name line, with its id and cooldown', () => {
-    expect(records).toHaveLength(9);
+    expect(records).toHaveLength(11);
     expect(named('Recklessness')).toMatchObject({ id: 1719, token: 'recklessness', cooldown: 90 });
   });
 
@@ -93,5 +106,17 @@ describe('SpellDumpService.readDump', () => {
     expect(named('Enraged Regeneration')?.specs).toBeNull();
     expect(named('Enraged Regeneration')?.talented).toBe(true);
     expect(named('Bladestorm')?.talented).toBe(false);
+  });
+
+  it('gives a talent several specs share every spec its entry lists', () => {
+    expect(named('Avatar')?.specs).toEqual(['Fury', 'Arms']);
+  });
+
+  it('reads a dump written with Windows line endings the same', () => {
+    expect(dumps.readDump(DUMP.replace(/\n/g, '\r\n'))).toEqual(records);
+  });
+
+  it('reads each effect\'s base value under its own number', () => {
+    expect(named('Scorch')?.effects).toEqual([0, 30]);
   });
 });

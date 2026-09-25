@@ -16,6 +16,7 @@ const LIST = {
     secret_technique: planSpell('Secret Technique', [SECRET_TECHNIQUE]),
     shadow_dance: planSpell('Shadow Dance', [SHADOW_DANCE], { duration: 8 }),
   },
+  variables: [],
   talents: {},
 };
 const NEVER_OFF: ButtonBench = {

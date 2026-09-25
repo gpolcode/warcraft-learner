@@ -6,6 +6,7 @@ import { WclProjectionsService } from '../../analysis/wcl-projections-service';
 import type { PlanLine, PriorityList } from '../../plan/plan.models';
 import { AplNode, SimcAplService } from '../../simc/simc-apl-service';
 import { ConditionEvalService } from './condition-eval-service';
+import { VariableReplayService } from './variable-replay-service';
 import { FactContextService } from './fact-context-service';
 import { CooldownFacts } from './facts/cooldown-facts';
 import type { CastMoment, FactContext, FactStream, Range, Truth } from './priority-list.models';
@@ -70,9 +71,14 @@ export class ListCheckService {
   private readonly contexts = inject(FactContextService);
   private readonly cooldowns = inject(CooldownFacts);
   private readonly projections = inject(WclProjectionsService);
+  private readonly replay = inject(VariableReplayService);
 
   streams(list: PriorityList): Set<FactStream> {
-    const names = list.lines.flatMap(line => this.parseLine(line, 0).terms ?? []).flatMap(term => this.apl.identifiers(term));
+    const texts = [...list.lines.flatMap(line => line.terms ?? []), ...list.variables.flatMap(({ value, value_else, condition, terms }) => [value, value_else, condition, ...(terms ?? [])])];
+    const names = texts.flatMap(text => {
+      const node = text === undefined ? null : this.apl.parse(text);
+      return node ? this.apl.identifiers(node) : [];
+    });
     return new Set(names.flatMap(name => this.evaluator.readerFor(name)?.streams ?? []));
   }
 
@@ -85,7 +91,7 @@ export class ListCheckService {
   read(ctx: FactContext): LogReading {
     const buttons = this.buttons(ctx.list);
     const lines = [...buttons.values()].flat().sort((a, b) => a.index - b.index);
-    const moments = this.moments(ctx);
+    const moments = this.replay.withVariables(ctx.list, this.moments(ctx), ctx);
     const cache = new Map<string, LineReading>();
     const readLine = (line: ReadLine, moment: CastMoment): LineReading =>
       getOrInsert(cache, `${moment.index}:${line.index}`, () => this.readLine(line, moment, ctx));

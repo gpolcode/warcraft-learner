@@ -21,6 +21,19 @@ export interface PlanLine {
   line_cd?: number;
 }
 
+/** A variable SimC sets during the fight, replayed at each cast in list order; one set once is inlined into the lines instead. */
+export interface PlanVariable {
+  name: string;
+  op: string;
+  value?: string;
+  value_else?: string;
+  condition?: string;
+  terms: string[] | null;
+  default?: number;
+  /** Set once before the pull. */
+  precombat?: true;
+}
+
 /** Merged over every record SimC holds under the name; a log casts under any of `ids`. */
 export interface PlanSpell {
   name: string;
@@ -46,6 +59,7 @@ export interface PlanTalent {
 
 export interface PriorityList {
   lines: PlanLine[];
+  variables: PlanVariable[];
   spells: Record<string, PlanSpell>;
   talents: Record<string, PlanTalent>;
 }

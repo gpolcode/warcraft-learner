@@ -33,7 +33,7 @@ const TALENT = /^(talent|hero_tree|apex)\.(\w+)(?:\.enabled)?$/;
 const POOL = /^(mana|rage|focus|energy|combo_points|rune|runic_power|soul_shard|astral_power|holy_power|maelstrom|chi|insanity|fury|essence)(?:\.(deficit|pct))?$/;
 const POOL_WORDS: Record<string, string | undefined> = { soul_shard: 'soul shards', rune: 'runes' };
 const AMOUNTS: Record<string, string | undefined> = { cp_max_spend: 'full', 'gcd.max': 'one GCD', gcd: 'one GCD' };
-const FLAG_VALUE = /(^|\.)(up|down|ticking|active|enabled|refreshable|ready|executing)$|^(talent|hero_tree|apex)\./;
+const FLAG_VALUE = /(^|\.)(up|down|ticking|active|enabled|refreshable|ready|executing|exists)$|^(talent|hero_tree|apex)\./;
 const SINGULAR = /^(stacks|charges|combo points|soul shards|runes)$/;
 
 const not = (holds: boolean): string => (holds ? '' : 'not ');
@@ -51,7 +51,15 @@ const enemies = (op: Op, n: string): string => {
   return op === '>' && Number.isInteger(count) ? `on ${count + 1}+ enemies` : `on ${bound(op, n)} enemies`;
 };
 
+/** What a term no phrase covers reads as, so the player never meets SimC's own syntax. */
+const OTHER = 'another condition';
+
 const FLAGS: FlagWords[] = [
+  { match: /^target\.debuff\.casting\.(up|react)$/, words: (_, holds) => `while the target is ${not(holds)}casting` },
+  { match: /^raid_event\.adds\.exists$/, words: (_, holds) => `in a fight ${holds ? 'with' : 'without'} adds` },
+  { match: /^raid_event\.adds\.up$/, words: (_, holds) => (holds ? 'while adds are up' : 'while no adds are up') },
+  { match: /^raid_event\.pull\.exists$/, words: (_, holds) => (holds ? 'in a dungeon' : 'outside a dungeon') },
+  { match: /^variable\.\w+$/, words: (x, holds) => `${holds ? 'when' : 'unless'} ${x} holds` },
   { match: /^buff\.\w+\.(up|react|stack)$/, words: (x, holds) => `while ${x} is ${holds ? 'up' : 'down'}` },
   { match: /^buff\.\w+\.down$/, words: (x, holds) => `while ${x} is ${holds ? 'down' : 'up'}` },
   { match: /^((?:target\.)?(dot|debuff)\.\w+\.(up|ticking)|ticking)$/, words: (x, holds) => `while ${x} is ${not(holds)}on the target` },
@@ -67,6 +75,11 @@ const FLAGS: FlagWords[] = [
 
 const SUBJECTS: SubjectWords[] = [
   { match: /^(active_enemies|spell_targets(\.\w+)?)$/, at: (_, op, n) => enemies(op, n), unit: 'enemies' },
+  { match: /^raid_event\.adds\.in$/, at: (_, op, n) => (below(op) ? `when adds come within ${secs(n)}` : `when adds are ${lessMore(op)} ${secs(n)} away`), unit: 's until adds' },
+  { match: /^raid_event\.adds\.remains$/, at: (_, op, n) => `with ${lessMore(op)} ${secs(n)} of adds left`, unit: 's of adds left' },
+  { match: /^raid_event\.adds\.count$/, at: (_, op, n) => `with ${bound(op, n)} adds coming`, unit: 'adds' },
+  { match: /^raid_event\.movement\.in$/, at: (_, op, n) => (below(op) ? `when you must move within ${secs(n)}` : `with ${lessMore(op)} ${secs(n)} before you must move`), unit: 's until you move' },
+  { match: /^variable\.\w+$/, at: (x, op, n) => `with ${x} ${lessMore(op)} ${n}`, unit: '' },
   { match: /^(?:target\.)?(buff|debuff|dot)\.\w+\.(stack|react)$/, at: (x, op, n) => `at ${bound(op, n)} ${x} stacks`, unit: 'stacks' },
   { match: /^((?:target\.)?(buff|debuff|dot)\.\w+\.)?remains$/, at: (x, op, n) => `with ${lessMore(op)} ${secs(n)} of ${x} left`, unit: 's left' },
   { match: /^cooldown\.\w+\.(remains|full_recharge_time)$/, at: (x, op, n) => (n === '0' && below(op) ? `when ${x} is ready` : `when ${x} is ${lessMore(op)} ${secs(n)} away`), unit: 's away' },
@@ -95,7 +108,7 @@ export class ListTextService {
   sentence(list: PriorityList, line: ReadLine, ownBuild = false): string {
     if (!line.terms) return '';
     const picked = line.terms.filter((term, at) => line.talentTerms[at] && this.picksTalent(term));
-    const body = line.terms.filter(term => !picked.includes(term)).map(term => this.phrase(list, term, true, line.action));
+    const body = [...new Set(line.terms.filter(term => !picked.includes(term)).map(term => this.phrase(list, term, true, line.action)))];
     const prefix = picked.length && !ownBuild ? `With ${this.join(picked.map(term => this.talentName(list, this.apl.identifiers(term)[0] ?? '')))}: ` : '';
     return prefix + (this.join(body) || 'whenever it is ready');
   }
@@ -107,17 +120,33 @@ export class ListTextService {
   /** The term in words; `holds` false phrases its negation, which a title uses to name what went wrong. */
   phrase(list: PriorityList, node: AplNode, holds: boolean, action: string): string {
     if (node.type === 'UnaryExpression' && (node as jsep.UnaryExpression).operator === '!') return this.phrase(list, (node as jsep.UnaryExpression).argument, !holds, action);
-    if (node.type === 'Identifier') return this.flag(list, (node as jsep.Identifier).name, holds, action) ?? this.raw(node, holds);
-    return node.type === 'BinaryExpression' ? this.binary(list, node as jsep.BinaryExpression, holds, action) : this.raw(node, holds);
+    if (node.type === 'Identifier') return this.flag(list, (node as jsep.Identifier).name, holds, action) ?? this.raw(holds);
+    return node.type === 'BinaryExpression' ? this.binary(list, node as jsep.BinaryExpression, holds, action) : this.raw(holds);
   }
 
-  value(node: AplNode, [lo, hi]: Range): string {
+  /** The term's miss in words, or null where no phrase names it, since a title reads nothing from `another condition`. */
+  failure(list: PriorityList, node: AplNode, action: string): string | null {
+    const words = this.phrase(list, node, false, action);
+    return words.includes(OTHER) ? null : words;
+  }
+
+  /** `flag` marks a term that tests the value for truth alone, so a variable read that way shows as yes or no. */
+  value(node: AplNode, [lo, hi]: Range, flag = false): string {
     if (lo === -Infinity && hi === Infinity) return 'not in the log';
     const name = node.type === 'Identifier' ? (node as jsep.Identifier).name : '';
-    if (FLAG_VALUE.test(name)) return lo !== hi ? 'either' : this.flagValue(name, lo);
+    if (this.readsAsFlag(name, flag)) return lo !== hi ? 'either' : this.flagValue(name, lo);
     const unit = this.unit(name, lo === 1 && hi === 1);
-    const text = lo === hi ? this.number(lo) : hi === Infinity ? `${this.number(lo)}+` : `${this.number(lo)} to ${this.number(hi)}`;
+    const text = this.span(lo, hi);
     return unit ? `${text} ${unit}` : text;
+  }
+
+  private readsAsFlag(name: string, flag: boolean): boolean {
+    return FLAG_VALUE.test(name) || (flag && name.startsWith('variable.'));
+  }
+
+  private span(lo: number, hi: number): string {
+    if (lo === hi) return this.number(lo);
+    return hi === Infinity ? `${this.number(lo)}+` : `${this.number(lo)} to ${this.number(hi)}`;
   }
 
   private flagValue(name: string, value: number): string {
@@ -136,10 +165,10 @@ export class ListTextService {
     const { operator, left, right } = node;
     if (operator === '|' || operator === '&') return this.compound(list, node, operator, holds, action);
     const op = (operator === '==' ? '=' : operator) as Op;
-    if (!(op in FLIP)) return this.raw(node, holds);
+    if (!(op in FLIP)) return this.raw(holds);
     const facing = left.type === 'Literal' ? { subject: right, op: MIRROR[op], amount: left } : { subject: left, op, amount: right };
     const words = this.comparison(list, facing.subject, holds ? facing.op : FLIP[facing.op], facing.amount, action);
-    return words ?? this.raw(node, holds);
+    return words ?? this.raw(holds);
   }
 
   private compound(list: PriorityList, node: AplNode, operator: string, holds: boolean, action: string): string {
@@ -215,8 +244,8 @@ export class ListTextService {
     return kind === 'hero_tree' ? `the ${named} hero tree` : named;
   }
 
-  private raw(node: AplNode, holds: boolean): string {
-    return `${holds ? 'when' : 'unless'} ${this.apl.print(node)}`;
+  private raw(holds: boolean): string {
+    return `${holds ? 'when' : 'unless'} ${OTHER} holds`;
   }
 
   private join(parts: string[], last = 'and'): string {

@@ -30,6 +30,16 @@ describe('SimcDataService', () => {
     expect((await pending).ok).toBe(true);
   });
 
+  it('reads SimC\'s engine code under its own path, and names a class\'s modules beside the code every class shares', async () => {
+    const { service, httpMock } = setup();
+    expect(service.sourcePaths('Paladin')).toEqual([
+      'class_modules/paladin/sc_paladin.cpp', 'class_modules/paladin/sc_paladin_protection.cpp', 'class_modules/paladin/sc_paladin_retribution.cpp', 'player/player.cpp',
+    ]);
+    const pending = service.getSource('player/player.cpp');
+    httpMock.expectOne(`${SIMC_RAW}/engine/player/player.cpp`).flush('buffs.shadowmeld = make_buff( this, "shadowmeld", find_spell( 58984 ) );');
+    expect((await pending).ok).toBe(true);
+  });
+
   it('reads a list SimC does not write as missing', async () => {
     const { service, httpMock } = setup();
     const pending = service.getApl('Evoker', 'Preservation');

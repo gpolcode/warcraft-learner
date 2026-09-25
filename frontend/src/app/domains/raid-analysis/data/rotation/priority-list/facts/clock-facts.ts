@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import type { CastMoment, FactContext, FactReader, FactStream, HealthRow, Range } from '../priority-list.models';
 
-const CLOCK = /^(time|fight_remains|expected_combat_length|(?:target\.)?time_to_die(?:\.remains)?)$/;
+const CLOCK = /^(time|in_combat|fight_remains|expected_combat_length|(?:target\.)?time_to_die(?:\.remains)?)$/;
 
 /** A wipe never shows when the boss would have died, so its end bounds the clock only from below. */
 @Injectable({ providedIn: 'root' })
@@ -16,6 +16,7 @@ export class ClockFacts implements FactReader {
     const { atS } = moment;
     const end = ctx.fightDurationS;
     if (name === 'time') return [atS, atS];
+    if (name === 'in_combat') return [1, 1];
     if (name === 'expected_combat_length') return ctx.kill ? [end, end] : [end, Infinity];
     const fightLeft: Range = ctx.kill ? [end - atS, end - atS] : [end - atS, Infinity];
     if (name === 'fight_remains' || !moment.target) return fightLeft;
