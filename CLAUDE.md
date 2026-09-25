@@ -1,6 +1,6 @@
 # warcraft-learner
 
-A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs combat data against per-spec plans derived from SimulationCraft's action priority lists and Blizzard's spell labels, and delivers coaching-style feedback benchmarked against top parses. The app is a **fully static Angular SPA** on GitHub Pages - no backend, all analysis client-side, WCL queried directly from the browser with an OAuth2 client-credentials token (no user login).
+A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs combat data against per-spec plans derived from SimulationCraft and delivers coaching-style feedback benchmarked against top parses. The app is a **fully static Angular SPA** on GitHub Pages - no backend, all analysis client-side, WCL queried directly from the browser with an OAuth2 client-credentials token (no user login).
 
 ## Always-on rules
 
@@ -26,7 +26,7 @@ flowchart LR
   specs --> runtimeFiles
 ```
 
-Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it. The benches embed each spec's plan (rotation rules, cooldowns, defensives), which ingest and the dev build derive from SimulationCraft's profile and spell dump (`data/simc/`) for the tier `SIMC_TIER` (`data/http/simc-data-service.ts`) names; a new raid tier moves that constant.
+Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
 
 ## Commands (run from `frontend/`)
 

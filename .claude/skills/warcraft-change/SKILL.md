@@ -29,7 +29,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 
 ## Ingest version
 
-`INGEST_VERSION` (`data/ingest/ingest-version.ts`) bumps exactly when what ingestion bakes changes: a feature's `*Bench` interface in its `data/<feature>/*-data-source.ts`, measured values, or the rule copy. A change to what a spec's plan derives needs no bump: the plan key in each bench's signature re-benches it.
+`INGEST_VERSION` (`data/ingest/ingest-version.ts`) bumps exactly when what ingestion bakes changes: a feature's `*Bench` interface in its `data/<feature>/*-data-source.ts`, measured values, or the rule copy. A change to what a spec's plan derives needs no bump: the plan key in each bench's signature re-benches it. A new raid tier moves `SIMC_TIER` (`data/http/simc-data-service.ts`) and re-benches the same way.
 
 ## Architecture roles
 
