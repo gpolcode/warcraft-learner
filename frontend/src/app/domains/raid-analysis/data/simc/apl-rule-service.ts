@@ -44,7 +44,7 @@ interface Button {
   fillers: string[];
 }
 
-/** Turns an APL into rule conditions: a term on every line of a button is a requirement, and each requirement shape is one rule kind. */
+/** Turns an APL into rule conditions: each requirement shape is one rule kind, and a rule every line of a button implies is a requirement of pressing it. */
 @Injectable({ providedIn: 'root' })
 export class AplRuleService {
   private readonly apl = inject(SimcAplService);
@@ -58,11 +58,19 @@ export class AplRuleService {
     const rules: RuleCondition[] = [];
     for (const [action, lines] of byAction) {
       const button: Button = { action, spells, fillers };
-      for (const term of this.apl.sharedTerms(lines)) rules.push(...this.termRules(button, term));
+      rules.push(...this.sharedRules(button, lines));
       for (const term of lines.flatMap(line => line.terms)) rules.push(...this.stateRules(action, term));
     }
     rules.push(...this.procRules(lines, new Set(byAction.keys())));
     return [...new Map(rules.map(rule => [JSON.stringify(rule), rule])).values()];
+  }
+
+  /** A rule carries no threshold, so `spell_targets>=2` on one line and `spell_targets>=3` on another imply the same one. */
+  private sharedRules(button: Button, lines: AplLine[]): RuleCondition[] {
+    if (lines.some(line => !line.readable)) return [];
+    const [first, ...rest] = lines.map(line => line.terms.flatMap(term => this.termRules(button, term)));
+    const others = rest.map(implied => new Set(implied.map(rule => JSON.stringify(rule))));
+    return (first ?? []).filter(rule => others.every(keys => keys.has(JSON.stringify(rule))));
   }
 
   /** Base seconds from SimC's spell data; 0 for a button that has none. */
@@ -129,20 +137,21 @@ export class AplRuleService {
   }
 
   private targetGate(action: string, { name, op, value }: Comparison): RuleCondition | null {
-    if (!TARGETS.test(name) || value === null) return null;
-    const exact = op === '=' ? (value > 1 ? 'min' : 'max') : null;
+    if (!TARGETS.test(name)) return null;
+    const exact = op === '=' && value !== null ? (value > 1 ? 'min' : 'max') : null;
     const bound = AT_LEAST.has(op) ? 'min' : AT_MOST.has(op) ? 'max' : exact;
     return bound && { kind: 'cast_at_target_count', spell_id: UNRESOLVED, spell_name: action, bound };
   }
 
-  /** A floor on the pool spends it full; a floor on its deficit keeps a generator from capping it. */
+  /** A floor on the pool spends it full and a ceiling spends it low; on the deficit, each reads the other way round. */
   private resourceGate(action: string, { name, op }: Comparison): RuleCondition | null {
     const [pool = '', field] = name.split('.');
     const resource = RESOURCES[pool];
-    if (!resource || !AT_LEAST.has(op) || (field !== undefined && field !== 'deficit')) return null;
+    if (!resource || !(AT_LEAST.has(op) || AT_MOST.has(op)) || (field !== undefined && field !== 'deficit')) return null;
+    const low = AT_MOST.has(op) !== (field === 'deficit');
     return {
       kind: 'resource_at_cast', spell_id: UNRESOLVED, spell_name: action,
-      resource_type: resource.type, resource_name: resource.name, bound: field === 'deficit' ? 'max' : 'min',
+      resource_type: resource.type, resource_name: resource.name, bound: low ? 'max' : 'min',
     };
   }
 

@@ -11,6 +11,7 @@ const apl = TestBed.inject(SimcAplService);
 
 const MAELSTROM_MAX_STACKS = 10;
 const RAGE_TYPE = 1;
+const COMBO_POINTS_TYPE = 4;
 
 /** A spell as SimC's dump records it, with no cooldown, stacks or labels unless the case gives them. */
 const spell = (token: string, over: Partial<SpellRecord> = {}): SpellRecord => ({
@@ -74,6 +75,16 @@ describe('AplRuleService.derive', () => {
       derived: [{ kind: 'resource_at_cast', spell_id: 0, spell_name: 'bloodthirst', resource_type: RAGE_TYPE, resource_name: 'rage', bound: 'max' }],
     },
     {
+      name: 'a ceiling on the pool means press it while the pool is low',
+      lines: ['actions=vanish,if=combo_points<=2'],
+      derived: [{ kind: 'resource_at_cast', spell_id: 0, spell_name: 'vanish', resource_type: COMBO_POINTS_TYPE, resource_name: 'combo points', bound: 'max' }],
+    },
+    {
+      name: 'a ceiling on the pool\'s deficit means spend it full',
+      lines: ['actions=eviscerate,if=combo_points.deficit<=1'],
+      derived: [{ kind: 'resource_at_cast', spell_id: 0, spell_name: 'eviscerate', resource_type: COMBO_POINTS_TYPE, resource_name: 'combo points', bound: 'min' }],
+    },
+    {
       name: 'a floor on a buff\'s stacks means spend at high stacks, capped at the buff\'s own maximum',
       lines: ['actions=lightning_bolt,if=buff.maelstrom_weapon.stack>=5'],
       spells: [spell('maelstrom_weapon', { maxStacks: MAELSTROM_MAX_STACKS })],
@@ -119,6 +130,21 @@ describe('AplRuleService.derive', () => {
     {
       name: 'a term only one line of a button carries makes no rule',
       lines: ['actions=rampage,if=rage>=80', 'actions+=/rampage'],
+      derived: [],
+    },
+    {
+      name: 'a floor every line states with its own number is one requirement, since the top logs set the number',
+      lines: ['actions=black_powder,if=talent.unseen_blade&spell_targets>=(3-talent.potent_powder)', 'actions+=/black_powder,if=talent.deathstalkers_mark&spell_targets>=2'],
+      derived: [{ kind: 'cast_at_target_count', spell_id: 0, spell_name: 'black_powder', bound: 'min' }],
+    },
+    {
+      name: 'a floor on one line and a ceiling on another make no rule',
+      lines: ['actions=black_powder,if=spell_targets>=3', 'actions+=/black_powder,if=spell_targets<=1'],
+      derived: [],
+    },
+    {
+      name: 'a line of the button no one can read makes no rule, since its terms are unknown',
+      lines: ['actions=rampage,if=rage>=80', 'actions+=/rampage,if=rage>=(80'],
       derived: [],
     },
     {

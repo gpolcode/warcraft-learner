@@ -7,7 +7,7 @@ const apl = TestBed.inject(SimcAplService);
 /** A line's terms as the SimC source reads, so a case states its expectation in APL syntax. */
 const source = (line: AplLine | undefined): string[] => (line?.terms ?? []).map(term => apl.identifiers(term).join(' '));
 const lines = (...entries: string[]): AplLine[] => apl.readApl(entries.join('\n'));
-const keys = (line: AplLine | undefined): string[] => (line?.terms ?? []).map(term => apl.termKey(term));
+const keys = (line: AplLine | undefined): string[] => (line?.terms ?? []).map(term => JSON.stringify(term));
 
 describe('SimcAplService.readApl', () => {
   it('reads each button line of the default list with its top-level & terms', () => {
@@ -77,20 +77,5 @@ describe('SimcAplService.readApl', () => {
 
   it('keeps a line under a condition jsep cannot read, with its terms marked unknown', () => {
     expect(lines('actions=rampage,if=rage>=(80')).toEqual([{ action: 'rampage', terms: [], readable: false }]);
-  });
-});
-
-describe('SimcAplService.sharedTerms', () => {
-  it('keeps the terms every line of a button agrees on', () => {
-    const rampage = lines(
-      'actions=rampage,if=buff.enrage.down&rage>=80',
-      'actions+=/rampage,if=rage>=80&active_enemies>=3',
-    );
-    expect(apl.sharedTerms(rampage).flatMap(term => apl.identifiers(term))).toEqual(['rage']);
-  });
-
-  it('agrees on nothing when a line of the button is unreadable', () => {
-    const rampage = lines('actions=rampage,if=rage>=80', 'actions+=/rampage,if=rage>=(80');
-    expect(apl.sharedTerms(rampage)).toEqual([]);
   });
 });

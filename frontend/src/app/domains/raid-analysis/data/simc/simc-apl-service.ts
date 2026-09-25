@@ -57,18 +57,6 @@ export class SimcAplService {
     return context.lines;
   }
 
-  /** The terms on every line of one button: a term every line agrees on is a requirement of pressing it. */
-  sharedTerms(lines: AplLine[]): AplNode[] {
-    if (lines.some(line => !line.readable)) return [];
-    const [first, ...rest] = lines;
-    const others = rest.map(line => new Set(line.terms.map(term => this.termKey(term))));
-    return (first?.terms ?? []).filter(term => others.every(keys => keys.has(this.termKey(term))));
-  }
-
-  termKey(term: AplNode): string {
-    return JSON.stringify(term);
-  }
-
   identifiers(node: AplNode): string[] {
     if (node.type === 'Identifier') return [(node as jsep.Identifier).name];
     return this.children(node).flatMap(child => this.identifiers(child));
