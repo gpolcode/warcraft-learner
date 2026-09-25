@@ -39,7 +39,6 @@ const SINGULAR = /^(stacks|charges|combo points|soul shards|runes)$/;
 const not = (holds: boolean): string => (holds ? '' : 'not ');
 const below = (op: Op): boolean => op.startsWith('<');
 const lessMore = (op: Op): string => ({ '<': 'under', '<=': 'at most', '>': 'over', '>=': 'at least', '=': 'exactly', '!=': 'other than' })[op];
-/** Seconds read `3 s`; a number that is already words (`2 GCDs`) keeps its own unit. */
 const secs = (n: string): string => (/^\d+(\.\d+)?$/.test(n) ? `${n} s` : n);
 const bound = (op: Op, n: string): string => {
   if (!/^\d/.test(n)) return `${below(op) ? 'under ' : ''}${n}`;
@@ -80,12 +79,10 @@ const SUBJECTS: SubjectWords[] = [
   { match: /^time$/, at: (_, op, n) => (below(op) ? `in the first ${secs(n)} of the fight` : `after the first ${secs(n)} of the fight`), unit: 's in' },
 ];
 
-/** Plain-spoken sentences for list lines, built from each term's own names and numbers; a term no phrase covers reads as SimC wrote it. */
 @Injectable({ providedIn: 'root' })
 export class ListTextService {
   private readonly apl = inject(SimcAplService);
 
-  /** A button or aura's in-game name, or the SimC token spaced out. */
   name(list: PriorityList, token: string): string {
     return list.spells[token]?.name ?? token.replace(/_/g, ' ');
   }
@@ -96,7 +93,7 @@ export class ListTextService {
 
   /** `With Deathstalker's Mark: at full combo points and on 2+ enemies`; the talent prefix is left out where `ownBuild` says the player has it. */
   sentence(list: PriorityList, line: ReadLine, ownBuild = false): string {
-    if (!line.terms) return 'under a condition the log cannot read';
+    if (!line.terms) return '';
     const picked = line.terms.filter((term, at) => line.talentTerms[at] && this.picksTalent(term));
     const body = line.terms.filter(term => !picked.includes(term)).map(term => this.phrase(list, term, true, line.action));
     const prefix = picked.length && !ownBuild ? `With ${this.join(picked.map(term => this.talentName(list, this.apl.identifiers(term)[0] ?? '')))}: ` : '';
@@ -114,7 +111,6 @@ export class ListTextService {
     return node.type === 'BinaryExpression' ? this.binary(list, node as jsep.BinaryExpression, holds, action) : this.raw(node, holds);
   }
 
-  /** A term's value on one cast, in the words its subject is counted in. */
   value(node: AplNode, [lo, hi]: Range): string {
     if (lo === -Infinity && hi === Infinity) return 'not in the log';
     const name = node.type === 'Identifier' ? (node as jsep.Identifier).name : '';
@@ -184,7 +180,6 @@ export class ListTextService {
     return n === 'full' && !below(op) ? `at full ${pool}` : `at ${bound(op, n)} ${pool}`;
   }
 
-  /** A number as a sentence reads it: `full` for the combo point cap, `2 GCDs`, or the literal. */
   private amount(list: PriorityList, node: AplNode, action: string): Amount | null {
     if (node.type === 'Literal') return { n: this.number(Number((node as jsep.Literal).value)), aside: '' };
     const named = node.type === 'Identifier' ? AMOUNTS[(node as jsep.Identifier).name] : undefined;
@@ -192,7 +187,6 @@ export class ListTextService {
     return node.type === 'BinaryExpression' ? this.arithmetic(list, node as jsep.BinaryExpression, action) : null;
   }
 
-  /** `gcd.max*2` reads as `2 GCDs`, and `cp_max_spend-!buff.x.up` as `full`, one less while x is down. */
   private arithmetic(list: PriorityList, { operator, left, right }: jsep.BinaryExpression, action: string): Amount | null {
     const gcd = [left, right].find(side => side.type === 'Identifier' && /^gcd(\.max)?$/.test((side as jsep.Identifier).name));
     const gcds = operator === '*' && gcd ? this.amount(list, gcd === left ? right : left, action) : null;
@@ -209,7 +203,6 @@ export class ListTextService {
     return term.type === 'Identifier' && TALENT.test((term as jsep.Identifier).name);
   }
 
-  /** The spell a name reads: `buff.x.up` and `prev_gcd.2.x` read x, and a bare name the line's own button. */
   private token(name: string, action: string): string {
     const parts = name.replace(/^target\./, '').split('.');
     if (parts[0] === 'prev_gcd') return parts[2] ?? action;

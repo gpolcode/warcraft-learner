@@ -12,7 +12,6 @@ const list = priorityList({
   lines: [
     { action: 'black_powder', terms: ['talent.deathstalkers_mark', 'combo_points>=cp_max_spend-!buff.darkest_night.up', 'active_enemies>=2'] },
     { action: 'backstab', terms: [] },
-    { action: 'eviscerate', terms: null },
   ],
   spells: {
     shadow_dance: planSpell('Shadow Dance', [SHADOW_DANCE]),
@@ -54,9 +53,8 @@ describe('ListTextService sentences', () => {
       'Press Black Powder at full combo points (one less while Darkest Night is down) and on 2+ enemies.');
   });
 
-  it('reads a line with no condition as press when ready, and an unreadable one as such', () => {
+  it('reads a line with no condition as press when ready', () => {
     expect(text.sentence(list, lineOf('backstab'))).toBe('whenever it is ready');
-    expect(text.sentence(list, lineOf('eviscerate'))).toBe('under a condition the log cannot read');
   });
 });
 

@@ -13,7 +13,7 @@ const apart = ([a0, a1]: Range, [b0, b1]: Range): boolean => a1 < b0 || b1 < a0;
 const hull = (values: number[]): Range => [Math.min(...values), Math.max(...values)];
 const products = ([a0, a1]: Range, [b0, b1]: Range): number[] => [a0 * b0, a0 * b1, a1 * b0, a1 * b1];
 
-/** Per comparison, whether it certainly holds and whether it certainly fails, over every value each side may take. */
+/** `[certainly holds, certainly fails]` over every value each side may take. */
 const COMPARE: Record<string, ((a: Range, b: Range) => readonly [boolean, boolean]) | undefined> = {
   '<': ([a0, a1], [b0, b1]) => [a1 < b0, a0 >= b1],
   '<=': ([a0, a1], [b0, b1]) => [a1 <= b0, a0 > b1],
@@ -36,7 +36,6 @@ const ARITHMETIC: Record<string, ((a: Range, b: Range) => Range) | undefined> = 
   '%%': (a, b) => (point(a) && point(b) && b[0] !== 0 ? [a[0] % b[0], a[0] % b[0]] : UNKNOWN),
 };
 
-/** Reads a SimC condition against one log the way SimC evaluates it, every value a range so an unknown or approximate fact never settles more than it knows. */
 @Injectable({ providedIn: 'root' })
 export class ConditionEvalService {
   private readonly readers = inject(FACT_READERS);
@@ -94,7 +93,6 @@ export class ConditionEvalService {
     return this.compare(operator, a, b) ?? this.arithmetic(operator, a, b);
   }
 
-  /** SimC skips the right side once the left settles it; so does a known left side here. */
   private logical(operator: string, left: Truth, right: () => Truth): Range {
     if (operator === '&') return this.fromTruth(left === 'false' ? 'false' : this.and(left, right()));
     if (operator === '|') return this.fromTruth(left === 'true' ? 'true' : this.or(left, right()));

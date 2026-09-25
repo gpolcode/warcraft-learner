@@ -23,7 +23,6 @@ const list = (terms: string[]) => priorityList({
 
 interface Call { dataType: string; sourceId?: number; includeResources: boolean; hostilityType?: string }
 
-/** Records every event fetch and answers each stream from the given events. */
 function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclCombatantInfo = {}) {
   const calls: Call[] = [];
   TestBed.configureTestingModule({ providers: [{

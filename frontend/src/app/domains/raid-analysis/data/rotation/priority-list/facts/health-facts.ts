@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UNKNOWN, CastMoment, FactContext, FactReader, FactStream, Range } from '../priority-list.models';
 
-/** Health as a share of its max: the cast's target's from the damage rows, the player's own from the cast. */
 @Injectable({ providedIn: 'root' })
 export class HealthFacts implements FactReader {
   readonly streams: FactStream[] = ['targetHealth'];

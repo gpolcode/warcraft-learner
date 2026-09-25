@@ -9,38 +9,32 @@ export const UNKNOWN: Range = [-Infinity, Infinity];
 
 export type Truth = 'true' | 'false' | 'unknown';
 
-/** What a list's facts read beyond the always-fetched casts, buffs and combatant info. `targetHealth` asks for the damage rows' heavier resource-bearing form. */
+/** `targetHealth` asks for the damage rows' heavier resource-bearing form. */
 export type FactStream = 'enemyAuras' | 'damage' | 'targetHealth' | 'resources';
 
-/** Damage rows as `[atS, targetKey]`, time-ordered so a window is a slice rather than a scan. */
-export type DamageRow = readonly [number, string];
+/** Time-ordered, so a window is a slice rather than a scan. */
+export type DamageRow = readonly [atS: number, target: string];
 
-/** One enemy's health as `[atS, share of max]`, time-ordered. */
-export type HealthRow = readonly [number, number];
+export type HealthRow = readonly [atS: number, share: number];
 
-/** One cast's pool as `[atS, amount before the cost, amount the cast left behind, max, the cast's index]`, in the game's own units, time-ordered. */
-export type ResourceRow = readonly [number, number, number, number, number];
+/** In the game's own units. */
+export type ResourceRow = readonly [atS: number, before: number, left: number, max: number, castIndex: number];
 
-/** One change to a pool between casts, `[atS, amount]`, in the game's own units: a gain past the cap counts only up to it, a drain is negative. */
-export type ResourceChange = readonly [number, number];
+/** A gain past the cap counts only up to it; a drain is negative. */
+export type ResourceChange = readonly [atS: number, amount: number];
 
-/** The moment a line is read at: a cast of the player's, with the enemy it was aimed at. */
 export interface CastMoment {
   atS: number;
   event: TimedEvent;
   /** The cast's place in the context's `casts`, so the casts before it are a slice. */
   index: number;
-  /** The enemy's damage-index key; the last enemy the player aimed at for a cast with none, null before the first. */
   target: string | null;
 }
 
-/** Everything one log says that a list's facts read, each index built on first use. */
 export interface FactContext {
   list: PriorityList;
   fightDurationS: number;
-  /** A wipe never shows when the boss would have died, so the fight's end bounds the clock only from below. */
   kill: boolean;
-  /** Completed casts, time-ordered. */
   casts: readonly TimedEvent[];
   begincasts: readonly TimedEvent[];
   /** Picked talent entries and their ranks; null for a log with no talent tree. */
@@ -60,8 +54,8 @@ export interface FactContext {
   resourceChanges: (resourceType: number) => readonly ResourceChange[];
   /** The global cooldown a cast id spends by the list's spell data, null for an id the list never names. */
   gcd: (spellId: number) => number | null;
-  /** Observed cast time over the base one, `[atS, factor]`, from every hardcast the list's spell data times. */
-  hasteFactors: () => readonly (readonly [number, number])[];
+  /** Observed cast time over the base one, from every hardcast the list's spell data times. */
+  hasteFactors: () => readonly (readonly [atS: number, factor: number])[];
 }
 
 export interface FactReader {

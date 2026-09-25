@@ -4,7 +4,6 @@ import { UNKNOWN, CastMoment, FactContext, FactReader, FactStream, Range } from 
 
 const PET = /^pet\.(\w+)\.(active|remains)$/;
 
-/** A pet is out for the summoning button's duration from its last press; a pet no button of the spell data summons stays unknown. */
 @Injectable({ providedIn: 'root' })
 export class PetFacts implements FactReader {
   readonly streams: FactStream[] = [];

@@ -213,6 +213,6 @@ describe('RotationTransformService (live, in-browser)', () => {
   it('propagates a missing error when the spec\'s plan has neither cooldowns nor a list', async () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan()) }) });
     expect(await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(Results.missing('No cooldowns or list for this spec.'));
+      .toEqual(Results.missing('No cooldowns or rotation for this spec.'));
   });
 });

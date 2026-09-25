@@ -36,7 +36,6 @@ const NON_SPELL = new Set([
 ]);
 const MAX_VARIABLE_DEPTH = 3;
 
-/** Reads a SimulationCraft action priority list into button lines, each condition split into its `&` terms and printed back as SimC text. */
 @Injectable({ providedIn: 'root' })
 export class SimcAplService {
   /** Every button line reachable from the default list, in priority order. */
@@ -139,7 +138,6 @@ export class SimcAplService {
     return text;
   }
 
-  /** A null term list is a line under a condition jsep could not read: its terms are unknown, not absent. */
   private walk(context: AplWalk, list: string, inherited: AplNode[] | null, seen: Set<string>): void {
     if (seen.has(list)) return;
     let reached = inherited;

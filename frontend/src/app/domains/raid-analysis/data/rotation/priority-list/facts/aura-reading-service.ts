@@ -10,7 +10,6 @@ export interface AuraAt {
   endS: number | null;
 }
 
-/** The aura arithmetic a buff and a debuff share. */
 @Injectable({ providedIn: 'root' })
 export class AuraReadingService {
   private readonly auraWindows = inject(AuraWindowsService);

@@ -8,7 +8,6 @@ import { SimcDataService } from '../http/simc-data-service';
 import { TalentDataService, TalentTree } from '../http/talent-data-service';
 import { SpecPlan, SpecPlanService } from './spec-plan-service';
 
-/** Fetches a spec's SimulationCraft sources and talent tree and keeps its plan for the session, so ingest and the dev build share one path. */
 @Injectable({ providedIn: 'root' })
 export class SpecPlanLoaderService {
   private readonly simc = inject(SimcDataService);

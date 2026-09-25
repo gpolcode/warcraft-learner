@@ -13,12 +13,10 @@ import type { CastMoment, FactContext, FactStream, Range, Truth } from './priori
 const COMPARISONS = new Set(['=', '==', '!=', '<', '<=', '>', '>=']);
 const TALENT = /^(talent|hero_tree|apex)\./;
 
-/** A list line with its terms parsed once per log. */
 export interface ReadLine {
-  /** The line's place in the whole list. */
+  /** Across the whole list, not the button's own lines. */
   index: number;
   action: string;
-  /** Null for a line SimC wrote a condition no parser reads. */
   terms: AplNode[] | null;
   lineCdS: number;
   /** Per term, whether it reads talents alone: such a term says whose build the line is, not when to press. */
@@ -43,14 +41,12 @@ export interface CastCheck {
   verdict: CastVerdict;
   /** Into the button's own lines: the first that allowed the cast, else the closest one. */
   line: number;
-  /** Every line of the button as it read at the cast. */
   lines: LineReading[];
 }
 
-/** One on-GCD cast where the list's order settled what SimC presses. */
+/** Only casts where the list's order settled what SimC presses. */
 export interface OrderCheck {
   atS: number;
-  /** The button of the first line that certainly holds with its button certainly ready. */
   expected: string;
   pressed: string;
   /** Into the expected button's own lines. */
@@ -59,7 +55,6 @@ export interface OrderCheck {
 }
 
 export interface LogReading {
-  /** Each button's judged casts, in time order. */
   casts: Map<string, CastCheck[]>;
   /** The id this log cast each button under most. */
   ids: Map<string, number>;
@@ -68,7 +63,6 @@ export interface LogReading {
   builds: Map<string, Truth[]>;
 }
 
-/** Reads one log against the list: every cast of a listed button against that button's lines, and every on-GCD cast against the list's order. */
 @Injectable({ providedIn: 'root' })
 export class ListCheckService {
   private readonly apl = inject(SimcAplService);
@@ -77,13 +71,11 @@ export class ListCheckService {
   private readonly cooldowns = inject(CooldownFacts);
   private readonly projections = inject(WclProjectionsService);
 
-  /** The streams a list's facts need fetched. */
   streams(list: PriorityList): Set<FactStream> {
     const names = list.lines.flatMap(line => this.parseLine(line, 0).terms ?? []).flatMap(term => this.apl.identifiers(term));
     return new Set(names.flatMap(name => this.evaluator.readerFor(name)?.streams ?? []));
   }
 
-  /** Each button's lines in list order. */
   buttons(list: PriorityList): Map<string, ReadLine[]> {
     const buttons = new Map<string, ReadLine[]>();
     list.lines.forEach((line, index) => getOrInsert(buttons, line.action, (): ReadLine[] => []).push(this.parseLine(line, index)));
@@ -121,7 +113,6 @@ export class ListCheckService {
     };
   }
 
-  /** Every cast id a listed button goes under in this log. */
   private pressedOf(ctx: FactContext, actions: string[]): Map<number, string> {
     return new Map(actions.flatMap(action => [...ctx.castIds(action)].map(id => [id, action] as const)));
   }
@@ -151,7 +142,6 @@ export class ListCheckService {
     return subject ? this.evaluator.value(subject, moment, action, ctx) : null;
   }
 
-  /** What a term measures: a comparison's left side, or a flag itself. */
   subject(term: AplNode): AplNode | null {
     if (term.type === 'Identifier') return term;
     if (term.type === 'UnaryExpression') return this.subject((term as jsep.UnaryExpression).argument);
@@ -171,7 +161,7 @@ export class ListCheckService {
     return { atS, verdict, line: closest, lines: readings };
   }
 
-  /** Walks the list top down the way SimC does; a line that may or may not hold above the first certain one leaves the moment undecided. */
+  /** A line above the first certain one that may or may not hold leaves the moment undecided. */
   private orderCheck(
     lines: ReadLine[], pressed: string, moment: CastMoment, ctx: FactContext,
     readLine: (line: ReadLine, moment: CastMoment) => LineReading,
@@ -192,7 +182,7 @@ export class ListCheckService {
     return !!ctx.list.spells[action]?.gcd && ctx.castTimes(action).length > 0;
   }
 
-  /** Off cooldown, affordable at the spell data's cost, and clear of its line's own wait; a cost the pool may not cover is unknown, since talents cut costs. */
+  /** A cost the pool may not cover reads as unknown, since talents cut costs. */
   private ready(line: ReadLine, moment: CastMoment, ctx: FactContext): Truth {
     const cooldown = this.evaluator.truth(this.cooldowns.read('cooldown_react', moment, line.action, ctx));
     const costs = (ctx.list.spells[line.action]?.costs ?? []).map(({ type, amount }) => {

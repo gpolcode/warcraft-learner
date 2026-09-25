@@ -15,7 +15,6 @@ const UNSEEN_BLADE_ENTRY = 117100;
 const SHADOWSTRIKE = 185438;
 const checks = TestBed.inject(ListCheckService);
 
-/** A Subtlety-shaped list: Eviscerate at 5 combo points above Backstab as the filler. */
 const list = (lines: PlanLine[], over: { eviscerateCooldown?: number } = {}) => priorityList({
   lines,
   spells: {

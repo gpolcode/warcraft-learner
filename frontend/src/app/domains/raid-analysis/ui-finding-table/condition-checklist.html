@@ -1,4 +1,4 @@
-<ul class="flex flex-col gap-1" aria-label="Conditions of the line">
+<ul class="flex flex-col gap-1" aria-label="Conditions for this cast">
   @for (check of checks(); track $index) {
     <li class="flex items-start gap-2 text-body">
       @switch (check.truth) {
@@ -13,12 +13,7 @@
         }
       }
       <span class="min-w-0 flex-1">{{ check.text }}</span>
-      <span class="tabular-nums text-caption text-muted shrink-0 text-right">
-        {{ check.value }}
-        @if (check.top) {
-          <span class="block">Top logs {{ check.top }}</span>
-        }
-      </span>
+      <span class="tabular-nums text-caption text-muted shrink-0 text-right">{{ check.value }}</span>
     </li>
   }
 </ul>

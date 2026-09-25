@@ -9,7 +9,6 @@ import { UNKNOWN } from '../priority-list.models';
 import { DebuffFacts } from './debuff-facts';
 
 const RUPTURE_S = 20;
-/** The pandemic window: the last 30% of the duration. */
 const PANDEMIC_S = (RUPTURE_S * 30) / 100;
 const BOSS = 1;
 const ADD = 2;

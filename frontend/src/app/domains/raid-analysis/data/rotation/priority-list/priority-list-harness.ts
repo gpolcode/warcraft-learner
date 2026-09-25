@@ -34,7 +34,6 @@ export function factContext(list: PriorityList, log: LogEvents = {}): FactContex
   });
 }
 
-/** The first cast at `atS`, aimed at `target` where the case names one. */
 export function castAt(ctx: FactContext, atS: number, target: string | null = null): CastMoment {
   const index = ctx.casts.findIndex(event => event.atS === atS);
   const event = ctx.casts[index];

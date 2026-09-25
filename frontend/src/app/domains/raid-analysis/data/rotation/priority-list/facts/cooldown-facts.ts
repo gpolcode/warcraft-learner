@@ -13,7 +13,7 @@ interface Charges {
 
 const ready = (slow: Charges, fast: Charges): Range => (slow.remains === 0 ? [1, 1] : fast.remains > 0 ? [0, 0] : [0, 1]);
 
-/** Each field from the rebuild at the spell data's recharge (`slow`) and at the fastest the log shows (`fast`). */
+/** `slow` is the rebuild at the spell data's recharge, `fast` at the fastest the log shows. */
 const FIELDS: Record<string, ((slow: Charges, fast: Charges) => Range) | undefined> = {
   remains: (slow, fast) => [fast.remains, slow.remains],
   remains_expected: (slow, fast) => [fast.remains, slow.remains],
@@ -23,7 +23,6 @@ const FIELDS: Record<string, ((slow: Charges, fast: Charges) => Range) | undefin
   full_recharge_time: (slow, fast) => [fast.full, slow.full],
 };
 
-/** A button's cooldown rebuilt from the player's own casts: the spell data's recharge bounds it from above, the fastest recast the log shows from below. */
 @Injectable({ providedIn: 'root' })
 export class CooldownFacts implements FactReader {
   readonly streams: FactStream[] = [];

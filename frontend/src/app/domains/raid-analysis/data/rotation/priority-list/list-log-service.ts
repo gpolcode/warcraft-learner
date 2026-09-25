@@ -13,7 +13,6 @@ export interface ListPull {
   playerId: number;
 }
 
-/** Fetches what a list's facts read from one pull and reads the pull against the list; the bench and the player's view share it. */
 @Injectable({ providedIn: 'root' })
 export class ListLogService {
   private readonly wclApi = inject(WclApiService);

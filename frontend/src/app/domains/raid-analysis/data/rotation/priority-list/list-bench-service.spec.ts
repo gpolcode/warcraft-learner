@@ -16,7 +16,6 @@ const list = priorityList({
 const benches = TestBed.inject(ListBenchService);
 
 const term = (truth: Truth, value: [number, number] | null = null): TermReading => ({ truth, value });
-/** A cast read against both Eviscerate lines: the first measures combo points, the second is a flag. */
 const cast = (verdict: CastVerdict, line = 0, cp = 5): CastCheck => ({
   atS: 1, verdict, line,
   lines: [{ truth: cp >= 5 ? 'true' : 'false', terms: [term(cp >= 5 ? 'true' : 'false', [cp, cp])] }, { truth: 'false', terms: [term('false', [0, 0])] }],
@@ -56,16 +55,7 @@ describe('ListBenchService', () => {
 
   it('shares the on-list casts out over the lines that allowed them', () => {
     const readings = field(MIN_MEASURED_PARSES, [cast('on', 0), cast('on', 0), cast('on', 0), cast('on', 1)]);
-    expect(benchOf(readings)?.lines.map(line => line.allowed)).toEqual([0.75, 0.25]);
-  });
-
-  it('keeps the spread of what each term measured, from the 10th to the 90th percentile', () => {
-    const readings = field(MIN_MEASURED_PARSES, [cast('off', 0, 3), cast('on', 0, 5), cast('on', 0, 6), cast('on', 0, 7)]);
-    expect(benchOf(readings)?.lines[0]?.spreads).toEqual([[3, 7]]);
-  });
-
-  it('keeps no spread for a flag', () => {
-    expect(benchOf(field(MIN_MEASURED_PARSES, clean))?.lines[1]?.spreads).toEqual([null]);
+    expect(benchOf(readings)?.allowed).toEqual([0.75, 0.25]);
   });
 
   it('benches the order once enough top logs met a moment the list settled for the button', () => {

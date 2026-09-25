@@ -5,7 +5,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Results } from '../../../shared/util-http/result';
 import { SimcDataService } from './simc-data-service';
 
-const SIMC_RAW = 'https://raw.githubusercontent.com/simulationcraft/simc/midnight';
+const SIMC_RAW = 'https://raw.githubusercontent.com/simulationcraft/simc/HEAD';
 const HTTP_NOT_FOUND = 404;
 
 function setup(): { service: SimcDataService; httpMock: HttpTestingController } {

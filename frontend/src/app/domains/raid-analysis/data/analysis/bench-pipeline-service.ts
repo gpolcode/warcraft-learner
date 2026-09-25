@@ -55,14 +55,14 @@ export class BenchPipelineService {
     return step.pick(plan.value) === null ? Results.missing(step.missingMessage) : plan;
   }
 
-  /** The recipe's slice of the plan as one log played it; the full plan already passed `pick`, so it names something. */
+  /** The full plan already passed `pick`, so the slice names something. */
   private logPlan<TParse, TBench, TPlan>(
     recipe: BenchRecipe<TParse, TBench, TPlan>, plan: SpecPlan | null, castIds: Record<string, number>,
   ): TPlan {
     return (plan && recipe.plan ? recipe.plan.pick(this.specPlans.inLog(plan, castIds)) : undefined) as TPlan;
   }
 
-  /** The recipe's slice as the top logs played it; null when they cast none of what it names. */
+  /** Null when the top logs cast none of what the recipe names. */
   private topLogPlan<TParse, TBench, TPlan>(
     recipe: BenchRecipe<TParse, TBench, TPlan>, plan: SpecPlan | null, castIds: Record<string, number>[],
   ): TPlan | null {

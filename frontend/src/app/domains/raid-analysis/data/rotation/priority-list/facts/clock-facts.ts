@@ -3,7 +3,7 @@ import type { CastMoment, FactContext, FactReader, FactStream, HealthRow, Range 
 
 const CLOCK = /^(time|fight_remains|expected_combat_length|(?:target\.)?time_to_die(?:\.remains)?)$/;
 
-/** The fight's clock, which SimC has to guess and the log knows afterwards: to the second on a kill, from below on a wipe. */
+/** A wipe never shows when the boss would have died, so its end bounds the clock only from below. */
 @Injectable({ providedIn: 'root' })
 export class ClockFacts implements FactReader {
   readonly streams: FactStream[] = ['targetHealth'];

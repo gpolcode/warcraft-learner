@@ -17,7 +17,6 @@ const POOL_FIELDS: Record<string, ((amount: Range, max: number) => Range) | unde
   max: (_, max) => [max, max],
 };
 
-/** The player's pools: exact on a cast that touches the pool, else rebuilt from the casts either side and the gains and drains between them. */
 @Injectable({ providedIn: 'root' })
 export class ResourceFacts implements FactReader {
   private readonly contexts = inject(FactContextService);

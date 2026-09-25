@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import type { CastMoment, FactContext, FactReader, FactStream, Range } from '../priority-list.models';
 
 const ENEMIES = /^(active_enemies|spell_targets(\.\w+)?)$/;
-/** Enemies damaged this soon after a cast count as engaged for it; an AoE ability lands well inside a GCD or two. */
+/** An AoE ability lands well inside a GCD or two of its cast. */
 const TARGET_COUNT_WINDOW_S = 3;
 
-/** `active_enemies` and `spell_targets`: every enemy the player damaged in the seconds after the cast, since both ask how many were up to be hit. */
+/** `spell_targets` reads the same count as `active_enemies`, since both ask how many enemies were up to be hit. */
 @Injectable({ providedIn: 'root' })
 export class EnemyFacts implements FactReader {
   readonly streams: FactStream[] = ['damage'];

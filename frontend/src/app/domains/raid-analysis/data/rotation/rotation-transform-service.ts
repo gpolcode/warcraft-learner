@@ -71,7 +71,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
       plan: {
         plans: this.specPlanLoader,
         pick: plan => (plan.cooldowns.length || plan.lines.length ? plan : null),
-        missingMessage: 'No cooldowns or list for this spec.',
+        missingMessage: 'No cooldowns or rotation for this spec.',
       },
       iconSpellIds: bench => [...Object.values(bench.cd_spell_ids), ...bench.buttons.map(button => button.spell_id)],
       parse: (parse, plan) => this.parseRotation(parse, plan),

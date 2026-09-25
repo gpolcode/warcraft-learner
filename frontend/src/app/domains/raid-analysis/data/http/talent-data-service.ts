@@ -20,13 +20,10 @@ export interface TalentName {
   name: string;
 }
 
-/** A spec's talent entries as a SimulationCraft list names them. */
 export interface TalentTree {
-  /** Class, spec and hero talents, which `talent.x` names. */
   talents: TalentName[];
-  /** The hero tree picks, which `hero_tree.x` names. */
   heroTrees: TalentName[];
-  /** The spec tree's tiered node, one entry per tier in order, which `apex.N` names. */
+  /** One entry per tier, in order, so `apex.N` is the Nth. */
   apex: TalentName[];
 }
 
@@ -42,7 +39,7 @@ export class TalentDataService {
     return talents ? Results.ok(talents) : Results.missing('No talent data for this spec.');
   }
 
-  /** Every spec's tree at once, keyed like `getTalents`, since one read of the dump serves them all. */
+  /** Keyed like `getTalents`. */
   async getTalentTrees(): Promise<Result<Map<string, TalentTree>>> {
     const trees = await this.fetchTrees();
     return trees.ok ? Results.ok(new Map(trees.value.map(tree => [this.specKey(tree), this.talentTree(tree)]))) : trees;

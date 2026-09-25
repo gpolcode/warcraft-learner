@@ -24,10 +24,9 @@ export interface FactInputs {
   list: PriorityList;
   casts: TimedEvent[];
   buffs: TimedEvent[];
-  /** The player's own auras on enemies. */
+  /** Only the player's own, out of the raid-wide stream. */
   debuffs: TimedEvent[];
   damage: TimedEvent[];
-  /** The player's `Resources` events: gains and drains between casts. */
   resources: TimedEvent[];
   talents: ReadonlyMap<number, number> | null;
   fightDurationS: number;
@@ -98,7 +97,7 @@ export class FactContextService {
     return id !== undefined && seen(id) > 0 ? id : null;
   }
 
-  /** Built on first call and kept, so a stream no fact asks about costs nothing. */
+  /** So an index no fact reads costs nothing. */
   private lazy<T extends object>(build: () => T): () => T {
     let value: T | undefined;
     return () => (value ??= build());

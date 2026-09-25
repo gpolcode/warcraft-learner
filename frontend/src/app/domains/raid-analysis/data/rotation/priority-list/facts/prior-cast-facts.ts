@@ -5,7 +5,7 @@ import type { CastMoment, FactContext, FactReader, FactStream, Range } from '../
 const PRIOR = /^(?:prev_gcd\.(\d+)|prev|prev_off_gcd)\.(\w+)$/;
 const LAST_USED = /^action\.(\w+)\.last_used$/;
 
-/** The player's cast order. A cast the list never names is a utility press, not part of the rotation SimC counts. */
+/** A cast the list never names is a utility press, not part of the rotation SimC counts. */
 @Injectable({ providedIn: 'root' })
 export class PriorCastFacts implements FactReader {
   readonly streams: FactStream[] = [];

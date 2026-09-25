@@ -13,7 +13,6 @@ export interface SpellRecord {
   /** 0 for a spell off the global cooldown. */
   gcd: number;
   castTime: number;
-  /** What pressing it spends, per WCL power type, in the game's own units. */
   costs: SpellCost[];
   maxStacks: number;
   /** Blizzard's own `Major Cooldowns` label. */
@@ -30,7 +29,6 @@ export interface SpellCost {
   amount: number;
 }
 
-/** Reads the few fields a plan needs from SimulationCraft's per-class spell data dump. */
 @Injectable({ providedIn: 'root' })
 export class SpellDumpService {
   tokenize(name: string): string {
@@ -65,7 +63,6 @@ export class SpellDumpService {
     return { talented: !!talent, specs: talent ? this.talentSpecs(talent[1] ?? '', talent[2] ?? '') : null };
   }
 
-  /** A charged button's recharge is its cooldown. */
   private cooldown(block: string): number {
     const charges = /^Charges +: \d+ \((\d+(?:\.\d+)?) seconds cooldown\)/m.exec(block);
     return Number((charges ?? /^Cooldown +: (\d+(?:\.\d+)?) seconds/m.exec(block))?.[1] ?? 0);

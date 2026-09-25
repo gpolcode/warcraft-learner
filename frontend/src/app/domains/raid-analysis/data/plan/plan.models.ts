@@ -13,17 +13,15 @@ export interface PlanDefensive {
   talent_gated?: boolean;
 }
 
-/** One line of the list: its button, and the condition SimC presses it under. */
 export interface PlanLine {
-  /** The button as SimC names it: `black_powder`. */
+  /** SimC's token, not the in-game name: `black_powder`. */
   action: string;
-  /** The `&` terms of the line's own condition and of every list call above it, as SimC text; null when SimC wrote one no parser reads. */
+  /** The `&` terms of the line and of every list call above it, as SimC text; null when no parser reads the condition. */
   terms: string[] | null;
-  /** Seconds the line waits after it fires before it may fire again. */
   line_cd?: number;
 }
 
-/** The spell data a list's names resolve to; every record SimC holds under the name, each log reading the one it shows. */
+/** Merged over every record SimC holds under the name; a log casts under any of `ids`. */
 export interface PlanSpell {
   name: string;
   ids: number[];
@@ -40,13 +38,12 @@ export interface PlanSpell {
   costs: { type: number; amount: number }[];
 }
 
-/** The talent entries a list's `talent.x`, `hero_tree.x` or `apex.N` names; picking any one of them holds it. */
+/** Picking any one of `entries` holds the talent. */
 export interface PlanTalent {
   name: string;
   entries: number[];
 }
 
-/** A spec's SimulationCraft list and everything its names resolve to, so a log is read against it with nothing fetched. */
 export interface PriorityList {
   lines: PlanLine[];
   spells: Record<string, PlanSpell>;

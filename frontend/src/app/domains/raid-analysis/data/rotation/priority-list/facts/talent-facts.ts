@@ -4,7 +4,6 @@ import { UNKNOWN, CastMoment, FactContext, FactReader, FactStream, Range } from 
 
 const TALENT = /^(talent\.\w+|hero_tree\.\w+|apex\.\d+)(?:\.(enabled|rank))?$/;
 
-/** `talent.x`, `hero_tree.x` and `apex.N` against the log's talent tree. */
 @Injectable({ providedIn: 'root' })
 export class TalentFacts implements FactReader {
   readonly streams: FactStream[] = [];

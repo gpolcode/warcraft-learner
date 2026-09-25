@@ -1,18 +1,8 @@
-<div class="text-label text-muted mb-1.5">Which line allowed each cast</div>
+<div class="text-label text-muted mb-1.5">When you pressed it</div>
 <div class="flex flex-col gap-2">
   @for (line of lines(); track $index) {
     <div class="grid grid-cols-[1fr_auto] gap-x-(--gap-card) gap-y-0.5 items-baseline">
-      <div class="min-w-0 text-body">
-        {{ line.text }}
-        @switch (line.build) {
-          @case ('true') {
-            <span class="text-label rounded-sm px-1.25 ml-1 text-accent bg-accent/10 border border-accent/25">Your build</span>
-          }
-          @case ('false') {
-            <span class="text-label rounded-sm px-1.25 ml-1 text-muted border border-line">Other build</span>
-          }
-        }
-      </div>
+      <div class="min-w-0 text-body">{{ line.text }}</div>
       <div class="tabular-nums text-caption text-muted text-right whitespace-nowrap">
         You {{ line.you === null ? '-' : (line.you | percent) }} / top logs {{ line.top === null ? '-' : (line.top | percent) }}
       </div>

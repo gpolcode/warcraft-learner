@@ -23,7 +23,6 @@ export function specPlan(partial: {
   };
 }
 
-/** A spell on the GCD with no cooldown, cost or aura unless the case gives one. */
 export function planSpell(name: string, ids: number[], over: Partial<PlanSpell> = {}): PlanSpell {
   return { name, ids, cooldown: 0, charges: 1, duration: 0, gcd: 1.5, cast_time: 0, max_stacks: 0, costs: [], ...over };
 }

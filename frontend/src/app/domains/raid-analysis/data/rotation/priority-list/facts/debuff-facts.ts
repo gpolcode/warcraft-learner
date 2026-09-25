@@ -10,7 +10,6 @@ const OWN = /^(ticking|refreshable|remains|duration)$/;
 /** A refresh inside the aura's last 30% keeps the remainder: the game's pandemic window, which SimC's `refreshable` reads. */
 const PANDEMIC_PCT = 30;
 
-/** The player's own auras on enemies: on the cast's target, or counted across every enemy. */
 @Injectable({ providedIn: 'root' })
 export class DebuffFacts implements FactReader {
   private readonly auras = inject(AuraReadingService);

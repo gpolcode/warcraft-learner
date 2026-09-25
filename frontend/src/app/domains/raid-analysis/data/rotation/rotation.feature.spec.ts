@@ -20,7 +20,7 @@ const LIST = {
 };
 const NEVER_OFF: ButtonBench = {
   action: 'secret_technique', spell_id: SECRET_TECHNIQUE, off_tolerance: 0, skip_tolerance: null,
-  lines: [{ allowed: 1, spreads: [null] }],
+  allowed: [1],
 };
 
 const FIGHT_END_MS = 120_000;
@@ -64,7 +64,7 @@ describe('RotationFeatureService', () => {
   it('judges the player\'s casts against the list the bench carries', async () => {
     const wcl = {
       getReport: async () => REPORT,
-      // Shadow Dance ran from 5 to 13 s, so the log shows the aura and the cast at 30 s sits outside it.
+      // The log has to show Shadow Dance, or the aura reads as unknown rather than down.
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
         (dataType === 'Casts' ? [cast(SECRET_TECHNIQUE, 30)] : dataType === 'Buffs' ? [applyBuff(SHADOW_DANCE, 5), removeBuff(SHADOW_DANCE, 13)] : []),
       getCombatantInfo: async () => [],
@@ -72,8 +72,8 @@ describe('RotationFeatureService', () => {
     const service = withSource(Results.ok(bench({ list: LIST, buttons: [NEVER_OFF] })), wcl);
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
     assert(result.ok);
-    expect(result.value.ruleRows.find(row => row.chip === 'conditions')).toMatchObject({
-      what: 'Secret Technique while Shadow Dance is down', measured: { value: '1 / 1', unit: 'casts off the list' },
+    expect(result.value.ruleRows.find(row => row.chip === 'Wrong time')).toMatchObject({
+      what: 'Secret Technique while Shadow Dance is down', measured: { value: '1 / 1', unit: 'casts at the wrong time' },
     });
   });
 

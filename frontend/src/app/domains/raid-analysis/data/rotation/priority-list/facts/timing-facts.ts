@@ -3,14 +3,12 @@ import { mode } from 'd3-array';
 import { UNKNOWN, CastMoment, FactContext, FactReader, FactStream, Range } from '../priority-list.models';
 
 const TIMING = /^(?:action\.(\w+)\.)?(gcd|gcd\.max|gcd\.remains|cast_time|execute_time|executing|execute_remains)$/;
-/** The floor haste can press a hasted global cooldown down to. */
 const GCD_FLOOR_S = 0.75;
 /** A class whose global cooldown is a flat second never has it hasted. */
 const FLAT_GCD_S = 1;
 /** Haste can at most halve a cast when no hardcast in the log narrows it. */
 const HASTE_FACTOR_MIN = 0.5;
 
-/** Global cooldown and cast times, hasted by the factor the log's own hardcasts show around the cast. */
 @Injectable({ providedIn: 'root' })
 export class TimingFacts implements FactReader {
   readonly streams: FactStream[] = [];
@@ -28,7 +26,6 @@ export class TimingFacts implements FactReader {
     return this.castTime(field, ctx.list.spells[named]?.cast_time, gcd, this.haste(moment.atS, ctx));
   }
 
-  /** `execute_time` is the cast or the global cooldown, whichever is longer. */
   private castTime(field: string, base: number | undefined, gcd: Range, [fLo, fHi]: Range): Range {
     if (base === undefined) return UNKNOWN;
     const cast: Range = [base * fLo, base * fHi];

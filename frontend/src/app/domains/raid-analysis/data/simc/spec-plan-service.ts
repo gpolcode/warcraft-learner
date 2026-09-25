@@ -12,14 +12,12 @@ import { SpellDumpService, SpellRecord } from './spell-dump-service';
 const MAJOR_COOLDOWN_S = 60;
 const KEY_LENGTH = 16;
 
-/** Where a list names a spell: `buff.x.up`, `prev_gcd.2.x`, `target.dot.x.remains`. */
 const SPELL_NAME = /^(?:target\.)?(?:buff|debuff|dot|cooldown|action|active_dot|prev|prev_off_gcd|pet)\.(\w+)|^prev_gcd\.\d+\.(\w+)/;
 const TALENT_NAME = /^(talent|hero_tree|apex)\.\w+/;
 
 /** A `pet.x` is out while the button that summons it lasts, named for the pet itself or with one of these. */
 export const SUMMON_PREFIXES = ['', 'summon_', 'invoke_'];
 
-/** What a spec's benches judge, read from SimulationCraft's rotation and Blizzard's spell labels. */
 export interface SpecPlan extends PriorityList {
   cooldowns: PlanCooldown[];
   defensives: PlanDefensive[];
@@ -27,7 +25,6 @@ export interface SpecPlan extends PriorityList {
   key: string;
 }
 
-/** Builds a spec's plan from its SimC action priority list, class spell dump and talent tree, and fits it to each log's own spell ids. */
 @Injectable({ providedIn: 'root' })
 export class SpecPlanService {
   private readonly dumps = inject(SpellDumpService);
@@ -57,13 +54,12 @@ export class SpecPlanService {
     return ids;
   }
 
-  /** The plan as one log played it: each button under the id that log cast it with. */
   inLog(plan: SpecPlan, ids: Record<string, number>): SpecPlan {
     const castAs = <T extends { name: string; spell_id: number }>(button: T): T => ({ ...button, spell_id: ids[button.name] ?? button.spell_id });
     return { ...plan, cooldowns: plan.cooldowns.map(castAs), defensives: plan.defensives.map(castAs) };
   }
 
-  /** The plan as the top logs played it: each button under the id most of them cast it with, and a button none cast left out. */
+  /** A button none of the top logs cast is left out. */
   inTopLogs(plan: SpecPlan, perLog: Record<string, number>[]): SpecPlan {
     const castAs = <T extends { name: string; spell_id: number }>(button: T): T[] => {
       const cast = perLog.flatMap(ids => ids[button.name] ?? []);
@@ -131,7 +127,6 @@ export class SpecPlanService {
     return (kind === 'talent' ? tree?.talents : tree?.heroTrees)?.filter(entry => this.dumps.tokenize(entry.name) === token) ?? [];
   }
 
-  /** APL buttons Blizzard labels major or that hold a long cooldown, in APL order; with no APL, the labelled ones alone. */
   private cooldowns(lines: PlanLine[] | null, byToken: Map<string, SpellRecord[]>): PlanCooldown[] {
     const tokens = lines ? new Set(lines.map(line => line.action)) : byToken.keys();
     return [...tokens].flatMap(token => {

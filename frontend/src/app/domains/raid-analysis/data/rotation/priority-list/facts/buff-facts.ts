@@ -5,7 +5,6 @@ import { AuraAt, AuraReadingService } from './aura-reading-service';
 
 const BUFF = /^buff\.(\w+)\.(up|down|react|stack|remains|duration|max_stack|at_max_stacks)$/;
 
-/** The player's own auras: whether one is up, its stacks and its time left. */
 @Injectable({ providedIn: 'root' })
 export class BuffFacts implements FactReader {
   private readonly auras = inject(AuraReadingService);
