@@ -16,11 +16,11 @@ function setup(): { service: SimcDataService; httpMock: HttpTestingController } 
 describe('SimcDataService', () => {
   afterEach(() => { TestBed.inject(HttpTestingController).verify(); });
 
-  it('reads a spec\'s profile under its class and spec labels, spaces as underscores', async () => {
+  it('reads a spec\'s list under its lowercased class slug and spec label, spaces as underscores', async () => {
     const { service, httpMock } = setup();
-    const pending = service.getProfile('Death Knight', 'Unholy');
-    httpMock.expectOne(`${SIMC_RAW}/profiles/MID2/MID2_Death_Knight_Unholy.simc`).flush('actions=festering_strike');
-    expect(await pending).toEqual(Results.ok('actions=festering_strike'));
+    const pending = service.getApl('Hunter', 'Beast Mastery');
+    httpMock.expectOne(`${SIMC_RAW}/ActionPriorityLists/default/hunter_beast_mastery.simc`).flush('actions=kill_command');
+    expect(await pending).toEqual(Results.ok('actions=kill_command'));
   });
 
   it('reads a class\'s spell dump under its lowercased class slug', async () => {
@@ -30,10 +30,10 @@ describe('SimcDataService', () => {
     expect((await pending).ok).toBe(true);
   });
 
-  it('reads a profile SimC does not ship as missing', async () => {
+  it('reads a list SimC does not write as missing', async () => {
     const { service, httpMock } = setup();
-    const pending = service.getProfile('Evoker', 'Augmentation');
-    httpMock.expectOne(`${SIMC_RAW}/profiles/MID2/MID2_Evoker_Augmentation.simc`)
+    const pending = service.getApl('Evoker', 'Preservation');
+    httpMock.expectOne(`${SIMC_RAW}/ActionPriorityLists/default/evoker_preservation.simc`)
       .flush('404: Not Found', { status: HTTP_NOT_FOUND, statusText: 'Not Found' });
     expect(await pending).toMatchObject({ error: { kind: 'missing' } });
   });

@@ -31,17 +31,17 @@ export interface SpecPlan {
   key: string;
 }
 
-/** Builds a spec's plan from its SimC profile and class spell dump, and fits it to each log's own spell ids. */
+/** Builds a spec's plan from its SimC action priority list and class spell dump, and fits it to each log's own spell ids. */
 @Injectable({ providedIn: 'root' })
 export class SpecPlanService {
   private readonly dumps = inject(SpellDumpService);
   private readonly apl = inject(SimcAplService);
   private readonly aplRules = inject(AplRuleService);
 
-  /** A null profile is a spec SimulationCraft writes no APL for: it gets cooldowns and defensives from the labels alone. */
-  build(sources: { profile: string | null; dump: string; specLabel: string }): SpecPlan {
-    const own = this.ownRecords(this.dumps.readDump(sources.dump), sources.specLabel, new Set(sources.profile?.match(/\w+/g)));
-    return this.assemble(sources.profile === null ? null : this.apl.readProfile(sources.profile), own);
+  /** A null list is a spec SimulationCraft writes no APL for: it gets cooldowns and defensives from the labels alone. */
+  build(sources: { apl: string | null; dump: string; specLabel: string }): SpecPlan {
+    const own = this.ownRecords(this.dumps.readDump(sources.dump), sources.specLabel, new Set(sources.apl?.match(/\w+/g)));
+    return this.assemble(sources.apl === null ? null : this.apl.readApl(sources.apl), own);
   }
 
   /** A name only other specs' talents carry belongs to them, untalented records under it included, unless this spec's APL names it. */
@@ -109,10 +109,10 @@ export class SpecPlanService {
     return plan.spells[this.dumps.tokenize(name)];
   }
 
-  private assemble(profile: AplLine[] | null, records: SpellRecord[]): SpecPlan {
+  private assemble(lines: AplLine[] | null, records: SpellRecord[]): SpecPlan {
     const byToken = group(records, record => record.token);
-    const rules = profile ? this.aplRules.derive(profile, byToken) : [];
-    const cooldowns = this.cooldowns(profile, byToken);
+    const rules = lines ? this.aplRules.derive(lines, byToken) : [];
+    const cooldowns = this.cooldowns(lines, byToken);
     const defensives = this.defensives(records, byToken);
     const tokens = new Set([
       ...rules.flatMap(rule => this.spellFields(rule).flatMap(([, value]) => [value].flat())),
@@ -127,15 +127,15 @@ export class SpecPlanService {
   }
 
   /** APL buttons Blizzard labels major or that hold a long cooldown, in APL order; with no APL, the labelled ones alone. */
-  private cooldowns(profile: AplLine[] | null, byToken: Map<string, SpellRecord[]>): PlanCooldown[] {
-    const tokens = profile ? new Set(profile.map(line => line.action)) : byToken.keys();
+  private cooldowns(lines: AplLine[] | null, byToken: Map<string, SpellRecord[]>): PlanCooldown[] {
+    const tokens = lines ? new Set(lines.map(line => line.action)) : byToken.keys();
     return [...tokens].flatMap(token => {
       const records = byToken.get(token) ?? [];
       const button = greatest(records, record => record.cooldown);
-      const major = records.some(record => record.major) || (!!profile && (button?.cooldown ?? 0) >= MAJOR_COOLDOWN_S);
+      const major = records.some(record => record.major) || (!!lines && (button?.cooldown ?? 0) >= MAJOR_COOLDOWN_S);
       if (!button?.cooldown || !major || records.some(record => record.defensive)) return [];
       return [this.button(button, records)];
-    }).map((cooldown, index) => (profile ? { ...cooldown, opener_priority: index + 1 } : cooldown));
+    }).map((cooldown, index) => (lines ? { ...cooldown, opener_priority: index + 1 } : cooldown));
   }
 
   private defensives(records: SpellRecord[], byToken: Map<string, SpellRecord[]>): PlanDefensive[] {

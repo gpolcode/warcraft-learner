@@ -30,15 +30,15 @@ export class SpecPlanLoaderService {
     this.metas ??= this.currentRaids.discoverSpecMetas(this.wclApi);
     const meta = (await this.metas).find(entry => entry.spec === spec);
     if (!meta) return Results.missing(`No spec metadata for ${spec}.`);
-    const [profile, dump] = await Promise.all([
-      this.simc.getProfile(meta.classLabel, meta.specLabel),
+    const [apl, dump] = await Promise.all([
+      this.simc.getApl(meta.className, meta.specLabel),
       getOrInsert(this.dumps, meta.className, () => this.simc.getSpellDump(meta.className)),
     ]);
     if (!dump.ok) {
       this.dumps.delete(meta.className);
       return dump;
     }
-    if (!profile.ok && profile.error.kind !== 'missing') return profile;
-    return Results.ok(this.specPlans.build({ profile: profile.ok ? profile.value : null, dump: dump.value, specLabel: meta.specLabel }));
+    if (!apl.ok && apl.error.kind !== 'missing') return apl;
+    return Results.ok(this.specPlans.build({ apl: apl.ok ? apl.value : null, dump: dump.value, specLabel: meta.specLabel }));
   }
 }

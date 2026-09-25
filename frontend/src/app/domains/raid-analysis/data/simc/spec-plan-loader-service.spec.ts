@@ -11,18 +11,18 @@ const DUMP = [
   'Cooldown         : 45 seconds',
   'Labels           : 690: Major Cooldowns',
 ].join('\n');
-const PROFILE = 'actions=dark_transformation';
+const APL = 'actions=dark_transformation';
 const UNREACHABLE = Results.transient('WCL is unreachable right now.');
 
 /** Records every SimC read and answers each from the queue given for it, repeating the last answer. */
-function simcFake(answers: { profile?: Result<string>[]; dump?: Result<string>[] } = {}) {
+function simcFake(answers: { apl?: Result<string>[]; dump?: Result<string>[] } = {}) {
   const reads: string[] = [];
   const next = (queue: Result<string>[] | undefined, fallback: Result<string>) => (queue && queue.length > 1 ? queue.shift() : queue?.[0]) ?? fallback;
   const fake = {
     reads,
-    getProfile: async (classLabel: string, specLabel: string) => {
-      reads.push(`profile ${classLabel} ${specLabel}`);
-      return next(answers.profile, Results.ok(PROFILE));
+    getApl: async (className: string, specLabel: string) => {
+      reads.push(`apl ${className} ${specLabel}`);
+      return next(answers.apl, Results.ok(APL));
     },
     getSpellDump: async (className: string) => {
       reads.push(`dump ${className}`);
@@ -41,15 +41,15 @@ function loader(simc: ReturnType<typeof simcFake>): SpecPlanLoaderService {
 }
 
 describe('SpecPlanLoaderService.planFor', () => {
-  it('builds a spec\'s plan from the profile under its WCL labels and its class\'s dump', async () => {
+  it('builds a spec\'s plan from the list under its WCL class slug and spec label, and its class\'s dump', async () => {
     const simc = simcFake();
     const plan = await loader(simc).planFor('UnholyDeathKnight');
-    expect(simc.reads).toEqual(['profile Death Knight Unholy', 'dump DeathKnight']);
+    expect(simc.reads).toEqual(['apl DeathKnight Unholy', 'dump DeathKnight']);
     expect(plan.ok && plan.value.cooldowns.map(cooldown => cooldown.name)).toEqual(['Dark Transformation']);
   });
 
-  it('plans a spec SimC ships no profile for from the dump\'s labels alone', async () => {
-    const plan = await loader(simcFake({ profile: [Results.missing('Not yet ingested.')] })).planFor('UnholyDeathKnight');
+  it('plans a spec SimC writes no list for from the dump\'s labels alone', async () => {
+    const plan = await loader(simcFake({ apl: [Results.missing('Not yet ingested.')] })).planFor('UnholyDeathKnight');
     expect(plan.ok && plan.value.rules).toEqual([]);
     expect(plan.ok && plan.value.cooldowns).toHaveLength(1);
   });
@@ -60,7 +60,7 @@ describe('SpecPlanLoaderService.planFor', () => {
     await plans.planFor('UnholyDeathKnight');
     await plans.planFor('UnholyDeathKnight');
     await plans.planFor('FrostDeathKnight');
-    expect(simc.reads).toEqual(['profile Death Knight Unholy', 'dump DeathKnight', 'profile Death Knight Frost']);
+    expect(simc.reads).toEqual(['apl DeathKnight Unholy', 'dump DeathKnight', 'apl DeathKnight Frost']);
   });
 
   it('reads the sources again after a failed read rather than keeping the failure', async () => {
@@ -70,8 +70,8 @@ describe('SpecPlanLoaderService.planFor', () => {
     expect((await plans.planFor('UnholyDeathKnight')).ok).toBe(true);
   });
 
-  it('fails a profile read that is more than missing', async () => {
-    expect(await loader(simcFake({ profile: [UNREACHABLE] })).planFor('UnholyDeathKnight')).toEqual(UNREACHABLE);
+  it('fails a list read that is more than missing', async () => {
+    expect(await loader(simcFake({ apl: [UNREACHABLE] })).planFor('UnholyDeathKnight')).toEqual(UNREACHABLE);
   });
 
   it('reads a spec WCL does not list as missing', async () => {

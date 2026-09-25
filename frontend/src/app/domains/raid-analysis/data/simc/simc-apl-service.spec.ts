@@ -6,10 +6,10 @@ const apl = TestBed.inject(SimcAplService);
 
 /** A line's terms as the SimC source reads, so a case states its expectation in APL syntax. */
 const source = (line: AplLine | undefined): string[] => (line?.terms ?? []).map(term => apl.identifiers(term).join(' '));
-const lines = (...entries: string[]): AplLine[] => apl.readProfile(entries.join('\n'));
+const lines = (...entries: string[]): AplLine[] => apl.readApl(entries.join('\n'));
 const keys = (line: AplLine | undefined): string[] => (line?.terms ?? []).map(term => apl.termKey(term));
 
-describe('SimcAplService.readProfile', () => {
+describe('SimcAplService.readApl', () => {
   it('reads each button line of the default list with its top-level & terms', () => {
     const [line] = lines('actions=rampage,if=buff.enrage.down&rage>=80');
     expect(line?.action).toBe('rampage');
@@ -33,6 +33,11 @@ describe('SimcAplService.readProfile', () => {
   it('drops the sim-only branch of an | term, so the log-readable branch stands alone', () => {
     const [line] = lines('actions=bladestorm,if=buff.recklessness.up|fight_remains<10');
     expect(source(line)).toEqual(['buff.recklessness.up']);
+  });
+
+  it('keeps an | term whole when its sim-only branch waits on a raid event, which holds for most of the fight', () => {
+    const [line] = lines('actions=disintegrate,if=raid_event.movement.in>2|buff.hover.up');
+    expect(source(line)).toEqual(['raid_event.movement.in buff.hover.up']);
   });
 
   it('keeps an | term whole when every branch is sim-only, since nothing readable would stand in for it', () => {

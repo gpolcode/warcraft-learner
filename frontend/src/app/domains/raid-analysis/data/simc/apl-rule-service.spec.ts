@@ -18,7 +18,7 @@ const spell = (token: string, over: Partial<SpellRecord> = {}): SpellRecord => (
 });
 
 const derive = (lines: string[], spells: SpellRecord[] = []): RuleCondition[] =>
-  rules.derive(apl.readProfile(lines.join('\n')), group(spells, record => record.token));
+  rules.derive(apl.readApl(lines.join('\n')), group(spells, record => record.token));
 
 const cooldown = (token: string): SpellRecord => spell(token, { cooldown: 90 });
 const filler = (token: string): SpellRecord => spell(token);

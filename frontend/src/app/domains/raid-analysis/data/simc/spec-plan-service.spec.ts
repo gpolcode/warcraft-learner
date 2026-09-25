@@ -31,7 +31,7 @@ const DUMP = [
   record('Die by the Sword', DIE_BY_THE_SWORD + 1, 'Cooldown         : 120 seconds', 'Attributes       : Big Defensive (512)'),
   record('Enrage', ENRAGE, 'Duration         : 4 seconds'),
 ].join('\n\n');
-const PROFILE = [
+const APL = [
   'actions=recklessness',
   'actions+=/avatar',
   'actions+=/bladestorm,if=buff.recklessness.up',
@@ -39,7 +39,7 @@ const PROFILE = [
   'actions+=/rampage,if=buff.enrage.remains<1.5',
 ].join('\n');
 
-const fury = (profile: string | null = PROFILE) => specPlans.build({ profile, dump: DUMP, specLabel: 'Fury' });
+const fury = (apl: string | null = APL) => specPlans.build({ apl, dump: DUMP, specLabel: 'Fury' });
 
 describe('SpecPlanService.build', () => {
   it('plans the APL buttons Blizzard labels major or that hold a minute or longer, in APL order', () => {
@@ -60,7 +60,7 @@ describe('SpecPlanService.build', () => {
   });
 
   it('keeps a button another spec\'s talent carries when the spec\'s own APL presses it', () => {
-    const armsPressesIt = `${PROFILE}\nactions+=/die_by_the_sword`;
+    const armsPressesIt = `${APL}\nactions+=/die_by_the_sword`;
     expect(fury(armsPressesIt).defensives.map(defensive => defensive.name)).toContain('Die by the Sword');
   });
 
@@ -71,12 +71,12 @@ describe('SpecPlanService.build', () => {
   });
 
   it('keys a plan on what it derived: an APL edit that adds a rule changes the key', () => {
-    expect(fury(`${PROFILE}\nactions+=/execute,if=rage>=40`).key).not.toBe(fury().key);
+    expect(fury(`${APL}\nactions+=/execute,if=rage>=40`).key).not.toBe(fury().key);
   });
 
   it('keeps the key through an APL edit that derives nothing new', () => {
     // No filler to displace, so the execute line makes no rule.
-    expect(fury(`${PROFILE}\nactions+=/execute,if=target.health.pct<20`).key).toBe(fury().key);
+    expect(fury(`${APL}\nactions+=/execute,if=target.health.pct<20`).key).toBe(fury().key);
   });
 });
 

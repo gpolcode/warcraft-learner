@@ -50,7 +50,7 @@ const MAX_VARIABLE_DEPTH = 3;
 @Injectable({ providedIn: 'root' })
 export class SimcAplService {
   /** Every button line reachable from the default list, in priority order. */
-  readProfile(simc: string): AplLine[] {
+  readApl(simc: string): AplLine[] {
     const lists = this.parseLists(simc);
     const context: AplWalk = { lists, variables: this.variableExpressions([...lists.values()].flat()), lines: [] };
     this.walk(context, 'default', [], new Set());
@@ -162,7 +162,9 @@ export class SimcAplService {
       const names = this.identifiers(branch);
       return !names.some(name => SIM_ONLY.test(name)) || names.some(name => PLAYER_STATE.test(name));
     });
-    if (!kept.length || kept.length === branches.length) return term;
+    // Unlike the fight's end, a raid event's timing holds for most of the fight, so `raid_event.movement.in>2|buff.hover.up` is no call for Hover.
+    const raidEvent = branches.some(branch => !kept.includes(branch) && this.identifiers(branch).some(name => name.startsWith('raid_event.')));
+    if (!kept.length || kept.length === branches.length || raidEvent) return term;
     return kept.reduce((left, right): AplNode => ({ type: 'BinaryExpression', operator: '|', left, right }));
   }
 }
