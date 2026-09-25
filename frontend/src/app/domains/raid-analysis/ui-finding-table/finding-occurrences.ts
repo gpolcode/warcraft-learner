@@ -1,11 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
-import type { FindingOccurrence, FindingTimeline } from '../data/analysis/analysis.models';
-
-export interface TimelineBand {
-  leftPercentage: number;
-  widthPercentage: number;
-}
+import type { FindingOccurrence } from '../data/analysis/analysis.models';
+import { ConditionChecklist } from './condition-checklist';
 
 // Distinguishes option ids when several occurrence strips are open across the page.
 let nextInstanceSeq = 0;
@@ -14,13 +10,12 @@ let nextInstanceSeq = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-finding-occurrences',
   host: { class: 'block' },
-  imports: [FormatDurationPipe],
+  imports: [FormatDurationPipe, ConditionChecklist],
   templateUrl: './finding-occurrences.html',
 })
 export class FindingOccurrences {
   readonly occurrences = input.required<FindingOccurrence[]>();
   readonly target = input<string>('');
-  readonly timeline = input<FindingTimeline | undefined>(undefined);
 
   private readonly selectedIndex = linkedSignal<FindingOccurrence[], number | null>({
     source: this.occurrences,
@@ -29,21 +24,12 @@ export class FindingOccurrences {
 
   /** Defaults to the first failing instance, so opening a finding points straight at a moment worth reading. */
   private readonly firstBadIndex = computed(() => {
-    const index = this.occurrences().findIndex(occ => !occ.ok);
+    const index = this.occurrences().findIndex(occ => !occ.ok && !occ.unjudged);
     return index === -1 ? 0 : index;
   });
 
   readonly activeIndex = computed(() => this.selectedIndex() ?? this.firstBadIndex());
   readonly active = computed<FindingOccurrence | undefined>(() => this.occurrences()[this.activeIndex()]);
-
-  readonly segments = computed<TimelineBand[]>(() => {
-    const t = this.timeline();
-    if (!t || t.fightDurationS <= 0) return [];
-    return t.segmentsS.map(([start, end]) => ({
-      leftPercentage: (start / t.fightDurationS) * 100,
-      widthPercentage: ((end - start) / t.fightDurationS) * 100,
-    }));
-  });
 
   private readonly instanceId = `wl-finding-occurrences-${nextInstanceSeq++}`;
 

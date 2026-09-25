@@ -16,7 +16,7 @@ description: warcraft-learner writing and branding - the plain-spoken coaching v
 
 ## UI copy voice (plain-spoken coach)
 
-All user-facing copy - finding messages, remedies, card subtitles, empty states, microcopy - is written so a raider reads it once and knows what to change. Plain words over jargon, and never a number whose meaning the reader has to infer. The reference implementations, under `frontend/src/app/domains/raid-analysis/`, are the finding messages in the rotation rule kinds and `data/rotation/rotation-feature-service.ts` / `data/defensive/defensive-feature-service.ts`, and the gear notes in `data/gear/gear-comparison-service.ts`.
+All user-facing copy - finding messages, remedies, card subtitles, empty states, microcopy - is written so a raider reads it once and knows what to change. Plain words over jargon, and never a number whose meaning the reader has to infer. The reference implementations, under `frontend/src/app/domains/raid-analysis/`, are the list texts in `data/rotation/priority-list/list-text-service.ts` and `list-finding-service.ts`, `data/rotation/rotation-feature-service.ts` / `data/defensive/defensive-feature-service.ts`, and the gear notes in `data/gear/gear-comparison-service.ts`.
 
 - **Count first, target second, in one sentence each.** A finding reads `<what happened>. <what to hit>.` `"4 of 12 Black Powders hit fewer than 3 targets. Wait for 3 or more."` Never staple two fragments together with a colon or a trailing label.
 - **Name the comparison group `top raiders` in prose, `top logs` in data labels.** `"Top raiders average 12s."`, `"of top logs"`. `parse` names a Warcraft Logs ranking, so it appears only where the benchmark itself is defined.

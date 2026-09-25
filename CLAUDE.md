@@ -49,7 +49,7 @@ The detailed conventions live in the `warcraft-*` skills under `.claude/skills/`
 
 | When you are... | Load |
 |---|---|
-| Building or changing any code (finding, rule kind, feature, page, component) | **warcraft-change** |
+| Building or changing any code (finding, fact family, feature, page, component) | **warcraft-change** |
 | Writing or changing any string a user sees | **warcraft-writing** |
 | Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
 | Reviewing code, a diff, or a PR | **warcraft-change** (the verification section applies) |

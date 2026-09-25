@@ -7,11 +7,29 @@ export interface FindingOccurrence {
   detail: string;
   /** Excludes this entry from the ok/violation tone the template otherwise applies. */
   marker?: boolean;
+  /** A cast the log could not settle either way, toned apart from both. */
+  unjudged?: boolean;
+  /** The list line the cast was read against, term by term. */
+  checks?: ConditionCheck[];
 }
 
-export interface FindingTimeline {
-  segmentsS: [number, number][];
-  fightDurationS: number;
+/** One term of a list line at a cast: the condition in words, whether it held, and what the log shows. */
+export interface ConditionCheck {
+  text: string;
+  truth: 'true' | 'false' | 'unknown';
+  value: string;
+  /** Where the top logs' casts put it, from their 10th to their 90th percentile, for a term that measures a number. */
+  top?: string;
+}
+
+/** One line of a button's list entry: whose build it is and how often it allowed the player's and the top logs' casts. */
+export interface LineSplit {
+  text: string;
+  /** Whether the player's talents hold for the line's talent terms. */
+  build: 'true' | 'false' | 'unknown';
+  /** Shares of on-list casts; null where there were none to share out. */
+  you: number | null;
+  top: number | null;
 }
 
 export interface AnalysisFinding {
@@ -22,16 +40,12 @@ export interface AnalysisFinding {
   // Populated by the analysis engine so the UI never has to parse the templated `message`.
   measured?: { value: string; unit?: string };
   label?: string;
-  rule_type?: string;
   timestamp_s?: number;
   details?: {
     cd_name?: string;
     remedy?: string;
   };
   occurrences: FindingOccurrence[];
-  occurrenceTarget?: string;
-  /** Only aura_uptime_below sets this; every other kind renders occurrences with no timeline. */
-  timeline?: FindingTimeline;
 }
 
 interface AbilityBreakdown {

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { AnalysisFinding, FindingOccurrence, FindingTimeline, CAT_LABEL } from '../analysis/analysis.models';
+import { AnalysisFinding, CAT_LABEL } from '../analysis/analysis.models';
+import type { FindingRow, OnPlanChip } from '../analysis/finding-rows-service';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { PlanCooldown } from '../plan/plan.models';
 import { Result, Results } from '../../../shared/util-http/result';
@@ -11,34 +12,13 @@ import {
 import { CadenceVoice } from '../analysis/cast-cadence-service';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../analysis/wcl-projections-service';
 import { PullContextService, PullContext, PullRef } from '../analysis/pull-context-service';
-import { RotationRuleEngineService, RULE_TYPE_LABEL } from './rotation-rule-engine-service';
-import { RuleContextService } from './rotation-rules/rule-context-service';
+import { ListLogService } from './priority-list/list-log-service';
+import { ListFindingService } from './priority-list/list-finding-service';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
-
-export interface RotationFindingRow {
-  severity: 'critical' | 'warning' | 'info';
-  name: string;
-  spellId?: number | null;
-  icon: string;
-  timestampS?: number | null;
-  chip?: string;
-  what?: string;
-  measured: { value: string; unit?: string };
-  fix?: string;
-  occurrences: FindingOccurrence[];
-  occurrenceTarget?: string;
-  timeline?: FindingTimeline;
-}
-
-export interface RotationOnPlanChip {
-  name: string;
-  spellId: number | null;
-  icon: string;
-}
 
 export interface CdPlanRow {
   name: string;
@@ -57,10 +37,10 @@ export interface CdPlanRow {
 
 /** An `ok` result implies the top-parse bench exists. */
 export interface RotationPlayerView {
-  ruleRows: RotationFindingRow[];
-  ruleOnPlan: string[];
-  offensiveRows: RotationFindingRow[];
-  onPlan: RotationOnPlanChip[];
+  ruleRows: FindingRow[];
+  ruleOnPlan: OnPlanChip[];
+  offensiveRows: FindingRow[];
+  onPlan: OnPlanChip[];
 }
 
 export interface RotationPlanView {
@@ -111,8 +91,8 @@ export class RotationFeatureService {
   private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly bloodlust = inject(RotationBloodlustService);
-  private readonly ruleEngine = inject(RotationRuleEngineService);
-  private readonly ruleContexts = inject(RuleContextService);
+  private readonly listLogs = inject(ListLogService);
+  private readonly listFindings = inject(ListFindingService);
   private readonly pullContext = inject(PullContextService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(ROTATION_DATA_SOURCE);
@@ -129,8 +109,14 @@ export class RotationFeatureService {
       logSource: 'RotationFeatureService.loadPlayerView',
       errorId: 'rotation.player-view',
       emptyView: () => ({ ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] }),
-      analyze: context => this.playerView(bench.value, pull, playerId, context),
+      analyze: context => this.playerView(this.withList(bench.value), pull, playerId, context),
     });
+  }
+
+  /** A bench an older ingest wrote carries no list, and judges no button until the next ingest re-benches it. */
+  private withList(bench: RotationBench): RotationBench {
+    const stored: Partial<RotationBench> = bench;
+    return stored.list && stored.buttons ? bench : { ...bench, list: { lines: [], spells: {}, talents: {} }, buttons: [] };
   }
 
   private async playerView(
@@ -138,40 +124,20 @@ export class RotationFeatureService {
   ): Promise<RotationPlayerView> {
     const { reportCode, fightId } = pull;
     const { fight, fightDurationS } = context;
-    const rules = this.ruleEngine.benchedRules(bench.rules);
-    const conditions = rules.map(entry => entry.rule.condition);
-    const [casts, buffs, enemyAuras, damage] = await Promise.all([
+    const [casts, buffs, reading] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
-      // Unnarrowable, so it costs several raid-wide pages: `Enemies` plus a sourceID returns nothing, and WCL offers no other source filter here.
-      this.ruleEngine.rulesNeed(conditions, 'enemyAuras')
-        ? this.wclApi.getAllEvents(reportCode, fightId, 'Debuffs', fight.startTime, fight.endTime, undefined, false, 'Enemies')
-        : Promise.resolve([]),
-      // Target health rides on the damage rows, and only the resource-bearing form carries it.
-      this.ruleEngine.rulesNeed(conditions, 'damage')
-        ? this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId,
-          this.ruleEngine.rulesNeed(conditions, 'targetHealth'))
-        : Promise.resolve([]),
+      this.listLogs.read(bench.list, { reportCode, fight, playerId }),
     ]);
-    const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);
-    const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
-    const debuffsTimed = this.wclProjections.withRelativeS(enemyAuras.filter(event => event.sourceID === playerId), fight.startTime);
-
-    const offensiveFindings = this.analyzeRotationFindings({
-      fightDurationS, castEvents: castsTimed, buffEvents: buffsTimed,
+    const findings = this.analyzeRotationFindings({
+      fightDurationS,
+      castEvents: this.wclProjections.withRelativeS(casts, fight.startTime),
+      buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime),
       cooldowns: bench.major_cooldowns, bench,
     });
-    const ruleCtx = this.ruleContexts.buildRuleContext({
-      casts: castsTimed, buffs: buffsTimed, debuffs: debuffsTimed, damage: this.wclProjections.withRelativeS(damage, fight.startTime),
-      fightDurationS,
-    });
-    const ruleFindings = this.ruleEngine.evaluateRules(rules, ruleCtx);
-    const findings = [...offensiveFindings, ...ruleFindings];
-    sortBySeverity(findings);
-    const { ruleRows, offensiveRows, onPlan } =
-      this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
-    const ruleOnPlan = this.ruleEngine.rulesFollowed(rules, ruleCtx);
-    return { ruleRows, ruleOnPlan, offensiveRows, onPlan };
+    const { ruleRows, offensiveRows, onPlan } = this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
+    const list = this.listFindings.judge(bench, reading);
+    return { ruleRows: [...ruleRows, ...list.rows], ruleOnPlan: list.onPlan, offensiveRows, onPlan };
   }
 
   async loadPlanView(spec: string, encounterId: number): Promise<Result<RotationPlanView>> {
@@ -328,36 +294,34 @@ export class RotationFeatureService {
       if (finding.severity === 'success') { if (finding.cd_name) successNames.add(finding.cd_name); continue; }
       const holdName = finding.category === 'hold_suggestion' ? finding.details?.cd_name : undefined;
       if (holdName) bucketFor(holdName).holds.push(finding);
-      else if (finding.category === 'rule_violation' || !finding.cd_name) ruleFindings.push(finding);
+      else if (!finding.cd_name) ruleFindings.push(finding);
       else bucketFor(finding.cd_name).issues.push(finding);
     }
     return { ruleFindings, byName, successNames };
   }
 
-  private rowSeverity(severity: AnalysisFinding['severity']): RotationFindingRow['severity'] {
+  private rowSeverity(severity: AnalysisFinding['severity']): FindingRow['severity'] {
     return severity === 'critical' ? 'critical' : severity === 'info' ? 'info' : 'warning';
   }
 
-  protected buildRuleRows(ruleFindings: AnalysisFinding[]): RotationFindingRow[] {
+  protected buildRuleRows(ruleFindings: AnalysisFinding[]): FindingRow[] {
     return ruleFindings.map(finding => ({
       severity: this.rowSeverity(finding.severity),
       name: '',
       icon: '',
       what: finding.label,
-      chip: finding.rule_type ? RULE_TYPE_LABEL[finding.rule_type] : undefined,
+      chip: CAT_LABEL[finding.category],
       measured: finding.measured ?? { value: '-' },
       timestampS: finding.timestamp_s ?? null,
       fix: finding.details?.remedy,
       occurrences: finding.occurrences,
-      occurrenceTarget: finding.occurrenceTarget,
-      timeline: finding.timeline,
     }));
   }
 
   protected buildOffensiveRows(
     byName: Record<string, FindingBucket>, cdSpellIds: Record<string, number>, abilities: AbilityIcons,
-  ): RotationFindingRow[] {
-    const offensiveRows: RotationFindingRow[] = [];
+  ): FindingRow[] {
+    const offensiveRows: FindingRow[] = [];
     for (const [name, bucket] of Object.entries(byName)) {
       if (!bucket.issues.length && !bucket.holds.length) continue;
       const { spellId, icon, rowName } = this.resolveCd(name, cdSpellIds, abilities);
@@ -380,9 +344,9 @@ export class RotationFeatureService {
 
   protected buildOnPlanChips(
     partition: PartitionedFindings, cdSpellIds: Record<string, number>, abilities: AbilityIcons,
-  ): RotationOnPlanChip[] {
+  ): OnPlanChip[] {
     const { byName, successNames } = partition;
-    const onPlan: RotationOnPlanChip[] = [];
+    const onPlan: OnPlanChip[] = [];
     for (const name of successNames) {
       if (!byName[name] || (!byName[name].issues.length && !byName[name].holds.length)) {
         const { spellId, icon, rowName } = this.resolveCd(name, cdSpellIds, abilities);
@@ -394,7 +358,7 @@ export class RotationFeatureService {
 
   protected bucketRotationFindings(
     findings: AnalysisFinding[], cdSpellIds: Record<string, number>, abilities: AbilityIcons,
-  ): { ruleRows: RotationFindingRow[]; offensiveRows: RotationFindingRow[]; onPlan: RotationOnPlanChip[] } {
+  ): { ruleRows: FindingRow[]; offensiveRows: FindingRow[]; onPlan: OnPlanChip[] } {
     const partition = this.partitionRotationFindings(findings);
     return {
       ruleRows: this.buildRuleRows(partition.ruleFindings),

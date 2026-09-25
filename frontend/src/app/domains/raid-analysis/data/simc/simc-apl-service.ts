@@ -1,16 +1,9 @@
 import { Injectable } from '@angular/core';
 import jsep from 'jsep';
 import { getOrInsert } from '../analysis/analysis-math';
+import type { PlanLine } from '../plan/plan.models';
 
 export type AplNode = jsep.Expression;
-
-export interface AplLine {
-  action: string;
-  /** The top-level `&` operands of the line's own `if=` plus those of every list call above it. */
-  terms: AplNode[];
-  /** False when jsep could not parse a condition on the line, so its terms are unknown rather than absent. */
-  readable: boolean;
-}
 
 interface AplEntry {
   action: string;
@@ -20,7 +13,7 @@ interface AplEntry {
 interface AplWalk {
   lists: Map<string, AplEntry[]>;
   variables: Map<string, string>;
-  lines: AplLine[];
+  lines: PlanLine[];
 }
 
 // SimulationCraft's own table (engine/sim/expressions.cpp): `%` divides, `%%` is the remainder, `<?` and `>?` are max and min.
@@ -41,20 +34,45 @@ const NON_SPELL = new Set([
   'auto_attack', 'snapshot_stats', 'potion', 'use_items', 'use_item', 'invoke_external_buff', 'pool_resource', 'wait',
   'cancel_buff', 'retarget_auto_attack', 'flask', 'food', 'augmentation', 'summon_pet', 'variable', 'cancel_action',
 ]);
-/** Sim state a log never records; a `|` branch that reads only these is dropped, so `buff.x.up|fight_remains<5` reads as `buff.x.up`. */
-const SIM_ONLY = /^(fight_remains|time_to_die|target\.time_to_die|raid_event\.|trinket\.|fight_style\.|equipped\.|set_bonus\.|variable\.|boss)/;
-const PLAYER_STATE = /^(buff|dot|debuff|talent)\.|^(active_enemies|spell_targets)/;
 const MAX_VARIABLE_DEPTH = 3;
 
-/** Reads a SimulationCraft action priority list into button lines whose conditions are jsep trees. */
+/** Reads a SimulationCraft action priority list into button lines, each condition split into its `&` terms and printed back as SimC text. */
 @Injectable({ providedIn: 'root' })
 export class SimcAplService {
   /** Every button line reachable from the default list, in priority order. */
-  readApl(simc: string): AplLine[] {
+  readApl(simc: string): PlanLine[] {
     const lists = this.parseLists(simc);
     const context: AplWalk = { lists, variables: this.variableExpressions([...lists.values()].flat()), lines: [] };
     this.walk(context, 'default', [], new Set());
     return context.lines;
+  }
+
+  /** A term as the plan stores it; null for one jsep cannot read, which then reads as unknown. */
+  parse(term: string): AplNode | null {
+    try {
+      return jsep(term);
+    } catch {
+      return null;
+    }
+  }
+
+  /** SimC text that parses back to the same tree, bracketed only where precedence needs it. */
+  print(node: AplNode): string {
+    if (node.type === 'Literal') return String((node as jsep.Literal).value);
+    if (node.type === 'Identifier') return (node as jsep.Identifier).name;
+    if (node.type === 'UnaryExpression') {
+      const { operator, argument } = node as jsep.UnaryExpression;
+      return `${operator}${argument.type === 'BinaryExpression' ? `(${this.print(argument)})` : this.print(argument)}`;
+    }
+    if (node.type !== 'BinaryExpression') throw new Error(`no SimC form for a ${node.type}`);
+    const { operator, left, right } = node as jsep.BinaryExpression;
+    const precedence = BINARY_PRECEDENCE[operator] ?? 0;
+    // Every SimC operator groups left to right, so only a right operand of equal precedence needs brackets.
+    const side = (operand: AplNode, tie: boolean): string => {
+      const inner = operand.type === 'BinaryExpression' ? BINARY_PRECEDENCE[(operand as jsep.BinaryExpression).operator] ?? 0 : Infinity;
+      return inner < precedence || (tie && inner === precedence) ? `(${this.print(operand)})` : this.print(operand);
+    };
+    return `${side(left, false)}${operator}${side(right, true)}`;
   }
 
   identifiers(node: AplNode): string[] {
@@ -121,38 +139,52 @@ export class SimcAplService {
     return text;
   }
 
+  /** A null term list is a line under a condition jsep could not read: its terms are unknown, not absent. */
   private walk(context: AplWalk, list: string, inherited: AplNode[] | null, seen: Set<string>): void {
     if (seen.has(list)) return;
-    for (const entry of context.lists.get(list) ?? []) this.visit(context, entry, inherited, new Set([...seen, list]));
+    let reached = inherited;
+    for (const entry of context.lists.get(list) ?? []) {
+      const own = this.gateTerms(entry.options['if'], context.variables);
+      this.visit(context, entry, own && reached && [...reached, ...own], new Set([...seen, list]));
+      if (entry.action !== 'run_action_list') continue;
+      if (own?.length === 0) return;
+      reached = this.afterRun(reached, own);
+    }
   }
 
-  /** A null term list is a line under a condition jsep could not read: its terms are unknown, not absent. */
-  private visit(context: AplWalk, { action, options }: AplEntry, inherited: AplNode[] | null, seen: Set<string>): void {
-    const own = this.gateTerms(options['if'], context.variables);
-    const terms = own && inherited ? [...inherited, ...own] : null;
+  private visit(context: AplWalk, { action, options }: AplEntry, terms: AplNode[] | null, seen: Set<string>): void {
     if (LIST_CALLS.has(action)) this.walk(context, options['name'] ?? '', terms, seen);
-    else if (!NON_SPELL.has(action)) context.lines.push({ action, terms: terms ?? [], readable: terms !== null });
+    else if (!NON_SPELL.has(action)) context.lines.push(this.line(action, terms, options['line_cd']));
   }
 
-  private gateTerms(gate: string | undefined, variables: Map<string, string>): AplNode[] | null {
-    if (!gate) return [];
-    const text = this.inline(gate, variables).replace(/&&/g, '&').replace(/\|\|/g, '|').replace(/\^\^/g, '^');
+  /** SimC never returns from a list it runs, so the lines after the call hold only while its condition does not. */
+  private afterRun(reached: AplNode[] | null, own: AplNode[] | null): AplNode[] | null {
+    return own && reached && [...reached, this.negation(own)];
+  }
+
+  private negation(terms: AplNode[]): AplNode {
+    const all = terms.reduce((left, right): AplNode => ({ type: 'BinaryExpression', operator: '&', left, right }));
+    const negated: jsep.UnaryExpression = { type: 'UnaryExpression', operator: '!', prefix: true, argument: all };
+    return negated;
+  }
+
+  private line(action: string, terms: AplNode[] | null, lineCd: string | undefined): PlanLine {
+    return { action, terms: terms && this.printed(terms), ...(lineCd ? { line_cd: Number(lineCd) } : {}) };
+  }
+
+  /** A tree with a node SimC text has no form for leaves the line unread rather than half-printed. */
+  private printed(terms: AplNode[]): string[] | null {
     try {
-      return this.operands(jsep(text), '&').map(term => this.dropSimOnly(term));
+      return terms.map(term => this.print(term));
     } catch {
       return null;
     }
   }
 
-  private dropSimOnly(term: AplNode): AplNode {
-    const branches = this.operands(term, '|');
-    const kept = branches.filter(branch => {
-      const names = this.identifiers(branch);
-      return !names.some(name => SIM_ONLY.test(name)) || names.some(name => PLAYER_STATE.test(name));
-    });
-    // Unlike the fight's end, a raid event's timing holds for most of the fight, so `raid_event.movement.in>2|buff.hover.up` is no call for Hover.
-    const raidEvent = branches.some(branch => !kept.includes(branch) && this.identifiers(branch).some(name => name.startsWith('raid_event.')));
-    if (!kept.length || kept.length === branches.length || raidEvent) return term;
-    return kept.reduce((left, right): AplNode => ({ type: 'BinaryExpression', operator: '|', left, right }));
+  private gateTerms(gate: string | undefined, variables: Map<string, string>): AplNode[] | null {
+    if (!gate) return [];
+    const text = this.inline(gate, variables).replace(/&&/g, '&').replace(/\|\|/g, '|').replace(/\^\^/g, '^');
+    const node = this.parse(text);
+    return node && this.operands(node, '&');
   }
 }

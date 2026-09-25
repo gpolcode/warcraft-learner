@@ -10,23 +10,15 @@ export const CLOAK_OF_SHADOWS = 31224;
 export const EVASION = 5277;
 
 export const EVISCERATE = 196819;
+export const BACKSTAB = 53;
 export const BLACK_POWDER = 319175;
 
 export const RUPTURE = 1943;
 
 export const WRATH = 190984;
 export const STARFIRE = 194153;
-export const ECLIPSE_SOLAR = 48517;
 
-export const LIGHTNING_BOLT = 188196;
 export const MAELSTROM_WEAPON = 344179;
-
-// Moonfire, the clip fixture: the cast id and the debuff it applies are different ids sharing one name.
-export const MOONFIRE = 8921;
-export const MOONFIRE_DOT = 164812;
-
-export const EXECUTE = 5308;
-export const SLAM = 1464;
 
 // WCL quirk: Shadow Blades casts as 121471 but its damage rows show up as 279043 - the name is the only bridge between the two.
 export const SHADOW_BLADES_DAMAGE = 279043;

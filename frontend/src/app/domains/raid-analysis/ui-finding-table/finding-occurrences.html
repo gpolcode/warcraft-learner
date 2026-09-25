@@ -1,16 +1,4 @@
-@if (timeline(); as t) {
-  <div class="text-label text-muted mb-1.5">Uptime across the fight</div>
-  <div class="relative h-[22px] rounded-md bg-bg overflow-hidden mb-3" aria-hidden="true">
-    @for (seg of segments(); track $index) {
-      <div class="absolute inset-y-0 rounded-md bg-success/65" [style.left.%]="seg.leftPercentage" [style.width.%]="seg.widthPercentage"></div>
-    }
-  </div>
-  @if (t.segmentsS.length) {
-    <div class="text-label text-muted mb-1.5">Largest gaps</div>
-  }
-} @else {
-  <div class="text-label text-muted mb-1.5">Instances</div>
-}
+<div class="text-label text-muted mb-1.5">Instances</div>
 
 <div
   role="listbox"
@@ -20,8 +8,8 @@
   (keydown)="onKeydown($event)">
   <div class="flex flex-wrap items-start gap-1.5">
     @for (occ of occurrences(); track $index) {
-      @let tone = occ.marker ? 'text-gold' : (occ.ok ? 'text-success' : 'text-critical');
-      @let barTone = occ.marker ? 'bg-gold' : (occ.ok ? 'bg-success' : 'bg-critical');
+      @let tone = occ.marker ? 'text-gold' : occ.unjudged ? 'text-muted' : (occ.ok ? 'text-success' : 'text-critical');
+      @let barTone = occ.marker ? 'bg-gold' : occ.unjudged ? 'bg-muted' : (occ.ok ? 'bg-success' : 'bg-critical');
       @let active = activeIndex() === $index;
       <div class="flex flex-col items-center gap-1.5 shrink-0">
         <button
@@ -57,4 +45,7 @@
     }
     {{ occ.detail }}
   </div>
+  @if (occ.checks?.length) {
+    <wl-condition-checklist class="mt-1.5" [checks]="occ.checks"></wl-condition-checklist>
+  }
 }

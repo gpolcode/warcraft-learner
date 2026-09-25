@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { FindingTable, OnPlanChip } from '../ui-finding-table/finding-table';
+import { FindingRow, FindingTable, OnPlanChip } from '../ui-finding-table/finding-table';
 import { LoadState } from '../../shared/ui-load-state/load-state';
-import {
-  RotationFeatureService, RotationFindingRow, RotationOnPlanChip,
-} from '../data/rotation/rotation-feature-service';
+import { RotationFeatureService } from '../data/rotation/rotation-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
 
 @Component({
@@ -42,10 +40,9 @@ export class Rotation {
 
   protected readonly available = this.load.available;
   protected readonly error = this.load.error;
-  protected readonly ruleRows = computed<RotationFindingRow[]>(() => this.load.value()?.ruleRows ?? []);
-  protected readonly offensiveRows = computed<RotationFindingRow[]>(() => this.load.value()?.offensiveRows ?? []);
-  protected readonly onPlan = computed<RotationOnPlanChip[]>(() => this.load.value()?.onPlan ?? []);
+  protected readonly ruleRows = computed<FindingRow[]>(() => this.load.value()?.ruleRows ?? []);
+  protected readonly offensiveRows = computed<FindingRow[]>(() => this.load.value()?.offensiveRows ?? []);
+  protected readonly onPlan = computed<OnPlanChip[]>(() => this.load.value()?.onPlan ?? []);
 
-  protected readonly ruleOnPlanChips = computed<OnPlanChip[]>(() =>
-    (this.load.value()?.ruleOnPlan ?? []).map(label => ({ name: label, spellId: null, icon: '' })));
+  protected readonly ruleOnPlanChips = computed<OnPlanChip[]>(() => this.load.value()?.ruleOnPlan ?? []);
 }

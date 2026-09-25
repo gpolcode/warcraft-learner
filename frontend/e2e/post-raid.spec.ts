@@ -97,18 +97,18 @@ test('pull overview reports the DPS, the death, and the kill', async () => {
   await expect(outcomeRow.locator('span.text-accent')).toHaveText(CLOCK);
 });
 
-test('rotation rules count the casts that broke each rule, name the ones followed, and expand a row into the instances behind its count', async () => {
+test('rotation rules count the casts off each button\'s lines, name the buttons on plan, and expand a row into the casts behind its count', async () => {
   const rotationRules = page.locator('wl-rotation').locator('wl-finding-table')
-    .filter({ hasText: 'How your casts held up against the rules the top Mythic logs follow for your spec.' });
+    .filter({ hasText: 'Your casts against the lines of SimulationCraft\'s priority list for your spec, next to how often the top Mythic logs stray from them.' });
   await shows(rotationRules, 'Rotation rules');
   await showsFindingRows(rotationRules);
-  // A rule the pull followed shows as a chip rather than a row, so only both together cover the spec's rules.
+  // A button the pull pressed within the top logs' tolerance shows as a chip rather than a row, so only both together cover the list.
   await showsOnPlan(rotationRules);
 
   // The button's accessible name flips to "Hide instances" once clicked, so the filter matches either name.
   const expandable = findingRows(rotationRules)
     .filter({ has: page.getByRole('button', { name: /instances/i }) });
-  // A refresh can leave every rule verdict without judged instances.
+  // A refresh can leave every verdict without judged casts.
   if (await expandable.count()) {
     const row = expandable.first();
     await row.getByRole('button', { name: 'Show instances' }).click();

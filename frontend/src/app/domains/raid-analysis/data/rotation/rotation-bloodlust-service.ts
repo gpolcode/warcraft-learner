@@ -16,4 +16,4 @@ export class RotationBloodlustService {
   }
 }
 
-const BLOODLUST_IDS = new Set([2825, 32182, 80353, 90355, 264667, 390386]);
+export const BLOODLUST_IDS = new Set([2825, 32182, 80353, 90355, 264667, 390386]);

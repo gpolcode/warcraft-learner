@@ -1,17 +1,14 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { RotationTransformService, CdSummary, ParseRuleSamples } from './rotation-transform-service';
-import { SHADOW_BLADES, BLOODLUST, RUPTURE } from '../../../../../testing/spell-ids';
+import { RotationTransformService, CdSummary } from './rotation-transform-service';
+import { SHADOW_BLADES, BLOODLUST } from '../../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../../testing/builders/events';
-import { planLoader, specPlan } from '../../../../../testing/builders/spec-plan';
+import { planLoader, planSpell, specPlan } from '../../../../../testing/builders/spec-plan';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { Results } from '../../../shared/util-http/result';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
-import { RuleCondition } from '../plan/plan.models';
-import { RuleCopyService } from './rotation-rules/rule-copy-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
-import { RuleSample } from './rotation-rule-engine-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
 
@@ -159,52 +156,6 @@ describe('aggregateCdBenchmarks', () => {
   });
 });
 
-const transform = () => {
-  TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: {} }) });
-  return TestBed.inject(RotationTransformService);
-};
-
-describe('benchRules', () => {
-  const sample = (values: number[]): RuleSample => ({ values, unmeasuredOut: 0 });
-  const rupture: RuleCondition = { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target' };
-  // The same plan rule as a log that showed Rupture under another of its records resolves it.
-  const ruptureElsewhere: RuleCondition = { ...rupture, aura_spell_id: RUPTURE + 1 };
-  const measured = (condition: RuleCondition, uptimePct: number) => ({ condition, sample: sample([uptimePct]) });
-  const TOP_UPTIMES_PCT = [90, 92, 94, 96, 98];
-  // The transform's own upkeep floor: the field's median uptime at or above it makes the aura an upkeep.
-  const UPKEEP_FLOOR_PCT = 70;
-
-  it('benches a rule under the condition most logs resolved it to, measured on those logs alone', () => {
-    const perParse: ParseRuleSamples[] = [...TOP_UPTIMES_PCT.map(pct => [measured(rupture, pct)]), [measured(ruptureElsewhere, 10)]];
-    const [entry] = transform()['benchRules'](perParse);
-    assert.exists(entry);
-    expect(entry.rule.condition).toEqual(rupture);
-    expect(entry.sample_count).toBe(TOP_UPTIMES_PCT.length);
-  });
-
-  it('writes the rule\'s title, fix and chip from its condition', () => {
-    const [entry] = transform()['benchRules'](TOP_UPTIMES_PCT.map(pct => [measured(rupture, pct)]));
-    expect(entry?.rule).toEqual(TestBed.inject(RuleCopyService).rule(rupture));
-  });
-
-  it('leaves out a rule too few logs resolved for the field to give it a band', () => {
-    const perParse: ParseRuleSamples[] = [...TOP_UPTIMES_PCT.slice(1).map(pct => [measured(rupture, pct)]), [null]];
-    expect(transform()['benchRules'](perParse)).toEqual([]);
-  });
-
-  it('leaves out an uptime rule whose aura the field keeps up under the upkeep floor, but keeps one at the floor', () => {
-    const at = (pct: number): ParseRuleSamples[] => TOP_UPTIMES_PCT.map(() => [measured(rupture, pct)]);
-    const rotation = transform();
-    expect(rotation['benchRules'](at(UPKEEP_FLOOR_PCT - 1))).toEqual([]);
-    expect(rotation['benchRules'](at(UPKEEP_FLOOR_PCT))).toHaveLength(1);
-  });
-
-  it('benches two plan rules that resolve to one condition once', () => {
-    const perParse: ParseRuleSamples[] = TOP_UPTIMES_PCT.map(pct => [measured(rupture, pct), measured(rupture, pct)]);
-    expect(transform()['benchRules'](perParse)).toHaveLength(1);
-  });
-});
-
 const reportShape = {
   endTimeMs: 120_000,
   abilities: [{ gameID: SHADOW_BLADES, name: 'Shadow Blades', icon: 'sb' }],
@@ -213,7 +164,7 @@ const reportShape = {
 // An id outside the plan's cooldowns; exercises the cooldown-cast filter.
 const UNTRACKED_SPELL_ID = 99;
 
-// The floor the transform benches at (MIN_PARSE_COUNT in the service, which tracks the rule engine's own MIN_MEASURED_PARSES).
+// The floor the transform benches at (MIN_PARSE_COUNT in the service, which tracks the list bench's own MIN_MEASURED_PARSES).
 const MIN_SAMPLE_COUNT = 5;
 
 const wclFake = {
@@ -223,19 +174,14 @@ const wclFake = {
   getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
     dataType === 'Casts' ? [cast(SHADOW_BLADES, 5), cast(UNTRACKED_SPELL_ID, 8)] : [applyBuff(BLOODLUST, 6)],
   getAbilities: abilityLookup({ [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' } }),
+  getCombatantInfo: async () => [],
 };
 const COOLDOWNS = [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }];
-// A template as the plan carries it: SimC tokens for names and ids left at 0 until a log resolves them.
-const bladesOutsideLust: RuleCondition = {
-  kind: 'cast_outside_buff', spell_id: 0, spell_name: 'shadow_blades', buff_spell_id: 0, buff_spell_name: 'bloodlust', require: 'outside',
-};
-const unseenProc: RuleCondition = {
-  kind: 'proc_wasted', buff_spell_id: 0, buff_spell_name: 'unseen_proc', spend_spell_ids: [0], spend_spell_names: ['shadow_blades'],
-};
-const SPELLS = {
-  shadow_blades: { name: 'Shadow Blades', ids: [SHADOW_BLADES] },
-  bloodlust: { name: 'Bloodlust', ids: [BLOODLUST] },
-  unseen_proc: { name: 'Unseen Proc', ids: [UNTRACKED_SPELL_ID + 1] },
+// Shadow Blades outside Bloodlust: every fixture log casts it at 5 s, before the lust the log applies at 6 s.
+const LIST = {
+  lines: [{ action: 'shadow_blades', terms: ['!buff.bloodlust.up'] }],
+  spells: { shadow_blades: planSpell('Shadow Blades', [SHADOW_BLADES], { cooldown: 90 }) },
+  talents: {},
 };
 
 describe('RotationTransformService (live, in-browser)', () => {
@@ -255,28 +201,18 @@ describe('RotationTransformService (live, in-browser)', () => {
     }
   });
 
-  it('benches a plan rule under the ids and in-game names the top logs show it with', async () => {
-    const plan = specPlan({ cooldowns: COOLDOWNS, rules: [bladesOutsideLust], spells: SPELLS });
+  it('carries the spec\'s list and benches each button the top logs press against its lines', async () => {
+    const plan = specPlan({ cooldowns: COOLDOWNS, ...LIST });
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(plan) }) });
     const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
     assert(result.ok);
-    expect(result.value.rules.map(entry => entry.rule.condition)).toEqual([{
-      kind: 'cast_outside_buff', spell_id: SHADOW_BLADES, spell_name: 'Shadow Blades',
-      buff_spell_id: BLOODLUST, buff_spell_name: 'Bloodlust', require: 'outside',
-    }]);
+    expect(result.value.list).toEqual(LIST);
+    expect(result.value.buttons.map(button => [button.action, button.spell_id, button.off_tolerance])).toEqual([['shadow_blades', SHADOW_BLADES, 0]]);
   });
 
-  it('leaves out a plan rule naming a spell no top log shows', async () => {
-    const plan = specPlan({ cooldowns: COOLDOWNS, rules: [unseenProc], spells: SPELLS });
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(plan) }) });
-    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
-    assert(result.ok);
-    expect(result.value.rules).toEqual([]);
-  });
-
-  it('propagates a missing error when the spec\'s plan has neither cooldowns nor rules', async () => {
+  it('propagates a missing error when the spec\'s plan has neither cooldowns nor a list', async () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan()) }) });
     expect(await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(Results.missing('No cooldowns or rules for this spec.'));
+      .toEqual(Results.missing('No cooldowns or list for this spec.'));
   });
 });

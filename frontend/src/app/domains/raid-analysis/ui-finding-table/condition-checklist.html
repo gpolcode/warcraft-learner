@@ -1,0 +1,24 @@
+<ul class="flex flex-col gap-1" aria-label="Conditions of the line">
+  @for (check of checks(); track $index) {
+    <li class="flex items-start gap-2 text-body">
+      @switch (check.truth) {
+        @case ('true') {
+          <mat-icon class="icon-18 shrink-0 text-success" aria-hidden="false" aria-label="Met">check</mat-icon>
+        }
+        @case ('false') {
+          <mat-icon class="icon-18 shrink-0 text-critical" aria-hidden="false" aria-label="Not met">close</mat-icon>
+        }
+        @default {
+          <mat-icon class="icon-18 shrink-0 text-muted" aria-hidden="false" aria-label="Not in the log">help_outline</mat-icon>
+        }
+      }
+      <span class="min-w-0 flex-1">{{ check.text }}</span>
+      <span class="tabular-nums text-caption text-muted shrink-0 text-right">
+        {{ check.value }}
+        @if (check.top) {
+          <span class="block">Top logs {{ check.top }}</span>
+        }
+      </span>
+    </li>
+  }
+</ul>

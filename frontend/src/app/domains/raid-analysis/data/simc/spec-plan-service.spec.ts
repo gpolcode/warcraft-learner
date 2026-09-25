@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import type { RuleCondition } from '../plan/plan.models';
 import { cast } from '../../../../../testing/builders/events';
 import { BLADESTORM, BLADESTORM_HERO } from '../../../../../testing/spell-ids';
-import { specPlan } from '../../../../../testing/builders/spec-plan';
-import { SpecPlanService, SpellScope } from './spec-plan-service';
+import { planSpell, specPlan } from '../../../../../testing/builders/spec-plan';
+import type { TalentTree } from '../http/talent-data-service';
+import { SpecPlanService } from './spec-plan-service';
 
 const specPlans = TestBed.inject(SpecPlanService);
 
@@ -15,6 +15,10 @@ const ENRAGED_REGENERATION = 184364;
 const SPELL_REFLECTION = 23920;
 const DIE_BY_THE_SWORD = 118038;
 const ENRAGE = 184362;
+const SUMMON_RAVAGER = 228920;
+const ANGER_MANAGEMENT_ENTRY = 90371;
+const SLAYER_ENTRY = 123389;
+const APEX_TIER_ENTRIES = [137004, 137003, 137002];
 
 const record = (name: string, id: number, ...fields: string[]): string =>
   [`Name             : ${name} (id=${id}) [Spell Family (4)] `, ...fields].join('\n');
@@ -29,8 +33,15 @@ const DUMP = [
   record('Die by the Sword', DIE_BY_THE_SWORD, 'Talent Entry     : Arms [tree=spec, row=3]', 'Cooldown         : 120 seconds', 'Attributes       : Big Defensive (512)'),
   // The spell record beside Arms' talent, untalented, as the dump lists many a spec's buttons.
   record('Die by the Sword', DIE_BY_THE_SWORD + 1, 'Cooldown         : 120 seconds', 'Attributes       : Big Defensive (512)'),
-  record('Enrage', ENRAGE, 'Duration         : 4 seconds'),
+  record('Enrage', ENRAGE, 'Duration         : 4 seconds', 'Stacks           : 1 initial, 3 maximum'),
+  record('Rampage', 184367, 'GCD              : 1.5 seconds', 'Resource         : 80 Rage (1) (id=1)', 'Cast Time        : 0.5 seconds'),
+  record('Summon Ravager', SUMMON_RAVAGER, 'Duration         : 12 seconds', 'Cooldown         : 30 seconds', 'Charges          : 2 (30 seconds cooldown)'),
 ].join('\n\n');
+const TREE: TalentTree = {
+  talents: [{ id: ANGER_MANAGEMENT_ENTRY, name: 'Anger Management' }],
+  heroTrees: [{ id: SLAYER_ENTRY, name: 'Slayer' }],
+  apex: APEX_TIER_ENTRIES.map(id => ({ id, name: 'Rampaging Berserker' })),
+};
 const APL = [
   'actions=recklessness',
   'actions+=/avatar',
@@ -39,7 +50,7 @@ const APL = [
   'actions+=/rampage,if=buff.enrage.remains<1.5',
 ].join('\n');
 
-const fury = (apl: string | null = APL) => specPlans.build({ apl, dump: DUMP, specLabel: 'Fury' });
+const fury = (apl: string | null = APL) => specPlans.build({ apl, dump: DUMP, specLabel: 'Fury', talents: TREE });
 
 describe('SpecPlanService.build', () => {
   it('plans the APL buttons Blizzard labels major or that hold a minute or longer, in APL order', () => {
@@ -52,7 +63,7 @@ describe('SpecPlanService.build', () => {
 
   it('plans only the labelled cooldowns, in no order, for a spec SimC writes no APL for', () => {
     expect(fury(null).cooldowns.map(cooldown => [cooldown.name, cooldown.opener_priority])).toEqual([['Recklessness', undefined], ['Bladestorm', undefined]]);
-    expect(fury(null).rules).toEqual([]);
+    expect(fury(null).lines).toEqual([]);
   });
 
   it('plans the spec\'s own big and external defensives, leaving out a name only another spec\'s talent carries', () => {
@@ -64,26 +75,43 @@ describe('SpecPlanService.build', () => {
     expect(fury(armsPressesIt).defensives.map(defensive => defensive.name)).toContain('Die by the Sword');
   });
 
-  it('derives the APL\'s rules and every id the dump holds under each name they use', () => {
-    expect(fury().rules.map(rule => rule.kind)).toEqual(['cast_outside_buff', 'aura_uptime_below']);
-    expect(fury().spells['bladestorm']).toEqual({ name: 'Bladestorm', ids: [BLADESTORM, BLADESTORM_HERO] });
-    expect(fury().spells['enrage']).toEqual({ name: 'Enrage', ids: [ENRAGE] });
+  it('keeps the list\'s lines and the spell data of every name they use', () => {
+    expect(fury().lines[2]).toEqual({ action: 'bladestorm', terms: ['buff.recklessness.up'] });
+    expect(fury().spells['bladestorm']?.ids).toEqual([BLADESTORM, BLADESTORM_HERO]);
+    expect(fury().spells['enrage']).toMatchObject({ name: 'Enrage', ids: [ENRAGE], duration: 4, max_stacks: 3 });
+    expect(fury().spells['rampage']).toMatchObject({ gcd: 1.5, cast_time: 0.5, costs: [{ type: 1, amount: 80 }] });
   });
 
-  it('keys a plan on what it derived: an APL edit that adds a rule changes the key', () => {
+  it('reads a pet the list names through the button that summons it', () => {
+    expect(fury(`${APL}\nactions+=/execute,if=pet.ravager.active`).spells['summon_ravager']).toMatchObject({ duration: 12, charges: 2 });
+  });
+
+  it('names the talent entries each talent, hero tree and apex tier of the list stands for', () => {
+    const { talents } = fury(`${APL}\nactions+=/execute,if=talent.anger_management.enabled&hero_tree.slayer&apex.2`);
+    expect(talents).toEqual({
+      'talent.anger_management': { name: 'Anger Management', entries: [ANGER_MANAGEMENT_ENTRY] },
+      'hero_tree.slayer': { name: 'Slayer', entries: [SLAYER_ENTRY] },
+      'apex.2': { name: 'Rampaging Berserker', entries: [APEX_TIER_ENTRIES[1]] },
+    });
+  });
+
+  it('leaves out a talent the tree does not carry, which the list then reads as unknown', () => {
+    expect(fury(`${APL}\nactions+=/execute,if=talent.massacre`).talents).toEqual({});
+  });
+
+  it('keys a plan on what it derived: an APL edit changes the key', () => {
     expect(fury(`${APL}\nactions+=/execute,if=rage>=40`).key).not.toBe(fury().key);
   });
 
-  it('keeps the key through an APL edit that derives nothing new', () => {
-    // No filler to displace, so the execute line makes no rule.
-    expect(fury(`${APL}\nactions+=/execute,if=target.health.pct<20`).key).toBe(fury().key);
+  it('keeps the key when the sources derive the same plan', () => {
+    expect(fury(`${APL}\n\n# a comment`).key).toBe(fury().key);
   });
 });
 
 describe('SpecPlanService button ids', () => {
   const plan = specPlan({
     cooldowns: [{ name: 'Bladestorm', spell_id: BLADESTORM, cooldown: 90 }],
-    spells: { bladestorm: { name: 'Bladestorm', ids: [BLADESTORM, BLADESTORM_HERO] } },
+    spells: { bladestorm: planSpell('Bladestorm', [BLADESTORM, BLADESTORM_HERO]) },
   });
 
   it('reads the record a log cast a button with, over the others its name holds', () => {
@@ -110,36 +138,5 @@ describe('SpecPlanService button ids', () => {
   it('leaves out a button no top log cast, but keeps one a single log cast', () => {
     expect(specPlans.inTopLogs(plan, [{}, {}]).cooldowns).toEqual([]);
     expect(specPlans.inTopLogs(plan, [{}, { Bladestorm: BLADESTORM }]).cooldowns).toHaveLength(1);
-  });
-});
-
-describe('SpecPlanService.resolveRule', () => {
-  const plan = specPlan({
-    spells: {
-      bladestorm: { name: 'Bladestorm', ids: [BLADESTORM, BLADESTORM_HERO] },
-      recklessness: { name: 'Recklessness', ids: [RECKLESSNESS] },
-    },
-  });
-  const template: RuleCondition = {
-    kind: 'cast_outside_buff', spell_id: 0, spell_name: 'bladestorm', buff_spell_id: 0, buff_spell_name: 'recklessness', require: 'inside',
-  };
-  // A log that cast the hero-talent Bladestorm and wore Recklessness as a buff.
-  const shown: Record<SpellScope, number[]> = { cast: [BLADESTORM_HERO], self: [RECKLESSNESS], target: [] };
-  const inLog = (seen: Record<SpellScope, number[]>) => (ids: number[], scope: SpellScope): number | null =>
-    ids.find(id => seen[scope].includes(id)) ?? null;
-
-  it('names each spell by the id the log shows in the stream its field reads, and by its in-game name', () => {
-    expect(specPlans.resolveRule(plan, template, inLog(shown))).toEqual({
-      kind: 'cast_outside_buff', spell_id: BLADESTORM_HERO, spell_name: 'Bladestorm',
-      buff_spell_id: RECKLESSNESS, buff_spell_name: 'Recklessness', require: 'inside',
-    });
-  });
-
-  it('resolves nothing when a spell the rule needs never shows in the log', () => {
-    expect(specPlans.resolveRule(plan, template, inLog({ ...shown, self: [] }))).toBeNull();
-  });
-
-  it('resolves nothing for a name SimC\'s spell data does not hold', () => {
-    expect(specPlans.resolveRule(plan, { ...template, buff_spell_name: 'bloodlust' }, inLog(shown))).toBeNull();
   });
 });

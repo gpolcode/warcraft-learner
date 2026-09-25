@@ -29,20 +29,10 @@ describe('FindingOccurrences', () => {
     expect(vm.active()?.label).toBe('c');
   });
 
-  it('computes no timeline segments when the finding carries no timeline', () => {
-    const { vm } = mountVm(FindingOccurrences, { occurrences: [occ()] });
-    expect(vm.segments()).toEqual([]);
-  });
-
-  it('positions timeline segments as a percentage of the fight', () => {
-    const { vm } = mountVm(FindingOccurrences, {
-      occurrences: [occ()],
-      timeline: { segmentsS: [[0, 25], [75, 100]], fightDurationS: 100 },
-    });
-    expect(vm.segments()).toEqual([
-      { leftPercentage: 0, widthPercentage: 25 },
-      { leftPercentage: 75, widthPercentage: 25 },
-    ]);
+  it('activeIndex passes over a cast the log could not settle for the first failing one', () => {
+    const occurrences = [occ({ ok: false, unjudged: true, label: 'a' }), occ({ ok: false, label: 'b' })];
+    const { vm } = mountVm(FindingOccurrences, { occurrences });
+    expect(vm.active()?.label).toBe('b');
   });
 
   it('drops a stale manual pick when occurrences swaps to a different finding, falling back to the new first-bad index', () => {

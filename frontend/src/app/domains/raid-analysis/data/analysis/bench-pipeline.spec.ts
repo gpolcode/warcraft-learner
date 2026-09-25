@@ -5,7 +5,7 @@ import { Results } from '../../../shared/util-http/result';
 import { TopParseSelection } from '../wcl/wcl.models';
 import { SHADOW_BLADES, CLOAK_OF_SHADOWS, BLADESTORM, BLADESTORM_HERO } from '../../../../../testing/spell-ids';
 import { cast } from '../../../../../testing/builders/events';
-import { planLoader, specPlan } from '../../../../../testing/builders/spec-plan';
+import { planLoader, planSpell, specPlan } from '../../../../../testing/builders/spec-plan';
 import type { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { FixtureRanking, abilityLookup, parseRankings, wclReport, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { AbilityIcons, WclProjectionsService } from './wcl-projections-service';
@@ -268,7 +268,7 @@ describe('benchFromTopParses button ids', () => {
   const TOP_LOGS = 3;
   const bladestorm = specPlan({
     cooldowns: [{ name: 'Bladestorm', spell_id: BLADESTORM, cooldown: 90 }],
-    spells: { bladestorm: { name: 'Bladestorm', ids: [BLADESTORM, BLADESTORM_HERO] } },
+    spells: { bladestorm: planSpell('Bladestorm', [BLADESTORM, BLADESTORM_HERO]) },
   });
   const idRecipe = planRecipe(planLoader(bladestorm), {
     sampleTarget: TOP_LOGS,

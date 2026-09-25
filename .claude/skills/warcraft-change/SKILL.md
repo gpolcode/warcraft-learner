@@ -1,6 +1,6 @@
 ---
 name: warcraft-change
-description: warcraft-learner change contract - what a code change must deliver, end to end. Covers the four change kinds (finding, rule kind, feature, page), the conventions no lint rule or type checks (architecture roles, failure handling, UI, testing, e2e), and the verification steps. Load this before writing, changing, or reviewing any code under frontend/src.
+description: warcraft-learner change contract - what a code change must deliver, end to end. Covers the four change kinds (finding, fact family, feature, page), the conventions no lint rule or type checks (architecture roles, failure handling, UI, testing, e2e), and the verification steps. Load this before writing, changing, or reviewing any code under frontend/src.
 ---
 
 # warcraft-learner change
@@ -15,9 +15,9 @@ Layer access, the two HTTP chokepoints, method shape, styling syntax, and file n
 
 Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences` populated on the finding (all `wl-finding-occurrences` needs to render the drill-down), message + remedy copy, boundary-paired specs. No bench change means no `INGEST_VERSION` bump.
 
-### New rule-engine kind
+### New fact family
 
-Deliver: the kind's class in `data/rotation/rotation-rules/kinds/` extending `RuleKind` - or `BoundedPerCastKind` / `FillerKind` for the shared evaluators - registered in `KIND_CLASSES` (`data/rotation/rotation-rules/rule-kinds.ts`), its title, fix and chip in `rule-copy-service.ts`, the APL shape that states it as a pattern in `data/simc/apl-rule-service.ts`, per-instance `occurrences` on the finding, boundary-paired specs. Bump `INGEST_VERSION`.
+Deliver: the reader in `data/rotation/priority-list/facts/` implementing `FactReader` - the SimC names it matches, what the log says of each as a range (a point where the log states it, a span where it only bounds it), and the streams it needs - registered in `FACT_READERS` (`data/rotation/priority-list/fact-readers.ts`), its phrases and value units in `list-text-service.ts`, boundary-paired specs. A name no reader matches reads as unknown, so a reader never flags a cast its range does not settle. Bump `INGEST_VERSION`.
 
 ### New feature
 
@@ -29,7 +29,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 
 ## Ingest version
 
-`INGEST_VERSION` (`data/ingest/ingest-version.ts`) bumps exactly when what ingestion bakes changes: a feature's `*Bench` interface in its `data/<feature>/*-data-source.ts`, measured values, or the rule copy. A change to what a spec's plan derives needs no bump: the plan key in each bench's signature re-benches it. SimC edits each spec's list in place across raid tiers, which re-benches the same way; only a new expansion moves `SIMC_BRANCH` (`data/http/simc-data-service.ts`).
+`INGEST_VERSION` (`data/ingest/ingest-version.ts`) bumps exactly when what ingestion bakes changes: a feature's `*Bench` interface in its `data/<feature>/*-data-source.ts`, or measured values. A change to what a spec's plan derives needs no bump: the plan key in each bench's signature re-benches it. SimC edits each spec's list in place across raid tiers, which re-benches the same way; only a new expansion moves `SIMC_BRANCH` (`data/http/simc-data-service.ts`).
 
 ## Architecture roles
 
@@ -54,7 +54,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 ## Testing
 
 - **Altitude rule:** test behavior exhaustively at the lowest altitude that owns it. A composite gets exactly one composition test; never re-test shared helpers from feature specs. Feature components are covered by their service spec, not by mounting them.
-- **Titles, setup, and assertions read as sentences:** `describe` names the unit, `it` finishes the sentence - no arrows, colon prefixes, or labels. The body keeps that voice: setup is a few named fixture calls that spell out the scenario (`reapplied(CLIPPED_ELAPSED_S)`, `at(FIELD_ELAPSED_S - 1)`), and each `expect` states one claim from the title, so a reviewer reads the test top to bottom without decoding it. The aura-clipped kind spec is the reference for setup; the e2e specs (`frontend/e2e/*.spec.ts`) with their `support.ts` verbs (`shows`, `showsFindingRows`, `showsOnPlan`) for assertions.
+- **Titles, setup, and assertions read as sentences:** `describe` names the unit, `it` finishes the sentence - no arrows, colon prefixes, or labels. The body keeps that voice: setup is a few named fixture calls that spell out the scenario (`hardcast(0)`, `read('refreshable', onBoss, RUPTURE_S - PANDEMIC_S)`), and each `expect` states one claim from the title, so a reviewer reads the test top to bottom without decoding it. The debuff facts spec (`data/rotation/priority-list/facts/debuff-facts.spec.ts`) is the reference for setup; the e2e specs (`frontend/e2e/*.spec.ts`) with their `support.ts` verbs (`shows`, `showsFindingRows`, `showsOnPlan`) for assertions.
 - **Boundary pairs:** every "triggers" case has a "does not trigger at the boundary" partner, and comparisons are strict: a value exactly at `mean + 2*stddev` is not an outlier.
 - **Named constants, never magic numbers or raw ids.** Spell/item ids come from `src/testing/spell-ids.ts`; every computed value gets a named `const` with a one-line derivation.
 - **Never load a WCL JSON blob** - build minimal event streams from the factories in `src/testing/builders/events.ts`.

@@ -26,7 +26,14 @@ const DUMP = [
   ),
   record('Name             : Rallying Cry (id=97462) [Spell Family (4)] ', 'Attributes       : External Defensive (499)'),
   record("Name             : Odyn's Fury (desc=Artifact) (id=205545) [Spell Family (4)] ", 'Cooldown         : 45 seconds'),
-  record('Name             : Maelstrom Weapon (id=344179)', 'Stacks           : 1 initial, 10 maximum'),
+  record('Name             : Maelstrom Weapon (id=344179)', 'Stacks           : 1 initial, 10 maximum', 'Duration         : 30 seconds'),
+  record(
+    'Name             : Eviscerate (id=196819) [Spell Family (8)] ',
+    'Resource         : 35 Energy (3) (id=10594)',
+    'Resource         : 1 - 5 Combo Points (4) (id=10595)',
+    'GCD              : 1 seconds',
+  ),
+  record('Name             : Death Coil (id=47541)', 'Resource         : -30 Runic Power (6) (id=1)', 'Resource         : 2% Base Mana (0) (id=2)', 'Cast Time        : 1.5 seconds'),
   record('Name             : Demolish (id=436358)', 'Talent Entry     : Colossus (Arms, Protection) [tree=hero, row=1, col=1]'),
 ].join('\n\n');
 
@@ -35,12 +42,29 @@ const named = (name: string) => records.find(entry => entry.name === name);
 
 describe('SpellDumpService.readDump', () => {
   it('reads one record per Name line, with its id and cooldown', () => {
-    expect(records).toHaveLength(7);
+    expect(records).toHaveLength(9);
     expect(named('Recklessness')).toMatchObject({ id: 1719, token: 'recklessness', cooldown: 90 });
   });
 
   it('reads a charged button\'s recharge as its cooldown', () => {
     expect(named('Bladestorm')?.cooldown).toBe(90);
+  });
+
+  it('reads a charged button\'s charges, and one for a button without them', () => {
+    expect(named('Bladestorm')?.charges).toBe(1);
+    expect(named('Recklessness')?.charges).toBe(1);
+  });
+
+  it('reads an aura\'s duration, the global cooldown and a cast time, each 0 where the record states none', () => {
+    expect(named('Maelstrom Weapon')?.duration).toBe(30);
+    expect(named('Eviscerate')?.gcd).toBe(1);
+    expect(named('Death Coil')?.castTime).toBe(1.5);
+    expect(named('Recklessness')).toMatchObject({ duration: 0, gcd: 0, castTime: 0 });
+  });
+
+  it('reads what a button spends, a ranged cost at its minimum, and neither a gain nor a mana share', () => {
+    expect(named('Eviscerate')?.costs).toEqual([{ type: 3, amount: 35 }, { type: 4, amount: 1 }]);
+    expect(named('Death Coil')?.costs).toEqual([]);
   });
 
   it('reads Blizzard\'s Major Cooldowns label', () => {

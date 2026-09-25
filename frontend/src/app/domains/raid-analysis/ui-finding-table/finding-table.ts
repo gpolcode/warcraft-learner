@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { Collapsible } from '../../shared/ui-collapsible/collapsible';
 import { FindingOccurrences } from './finding-occurrences';
+import { LineSplitTable } from './line-split';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
 
@@ -15,7 +16,7 @@ export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-servi
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    MatIconModule, MatButtonModule, GameIcon, Collapsible, FindingOccurrences,
+    MatIconModule, MatButtonModule, GameIcon, Collapsible, FindingOccurrences, LineSplitTable,
     FormatDurationPipe,
   ],
   templateUrl: './finding-table.html',

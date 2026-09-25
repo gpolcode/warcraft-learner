@@ -282,8 +282,8 @@ export class IngestOrchestratorService {
   private async planVersion(spec: string, ingestVersion: string): Promise<string> {
     const plan = await this.specPlans.planFor(spec);
     if (!plan.ok) throw new Error(`no plan for ${spec}: ${plan.error.message}`);
-    const { key, rules, cooldowns, defensives } = plan.value;
-    console.log(`  plan ${key}: ${rules.length} candidate rules, ${cooldowns.length} cooldowns, ${defensives.length} defensives`);
+    const { key, lines, cooldowns, defensives } = plan.value;
+    console.log(`  plan ${key}: ${lines.length} list lines, ${cooldowns.length} cooldowns, ${defensives.length} defensives`);
     return `${ingestVersion}:${key}`;
   }
 

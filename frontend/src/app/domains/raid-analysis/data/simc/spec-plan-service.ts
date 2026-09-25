@@ -1,47 +1,42 @@
 import { Injectable, inject } from '@angular/core';
-import { greatest, group, mode, rollup } from 'd3-array';
+import { greatest, group, max, mode, rollup } from 'd3-array';
 import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
-import type { RuleCondition, PlanCooldown, PlanDefensive } from '../plan/plan.models';
+import type { PlanCooldown, PlanDefensive, PlanLine, PlanSpell, PlanTalent, PriorityList } from '../plan/plan.models';
 import type { WclEvent } from '../wcl/wcl.models';
-import { AplLine, SimcAplService } from './simc-apl-service';
-import { AplRuleService } from './apl-rule-service';
+import type { TalentName, TalentTree } from '../http/talent-data-service';
+import { SimcAplService } from './simc-apl-service';
 import { SpellDumpService, SpellRecord } from './spell-dump-service';
 
 /** A button pressed from the APL with a cooldown this long is a major cooldown even without Blizzard's label. */
 const MAJOR_COOLDOWN_S = 60;
 const KEY_LENGTH = 16;
 
-export type SpellScope = 'cast' | 'self' | 'target';
+/** Where a list names a spell: `buff.x.up`, `prev_gcd.2.x`, `target.dot.x.remains`. */
+const SPELL_NAME = /^(?:target\.)?(?:buff|debuff|dot|cooldown|action|active_dot|prev|prev_off_gcd|pet)\.(\w+)|^prev_gcd\.\d+\.(\w+)/;
+const TALENT_NAME = /^(talent|hero_tree|apex)\.\w+/;
 
-export interface PlanSpell {
-  name: string;
-  /** Every record SimC's spell data holds under the name; each log picks the one it shows. */
-  ids: number[];
-}
+/** A `pet.x` is out while the button that summons it lasts, named for the pet itself or with one of these. */
+export const SUMMON_PREFIXES = ['', 'summon_', 'invoke_'];
 
 /** What a spec's benches judge, read from SimulationCraft's rotation and Blizzard's spell labels. */
-export interface SpecPlan {
-  /** Spell ids are 0 and spell names are SimC tokens until `resolveRule` names them from one log. */
-  rules: RuleCondition[];
+export interface SpecPlan extends PriorityList {
   cooldowns: PlanCooldown[];
   defensives: PlanDefensive[];
-  spells: Record<string, PlanSpell | undefined>;
   /** Changes exactly when a derived part changes, so ingest re-benches an encounter only then. */
   key: string;
 }
 
-/** Builds a spec's plan from its SimC action priority list and class spell dump, and fits it to each log's own spell ids. */
+/** Builds a spec's plan from its SimC action priority list, class spell dump and talent tree, and fits it to each log's own spell ids. */
 @Injectable({ providedIn: 'root' })
 export class SpecPlanService {
   private readonly dumps = inject(SpellDumpService);
   private readonly apl = inject(SimcAplService);
-  private readonly aplRules = inject(AplRuleService);
 
   /** A null list is a spec SimulationCraft writes no APL for: it gets cooldowns and defensives from the labels alone. */
-  build(sources: { apl: string | null; dump: string; specLabel: string }): SpecPlan {
+  build(sources: { apl: string | null; dump: string; specLabel: string; talents: TalentTree | null }): SpecPlan {
     const own = this.ownRecords(this.dumps.readDump(sources.dump), sources.specLabel, new Set(sources.apl?.match(/\w+/g)));
-    return this.assemble(sources.apl === null ? null : this.apl.readApl(sources.apl), own);
+    return this.assemble(sources.apl === null ? null : this.apl.readApl(sources.apl), own, sources.talents);
   }
 
   /** A name only other specs' talents carry belongs to them, untalented records under it included, unless this spec's APL names it. */
@@ -77,57 +72,67 @@ export class SpecPlanService {
     return { ...plan, cooldowns: plan.cooldowns.flatMap(castAs), defensives: plan.defensives.flatMap(castAs) };
   }
 
-  /** The rule under one log's ids and in-game names; null when a spell it needs never shows in that log. */
-  resolveRule(plan: SpecPlan, rule: RuleCondition, idIn: (ids: number[], scope: SpellScope) => number | null): RuleCondition | null {
-    const resolved: Record<string, unknown> = { ...rule };
-    for (const [key, value] of this.spellFields(rule)) {
-      const scope = this.scopeOf(rule, key);
-      const found = [value].flat().flatMap(token => {
-        const spell = plan.spells[token];
-        const id = spell ? idIn(spell.ids, scope) : null;
-        return spell && id ? [{ id, name: spell.name }] : [];
-      });
-      if (!found.length && !key.startsWith('except_')) return null;
-      const list = Array.isArray(value);
-      resolved[key] = list ? found.map(spell => spell.name) : found[0]?.name;
-      resolved[key.replace(/_name(s?)$/, '_id$1')] = list ? found.map(spell => spell.id) : found[0]?.id;
-    }
-    return resolved as unknown as RuleCondition;
-  }
-
-  /** Every `*_name` field names a spell but `resource_name`, which names a pool. */
-  private spellFields(rule: RuleCondition): [string, string | string[]][] {
-    return Object.entries(rule).filter((entry): entry is [string, string | string[]] => /_names?$/.test(entry[0]) && entry[0] !== 'resource_name');
-  }
-
-  private scopeOf(rule: RuleCondition, key: string): SpellScope {
-    if (/^(except_)?buff_/.test(key)) return 'self';
-    return key.startsWith('aura_') && 'on' in rule ? rule.on : 'cast';
-  }
-
   private spell(plan: SpecPlan, name: string): PlanSpell | undefined {
     return plan.spells[this.dumps.tokenize(name)];
   }
 
-  private assemble(lines: AplLine[] | null, records: SpellRecord[]): SpecPlan {
+  private assemble(lines: PlanLine[] | null, records: SpellRecord[], tree: TalentTree | null): SpecPlan {
     const byToken = group(records, record => record.token);
-    const rules = lines ? this.aplRules.derive(lines, byToken) : [];
     const cooldowns = this.cooldowns(lines, byToken);
     const defensives = this.defensives(records, byToken);
+    const names = (lines ?? []).flatMap(line => (line.terms ?? []).flatMap(term => {
+      const node = this.apl.parse(term);
+      return node ? this.apl.identifiers(node) : [];
+    }));
     const tokens = new Set([
-      ...rules.flatMap(rule => this.spellFields(rule).flatMap(([, value]) => [value].flat())),
+      ...(lines ?? []).map(line => line.action),
+      ...names.flatMap(name => this.spellTokens(name)),
       ...[...cooldowns, ...defensives].map(button => this.dumps.tokenize(button.name)),
     ]);
     const spells = Object.fromEntries([...tokens].flatMap(token => {
-      const named = byToken.get(token) ?? [];
-      return named[0] ? [[token, { name: named[0].name, ids: named.map(record => record.id) }]] : [];
+      const named = byToken.get(token);
+      return named ? [[token, this.planSpell(named)]] : [];
     }));
-    const derived = { rules, cooldowns, defensives, spells };
+    const derived = { lines: lines ?? [], spells, talents: this.talents(names, tree), cooldowns, defensives };
     return { ...derived, key: bytesToHex(sha256(utf8ToBytes(JSON.stringify(derived)))).slice(0, KEY_LENGTH) };
   }
 
+  private spellTokens(name: string): string[] {
+    const [, token, prior] = SPELL_NAME.exec(name) ?? [];
+    if (prior) return [prior];
+    if (!token) return [];
+    return name.startsWith('pet.') ? SUMMON_PREFIXES.map(prefix => prefix + token) : [token];
+  }
+
+  /** One spell over every record its name holds: a button's cooldown sits on one record and its buff's duration on another. */
+  private planSpell(named: SpellRecord[]): PlanSpell {
+    const most = (field: 'cooldown' | 'charges' | 'duration' | 'gcd' | 'castTime' | 'maxStacks'): number => max(named, record => record[field]) ?? 0;
+    const costs = rollup(named.flatMap(record => record.costs), same => max(same, cost => cost.amount) ?? 0, cost => cost.type);
+    return {
+      name: named[0]?.name ?? '', ids: named.map(record => record.id),
+      cooldown: most('cooldown'), charges: most('charges'), duration: most('duration'), gcd: most('gcd'),
+      cast_time: most('castTime'), max_stacks: most('maxStacks'),
+      costs: [...costs].map(([type, amount]) => ({ type, amount })),
+    };
+  }
+
+  /** The talent entries each `talent.x`, `hero_tree.x` and `apex.N` of the list names, by the tree's own names tokenized the way SimC does. */
+  private talents(names: string[], tree: TalentTree | null): Record<string, PlanTalent> {
+    const keys = new Set(names.flatMap(name => TALENT_NAME.exec(name)?.[0] ?? []));
+    return Object.fromEntries([...keys].flatMap(key => {
+      const entries = this.talentEntries(key, tree);
+      return entries[0] ? [[key, { name: entries[0].name, entries: entries.map(entry => entry.id) }]] : [];
+    }));
+  }
+
+  private talentEntries(key: string, tree: TalentTree | null): TalentName[] {
+    const [kind, token = ''] = key.split('.');
+    if (kind === 'apex') return (tree?.apex ?? []).slice(Number(token) - 1, Number(token));
+    return (kind === 'talent' ? tree?.talents : tree?.heroTrees)?.filter(entry => this.dumps.tokenize(entry.name) === token) ?? [];
+  }
+
   /** APL buttons Blizzard labels major or that hold a long cooldown, in APL order; with no APL, the labelled ones alone. */
-  private cooldowns(lines: AplLine[] | null, byToken: Map<string, SpellRecord[]>): PlanCooldown[] {
+  private cooldowns(lines: PlanLine[] | null, byToken: Map<string, SpellRecord[]>): PlanCooldown[] {
     const tokens = lines ? new Set(lines.map(line => line.action)) : byToken.keys();
     return [...tokens].flatMap(token => {
       const records = byToken.get(token) ?? [];
