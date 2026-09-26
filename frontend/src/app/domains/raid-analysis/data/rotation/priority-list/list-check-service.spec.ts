@@ -58,6 +58,15 @@ describe('ListCheckService cast check', () => {
     expect(check?.verdict).toBe('unjudged');
   });
 
+  it('reads each operand of an either-or term on its own, down through a nested all-of group', () => {
+    const lines: PlanLine[] = [{ action: 'eviscerate', terms: ['combo_points>=5|(time<100&combo_points>=3)'] }];
+    const [check] = read(lines, [pooled(EVISCERATE, 10, 3)]).casts.get('eviscerate') ?? [];
+    expect(check?.lines[0]?.terms[0]).toEqual({
+      truth: 'true', value: null,
+      parts: [{ truth: 'false', value: [3, 3] }, { truth: 'true', value: null, parts: [{ truth: 'true', value: [10, 10] }, { truth: 'true', value: [3, 3] }] }],
+    });
+  });
+
   it('leaves a cast not judged under a line no parser reads', () => {
     const [check] = read([{ action: 'eviscerate', terms: null }], [pooled(EVISCERATE, 10, 3)]).casts.get('eviscerate') ?? [];
     expect(check?.verdict).toBe('unjudged');

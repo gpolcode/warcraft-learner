@@ -1,7 +1,8 @@
 export interface FindingOccurrence {
   atS?: number;
   ok: boolean;
-  label: string;
+  /** Absent where the chip shows the moment's time instead. */
+  label?: string;
   /** Rendered only when `atS` is absent - never alongside it. */
   note?: string;
   detail: string;
@@ -16,6 +17,8 @@ export interface ConditionCheck {
   text: string;
   truth: 'true' | 'false' | 'unknown';
   value: string;
+  /** An either-or or all-of term, read operand by operand in place of its own row. */
+  group?: { any: boolean; checks: ConditionCheck[] };
 }
 
 export interface LineSplit {

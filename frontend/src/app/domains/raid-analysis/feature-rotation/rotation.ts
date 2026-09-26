@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { FindingRow, FindingTable, OnPlanChip } from '../ui-finding-table/finding-table';
+import { ButtonTable } from '../ui-button-table/button-table';
+import type { ButtonRow } from '../data/rotation/priority-list/list-finding-service';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { RotationFeatureService } from '../data/rotation/rotation-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
@@ -7,7 +9,7 @@ import { LoadResourceService } from '../../shared/ui-load-state/load-resource-se
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-rotation',
-  imports: [FindingTable, LoadState],
+  imports: [ButtonTable, FindingTable, LoadState],
   templateUrl: './rotation.html',
 })
 export class Rotation {
@@ -40,9 +42,8 @@ export class Rotation {
 
   protected readonly available = this.load.available;
   protected readonly error = this.load.error;
-  protected readonly ruleRows = computed<FindingRow[]>(() => this.load.value()?.ruleRows ?? []);
+  protected readonly buttonRows = computed<ButtonRow[]>(() => this.load.value()?.buttonRows ?? []);
+  protected readonly downtimeRows = computed<FindingRow[]>(() => this.load.value()?.downtimeRows ?? []);
   protected readonly offensiveRows = computed<FindingRow[]>(() => this.load.value()?.offensiveRows ?? []);
   protected readonly onPlan = computed<OnPlanChip[]>(() => this.load.value()?.onPlan ?? []);
-
-  protected readonly ruleOnPlanChips = computed<OnPlanChip[]>(() => this.load.value()?.ruleOnPlan ?? []);
 }

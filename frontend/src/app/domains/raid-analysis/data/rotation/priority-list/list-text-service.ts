@@ -113,21 +113,11 @@ export class ListTextService {
     return prefix + (this.join(body) || 'whenever it is ready');
   }
 
-  instruction(list: PriorityList, line: ReadLine): string {
-    return `Press ${this.name(list, line.action)} ${this.sentence(list, line, true)}.`;
-  }
-
   /** The term in words; `holds` false phrases its negation, which a title uses to name what went wrong. */
   phrase(list: PriorityList, node: AplNode, holds: boolean, action: string): string {
     if (node.type === 'UnaryExpression' && (node as jsep.UnaryExpression).operator === '!') return this.phrase(list, (node as jsep.UnaryExpression).argument, !holds, action);
     if (node.type === 'Identifier') return this.flag(list, (node as jsep.Identifier).name, holds, action) ?? this.raw(holds);
     return node.type === 'BinaryExpression' ? this.binary(list, node as jsep.BinaryExpression, holds, action) : this.raw(holds);
-  }
-
-  /** The term's miss in words, or null where no phrase names it, since a title reads nothing from `another condition`. */
-  failure(list: PriorityList, node: AplNode, action: string): string | null {
-    const words = this.phrase(list, node, false, action);
-    return words.includes(OTHER) ? null : words;
   }
 
   /** `flag` marks a term that tests the value for truth alone, so a variable read that way shows as yes or no. */

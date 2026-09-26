@@ -1,19 +1,33 @@
-<ul class="flex flex-col gap-1" aria-label="Conditions for this cast">
-  @for (check of checks(); track $index) {
-    <li class="flex items-start gap-2 text-body">
-      @switch (check.truth) {
-        @case ('true') {
-          <mat-icon class="icon-18 shrink-0 text-success" aria-hidden="false" aria-label="Met">check</mat-icon>
+<ng-template #list let-checks>
+  @for (check of checks; track $index) {
+    @if (check.group; as group) {
+      <li>
+        <div class="text-label text-muted pt-1">{{ group.any ? 'Any one of these' : 'All of these' }}</div>
+        <!-- The rail sits under the icon column's center, so a group's conditions read as hanging off it. -->
+        <ul class="flex flex-col gap-1 mt-1 ml-[9px] pl-3 border-l border-line" [attr.aria-label]="check.text">
+          <ng-container *ngTemplateOutlet="list; context: { $implicit: group.checks }"></ng-container>
+        </ul>
+      </li>
+    } @else {
+      <li class="flex items-start gap-2 text-body">
+        @switch (check.truth) {
+          @case ('true') {
+            <mat-icon class="icon-18 shrink-0 text-success" aria-hidden="false" aria-label="Met">check</mat-icon>
+          }
+          @case ('false') {
+            <mat-icon class="icon-18 shrink-0 text-critical" aria-hidden="false" aria-label="Not met">close</mat-icon>
+          }
+          @default {
+            <mat-icon class="icon-18 shrink-0 text-muted" aria-hidden="false" aria-label="Not in the log">help_outline</mat-icon>
+          }
         }
-        @case ('false') {
-          <mat-icon class="icon-18 shrink-0 text-critical" aria-hidden="false" aria-label="Not met">close</mat-icon>
-        }
-        @default {
-          <mat-icon class="icon-18 shrink-0 text-muted" aria-hidden="false" aria-label="Not in the log">help_outline</mat-icon>
-        }
-      }
-      <span class="min-w-0 flex-1">{{ check.text }}</span>
-      <span class="tabular-nums text-caption text-muted shrink-0 text-right">{{ check.value }}</span>
-    </li>
+        <span class="min-w-0 flex-1">{{ check.text }}</span>
+        <span class="tabular-nums text-caption text-muted shrink-0 text-right">{{ check.value }}</span>
+      </li>
+    }
   }
+</ng-template>
+
+<ul class="flex flex-col gap-1" aria-label="Conditions for this cast">
+  <ng-container *ngTemplateOutlet="list; context: { $implicit: checks() }"></ng-container>
 </ul>

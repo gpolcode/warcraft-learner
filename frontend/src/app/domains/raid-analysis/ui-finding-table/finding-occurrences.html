@@ -21,25 +21,25 @@
           [attr.aria-selected]="active"
           [attr.aria-describedby]="active ? detailId : null"
           (click)="select($index)">
-          {{ occ.label }}
+          @if (occ.label === undefined) {
+            <span class="tabular-nums">{{ occ.atS | formatDuration }}</span>
+          } @else {
+            {{ occ.label }}
+          }
           <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
         </button>
-        <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted')">
-          {{ occ.atS != null ? (occ.atS | formatDuration) : occ.note }}
-        </span>
+        @if (occ.label !== undefined) {
+          <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted')">
+            {{ occ.atS != null ? (occ.atS | formatDuration) : occ.note }}
+          </span>
+        }
       </div>
     }
   </div>
 </div>
 
-@if (target()) {
-  <div class="text-caption text-muted mt-2 pt-2 border-t border-line">
-    <span class="text-text">Target:</span> {{ target() }}
-  </div>
-}
-
 @if (active(); as occ) {
-  <div [id]="detailId" class="mt-2.75 text-body text-muted">
+  <div [id]="detailId" class="mt-2.5 pt-2.5 border-t border-line text-body text-muted">
     @if (occ.atS != null) {
       <span class="text-accent mr-0.5">{{ occ.atS | formatDuration }}</span>
     }

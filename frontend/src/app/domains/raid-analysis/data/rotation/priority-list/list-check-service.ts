@@ -28,6 +28,13 @@ export interface TermReading {
   truth: Truth;
   /** What the term measures: a comparison's left side, a flag's own value; null for a term that is neither. */
   value: Range | null;
+  /** Per operand of an `|` or `&` term, in the order `junction` lists them. */
+  parts?: TermReading[];
+}
+
+export interface Junction {
+  any: boolean;
+  operands: AplNode[];
 }
 
 export interface LineReading {
@@ -136,11 +143,29 @@ export class ListCheckService {
 
   private readLine(line: ReadLine, moment: CastMoment, ctx: FactContext): LineReading {
     if (!line.terms) return { truth: 'unknown', terms: [] };
-    const terms = line.terms.map(term => ({
-      truth: this.evaluator.truthOf(term, moment, line.action, ctx),
-      value: this.measured(term, moment, line.action, ctx),
-    }));
+    const terms = line.terms.map(term => this.readTerm(term, moment, line.action, ctx));
     return { truth: this.evaluator.and(...terms.map(term => term.truth)), terms };
+  }
+
+  private readTerm(term: AplNode, moment: CastMoment, action: string, ctx: FactContext): TermReading {
+    const junction = this.junction(term);
+    if (!junction) return { truth: this.evaluator.truthOf(term, moment, action, ctx), value: this.measured(term, moment, action, ctx) };
+    const parts = junction.operands.map(operand => this.readTerm(operand, moment, action, ctx));
+    const truths = parts.map(part => part.truth);
+    return { truth: junction.any ? this.evaluator.or(...truths) : this.evaluator.and(...truths), value: null, parts };
+  }
+
+  /** A skip when due counts against the button like a cast off its lines. */
+  rightShare(reading: LogReading, action: string): number | null {
+    const judged = (reading.casts.get(action) ?? []).filter(check => check.verdict !== 'unjudged');
+    const skipped = reading.order.filter(check => check.expected === action && check.pressed !== action);
+    const moments = judged.length + skipped.length;
+    return moments ? judged.filter(check => check.verdict === 'on').length / moments : null;
+  }
+
+  junction(term: AplNode): Junction | null {
+    const operator = term.type === 'BinaryExpression' ? (term as jsep.BinaryExpression).operator : '';
+    return operator === '|' || operator === '&' ? { any: operator === '|', operands: this.apl.operands(term, operator) } : null;
   }
 
   private measured(term: AplNode, moment: CastMoment, action: string, ctx: FactContext): Range | null {

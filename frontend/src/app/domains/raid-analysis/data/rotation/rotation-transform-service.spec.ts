@@ -208,7 +208,7 @@ describe('RotationTransformService (live, in-browser)', () => {
     const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
     assert(result.ok);
     expect(result.value.list).toEqual(LIST);
-    expect(result.value.buttons.map(button => [button.action, button.spell_id, button.off_tolerance])).toEqual([['shadow_blades', SHADOW_BLADES, 0]]);
+    expect(result.value.buttons.map(button => [button.action, button.spell_id, button.right])).toEqual([['shadow_blades', SHADOW_BLADES, { lo: 1, avg: 1, hi: 1 }]]);
   });
 
   it('propagates a missing error when the spec\'s plan has neither cooldowns nor a list', async () => {

@@ -15,7 +15,6 @@ let nextInstanceSeq = 0;
 })
 export class FindingOccurrences {
   readonly occurrences = input.required<FindingOccurrence[]>();
-  readonly target = input<string>('');
 
   private readonly selectedIndex = linkedSignal<FindingOccurrence[], number | null>({
     source: this.occurrences,

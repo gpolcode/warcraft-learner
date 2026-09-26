@@ -30,37 +30,46 @@ const log = (casts: CastCheck[], opts: { order?: OrderCheck[]; id?: number } = {
 const field = (count: number, casts: CastCheck[], opts = {}): LogReading[] => Array.from({ length: count }, () => log(casts, opts));
 const benchOf = (readings: LogReading[]) => benches.bench(list, readings)[0];
 
+/** Two right casts of three settled ones. */
+const TWO_THIRDS = 0.667;
+/** Four right casts of five moments, the fifth a skip when due. */
+const FOUR_FIFTHS = 0.8;
+
 describe('ListBenchService', () => {
   const clean = [cast('on'), cast('on'), cast('on'), cast('on')];
+  const quarterOff = [cast('off', 0, 3), cast('on'), cast('on'), cast('on')];
 
   it('benches a button once enough top logs pressed it, and leaves it out below that', () => {
-    expect(benchOf(field(MIN_MEASURED_PARSES, clean))?.off_tolerance).toBe(0);
+    expect(benchOf(field(MIN_MEASURED_PARSES, clean))?.right).toEqual({ lo: 1, avg: 1, hi: 1 });
     expect(benchOf(field(MIN_MEASURED_PARSES - 1, clean))).toBeUndefined();
   });
 
-  it('sets the tolerance at the share all but the sloppiest top log stays under', () => {
-    // Four logs never stray and one strays on a quarter of its casts: the 90th percentile sits between them.
-    const readings = [...field(MIN_MEASURED_PARSES - 1, clean), log([cast('off', 0, 3), cast('on'), cast('on'), cast('on')])];
-    expect(benchOf(readings)?.off_tolerance).toBe(0.15);
+  it('spans the top logs from the one that got the button right least often to the one that did most', () => {
+    // Four logs never stray and one strays on a quarter of its casts, so the average sits a twentieth under the top.
+    const readings = [...field(MIN_MEASURED_PARSES - 1, clean), log(quarterOff)];
+    expect(benchOf(readings)?.right).toEqual({ lo: 0.75, avg: 0.95, hi: 1 });
   });
 
-  it('judges no casts of a button the field strays from at least half the time, since the list does not describe how it is played', () => {
-    const half = [cast('off', 0, 3), cast('on')];
-    expect(benchOf(field(MIN_MEASURED_PARSES, half))?.off_tolerance ?? null).toBeNull();
+  it('leaves out a button the field gets right only half the time, since the list does not describe how it is played', () => {
+    expect(benchOf(field(MIN_MEASURED_PARSES, [cast('off', 0, 3), cast('on')]))).toBeUndefined();
+  });
+
+  it('benches a button the field gets right more often than not', () => {
+    expect(benchOf(field(MIN_MEASURED_PARSES, [cast('off', 0, 3), cast('on'), cast('on')]))?.right.avg).toBe(TWO_THIRDS);
   });
 
   it('leaves the casts the logs could not settle out of the share', () => {
-    expect(benchOf(field(MIN_MEASURED_PARSES, [cast('unjudged'), cast('off', 0, 3), ...clean.slice(2)]))?.off_tolerance).toBe(0.333);
+    expect(benchOf(field(MIN_MEASURED_PARSES, [cast('unjudged'), cast('off', 0, 3), ...clean.slice(2)]))?.right.avg).toBe(TWO_THIRDS);
+  });
+
+  it('counts a moment the button was due and something else was pressed against it', () => {
+    const readings = field(MIN_MEASURED_PARSES, clean, { order: [decision('eviscerate'), decision('backstab')] });
+    expect(benchOf(readings)?.right.avg).toBe(FOUR_FIFTHS);
   });
 
   it('shares the on-list casts out over the lines that allowed them', () => {
     const readings = field(MIN_MEASURED_PARSES, [cast('on', 0), cast('on', 0), cast('on', 0), cast('on', 1)]);
     expect(benchOf(readings)?.allowed).toEqual([0.75, 0.25]);
-  });
-
-  it('benches the order once enough top logs met a moment the list settled for the button', () => {
-    const readings = field(MIN_MEASURED_PARSES, clean, { order: [decision('eviscerate'), decision('eviscerate'), decision('eviscerate'), decision('backstab')] });
-    expect(benchOf(readings)?.skip_tolerance).toBe(0.25);
   });
 
   it('names the button\'s icon by the id most top logs cast it under', () => {

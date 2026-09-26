@@ -4,14 +4,18 @@ import { PerCdBenchmark } from '../encounter/encounter.models';
 import { PlanCooldown, PriorityList } from '../plan/plan.models';
 import { BenchHeader } from '../analysis/bench-pipeline-service';
 
+export interface ShareRange {
+  lo: number;
+  avg: number;
+  hi: number;
+}
+
 export interface ButtonBench {
   action: string;
   /** The id the top logs cast it under most, which names its icon. */
   spell_id: number;
-  /** The off-list share all but the sloppiest top log stays at or under; null when too few top logs cast it or past MAX_TOLERANCE. */
-  off_tolerance: number | null;
-  /** The same for the moments its line led the list and something lower was pressed. */
-  skip_tolerance: number | null;
+  /** Over the top logs, each log's share of the button's moments it got right, as `ListCheckService.rightShare` reads it. */
+  right: ShareRange;
   /** Per line of the button, in list order, its share of the top logs' on-list casts. */
   allowed: number[];
 }

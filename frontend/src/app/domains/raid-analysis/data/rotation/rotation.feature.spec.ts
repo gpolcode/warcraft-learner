@@ -19,8 +19,8 @@ const LIST = {
   variables: [],
   talents: {},
 };
-const NEVER_OFF: ButtonBench = {
-  action: 'secret_technique', spell_id: SECRET_TECHNIQUE, off_tolerance: 0, skip_tolerance: null,
+const ALWAYS_RIGHT: ButtonBench = {
+  action: 'secret_technique', spell_id: SECRET_TECHNIQUE, right: { lo: 1, avg: 1, hi: 1 },
   allowed: [1],
 };
 
@@ -55,7 +55,7 @@ describe('RotationFeatureService', () => {
     });
 
     const onMissingFight = await service.loadPlayerView('SubtletyRogue', 1, 'rX', UNLOGGED_FIGHT_ID, 10);
-    expect(onMissingFight).toEqual(Results.ok({ ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] }));
+    expect(onMissingFight).toEqual(Results.ok({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [] }));
 
     const onFailure = await service.loadPlayerView('SubtletyRogue', 1, FAILING_CODE, 1, 10);
     expect(onFailure.ok).toBe(false);
@@ -70,12 +70,11 @@ describe('RotationFeatureService', () => {
         (dataType === 'Casts' ? [cast(SECRET_TECHNIQUE, 30)] : dataType === 'Buffs' ? [applyBuff(SHADOW_DANCE, 5), removeBuff(SHADOW_DANCE, 13)] : []),
       getCombatantInfo: async () => [],
     };
-    const service = withSource(Results.ok(bench({ list: LIST, buttons: [NEVER_OFF] })), wcl);
+    const service = withSource(Results.ok(bench({ list: LIST, buttons: [ALWAYS_RIGHT] })), wcl);
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
     assert(result.ok);
-    expect(result.value.ruleRows.find(row => row.chip === 'Wrong time')).toMatchObject({
-      what: 'Secret Technique while Shadow Dance is down', measured: { value: '1 / 1', unit: 'casts at the wrong time' },
-    });
+    expect(result.value.buttonRows).toMatchObject([{ name: 'Secret Technique', you: 0, top: ALWAYS_RIGHT.right }]);
+    expect(result.value.buttonRows[0]?.occurrences[0]?.checks).toEqual([{ text: 'While Shadow Dance is up', truth: 'false', value: 'no' }]);
   });
 
   it('judges no button on a bench an older ingest wrote without a list, and still reads the offensives', async () => {
@@ -83,7 +82,7 @@ describe('RotationFeatureService', () => {
     const service = withSource(Results.ok(older as RotationBench), WORKING_WCL);
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
     assert(result.ok);
-    expect(result.value.ruleOnPlan).toEqual([]);
+    expect(result.value.buttonRows).toEqual([]);
   });
 
   it('computes player findings from the player log', async () => {

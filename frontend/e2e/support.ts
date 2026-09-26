@@ -29,7 +29,7 @@ export async function showsEntity(scope: Locator): Promise<void> {
 }
 
 /** A bare `div.border-t` also matches the on-plan strip, the empty state, and the Fix cell itself, so a row is narrowed to a top-level band that owns a Fix. */
-export function findingRows(table: Locator): Locator {
+function findingRows(table: Locator): Locator {
   return table.locator(':scope > div > div.border-t').filter({ has: table.page().locator('wl-collapsible') });
 }
 

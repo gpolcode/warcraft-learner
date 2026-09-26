@@ -13,7 +13,7 @@ import { CadenceVoice } from '../analysis/cast-cadence-service';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../analysis/wcl-projections-service';
 import { PullContextService, PullContext, PullRef } from '../analysis/pull-context-service';
 import { ListLogService } from './priority-list/list-log-service';
-import { ListFindingService } from './priority-list/list-finding-service';
+import { ButtonRow, ListFindingService } from './priority-list/list-finding-service';
 import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
@@ -37,8 +37,8 @@ export interface CdPlanRow {
 
 /** An `ok` result implies the top-parse bench exists. */
 export interface RotationPlayerView {
-  ruleRows: FindingRow[];
-  ruleOnPlan: OnPlanChip[];
+  buttonRows: ButtonRow[];
+  downtimeRows: FindingRow[];
   offensiveRows: FindingRow[];
   onPlan: OnPlanChip[];
 }
@@ -108,7 +108,7 @@ export class RotationFeatureService {
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'RotationFeatureService.loadPlayerView',
       errorId: 'rotation.player-view',
-      emptyView: () => ({ ruleRows: [], ruleOnPlan: [], offensiveRows: [], onPlan: [] }),
+      emptyView: () => ({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [] }),
       analyze: context => this.playerView(this.withList(bench.value), pull, playerId, context),
     });
   }
@@ -136,8 +136,7 @@ export class RotationFeatureService {
       cooldowns: bench.major_cooldowns, bench,
     });
     const { ruleRows, offensiveRows, onPlan } = this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
-    const list = this.listFindings.judge(bench, reading);
-    return { ruleRows: [...ruleRows, ...list.rows], ruleOnPlan: list.onPlan, offensiveRows, onPlan };
+    return { buttonRows: this.listFindings.rows(bench, reading), downtimeRows: ruleRows, offensiveRows, onPlan };
   }
 
   async loadPlanView(spec: string, encounterId: number): Promise<Result<RotationPlanView>> {

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import type { ConditionCheck } from '../data/analysis/analysis.models';
 
@@ -6,7 +7,7 @@ import type { ConditionCheck } from '../data/analysis/analysis.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-condition-checklist',
   host: { class: 'block' },
-  imports: [MatIconModule],
+  imports: [MatIconModule, NgTemplateOutlet],
   templateUrl: './condition-checklist.html',
 })
 export class ConditionChecklist {

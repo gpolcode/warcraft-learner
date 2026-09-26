@@ -48,9 +48,9 @@ describe('ListTextService sentences', () => {
       "With Deathstalker's Mark: at full combo points (one less while Darkest Night is down) and on 2+ enemies");
   });
 
-  it('leaves the talent out where the player has it, as an instruction reads', () => {
-    expect(text.instruction(list, lineOf('black_powder'))).toBe(
-      'Press Black Powder at full combo points (one less while Darkest Night is down) and on 2+ enemies.');
+  it('leaves the talent out where the player has it', () => {
+    expect(text.sentence(list, lineOf('black_powder'), true)).toBe(
+      'at full combo points (one less while Darkest Night is down) and on 2+ enemies');
   });
 
   it('reads a line with no condition as press when ready', () => {
@@ -120,15 +120,6 @@ describe('ListTextService phrases', () => {
   it('reads a term no phrase covers as another condition, never as SimC wrote it', () => {
     expect(phrase('movement.distance>20')).toBe('when another condition holds');
     expect(phrase('movement.distance>20', false)).toBe('unless another condition holds');
-  });
-
-  it('names a miss only where a phrase covers it', () => {
-    const miss = (term: string) => {
-      const node = apl.parse(term);
-      return node && text.failure(list, node, 'black_powder');
-    };
-    expect(miss('combo_points>=6')).toBe('at under 6 combo points');
-    expect(miss('movement.distance>20')).toBeNull();
   });
 });
 

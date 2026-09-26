@@ -1,0 +1,57 @@
+<div class="bg-surface border border-line rounded-[10px] overflow-hidden">
+
+  <div class="px-4 pt-3 pb-2">
+    <h2 class="text-title">{{ heading() }}</h2>
+    @if (subtitle()) {
+      <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
+    }
+  </div>
+
+  <div class="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 pb-2.5 text-caption text-muted" aria-hidden="true">
+    <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] opacity-[0.65] bg-warning"></span>You</span>
+    <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] bg-accent/30 border border-accent"></span>Top raiders, lowest to highest</span>
+    <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-[2px] bg-accent"></span>Top raiders average</span>
+  </div>
+
+  @for (row of rows(); track $index) {
+    @let open = openIndex() === $index;
+    <div class="border-t border-line">
+      <div class="flex items-center gap-(--gap-card) pl-4 pr-2 py-1">
+        <div class="min-w-0 flex-1 truncate">
+          <wl-game-icon [id]="row.spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
+        </div>
+        <div class="relative h-4 w-28 sm:w-45 shrink-0 rounded bg-bg" aria-hidden="true">
+          @if (row.you !== null) {
+            <div class="absolute inset-y-0 left-0 rounded opacity-[0.65] bg-warning" [style.width.%]="row.you * 100"></div>
+          }
+          <div class="absolute inset-y-0 rounded bg-accent/30 border border-accent"
+            [style.left.%]="row.top.lo * 100" [style.width.%]="(row.top.hi - row.top.lo) * 100"></div>
+          <div class="absolute inset-y-0 w-[2px] bg-accent" [style.left.%]="row.top.avg * 100"></div>
+        </div>
+        <span class="sr-only">
+          @if (row.you !== null) {
+            You {{ row.you | percent }}.
+          }
+          Top raiders {{ row.top.lo | percent }} to {{ row.top.hi | percent }}, {{ row.top.avg | percent }} on average.
+        </span>
+        <button mat-icon-button
+          [attr.aria-expanded]="open"
+          [attr.aria-label]="open ? 'Hide instances' : 'Show instances'"
+          (click)="toggle($index)">
+          <mat-icon class="icon-18 transition-transform" [class.rotate-180]="open">expand_more</mat-icon>
+        </button>
+      </div>
+
+      @if (open) {
+        <!-- From sm up, indented to the name past the icon, so the instances read as the row's own. -->
+        <div class="pl-4 sm:pl-10 pr-4 pt-1 pb-4">
+          <wl-finding-occurrences [occurrences]="row.occurrences"></wl-finding-occurrences>
+          @if (row.lines.length) {
+            <wl-line-split class="mt-3 pt-2 border-t border-line" [lines]="row.lines"></wl-line-split>
+          }
+        </div>
+      }
+    </div>
+  }
+
+</div>
