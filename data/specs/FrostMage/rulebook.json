@@ -1,0 +1,171 @@
+{
+  "spec": "FrostMage",
+  "spec_icon": "spell_frost_frostbolt02",
+  "major_cooldowns": [
+    {
+      "name": "Ray of Frost",
+      "spell_id": 205021,
+      "cooldown": 60,
+      "opener_priority": 3,
+      "usage_rule": "Send it early in the opener, keep it off two charges, and cancel the channel after a GCD once two or more enemies are up.",
+      "id_note": "205021 is the cast id, 67 casts in 5/5 parses. Hand of Frost grants a second charge, so expected casts run above one per 60s."
+    },
+    {
+      "name": "Frozen Orb",
+      "spell_id": 84714,
+      "cooldown": 60,
+      "opener_priority": 2,
+      "usage_rule": "Press it on cooldown and place it so the orb rolls through the whole pack, then follow it with Blizzard while Freezing Rain is up.",
+      "id_note": "84714 is the cast id (85 casts in 5/5 parses); the same-name 84721 was never observed."
+    },
+    {
+      "name": "Flurry",
+      "spell_id": 44614,
+      "cooldown": 30,
+      "opener_priority": 1,
+      "usage_rule": "Fire it the moment Brain Freeze lands, once you have spent a Thermal Void that is still running.",
+      "id_note": "44614 is the cast id (291 casts in 5/5 parses); the same-name 228354 was never observed. Brain Freeze resets the cooldown, so casts far exceed one per 30s."
+    },
+    {
+      "name": "Comet Storm",
+      "spell_id": 1247777,
+      "cooldown": 60,
+      "usage_rule": "It replaces Ray of Frost once you channel it, so fire it a couple of GCDs after Glacial Spike to let Rapid Refreezing finish.",
+      "id_note": "Guide links spell=1247777, the only Comet Storm row in the table; it is marked NOT observed and its tooltip reads as the talent node, and no Comet Storm cast id appears in the sampled parses. Cooldown mirrors Ray of Frost, which it replaces after a cast.",
+      "talent_gated": true
+    },
+    {
+      "name": "Time Warp",
+      "spell_id": 80353,
+      "cooldown": 300,
+      "usage_rule": "Cast it just before Ray of Frost, or at the moment your group calls for it.",
+      "id_note": "80353 cast in 3/5 parses; raids rotate the haste buff between casters."
+    },
+    {
+      "name": "Freightrunner's Flask",
+      "spell_id": 1250533,
+      "cooldown": 90,
+      "usage_rule": "Press it right after Frozen Orb or Glacial Spike, with a Ray of Frost charge banked and your Freezing stacks low.",
+      "id_note": "On-use item the APL names as freightrunners_flask and gates on the ff/ss trinket timing variable; cast in 2/5 parses.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Ice Barrier",
+      "spell_id": 11426,
+      "cooldown": 30,
+      "duration": 60,
+      "usage_rule": "Shield up before the pull and put it straight back on when the absorb breaks, banking the second charge for the next damage event."
+    },
+    {
+      "name": "Alter Time",
+      "spell_id": 342245,
+      "cooldown": 60,
+      "usage_rule": "Press it before a big hit and press it again within 10 seconds to snap back to your old health and position.",
+      "id_note": "342245 is the initial cast; 342246 is the self aura and 342247 the return cast."
+    },
+    {
+      "name": "Ice Cold",
+      "spell_id": 414658,
+      "cooldown": 240,
+      "duration": 6,
+      "usage_rule": "Take 70% less damage through a scripted raid hit while you keep casting, since this gives up the immunity.",
+      "id_note": "414658 is the cast id (12 casts in 5/5 parses); 414659 is the talent node.",
+      "talent_gated": true
+    },
+    {
+      "name": "Ice Block",
+      "spell_id": 45438,
+      "cooldown": 240,
+      "duration": 10,
+      "usage_rule": "Drop it on a hit you cannot survive, and script the second charge from Glacial Bulwark onto the next one.",
+      "id_note": "Not observed in the sampled parses because every sampled build talented Ice Cold (414658), which replaces this button.",
+      "talent_gated": true
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Frostbolt into Flurry, Frozen Orb, Ray of Frost",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [116, 44614, 84714, 205021],
+        "spell_names": ["Frostbolt", "Flurry", "Frozen Orb", "Ray of Frost"]
+      },
+      "action": "Pre-cast Frostbolt, chain Flurry into Frozen Orb, then get Ray of Frost rolling."
+    },
+    {
+      "type": "rotation",
+      "severity": "critical",
+      "description": "Ice Lance over Frostbolt on Fingers of Frost",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 30455,
+        "spell_name": "Ice Lance",
+        "alternative_spell_ids": [116],
+        "alternative_spell_names": ["Frostbolt"],
+        "buff_spell_id": 44544,
+        "buff_spell_name": "Fingers of Frost",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
+      },
+      "action": "Throw Ice Lance instead of Frostbolt while Fingers of Frost is up, and never leave it sitting at its 2 stack cap."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Brain Freeze with Flurry",
+      "condition": {
+        "kind": "proc_wasted",
+        "buff_spell_id": 190446,
+        "buff_spell_name": "Brain Freeze",
+        "spend_spell_ids": [44614],
+        "spend_spell_names": ["Flurry"]
+      },
+      "action": "Fire Flurry as soon as Brain Freeze lands, and only hold it long enough to use up a running Thermal Void."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Blizzard joins the rotation on multiple targets",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 190356,
+        "spell_name": "Blizzard",
+        "bound": "min"
+      },
+      "action": "Weave Blizzard in when enemies stack up, and hold it to follow Frozen Orb so Freezing Rain covers it."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Ray of Frost while Icicles are low",
+      "condition": {
+        "kind": "spend_at_stacks",
+        "spell_id": 205021,
+        "spell_name": "Ray of Frost",
+        "buff_spell_id": 205473,
+        "buff_spell_name": "Icicles",
+        "bound": "max",
+        "max_stacks": 5
+      },
+      "action": "Channel Ray of Frost while your Icicles are low so it neither overcaps them nor delays Glacial Spike."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "Time Warp into Ray of Frost",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 80353,
+        "spell_name": "Time Warp",
+        "required_spell_id": 205021,
+        "required_spell_name": "Ray of Frost",
+        "position": "after"
+      },
+      "action": "Pop Time Warp just before you send Ray of Frost so the haste covers the channel."
+    }
+  ]
+}
