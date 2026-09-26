@@ -176,6 +176,11 @@ mat-checkbox .mat-internal-form-field-label { display: flex; align-items: center
 mat-icon.icon-16 { font-size: 16px; width: 16px; height: 16px; line-height: 16px; }
 mat-icon.icon-18 { font-size: 18px; width: 18px; height: 18px; line-height: 18px; }
 
+/* Material colors mat-icon outside any layer, which outranks a layered text-* tone on the icon itself; element+class (0,1,1) restores the tone. */
+@each $tone in (text, muted, accent, critical, warning, success, gold) {
+  mat-icon.text-#{$tone} { color: var(--color-#{$tone}); }
+}
+
 /* Timeline glyphs: 22px in the 42px mobile tap targets, 18px on the md rail (48rem = Tailwind md). */
 mat-icon.icon-seg { font-size: 22px; width: 22px; height: 22px; line-height: 1; }
 @media (min-width: 48rem) {
