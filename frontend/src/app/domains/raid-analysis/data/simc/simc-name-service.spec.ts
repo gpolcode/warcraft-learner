@@ -46,6 +46,10 @@ describe('SimcNameService.resolve', () => {
     expect(names.resolve('ca_inc', CODE)?.tokens.sort()).toEqual(['celestial_alignment', 'incarnation_chosen_of_elune']);
   });
 
+  it('matches a name only as written, a dot in it standing for no other character', () => {
+    expect(names.resolve('ca.inc', CODE)).toBeNull();
+  });
+
   it('resolves no name the code never declares', () => {
     expect(names.resolve('supercharge_1', CODE)).toBeNull();
   });

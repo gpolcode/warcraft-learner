@@ -13,6 +13,7 @@ const MEMBER = /(?:\w+->)?((?:\w+\.)+\w+)\b(?!\s*\()/;
 const SPELL_ID = /\b(\d{4,})\b/g;
 const QUOTED = /"([^"]+)"/g;
 const MEMBER_DEPTH = 2;
+const REGEX_SPECIAL = /[.*+?^${}()|[\]\\]/g;
 
 @Injectable({ providedIn: 'root' })
 export class SimcNameService {
@@ -23,7 +24,7 @@ export class SimcNameService {
 
   /** `ca_inc` is whichever of Celestial Alignment and Incarnation the build takes, so it reads as either. */
   private alias(token: string, source: string): SimcName | null {
-    const match = new RegExp(`str_compare_ci\\(\\s*splits\\[\\s*1\\s*\\],\\s*"${token}"\\s*\\)([\\s\\S]*?)return`).exec(source);
+    const match = new RegExp(`str_compare_ci\\(\\s*splits\\[\\s*1\\s*\\],\\s*"${this.literal(token)}"\\s*\\)([\\s\\S]*?)return`).exec(source);
     return match ? { ids: [], tokens: [...new Set([...(match[1] ?? '').matchAll(QUOTED)].map(([, name = '']) => name))] } : null;
   }
 
@@ -42,7 +43,7 @@ export class SimcNameService {
 
   /** `spell.rend_dot = find_spell( 388539 )`, `talent_spell_lookup( talent.x, 1256302 )`, or `find_talent_spell( ..., "Avatar" )`. */
   private member(path: string, source: string, depth: number): SimcName | null {
-    const rhs = new RegExp(`(?<![\\w.])${path.replace(/\./g, '\\.')}\\s*=\\s*([^;]+);`).exec(source)?.[1];
+    const rhs = new RegExp(`(?<![\\w.])${this.literal(path)}\\s*=\\s*([^;]+);`).exec(source)?.[1];
     if (!rhs) return null;
     const ids = [...rhs.matchAll(SPELL_ID)].map(([, id]) => Number(id));
     if (ids.length) return { ids: ids.slice(-1), tokens: [] };
@@ -50,5 +51,9 @@ export class SimcNameService {
     if (names.length) return { ids: [], tokens: names.slice(-1) };
     const next = MEMBER.exec(rhs)?.[1];
     return next && depth < MEMBER_DEPTH ? this.member(next, source, depth + 1) : null;
+  }
+
+  private literal(text: string): string {
+    return text.replace(REGEX_SPECIAL, '\\$&');
   }
 }
