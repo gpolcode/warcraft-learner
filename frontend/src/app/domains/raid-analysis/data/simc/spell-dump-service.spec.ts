@@ -36,6 +36,14 @@ const DUMP = [
   record('Name             : Death Coil (id=47541)', 'Resource         : -30 Runic Power (6) (id=1)', 'Resource         : 2% Base Mana (0) (id=2)', 'Cast Time        : 1.5 seconds'),
   record('Name             : Demolish (id=436358)', 'Talent Entry     : Colossus (Arms, Protection) [tree=hero, row=1, col=1]'),
   record(
+    'Name             : Cloak of Shadows (id=31224) [Spell Family (8)] ',
+    'Talent Entry     : Generic [free=(Subtlety), tree=class, row=1, col=6, max_rank=1, req_points=0]',
+  ),
+  record(
+    'Name             : Unseen Blade (id=441146) [Spell Family (8), Passive] ',
+    'Talent Entry     : Trickster (Outlaw, Subtlety) [free=(Outlaw, Subtlety), tree=hero, row=1, col=3, max_rank=1, req_points=0]',
+  ),
+  record(
     'Name             : Avatar (id=107574) [Spell Family (4)] ',
     'Talent Entry     : Fury [tree=spec, row=10, col=6, max_rank=1, req_points=20, select_idx=100]',
     '                 : Arms [tree=spec, row=10, col=6, max_rank=1, req_points=20]',
@@ -55,7 +63,7 @@ const named = (name: string) => records.find(entry => entry.name === name);
 
 describe('SpellDumpService.readDump', () => {
   it('reads one record per Name line, with its id and cooldown', () => {
-    expect(records).toHaveLength(11);
+    expect(records).toHaveLength(13);
     expect(named('Recklessness')).toMatchObject({ id: 1719, token: 'recklessness', cooldown: 90 });
   });
 
@@ -106,6 +114,11 @@ describe('SpellDumpService.readDump', () => {
     expect(named('Enraged Regeneration')?.specs).toBeNull();
     expect(named('Enraged Regeneration')?.talented).toBe(true);
     expect(named('Bladestorm')?.talented).toBe(false);
+  });
+
+  it('reads a talent some specs get for free by its tree the same', () => {
+    expect(named('Cloak of Shadows')?.specs).toBeNull();
+    expect(named('Unseen Blade')?.specs).toEqual(['Outlaw', 'Subtlety']);
   });
 
   it('gives a talent several specs share every spec its entry lists', () => {

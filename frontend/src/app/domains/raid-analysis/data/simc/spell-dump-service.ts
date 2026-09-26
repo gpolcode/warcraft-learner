@@ -62,11 +62,11 @@ export class SpellDumpService {
     };
   }
 
-  /** A talent several specs share lists one tree per line: `Fury [tree=spec, ...]`, then `: Arms [tree=spec, ...]` below it. */
+  /** A talent several specs share lists one tree per line: `Fury [tree=spec, ...]`, then `: Arms [tree=spec, ...]` below it; one some specs get free opens `[free=(Subtlety), tree=class, ...]`. */
   private talent(block: string): Pick<SpellRecord, 'talented' | 'specs'> {
     const entry = /^Talent Entry +: .*(?:\n +: .*)*/m.exec(block)?.[0];
     if (!entry) return { talented: false, specs: null };
-    const trees = [...entry.matchAll(/: (.+?) \[tree=(\w+)/g)].map(([, name = '', tree = '']) => this.talentSpecs(name, tree));
+    const trees = [...entry.matchAll(/: (.+?) \[[^\]]*?\btree=(\w+)/g)].map(([, name = '', tree = '']) => this.talentSpecs(name, tree));
     return { talented: true, specs: trees.some(specs => specs === null) ? null : trees.flatMap(specs => specs ?? []) };
   }
 
