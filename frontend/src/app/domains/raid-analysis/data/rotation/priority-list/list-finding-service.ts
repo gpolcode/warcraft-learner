@@ -40,7 +40,7 @@ export class ListFindingService {
     const { list } = bench;
     const casts = (reading.casts.get(entry.action) ?? []).map(check => this.castOccurrence(list, lines, check));
     const skips = reading.order.filter(check => check.expected === entry.action && check.pressed !== entry.action).map(check => this.skipOccurrence(list, lines, check));
-    const occurrences = [...casts, ...skips].sort((a, b) => (a.atS ?? 0) - (b.atS ?? 0));
+    const occurrences = [...casts, ...skips].sort((a, b) => a.atS - b.atS);
     if (!occurrences.length) return null;
     const you = this.checks.rightShare(reading, entry.action);
     const spellId = reading.ids.get(entry.action) ?? entry.spell_id;

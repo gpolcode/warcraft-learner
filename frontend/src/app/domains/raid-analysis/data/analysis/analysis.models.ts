@@ -1,16 +1,10 @@
 export interface FindingOccurrence {
-  atS?: number;
+  atS: number;
   ok: boolean;
-  /** Absent where the chip shows the moment's time instead. */
-  label?: string;
-  /** Rendered only when `atS` is absent - never alongside it. */
-  note?: string;
   detail: string;
-  /** Excludes this entry from the ok/violation tone the template otherwise applies. */
-  marker?: boolean;
   /** A cast the log could not settle: `ok` is false, yet it is no miss. */
   unjudged?: boolean;
-  checks?: ConditionCheck[];
+  checks: ConditionCheck[];
 }
 
 export interface ConditionCheck {

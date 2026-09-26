@@ -164,7 +164,7 @@ const reportShape = {
 // An id outside the plan's cooldowns; exercises the cooldown-cast filter.
 const UNTRACKED_SPELL_ID = 99;
 
-// The floor the transform benches at (MIN_PARSE_COUNT in the service, which tracks the list bench's own MIN_MEASURED_PARSES).
+// The floor the transform benches at: the list bench's own MIN_MEASURED_PARSES.
 const MIN_SAMPLE_COUNT = 5;
 
 const wclFake = {

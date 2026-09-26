@@ -22,8 +22,6 @@ import { RotationBench } from './rotation-data-source';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 
-/** The rule engine's own floor, so an encounter never benches a parse count every rule band would then reject. */
-const MIN_PARSE_COUNT = MIN_MEASURED_PARSES;
 const BL_WINDOW_BEFORE_S = 30;
 const BL_WINDOW_AFTER_S = 55;
 const DOWNTIME_PERCENTILE = 0.9;
@@ -64,10 +62,10 @@ export class RotationTransformService implements DataSource<RotationBench> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'RotationTransformService',
       errorId: 'rotation.bench',
-      minSamples: MIN_PARSE_COUNT,
+      minSamples: MIN_MEASURED_PARSES,
       noRankingsMessage: 'No top logs for this encounter.',
       tooFewParsesMessage: usable =>
-        `Only ${usable} usable top log(s) for this encounter; ${MIN_PARSE_COUNT} are needed to bench it.`,
+        `Only ${usable} usable top log(s) for this encounter; ${MIN_MEASURED_PARSES} are needed to bench it.`,
       plan: {
         plans: this.specPlanLoader,
         pick: plan => (plan.cooldowns.length || plan.lines.length ? plan : null),

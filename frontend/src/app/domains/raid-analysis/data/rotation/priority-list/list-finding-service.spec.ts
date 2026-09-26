@@ -62,11 +62,9 @@ describe('ListFindingService rows', () => {
     expect(row?.occurrences[1]).toMatchObject({ detail: 'Skipped when due. You pressed Backstab instead.', checks: [{ text: 'At 5+ combo points', truth: 'true', value: '5 combo points' }] });
   });
 
-  it('marks each cast right, wrong or not judged, its chip showing the time and its line read term by term', () => {
+  it('marks each cast right, wrong or not judged, its line read term by term', () => {
     const row = rowOf(reading([...quarterOff, cast('unjudged', 50)]));
-    expect(row?.occurrences.map(occ => [occ.ok, occ.unjudged ?? false, occ.label])).toEqual([
-      [false, false, undefined], [true, false, undefined], [true, false, undefined], [true, false, undefined], [false, true, undefined],
-    ]);
+    expect(row?.occurrences.map(occ => [occ.ok, occ.unjudged ?? false])).toEqual([[false, false], [true, false], [true, false], [true, false], [false, true]]);
     expect(row?.occurrences[0]?.checks).toEqual([{ text: 'At 5+ combo points', truth: 'false', value: '3 combo points' }]);
   });
 

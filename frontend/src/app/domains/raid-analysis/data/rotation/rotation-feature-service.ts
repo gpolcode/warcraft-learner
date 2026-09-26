@@ -76,7 +76,7 @@ interface FindingBucket { issues: AnalysisFinding[]; holds: AnalysisFinding[]; }
 interface ResolvedCd { spellId: number | null; icon: string; rowName: string }
 
 interface PartitionedFindings {
-  ruleFindings: AnalysisFinding[];
+  downtimeFindings: AnalysisFinding[];
   byName: Record<string, FindingBucket>;
   successNames: Set<string>;
 }
@@ -135,8 +135,8 @@ export class RotationFeatureService {
       buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime),
       cooldowns: bench.major_cooldowns, bench,
     });
-    const { ruleRows, offensiveRows, onPlan } = this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
-    return { buttonRows: this.listFindings.rows(bench, reading), downtimeRows: ruleRows, offensiveRows, onPlan };
+    const { downtimeRows, offensiveRows, onPlan } = this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
+    return { buttonRows: this.listFindings.rows(bench, reading), downtimeRows, offensiveRows, onPlan };
   }
 
   async loadPlanView(spec: string, encounterId: number): Promise<Result<RotationPlanView>> {
@@ -285,7 +285,7 @@ export class RotationFeatureService {
   }
 
   protected partitionRotationFindings(findings: AnalysisFinding[]): PartitionedFindings {
-    const ruleFindings: AnalysisFinding[] = [];
+    const downtimeFindings: AnalysisFinding[] = [];
     const byName: Record<string, FindingBucket> = {};
     const successNames = new Set<string>();
     const bucketFor = (name: string): FindingBucket => (byName[name] ??= { issues: [], holds: [] });
@@ -293,18 +293,18 @@ export class RotationFeatureService {
       if (finding.severity === 'success') { if (finding.cd_name) successNames.add(finding.cd_name); continue; }
       const holdName = finding.category === 'hold_suggestion' ? finding.details?.cd_name : undefined;
       if (holdName) bucketFor(holdName).holds.push(finding);
-      else if (!finding.cd_name) ruleFindings.push(finding);
+      else if (!finding.cd_name) downtimeFindings.push(finding);
       else bucketFor(finding.cd_name).issues.push(finding);
     }
-    return { ruleFindings, byName, successNames };
+    return { downtimeFindings, byName, successNames };
   }
 
   private rowSeverity(severity: AnalysisFinding['severity']): FindingRow['severity'] {
     return severity === 'critical' ? 'critical' : severity === 'info' ? 'info' : 'warning';
   }
 
-  protected buildRuleRows(ruleFindings: AnalysisFinding[]): FindingRow[] {
-    return ruleFindings.map(finding => ({
+  protected buildDowntimeRows(downtimeFindings: AnalysisFinding[]): FindingRow[] {
+    return downtimeFindings.map(finding => ({
       severity: this.rowSeverity(finding.severity),
       name: '',
       icon: '',
@@ -357,10 +357,10 @@ export class RotationFeatureService {
 
   protected bucketRotationFindings(
     findings: AnalysisFinding[], cdSpellIds: Record<string, number>, abilities: AbilityIcons,
-  ): { ruleRows: FindingRow[]; offensiveRows: FindingRow[]; onPlan: OnPlanChip[] } {
+  ): { downtimeRows: FindingRow[]; offensiveRows: FindingRow[]; onPlan: OnPlanChip[] } {
     const partition = this.partitionRotationFindings(findings);
     return {
-      ruleRows: this.buildRuleRows(partition.ruleFindings),
+      downtimeRows: this.buildDowntimeRows(partition.downtimeFindings),
       offensiveRows: this.buildOffensiveRows(partition.byName, cdSpellIds, abilities),
       onPlan: this.buildOnPlanChips(partition, cdSpellIds, abilities),
     };
