@@ -4,13 +4,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { FindingOccurrences } from '../ui-finding-table/finding-occurrences';
+import { RangeBar } from '../ui-range-bar/range-bar';
+import { RangeLegend } from '../ui-range-bar/range-legend';
 import type { ButtonRow } from '../data/rotation/priority-list/list-finding-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-button-table',
   host: { class: 'block' },
-  imports: [PercentPipe, MatIconModule, MatButtonModule, GameIcon, FindingOccurrences],
+  imports: [PercentPipe, MatIconModule, MatButtonModule, GameIcon, FindingOccurrences, RangeBar, RangeLegend],
   templateUrl: './button-table.html',
 })
 export class ButtonTable {

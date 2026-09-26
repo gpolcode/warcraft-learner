@@ -1,0 +1,8 @@
+@let fill =
+  status() === 'good' ? 'bg-success' :
+  status() === 'warn' ? 'bg-warning' :
+  status() === 'bad' ? 'bg-critical' :
+  status() === 'muted' ? 'bg-muted' : 'bg-accent';
+<span class="flex items-center gap-1"><span [class]="'inline-block size-2 rounded-xs opacity-65 ' + fill" aria-hidden="true"></span>You</span>
+<span class="flex items-center gap-1"><span class="inline-block size-2 rounded-xs bg-accent/30 border border-accent" aria-hidden="true"></span>Top raiders, lowest to highest</span>
+<span class="flex items-center gap-1"><span class="inline-block h-2.5 w-0.5 bg-accent" aria-hidden="true"></span>Top raiders average</span>

@@ -7,11 +7,7 @@
     }
   </div>
 
-  <div class="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 pb-2.5 text-caption text-muted" aria-hidden="true">
-    <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] opacity-[0.65] bg-warning"></span>You</span>
-    <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] bg-accent/30 border border-accent"></span>Top raiders, lowest to highest</span>
-    <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-[2px] bg-accent"></span>Top raiders average</span>
-  </div>
+  <wl-range-legend class="px-4 pb-2.5"></wl-range-legend>
 
   @for (row of rows(); track $index) {
     @let open = openIndex() === $index;
@@ -20,14 +16,10 @@
         <div class="flex min-w-0 flex-1 items-center overflow-hidden">
           <wl-game-icon [id]="row.spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
         </div>
-        <div class="relative h-4 w-28 sm:w-45 shrink-0 rounded bg-bg" aria-hidden="true">
-          @if (row.you !== null) {
-            <div class="absolute inset-y-0 left-0 rounded opacity-[0.65] bg-warning" [style.width.%]="row.you * 100"></div>
-          }
-          <div class="absolute inset-y-0 rounded bg-accent/30 border border-accent"
-            [style.left.%]="row.top.lo * 100" [style.width.%]="(row.top.hi - row.top.lo) * 100"></div>
-          <div class="absolute inset-y-0 w-[2px] bg-accent" [style.left.%]="row.top.avg * 100"></div>
-        </div>
+        <wl-range-bar class="h-4 w-28 sm:w-45 shrink-0"
+          [you]="row.you === null ? null : row.you * 100" [rangeLeft]="row.top.lo * 100" [rangeWidth]="(row.top.hi - row.top.lo) * 100" [avg]="row.top.avg * 100"
+          [status]="row.status">
+        </wl-range-bar>
         <span class="sr-only">
           @if (row.you !== null) {
             You {{ row.you | percent }}.
@@ -43,8 +35,7 @@
       </div>
 
       @if (open) {
-        <!-- From sm up, indented to the name past the icon, so the instances read as the row's own. -->
-        <div class="pl-4 sm:pl-10 pr-4 pt-1 pb-4">
+        <div class="px-4 pt-1 pb-4">
           <wl-finding-occurrences [occurrences]="row.occurrences"></wl-finding-occurrences>
         </div>
       }

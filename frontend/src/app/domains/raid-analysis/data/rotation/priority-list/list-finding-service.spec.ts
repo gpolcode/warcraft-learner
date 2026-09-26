@@ -44,6 +44,11 @@ const reading = (casts: CastCheck[], order: OrderCheck[] = [], backstabs: CastCh
 });
 const quarterOff = [cast('off', 10, 3), cast('on', 20), cast('on', 30), cast('on', 40)];
 const rowOf = (judged: LogReading, benched = withButtons()) => findings.rows(benched, judged)[0];
+/** `right` casts on the list, then `wrong` off it, so the share is right over both. */
+const share = (right: number, wrong: number): CastCheck[] => [
+  ...Array.from({ length: right }, (_, at) => cast('on', at)),
+  ...Array.from({ length: wrong }, (_, at) => cast('off', right + at, 3)),
+];
 
 describe('ListFindingService rows', () => {
   it('reads your share of the button\'s moments right beside the top logs\' range', () => {
@@ -68,6 +73,20 @@ describe('ListFindingService rows', () => {
   it('leaves the casts the log could not settle out of your share, and reads no share where it settled none', () => {
     expect(rowOf(reading([cast('unjudged', 10), cast('on', 20)]))?.you).toBe(1);
     expect(rowOf(reading([cast('unjudged', 10)]))?.you).toBeNull();
+  });
+
+  it('tones a row under every top log as bad, and one at the lowest top log as only under their average', () => {
+    expect(rowOf(reading(share(3, 1)))?.status).toBe('bad');
+    expect(rowOf(reading(share(4, 1)))?.status).toBe('warn');
+  });
+
+  it('tones a row under the top raiders\' average as a warning, and one at the average as good', () => {
+    expect(rowOf(reading(share(8, 1)))?.status).toBe('warn');
+    expect(rowOf(reading(share(9, 1)))?.status).toBe('good');
+  });
+
+  it('tones a row whose moments the log settled none of as muted', () => {
+    expect(rowOf(reading([cast('unjudged', 10)]))?.status).toBe('muted');
   });
 
   it('shows no row for a button the pull never pressed and never had due', () => {

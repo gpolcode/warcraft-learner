@@ -5,7 +5,7 @@ import type { ButtonRow } from '../data/rotation/priority-list/list-finding-serv
 import { ButtonTable } from './button-table';
 
 const row = (name: string, spellId: number): ButtonRow => ({
-  name, spellId, icon: '', you: 1, top: { lo: 1, avg: 1, hi: 1 }, occurrences: [],
+  name, spellId, icon: '', you: 1, top: { lo: 1, avg: 1, hi: 1 }, status: 'good', occurrences: [],
 });
 
 describe('ButtonTable', () => {

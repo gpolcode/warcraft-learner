@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { round } from '../../analysis/analysis-math';
 import type { ConditionCheck, FindingOccurrence } from '../../analysis/analysis.models';
+import type { WindowStatus } from '../../analysis/window-comparison.models';
 import type { PriorityList } from '../../plan/plan.models';
 import type { AplNode } from '../../simc/simc-apl-service';
 import type { ButtonBench, RotationBench, ShareRange } from '../rotation-data-source';
@@ -18,6 +19,7 @@ export interface ButtonRow {
   /** Null where the log settled none of the button's moments. */
   you: number | null;
   top: ShareRange;
+  status: WindowStatus;
   occurrences: FindingOccurrence[];
 }
 
@@ -45,9 +47,16 @@ export class ListFindingService {
     const icon = bench.ability_icons[spellId] ?? bench.ability_icons[entry.spell_id];
     return {
       name: icon?.name ?? this.text.name(list, entry.action), spellId, icon: icon?.icon ?? '',
-      you: you === null ? null : round(you, SHARE_DIGITS), top: entry.right,
+      you: you === null ? null : round(you, SHARE_DIGITS), top: entry.right, status: this.status(you, entry.right),
       occurrences: this.thinned(occurrences),
     };
+  }
+
+  /** The burst windows' reading: under every top log is bad, under their average a warning. */
+  private status(you: number | null, top: ShareRange): WindowStatus {
+    if (you === null) return 'muted';
+    if (you < top.lo) return 'bad';
+    return you < top.avg ? 'warn' : 'good';
   }
 
   private castOccurrence(list: PriorityList, lines: ReadLine[], check: CastCheck): FindingOccurrence {

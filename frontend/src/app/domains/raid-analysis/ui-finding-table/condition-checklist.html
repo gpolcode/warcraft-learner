@@ -4,7 +4,7 @@
       <li>
         <div class="text-label text-muted pt-1">{{ group.any ? 'Any one of these' : 'All of these' }}</div>
         <!-- The rail sits under the icon column's center, so a group's conditions read as hanging off it. -->
-        <ul class="flex flex-col gap-1 mt-1 ml-[9px] pl-3 border-l border-line" [attr.aria-label]="check.text">
+        <ul class="flex flex-col gap-1 mt-1 ml-2.25 pl-3 border-l border-line" [attr.aria-label]="check.text">
           <ng-container *ngTemplateOutlet="list; context: { $implicit: group.checks }"></ng-container>
         </ul>
       </li>
