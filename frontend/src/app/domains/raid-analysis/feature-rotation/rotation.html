@@ -2,12 +2,19 @@
   @if (error() || !available()) {
     <wl-load-state heading="Offensives" subtitle="How you used your damage cooldowns compared with the top logs." [error]="error()"></wl-load-state>
   } @else {
-    @if (ruleRows().length || ruleOnPlanChips().length) {
-      <wl-finding-table
+    @if (buttonRows().length) {
+      <wl-button-table
         heading="Rotation rules"
-        subtitle="How your casts held up against the rules the top Mythic logs follow for your spec."
-        [rows]="ruleRows()"
-        [onPlan]="ruleOnPlanChips()">
+        subtitle="How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press at the wrong time and a skip when it was due both count as a miss."
+        [rows]="buttonRows()">
+      </wl-button-table>
+    }
+
+    @if (downtimeRows().length) {
+      <wl-finding-table
+        heading="Downtime"
+        subtitle="Time you spent not casting, compared with the top logs."
+        [rows]="downtimeRows()">
       </wl-finding-table>
     }
 

@@ -1,16 +1,4 @@
-@if (timeline(); as t) {
-  <div class="text-label text-muted mb-1.5">Uptime across the fight</div>
-  <div class="relative h-[22px] rounded-md bg-bg overflow-hidden mb-3" aria-hidden="true">
-    @for (seg of segments(); track $index) {
-      <div class="absolute inset-y-0 rounded-md bg-success/65" [style.left.%]="seg.leftPercentage" [style.width.%]="seg.widthPercentage"></div>
-    }
-  </div>
-  @if (t.segmentsS.length) {
-    <div class="text-label text-muted mb-1.5">Largest gaps</div>
-  }
-} @else {
-  <div class="text-label text-muted mb-1.5">Instances</div>
-}
+<div class="text-label text-muted mb-1.5">Instances</div>
 
 <div
   role="listbox"
@@ -20,41 +8,31 @@
   (keydown)="onKeydown($event)">
   <div class="flex flex-wrap items-start gap-1.5">
     @for (occ of occurrences(); track $index) {
-      @let tone = occ.marker ? 'text-gold' : (occ.ok ? 'text-success' : 'text-critical');
-      @let barTone = occ.marker ? 'bg-gold' : (occ.ok ? 'bg-success' : 'bg-critical');
+      @let tone = occ.unjudged ? 'text-muted' : (occ.ok ? 'text-success' : 'text-critical');
+      @let barTone = occ.unjudged ? 'bg-muted' : (occ.ok ? 'bg-success' : 'bg-critical');
       @let active = activeIndex() === $index;
-      <div class="flex flex-col items-center gap-1.5 shrink-0">
-        <button
-          type="button"
-          role="option"
-          tabindex="-1"
-          [id]="optionId($index)"
-          [class]="'relative flex items-center justify-center cursor-pointer min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-bg border border-line text-caption whitespace-nowrap ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
-          [attr.aria-selected]="active"
-          [attr.aria-describedby]="active ? detailId : null"
-          (click)="select($index)">
-          {{ occ.label }}
-          <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
-        </button>
-        <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted')">
-          {{ occ.atS != null ? (occ.atS | formatDuration) : occ.note }}
-        </span>
-      </div>
+      <button
+        type="button"
+        role="option"
+        tabindex="-1"
+        [id]="optionId($index)"
+        [class]="'relative flex items-center justify-center cursor-pointer min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-bg border border-line text-caption tabular-nums whitespace-nowrap shrink-0 ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
+        [attr.aria-selected]="active"
+        [attr.aria-describedby]="active ? detailId : null"
+        (click)="select($index)">
+        {{ occ.atS | formatDuration }}
+        <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
+      </button>
     }
   </div>
 </div>
 
-@if (target()) {
-  <div class="text-caption text-muted mt-2 pt-2 border-t border-line">
-    <span class="text-text">Target:</span> {{ target() }}
-  </div>
-}
-
 @if (active(); as occ) {
-  <div [id]="detailId" class="mt-2.75 text-body text-muted">
-    @if (occ.atS != null) {
-      <span class="text-accent mr-0.5">{{ occ.atS | formatDuration }}</span>
-    }
+  <div [id]="detailId" class="mt-2.5 pt-2.5 border-t border-line text-body text-muted">
+    <span class="text-accent mr-0.5">{{ occ.atS | formatDuration }}</span>
     {{ occ.detail }}
   </div>
+  @if (occ.checks.length) {
+    <wl-condition-checklist class="mt-1.5" [checks]="occ.checks"></wl-condition-checklist>
+  }
 }

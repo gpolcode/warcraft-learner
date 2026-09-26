@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { DataFileApiService } from '../data-files/data-file-api-service';
+import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { RulebookCooldown, RulebookDefensive, RulebookRule } from '../rulebook/rulebook.models';
+import { PlanCooldown } from '../plan/plan.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { group, quantile } from 'd3-array';
 import {
@@ -13,15 +13,15 @@ import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-s
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
 import { Result } from '../../../shared/util-http/result';
-import { RotationRuleEngineService, BenchedRule, RuleSample, MIN_MEASURED_PARSES } from './rotation-rule-engine-service';
-import { RuleContextService } from './rotation-rules/rule-context-service';
+import { SpecPlan } from '../simc/spec-plan-service';
+import { ListBenchService, MIN_MEASURED_PARSES } from './priority-list/list-bench-service';
+import { LogReading } from './priority-list/list-check-service';
+import { ListLogService } from './priority-list/list-log-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { RotationBench } from './rotation-data-source';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 
-/** The rule engine's own floor, so an encounter never benches a parse count every rule band would then reject. */
-const MIN_PARSE_COUNT = MIN_MEASURED_PARSES;
 const BL_WINDOW_BEFORE_S = 30;
 const BL_WINDOW_AFTER_S = 55;
 const DOWNTIME_PERCENTILE = 0.9;
@@ -39,19 +39,11 @@ export interface CdSummary {
   fight_duration_s: number;
 }
 
-export type ParseRuleSamples = RuleSample[];
-
 interface ParseRotation {
   summaries: CdSummary[];
   gapListS: number[];
   durationS: number;
-  ruleSamples: ParseRuleSamples;
-}
-
-interface RotationPlan {
-  cooldowns: RulebookCooldown[];
-  defensives: RulebookDefensive[];
-  judgeable: RulebookRule[];
+  reading: LogReading;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -59,34 +51,28 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly bloodlust = inject(RotationBloodlustService);
-  private readonly ruleEngine = inject(RotationRuleEngineService);
-  private readonly ruleContexts = inject(RuleContextService);
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
-  private readonly dataFiles = inject(DataFileApiService);
+  private readonly specPlanLoader = inject(SpecPlanLoaderService);
+  private readonly listLogs = inject(ListLogService);
+  private readonly listBench = inject(ListBenchService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<RotationBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'RotationTransformService',
       errorId: 'rotation.bench',
-      minSamples: MIN_PARSE_COUNT,
+      minSamples: MIN_MEASURED_PARSES,
       noRankingsMessage: 'No top logs for this encounter.',
       tooFewParsesMessage: usable =>
-        `Only ${usable} usable top log(s) for this encounter; ${MIN_PARSE_COUNT} are needed to bench it.`,
-      rulebook: {
-        dataFiles: this.dataFiles,
-        plan: (rulebook): RotationPlan | null => rulebook.major_cooldowns.length
-          ? {
-            cooldowns: rulebook.major_cooldowns,
-            defensives: rulebook.defensives,
-            judgeable: this.ruleEngine.judgeableRules(rulebook.rules),
-          }
-          : null,
-        missingMessage: 'No rulebook cooldowns for this spec.',
+        `Only ${usable} usable top log(s) for this encounter; ${MIN_MEASURED_PARSES} are needed to bench it.`,
+      plan: {
+        plans: this.specPlanLoader,
+        pick: plan => (plan.cooldowns.length || plan.lines.length ? plan : null),
+        missingMessage: 'No cooldowns or rotation for this spec.',
       },
-      iconSpellIds: bench => Object.values(bench.cd_spell_ids),
-      parse: (parse, plan) => this.parseRotation(parse, plan.cooldowns, plan.judgeable),
+      iconSpellIds: bench => [...Object.values(bench.cd_spell_ids), ...bench.buttons.map(button => button.spell_id)],
+      parse: (parse, plan) => this.parseRotation(parse, plan),
       bench: ({ parses }, plan) => {
         const { downtimeThresholdS, topAvgEfficiency, topEfficiencyStddev } = this.computeEfficiencyThresholds(parses);
         return {
@@ -95,58 +81,33 @@ export class RotationTransformService implements DataSource<RotationBench> {
           top_efficiency_stddev: topEfficiencyStddev,
           per_cd_benchmarks: this.aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
-          rules: this.benchRules(plan.judgeable, parses.map(parse => parse.ruleSamples)),
+          list: { lines: plan.lines, variables: plan.variables, spells: plan.spells, talents: plan.talents },
+          buttons: this.listBench.bench(plan, parses.map(parse => parse.reading)),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
         };
       },
     });
   }
 
-  protected benchRules(rules: RulebookRule[], perParse: ParseRuleSamples[]): BenchedRule[] {
-    return rules.map((rule, i) => ({
-      rule,
-      ...(rule.condition
-        ? this.ruleEngine.ruleBand(rule.condition, perParse.map(samples => samples[i] ?? { values: [], unmeasuredOut: 0 }))
-        : { band: null, sample_count: 0 }),
-    }));
-  }
-
-  private async parseRotation(
-    { ranking, fight, player }: BenchParse, cooldowns: RulebookCooldown[], rules: RulebookRule[],
-  ): Promise<ParseRotation> {
-    const [casts, buffs, enemyAuras, damage] = await Promise.all([
+  private async parseRotation({ ranking, fight, player }: BenchParse, plan: SpecPlan): Promise<ParseRotation> {
+    const [casts, buffs, reading] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
-      // Same shape and cost as the runtime fetch: raid-wide, so only for a spec that reads enemy auras.
-      this.ruleEngine.rulesNeed(rules, 'enemyAuras')
-        ? this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Debuffs', fight.startTime, fight.endTime, undefined, false, 'Enemies')
-        : Promise.resolve([]),
-      // Target health rides on the damage rows, and only the resource-bearing form carries it.
-      this.ruleEngine.rulesNeed(rules, 'damage')
-        ? this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id,
-          this.ruleEngine.rulesNeed(rules, 'targetHealth'))
-        : Promise.resolve([]),
+      this.listLogs.read(plan, { reportCode: ranking.report_code, fight, playerId: player.id }),
     ]);
-
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
     const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);
-    const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
-    const blTimeS = this.bloodlust.detectBloodlust(buffsTimed);
-    const ruleCtx = this.ruleContexts.buildRuleContext({
-      casts: castsTimed, buffs: buffsTimed, damage: this.wclProjections.withRelativeS(damage, fight.startTime),
-      debuffs: this.wclProjections.withRelativeS(enemyAuras.filter(event => event.sourceID === player.id), fight.startTime),
-      fightDurationS: fightDurS,
-    });
+    const blTimeS = this.bloodlust.detectBloodlust(this.wclProjections.withRelativeS(buffs, fight.startTime));
     return {
-      summaries: this.summarizeCooldownCasts(castsTimed, cooldowns, fightDurS, blTimeS),
+      summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, blTimeS),
       gapListS: this.castGapListS(castsTimed),
       durationS: fightDurS,
-      ruleSamples: rules.map(rule => (rule.condition ? this.ruleEngine.sampleRule(rule.condition, ruleCtx) : { values: [], unmeasuredOut: 0 })),
+      reading,
     };
   }
 
   protected summarizeCooldownCasts(
-    castEvents: TimedEvent[], cooldowns: RulebookCooldown[],
+    castEvents: TimedEvent[], cooldowns: PlanCooldown[],
     fightDurS: number, blTimeS: number | null,
   ): CdSummary[] {
     return cooldowns.map(cooldown => {
@@ -228,7 +189,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
   }
 
   protected aggregateCdBenchmarks(
-    perParse: CdSummary[][], cooldowns: RulebookCooldown[],
+    perParse: CdSummary[][], cooldowns: PlanCooldown[],
   ): Record<string, PerCdBenchmark> {
     const cdSecondsByName = new Map(cooldowns.map(cooldown => [cooldown.name, cooldown.cooldown]));
     const byCd = group(perParse.flat(), summary => summary.name);

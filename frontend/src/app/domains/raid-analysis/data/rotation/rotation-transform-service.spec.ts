@@ -1,15 +1,14 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { RotationTransformService, CdSummary, ParseRuleSamples } from './rotation-transform-service';
-import { SHADOW_BLADES, BLOODLUST, RUPTURE } from '../../../../../testing/spell-ids';
+import { RotationTransformService, CdSummary } from './rotation-transform-service';
+import { SHADOW_BLADES, BLOODLUST } from '../../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../../testing/builders/events';
-import { rulebook } from '../../../../../testing/builders/rulebook';
+import { planLoader, planSpell, specPlan } from '../../../../../testing/builders/spec-plan';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { Results } from '../../../shared/util-http/result';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
-import { RulebookRule } from '../rulebook/rulebook.models';
-import { RuleSample } from './rotation-rule-engine-service';
+import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
 
@@ -18,6 +17,7 @@ TestBed.resetTestingModule();
 TestBed.configureTestingModule({ providers: [
   { provide: WCL_TRANSPORT, useValue: {} },
   { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+  { provide: SpecPlanLoaderService, useValue: {} },
 ] });
 const svc = TestBed.inject(RotationTransformService);
 TestBed.resetTestingModule();
@@ -156,70 +156,15 @@ describe('aggregateCdBenchmarks', () => {
   });
 });
 
-const transform = () => {
-  TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: {} }) });
-  return TestBed.inject(RotationTransformService);
-};
-
-describe('benchRules', () => {
-  const sample = (values: number[], unmeasuredOut = 0): RuleSample => ({ values, unmeasuredOut });
-  const dotUptime = (): RulebookRule => ({
-    type: 'rotation', severity: 'warning', description: 'Keep Rupture up on the boss',
-    condition: { kind: 'aura_uptime_below', aura_spell_id: RUPTURE, aura_spell_name: 'Rupture', on: 'target' },
-    action: 'Refresh it inside its pandemic window.',
-  });
-  const ruleA = dotUptime(), ruleB = dotUptime(), ruleC = dotUptime();
-
-  it('pools each rule\'s instances across parses at its own index; an empty sample leaves that parse out of the rule\'s pool and count while other rules still see its other samples', () => {
-    const perParse: ParseRuleSamples[] = [
-      [sample([10]), sample([]), sample([1])],
-      [sample([20]), sample([30]), sample([])],
-      [sample([30]), sample([]), sample([])],
-      [sample([40]), sample([]), sample([])],
-      [sample([50]), sample([]), sample([])],
-    ];
-    const benched = transform()['benchRules']([ruleA, ruleB, ruleC], perParse);
-
-    // Rule A: every one of the 5 parses contributed its own instance.
-    assert.exists(benched[0]);
-    expect(benched[0].rule).toBe(ruleA);
-    assert.exists(benched[0]);
-    expect(benched[0].sample_count).toBe(5);
-    assert.exists(benched[0]);
-    expect(benched[0].band).not.toBeNull();
-
-    // Rule B: only the second parse's sample was non-empty, below the parse floor.
-    assert.exists(benched[1]);
-    expect(benched[1].sample_count).toBe(1);
-    assert.exists(benched[1]);
-    expect(benched[1].band).toBeNull();
-
-    // Rule C: only the first parse's sample was non-empty.
-    assert.exists(benched[2]);
-    expect(benched[2].sample_count).toBe(1);
-    assert.exists(benched[2]);
-    expect(benched[2].band).toBeNull();
-  });
-
-  it('returns a null band, with no contributing parses, for a rule index with no samples anywhere', () => {
-    const perParse: ParseRuleSamples[] = [[sample([])], [sample([])], [sample([])], [sample([])], [sample([])]];
-    const [entry] = transform()['benchRules']([ruleA], perParse);
-    assert.exists(entry);
-    expect(entry.band).toBeNull();
-    assert.exists(entry);
-    expect(entry.sample_count).toBe(0);
-  });
-});
-
 const reportShape = {
   endTimeMs: 120_000,
   abilities: [{ gameID: SHADOW_BLADES, name: 'Shadow Blades', icon: 'sb' }],
 };
 
-// An id outside the rulebook cooldowns; exercises the cooldown-cast filter.
+// An id outside the plan's cooldowns; exercises the cooldown-cast filter.
 const UNTRACKED_SPELL_ID = 99;
 
-// The floor the transform benches at (MIN_PARSE_COUNT in the service, which tracks the rule engine's own MIN_MEASURED_PARSES).
+// The floor the transform benches at: the list bench's own MIN_MEASURED_PARSES.
 const MIN_SAMPLE_COUNT = 5;
 
 const wclFake = {
@@ -229,16 +174,20 @@ const wclFake = {
   getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
     dataType === 'Casts' ? [cast(SHADOW_BLADES, 5), cast(UNTRACKED_SPELL_ID, 8)] : [applyBuff(BLOODLUST, 6)],
   getAbilities: abilityLookup({ [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' } }),
+  getCombatantInfo: async () => [],
 };
-const filesFake = {
-  getRulebook: async () => Results.ok(rulebook({
-    cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }],
-  })),
+const COOLDOWNS = [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }];
+// Shadow Blades outside Bloodlust: every fixture log casts it at 5 s, before the lust the log applies at 6 s.
+const LIST = {
+  lines: [{ action: 'shadow_blades', terms: ['!buff.bloodlust.up'] }],
+  variables: [],
+  spells: { shadow_blades: planSpell('Shadow Blades', [SHADOW_BLADES], { cooldown: 90 }) },
+  talents: {},
 };
 
 describe('RotationTransformService (live, in-browser)', () => {
   it('computes a rotation bench from the top parses', async () => {
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan({ cooldowns: COOLDOWNS })) }) });
     const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -253,12 +202,18 @@ describe('RotationTransformService (live, in-browser)', () => {
     }
   });
 
-  it('propagates a missing error when the spec has no rulebook cooldowns', async () => {
-    // A rulebook with no cooldowns is nothing to analyze - the transform reports missing.
-    TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok(rulebook()) } }),
-    });
+  it('carries the spec\'s list and benches each button the top logs press against its lines', async () => {
+    const plan = specPlan({ cooldowns: COOLDOWNS, ...LIST });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(plan) }) });
+    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
+    assert(result.ok);
+    expect(result.value.list).toEqual(LIST);
+    expect(result.value.buttons.map(button => [button.action, button.spell_id, button.right])).toEqual([['shadow_blades', SHADOW_BLADES, { lo: 1, avg: 1, hi: 1 }]]);
+  });
+
+  it('propagates a missing error when the spec\'s plan has neither cooldowns nor a list', async () => {
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan()) }) });
     expect(await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(Results.missing('No rulebook cooldowns for this spec.'));
+      .toEqual(Results.missing('No cooldowns or rotation for this spec.'));
   });
 });

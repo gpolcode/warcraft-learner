@@ -1,0 +1,45 @@
+<div class="bg-surface border border-line rounded-[10px] overflow-hidden">
+
+  <div class="px-4 pt-3 pb-2">
+    <h2 class="text-title">{{ heading() }}</h2>
+    @if (subtitle()) {
+      <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
+    }
+  </div>
+
+  <wl-range-legend class="px-4 pb-2.5"></wl-range-legend>
+
+  @for (row of rows(); track $index) {
+    @let open = openIndex() === $index;
+    <div class="border-t border-line">
+      <div class="flex items-center gap-(--gap-card) pl-4 pr-2 py-1">
+        <div class="flex min-w-0 flex-1 items-center overflow-hidden">
+          <wl-game-icon [id]="row.spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
+        </div>
+        <wl-range-bar class="h-4 w-28 sm:w-45 shrink-0"
+          [you]="row.you === null ? null : row.you * 100" [rangeLeft]="row.top.lo * 100" [rangeWidth]="(row.top.hi - row.top.lo) * 100" [avg]="row.top.avg * 100"
+          [status]="row.status">
+        </wl-range-bar>
+        <span class="sr-only">
+          @if (row.you !== null) {
+            You {{ row.you | percent }}.
+          }
+          Top raiders {{ row.top.lo | percent }} to {{ row.top.hi | percent }}, {{ row.top.avg | percent }} on average.
+        </span>
+        <button mat-icon-button
+          [attr.aria-expanded]="open"
+          [attr.aria-label]="open ? 'Hide instances' : 'Show instances'"
+          (click)="toggle($index)">
+          <mat-icon class="icon-18 transition-transform" [class.rotate-180]="open">expand_more</mat-icon>
+        </button>
+      </div>
+
+      @if (open) {
+        <div class="px-4 pt-1 pb-4">
+          <wl-finding-occurrences [occurrences]="row.occurrences"></wl-finding-occurrences>
+        </div>
+      }
+    </div>
+  }
+
+</div>

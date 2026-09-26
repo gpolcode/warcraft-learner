@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { DataFileApiService } from '../data-files/data-file-api-service';
+import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { RulebookCooldown, RulebookDefensive } from '../rulebook/rulebook.models';
+import { PlanCooldown, PlanDefensive } from '../plan/plan.models';
 import { BurstWindow } from '../analysis/analysis.models';
 import { Result } from '../../../shared/util-http/result';
 import { mean, median, deviation, extent, greatest, quantile, rollup, rollups } from 'd3-array';
@@ -79,8 +79,8 @@ interface RunWindowContext {
 }
 
 interface BurstPlan {
-  cooldowns: RulebookCooldown[];
-  defensives: RulebookDefensive[];
+  cooldowns: PlanCooldown[];
+  defensives: PlanDefensive[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -88,18 +88,16 @@ export class BurstTransformService implements DataSource<BurstBench> {
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
-  private readonly dataFiles = inject(DataFileApiService);
+  private readonly specPlanLoader = inject(SpecPlanLoaderService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<BurstBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'BurstTransformService',
       errorId: 'burst.bench',
       noRankingsMessage: 'Not yet ingested.',
-      rulebook: {
-        dataFiles: this.dataFiles,
-        plan: (rulebook): BurstPlan | null => rulebook.major_cooldowns.length
-          ? { cooldowns: rulebook.major_cooldowns, defensives: rulebook.defensives }
-          : null,
+      plan: {
+        plans: this.specPlanLoader,
+        pick: (plan): BurstPlan | null => plan.cooldowns.length ? { cooldowns: plan.cooldowns, defensives: plan.defensives } : null,
         missingMessage: 'Not yet ingested.',
       },
       iconSpellIds: bench => [
@@ -118,7 +116,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
     });
   }
 
-  private async parseWindows({ ranking, report, fight, player }: BenchParse, cooldowns: RulebookCooldown[]): Promise<ParseWindow[]> {
+  private async parseWindows({ ranking, report, fight, player }: BenchParse, cooldowns: PlanCooldown[]): Promise<ParseWindow[]> {
     // Names only, to attribute casts by ability name inside a parse window.
     const abilityNames = new Map<number, string>(
       (report.masterData?.abilities ?? []).map(ability => [ability.gameID, ability.name]),
@@ -135,7 +133,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
     });
   }
 
-  protected cdTimings(casts: TimedEvent[], cooldowns: RulebookCooldown[]): CdTiming[] {
+  protected cdTimings(casts: TimedEvent[], cooldowns: PlanCooldown[]): CdTiming[] {
     return cooldowns.map(cooldown => ({
       name: cooldown.name,
       castTimesS: casts

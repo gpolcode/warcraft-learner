@@ -229,7 +229,6 @@ export default defineConfig([
     files: ['src/app/**/*.ts'],
     ignores: [
       'src/app/**/*-harness.ts',
-      'src/app/**/rule-fixtures.ts',
       'src/app/post-raid/post-raid-page.ts',
       'src/app/domains/raid-analysis/data/analysis/analysis-math.ts',
       'src/app/domains/shared/util-http/http-providers.ts',

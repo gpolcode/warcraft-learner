@@ -78,12 +78,6 @@ describe('DataFileApiService reads', () => {
     expect(transport.reads).toEqual(['SubtletyRogue/ingest-state.json']);
   });
 
-  it('reads a rulebook at {spec}/rulebook.json', async () => {
-    const transport = new RecordingTransport(Results.ok({ spec: SPEC }));
-    await withTransport(transport).getRulebook(SPEC);
-    expect(transport.reads).toEqual(['SubtletyRogue/rulebook.json']);
-  });
-
   it('reads the spec manifest at index.json, folding a missing file to Results.ok([]) but propagating a transient error', async () => {
     const specs: SpecEntry[] = [{ spec: SPEC, encounter_count: 2 }];
     const present = new RecordingTransport(Results.ok(specs));
@@ -118,7 +112,6 @@ describe('DataFileApiService reads', () => {
       classLabel: 'Rogue',
       specLabel: 'Subtlety',
       classIcon: 'class_rogue',
-      specIcon: 'ability_stealth',
     }];
     const present = new RecordingTransport(Results.ok(metas));
     expect(await withTransport(present).getSpecMeta()).toEqual(Results.ok(metas));

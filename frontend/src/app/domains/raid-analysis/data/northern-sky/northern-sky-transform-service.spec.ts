@@ -4,7 +4,7 @@ import { Results } from '../../../shared/util-http/result';
 import { NorthernSkyTransformService } from './northern-sky-transform-service';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../../testing/spell-ids';
 import { cast } from '../../../../../testing/builders/events';
-import { rulebook } from '../../../../../testing/builders/rulebook';
+import { planLoader, specPlan } from '../../../../../testing/builders/spec-plan';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
@@ -48,22 +48,19 @@ const wclFake = {
       : [cast(SHADOW_BLADES, 5), cast(SHADOW_DANCE, 44), cast(EVASION, 66)],
   getAbilities: abilityLookup(),
 };
-const filesFake = {
-  getRulebook: async () => Results.ok(rulebook({
-    spec: 'SubtletyRogue',
-    cooldowns: [
-      { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180 },
-      { name: 'Shadow Dance', spell_id: SHADOW_DANCE, cooldown: 60 },
-    ],
-    defensives: [{ name: 'Evasion', spell_id: EVASION, cooldown: 120 }],
-  })),
-};
+const plansFake = planLoader(specPlan({
+  cooldowns: [
+    { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180 },
+    { name: 'Shadow Dance', spell_id: SHADOW_DANCE, cooldown: 60 },
+  ],
+  defensives: [{ name: 'Evasion', spell_id: EVASION, cooldown: 120 }],
+}));
 
 const ENCOUNTER_ID = 1;
 
 describe('NorthernSkyTransformService (live, in-browser)', () => {
   it('bakes the #1 log\'s own cast schedule for cooldowns and defensives, with icons', async () => {
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: plansFake }) });
     const bench = await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
@@ -79,7 +76,7 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
   it('bakes the encounter\'s own Northern Sky phases onto the bench', async () => {
     const phases = [{ phase: 1, start_s: 0 }, { phase: 2, start_s: 56 }];
     const phaseFake = { getPhases: async () => Results.ok({ [ENCOUNTER_ID]: phases, [ENCOUNTER_ID + 1]: [] }) };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake, northernSkyPhases: phaseFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: plansFake, northernSkyPhases: phaseFake }) });
     const bench = await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', ENCOUNTER_ID);
     expect(bench.ok).toBe(true);
     if (bench.ok) expect(bench.value.phases).toEqual(phases);
@@ -87,7 +84,7 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
 
   it('bakes no phases when the addon declares none, leaving the note pull-relative', async () => {
     const phaseFake = { getPhases: async () => Results.missing('No Northern Sky phase tables.') };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake, northernSkyPhases: phaseFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: plansFake, northernSkyPhases: phaseFake }) });
     const bench = await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', ENCOUNTER_ID);
     expect(bench.ok).toBe(true);
     if (bench.ok) expect(bench.value.phases).toEqual([]);
@@ -96,13 +93,13 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
   it('returns the read failure when the addon source cannot be read, so the bench is skipped rather than baked pull-relative', async () => {
     const unreachable = Results.transient('WCL is unreachable right now.');
     const phaseFake = { getPhases: async () => unreachable };
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake, northernSkyPhases: phaseFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: plansFake, northernSkyPhases: phaseFake }) });
     expect(await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', ENCOUNTER_ID)).toEqual(unreachable);
   });
 
-  it('returns missing when the spec rulebook has no cooldowns or defensives', async () => {
+  it('returns missing when the spec\'s plan has no cooldowns or defensives', async () => {
     TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok(rulebook({ spec: 'SubtletyRogue', cooldowns: [] })) } }),
+      providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan()) }),
     });
     expect(await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', 1)).toEqual(Results.missing('Not yet ingested.'));
   });

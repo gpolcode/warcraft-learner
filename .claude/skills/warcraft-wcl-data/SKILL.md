@@ -23,6 +23,7 @@ The API facts a correct read depends on, and how to read each one.
 | Quirk | Detail |
 |---|---|
 | **`actor.subType` is class-only** | Returns the class (`Rogue`), never the spec. Spec comes from `playerDetails(fightIDs:[...])`. |
+| **The API carries no class or spec icon** | `gameData.classes` returns names and slugs only. WCL's asset host serves the spec art by those slugs, `assets.rpglogs.com/img/warcraft/icons/<ClassSlug>-<SpecSlug>.jpg` (`DeathKnight-Blood`, `Hunter-BeastMastery`), so a new spec gets its icon with no data change; the class art is zamimg's `class_<slug>`. |
 | **`Debuffs` tables do not narrow by caster** | `table(dataType:Debuffs fightIDs:[F] sourceID:S)` can return auras sitting **on** that actor, not ones it applied to enemies. Treat a row as an aura id and confirm the direction elsewhere before reading it as the player's dot. |
 | **A single parse's `Casts` table can be partial** | A top log routinely lists a dozen cast entries and omits core buttons, and resource-gated form entries are never logged as casts. Sample several parses before calling an ability unused. |
 | **Gear array is positionally indexed** | WCL returns gear as a bare array; the 0-based index IS the slot number. There is no `slot` field. |

@@ -6,8 +6,9 @@ const MS_PER_SECOND = 1000;
 
 export function cast(
   spellId: number, atS: number,
-  opts?: { source?: number; target?: number; resources?: { amount: number; max?: number; type: number; cost?: number }[] },
+  opts?: { source?: number; target?: number; resources?: { amount: number; max?: number; type: number; cost?: number }[]; healthPct?: number },
 ): WclEvent {
+  const MAX_HP = 1_000_000;
   return {
     type: 'cast',
     timestamp: atS * MS_PER_SECOND,
@@ -15,6 +16,25 @@ export function cast(
     ...(opts?.source !== undefined && { sourceID: opts.source }),
     ...(opts?.target !== undefined && { targetID: opts.target }),
     ...(opts?.resources !== undefined && { resourceActor: 1, classResources: opts.resources }),
+    // The caster's own health, which `includeResources: true` flattens onto a cast.
+    ...(opts?.healthPct !== undefined && { resourceActor: 1, maxHitPoints: MAX_HP, hitPoints: Math.round(MAX_HP * opts.healthPct / 100) }),
+  };
+}
+
+export function beginCast(spellId: number, atS: number): WclEvent {
+  return { type: 'begincast', timestamp: atS * MS_PER_SECOND, abilityGameID: spellId };
+}
+
+/** A `Resources` event: a gain carries its overflow in `waste`, a drain a negative change. */
+export function resourceChange(type: number, atS: number, change: number, opts: { max: number; waste?: number }): WclEvent {
+  return {
+    type: change < 0 ? 'drain' : 'resourcechange',
+    timestamp: atS * MS_PER_SECOND,
+    abilityGameID: 0,
+    resourceChange: change,
+    resourceChangeType: type,
+    maxResourceAmount: opts.max,
+    ...(opts.waste !== undefined && { waste: opts.waste }),
   };
 }
 
@@ -75,17 +95,12 @@ export function removeDebuff(spellId: number, atS: number, opts?: { target?: num
   };
 }
 
-export function buffWindow(spellId: number, fromS: number, toS: number, opts?: { target?: number }): WclEvent[] {
-  return [applyBuff(spellId, fromS, opts), removeBuff(spellId, toS, opts)];
-}
-
 export function damage(
   spellId: number,
   atS: number,
   amount: number,
-  opts?: { source?: number; target?: number; absorbed?: number; targetHealthPct?: number },
+  opts?: { source?: number; target?: number; absorbed?: number; targetHealthPct?: number; targetMaxHp?: number },
 ): WclEvent {
-  const MAX_HP = 1_000_000;
   return {
     type: 'damage',
     timestamp: atS * MS_PER_SECOND,
@@ -94,11 +109,13 @@ export function damage(
     ...(opts?.absorbed !== undefined && { absorbed: opts.absorbed }),
     ...(opts?.source !== undefined && { sourceID: opts.source }),
     ...(opts?.target !== undefined && { targetID: opts.target }),
-    // What `includeResources: true` flattens on for the struck actor, which is where target health lives.
-    ...(opts?.targetHealthPct !== undefined && {
-      resourceActor: 2, maxHitPoints: MAX_HP, hitPoints: Math.round(MAX_HP * opts.targetHealthPct / 100),
-    }),
+    ...(opts?.targetHealthPct !== undefined && struckHealth(opts.targetHealthPct, opts.targetMaxHp)),
   };
+}
+
+/** What `includeResources: true` flattens on for the struck actor, which is where target health lives. */
+function struckHealth(pct: number, maxHp = 1_000_000): Pick<WclEvent, 'resourceActor' | 'maxHitPoints' | 'hitPoints'> {
+  return { resourceActor: 2, maxHitPoints: maxHp, hitPoints: Math.round(maxHp * pct / 100) };
 }
 
 /** Damage dealt TO the player (`type: 'damage'`): `source` is the attacker, and no target actor is set. */

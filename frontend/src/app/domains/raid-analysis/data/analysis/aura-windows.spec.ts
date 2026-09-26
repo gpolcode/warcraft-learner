@@ -12,7 +12,6 @@ const wclProjections = TestBed.inject(WclProjectionsService);
 
 // Spans are carried in fight-relative seconds; the fixtures pass fight-relative seconds straight through.
 const APPLY_S = 10, REMOVE_S = 15;
-const FIGHT_DUR_S = 100;
 
 /** Fixture events build against a fight-start of 0, so stamping is a pass-through to seconds. */
 const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclProjections.withRelativeS(events, startMs);
@@ -49,45 +48,6 @@ describe('buildAuraWindows', () => {
   });
 });
 
-describe('auraUpAt', () => {
-  const windows = auraWindows.buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, APPLY_S), removeBuff(CLOAK_OF_SHADOWS, REMOVE_S)], 0));
-
-  it('counts both the apply and the remove instant, since the consuming cast lands on the removal', () => {
-    expect(auraWindows.auraUpAt(windows, CLOAK_OF_SHADOWS, APPLY_S)).toBe(true);
-    expect(auraWindows.auraUpAt(windows, CLOAK_OF_SHADOWS, REMOVE_S)).toBe(true);
-  });
-
-  it('is false outside the span and for an aura with no spans', () => {
-    expect(auraWindows.auraUpAt(windows, CLOAK_OF_SHADOWS, REMOVE_S + 1)).toBe(false);
-    expect(auraWindows.auraUpAt(windows, CLOAK_OF_SHADOWS, APPLY_S - 1)).toBe(false);
-    expect(auraWindows.auraUpAt(windows, RUPTURE, APPLY_S)).toBe(false);
-  });
-
-  it('reads a back-filled remove as up before it and down after', () => {
-    const preCast = auraWindows.buildAuraWindows(timed([removeDebuff(RUPTURE, REMOVE_S)], 0));
-    expect(auraWindows.auraUpAt(preCast, RUPTURE, REMOVE_S - 1)).toBe(true);
-    expect(auraWindows.auraUpAt(preCast, RUPTURE, REMOVE_S + 1)).toBe(false);
-  });
-});
-
-describe('auraAlreadyUpAt', () => {
-  const windows = auraWindows.buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, APPLY_S), removeBuff(CLOAK_OF_SHADOWS, REMOVE_S)], 0));
-
-  it('excludes the apply instant and keeps the remove one, since the cast that grants a state shares its timestamp', () => {
-    expect(auraWindows.auraAlreadyUpAt(windows, CLOAK_OF_SHADOWS, APPLY_S)).toBe(false);
-    expect(auraWindows.auraAlreadyUpAt(windows, CLOAK_OF_SHADOWS, REMOVE_S)).toBe(true);
-    expect(auraWindows.auraAlreadyUpAt(windows, CLOAK_OF_SHADOWS, APPLY_S + 1)).toBe(true);
-  });
-
-  it('reads a back-filled remove as already up before it, with no apply instant to exclude', () => {
-    const preCast = auraWindows.buildAuraWindows(timed([removeDebuff(RUPTURE, REMOVE_S)], 0));
-    expect(auraWindows.auraAlreadyUpAt(preCast, RUPTURE, REMOVE_S - 1)).toBe(true);
-    // A cast logged at exactly fight start is not credited: 0 is the span's own start instant, excluded like any apply.
-    expect(auraWindows.auraAlreadyUpAt(preCast, RUPTURE, 0)).toBe(false);
-    expect(auraWindows.auraAlreadyUpAt(preCast, RUPTURE, REMOVE_S + 1)).toBe(false);
-  });
-});
-
 describe('buildStackTimeline and stacksAt', () => {
   const FIRST_S = 5, SECOND_S = 6, DROP_S = 9;
   const events = timed([
@@ -108,7 +68,7 @@ describe('buildStackTimeline and stacksAt', () => {
     expect(auraWindows.stacksAt(stacks, FIRST_S + 1)).toBe(1);
   });
 
-  it('builds only the aura it was asked for, so a pull pays for what its rulebook names', () => {
+  it('builds only the aura it was asked for, so a pull pays for what its rules name', () => {
     expect(auraWindows.buildStackTimeline(events, RUPTURE)).toEqual({ groundedFromStart: false, entries: [] });
     expect(auraWindows.stacksAt(auraWindows.buildStackTimeline(events, RUPTURE), DROP_S)).toBeNull();
   });
@@ -167,49 +127,5 @@ describe('buildAuraSpansByTarget', () => {
   it('does not back-fill a bare refresh, since the true pre-pull start is unknown', () => {
     const spans = auraWindows.buildAuraSpansByTarget(timed([refreshDebuff(RUPTURE, REFRESH_S)], 0), RUPTURE);
     expect(spans.get('0:0')).toEqual([{ startS: REFRESH_S, endS: null, endedByRefresh: false }]);
-  });
-});
-
-describe('auraUptimePct', () => {
-  it('measures a closed span against the fight length', () => {
-    const windows = auraWindows.buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, 0), removeBuff(CLOAK_OF_SHADOWS, 25)], 0));
-    expect(auraWindows.auraUptimePct(windows, CLOAK_OF_SHADOWS, FIGHT_DUR_S)).toBe(25);
-  });
-
-  it('runs an open span to fight end', () => {
-    const windows = auraWindows.buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, 50)], 0));
-    expect(auraWindows.auraUptimePct(windows, CLOAK_OF_SHADOWS, FIGHT_DUR_S)).toBe(50);
-  });
-
-  it('merges overlapping spans, so multi-target dots do not exceed 100%', () => {
-    const windows = auraWindows.buildAuraWindows(timed([
-      applyDebuff(RUPTURE, 0), applyDebuff(RUPTURE, 10), applyDebuff(RUPTURE, 20),
-      removeDebuff(RUPTURE, 25), removeDebuff(RUPTURE, 35), removeDebuff(RUPTURE, 40),
-    ], 0));
-    expect(auraWindows.auraUptimePct(windows, RUPTURE, FIGHT_DUR_S)).toBe(40);
-  });
-
-  // Spans are keyed by spell only, so per-target pairing is lost; the union that a maintain rule reads is not.
-  it('covers the same stretch whether the per-target dots are nested or interleaved', () => {
-    const nested = auraWindows.buildAuraWindows(timed([
-      applyDebuff(RUPTURE, 0, { target: 1 }), applyDebuff(RUPTURE, 10, { target: 2 }),
-      removeDebuff(RUPTURE, 20, { target: 2 }), removeDebuff(RUPTURE, 30, { target: 1 }),
-    ], 0));
-    const interleaved = auraWindows.buildAuraWindows(timed([
-      applyDebuff(RUPTURE, 0, { target: 1 }), applyDebuff(RUPTURE, 10, { target: 2 }),
-      removeDebuff(RUPTURE, 20, { target: 1 }), removeDebuff(RUPTURE, 30, { target: 2 }),
-    ], 0));
-    expect(auraWindows.auraUptimePct(nested, RUPTURE, FIGHT_DUR_S)).toBe(30);
-    expect(auraWindows.auraUptimePct(interleaved, RUPTURE, FIGHT_DUR_S)).toBe(30);
-  });
-
-  it('counts a lone remove as uptime from fight start, since a pre-pull aura leaves no apply', () => {
-    const PREPULL_REMOVE_S = 20; // the back-filled [0, 20] span is 20/100 of FIGHT_DUR_S -> 20% uptime
-    const windows = auraWindows.buildAuraWindows(timed([removeDebuff(RUPTURE, PREPULL_REMOVE_S)], 0));
-    expect(auraWindows.auraUptimePct(windows, RUPTURE, FIGHT_DUR_S)).toBe(PREPULL_REMOVE_S);
-  });
-
-  it('is zero for an aura that never went up', () => {
-    expect(auraWindows.auraUptimePct(new Map(), RUPTURE, FIGHT_DUR_S)).toBe(0);
   });
 });

@@ -55,6 +55,11 @@ export interface WclEvent {
   stack?: number;
   // Flattened onto the event by `includeResources: true`; `type` is WCL's power-type id (4 = combo points) and `amount` is the pool BEFORE `cost` is deducted.
   classResources?: { amount: number; max?: number; type: number; cost?: number }[];
+  // A `Resources` event's change to one pool: positive on a `resourcechange`, negative on a `drain`, with the overflow past the cap in `waste`.
+  resourceChange?: number;
+  resourceChangeType?: number;
+  waste?: number;
+  maxResourceAmount?: number;
 }
 
 export interface WclReport {
@@ -98,6 +103,8 @@ export interface WclCombatantInfo {
   sourceID?: number;
   gear?: WclGearItem[];
   talentTree?: WclTalentNode[];
+  /** The auras up on the player at the pull, which the event stream never applies. */
+  auras?: { ability?: number }[];
 }
 
 // CombatantInfo rows come back through the same `events.data` field as ordinary events, so one type has to cover both.
