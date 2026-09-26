@@ -43,9 +43,10 @@ describe('DebuffFacts', () => {
     expect(read('dot.rupture.remains', refreshed, 15)).toEqual([RUPTURE_S - 5, RUPTURE_S - 5]);
   });
 
-  it('counts the enemies the dot is on', () => {
+  it('counts the enemies the dot is on, under either spelling SimC reads', () => {
     const spread = [...onBoss, applyDebuff(RUPTURE, 1, { target: ADD })];
     expect(read('active_dot.rupture', spread, 5, null)).toEqual([2, 2]);
+    expect(read('active_dots.rupture', spread, 5, null)).toEqual([2, 2]);
   });
 
   it('reads a per-target fact as unknown when the cast aims at no known enemy', () => {

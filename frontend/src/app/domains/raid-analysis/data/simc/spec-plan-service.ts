@@ -13,7 +13,7 @@ import { SpellDumpService, SpellRecord } from './spell-dump-service';
 const MAJOR_COOLDOWN_S = 60;
 const KEY_LENGTH = 16;
 
-const SPELL_NAME = /^(?:target\.)?(?:buff|debuff|dot|cooldown|action|active_dot|prev|prev_off_gcd|pet)\.(\w+)|^prev_gcd\.\d+\.(\w+)/;
+const SPELL_NAME = /^(?:target\.)?(?:buff|debuff|dot|cooldown|action|active_dots?|prev|prev_off_gcd|pet)\.(\w+)|^prev_gcd\.\d+\.(\w+)/;
 const TALENT_NAME = /^(talent|hero_tree|apex)\.\w+/;
 /** An id SimC's code names with no record in the class spell data (a racial) carries no cooldown or duration, so only aura reads may use it. */
 const AURA_READ = /^(?:target\.)?(?:buff|debuff|dot)\./;

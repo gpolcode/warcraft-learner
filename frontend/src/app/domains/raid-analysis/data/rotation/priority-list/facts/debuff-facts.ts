@@ -4,7 +4,8 @@ import { UNKNOWN, CastMoment, FactContext, FactReader, FactStream, Range } from 
 import { AuraAt, AuraReadingService } from './aura-reading-service';
 
 const DEBUFF = /^(?:target\.)?(?:dot|debuff)\.(\w+)\.(up|down|ticking|remains|refreshable|stack|react|duration|active_dots)$/;
-const SPREAD = /^active_dot\.(\w+)$/;
+/** SimC reads `active_dot` and `active_dots` alike. */
+const SPREAD = /^active_dots?\.(\w+)$/;
 /** A bare name reads the line's own button's aura: `refreshable` on a Rupture line is Rupture's. */
 const OWN = /^(ticking|refreshable|remains|duration)$/;
 /** A refresh inside the aura's last 30% keeps the remainder: the game's pandemic window, which SimC's `refreshable` reads. */

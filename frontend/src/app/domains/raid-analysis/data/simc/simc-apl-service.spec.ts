@@ -38,6 +38,19 @@ describe('SimcAplService.readApl', () => {
     expect(lines('actions=run_action_list,name=aoe', 'actions.aoe=whirlwind', 'actions+=/rampage').map(line => line.action)).toEqual(['whirlwind']);
   });
 
+  it('gates a line on a target_if that skips it when no target satisfies it, but not on one that only ranks targets', () => {
+    const [gated, ranked] = lines(
+      'actions=rake,target_if=refreshable,if=combo_points<5',
+      'actions+=/rip,target_if=max:target.time_to_die,if=combo_points>=5',
+    );
+    expect(gated).toEqual({ action: 'rake', terms: ['combo_points<5', 'refreshable'] });
+    expect(ranked).toEqual({ action: 'rip', terms: ['combo_points>=5'] });
+  });
+
+  it('reads a first: target_if as the same gate', () => {
+    expect(lines('actions=reapers_mark,target_if=first:debuff.reapers_mark.down')).toEqual([{ action: 'reapers_mark', terms: ['debuff.reapers_mark.down'] }]);
+  });
+
   it('keeps a line\'s line_cd', () => {
     expect(lines('actions=rampage,line_cd=10')).toEqual([{ action: 'rampage', terms: [], line_cd: 10 }]);
   });
@@ -56,6 +69,11 @@ describe('SimcAplService.readApl', () => {
     );
     expect(one?.terms).toEqual(['active_enemies=1']);
     expect(zero?.terms).toEqual(['!(active_enemies=1)']);
+  });
+
+  it('inlines a variable read inside a function call', () => {
+    const [line] = lines('actions=variable,name=casts,value=floor(fight_remains%variable.cd)', 'actions+=/variable,name=cd,value=90', 'actions+=/rampage,if=variable.casts>1');
+    expect(line?.terms).toEqual(['floor(fight_remains%90)>1']);
   });
 
   it('leaves a variable assigned more than once as sim state', () => {
@@ -128,6 +146,10 @@ describe('SimcAplService.print', () => {
     expect(printed('a-(b-c)')).toBe('a-(b-c)');
     expect(printed('(a-b)-c')).toBe('a-b-c');
     expect(printed('!(a&b)')).toBe('!(a&b)');
+  });
+
+  it('prints a SimC function call as written', () => {
+    expect(printed('floor(fight_remains%cooldown.x.duration-0.05)')).toBe('floor(fight_remains%cooldown.x.duration-0.05)');
   });
 
   it('reads a term back to the tree it was printed from', () => {

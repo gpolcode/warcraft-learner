@@ -16,7 +16,7 @@ export interface PlanDefensive {
 export interface PlanLine {
   /** SimC's token, not the in-game name: `black_powder`. */
   action: string;
-  /** The `&` terms of the line and of every list call above it, as SimC text; null when no parser reads the condition. */
+  /** The `&` terms of the line's `if`, of a `target_if` that skips the line when no target satisfies it, and of every list call above it, as SimC text; null when no parser reads the condition. */
   terms: string[] | null;
   line_cd?: number;
 }

@@ -31,8 +31,6 @@ const STEPS: Record<string, ((variable: ReadVariable, current: Range, read: Read
   reset: variable => variable.start,
   floor: (_, [lo, hi]) => [Math.floor(lo), Math.floor(hi)],
   ceil: (_, [lo, hi]) => [Math.ceil(lo), Math.ceil(hi)],
-  print: (_, current) => current,
-  report: (_, current) => current,
 };
 /** `>?` is SimC's min and `<?` its max, and `%` divides. */
 const OPERATORS: Record<string, string | undefined> = { add: '+', sub: '-', mul: '*', div: '%', mod: '%%', min: '>?', max: '<?' };

@@ -47,11 +47,17 @@ describe('ConditionEvalService', () => {
     expect(truth('0*raid_event.movement.in=0')).toBe('true');
   });
 
-  it('reads SimC\'s own operators: % divides, <? takes the larger, >? the smaller, ^ is exclusive', () => {
+  it('reads SimC\'s own operators: % divides, %% is the remainder, <? takes the larger, >? the smaller', () => {
     expect(truth('time%2=15')).toBe('true');
+    expect(truth('time%%7=2')).toBe('true');
     expect(truth('(time<?40)=40')).toBe('true');
     expect(truth('(time>?40)=30')).toBe('true');
-    expect(truth('(time>1)^(time>2)')).toBe('false');
+  });
+
+  it('reads SimC\'s floor and ceil functions over the value, an unknown one staying unknown', () => {
+    expect(truth('floor(time%4)=7')).toBe('true');
+    expect(truth('ceil(time%4)=8')).toBe('true');
+    expect(truth('floor(raid_event.movement.in)>0')).toBe('unknown');
   });
 
   it('settles nothing on a division by a value that may be zero', () => {

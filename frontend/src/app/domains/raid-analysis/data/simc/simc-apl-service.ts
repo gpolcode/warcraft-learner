@@ -23,24 +23,26 @@ interface AplWalk {
   precombat: boolean;
 }
 
-// SimulationCraft's own table (engine/sim/expressions.cpp): `%` divides, `%%` is the remainder, `<?` and `>?` are max and min.
+// SimulationCraft's own order (engine/sim/expressions.cpp): `%` divides, `%%` is the remainder, `<?` and `>?` are max and min.
 const BINARY_PRECEDENCE: Record<string, number> = {
-  '|': 1, '^': 2, '&': 3,
-  '=': 4, '==': 4, '!=': 4, '<': 4, '<=': 4, '>': 4, '>=': 4, '~': 4, '!~': 4,
-  '<?': 5, '>?': 5, '+': 6, '-': 6, '*': 7, '%': 7, '%%': 7,
+  '|': 1, '&': 2,
+  '=': 3, '==': 3, '!=': 3, '<': 3, '<=': 3, '>': 3, '>=': 3,
+  '<?': 4, '>?': 4, '+': 5, '-': 5, '*': 6, '%': 6, '%%': 6,
 };
 for (const op of Object.keys(jsep.binary_ops)) jsep.removeBinaryOp(op);
 for (const op of Object.keys(jsep.unary_ops)) jsep.removeUnaryOp(op);
 for (const [op, precedence] of Object.entries(BINARY_PRECEDENCE)) jsep.addBinaryOp(op, precedence);
-for (const op of ['!', '-', '@']) jsep.addUnaryOp(op);
+for (const op of ['!', '-']) jsep.addUnaryOp(op);
 jsep.addIdentifierChar('.');
 
 const LINE = /^actions(?:\.(\w+))?\+?=\/?(.*)$/;
 const LIST_CALLS = new Set(['call_action_list', 'run_action_list']);
 const NON_SPELL = new Set([
   'auto_attack', 'snapshot_stats', 'potion', 'use_items', 'use_item', 'invoke_external_buff', 'pool_resource', 'wait',
-  'cancel_buff', 'retarget_auto_attack', 'flask', 'food', 'augmentation', 'summon_pet', 'variable', 'cancel_action',
+  'cancel_buff', 'retarget_auto_attack', 'flask', 'food', 'augmentation', 'summon_pet', 'cancel_action',
 ]);
+/** `min:` and `max:` only rank the targets; any other `target_if` skips the line when no target satisfies it. */
+const TARGET_RANKING = /^(min|max):/;
 const MAX_VARIABLE_DEPTH = 3;
 
 @Injectable({ providedIn: 'root' })
@@ -72,6 +74,10 @@ export class SimcAplService {
     if (node.type === 'UnaryExpression') {
       const { operator, argument } = node as jsep.UnaryExpression;
       return `${operator}${argument.type === 'BinaryExpression' ? `(${this.print(argument)})` : this.print(argument)}`;
+    }
+    if (node.type === 'CallExpression') {
+      const { callee, arguments: args } = node as jsep.CallExpression;
+      return `${this.print(callee)}(${args.map(argument => this.print(argument)).join(',')})`;
     }
     if (node.type !== 'BinaryExpression') throw new Error(`no SimC form for a ${node.type}`);
     const { operator, left, right } = node as jsep.BinaryExpression;
@@ -152,12 +158,16 @@ export class SimcAplService {
       const binary = node as jsep.BinaryExpression;
       return { ...binary, left: this.substitute(binary.left, substitutes, depth), right: this.substitute(binary.right, substitutes, depth) };
     }
+    if (node.type === 'CallExpression') {
+      const call = node as jsep.CallExpression;
+      return { ...call, arguments: call.arguments.map(argument => this.substitute(argument, substitutes, depth)) };
+    }
     if (node.type !== 'UnaryExpression') return node;
     return { ...node, argument: this.substitute((node as jsep.UnaryExpression).argument, substitutes, depth) };
   }
 
   private normalized(text: string): string {
-    return text.replace(/&&/g, '&').replace(/\|\|/g, '|').replace(/\^\^/g, '^');
+    return text.replace(/&&/g, '&').replace(/\|\|/g, '|');
   }
 
   /** Only a variable a line reads, or one such a variable reads, needs replaying. */
@@ -176,7 +186,7 @@ export class SimcAplService {
     if (seen.has(list)) return;
     let reached = inherited;
     for (const entry of context.lists.get(list) ?? []) {
-      const own = this.gateTerms(entry.options['if'], context.substitutes);
+      const own = this.gateTerms(entry.options, context.substitutes);
       this.visit(context, entry, own && reached && [...reached, ...own], new Set([...seen, list]));
       if (entry.action !== 'run_action_list') continue;
       if (own?.length === 0) return;
@@ -229,9 +239,11 @@ export class SimcAplService {
     }
   }
 
-  private gateTerms(gate: string | undefined, substitutes: ReadonlyMap<string, AplNode>): AplNode[] | null {
-    if (!gate) return [];
-    const node = this.parse(this.normalized(gate));
-    return node && this.operands(this.substitute(node, substitutes), '&');
+  private gateTerms(options: Record<string, string>, substitutes: ReadonlyMap<string, AplNode>): AplNode[] | null {
+    const targetIf = options['target_if'];
+    const gates = [options['if'], targetIf && !TARGET_RANKING.test(targetIf) ? targetIf.replace(/^first:/, '') : undefined];
+    const nodes = gates.flatMap(gate => (gate ? [this.parse(this.normalized(gate))] : []));
+    if (!nodes.every((node): node is AplNode => node !== null)) return null;
+    return nodes.flatMap(node => this.operands(this.substitute(node, substitutes), '&'));
   }
 }

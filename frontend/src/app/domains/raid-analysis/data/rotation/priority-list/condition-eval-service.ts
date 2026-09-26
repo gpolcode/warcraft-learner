@@ -24,6 +24,9 @@ const COMPARE: Record<string, ((a: Range, b: Range) => readonly [boolean, boolea
   '!=': (a, b) => [apart(a, b), equal(a, b)],
 };
 
+/** SimC's expression functions; each is monotonic, so it maps a range end to end. */
+const FUNCTIONS: Record<string, ((value: number) => number) | undefined> = { floor: Math.floor, ceil: Math.ceil };
+
 const ARITHMETIC: Record<string, ((a: Range, b: Range) => Range) | undefined> = {
   '+': (a, b) => [a[0] + b[0], a[1] + b[1]],
   '-': (a, b) => [a[0] - b[1], a[1] - b[0]],
@@ -70,6 +73,7 @@ export class ConditionEvalService {
       case 'Identifier': return this.identifier((node as jsep.Identifier).name, moment, action, ctx);
       case 'UnaryExpression': return this.unary(node as jsep.UnaryExpression, moment, action, ctx);
       case 'BinaryExpression': return this.binary(node as jsep.BinaryExpression, moment, action, ctx);
+      case 'CallExpression': return this.call(node as jsep.CallExpression, moment, action, ctx);
       default: return UNKNOWN;
     }
   }
@@ -81,24 +85,26 @@ export class ConditionEvalService {
 
   private unary({ operator, argument }: jsep.UnaryExpression, moment: CastMoment, action: string, ctx: FactContext): Range {
     const [lo, hi] = this.value(argument, moment, action, ctx);
-    if (operator === '!') return this.fromTruth(this.not(this.truth([lo, hi])));
-    if (operator === '-') return [-hi, -lo];
-    return lo >= 0 ? [lo, hi] : hi <= 0 ? [-hi, -lo] : [0, Math.max(-lo, hi)];
+    return operator === '!' ? this.fromTruth(this.not(this.truth([lo, hi]))) : [-hi, -lo];
+  }
+
+  private call({ callee, arguments: [argument] }: jsep.CallExpression, moment: CastMoment, action: string, ctx: FactContext): Range {
+    const fn = callee.type === 'Identifier' ? FUNCTIONS[(callee as jsep.Identifier).name] : undefined;
+    if (!fn || !argument) return UNKNOWN;
+    const [lo, hi] = this.value(argument, moment, action, ctx);
+    return [fn(lo), fn(hi)];
   }
 
   private binary({ operator, left, right }: jsep.BinaryExpression, moment: CastMoment, action: string, ctx: FactContext): Range {
     const a = this.value(left, moment, action, ctx);
-    if (operator === '&' || operator === '|' || operator === '^') return this.logical(operator, this.truth(a), () => this.truth(this.value(right, moment, action, ctx)));
+    if (operator === '&' || operator === '|') return this.logical(operator, this.truth(a), () => this.truth(this.value(right, moment, action, ctx)));
     const b = this.value(right, moment, action, ctx);
     return this.compare(operator, a, b) ?? this.arithmetic(operator, a, b);
   }
 
   private logical(operator: string, left: Truth, right: () => Truth): Range {
     if (operator === '&') return this.fromTruth(left === 'false' ? 'false' : this.and(left, right()));
-    if (operator === '|') return this.fromTruth(left === 'true' ? 'true' : this.or(left, right()));
-    const other = right();
-    if (left === 'unknown' || other === 'unknown') return EITHER;
-    return this.fromTruth(left === other ? 'false' : 'true');
+    return this.fromTruth(left === 'true' ? 'true' : this.or(left, right()));
   }
 
   private compare(operator: string, a: Range, b: Range): Range | null {

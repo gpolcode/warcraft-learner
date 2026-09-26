@@ -83,7 +83,7 @@ const SUBJECTS: SubjectWords[] = [
   { match: /^((?:target\.)?(buff|debuff|dot)\.\w+\.)?remains$/, at: (x, op, n) => `with ${lessMore(op)} ${secs(n)} of ${x} left`, unit: 's left' },
   { match: /^cooldown\.\w+\.(remains|full_recharge_time)$/, at: (x, op, n) => (n === '0' && below(op) ? `when ${x} is ready` : `when ${x} is ${lessMore(op)} ${secs(n)} away`), unit: 's away' },
   { match: /^(cooldown\.\w+\.)?(charges|charges_fractional)$/, at: (x, op, n) => `at ${bound(op, n)} ${x} charges`, unit: 'charges' },
-  { match: /^active_dot\.\w+$/, at: (x, op, n) => `while ${x} is on ${bound(op, n)} enemies`, unit: 'enemies' },
+  { match: /^active_dots?\.\w+$/, at: (x, op, n) => `while ${x} is on ${bound(op, n)} enemies`, unit: 'enemies' },
   { match: /^target\.health\.pct$/, at: (_, op, n) => `${below(op) ? 'below' : 'above'} ${n}% target health`, unit: '% health' },
   { match: /^health\.pct$/, at: (_, op, n) => `${below(op) ? 'below' : 'above'} ${n}% health`, unit: '% health' },
   { match: /^fight_remains$/, at: (_, op, n) => (below(op) ? `in the last ${secs(n)} of the fight` : `with ${lessMore(op)} ${secs(n)} of the fight left`), unit: 's left' },
