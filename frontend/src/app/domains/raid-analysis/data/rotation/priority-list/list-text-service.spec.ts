@@ -3,7 +3,6 @@ import { TestBed } from '@angular/core/testing';
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
 import { SHADOW_DANCE, SECRET_TECHNIQUE, RUPTURE } from '../../../../../../testing/spell-ids';
 import { SimcAplService } from '../../simc/simc-apl-service';
-import { ListCheckService } from './list-check-service';
 import { ListTextService } from './list-text-service';
 import { priorityList } from './priority-list-harness';
 import type { Range } from './priority-list.models';
@@ -24,7 +23,6 @@ const list = priorityList({
 });
 const text = TestBed.inject(ListTextService);
 const apl = TestBed.inject(SimcAplService);
-const lines = TestBed.inject(ListCheckService).buttons(list);
 
 const phrase = (term: string, holds = true, action = 'black_powder'): string => {
   const node = apl.parse(term);
@@ -36,28 +34,6 @@ const value = (term: string, range: Range, flag = false): string => {
   if (!node) throw new Error(`unreadable ${term}`);
   return text.value(node, range, flag);
 };
-const lineOf = (action: string) => {
-  const [line] = lines.get(action) ?? [];
-  if (!line) throw new Error(`no ${action} line`);
-  return line;
-};
-
-describe('ListTextService sentences', () => {
-  it('reads a line with its talent up front and its moment terms joined', () => {
-    expect(text.sentence(list, lineOf('black_powder'))).toBe(
-      "With Deathstalker's Mark: at full combo points (one less while Darkest Night is down) and on 2+ enemies");
-  });
-
-  it('leaves the talent out where the player has it', () => {
-    expect(text.sentence(list, lineOf('black_powder'), true)).toBe(
-      'at full combo points (one less while Darkest Night is down) and on 2+ enemies');
-  });
-
-  it('reads a line with no condition as press when ready', () => {
-    expect(text.sentence(list, lineOf('backstab'))).toBe('whenever it is ready');
-  });
-});
-
 describe('ListTextService phrases', () => {
   it('reads a buff flag and its negation', () => {
     expect(phrase('buff.shadow_dance.up')).toBe('while Shadow Dance is up');

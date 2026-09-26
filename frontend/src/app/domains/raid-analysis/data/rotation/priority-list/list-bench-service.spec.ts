@@ -24,7 +24,6 @@ const decision = (pressed: string): OrderCheck => ({ atS: 1, expected: 'eviscera
 const log = (casts: CastCheck[], opts: { order?: OrderCheck[]; id?: number } = {}): LogReading => ({
   casts: new Map([['eviscerate', casts]]),
   order: opts.order ?? [],
-  builds: new Map([['eviscerate', ['true', 'true']]]),
   ids: new Map([['eviscerate', opts.id ?? EVISCERATE]]),
 });
 const field = (count: number, casts: CastCheck[], opts = {}): LogReading[] => Array.from({ length: count }, () => log(casts, opts));
@@ -65,11 +64,6 @@ describe('ListBenchService', () => {
   it('counts a moment the button was due and something else was pressed against it', () => {
     const readings = field(MIN_MEASURED_PARSES, clean, { order: [decision('eviscerate'), decision('backstab')] });
     expect(benchOf(readings)?.right.avg).toBe(FOUR_FIFTHS);
-  });
-
-  it('shares the on-list casts out over the lines that allowed them', () => {
-    const readings = field(MIN_MEASURED_PARSES, [cast('on', 0), cast('on', 0), cast('on', 0), cast('on', 1)]);
-    expect(benchOf(readings)?.allowed).toEqual([0.75, 0.25]);
   });
 
   it('names the button\'s icon by the id most top logs cast it under', () => {

@@ -21,13 +21,6 @@ export interface ConditionCheck {
   group?: { any: boolean; checks: ConditionCheck[] };
 }
 
-export interface LineSplit {
-  text: string;
-  /** Shares of on-list casts; null where there were none to share out. */
-  you: number | null;
-  top: number | null;
-}
-
 export interface AnalysisFinding {
   severity: 'critical' | 'warning' | 'info' | 'hold_suggestion' | 'success';
   category: string;

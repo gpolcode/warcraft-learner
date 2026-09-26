@@ -27,7 +27,7 @@ const list = priorityList({
 const findings = TestBed.inject(ListFindingService);
 
 const button = (over: Partial<ButtonBench> = {}): ButtonBench => ({
-  action: 'eviscerate', spell_id: EVISCERATE, right: FIELD, allowed: [1],
+  action: 'eviscerate', spell_id: EVISCERATE, right: FIELD,
   ...over,
 });
 const withButtons = (buttons: ButtonBench[] = [button()], over: Partial<RotationBench> = {}): RotationBench => bench({
@@ -40,7 +40,7 @@ const cast = (verdict: CastVerdict, atS: number, cp = 5): CastCheck => ({
 const skipped = (atS: number): OrderCheck => ({ atS, expected: 'eviscerate', pressed: 'backstab', line: 0, terms: [{ truth: 'true', value: [5, 5] }] });
 const reading = (casts: CastCheck[], order: OrderCheck[] = [], backstabs: CastCheck[] = []): LogReading => ({
   casts: new Map([['eviscerate', casts], ['backstab', backstabs]]), order,
-  builds: new Map([['eviscerate', ['true']]]), ids: new Map([['eviscerate', EVISCERATE]]),
+  ids: new Map([['eviscerate', EVISCERATE]]),
 });
 const quarterOff = [cast('off', 10, 3), cast('on', 20), cast('on', 30), cast('on', 40)];
 const rowOf = (judged: LogReading, benched = withButtons()) => findings.rows(benched, judged)[0];
@@ -114,38 +114,5 @@ describe('ListFindingService condition groups', () => {
         ],
       },
     }]);
-  });
-});
-
-describe('ListFindingService split', () => {
-  const DEATHSTALKERS_MARK = 1;
-  const builds = priorityList({
-    lines: [
-      { action: 'eviscerate', terms: ['combo_points>=5'] },
-      { action: 'eviscerate', terms: ['talent.deathstalkers_mark', 'combo_points>=4'] },
-      { action: 'eviscerate', terms: ['!talent.deathstalkers_mark', 'combo_points>=3'] },
-    ],
-    spells: { eviscerate: planSpell('Eviscerate', [EVISCERATE]) },
-    talents: { 'talent.deathstalkers_mark': { name: "Deathstalker's Mark", entries: [DEATHSTALKERS_MARK] } },
-  });
-  const onLine = (line: number, atS: number): CastCheck => ({ ...cast('on', atS), line });
-  const judged = (picked: Truth[]) => rowOf(
-    { ...reading([cast('off', 10, 3), onLine(0, 20), onLine(0, 30), onLine(1, 40)]), builds: new Map([['eviscerate', picked]]) },
-    bench({ list: builds, buttons: [button({ allowed: [0.5, 0.5, 0] })], ability_icons: {} }),
-  )?.lines;
-
-  it('splits the on-time casts over the lines the player\'s build can press, beside the top logs\' split', () => {
-    expect(judged(['true', 'true', 'false'])).toEqual([
-      { text: 'At 5+ combo points', you: 0.667, top: 0.5 },
-      { text: 'At 4+ combo points', you: 0.333, top: 0.5 },
-    ]);
-  });
-
-  it('splits nothing once the player\'s build can press only one of the lines', () => {
-    expect(judged(['true', 'false', 'false'])).toEqual([]);
-  });
-
-  it('names a line\'s talent where the log shows no talents to settle the build', () => {
-    expect(judged(['true', 'unknown', 'false'])?.[1]?.text).toBe("With Deathstalker's Mark: at 4+ combo points");
   });
 });

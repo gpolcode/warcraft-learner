@@ -16,7 +16,7 @@ export class ListBenchService {
   private readonly checks = inject(ListCheckService);
 
   bench(list: PriorityList, readings: LogReading[]): ButtonBench[] {
-    return [...this.checks.buttons(list)].flatMap(([action, lines]) => {
+    return [...this.checks.buttons(list).keys()].flatMap(action => {
       const shares = readings.flatMap(reading => this.checks.rightShare(reading, action) ?? []);
       const avg = mean(shares) ?? 0;
       const ids = readings.flatMap(reading => reading.ids.get(action) ?? []);
@@ -24,13 +24,7 @@ export class ListBenchService {
       return [{
         action, spell_id: mode(ids),
         right: { lo: round(min(shares) ?? 0, SHARE_DIGITS), avg: round(avg, SHARE_DIGITS), hi: round(max(shares) ?? 0, SHARE_DIGITS) },
-        allowed: lines.map((_, index) => this.allowed(readings, action, index)),
       }];
     });
-  }
-
-  private allowed(readings: LogReading[], action: string, index: number): number {
-    const on = readings.flatMap(reading => reading.casts.get(action) ?? []).filter(check => check.verdict === 'on');
-    return on.length ? round(on.filter(check => check.line === index).length / on.length, SHARE_DIGITS) : 0;
   }
 }

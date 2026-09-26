@@ -17,7 +17,7 @@
     @let open = openIndex() === $index;
     <div class="border-t border-line">
       <div class="flex items-center gap-(--gap-card) pl-4 pr-2 py-1">
-        <div class="min-w-0 flex-1 truncate">
+        <div class="flex min-w-0 flex-1 items-center overflow-hidden">
           <wl-game-icon [id]="row.spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
         </div>
         <div class="relative h-4 w-28 sm:w-45 shrink-0 rounded bg-bg" aria-hidden="true">
@@ -46,9 +46,6 @@
         <!-- From sm up, indented to the name past the icon, so the instances read as the row's own. -->
         <div class="pl-4 sm:pl-10 pr-4 pt-1 pb-4">
           <wl-finding-occurrences [occurrences]="row.occurrences"></wl-finding-occurrences>
-          @if (row.lines.length) {
-            <wl-line-split class="mt-3 pt-2 border-t border-line" [lines]="row.lines"></wl-line-split>
-          }
         </div>
       }
     </div>

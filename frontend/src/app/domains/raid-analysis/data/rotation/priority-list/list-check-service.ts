@@ -67,8 +67,6 @@ export interface LogReading {
   /** The id this log cast each button under most. */
   ids: Map<string, number>;
   order: OrderCheck[];
-  /** Per button line, whether its talent terms hold for this log's build. */
-  builds: Map<string, Truth[]>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -112,9 +110,7 @@ export class ListCheckService {
       const decided = pressed && ctx.gcd(moment.event.abilityGameID) ? this.orderCheck(lines, pressed, moment, ctx, readLine) : null;
       if (decided) order.push({ ...decided, line: buttons.get(decided.expected)?.findIndex(line => line.index === decided.line) ?? -1 });
     }
-    const first = moments[0];
-    const builds = new Map([...buttons].map(([action, own]) => [action, own.map((line): Truth => (first ? this.build(line, first, ctx) : 'unknown'))]));
-    return { casts, order, builds, ids: this.castIds(ctx, [...casts.keys()]) };
+    return { casts, order, ids: this.castIds(ctx, [...casts.keys()]) };
   }
 
   private parseLine(line: PlanLine, index: number): ReadLine {
@@ -231,10 +227,5 @@ export class ListCheckService {
       const casts = ctx.casts.filter(event => ids.has(event.abilityGameID));
       return casts.length ? [[action, mode(casts, event => event.abilityGameID)] as const] : [];
     }));
-  }
-
-  private build(line: ReadLine, moment: CastMoment, ctx: FactContext): Truth {
-    const talents = (line.terms ?? []).filter((_, at) => line.talentTerms[at]);
-    return this.evaluator.and(...talents.map(term => this.evaluator.truthOf(term, moment, line.action, ctx)));
   }
 }

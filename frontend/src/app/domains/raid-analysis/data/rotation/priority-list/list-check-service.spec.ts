@@ -71,12 +71,6 @@ describe('ListCheckService cast check', () => {
     const [check] = read([{ action: 'eviscerate', terms: null }], [pooled(EVISCERATE, 10, 3)]).casts.get('eviscerate') ?? [];
     expect(check?.verdict).toBe('unjudged');
   });
-
-  it('reads whose build each line is from the log\'s talents', () => {
-    const lines: PlanLine[] = [{ action: 'eviscerate', terms: ['talent.unseen_blade', 'combo_points>=5'] }, { action: 'eviscerate', terms: ['combo_points>=6'] }];
-    expect(read(lines, [pooled(EVISCERATE, 10, 3)], { talents: [[UNSEEN_BLADE_ENTRY, 1]] }).builds.get('eviscerate')).toEqual(['true', 'true']);
-    expect(read(lines, [pooled(EVISCERATE, 10, 3)]).builds.get('eviscerate')).toEqual(['false', 'true']);
-  });
 });
 
 describe('ListCheckService order check', () => {

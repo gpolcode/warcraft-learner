@@ -3,7 +3,6 @@ import type jsep from 'jsep';
 import { round } from '../../analysis/analysis-math';
 import type { PriorityList } from '../../plan/plan.models';
 import { AplNode, SimcAplService } from '../../simc/simc-apl-service';
-import type { ReadLine } from './list-check-service';
 import type { Range } from './priority-list.models';
 
 type Op = '<' | '<=' | '>' | '>=' | '=' | '!=';
@@ -102,15 +101,6 @@ export class ListTextService {
 
   capitalized(text: string): string {
     return text.charAt(0).toUpperCase() + text.slice(1);
-  }
-
-  /** `With Deathstalker's Mark: at full combo points and on 2+ enemies`; the talent prefix is left out where `ownBuild` says the player has it. */
-  sentence(list: PriorityList, line: ReadLine, ownBuild = false): string {
-    if (!line.terms) return '';
-    const picked = line.terms.filter((term, at) => line.talentTerms[at] && this.picksTalent(term));
-    const body = [...new Set(line.terms.filter(term => !picked.includes(term)).map(term => this.phrase(list, term, true, line.action)))];
-    const prefix = picked.length && !ownBuild ? `With ${this.join(picked.map(term => this.talentName(list, this.apl.identifiers(term)[0] ?? '')))}: ` : '';
-    return prefix + (this.join(body) || 'whenever it is ready');
   }
 
   /** The term in words; `holds` false phrases its negation, which a title uses to name what went wrong. */
@@ -216,10 +206,6 @@ export class ListTextService {
 
   private isFlag(node: AplNode): boolean {
     return node.type === 'Identifier' || (node.type === 'UnaryExpression' && (node as jsep.UnaryExpression).operator === '!');
-  }
-
-  private picksTalent(term: AplNode): boolean {
-    return term.type === 'Identifier' && TALENT.test((term as jsep.Identifier).name);
   }
 
   private token(name: string, action: string): string {

@@ -22,7 +22,7 @@ export class ListLogService {
   private readonly checks = inject(ListCheckService);
 
   async read(list: PriorityList, { reportCode, fight, playerId }: ListPull): Promise<LogReading> {
-    if (!list.lines.length) return { casts: new Map(), order: [], builds: new Map(), ids: new Map() };
+    if (!list.lines.length) return { casts: new Map(), order: [], ids: new Map() };
     const streams = this.checks.streams(list);
     const { startTime, endTime, id } = fight;
     const [casts, buffs, enemyAuras, damage, resources, combatants] = await Promise.all([

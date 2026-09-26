@@ -16,8 +16,6 @@ export interface ButtonBench {
   spell_id: number;
   /** Over the top logs, each log's share of the button's moments it got right, as `ListCheckService.rightShare` reads it. */
   right: ShareRange;
-  /** Per line of the button, in list order, its share of the top logs' on-list casts. */
-  allowed: number[];
 }
 
 export interface RotationBench extends BenchHeader {

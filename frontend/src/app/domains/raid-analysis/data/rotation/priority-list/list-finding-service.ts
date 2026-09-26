@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { round } from '../../analysis/analysis-math';
-import type { ConditionCheck, FindingOccurrence, LineSplit } from '../../analysis/analysis.models';
+import type { ConditionCheck, FindingOccurrence } from '../../analysis/analysis.models';
 import type { PriorityList } from '../../plan/plan.models';
 import type { AplNode } from '../../simc/simc-apl-service';
 import type { ButtonBench, RotationBench, ShareRange } from '../rotation-data-source';
@@ -19,7 +19,6 @@ export interface ButtonRow {
   you: number | null;
   top: ShareRange;
   occurrences: FindingOccurrence[];
-  lines: LineSplit[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -47,7 +46,7 @@ export class ListFindingService {
     return {
       name: icon?.name ?? this.text.name(list, entry.action), spellId, icon: icon?.icon ?? '',
       you: you === null ? null : round(you, SHARE_DIGITS), top: entry.right,
-      occurrences: this.thinned(occurrences), lines: this.split(list, entry, lines, reading),
+      occurrences: this.thinned(occurrences),
     };
   }
 
@@ -88,18 +87,6 @@ export class ListFindingService {
     }
     const subject = this.checks.subject(term);
     return { text, truth, value: reading?.value && subject ? this.text.value(subject, reading.value, term.type !== 'BinaryExpression') : '' };
-  }
-
-  /** A single line the player's build can press leaves nothing to compare. */
-  private split(list: PriorityList, entry: ButtonBench, lines: ReadLine[], reading: LogReading): LineSplit[] {
-    const on = (reading.casts.get(entry.action) ?? []).filter(check => check.verdict === 'on');
-    const builds = reading.builds.get(entry.action) ?? [];
-    const split = lines.flatMap((line, index) => (!line.terms || builds[index] === 'false' ? [] : [{
-      text: this.text.capitalized(this.text.sentence(list, line, builds[index] === 'true')),
-      you: on.length ? round(on.filter(check => check.line === index).length / on.length, SHARE_DIGITS) : null,
-      top: entry.allowed[index] ?? null,
-    }]));
-    return split.length > 1 ? split : [];
   }
 
   /** Keeps the strip's own share of misses, so a thinned strip never reads worse or better than the bar above it. */

@@ -21,7 +21,6 @@ const LIST = {
 };
 const ALWAYS_RIGHT: ButtonBench = {
   action: 'secret_technique', spell_id: SECRET_TECHNIQUE, right: { lo: 1, avg: 1, hi: 1 },
-  allowed: [1],
 };
 
 const FIGHT_END_MS = 120_000;
