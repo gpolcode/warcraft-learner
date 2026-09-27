@@ -47,7 +47,8 @@ export class CastCadenceService {
       severity: 'critical', category: 'lost_cooldown', cd_name: name,
       measured: { value: `${actual} / ${expected}`, unit: voice.unit },
       message: `${name} was used ${actual} times. Top raiders get ${expected}.`,
-      details: { remedy: voice.underuseRemedy(name, floor - actual) }, occurrences: [] };
+      // The row shows the top count, so the fix counts up to it rather than to the looser floor.
+      details: { remedy: voice.underuseRemedy(name, expected - actual) }, occurrences: [] };
     return null;
   }
 

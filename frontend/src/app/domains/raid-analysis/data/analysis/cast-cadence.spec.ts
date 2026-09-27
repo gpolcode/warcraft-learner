@@ -115,6 +115,13 @@ describe('checkLostUses', () => {
     expect(finding?.details?.remedy).toBe('Cloak +2');
   });
 
+  it('asks for the uses up to the top count it shows, not up to the floor', () => {
+    const ACTUAL = 23, EXPECTED = 25, FLOOR = 24;
+    const finding = castCadence.checkLostUses(VOICE, 'Cloak', ACTUAL, EXPECTED, FLOOR, FIGHT_DUR_S);
+    expect(finding?.measured).toEqual({ value: `${ACTUAL} / ${EXPECTED}`, unit: 'press(es)' });
+    expect(finding?.details?.remedy).toBe(`Cloak +${EXPECTED - ACTUAL}`);
+  });
+
   it('does not flag a use count exactly at the floor (strict)', () => {
     expect(castCadence.checkLostUses(VOICE, 'Cloak', 2, 2, 2, FIGHT_DUR_S)).toBeNull();
   });
