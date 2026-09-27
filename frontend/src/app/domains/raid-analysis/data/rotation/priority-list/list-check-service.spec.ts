@@ -30,6 +30,26 @@ const pooled = (spellId: number, atS: number, cp: number, energy = 50) =>
 const read = (lines: PlanLine[], casts: WclEvent[], log: LogEvents = {}, over = {}): LogReading =>
   checks.read(factContext(list(lines, over), { casts, talents: [], ...log }));
 
+describe('ListCheckService build terms', () => {
+  const termsOf = (terms: string[], talents: [number, number][] = []) =>
+    read([{ action: 'eviscerate', terms }], [pooled(EVISCERATE, 10, 5)], { talents }).casts.get('eviscerate')?.[0]?.lines[0]?.terms ?? [];
+
+  it('marks a term the player\'s talents alone make hold, and not one that reads the moment', () => {
+    const [talentTerm, momentTerm] = termsOf(['!talent.unseen_blade', 'combo_points>=5']);
+    expect(talentTerm?.build).toBe(true);
+    expect(momentTerm?.build).toBeUndefined();
+  });
+
+  it('marks a mixed term the talents settle whatever the moment, and not one the moment still decides', () => {
+    expect(termsOf(['!(talent.unseen_blade&combo_points>=6)'])[0]?.build).toBe(true);
+    expect(termsOf(['!(talent.unseen_blade&combo_points>=6)'], [[UNSEEN_BLADE_ENTRY, 1]])[0]?.build).toBeUndefined();
+  });
+
+  it('does not mark a talent term that fails, which names another build\'s line', () => {
+    expect(termsOf(['talent.unseen_blade'])[0]?.build).toBeUndefined();
+  });
+});
+
 describe('ListCheckService cast check', () => {
   const EVISCERATE_LINES: PlanLine[] = [
     { action: 'eviscerate', terms: ['combo_points>=5'] },

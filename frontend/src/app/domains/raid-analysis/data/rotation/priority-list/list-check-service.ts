@@ -26,6 +26,8 @@ export interface ReadLine {
 
 export interface TermReading {
   truth: Truth;
+  /** The player's talents alone make the term hold: it says whose build the line is, not when to press. */
+  build?: true;
   /** What the term measures: a comparison's left side, a flag's own value; null for a term that is neither. */
   value: Range | null;
   /** Per operand of an `|` or `&` term, in the order `junction` lists them. */
@@ -144,11 +146,27 @@ export class ListCheckService {
   }
 
   private readTerm(term: AplNode, moment: CastMoment, action: string, ctx: FactContext): TermReading {
+    const build = this.buildTruth(term, moment, action, ctx) === 'true' ? { build: true as const } : {};
     const junction = this.junction(term);
-    if (!junction) return { truth: this.evaluator.truthOf(term, moment, action, ctx), value: this.measured(term, moment, action, ctx) };
+    if (!junction) return { truth: this.evaluator.truthOf(term, moment, action, ctx), value: this.measured(term, moment, action, ctx), ...build };
     const parts = junction.operands.map(operand => this.readTerm(operand, moment, action, ctx));
     const truths = parts.map(part => part.truth);
-    return { truth: junction.any ? this.evaluator.or(...truths) : this.evaluator.and(...truths), value: null, parts };
+    return { truth: junction.any ? this.evaluator.or(...truths) : this.evaluator.and(...truths), value: null, parts, ...build };
+  }
+
+  /** The term read with every name but a talent unknown. */
+  private buildTruth(term: AplNode, moment: CastMoment, action: string, ctx: FactContext): Truth {
+    if (term.type === 'UnaryExpression' && (term as jsep.UnaryExpression).operator === '!') {
+      const inner = this.buildTruth((term as jsep.UnaryExpression).argument, moment, action, ctx);
+      return inner === 'unknown' ? inner : inner === 'true' ? 'false' : 'true';
+    }
+    const junction = this.junction(term);
+    if (junction) {
+      const parts = junction.operands.map(operand => this.buildTruth(operand, moment, action, ctx));
+      return junction.any ? this.evaluator.or(...parts) : this.evaluator.and(...parts);
+    }
+    const names = this.apl.identifiers(term);
+    return names.length && names.every(name => TALENT.test(name)) ? this.evaluator.truthOf(term, moment, action, ctx) : 'unknown';
   }
 
   /** A skip when due counts against the button like a cast off its lines. */

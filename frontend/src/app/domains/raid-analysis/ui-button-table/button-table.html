@@ -17,13 +17,11 @@
           <wl-game-icon [id]="row.spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
         </div>
         <wl-range-bar class="h-4 w-28 sm:w-45 shrink-0"
-          [you]="row.you === null ? null : row.you * 100" [rangeLeft]="row.top.lo * 100" [rangeWidth]="(row.top.hi - row.top.lo) * 100" [avg]="row.top.avg * 100"
+          [you]="row.you * 100" [rangeLeft]="row.top.lo * 100" [rangeWidth]="(row.top.hi - row.top.lo) * 100" [avg]="row.top.avg * 100"
           [status]="row.status">
         </wl-range-bar>
         <span class="sr-only">
-          @if (row.you !== null) {
-            You {{ row.you | percent }}.
-          }
+          You {{ row.you | percent }}.
           Top raiders {{ row.top.lo | percent }} to {{ row.top.hi | percent }}, {{ row.top.avg | percent }} on average.
         </span>
         <button mat-icon-button
