@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, linkedSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import { PercentPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,6 +19,11 @@ export class ButtonTable {
   readonly heading = input.required<string>();
   readonly subtitle = input<string>('');
   readonly rows = input.required<ButtonRow[]>();
+  readonly showMap = input<boolean>(false);
+  readonly showClip = input<boolean>(false);
+  /** The open occurrence's second, for the page's map and clip overlays. */
+  readonly openMap = output<number>();
+  readonly openClip = output<number>();
 
   // The table is reused across pull/player switches, so a stale open row must not survive a rows swap.
   readonly openIndex = linkedSignal<ButtonRow[], number | null>({

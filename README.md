@@ -12,7 +12,7 @@ After the pull, paste a Warcraft Logs report and pick a fight and a player. Ever
 
 Your damage in each burst window and the damage you took in each defensive window go against the range top raiders manage there, and your talents, trinkets and enchants against their consensus for that boss. The pull itself gets read back to you as well: every death and the ability that landed it, your DPS, the duration, and the boss health you ended on.
 
-Any finding, death or window opens a scrubbable map of where you and the top raiders stood at that moment. During a live raid the page re-analyzes as new pulls upload, and an opt-in screen recording cuts a clip of each window without ever leaving the browser.
+Any finding, death, window or judged press opens a scrubbable map of where you and the top raiders stood at that moment. During a live raid the page re-analyzes as new pulls upload, and an opt-in screen recording cuts a clip of each window without ever leaving the browser.
 
 Every threshold is derived from the top 10 Mythic parses for the same encounter and spec, not from arbitrary constants.
 

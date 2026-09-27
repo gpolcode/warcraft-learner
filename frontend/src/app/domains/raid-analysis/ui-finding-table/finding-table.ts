@@ -39,4 +39,9 @@ export class FindingTable {
   toggle(index: number): void {
     this.openIndex.update(current => current === index ? null : index);
   }
+
+  /** An occurrence's moment, so the page opens the map or clip on it rather than on the row's own time. */
+  moment(row: FindingRow, atS: number): FindingRow {
+    return { ...row, timestampS: atS };
+  }
 }

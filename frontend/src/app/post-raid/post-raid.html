@@ -110,6 +110,10 @@
             [reportCode]="reportCode()"
             [fightId]="selectedFightId()!"
             [playerId]="selectedPlayerId()!"
+            [showMap]="mapReady()"
+            [showClip]="clipReady()"
+            (openMap)="onOpenMap($event)"
+            (openClip)="onOpenClip($event)"
             (busyChange)="cards.setBusy('rotation', $event)"
             (availableChange)="cards.setAvailable('rotation', $event)">
           </wl-rotation>

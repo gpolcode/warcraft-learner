@@ -6,7 +6,11 @@
       <wl-button-table
         heading="Rotation rules"
         subtitle="How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press at the wrong time and a skip when it was due both count as a miss."
-        [rows]="buttonRows()">
+        [rows]="buttonRows()"
+        [showMap]="showMap()"
+        [showClip]="showClip()"
+        (openMap)="onOpenMap($event)"
+        (openClip)="onOpenClip($event)">
       </wl-button-table>
     }
 
@@ -14,7 +18,11 @@
       <wl-finding-table
         heading="Downtime"
         subtitle="Time you spent not casting, compared with the top logs."
-        [rows]="downtimeRows()">
+        [rows]="downtimeRows()"
+        [showMap]="showMap()"
+        [showClip]="showClip()"
+        (openMap)="onFindingMap($event)"
+        (openClip)="onFindingClip($event)">
       </wl-finding-table>
     }
 
@@ -22,7 +30,11 @@
       heading="Offensives"
       subtitle="How you used your damage cooldowns compared with the top logs."
       [rows]="offensiveRows()"
-      [onPlan]="onPlan()">
+      [onPlan]="onPlan()"
+      [showMap]="showMap()"
+      [showClip]="showClip()"
+      (openMap)="onFindingMap($event)"
+      (openClip)="onFindingClip($event)">
     </wl-finding-table>
   }
 </div>

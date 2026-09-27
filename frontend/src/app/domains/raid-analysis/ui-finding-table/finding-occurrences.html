@@ -28,9 +28,23 @@
 </div>
 
 @if (active(); as occ) {
-  <div [id]="detailId" class="mt-2.5 pt-2.5 border-t border-line text-body text-muted">
-    <span class="text-accent mr-0.5">{{ occ.atS | formatDuration }}</span>
-    {{ occ.detail }}
+  <div [id]="detailId" class="mt-2.5 pt-2.5 border-t border-line flex flex-wrap items-center gap-x-2 gap-y-1.5">
+    <span class="min-w-0 flex-1 text-body text-muted">
+      <span class="text-accent mr-0.5">{{ occ.atS | formatDuration }}</span>
+      {{ occ.detail }}
+    </span>
+    @if (showMap()) {
+      <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openMap.emit(occ.atS)">
+        <mat-icon>my_location</mat-icon>
+        Show map
+      </button>
+    }
+    @if (showClip()) {
+      <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openClip.emit(occ.atS)">
+        <mat-icon>videocam</mat-icon>
+        Watch clip
+      </button>
+    }
   </div>
   @if (occ.checks.length) {
     <wl-condition-checklist class="mt-1.5" [checks]="occ.checks"></wl-condition-checklist>

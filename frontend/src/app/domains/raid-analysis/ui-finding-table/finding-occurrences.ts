@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import type { FindingOccurrence } from '../data/analysis/analysis.models';
 import { ConditionChecklist } from './condition-checklist';
@@ -10,11 +12,16 @@ let nextInstanceSeq = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-finding-occurrences',
   host: { class: 'block' },
-  imports: [FormatDurationPipe, ConditionChecklist],
+  imports: [MatIconModule, MatButtonModule, FormatDurationPipe, ConditionChecklist],
   templateUrl: './finding-occurrences.html',
 })
 export class FindingOccurrences {
   readonly occurrences = input.required<FindingOccurrence[]>();
+  readonly showMap = input<boolean>(false);
+  readonly showClip = input<boolean>(false);
+  /** The open occurrence's second, for the page's map and clip overlays. */
+  readonly openMap = output<number>();
+  readonly openClip = output<number>();
 
   private readonly selectedIndex = linkedSignal<FindingOccurrence[], number | null>({
     source: this.occurrences,

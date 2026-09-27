@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output } f
 import { FindingRow, FindingTable, OnPlanChip } from '../ui-finding-table/finding-table';
 import { ButtonTable } from '../ui-button-table/button-table';
 import type { ButtonRow } from '../data/rotation/priority-list/list-finding-service';
+import type { ClipAnchor } from '../data/capture/capture.models';
+import type { MapAnchor } from '../data/map/map-feature-service';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { RotationFeatureService } from '../data/rotation/rotation-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
@@ -21,7 +23,11 @@ export class Rotation {
   readonly reportCode = input.required<string>();
   readonly fightId = input.required<number>();
   readonly playerId = input.required<number>();
+  readonly showMap = input<boolean>(false);
+  readonly showClip = input<boolean>(false);
 
+  readonly openMap = output<MapAnchor>();
+  readonly openClip = output<ClipAnchor>();
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
 
@@ -46,4 +52,20 @@ export class Rotation {
   protected readonly downtimeRows = computed<FindingRow[]>(() => this.load.value()?.downtimeRows ?? []);
   protected readonly offensiveRows = computed<FindingRow[]>(() => this.load.value()?.offensiveRows ?? []);
   protected readonly onPlan = computed<OnPlanChip[]>(() => this.load.value()?.onPlan ?? []);
+
+  protected onOpenMap(timeS: number): void {
+    this.openMap.emit({ timeS, windowLengthS: 0 });
+  }
+
+  protected onOpenClip(timeS: number): void {
+    this.openClip.emit({ timeS, windowLengthS: 0, key: `rotation-${timeS}` });
+  }
+
+  protected onFindingMap(row: FindingRow): void {
+    if (row.timestampS != null) this.onOpenMap(row.timestampS);
+  }
+
+  protected onFindingClip(row: FindingRow): void {
+    if (row.timestampS != null) this.onOpenClip(row.timestampS);
+  }
 }

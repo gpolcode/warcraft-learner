@@ -36,7 +36,13 @@
 
       @if (open) {
         <div class="px-4 pt-1 pb-4">
-          <wl-finding-occurrences [occurrences]="row.occurrences"></wl-finding-occurrences>
+          <wl-finding-occurrences
+            [occurrences]="row.occurrences"
+            [showMap]="showMap()"
+            [showClip]="showClip()"
+            (openMap)="openMap.emit($event)"
+            (openClip)="openClip.emit($event)">
+          </wl-finding-occurrences>
         </div>
       }
     </div>
