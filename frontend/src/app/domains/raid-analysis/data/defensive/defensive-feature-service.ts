@@ -237,7 +237,7 @@ export class DefensiveFeatureService {
     issues.push(...this.castCadence.checkGaps(DEFENSIVE_VOICE, name, castTimesS, defBench));
 
     const result = issues.length ? issues : this.usageSuccessFindings(name, uses, expected);
-    if (uses > 0) result.push(...this.holdTargets.holdSuggestionFindings(name, castTimesS, defBench.hold_targets));
+    if (uses > 0) result.push(...this.holdTargets.holdSuggestionFindings(name, castTimesS, defBench.hold_targets, fightDurS));
     return result;
   }
 

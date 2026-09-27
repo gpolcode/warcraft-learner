@@ -120,24 +120,25 @@ describe('analyzeRotationFindings hold suggestions (prior-relative)', () => {
       hold_targets: { '2': { target_s: 130, delay_s: 30, band_s: 5, effective_cd_s: 90, count: 4, total_samples: 5 } },
     }) },
   });
+  const FIGHT_S = 300; // past the 0 + 90 + 30 hold-to, which a hold at the pull's end never suggests
 
   it('flags an under-hold below the consensus band', () => {
     // gap 100, effective_cd 90 -> playerDelay 10 < (delay 30 - band 5 = 25).
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 100)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S }));
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(true);
   });
 
   it('does not flag a player exactly at the band edge (strict)', () => {
     // gap 115 -> playerDelay 25, exactly delay - band; strict < so not flagged.
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 115)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S }));
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
   });
 
   it('does not flag an over-hold', () => {
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 160)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S }));
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
   });
 });

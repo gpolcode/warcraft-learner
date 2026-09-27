@@ -238,7 +238,7 @@ export class RotationFeatureService {
     const bl = this.checkBloodlustAlignment(cdName, castTimesS, cdBench, blTimeS, wantsBL);
     issues.push(...bl.findings);
     issues.push(...this.castCadence.checkGaps(ROTATION_VOICE, cdName, castTimesS, cdBench));
-    const holds = this.holdTargets.holdSuggestionFindings(cdName, castTimesS, cdBench.hold_targets);
+    const holds = this.holdTargets.holdSuggestionFindings(cdName, castTimesS, cdBench.hold_targets, fightDurS);
 
     const blNote = bl.blAligned && wantsBL ? ', aligned with Bloodlust' : '';
     const success = issues.length ? null : this.cooldownSuccess(cdName, actual, ` - ${actual}/${expected} casts${blNote}.`);
