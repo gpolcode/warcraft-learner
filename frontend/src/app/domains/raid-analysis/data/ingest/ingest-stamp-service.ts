@@ -44,7 +44,7 @@ export class IngestStampService {
     return { skip: stored.signature === signature, signature };
   }
 
-  /** Files with no numeric `ingest_version` (manifests, rulebooks) are never future. */
+  /** Files with no numeric `ingest_version` (manifests) are never future. */
   isFutureVersion(parsed: unknown): boolean {
     const file = VERSIONED_FILE_SCHEMA.safeParse(parsed);
     return file.success && file.data.ingest_version > INGEST_VERSION;

@@ -15,6 +15,9 @@ import { MapTransformService } from '../data/map/map-transform-service';
 import { NorthernSkyTransformService } from '../data/northern-sky/northern-sky-transform-service';
 import { IngestSignatureService } from '../data/ingest/ingest-signature-service';
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
+import { SpecPlanLoaderService } from '../data/simc/spec-plan-loader-service';
+import type { SpecPlan } from '../data/simc/spec-plan-service';
+import { PLAN_KEY, planLoader, specPlan } from '../../../../testing/builders/spec-plan';
 
 const signatures = TestBed.inject(IngestSignatureService);
 TestBed.resetTestingModule();
@@ -44,9 +47,9 @@ const RANKED = [TOP_PARSE, RUNNER_UP];
 const RERANKED = [TOP_PARSE, NEWCOMER];
 
 // Fewer rows than the orchestrator's top-N cap: past it, signatureOf stops matching the signature the run stamps.
-const signatureOf = (rows: RankedRow[]): string => signatures.encounterSkipKey(
+const signatureOf = (rows: RankedRow[], planKey = PLAN_KEY): string => signatures.encounterSkipKey(
   rows.map(row => ({ report_code: row.report.code, fight_id: row.report.fightID })),
-  new Set(), String(INGEST_VERSION), rows.length);
+  new Set(), `${INGEST_VERSION}:${planKey}`, rows.length);
 
 const benchPath = (encId: number, bench = LEAD_BENCH): string => `${SPEC}/${bench}/${encId}.json`;
 const bossName = (encId: number): string => BOSSES.find(boss => boss.id === encId)?.name ?? '';
@@ -103,7 +106,7 @@ const cleanTransport: Pick<WclTransport, 'withFetchOutcomes'> = {
     ({ result: await run(), outcomes: { inaccessibleCodes: new Set(), failedCodes: new Set() } }),
 };
 
-function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string): Promise<void> {
+function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string, plans = planLoader(specPlan())): Promise<void> {
   globalThis.history.replaceState(null, '', currentRaids ? `/?currentRaids=${encodeURIComponent(currentRaids)}` : '/');
   TestBed.configureTestingModule({
     providers: [
@@ -111,6 +114,7 @@ function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string): Promi
       { provide: WclApiService, useValue: wcl },
       { provide: WCL_TRANSPORT, useValue: cleanTransport },
       { provide: NgHttpCachingService, useValue: { clearCache: () => undefined } },
+      { provide: SpecPlanLoaderService, useValue: plans },
       ...TRANSFORMS.map(transform => ({ provide: transform, useValue: stubTransform })),
     ],
   });
@@ -118,9 +122,7 @@ function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string): Promi
 }
 
 describe('IngestOrchestratorService.run', () => {
-  const RULEBOOK_ONLY = { [`${SPEC}/rulebook.json`]: { spec_icon: 'ability_rogue_shadowdance' } };
   const RETIRED_ON_DISK = {
-    ...RULEBOOK_ONLY,
     [benchPath(RETIRED_BOSS.id)]: {
       encounter_id: RETIRED_BOSS.id, encounter_name: RETIRED_BOSS.name,
       sample_count: STORED_SAMPLES, ingest_version: INGEST_VERSION,
@@ -173,7 +175,7 @@ describe('IngestOrchestratorService.run', () => {
       encounter_id: CURRENT_BOSS.id, encounter_name: CURRENT_BOSS.name, sample_count: STORED_SAMPLES,
       source_signature: signatureOf(RANKED), ingest_version: INGEST_VERSION,
     };
-    const disk = fakeDisk({ ...RULEBOOK_ONLY, [benchPath(CURRENT_BOSS.id)]: stored });
+    const disk = fakeDisk({ [benchPath(CURRENT_BOSS.id)]: stored });
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 
@@ -185,7 +187,7 @@ describe('IngestOrchestratorService.run', () => {
       encounter_id: CURRENT_BOSS.id, encounter_name: CURRENT_BOSS.name, sample_count: STORED_SAMPLES,
       source_signature: signatureOf(RANKED), ingest_version: INGEST_VERSION,
     };
-    const disk = fakeDisk({ ...RULEBOOK_ONLY, [benchPath(CURRENT_BOSS.id)]: stored });
+    const disk = fakeDisk({ [benchPath(CURRENT_BOSS.id)]: stored });
 
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RERANKED }), RAID);
 
@@ -195,7 +197,7 @@ describe('IngestOrchestratorService.run', () => {
   });
 
   it('lists an encounter with no Mythic parses yet in the index, at zero samples', async () => {
-    const disk = fakeDisk(RULEBOOK_ONLY);
+    const disk = fakeDisk({});
 
     await ingest(disk, fakeWcl([CURRENT_BOSS, NEW_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 
@@ -203,5 +205,38 @@ describe('IngestOrchestratorService.run', () => {
       { id: CURRENT_BOSS.id, name: CURRENT_BOSS.name, sample_count: FRESH_SAMPLES },
       { id: NEW_BOSS.id, name: NEW_BOSS.name, sample_count: 0 },
     ]);
+  });
+
+  it('re-benches an encounter once its spec\'s plan changes, though the top parses did not', async () => {
+    const REVISED_PLAN: SpecPlan = { ...specPlan(), key: 'revised-plan-key' };
+    const stored = {
+      encounter_id: CURRENT_BOSS.id, encounter_name: CURRENT_BOSS.name, sample_count: STORED_SAMPLES,
+      source_signature: signatureOf(RANKED), ingest_version: INGEST_VERSION,
+    };
+    const disk = fakeDisk({ [benchPath(CURRENT_BOSS.id)]: stored });
+
+    await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, planLoader(REVISED_PLAN));
+
+    expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toMatchObject({
+      sample_count: FRESH_SAMPLES, source_signature: signatureOf(RANKED, REVISED_PLAN.key),
+    });
+  });
+
+  it('ingests every spec WCL lists, with no file on disk naming it first', async () => {
+    const disk = fakeDisk({});
+
+    await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
+
+    expect(disk.files.has(benchPath(CURRENT_BOSS.id))).toBe(true);
+  });
+
+  it('fails a spec whose plan cannot load without writing any of its benches', async () => {
+    const disk = fakeDisk({});
+    const unreachable = planLoader(Results.transient('WCL is unreachable right now.'));
+
+    await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, unreachable);
+
+    expect(disk.files.has(benchPath(CURRENT_BOSS.id))).toBe(false);
+    expect((globalThis as { __INGEST_DONE__?: { failed: { spec: string }[] } }).__INGEST_DONE__?.failed.map(entry => entry.spec)).toEqual([SPEC]);
   });
 });

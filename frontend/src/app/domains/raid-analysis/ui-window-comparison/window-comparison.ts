@@ -3,6 +3,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { CompactAbilityRow } from './compact-ability-row';
+import { RangeBar } from '../ui-range-bar/range-bar';
+import { RangeLegend } from '../ui-range-bar/range-legend';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import { FormatDamagePipe } from '../../shared/ui-format/format-damage-pipe';
 import { SignedPercentPipe } from '../../shared/ui-format/signed-percent-pipe';
@@ -21,7 +23,7 @@ let nextInstanceSeq = 0;
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    MatIconModule, MatButtonModule, GameIcon, CompactAbilityRow,
+    MatIconModule, MatButtonModule, GameIcon, CompactAbilityRow, RangeBar, RangeLegend,
     FormatDurationPipe, FormatDamagePipe, SignedPercentPipe,
   ],
   templateUrl: './window-comparison.html',

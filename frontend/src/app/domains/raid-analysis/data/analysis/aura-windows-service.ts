@@ -38,16 +38,6 @@ export class AuraWindowsService {
     return windows;
   }
 
-  /** Up at that instant, both edges counted: a consuming cast shares the removal second 38% of the time. */
-  auraUpAt(windows: AuraWindows, spellId: number, timeS: number): boolean {
-    return (windows.get(spellId) ?? []).some(([start, end]) => timeS >= start && (end == null || timeS <= end));
-  }
-
-  /** Up going INTO that instant: the cast that grants a state shares its applybuff timestamp, which `auraUpAt` would credit it with. */
-  auraAlreadyUpAt(windows: AuraWindows, spellId: number, timeS: number): boolean {
-    return (windows.get(spellId) ?? []).some(([start, end]) => timeS > start && (end == null || timeS <= end));
-  }
-
   /** A bare apply carries no count and means one; every stack event carries the new total, clamped so a reported drop below zero cannot leak through. */
   private stackEdgeOf(event: TimedEvent): { count: number; opens: boolean } | null {
     const type = event.type;
@@ -101,22 +91,6 @@ export class AuraWindowsService {
       this.applySpanEdge(list, this.spanEdgeOf(event.type), event.atS);
     }
     return spans;
-  }
-
-  /** Percentage of the fight the aura was up. Overlapping spans are merged, so multi-target debuffs read as "up somewhere", which is what a maintain rule means. */
-  auraUptimePct(windows: AuraWindows, spellId: number, fightDurationS: number): number {
-    if (fightDurationS <= 0) return 0;
-    const spans = (windows.get(spellId) ?? [])
-      .map(([start, end]): [number, number] => [Math.max(0, start), Math.min(fightDurationS, end ?? fightDurationS)])
-      .filter(([start, end]) => end > start)
-      .sort((a, b) => a[0] - b[0]);
-    let covered = 0;
-    let cursor = -1;
-    for (const [start, end] of spans) {
-      const from = Math.max(start, cursor);
-      if (end > from) { covered += end - from; cursor = end; }
-    }
-    return (covered / fightDurationS) * 100;
   }
 }
 

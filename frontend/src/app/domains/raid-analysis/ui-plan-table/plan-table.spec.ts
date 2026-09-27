@@ -8,7 +8,7 @@ const SUBTITLE = 'Offensive cooldown usage across top logs.';
 function row(overrides: Partial<PlanTableRow> = {}): PlanTableRow {
   return {
     name: 'Shadow Blades', spellId: null, icon: '', firstCastS: null, typicalUses: null,
-    usedSampleCount: 0, sampleCount: 0, holds: [], rule: null, ...overrides,
+    usedSampleCount: 0, sampleCount: 0, holds: [], ...overrides,
   };
 }
 

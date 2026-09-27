@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
+import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { NorthernSkyPhaseDataService } from '../http/northern-sky-phase-data-service';
-import { DataFileApiService } from '../data-files/data-file-api-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { Rulebook } from '../rulebook/rulebook.models';
+import type { SpecPlan } from '../simc/spec-plan-service';
 import { Result } from '../../../shared/util-http/result';
 import { round } from '../analysis/analysis-math';
 import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
@@ -25,8 +25,8 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
+  private readonly specPlanLoader = inject(SpecPlanLoaderService);
   private readonly phaseData = inject(NorthernSkyPhaseDataService);
-  private readonly dataFiles = inject(DataFileApiService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<NorthernSkyBench>> {
     const phases = await this.phaseData.getPhases();
@@ -39,7 +39,7 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
       sampleTarget: EXPORTED_PARSE_COUNT,
       noRankingsMessage: NO_EXPORT_MESSAGE,
       header: 'identity',
-      rulebook: { dataFiles: this.dataFiles, plan: rulebook => this.exportAbilities(rulebook), missingMessage: NO_EXPORT_MESSAGE },
+      plan: { plans: this.specPlanLoader, pick: plan => this.exportAbilities(plan), missingMessage: NO_EXPORT_MESSAGE },
       parse: (parse, abilities) => this.parseCastTimes(parse, abilities),
       bench: async ({ parses }) => {
         const built = parses[0] ?? [];
@@ -71,10 +71,10 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
     return built.length ? built : null;
   }
 
-  private exportAbilities(rulebook: Rulebook): ExportAbility[] | null {
+  private exportAbilities(plan: SpecPlan): ExportAbility[] | null {
     const abilities: ExportAbility[] = [
-      ...rulebook.major_cooldowns.map(cd => ({ spell_id: cd.spell_id, name: cd.name, kind: 'cooldown' as const })),
-      ...rulebook.defensives.map(def => ({ spell_id: def.spell_id, name: def.name, kind: 'defensive' as const })),
+      ...plan.cooldowns.map(cd => ({ spell_id: cd.spell_id, name: cd.name, kind: 'cooldown' as const })),
+      ...plan.defensives.map(def => ({ spell_id: def.spell_id, name: def.name, kind: 'defensive' as const })),
     ].filter(ability => ability.spell_id);
     return abilities.length ? abilities : null;
   }

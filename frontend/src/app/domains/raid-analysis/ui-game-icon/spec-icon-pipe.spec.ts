@@ -12,7 +12,7 @@ beforeAll(() => {
     providers: [{ provide: DataFileApiService, useValue: { getSpecMeta: () => new Promise(() => undefined) } }],
   });
   TestBed.inject(SpecMetaService).hydrate([
-    { spec: 'SubtletyRogue', className: 'Rogue', specName: 'Subtlety', classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue', specIcon: 'ability_stealth' },
+    { spec: 'SubtletyRogue', className: 'Rogue', specName: 'Subtlety', classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue' },
   ]);
   pipe = TestBed.runInInjectionContext(() => new SpecIconPipe());
 });
@@ -22,7 +22,7 @@ describe('SpecIconPipe', () => {
     { input: null,            expected: '', why: 'null is falsy - no spec selected' },
     { input: undefined,       expected: '', why: 'undefined is falsy' },
     { input: '',              expected: '', why: 'empty string is falsy' },
-    { input: 'SubtletyRogue', expected: 'https://wow.zamimg.com/images/wow/icons/small/ability_stealth.jpg', why: 'delegation row; shape pinned in spec-meta.spec.ts' },
+    { input: 'SubtletyRogue', expected: 'https://assets.rpglogs.com/img/warcraft/icons/Rogue-Subtlety.jpg', why: 'delegation row; shape pinned in spec-meta.spec.ts' },
     { input: 'Bogus',         expected: '', why: 'unknown spec folder yields no icon' },
   ] as { input: string | null | undefined; expected: string; why: string }[])(
     'transform($input) === "$expected" ($why)',

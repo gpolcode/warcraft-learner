@@ -63,12 +63,6 @@
   </div>
 
   @if (activeWindow(); as w) {
-    @let fillBg =
-      w.status === 'good' ? 'bg-success' :
-      w.status === 'warn' ? 'bg-warning' :
-      w.status === 'bad' ? 'bg-critical' :
-      w.status === 'muted' ? 'bg-muted' : 'bg-accent';
-
     <div class="px-4 py-2.5 bg-surface border-t border-line">
       <div class="flex flex-wrap items-center gap-4 gap-y-2 md:gap-x-5.5">
         <div class="flex flex-col shrink-0">
@@ -141,23 +135,11 @@
     @if (!activeIsBenchOnly()) {
       <div class="px-4 pb-2">
         <span class="block text-label text-muted mb-1.5">{{ rangeLabel() }}</span>
-        <div class="relative h-5 rounded bg-bg" aria-hidden="true">
-          @if (overviewPlayerWidthPct() !== null) {
-            <div [class]="'absolute inset-y-0 left-0 rounded opacity-[0.65] ' + fillBg"
-              [style.width.%]="overviewPlayerWidthPct()"></div>
-          }
-          @if (overviewRangeLeftPct() !== null) {
-            <div class="absolute inset-y-0 rounded bg-accent/30 border border-accent" [style.left.%]="overviewRangeLeftPct()" [style.width.%]="overviewRangeWidthPct()"></div>
-          }
-          @if (overviewAvgLeftPct() !== null) {
-            <div class="absolute inset-y-0 w-[2px] bg-accent" [style.left.%]="overviewAvgLeftPct()"></div>
-          }
-        </div>
-        <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-muted">
-          <span class="flex items-center gap-1"><span [class]="'inline-block h-2 w-2 rounded-[2px] opacity-[0.65] ' + fillBg" aria-hidden="true"></span>You</span>
-          <span class="flex items-center gap-1"><span class="inline-block h-2 w-2 rounded-[2px] bg-accent/30 border border-accent" aria-hidden="true"></span>Top raiders, lowest to highest</span>
-          <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-[2px] bg-accent" aria-hidden="true"></span>Top raiders average</span>
-        </div>
+        <wl-range-bar class="h-5"
+          [you]="overviewPlayerWidthPct()" [rangeLeft]="overviewRangeLeftPct()" [rangeWidth]="overviewRangeWidthPct()" [avg]="overviewAvgLeftPct()"
+          [status]="w.status">
+        </wl-range-bar>
+        <wl-range-legend class="mt-1.5" [status]="w.status"></wl-range-legend>
       </div>
     }
 

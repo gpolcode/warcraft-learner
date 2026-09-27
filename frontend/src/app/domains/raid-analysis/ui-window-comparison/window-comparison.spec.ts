@@ -5,10 +5,10 @@ import { statusColor, mountDom, MountedDom } from '../../../../testing/component
 
 const CHIP = 'button[role="option"]';
 const LISTBOX = '[role="listbox"]';
-const BAR_TRACK = 'div.h-5';
+const BAR_TRACK = 'wl-range-bar';
 const PLAYER_FILL = `${BAR_TRACK} > div[class*="opacity-"]`;
-const AVG_MARKER = `${BAR_TRACK} > div[class*="w-[2px]"]`;
-const LEGEND = 'div[class*="gap-x-3"]';
+const AVG_MARKER = `${BAR_TRACK} > div[class*="w-0.5"]`;
+const LEGEND = 'wl-range-legend';
 const COLUMN_HEADERS = 'div.hidden.md\\:grid';
 const DELTA_BADGE = 'div.flex-col.shrink-0:nth-of-type(3) > span.text-value';
 const CELL = '[role="listbox"] div.flex-col.shrink-0';

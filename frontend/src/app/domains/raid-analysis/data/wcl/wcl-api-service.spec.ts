@@ -35,7 +35,7 @@ class RecordingTransport implements WclTransport {
 
 const SPEC_META = {
   spec: 'SubtletyRogue', className: 'Rogue', specName: 'Subtlety',
-  classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue', specIcon: 'ability_stealth',
+  classLabel: 'Rogue', specLabel: 'Subtlety', classIcon: 'class_rogue',
 };
 
 function setup(): { api: WclApiService; transport: RecordingTransport; tokens: string[] } {

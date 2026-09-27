@@ -12,7 +12,7 @@ function serviceWith(bench: Result<DefensiveBench>, wcl: Record<string, unknown>
   return featureService(DEFENSIVE_DATA_SOURCE, DefensiveFeatureService, bench, wcl);
 }
 
-const EVASION_META = { name: 'Evasion', spell_id: EVASION, cooldown: 120, usage_rule: 'Use on melee', talent_gated: false };
+const EVASION_META = { name: 'Evasion', spell_id: EVASION, cooldown: 120, talent_gated: false };
 
 function twoDefensiveBench(): DefensiveBench {
   return benchWith({

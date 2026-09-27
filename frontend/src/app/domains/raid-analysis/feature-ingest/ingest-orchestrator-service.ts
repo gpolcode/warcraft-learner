@@ -19,6 +19,7 @@ import { IngestSignatureService } from '../data/ingest/ingest-signature-service'
 import { IngestStampService, type IngestStamp } from '../data/ingest/ingest-stamp-service';
 import { IngestStateService, type SpecIngestState } from '../data/ingest/ingest-state-service';
 import { SpecReportService, SELECTED_MARKER, type SpecReportRow } from '../data/ingest/spec-report-service';
+import { SpecPlanLoaderService } from '../data/simc/spec-plan-loader-service';
 import type { IngestEncounter } from '../data/ingest/ingest.models';
 
 const TOP_N = 10;
@@ -69,6 +70,7 @@ export class IngestOrchestratorService {
   private readonly wclApi = inject(WclApiService);
   private readonly dataFile = inject(DataFileApiService);
   private readonly specMeta = inject(SpecMetaService);
+  private readonly specPlans = inject(SpecPlanLoaderService);
   private readonly wclTransport = inject(WCL_TRANSPORT);
   private readonly wclCache = inject(NgHttpCachingService);
   private readonly benches = inject(BenchRegistryService).benches;
@@ -89,7 +91,7 @@ export class IngestOrchestratorService {
     const version = String(INGEST_VERSION);
     console.log(`Ingest version: ${version}`);
 
-    await this.resolveSpecMetas();
+    const knownSpecs = await this.resolveSpecMetas();
 
     const raidNames = this.currentRaids.parseRaidNames(new URLSearchParams(globalThis.location.search).get('currentRaids'));
     console.log(raidNames.length
@@ -100,9 +102,9 @@ export class IngestOrchestratorService {
     await this.pruneRetiredRaids(protectedIds);
     await this.refreshIndices(encounters);
 
-    const specs = await this.orderedSpecsFromDisk();
+    const specs = await this.orderedSpecs(knownSpecs);
     if (!specs.length) {
-      console.log('No known specs (no rulebook.json found). Nothing to do.');
+      console.log('WCL listed no specs. Nothing to do.');
       publishSummary({ succeeded: [], failed: [], budgetStopped: false });
       return;
     }
@@ -112,24 +114,12 @@ export class IngestOrchestratorService {
     publishSummary(summary);
   }
 
-  private async resolveSpecMetas(): Promise<void> {
-    // The spec icon is not on WCL, so enrich each meta from that spec's rulebook (its spec_icon stem).
+  private async resolveSpecMetas(): Promise<string[]> {
     const metas = await this.currentRaids.discoverSpecMetas(this.wclApi);
-    for (const meta of metas) {
-      const rulebook = await this.dataFile.getRulebook(meta.spec);
-      if (rulebook.ok) {
-        meta.specIcon = rulebook.value.spec_icon;
-      } else {
-        // Only a corrupt file (permanent) is worth logging; a missing rulebook is an un-authored spec.
-        if (rulebook.error.kind === 'permanent') {
-          this.logger.logWarn(`ingest ${meta.spec}: corrupt rulebook.json, shipping blank spec icon`, rulebook.error);
-        }
-        meta.specIcon = '';
-      }
-    }
     this.specMeta.hydrate(metas);
     await this.dataFile.writeSpecMeta(metas);
     console.log(`Resolved ${metas.length} specs from WCL`);
+    return metas.map(meta => meta.spec);
   }
 
   /** Pruning only the selected specs would leave them at zero data and permanently re-selected. */
@@ -187,21 +177,10 @@ export class IngestOrchestratorService {
     }
   }
 
-  private async orderedSpecsFromDisk(): Promise<string[]> {
-    const onDisk = await this.dataFile.listSpecs();
-    const withRulebook: string[] = [];
-    for (const spec of onDisk) {
-      const rulebook = await this.dataFile.getRulebook(spec);
-      if (rulebook.ok) {
-        withRulebook.push(spec);
-      } else if (rulebook.error.kind === 'permanent') {
-        // A corrupt rulebook silently freezes the spec on stale data; log so it is diagnosable.
-        this.logger.logWarn(`ingest ${spec}: corrupt rulebook.json, excluded from this run`, rulebook.error);
-      }
-    }
-    if (!withRulebook.length) return [];
+  private async orderedSpecs(knownSpecs: string[]): Promise<string[]> {
+    if (!knownSpecs.length) return [];
 
-    const orderInputs = await Promise.all(withRulebook.map(async spec => {
+    const orderInputs = await Promise.all(knownSpecs.map(async spec => {
       const benched = await this.benchedIds(spec);
       const state = await this.loadIngestState(spec);
       const emptyIds = state?.empty_encounter_ids ?? [];
@@ -245,9 +224,10 @@ export class IngestOrchestratorService {
   }
 
   private async ingestSpec(
-    spec: string, encounters: IngestEncounter[], version: string,
+    spec: string, encounters: IngestEncounter[], ingestVersion: string,
   ): Promise<boolean> {
     console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
+    const version = await this.planVersion(spec, ingestVersion);
 
     // Feeds the never-checked-first order - a file-server-only signal, zero WCL budget.
     const previousState = await this.loadIngestState(spec);
@@ -296,6 +276,15 @@ export class IngestOrchestratorService {
     await this.finishSpec(spec, encounters, previousState, emptyThisPass);
     console.log(`Ingestion complete for ${spec}.`);
     return false;
+  }
+
+  /** The plan key rides in the signature, so an encounter re-benches exactly when its spec's plan changes. */
+  private async planVersion(spec: string, ingestVersion: string): Promise<string> {
+    const plan = await this.specPlans.planFor(spec);
+    if (!plan.ok) throw new Error(`no plan for ${spec}: ${plan.error.message}`);
+    const { key, lines, cooldowns, defensives } = plan.value;
+    console.log(`  plan ${key}: ${lines.length} list lines, ${cooldowns.length} cooldowns, ${defensives.length} defensives`);
+    return `${ingestVersion}:${key}`;
   }
 
   private benchedIds(spec: string): Promise<number[]> {

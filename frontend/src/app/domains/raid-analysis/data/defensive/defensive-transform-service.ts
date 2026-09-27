@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { DataFileApiService } from '../data-files/data-file-api-service';
+import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { RulebookDefensive } from '../rulebook/rulebook.models';
+import { PlanDefensive } from '../plan/plan.models';
 import { BurstWindow } from '../analysis/analysis.models';
 import { PerDefensiveBenchmark } from '../encounter/encounter.models';
 import { Result } from '../../../shared/util-http/result';
@@ -55,16 +55,16 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
-  private readonly dataFiles = inject(DataFileApiService);
+  private readonly specPlanLoader = inject(SpecPlanLoaderService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<DefensiveBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'DefensiveTransformService',
       errorId: 'defensive.bench',
       noRankingsMessage: NO_DEFENSIVE_BENCH_MESSAGE,
-      rulebook: {
-        dataFiles: this.dataFiles,
-        plan: (rulebook): RulebookDefensive[] | null => rulebook.defensives.length ? rulebook.defensives : null,
+      plan: {
+        plans: this.specPlanLoader,
+        pick: (plan): PlanDefensive[] | null => plan.defensives.length ? plan.defensives : null,
         missingMessage: NO_DEFENSIVE_BENCH_MESSAGE,
       },
       iconSpellIds: bench => [
@@ -86,7 +86,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
   }
 
   private async parseDefensives(
-    { ranking, report, fight, player }: BenchParse, defensives: RulebookDefensive[],
+    { ranking, report, fight, player }: BenchParse, defensives: PlanDefensive[],
   ): Promise<{ windows: ParseDefWindow[]; summaries: ParseDefensiveSummary[] }> {
     const gameIdByActorId = new Map<number, number>();
     for (const enemy of report.masterData?.enemies ?? []) gameIdByActorId.set(enemy.id, enemy.gameID);
@@ -105,12 +105,11 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     };
   }
 
-  protected defensivePlanMeta(defensives: RulebookDefensive[]): DefensivePlanMeta[] {
+  protected defensivePlanMeta(defensives: PlanDefensive[]): DefensivePlanMeta[] {
     return defensives.map(defensive => ({
       name: defensive.name,
       spell_id: defensive.spell_id,
       cooldown: defensive.cooldown,
-      usage_rule: defensive.usage_rule ?? null,
       talent_gated: !!defensive.talent_gated,
     }));
   }
@@ -124,7 +123,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
   }
 
   protected summarizeDefensiveCasts(
-    defensives: RulebookDefensive[],
+    defensives: PlanDefensive[],
     buffWindows: Map<number, [number, number | null][]>,
     castEvents: TimedEvent[],
     fightDurationS: number,
@@ -177,11 +176,11 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     return topSource != null ? (gameIdByActorId.get(topSource) ?? null) : null;
   }
 
-  // Open buffs run to fight end, never a rulebook duration.
+  // Open buffs run to fight end, never a fixed duration.
   protected findParseDefensiveWindows(
     damageTaken: TimedEvent[], fightDurationS: number,
     buffWindows: Map<number, [number, number | null][]>,
-    defensives: RulebookDefensive[],
+    defensives: PlanDefensive[],
     gameIdByActorId: Map<number, number>,
   ): ParseDefWindow[] {
     const hits = damageTaken
@@ -286,14 +285,14 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
 
   protected aggregateDefensiveBenchmarks(
     perParseSummaries: ParseDefensiveSummary[][],
-    defensives: RulebookDefensive[],
+    defensives: PlanDefensive[],
   ): Record<string, PerDefensiveBenchmark> {
     const byName = group(perParseSummaries.flat(), summary => summary.name);
 
     // Every sampled parse contributes one array, so the count is the total-parse use-share denominator.
     const totalParses = perParseSummaries.length;
     const perDefensiveBenchmarks: Record<string, PerDefensiveBenchmark> = {};
-    // Iterate the rulebook defensives so the name, cooldown, and spell id come from one source.
+    // Iterate the plan's defensives so the name, cooldown, and spell id come from one source.
     for (const defensive of defensives) {
       const summaries = byName.get(defensive.name);
       if (!summaries?.length) continue;

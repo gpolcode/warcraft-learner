@@ -1,18 +1,32 @@
 import { InjectionToken } from '@angular/core';
 import { DataSource } from '../data-source/data-source';
 import { PerCdBenchmark } from '../encounter/encounter.models';
-import { RulebookCooldown } from '../rulebook/rulebook.models';
+import { PlanCooldown, PriorityList } from '../plan/plan.models';
 import { BenchHeader } from '../analysis/bench-pipeline-service';
-import { BenchedRule } from './rotation-rule-engine-service';
+
+export interface ShareRange {
+  lo: number;
+  avg: number;
+  hi: number;
+}
+
+export interface ButtonBench {
+  action: string;
+  /** The id the top logs cast it under most, which names its icon. */
+  spell_id: number;
+  /** Over the top logs, each log's share of the button's moments it got right, as `ListCheckService.rightShare` reads it. */
+  right: ShareRange;
+}
 
 export interface RotationBench extends BenchHeader {
   downtime_threshold_s: number;
   top_avg_efficiency: number;
   top_efficiency_stddev: number;
   per_cd_benchmarks: Record<string, PerCdBenchmark>;
-  major_cooldowns: RulebookCooldown[];
-  /** Rulebook rules with the band this encounter measured, so the runtime never re-measures the field. */
-  rules: BenchedRule[];
+  major_cooldowns: PlanCooldown[];
+  /** The spec's SimulationCraft list, so the runtime reads the player's log with nothing fetched but the log. */
+  list: PriorityList;
+  buttons: ButtonBench[];
   cd_spell_ids: Record<string, number>;
   ability_icons: Record<number, { icon: string; name: string }>;
 }

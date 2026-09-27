@@ -116,11 +116,6 @@ describe('discoverSpecMetas', () => {
     expect(metas.find(meta => meta.spec === 'DevourerDemonHunter')?.classIcon).toBe('class_demonhunter');
   });
 
-  it('leaves the spec icon empty (the orchestrator fills it from the rulebook)', async () => {
-    const metas = await currentRaids.discoverSpecMetas(wclWithClasses(classes));
-    expect(metas.every(meta => meta.specIcon === '')).toBe(true);
-  });
-
   it('yields no meta when WCL serves no class', async () => {
     expect(await currentRaids.discoverSpecMetas(wclWithClasses([]))).toEqual([]);
   });

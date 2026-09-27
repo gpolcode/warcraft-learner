@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { type AnalysisFinding, type FindingOccurrence, type FindingTimeline, CAT_LABEL } from './analysis.models';
+import { type AnalysisFinding, type FindingOccurrence, CAT_LABEL } from './analysis.models';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 
 @Injectable({ providedIn: 'root' })
@@ -93,8 +93,6 @@ export interface FindingRow {
   measured: FindingMeasure;
   fix?: string;
   occurrences: FindingOccurrence[];
-  occurrenceTarget?: string;
-  timeline?: FindingTimeline;
 }
 
 export interface OnPlanChip {

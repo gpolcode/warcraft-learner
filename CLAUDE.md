@@ -1,6 +1,6 @@
 # warcraft-learner
 
-A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs combat data against AI-generated, spec-specific rulebooks and delivers coaching-style feedback benchmarked against top parses. The app is a **fully static Angular SPA** on GitHub Pages - no backend, all analysis client-side, WCL queried directly from the browser with an OAuth2 client-credentials token (no user login).
+A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs combat data against per-spec plans derived from SimulationCraft and delivers coaching-style feedback benchmarked against top parses. The app is a **fully static Angular SPA** on GitHub Pages - no backend, all analysis client-side, WCL queried directly from the browser with an OAuth2 client-credentials token (no user login).
 
 ## Always-on rules
 
@@ -26,7 +26,7 @@ flowchart LR
   specs --> runtimeFiles
 ```
 
-Bench data and rulebooks live only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
+Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
 
 ## Commands (run from `frontend/`)
 
@@ -49,10 +49,9 @@ The detailed conventions live in the `warcraft-*` skills under `.claude/skills/`
 
 | When you are... | Load |
 |---|---|
-| Building or changing any code (finding, rule kind, feature, page, component) | **warcraft-change** |
+| Building or changing any code (finding, fact family, feature, page, component) | **warcraft-change** |
 | Writing or changing any string a user sees | **warcraft-writing** |
 | Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
-| Generating or refreshing a spec's `rulebook.json` | **warcraft-rulebook** |
 | Reviewing code, a diff, or a PR | **warcraft-change** (the verification section applies) |
 
 On any conflict between a skill and this file, **this file wins**.

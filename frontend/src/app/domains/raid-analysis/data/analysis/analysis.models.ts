@@ -1,17 +1,18 @@
 export interface FindingOccurrence {
-  atS?: number;
+  atS: number;
   ok: boolean;
-  label: string;
-  /** Rendered only when `atS` is absent - never alongside it. */
-  note?: string;
   detail: string;
-  /** Excludes this entry from the ok/violation tone the template otherwise applies. */
-  marker?: boolean;
+  /** A cast the log could not settle: `ok` is false, yet it is no miss. */
+  unjudged?: boolean;
+  checks: ConditionCheck[];
 }
 
-export interface FindingTimeline {
-  segmentsS: [number, number][];
-  fightDurationS: number;
+export interface ConditionCheck {
+  text: string;
+  truth: 'true' | 'false' | 'unknown';
+  value: string;
+  /** An either-or or all-of term, read operand by operand in place of its own row. */
+  group?: { any: boolean; checks: ConditionCheck[] };
 }
 
 export interface AnalysisFinding {
@@ -22,16 +23,12 @@ export interface AnalysisFinding {
   // Populated by the analysis engine so the UI never has to parse the templated `message`.
   measured?: { value: string; unit?: string };
   label?: string;
-  rule_type?: string;
   timestamp_s?: number;
   details?: {
     cd_name?: string;
     remedy?: string;
   };
   occurrences: FindingOccurrence[];
-  occurrenceTarget?: string;
-  /** Only aura_uptime_below sets this; every other kind renders occurrences with no timeline. */
-  timeline?: FindingTimeline;
 }
 
 interface AbilityBreakdown {

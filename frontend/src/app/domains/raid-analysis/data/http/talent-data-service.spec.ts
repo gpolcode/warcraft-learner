@@ -51,6 +51,27 @@ describe('indexTalentTrees', () => {
   });
 });
 
+describe('talentTree', () => {
+  const tree = {
+    ...SUBTLETY_TREE,
+    specNodes: [...SUBTLETY_TREE.specNodes, { type: 'tiered', entries: [
+      { id: 52, name: 'Shadow Master', index: 200 },
+      { id: 51, name: 'Shadow Master', index: 100 },
+    ] }],
+  };
+
+  it('names class, spec and hero talents, the hero tree picks, and the apex tiers in tier order', () => {
+    const named = talentData['talentTree'](tree);
+    expect(named.talents.map(talent => talent.id)).toEqual([11, 22, 23, 52, 51, 33]);
+    expect(named.heroTrees).toEqual([{ id: 44, name: 'Trickster' }]);
+    expect(named.apex.map(tier => tier.id)).toEqual([51, 52]);
+  });
+
+  it('reads no apex for a tree without a tiered node', () => {
+    expect(talentData['talentTree'](SUBTLETY_TREE).apex).toEqual([]);
+  });
+});
+
 describe('TalentDataService', () => {
   afterEach(() => { TestBed.inject(HttpTestingController).verify(); });
 
@@ -68,6 +89,14 @@ describe('TalentDataService', () => {
     const pending = service.getTalents('BalanceDruid');
     httpMock.expectOne(DUMP_URL).flush([SUBTLETY_TREE]);
     expect(await pending).toEqual(Results.missing('No talent data for this spec.'));
+  });
+
+  it('names every spec\'s tree from one read of the dump', async () => {
+    const { service, httpMock } = setup();
+    const pending = service.getTalentTrees();
+    httpMock.expectOne(DUMP_URL).flush([SUBTLETY_TREE]);
+    const result = await pending;
+    expect(result.ok && result.value.get('SubtletyRogue')?.heroTrees).toEqual([{ id: 44, name: 'Trickster' }]);
   });
 
   it('is transient when the dump is unreachable', async () => {

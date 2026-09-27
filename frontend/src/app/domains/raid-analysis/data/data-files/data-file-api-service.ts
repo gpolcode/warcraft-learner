@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import type { Rulebook } from '../rulebook/rulebook.models';
 import type { EncounterEntry, SpecEntry } from '../encounter/encounter.models';
 import { SpecMeta } from './spec-meta.models';
 import { DATA_FILE_TRANSPORT } from './data-file-transport';
@@ -17,10 +16,6 @@ export class DataFileApiService {
 
   getBench<T>(spec: string, encounterId: number, bench: string): Promise<Result<T>> {
     return this.io.readJson<T>(`${spec}/${bench}/${encounterId}.json`);
-  }
-
-  getRulebook(spec: string): Promise<Result<Rulebook>> {
-    return this.io.readJson<Rulebook>(`${spec}/rulebook.json`);
   }
 
   async getSpecs(): Promise<Result<SpecEntry[]>> {

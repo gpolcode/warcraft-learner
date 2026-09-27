@@ -9,7 +9,7 @@ import {
 } from '../../../../../testing/spell-ids';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { cast, damage } from '../../../../../testing/builders/events';
-import { rulebook } from '../../../../../testing/builders/rulebook';
+import { planLoader, specPlan } from '../../../../../testing/builders/spec-plan';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
@@ -407,16 +407,13 @@ const wclFake = {
     dataType === 'Casts' ? [cast(SHADOW_BLADES, 10)] : burstDamage,
   getAbilities: abilityLookup(),
 };
-const filesFake = {
-  getRulebook: async () => Results.ok(rulebook({
-    spec: 'SubtletyRogue',
-    cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }],
-  })),
-};
+const plansFake = planLoader(specPlan({
+  cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }],
+}));
 
 describe('BurstTransformService (live, in-browser)', () => {
   it('computes a clustered burst bench from the top parses', async () => {
-    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, files: filesFake }) });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: plansFake }) });
     const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
@@ -431,9 +428,9 @@ describe('BurstTransformService (live, in-browser)', () => {
     expect(bench.value.ability_icons[SHADOW_BLADES_DAMAGE]).toEqual({ icon: `icon_${SHADOW_BLADES_DAMAGE}`, name: `name_${SHADOW_BLADES_DAMAGE}` });
   });
 
-  it('returns missing when the spec rulebook has no cooldowns', async () => {
+  it('returns missing when the spec\'s plan has no cooldowns', async () => {
     TestBed.configureTestingModule({
-      providers: provideApiFakes({ wcl: wclFake, files: { getRulebook: async () => Results.ok(rulebook({ spec: 'SubtletyRogue', cooldowns: [] })) } }),
+      providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan()) }),
     });
     expect(await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1))
       .toEqual(Results.missing('Not yet ingested.'));

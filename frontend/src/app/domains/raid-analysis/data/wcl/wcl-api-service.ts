@@ -187,7 +187,7 @@ export class WclApiService {
     return `query{gameData{${fields}}}`;
   }
 
-  // `gameData.ability(id)` returns `null` for a nonexistent id, so a bad (e.g. mistyped rulebook) id resolves to null rather than a wrong icon.
+  // `gameData.ability(id)` returns `null` for a nonexistent id, so a bad (e.g. mistyped) id resolves to null rather than a wrong icon.
   private buildAbilityIconsQuery(ids: number[]): string {
     const fields = ids.map(id => `a${id}: ability(id:${id}){id name icon}`).join(' ');
     return `query{gameData{${fields}}}`;

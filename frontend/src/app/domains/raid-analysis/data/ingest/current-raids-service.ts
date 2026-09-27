@@ -71,7 +71,6 @@ export class CurrentRaidsService {
           classLabel: cls.name,
           specLabel: spec.name,
           classIcon,
-          specIcon: '',
         });
       }
     }

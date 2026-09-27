@@ -1,6 +1,6 @@
 import { expect, test, Page } from '@playwright/test';
 import {
-  findingRows, shows, showsEntity, showsFindingRows, showsOnPlan, CD_CHIP, CLOCK, DAMAGE, PERCENT, RATIO,
+  shows, showsEntity, showsFindingRows, showsOnPlan, CD_CHIP, CLOCK, DAMAGE, PERCENT, RATIO,
 } from './support';
 
 const REPORT_URL = 'https://www.warcraftlogs.com/reports/fGDk8PmvBzdhtQga?fight=last';
@@ -97,30 +97,24 @@ test('pull overview reports the DPS, the death, and the kill', async () => {
   await expect(outcomeRow.locator('span.text-accent')).toHaveText(CLOCK);
 });
 
-test('rotation rules count the casts that broke each rule, name the ones followed, and expand a row into the instances behind its count', async () => {
-  const rotationRules = page.locator('wl-rotation').locator('wl-finding-table')
-    .filter({ hasText: 'How your casts held up against the rules the top Mythic logs follow for your spec.' });
+test('rotation rules bar each button against the top logs and open a row into the moments behind its bar', async () => {
+  const rotationRules = page.locator('wl-rotation').locator('wl-button-table');
   await shows(rotationRules, 'Rotation rules');
-  await showsFindingRows(rotationRules);
-  // A rule the pull followed shows as a chip rather than a row, so only both together cover the rulebook.
-  await showsOnPlan(rotationRules);
+  await shows(rotationRules, 'How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press at the wrong time and a skip when it was due both count as a miss.');
+  await shows(rotationRules, 'Top raiders, lowest to highest');
+  await showsEntity(rotationRules);
 
-  // The button's accessible name flips to "Hide instances" once clicked, so the filter matches either name.
-  const expandable = findingRows(rotationRules)
-    .filter({ has: page.getByRole('button', { name: /instances/i }) });
-  // A refresh can leave every rule verdict without judged instances.
-  if (await expandable.count()) {
-    const row = expandable.first();
-    await row.getByRole('button', { name: 'Show instances' }).click();
-    const strip = row.locator('wl-finding-occurrences');
-    await expect(strip).toBeVisible();
-    // MAX_OCCURRENCES is a code constant (24), not a bench value - the sampler caps the strip at it however many casts judged the row.
-    const count = await strip.getByRole('option').count();
-    expect(count).toBeGreaterThan(0);
-    expect(count).toBeLessThanOrEqual(24);
-    await row.getByRole('button', { name: 'Hide instances' }).click();
-    await expect(strip).not.toBeVisible();
-  }
+  await rotationRules.getByRole('button', { name: 'Show instances' }).first().click();
+  const strip = rotationRules.locator('wl-finding-occurrences');
+  await expect(strip).toBeVisible();
+  // MAX_OCCURRENCES is a code constant (24), not a bench value - the sampler caps the strip at it however many moments the button had.
+  const moments = strip.getByRole('option');
+  const count = await moments.count();
+  expect(count).toBeGreaterThan(0);
+  expect(count).toBeLessThanOrEqual(24);
+  await expect(moments.first()).toHaveText(CLOCK);
+  await rotationRules.getByRole('button', { name: 'Hide instances' }).click();
+  await expect(strip).not.toBeVisible();
 });
 
 test('offensives flag the cooldown casts that missed the top-parse plan', async () => {

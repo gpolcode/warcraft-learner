@@ -31,7 +31,7 @@ describe('BenchEmptyBanner', () => {
 
   it('uses the post-raid copy by default (Comparisons unlock)', () => {
     const text = render({ encounter: 'Boss' });
-    expect(text).toContain('Your pull graded against the spec rulebook below.');
+    expect(text).toContain('Rotation rules and the cooldown, burst, defensive and gear comparisons all need top-parse logs');
     expect(text).toContain('Comparisons unlock');
     expect(text).toContain('The sections below fill in.');
   });
