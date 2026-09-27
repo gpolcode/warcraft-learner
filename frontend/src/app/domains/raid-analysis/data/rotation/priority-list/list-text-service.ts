@@ -120,7 +120,7 @@ export class ListTextService {
 
   /** `flag` marks a term that tests the value for truth alone, so a variable read that way shows as yes or no. */
   value(node: AplNode, [lo, hi]: Range, flag = false): string {
-    if (lo === -Infinity && hi === Infinity) return this.supported(node) ? 'not in the log' : 'not supported by warcraft-learner yet';
+    if (lo === -Infinity && hi === Infinity) return this.supported(node) ? 'not in the log' : 'not supported by warcraft-learner';
     const name = node.type === 'Identifier' ? (node as jsep.Identifier).name : '';
     if (this.readsAsFlag(name, flag)) return lo !== hi ? 'either' : this.flagValue(name, lo);
     const unit = this.unit(name, lo === 1 && hi === 1);
