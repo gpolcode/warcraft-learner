@@ -92,13 +92,15 @@ describe('holdSuggestionFindings', () => {
   const EFFECTIVE_CD_S = 60;
   const HOLD_DELAY_S = 40;
   const HOLD_BAND_S = 5;          // tolerance half-width
-  const TARGET_CLOCK_S = 130;     // display-only median clock target ("hold to 02:10")
+  const TARGET_CLOCK_S = 130;     // the top logs' own clock, which only the plan shows
   const HELD_COUNT = 6;           // "6 of 10 top raiders hold" copy
   const TOTAL_SAMPLED = 10;
   const PRIOR_CAST_S = 10;
   const BAND_EDGE_S = PRIOR_CAST_S + EFFECTIVE_CD_S + (HOLD_DELAY_S - HOLD_BAND_S);
   const UNDER_HELD_S = BAND_EDGE_S - 5;
   const OVER_HELD_S = PRIOR_CAST_S + EFFECTIVE_CD_S + HOLD_DELAY_S + 20;
+  const HOLD_TO_S = PRIOR_CAST_S + EFFECTIVE_CD_S + HOLD_DELAY_S; // 01:50, from the player's own prior cast
+  const FIGHT_S = 300;
 
   const targetAt = (castIndex: number): CdHoldTargets => ({
     [castIndex]: {
@@ -110,37 +112,48 @@ describe('holdSuggestionFindings', () => {
   const holdTargets = targetAt(HELD_CAST_INDEX);
 
   it('suggests a hold when the player under-held vs the prior-relative band', () => {
-    const out = holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, UNDER_HELD_S], holdTargets);
+    const out = holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, UNDER_HELD_S], holdTargets, FIGHT_S);
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ severity: 'info', category: 'hold_suggestion' });
   });
 
-  it('reports the cast clock and the consensus in the message', () => {
-    const [finding] = holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, UNDER_HELD_S], holdTargets);
+  it('reports the consensus as how long top raiders wait after it is ready', () => {
+    const [finding] = holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, UNDER_HELD_S], holdTargets, FIGHT_S);
     assert.exists(finding);
-    expect(finding.message).toContain(`${HELD_COUNT} of ${TOTAL_SAMPLED} top raiders hold to 02:10`);
-    assert.exists(finding);
+    expect(finding.message).toContain(`${HELD_COUNT} of ${TOTAL_SAMPLED} top raiders wait ${HOLD_DELAY_S}s after it is ready.`);
     expect(finding.details?.cd_name).toBe(NAME);
   });
 
+  it('aims the hold at the prior cast plus the cooldown plus the top wait, not the top logs\' clock', () => {
+    const [finding] = holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, UNDER_HELD_S], holdTargets, FIGHT_S);
+    assert.exists(finding);
+    expect(finding.details?.remedy).toBe(`Hold ${NAME} to 01:50.`);
+    expect(finding.measured).toEqual({ value: '01:40', unit: 'hold to 01:50' });
+  });
+
+  it('does not suggest a hold that lands at the pull\'s end, only one before it', () => {
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, UNDER_HELD_S], holdTargets, HOLD_TO_S)).toEqual([]);
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, UNDER_HELD_S], holdTargets, HOLD_TO_S + 1)).toHaveLength(1);
+  });
+
   it('does not suggest at the band edge (strict boundary)', () => {
-    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, BAND_EDGE_S], holdTargets)).toEqual([]);
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, BAND_EDGE_S], holdTargets, FIGHT_S)).toEqual([]);
   });
 
   it('tolerates over-holding (a later-than-band press is fine)', () => {
-    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, OVER_HELD_S], holdTargets)).toEqual([]);
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, OVER_HELD_S], holdTargets, FIGHT_S)).toEqual([]);
   });
 
   it('skips index 0 - no prior cast to measure a gap against', () => {
     const PLAYER_FIRST_S = 80;
-    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PLAYER_FIRST_S], targetAt(1))).toEqual([]);
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PLAYER_FIRST_S], targetAt(1), FIGHT_S)).toEqual([]);
   });
 
   it('skips a cast index the player never reached', () => {
-    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S], holdTargets)).toEqual([]);
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S], holdTargets, FIGHT_S)).toEqual([]);
   });
 
   it('returns nothing when the player never cast the ability', () => {
-    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [], holdTargets)).toEqual([]);
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [], holdTargets, FIGHT_S)).toEqual([]);
   });
 });
