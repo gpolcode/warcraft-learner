@@ -91,15 +91,17 @@ export class ReportSelectionService {
     return `${fightName} was not pulled on Mythic. Pick a Mythic pull.`;
   }
 
+  // Pulls of one boss on another difficulty are a separate progression, so they do not advance this one's count.
   protected buildFights(fights: WclReport['fights'] = []): WclFight[] {
-    const bossAttempt: Record<number, number> = {};
+    const bossAttempt = new Map<string, number>();
     return fights
       .filter(f => (f.encounterID || 0) > 0)
       .sort((a, b) => a.startTime - b.startTime)
       .map(f => {
-        const eid = f.encounterID || 0;
-        bossAttempt[eid] = (bossAttempt[eid] ?? 0) + 1;
-        return { ...f, duration_s: Math.round((f.endTime - f.startTime) / 100) / 10, attempt: bossAttempt[eid] };
+        const key = `${f.encounterID}:${f.difficulty ?? ''}`;
+        const attempt = (bossAttempt.get(key) ?? 0) + 1;
+        bossAttempt.set(key, attempt);
+        return { ...f, duration_s: Math.round((f.endTime - f.startTime) / 100) / 10, attempt };
       });
   }
 

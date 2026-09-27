@@ -126,7 +126,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id),
     ]);
 
-    const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);
+    const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime);
     return this.findParseWindows({
       damage: this.wclProjections.withRelativeS(damage, fight.startTime), fightLenS: this.wclProjections.relativeS(fight.endTime, fight.startTime),
       timings: this.cdTimings(castsTimed, cooldowns), casts: castsTimed, abilityNames,

@@ -99,6 +99,23 @@ describe('RotationFeatureService', () => {
     if (result.ok) expect(result.value.onPlan).toEqual([{ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb' }]);
   });
 
+  it('counts a press WCL logs once per target as one use', async () => {
+    const PRESS_S = 6;
+    const ALLY_ID = 9;
+    const PLAYER_ID = 10;
+    const wcl = {
+      getReport: async () => REPORT,
+      getAllEvents: async (_c: string, _f: number, dataType: string) => (dataType === 'Casts'
+        ? [cast(SHADOW_BLADES, PRESS_S, { source: PLAYER_ID, target: ALLY_ID }), cast(SHADOW_BLADES, PRESS_S + 0.02, { source: PLAYER_ID, target: PLAYER_ID })]
+        : []),
+    };
+    // 1 use per minute over the 2-minute pull: 2 expected, and 2 is also the floor.
+    const twoExpected = bench({ per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 1, stddev: 0.1 } }) } });
+    const result = await withSource(Results.ok(twoExpected), wcl).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    assert(result.ok);
+    expect(result.value.offensiveRows[0]?.measured).toMatchObject({ value: '1 / 2' });
+  });
+
   it('returns bench-only plan rows for the pre-fight view', async () => {
     const service = withSource(Results.ok(bench({
       per_cd_benchmarks: { 'Shadow Blades': cdBench() },

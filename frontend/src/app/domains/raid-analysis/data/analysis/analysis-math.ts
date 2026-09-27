@@ -49,12 +49,17 @@ export function groupByTime<T extends { time_s: number }>(windows: T[], mergeS: 
   return clusters;
 }
 
-export function isOutlierAbove(value: number, mean: number, stddev: number, sigmas = 2): boolean {
-  return value > mean + sigmas * stddev;
+export const OUTLIER_SIGMAS = 2;
+
+/** Floor on a timing band's half-width, so top logs that agree to the second do not flag a cast a second off theirs. */
+export const TIMING_BAND_MIN_S = 2;
+
+export function isOutlierAbove(value: number, mean: number, stddev: number, sigmas = OUTLIER_SIGMAS, minBand = 0): boolean {
+  return value > mean + Math.max(sigmas * stddev, minBand);
 }
 
-export function isOutlierBeyond(value: number, mean: number, stddev: number, sigmas = 2): boolean {
-  return Math.abs(value - mean) > sigmas * stddev;
+export function isOutlierBeyond(value: number, mean: number, stddev: number, sigmas = OUTLIER_SIGMAS, minBand = 0): boolean {
+  return Math.abs(value - mean) > Math.max(sigmas * stddev, minBand);
 }
 
 export function isOutlierBelow(value: number, mean: number, stddev: number, sigmas = 2): boolean {

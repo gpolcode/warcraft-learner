@@ -1,5 +1,5 @@
 import {
-  round, getOrInsert, groupByTime, isOutlierAbove, isOutlierBeyond, isOutlierBelow,
+  round, getOrInsert, groupByTime, isOutlierAbove, isOutlierBeyond, isOutlierBelow, OUTLIER_SIGMAS,
   castEfficiencyPct, closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
 } from './analysis-math';
 import { AnalysisFinding } from './analysis.models';
@@ -66,6 +66,28 @@ describe('isOutlierBeyond', () => {
   });
   it('does not flag a value exactly at the boundary', () => {
     expect(isOutlierBeyond(6, MEAN, STDDEV)).toBe(false);
+  });
+});
+
+describe('a band floor', () => {
+  const MEAN = 10;
+  const TIGHT_STDDEV = 0.2; // two sigma is only 0.4
+  const FLOOR = 2;
+
+  it('widens a tight band above the mean to the floor, flagging only past it', () => {
+    expect(isOutlierAbove(MEAN + FLOOR, MEAN, TIGHT_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(false);
+    expect(isOutlierAbove(MEAN + FLOOR + 0.1, MEAN, TIGHT_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(true);
+  });
+
+  it('widens a tight band on both sides of the mean to the floor', () => {
+    expect(isOutlierBeyond(MEAN - FLOOR, MEAN, TIGHT_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(false);
+    expect(isOutlierBeyond(MEAN - FLOOR - 0.1, MEAN, TIGHT_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(true);
+  });
+
+  it('leaves a band already wider than the floor at two sigma', () => {
+    const WIDE_STDDEV = 2; // two sigma is 4
+    expect(isOutlierAbove(MEAN + 4, MEAN, WIDE_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(false);
+    expect(isOutlierAbove(MEAN + 4.1, MEAN, WIDE_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(true);
   });
 });
 

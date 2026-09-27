@@ -23,7 +23,7 @@ export class HoldTargetsService {
     return holdWindows;
   }
 
-  // `target_s` is the absolute clock median (display); `delay_s`/`band_s`/`effective_cd_s` are the prior-relative band the runtime compares the player's own gap against.
+  // `target_s` is the absolute clock median the plan shows; `delay_s`/`band_s`/`effective_cd_s` are the prior-relative band the runtime compares the player's own gap against.
   buildHoldTargets(
     entries: HoldWindowSource[], effectiveCd: number, totalSamples = entries.length,
   ): CdHoldTargets {
@@ -51,7 +51,7 @@ export class HoldTargetsService {
 
   /** Prior-relative (cascade-free): compares the player's own gap from their previous cast against the band; flags only a clear under-hold, tolerates over-holding. */
   holdSuggestionFindings(
-    name: string, castTimesS: number[], holdTargets: CdHoldTargets,
+    name: string, castTimesS: number[], holdTargets: CdHoldTargets, fightDurationS: number,
   ): AnalysisFinding[] {
     const findings: AnalysisFinding[] = [];
     if (!castTimesS.length) return findings;
@@ -67,15 +67,18 @@ export class HoldTargetsService {
       const pair = priorPairs.get(parseInt(idxStr, 10));
       if (!pair) continue;
       const { castS, prevCastS } = pair;
-      const playerDelay = castS - prevCastS - target.effective_cd_s;
-      if (playerDelay < target.delay_s - target.band_s) {
+      const readyS = prevCastS + target.effective_cd_s;
+      // From the player's own cooldown, never the top logs' clock, since the band judges the gap from the prior cast.
+      const holdToS = readyS + target.delay_s;
+      // A hold past the pull's end would mean not pressing it at all.
+      if (castS - readyS < target.delay_s - target.band_s && holdToS < fightDurationS) {
         findings.push({
           severity: 'info',
           category: 'hold_suggestion',
           timestamp_s: castS,
-          measured: { value: fmtClock(castS), unit: `top ${fmtClock(target.target_s)}` },
-          message: `${name} cast ${idxStr} at ${fmtClock(castS)}. ${target.count} of ${target.total_samples} top raiders hold to ${fmtClock(target.target_s)}.`,
-          details: { remedy: `Hold ${name} to ${fmtClock(target.target_s)}.`, cd_name: name },
+          measured: { value: fmtClock(castS), unit: `hold to ${fmtClock(holdToS)}` },
+          message: `${name} cast ${idxStr} at ${fmtClock(castS)}. ${target.count} of ${target.total_samples} top raiders wait ${Math.round(target.delay_s)}s after it is ready.`,
+          details: { remedy: `Hold ${name} to ${fmtClock(holdToS)}.`, cd_name: name },
           occurrences: [],
         });
       }

@@ -120,24 +120,25 @@ describe('analyzeRotationFindings hold suggestions (prior-relative)', () => {
       hold_targets: { '2': { target_s: 130, delay_s: 30, band_s: 5, effective_cd_s: 90, count: 4, total_samples: 5 } },
     }) },
   });
+  const FIGHT_S = 300; // past the 0 + 90 + 30 hold-to, which a hold at the pull's end never suggests
 
   it('flags an under-hold below the consensus band', () => {
     // gap 100, effective_cd 90 -> playerDelay 10 < (delay 30 - band 5 = 25).
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 100)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S }));
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(true);
   });
 
   it('does not flag a player exactly at the band edge (strict)', () => {
     // gap 115 -> playerDelay 25, exactly delay - band; strict < so not flagged.
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 115)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S }));
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
   });
 
   it('does not flag an over-hold', () => {
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 160)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S }));
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
   });
 });
@@ -171,6 +172,13 @@ describe('checkBloodlustAlignment', () => {
     const out = svc['checkBloodlustAlignment']('Shadow Blades', [(BL_AT_S + 4)], cdBench(), BL_AT_S, true);
     expect(out.blAligned).toBe(true);
     expect(out.findings).toEqual([]);
+  });
+
+  it('gives top logs that agree to the second on their Bloodlust offset a 2s band, flagging only past it', () => {
+    const agreed = cdBench({ avg_bl_offset_s: 0, stddev_bl_offset_s: 0 });
+    expect(svc['checkBloodlustAlignment']('Shadow Blades', [BL_AT_S + 2], agreed, BL_AT_S, true).findings).toEqual([]);
+    const late = svc['checkBloodlustAlignment']('Shadow Blades', [BL_AT_S + 2.1], agreed, BL_AT_S, true);
+    expect(late.findings[0]?.measured).toEqual({ value: 'late', unit: 'in Bloodlust' });
   });
 
   it('stamps the judged cast, not the earliest in-window cast', () => {

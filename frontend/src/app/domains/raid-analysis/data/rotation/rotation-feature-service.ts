@@ -6,7 +6,7 @@ import { PerCdBenchmark } from '../encounter/encounter.models';
 import { PlanCooldown } from '../plan/plan.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import {
-  isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
+  isOutlierBeyond, isOutlierBelow, castEfficiencyPct, OUTLIER_SIGMAS, TIMING_BAND_MIN_S,
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
 } from '../analysis/analysis-math';
 import { CadenceVoice } from '../analysis/cast-cadence-service';
@@ -131,7 +131,7 @@ export class RotationFeatureService {
     ]);
     const findings = this.analyzeRotationFindings({
       fightDurationS,
-      castEvents: this.wclProjections.withRelativeS(casts, fight.startTime),
+      castEvents: this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime),
       buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime),
       cooldowns: bench.major_cooldowns, bench,
     });
@@ -163,7 +163,7 @@ export class RotationFeatureService {
     } else if (blAligned && cdBench.avg_bl_offset_s != null && cdBench.stddev_bl_offset_s != null) {
       const offsets = inWindow.map(timeS => timeS - blTimeS);
       const playerOffset = closestToZero(offsets);
-      if (isOutlierBeyond(playerOffset, cdBench.avg_bl_offset_s, cdBench.stddev_bl_offset_s)) {
+      if (isOutlierBeyond(playerOffset, cdBench.avg_bl_offset_s, cdBench.stddev_bl_offset_s, OUTLIER_SIGMAS, TIMING_BAND_MIN_S)) {
         const dir = playerOffset > cdBench.avg_bl_offset_s ? 'late' : 'early';
         // The judged cast (closest-to-zero offset) is not always the earliest in the window.
         const judgedCastS = inWindow[offsets.indexOf(playerOffset)];
@@ -238,7 +238,7 @@ export class RotationFeatureService {
     const bl = this.checkBloodlustAlignment(cdName, castTimesS, cdBench, blTimeS, wantsBL);
     issues.push(...bl.findings);
     issues.push(...this.castCadence.checkGaps(ROTATION_VOICE, cdName, castTimesS, cdBench));
-    const holds = this.holdTargets.holdSuggestionFindings(cdName, castTimesS, cdBench.hold_targets);
+    const holds = this.holdTargets.holdSuggestionFindings(cdName, castTimesS, cdBench.hold_targets, fightDurS);
 
     const blNote = bl.blAligned && wantsBL ? ', aligned with Bloodlust' : '';
     const success = issues.length ? null : this.cooldownSuccess(cdName, actual, ` - ${actual}/${expected} casts${blNote}.`);

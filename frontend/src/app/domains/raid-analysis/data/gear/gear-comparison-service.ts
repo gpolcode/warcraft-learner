@@ -27,12 +27,12 @@ export class GearComparisonService {
     if (!player) {
       if (!top || top.pct < ENCHANT_CONSENSUS_PCT) return null;
       return { slotName: name, status: 'warn', name: 'Not enchanted',
-        note: 'Most top raiders run it. Apply it.', top: this.enchantItem(top) };
+        note: 'Most top raiders use it. Apply it.', top: this.enchantItem(top) };
     }
     const playerName = this.enchantLabel(player);
     if (top && player.id !== top.id) {
       return { slotName: name, status: 'info', name: playerName,
-        note: 'Most top raiders run it.', top: this.enchantItem(top) };
+        note: 'Most top raiders use it.', top: this.enchantItem(top) };
     }
     return { slotName: name, status: 'ok', name: playerName, note: null, top: null };
   }

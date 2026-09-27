@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { AnalysisFinding } from './analysis.models';
 import { CadenceBenchmark } from '../encounter/encounter.models';
-import { avgOr, stddevOr, medianOr, castGaps, round, fmtClock, isOutlierAbove } from './analysis-math';
+import { avgOr, stddevOr, medianOr, castGaps, round, fmtClock, isOutlierAbove, OUTLIER_SIGMAS, TIMING_BAND_MIN_S } from './analysis-math';
 import { HoldWindow, HOLD_CONSENSUS_FRAC } from './hold-targets-service';
 import { HoldTargetsService } from './hold-targets-service';
 
@@ -47,7 +47,8 @@ export class CastCadenceService {
       severity: 'critical', category: 'lost_cooldown', cd_name: name,
       measured: { value: `${actual} / ${expected}`, unit: voice.unit },
       message: `${name} was used ${actual} times. Top raiders get ${expected}.`,
-      details: { remedy: voice.underuseRemedy(name, floor - actual) }, occurrences: [] };
+      // The row shows the top count, so the fix counts up to it rather than to the looser floor.
+      details: { remedy: voice.underuseRemedy(name, expected - actual) }, occurrences: [] };
     return null;
   }
 
@@ -56,7 +57,7 @@ export class CastCadenceService {
   ): AnalysisFinding | null {
     const firstS = castTimesS[0];
     if (firstS == null) return null;
-    if (!isOutlierAbove(firstS, bench.avg_first_cast_s, bench.stddev_first_cast_s)) return null;
+    if (!isOutlierAbove(firstS, bench.avg_first_cast_s, bench.stddev_first_cast_s, OUTLIER_SIGMAS, TIMING_BAND_MIN_S)) return null;
     const lateS = (firstS - bench.avg_first_cast_s).toFixed(0);
     return {
       severity: 'warning', category: 'cooldown_delay', cd_name: name,

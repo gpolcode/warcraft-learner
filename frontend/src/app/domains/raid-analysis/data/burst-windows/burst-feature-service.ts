@@ -54,7 +54,7 @@ export class BurstFeatureService {
       this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId),
     ]);
     const playerWindows = this.findPlayerBurstWindows(
-      bench.windows, this.wclProjections.withRelativeS(damage, fight.startTime), this.wclProjections.withRelativeS(casts, fight.startTime), abilityNames,
+      bench.windows, this.wclProjections.withRelativeS(damage, fight.startTime), this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime), abilityNames,
     );
     return this.buildBurstView(bench.windows, playerWindows, fightDurationS, bench.cd_spell_ids, bench.ability_icons);
   }

@@ -61,7 +61,7 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
     { ranking, fight, player }: BenchParse, abilities: ExportAbility[],
   ): Promise<NorthernSkyAbility[] | null> {
     const casts = this.wclProjections.withRelativeS(
-      await this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id), fight.startTime,
+      this.wclProjections.presses(await this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id)), fight.startTime,
     );
     const built: NorthernSkyAbility[] = [];
     for (const ability of abilities) {
