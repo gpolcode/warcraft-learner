@@ -134,3 +134,13 @@ export function damageTaken(
     ...(opts?.source !== undefined && { sourceID: opts.source }),
   };
 }
+
+/** A raid-wide `Deaths` event: the one who died is the target. */
+export function death(targetId: number, atS: number): WclEvent {
+  return { type: 'death', timestamp: atS * MS_PER_SECOND, abilityGameID: 0, targetID: targetId };
+}
+
+/** The one brought back is the target. */
+export function resurrect(targetId: number, atS: number): WclEvent {
+  return { type: 'resurrect', timestamp: atS * MS_PER_SECOND, abilityGameID: 0, targetID: targetId };
+}
