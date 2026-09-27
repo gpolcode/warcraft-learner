@@ -96,7 +96,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
       this.listLogs.read(plan, { reportCode: ranking.report_code, fight, playerId: player.id, abilities: report.masterData?.abilities ?? [] }),
     ]);
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
-    const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);
+    const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime);
     const blTimeS = this.bloodlust.detectBloodlust(this.wclProjections.withRelativeS(buffs, fight.startTime));
     return {
       summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, blTimeS),

@@ -15,6 +15,9 @@ export const BLACK_POWDER = 319175;
 
 export const RUPTURE = 1943;
 
+// Logged once on its target and once on the priest, a few ms apart, for one press.
+export const POWER_INFUSION = 10060;
+
 export const WRATH = 190984;
 export const STARFIRE = 194153;
 

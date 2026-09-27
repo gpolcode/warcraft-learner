@@ -42,7 +42,7 @@ export class ListLogService {
     const tree = combatant?.talentTree;
     return this.checks.read(this.contexts.build({
       list, abilities,
-      casts: this.projections.withRelativeS(casts, startTime),
+      casts: this.projections.withRelativeS(this.projections.presses(casts), startTime),
       buffs: this.projections.withRelativeS([...this.upAtPull(combatant?.auras ?? [], startTime), ...buffs], startTime),
       debuffs: this.projections.withRelativeS(enemyAuras.filter(event => event.sourceID === playerId), startTime),
       damage: this.projections.withRelativeS(damage, startTime),

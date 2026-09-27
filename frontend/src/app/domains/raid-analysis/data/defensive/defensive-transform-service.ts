@@ -101,7 +101,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     const buffWindows = this.auraWindows.buildAuraWindows(this.wclProjections.withRelativeS(buffs, fight.startTime));
     return {
       windows: this.findParseDefensiveWindows(this.wclProjections.withRelativeS(dmgTaken, fight.startTime), fightDurationS, buffWindows, defensives, gameIdByActorId),
-      summaries: this.summarizeDefensiveCasts(defensives, buffWindows, this.wclProjections.withRelativeS(casts, fight.startTime), fightDurationS),
+      summaries: this.summarizeDefensiveCasts(defensives, buffWindows, this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime), fightDurationS),
     };
   }
 

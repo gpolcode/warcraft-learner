@@ -129,7 +129,7 @@ export class DefensiveFeatureService {
 
     const dtEventsTimed = this.wclProjections.withRelativeS(dtEvents, fight.startTime);
     const playerDefensives = this.analyzeDefensives(
-      bench.defensives, this.wclProjections.withRelativeS(casts, fight.startTime), this.wclProjections.withRelativeS(buffs, fight.startTime), fightDurationS,
+      bench.defensives, this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime), this.wclProjections.withRelativeS(buffs, fight.startTime), fightDurationS,
     );
     const findings = bench.defensives.length && playerDefensives.length
       ? this.analyzeDefensiveFindings(playerDefensives, bench.per_defensive_benchmarks, fightDurationS)

@@ -19,6 +19,19 @@ export class WclProjectionsService {
     return events.map(event => ({ ...event, atS: this.relativeS(event.timestamp, fightStartMs) }));
   }
 
+  /** WCL logs some presses once per target a few ms apart (Power Infusion on its target, then on the priest), so a cast of the same button that close to the last kept one is that press again. */
+  presses(events: WclEvent[]): WclEvent[] {
+    const lastPressMs = new Map<string, number>();
+    return events.filter(event => {
+      if (event.type !== 'cast') return true;
+      const key = `${event.sourceID ?? 0}:${event.abilityGameID}`;
+      const last = lastPressMs.get(key);
+      if (last !== undefined && event.timestamp - last < SAME_PRESS_MS) return false;
+      lastPressMs.set(key, event.timestamp);
+      return true;
+    });
+  }
+
   normalizeAbilityId(id: number): number {
     if (id === WCL_MELEE_EVENT_ABILITY_ID) return WOW_AUTO_ATTACK_SPELL_ID;
     if (id < 0) return WCL_SYNTHETIC_SOURCE_FALLBACK_ID;
@@ -91,6 +104,9 @@ export type TimedEvent = WclEvent & { atS: number };
 
 // WCL anonymizes a privacy-protected parse's player name to "Character <id>-<id>", unfetchable since it can never match a report actor.
 const ANONYMIZED_NAME = /^Character \d+-\d+$/;
+
+/** Well under any button's fastest repeat, well over the few ms between one press's per-target casts. */
+const SAME_PRESS_MS = 100;
 
 // WCL reports the physical auto-attack as event ability id 1; the real spell is Auto Attack.
 const WCL_MELEE_EVENT_ABILITY_ID = 1;
