@@ -144,6 +144,13 @@ describe('checkFirstCastDelay', () => {
   it('returns null with no casts', () => {
     expect(castCadence.checkFirstCastDelay(VOICE, 'Cloak', [], bench())).toBeNull();
   });
+
+  it('gives top logs that open within a second of each other a 2s band, flagging only past it', () => {
+    const TOP_OPEN_S = 5;
+    const tight = bench({ avg_first_cast_s: TOP_OPEN_S, stddev_first_cast_s: 0.3 });
+    expect(castCadence.checkFirstCastDelay(VOICE, 'Cloak', [TOP_OPEN_S + 2], tight)).toBeNull();
+    expect(castCadence.checkFirstCastDelay(VOICE, 'Cloak', [TOP_OPEN_S + 2.1], tight)?.category).toBe('cooldown_delay');
+  });
 });
 
 describe('checkGaps', () => {

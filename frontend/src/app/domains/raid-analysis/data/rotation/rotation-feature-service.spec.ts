@@ -173,6 +173,13 @@ describe('checkBloodlustAlignment', () => {
     expect(out.findings).toEqual([]);
   });
 
+  it('gives top logs that agree to the second on their Bloodlust offset a 2s band, flagging only past it', () => {
+    const agreed = cdBench({ avg_bl_offset_s: 0, stddev_bl_offset_s: 0 });
+    expect(svc['checkBloodlustAlignment']('Shadow Blades', [BL_AT_S + 2], agreed, BL_AT_S, true).findings).toEqual([]);
+    const late = svc['checkBloodlustAlignment']('Shadow Blades', [BL_AT_S + 2.1], agreed, BL_AT_S, true);
+    expect(late.findings[0]?.measured).toEqual({ value: 'late', unit: 'in Bloodlust' });
+  });
+
   it('stamps the judged cast, not the earliest in-window cast', () => {
     // avg_bl_offset -8, stddev 2 -> in-band [-12, -4]; the later cast (closest to zero) is judged, not the earlier in-band one.
     const EARLY_IN_BAND_S = BL_AT_S - 8;
