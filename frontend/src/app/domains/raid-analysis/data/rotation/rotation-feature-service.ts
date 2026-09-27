@@ -6,7 +6,7 @@ import { PerCdBenchmark } from '../encounter/encounter.models';
 import { PlanCooldown } from '../plan/plan.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import {
-  isOutlierBeyond, isOutlierBelow, castEfficiencyPct,
+  isOutlierBeyond, isOutlierBelow, castEfficiencyPct, OUTLIER_SIGMAS, TIMING_BAND_MIN_S,
   closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
 } from '../analysis/analysis-math';
 import { CadenceVoice } from '../analysis/cast-cadence-service';
@@ -163,7 +163,7 @@ export class RotationFeatureService {
     } else if (blAligned && cdBench.avg_bl_offset_s != null && cdBench.stddev_bl_offset_s != null) {
       const offsets = inWindow.map(timeS => timeS - blTimeS);
       const playerOffset = closestToZero(offsets);
-      if (isOutlierBeyond(playerOffset, cdBench.avg_bl_offset_s, cdBench.stddev_bl_offset_s)) {
+      if (isOutlierBeyond(playerOffset, cdBench.avg_bl_offset_s, cdBench.stddev_bl_offset_s, OUTLIER_SIGMAS, TIMING_BAND_MIN_S)) {
         const dir = playerOffset > cdBench.avg_bl_offset_s ? 'late' : 'early';
         // The judged cast (closest-to-zero offset) is not always the earliest in the window.
         const judgedCastS = inWindow[offsets.indexOf(playerOffset)];
