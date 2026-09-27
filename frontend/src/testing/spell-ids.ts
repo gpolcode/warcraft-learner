@@ -9,6 +9,10 @@ export const VANISH = 1856;
 export const CLOAK_OF_SHADOWS = 31224;
 export const EVASION = 5277;
 
+// WCL quirk: Blur casts as 198589 but its buff is 212800 - the name is the only bridge between the two.
+export const BLUR = 198589;
+export const BLUR_BUFF = 212800;
+
 export const EVISCERATE = 196819;
 export const BACKSTAB = 53;
 export const BLACK_POWDER = 319175;

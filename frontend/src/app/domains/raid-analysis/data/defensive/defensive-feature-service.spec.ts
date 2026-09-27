@@ -3,7 +3,7 @@ import { PlayerDefensive } from '../analysis/analysis.models';
 import { PerDefensiveBenchmark } from '../encounter/encounter.models';
 import { DefensiveFeatureService } from './defensive-feature-service';
 import { applyBuff, removeBuff, cast } from '../../../../../testing/builders/events';
-import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
+import { BLUR, BLUR_BUFF, CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { CLOAK_META, defBench, timed } from './defensive-harness';
 import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
@@ -24,7 +24,7 @@ describe('analyzeDefensives', () => {
     const out = svc['analyzeDefensives'](
       [CLOAK_META],
       [], timed([applyBuff(CLOAK_OF_SHADOWS, 10), removeBuff(CLOAK_OF_SHADOWS, 15)], 0),
-      300,
+      300, [],
     );
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 1, cast_times_s: [10] });
@@ -38,11 +38,20 @@ describe('analyzeDefensives', () => {
     const out = svc['analyzeDefensives'](
       [CLOAK_META],
       [], timed([removeBuff(CLOAK_OF_SHADOWS, REMOVE_S)], 0),
-      300,
+      300, [],
     );
     expect(out[0]).toMatchObject({ uses: 1, cast_times_s: [0] });
     assert.exists(out[0]);
     expect(out[0].windows[0]).toMatchObject({ start_s: 0, end_s: REMOVE_S });
+  });
+  it('counts a use from a buff the log carries under another id of the defensive\'s name', () => {
+    const BUFF_START_S = 40, BUFF_END_S = 50;
+    const blur = { name: 'Blur', spell_id: BLUR, cooldown: 60, talent_gated: false };
+    const abilities = [{ gameID: BLUR, name: 'Blur', icon: '' }, { gameID: BLUR_BUFF, name: 'Blur', icon: '' }];
+    const out = svc['analyzeDefensives'](
+      [blur], timed([cast(BLUR, BUFF_START_S)], 0), timed([applyBuff(BLUR_BUFF, BUFF_START_S), removeBuff(BLUR_BUFF, BUFF_END_S)], 0), 300, abilities,
+    );
+    expect(out[0]?.windows).toEqual([{ start_s: BUFF_START_S, end_s: BUFF_END_S }]);
   });
 });
 
