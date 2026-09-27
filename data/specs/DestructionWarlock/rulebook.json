@@ -1,0 +1,172 @@
+{
+  "spec": "DestructionWarlock",
+  "spec_icon": "spell_shadow_rainoffire",
+  "major_cooldowns": [
+    {
+      "name": "Summon Infernal",
+      "spell_id": 1122,
+      "cooldown": 120,
+      "opener_priority": 2,
+      "usage_rule": "Send it with your potion, trinket and racial, dump every Soul Shard into Chaos Bolt while it is out, and delay it only when the delay still leaves you every use.",
+      "id_note": "1122 is the cast id; 111685 is the self aura logs carry for the summon, and 335236 / 1220899 are unobserved twins of the same name."
+    },
+    {
+      "name": "Malevolence",
+      "spell_id": 442726,
+      "cooldown": 60,
+      "opener_priority": 3,
+      "usage_rule": "Press it with Wither already on every target and Soul Shards banked, then dump all of them before its 20 seconds run out.",
+      "id_note": "442726 carries both the casts and the self aura in the sampled parses; 430014 and 446285 are the unobserved talent-node twins.",
+      "talent_gated": true
+    },
+    {
+      "name": "Havoc",
+      "spell_id": 80240,
+      "cooldown": 30,
+      "usage_rule": "Mark the target you care about least and expect to live the full 15 seconds, then spend your Soul Shards while it is up.",
+      "id_note": "80240 is both the cast and the enemy debuff. Builds that take Mayhem lose the button entirely, hence talent_gated.",
+      "talent_gated": true
+    },
+    {
+      "name": "Soul Fire",
+      "spell_id": 6353,
+      "cooldown": 45,
+      "opener_priority": 1,
+      "usage_rule": "Precast it so it lands as the boss is pulled, then press it on cooldown whenever you are under 4 Soul Shards.",
+      "talent_gated": true
+    },
+    {
+      "name": "Cataclysm",
+      "spell_id": 152108,
+      "cooldown": 30,
+      "usage_rule": "Lead a big pull with it to land your dot on the whole pack before you press Malevolence.",
+      "id_note": "Not pressed in the sampled parses but castable per its tooltip; the talent build that takes it was not represented in the sample.",
+      "talent_gated": true
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Unending Resolve",
+      "spell_id": 104773,
+      "cooldown": 180,
+      "duration": 8,
+      "usage_rule": "Press it into heavy magic damage or when you have to keep casting through a silence or an interrupt."
+    },
+    {
+      "name": "Dark Pact",
+      "spell_id": 108416,
+      "cooldown": 60,
+      "duration": 20,
+      "usage_rule": "Shield up just before predictable damage while your health is high, since it spends 20% of your current health.",
+      "talent_gated": true
+    },
+    {
+      "name": "Mortal Coil",
+      "spell_id": 6789,
+      "cooldown": 45,
+      "usage_rule": "Send a loose add running and heal a fifth of your health with it when you dip low.",
+      "talent_gated": true
+    },
+    {
+      "name": "Demonic Healthstone",
+      "spell_id": 452930,
+      "cooldown": 60,
+      "usage_rule": "Swallow it the moment a big hit drops you low instead of waiting on a healer."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open with Infernal, Malevolence, Conflagrate, Chaos Bolt",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [1122, 442726, 17962, 116858],
+        "spell_names": ["Summon Infernal", "Malevolence", "Conflagrate", "Chaos Bolt"]
+      },
+      "action": "Pop Summon Infernal into Malevolence at the pull, then Conflagrate before your first Chaos Bolt."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Keep Wither up on your target",
+      "condition": {
+        "kind": "aura_uptime_below",
+        "aura_spell_id": 445474,
+        "aura_spell_name": "Wither",
+        "on": "target"
+      },
+      "action": "Recast Wither as it nears the end of its duration so its stacks never fall off."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Spend Backdraft stacks on Chaos Bolt",
+      "condition": {
+        "kind": "filler_in_buff",
+        "spell_id": 116858,
+        "spell_name": "Chaos Bolt",
+        "alternative_spell_ids": [29722],
+        "alternative_spell_names": ["Incinerate"],
+        "buff_spell_id": 117828,
+        "buff_spell_name": "Backdraft",
+        "except_buff_spell_ids": [],
+        "except_buff_spell_names": []
+      },
+      "action": "Follow Conflagrate with Chaos Bolt so Backdraft cuts its cast time, and fall back to Incinerate only when you are short on Soul Shards."
+    },
+    {
+      "type": "rotation",
+      "severity": "warning",
+      "description": "Cast Soul Fire before you cap Soul Shards",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 6353,
+        "spell_name": "Soul Fire",
+        "resource_type": 7,
+        "resource_name": "soul shards",
+        "bound": "max"
+      },
+      "action": "Dump a Chaos Bolt first so the shards Soul Fire hands you are not wasted."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Wither applied before Malevolence",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 442726,
+        "spell_name": "Malevolence",
+        "required_spell_id": 445468,
+        "required_spell_name": "Wither",
+        "position": "before"
+      },
+      "action": "Get Wither onto everything you are fighting before you press Malevolence."
+    },
+    {
+      "type": "aoe_switch",
+      "severity": "warning",
+      "description": "Rain of Fire replaces Chaos Bolt on packs",
+      "condition": {
+        "kind": "cast_at_target_count",
+        "spell_id": 5740,
+        "spell_name": "Rain of Fire",
+        "bound": "min"
+      },
+      "action": "Save Rain of Fire for wide packs and spend your Soul Shards on Chaos Bolt on a few targets or while Havoc is up."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "info",
+      "description": "Hold Havoc for Summon Infernal",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [80240],
+        "spell_names": ["Havoc"],
+        "anchor_spell_id": 1122,
+        "anchor_spell_name": "Summon Infernal"
+      },
+      "action": "Sit on Havoc while Summon Infernal is close so both land on the pack together."
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "spec": "HavocDemonHunter",
+  "spec_icon": "ability_demonhunter_specdps",
+  "major_cooldowns": [
+    {
+      "name": "Metamorphosis",
+      "spell_id": 200166,
+      "cooldown": 120,
+      "opener_priority": 7,
+      "usage_rule": "Press Metamorphosis only after Eye Beam is on cooldown and your Immolation Aura charges and Demonsurge empowerments are spent, since it resets them all.",
+      "id_note": "200166 is the id logs carry for the Havoc Metamorphosis cast (CAST in 5/5 parses); the guide cites 191427, which is castable per tooltip but was never observed as a cast. Cooldown 120s from the 191427 row; 162264 is the self aura."
+    },
+    {
+      "name": "Eye Beam",
+      "spell_id": 198013,
+      "cooldown": 30,
+      "opener_priority": 4,
+      "usage_rule": "Fire Eye Beam the moment it is ready with Vengeful Retreat a global earlier for Initiative, and press it as Abyssal Gaze inside Metamorphosis.",
+      "id_note": "Base and tooltip cooldown is 30s; Cycle of Hatred shaves up to 10s off once stacked, which the guide quotes as a 20s cooldown. Abyssal Gaze (452497) is the Fel-Scarred in-Metamorphosis cast and shares this cooldown, so it is deliberately not a separate entry."
+    },
+    {
+      "name": "Essence Break",
+      "spell_id": 258860,
+      "cooldown": 40,
+      "opener_priority": 6,
+      "usage_rule": "Cast Essence Break on cooldown and spend its whole window on Death Sweep and Annihilation, but hold it for after Eye Beam when Eye Beam is up within 4 seconds.",
+      "id_note": "258860 is the cast id; 320338 is the enemy debuff."
+    },
+    {
+      "name": "The Hunt",
+      "spell_id": 370965,
+      "cooldown": 90,
+      "opener_priority": 5,
+      "usage_rule": "Cast The Hunt when Eye Beam is within 10 seconds of ready so Eternal Hunt doubles that Eye Beam."
+    },
+    {
+      "name": "Immolation Aura",
+      "spell_id": 258920,
+      "cooldown": 30,
+      "opener_priority": 1,
+      "usage_rule": "Never sit on both charges of Immolation Aura, and dump them before Metamorphosis because it resets them.",
+      "id_note": "258920 is the observed Havoc cast id for every charge; A Fire Inside adds a second charge and cuts 6s, and the in-Metamorphosis version Consuming Fire (452487) was never observed as its own cast."
+    },
+    {
+      "name": "Potion of Recklessness",
+      "spell_id": 1236994,
+      "cooldown": 300,
+      "opener_priority": 2,
+      "usage_rule": "Drink it on its own keybind early in the opener before Eye Beam, never macroed into Metamorphosis.",
+      "talent_gated": true,
+      "id_note": "Combat potion named by the guide's opener and the APL potion line; gated so a player on a different potion is not read as never using one."
+    },
+    {
+      "name": "Algeth'ar Puzzle",
+      "spell_id": 383781,
+      "cooldown": 120,
+      "opener_priority": 3,
+      "usage_rule": "Press your on-use trinket with the potion at the start of the burst, never macroed into Metamorphosis.",
+      "talent_gated": true,
+      "id_note": "On-use trinket singled out by the APL precombat variables and cast in 4/5 parses; gated because trinket choice varies."
+    }
+  ],
+  "defensives": [
+    {
+      "name": "Blur",
+      "spell_id": 198589,
+      "cooldown": 60,
+      "duration": 10,
+      "usage_rule": "Press Blur just before a hit you cannot avoid, since the damage reduction is short.",
+      "id_note": "198589 is the cast id; 212800 is the self aura."
+    },
+    {
+      "name": "Darkness",
+      "spell_id": 196718,
+      "cooldown": 300,
+      "duration": 8,
+      "usage_rule": "Drop Darkness under the group for a raid-wide hit so everyone gets the avoidance chance."
+    },
+    {
+      "name": "Concentrated Silvermoon Health Potion",
+      "spell_id": 1295247,
+      "cooldown": 300,
+      "usage_rule": "Drink it when a spike drops you low and healing is committed elsewhere.",
+      "talent_gated": true,
+      "id_note": "Health potion consumable; gated so a player carrying a different potion is not read as never using one."
+    }
+  ],
+  "rules": [
+    {
+      "type": "opener",
+      "severity": "warning",
+      "description": "Open Eye Beam into Essence Break, then Metamorphosis",
+      "condition": {
+        "kind": "opening_sequence",
+        "spell_ids": [198013, 258860, 210152, 200166],
+        "spell_names": ["Eye Beam", "Essence Break", "Death Sweep", "Metamorphosis"]
+      },
+      "action": "Lead with Eye Beam and Essence Break, spend the window on Death Sweep, then press Metamorphosis."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Vengeful Retreat before every Eye Beam",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 198013,
+        "spell_name": "Eye Beam",
+        "required_spell_id": 198793,
+        "required_spell_name": "Vengeful Retreat",
+        "position": "before"
+      },
+      "action": "Retreat first so Initiative is up when Eye Beam goes out."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "warning",
+      "description": "Spend Immolation Aura charges before Metamorphosis",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 200166,
+        "spell_name": "Metamorphosis",
+        "required_spell_id": 258920,
+        "required_spell_name": "Immolation Aura",
+        "position": "before"
+      },
+      "action": "Dump your Immolation Aura charges first, because Metamorphosis resets them."
+    },
+    {
+      "type": "cooldown_pairing",
+      "severity": "info",
+      "description": "The Hunt paired into your next Eye Beam",
+      "condition": {
+        "kind": "cast_without_prior",
+        "spell_id": 370965,
+        "spell_name": "The Hunt",
+        "required_spell_id": 198013,
+        "required_spell_name": "Eye Beam",
+        "position": "after"
+      },
+      "action": "Send The Hunt so your next Eye Beam follows it and takes the Eternal Hunt damage."
+    },
+    {
+      "type": "cd_hold",
+      "severity": "warning",
+      "description": "Hold Essence Break until after Eye Beam",
+      "condition": {
+        "kind": "hold_cooldown_for_anchor",
+        "spell_ids": [258860],
+        "spell_names": ["Essence Break"],
+        "anchor_spell_id": 198013,
+        "anchor_spell_name": "Eye Beam"
+      },
+      "action": "Let Eye Beam go out first and break right after it, so the window is not spent channeling."
+    },
+    {
+      "type": "rotation",
+      "severity": "info",
+      "description": "Felblade only when Fury has room",
+      "condition": {
+        "kind": "resource_at_cast",
+        "spell_id": 232893,
+        "spell_name": "Felblade",
+        "resource_type": 17,
+        "resource_name": "fury",
+        "bound": "max"
+      },
+      "action": "Spend down with Annihilation or Chaos Strike first, then use Felblade to refill."
+    }
+  ]
+}
+
