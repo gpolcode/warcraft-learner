@@ -131,7 +131,7 @@ export class RotationFeatureService {
     ]);
     const findings = this.analyzeRotationFindings({
       fightDurationS,
-      castEvents: this.wclProjections.withRelativeS(casts, fight.startTime),
+      castEvents: this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime),
       buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime),
       cooldowns: bench.major_cooldowns, bench,
     });

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, MockInstance } from 'vitest';
 import { WclProjectionsService } from './wcl-projections-service';
-import { WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
+import { POWER_INFUSION, SHADOW_BLADES, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
+import { applyBuff, cast } from '../../../../../testing/builders/events';
 import { ParseRanking } from '../wcl/wcl.models';
 import { TestBed } from '@angular/core/testing';
 
@@ -191,5 +192,34 @@ describe('normalizeAbilityId', () => {
   it('passes other ability ids through unchanged', () => {
     const SHADOW_BLADES = 121471;
     expect(wclProjections.normalizeAbilityId(SHADOW_BLADES)).toBe(SHADOW_BLADES);
+  });
+});
+
+describe('presses', () => {
+  const PRIEST_ID = 5;
+  const ALLY_ID = 9;
+  const PRESS_S = 30;
+  const SAME_PRESS_S = 0.1;
+  const JUST_UNDER_S = 0.099;
+  const press = (atS: number, target: number) => cast(POWER_INFUSION, atS, { source: PRIEST_ID, target });
+
+  it('keeps one cast for a press logged on its target and then on the caster', () => {
+    const out = wclProjections.presses([press(PRESS_S, ALLY_ID), press(PRESS_S + 0.02, PRIEST_ID)]);
+    expect(out).toEqual([press(PRESS_S, ALLY_ID)]);
+  });
+
+  it('folds a repeat just under the same-press gap, and keeps one at it', () => {
+    expect(wclProjections.presses([press(PRESS_S, ALLY_ID), press(PRESS_S + JUST_UNDER_S, PRIEST_ID)])).toHaveLength(1);
+    expect(wclProjections.presses([press(PRESS_S, ALLY_ID), press(PRESS_S + SAME_PRESS_S, PRIEST_ID)])).toHaveLength(2);
+  });
+
+  it('keeps two different buttons pressed in the same instant', () => {
+    const both = [press(PRESS_S, ALLY_ID), cast(SHADOW_BLADES, PRESS_S, { source: PRIEST_ID })];
+    expect(wclProjections.presses(both)).toEqual(both);
+  });
+
+  it('passes every event that is not a cast through untouched', () => {
+    const buffs = [applyBuff(POWER_INFUSION, PRESS_S, { target: ALLY_ID }), applyBuff(POWER_INFUSION, PRESS_S, { target: PRIEST_ID })];
+    expect(wclProjections.presses(buffs)).toEqual(buffs);
   });
 });
