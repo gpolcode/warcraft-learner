@@ -1,6 +1,6 @@
 import { assert, describe, it, expect, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { PlayerDetailGroups, WclReport } from '../domains/raid-analysis/data/wcl/wcl.models';
+import { MYTHIC_DIFFICULTY, PlayerDetailGroups, WclReport } from '../domains/raid-analysis/data/wcl/wcl.models';
 import { WclApiService } from '../domains/raid-analysis/data/wcl/wcl-api-service';
 import { wclReport } from '../../testing/builders/wcl-fixtures';
 import { fight, player } from './post-raid-harness';
@@ -186,6 +186,16 @@ describe('buildFights', () => {
     ]);
     expect(fights.map(f => f.id)).toEqual([1, 2, 3]);
     expect(fights.map(f => f.attempt)).toEqual([1, 2, 1]); // boss 100: #1, #2; boss 200: #1
+  });
+
+  it('numbers a boss\'s pulls per difficulty, so an earlier Heroic kill does not advance the Mythic count', () => {
+    const HEROIC = 4;
+    const fights = selection['buildFights']([
+      fight({ id: 1, encounterID: 100, difficulty: HEROIC, startTime: 1000, endTime: 1000 }),
+      fight({ id: 2, encounterID: 100, difficulty: MYTHIC_DIFFICULTY, startTime: 2000, endTime: 2000 }),
+      fight({ id: 3, encounterID: 100, difficulty: MYTHIC_DIFFICULTY, startTime: 3000, endTime: 3000 }),
+    ]);
+    expect(fights.map(f => f.attempt)).toEqual([1, 1, 2]);
   });
 
   it('derives a one-decimal duration in seconds from the millisecond span', () => {
