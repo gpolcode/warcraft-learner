@@ -18,6 +18,7 @@ import { ListBenchService, MIN_MEASURED_PARSES } from './priority-list/list-benc
 import { LogReading } from './priority-list/list-check-service';
 import { ListLogService } from './priority-list/list-log-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
+import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { RotationBench } from './rotation-data-source';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
@@ -51,6 +52,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly bloodlust = inject(RotationBloodlustService);
+  private readonly auraWindows = inject(AuraWindowsService);
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
@@ -97,9 +99,10 @@ export class RotationTransformService implements DataSource<RotationBench> {
     ]);
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
     const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime);
-    const blTimeS = this.bloodlust.detectBloodlust(this.wclProjections.withRelativeS(buffs, fight.startTime));
+    const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
+    const blTimeS = this.bloodlust.detectBloodlust(buffsTimed);
     return {
-      summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, blTimeS),
+      summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, blTimeS, this.auraWindows.upAtPull(buffsTimed)),
       gapListS: this.castGapListS(castsTimed),
       durationS: fightDurS,
       reading,
@@ -108,13 +111,14 @@ export class RotationTransformService implements DataSource<RotationBench> {
 
   protected summarizeCooldownCasts(
     castEvents: TimedEvent[], cooldowns: PlanCooldown[],
-    fightDurS: number, blTimeS: number | null,
+    fightDurS: number, blTimeS: number | null, upAtPull: ReadonlySet<number>,
   ): CdSummary[] {
     return cooldowns.map(cooldown => {
-      const castTimesS = castEvents
-        .filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id)
-        .map(cast => cast.atS)
-        .sort((a, b) => a - b);
+      const castTimesS = [
+        // A use before the pull logs no cast, only its aura still up when the pull starts.
+        ...(upAtPull.has(cooldown.spell_id) ? [0] : []),
+        ...castEvents.filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id).map(cast => cast.atS),
+      ].sort((a, b) => a - b);
 
       let blAligned = false;
       let blOffsetS: number | null = null;

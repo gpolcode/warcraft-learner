@@ -27,14 +27,21 @@ const timed: WclProjectionsService['withRelativeS'] = (events, startMs) => wclPr
 
 describe('summarizeCooldownCasts', () => {
   const cooldowns = [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }];
+  const NONE_UP = new Set<number>();
+
+  it('counts a use before the pull, whose aura was still up at it, as a use at 0:00', () => {
+    const IN_FIGHT_S = 95;
+    const summaries = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, IN_FIGHT_S)], 0), cooldowns, 200, null, new Set([SHADOW_BLADES]));
+    expect(summaries[0]).toMatchObject({ total_uses: 2, first_cast_s: 0, cast_times_s: [0, IN_FIGHT_S] });
+  });
 
   it('counts casts, first cast, BL alignment and offset', () => {
-    const summaries = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 32)], 0), cooldowns, 200, 30);
+    const summaries = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 32)], 0), cooldowns, 200, 30, NONE_UP);
     expect(summaries[0]).toMatchObject({ name: 'Shadow Blades', total_uses: 1, first_cast_s: 32, bl_aligned: true, bl_offset_s: 2 });
   });
 
   it('flags a held second cast (>8s past the prior cast + cooldown)', () => {
-    const summaries = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 110)], 0), cooldowns, 200, null);
+    const summaries = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 110)], 0), cooldowns, 200, null, NONE_UP);
     assert.exists(summaries[0]);
     expect(summaries[0].cast_pattern).toBe('hold');
     // prior 0 + cd 90 = expected 90; actual 110 -> 20s hold.
@@ -45,7 +52,7 @@ describe('summarizeCooldownCasts', () => {
   it('measures each hold from the prior cast, so one hold does not cascade', () => {
     // cast 2 held (0 -> 200, well past reset); cast 3 is on cooldown after it (200 -> 290).
     const summaries = svc['summarizeCooldownCasts'](
-      timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 200), cast(SHADOW_BLADES, 290)], 0), cooldowns, 400, null);
+      timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 200), cast(SHADOW_BLADES, 290)], 0), cooldowns, 400, null, NONE_UP);
     assert.exists(summaries[0]);
     expect(summaries[0].hold_windows).toHaveLength(1);
     assert.exists(summaries[0]);
@@ -55,10 +62,10 @@ describe('summarizeCooldownCasts', () => {
 
   it('does not flag a hold exactly at the threshold (strict)', () => {
     // prior 0 + cd 90 + 8s threshold = 98; a cast at 98 has delay exactly 8 -> not a hold.
-    const atBoundary = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98)], 0), cooldowns, 200, null);
+    const atBoundary = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98)], 0), cooldowns, 200, null, NONE_UP);
     assert.exists(atBoundary[0]);
     expect(atBoundary[0].hold_windows).toHaveLength(0);
-    const past = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98.1)], 0), cooldowns, 200, null);
+    const past = svc['summarizeCooldownCasts'](timed([cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 98.1)], 0), cooldowns, 200, null, NONE_UP);
     assert.exists(past[0]);
     expect(past[0].hold_windows).toHaveLength(1);
   });

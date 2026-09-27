@@ -48,6 +48,17 @@ describe('buildAuraWindows', () => {
   });
 });
 
+describe('upAtPull', () => {
+  it('names an aura whose first event is a remove or a refresh, since it went up before the pull', () => {
+    const up = auraWindows.upAtPull(timed([removeBuff(CLOAK_OF_SHADOWS, REMOVE_S), refreshDebuff(RUPTURE, APPLY_S)], 0));
+    expect(up).toEqual(new Set([CLOAK_OF_SHADOWS, RUPTURE]));
+  });
+
+  it('does not name an aura that opens with an apply, even in the pull\'s first instant', () => {
+    expect(auraWindows.upAtPull(timed([applyBuff(CLOAK_OF_SHADOWS, 0), removeBuff(CLOAK_OF_SHADOWS, REMOVE_S)], 0))).toEqual(new Set());
+  });
+});
+
 describe('buildStackTimeline and stacksAt', () => {
   const FIRST_S = 5, SECOND_S = 6, DROP_S = 9;
   const events = timed([
