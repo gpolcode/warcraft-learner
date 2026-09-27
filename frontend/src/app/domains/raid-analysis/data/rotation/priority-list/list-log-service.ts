@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../wcl/wcl-api-service';
-import type { WclEvent, WclFight } from '../../wcl/wcl.models';
+import type { WclAbility, WclEvent, WclFight } from '../../wcl/wcl.models';
 import type { PriorityList } from '../../plan/plan.models';
 import { WclProjectionsService } from '../../analysis/wcl-projections-service';
 import { GearExtractService } from '../../gear/gear-extract-service';
@@ -11,6 +11,8 @@ export interface ListPull {
   reportCode: string;
   fight: WclFight;
   playerId: number;
+  /** The report's own ability names, which stand in for a name the spell data lacks. */
+  abilities: WclAbility[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -21,7 +23,7 @@ export class ListLogService {
   private readonly contexts = inject(FactContextService);
   private readonly checks = inject(ListCheckService);
 
-  async read(list: PriorityList, { reportCode, fight, playerId }: ListPull): Promise<LogReading> {
+  async read(list: PriorityList, { reportCode, fight, playerId, abilities }: ListPull): Promise<LogReading> {
     if (!list.lines.length) return { casts: new Map(), order: [], ids: new Map() };
     const streams = this.checks.streams(list);
     const { startTime, endTime, id } = fight;
@@ -39,7 +41,7 @@ export class ListLogService {
     const combatant = this.gearExtract.selectCombatantInfo(combatants, playerId);
     const tree = combatant?.talentTree;
     return this.checks.read(this.contexts.build({
-      list,
+      list, abilities,
       casts: this.projections.withRelativeS(casts, startTime),
       buffs: this.projections.withRelativeS([...this.upAtPull(combatant?.auras ?? [], startTime), ...buffs], startTime),
       debuffs: this.projections.withRelativeS(enemyAuras.filter(event => event.sourceID === playerId), startTime),

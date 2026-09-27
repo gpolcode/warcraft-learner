@@ -15,19 +15,27 @@ const KEY_LENGTH = 16;
 
 const SPELL_NAME = /^(?:target\.)?(?:buff|debuff|dot|cooldown|action|active_dots?|prev|prev_off_gcd|pet)\.(\w+)|^prev_gcd\.\d+\.(\w+)/;
 const TALENT_NAME = /^(talent|hero_tree|apex)\.\w+/;
-/** An id SimC's code names with no record in the class spell data (a racial) carries no cooldown or duration, so only aura reads may use it. */
-const AURA_READ = /^(?:target\.)?(?:buff|debuff|dot)\./;
-
+const TIERED_TALENT = /^(\w+)_(\d+)$/;
 type EffectOf = (token: string, effect: number) => number | undefined;
+/** Whether the spec's own spell data holds the name. */
+type Own = (token: string) => boolean;
 const healthGate = (talent: string, op: string, pct: number | undefined): string | null => (pct === undefined ? null : `${talent}&target.health.pct${op}${pct}`);
+const up = (token: string): string => `buff.${token}.up`;
+const anyUp = (tokens: string[]): string | null => (tokens.length ? tokens.map(up).join('|') : null);
 /** Names SimC computes in class code, each as the same test over names a log answers, with its threshold from the spell data. */
-const EXPRESSIONS: Record<string, (effect: EffectOf) => string | null> = {
+const EXPRESSIONS: Record<string, (effect: EffectOf, own: Own) => string | null> = {
   soul_fragments: () => 'buff.soul_fragments.stack',
   'soul_fragments.active': () => 'buff.soul_fragments.stack',
   // Fragments still spawning count towards SimC's total but sit on no aura yet, so the total reads as the ones already out.
   'soul_fragments.total': () => 'buff.soul_fragments.stack',
   'scorch_execute.active': effect => healthGate('talent.scorch', '<=', effect('scorch', 2)),
   'firestarter.active': effect => healthGate('talent.firestarter', '>=', effect('firestarter', 1)),
+  // SimC counts every rogue stealth, but a buff the spec cannot have would read as unknown rather than down.
+  'stealthed.rogue': (_, own) => anyUp(['stealth', 'vanish', 'subterfuge', 'shadow_dance'].filter(own)),
+  rtb_buffs: () => ['broadside', 'buried_treasure', 'grand_melee', 'ruthless_precision', 'skull_and_crossbones', 'true_bearing'].map(up).join('+'),
+  demonic_art: () => anyUp(['demonic_art_overlord', 'demonic_art_mother_of_chaos', 'demonic_art_pit_lord']),
+  // Scorch and Fire Blast hit as they cast, so only the three that travel are ever in flight.
+  hot_streak_spells_in_flight: () => ['fireball', 'pyroblast', 'phoenix_flames'].map(token => `action.${token}.in_flight_count`).join('+'),
 };
 
 /** A `pet.x` is out while the button that summons it lasts, named for the pet itself or with one of these. */
@@ -57,7 +65,7 @@ export class SpecPlanService {
   private expressions(byToken: Map<string, SpellRecord[]>): Map<string, string> {
     const effect: EffectOf = (token, index) => (byToken.get(token) ?? []).map(record => record.effects[index - 1]).find(value => value !== undefined);
     return new Map(Object.entries(EXPRESSIONS).flatMap(([name, expression]) => {
-      const text = expression(effect);
+      const text = expression(effect, token => byToken.has(token));
       return text ? [[name, text] as const] : [];
     }));
   }
@@ -114,15 +122,15 @@ export class SpecPlanService {
       ...[...cooldowns, ...defensives].map(button => this.dumps.tokenize(button.name)),
     ]);
     const spells = Object.fromEntries([...tokens].flatMap(token => {
-      const spell = this.spellOf(token, byToken, sources, names);
+      const spell = this.spellOf(token, byToken, sources);
       return spell ? [[token, spell]] : [];
     }));
     const derived = { lines: lines ?? [], variables: read?.variables ?? [], spells, talents: this.talents(names, sources.tree), cooldowns, defensives };
     return { ...derived, key: bytesToHex(sha256(utf8ToBytes(JSON.stringify(derived)))).slice(0, KEY_LENGTH) };
   }
 
-  /** A name the spell data does not hold, SimC's code declares: `voidfall_spending` is spell 1256302, `ca_inc` whichever of two buttons the build takes. */
-  private spellOf(token: string, byToken: Map<string, SpellRecord[]>, sources: { records: SpellRecord[]; code: string }, names: string[]): PlanSpell | null {
+  /** A name the spell data does not hold, SimC's code declares: `voidfall_spending` is spell 1256302, `ca_inc` whichever of two buttons the build takes; a racial it declares no record for is left to the log's own names. */
+  private spellOf(token: string, byToken: Map<string, SpellRecord[]>, sources: { records: SpellRecord[]; code: string }): PlanSpell | null {
     const named = byToken.get(token);
     if (named) return this.planSpell(named);
     const declared = this.simcNames.resolve(token, sources.code);
@@ -131,13 +139,7 @@ export class SpecPlanService {
       ...sources.records.filter(record => declared.ids.includes(record.id)),
       ...declared.tokens.flatMap(name => byToken.get(this.dumps.tokenize(name)) ?? []),
     ];
-    if (records.length) return this.planSpell(records);
-    const auraOnly = names.filter(name => this.spellTokens(name).includes(token)).every(name => AURA_READ.test(name));
-    return declared.ids.length && auraOnly ? { ...this.planSpell([]), name: this.spoken(token), ids: declared.ids } : null;
-  }
-
-  private spoken(token: string): string {
-    return token.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return records.length ? this.planSpell(records) : null;
   }
 
   private spellTokens(name: string): string[] {
@@ -156,6 +158,7 @@ export class SpecPlanService {
       cooldown: most('cooldown'), charges: most('charges'), duration: most('duration'), gcd: most('gcd'),
       cast_time: most('castTime'), max_stacks: most('maxStacks'),
       costs: [...costs].map(([type, amount]) => ({ type, amount })),
+      energize: named.map(record => record.energize).find(energize => energize !== null) ?? null,
     };
   }
 
@@ -163,15 +166,24 @@ export class SpecPlanService {
   private talents(names: string[], tree: TalentTree | null): Record<string, PlanTalent> {
     const keys = new Set(names.flatMap(name => TALENT_NAME.exec(name)?.[0] ?? []));
     return Object.fromEntries([...keys].flatMap(key => {
-      const entries = this.talentEntries(key, tree);
-      return entries[0] ? [[key, { name: entries[0].name, entries: entries.map(entry => entry.id) }]] : [];
+      const { entries, points } = this.talentEntries(key, tree);
+      return entries[0] ? [[key, { name: entries[0].name, entries: entries.map(entry => entry.id), ...(points ? { points } : {}) }]] : [];
     }));
   }
 
-  private talentEntries(key: string, tree: TalentTree | null): TalentName[] {
-    const [kind, token = ''] = key.split('.');
-    if (kind === 'apex') return (tree?.apex ?? []).slice(Number(token) - 1, Number(token));
-    return (kind === 'talent' ? tree?.talents : tree?.heroTrees)?.filter(entry => this.dumps.tokenize(entry.name) === token) ?? [];
+  /** `talent.hand_of_frost_4` is the fourth rank in the tiered node of that name, counted over its tiers. */
+  private talentEntries(key: string, tree: TalentTree | null): { entries: TalentName[]; points?: number } {
+    const kind = key.slice(0, key.indexOf('.'));
+    const token = key.slice(kind.length + 1);
+    if (kind === 'apex') return { entries: tree?.apex.slice(Number(token) - 1, Number(token)) ?? [] };
+    const own = this.named(tree, kind === 'talent' ? 'talents' : 'heroTrees', token);
+    const tiered = TIERED_TALENT.exec(token);
+    if (own.length || !tiered) return { entries: own };
+    return { entries: this.named(tree, 'apex', tiered[1] ?? ''), points: Number(tiered[2]) };
+  }
+
+  private named(tree: TalentTree | null, bucket: 'talents' | 'heroTrees' | 'apex', name: string): TalentName[] {
+    return tree?.[bucket].filter(entry => this.dumps.tokenize(entry.name) === name) ?? [];
   }
 
   private cooldowns(lines: PlanLine[] | null, byToken: Map<string, SpellRecord[]>): PlanCooldown[] {

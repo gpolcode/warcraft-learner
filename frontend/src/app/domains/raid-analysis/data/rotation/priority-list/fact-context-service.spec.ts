@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { applyBuff, beginCast, cast, removeBuff } from '../../../../../../testing/builders/events';
+import { applyBuff, beginCast, cast, damage, removeBuff } from '../../../../../../testing/builders/events';
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
 import { BLADESTORM, BLADESTORM_HERO, BLOODLUST, SHADOW_DANCE, STARFIRE } from '../../../../../../testing/spell-ids';
 import { FactContextService } from './fact-context-service';
@@ -8,6 +8,7 @@ import { factContext, priorityList } from './priority-list-harness';
 
 const DANCE_PASSIVE = 185314;
 const TIME_WARP = 80353;
+const BERSERKING = 26297;
 const RAGE = 1;
 const COMBO_POINTS = 4;
 const STARFIRE_S = 2;
@@ -29,6 +30,18 @@ describe('FactContextService', () => {
   it('reads an aura under the id the log shows most, so a same-named passive never stands in for it', () => {
     const buffs = [applyBuff(DANCE_PASSIVE, 0), applyBuff(SHADOW_DANCE, 10), removeBuff(SHADOW_DANCE, 16)];
     expect(factContext(list, { buffs }).auraId('shadow_dance', 'self')).toBe(SHADOW_DANCE);
+  });
+
+  it('reads a name the spell data lacks under the ids the report names it with', () => {
+    const abilities = [{ gameID: BERSERKING, name: 'Berserking', icon: '' }];
+    const ctx = factContext(list, { abilities, casts: [cast(BERSERKING, 1)], buffs: [applyBuff(BERSERKING, 1)] });
+    expect(ctx.castTimes('berserking')).toEqual([1]);
+    expect(ctx.auraId('berserking', 'self')).toBe(BERSERKING);
+  });
+
+  it('reads when each hit of a name landed, ticks aside', () => {
+    const ctx = factContext(list, { damage: [{ ...damage(STARFIRE, 4, 1), tick: true }, damage(STARFIRE, 3, 1)] });
+    expect(ctx.landings('starfire')).toEqual([3]);
   });
 
   it('reads SimC\'s bloodlust as whichever haste buff the raid used', () => {

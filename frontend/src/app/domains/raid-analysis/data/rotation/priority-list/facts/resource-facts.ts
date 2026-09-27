@@ -1,12 +1,9 @@
 import { Injectable, inject } from '@angular/core';
+import { POOL_TYPES } from '../../../simc/spell-dump-service';
 import { UNKNOWN, CastMoment, FactContext, FactReader, FactStream, Range } from '../priority-list.models';
 import { FactContextService } from '../fact-context-service';
 
-/** WCL's `classResources` type for each pool a SimC list names. */
-const POOLS: Record<string, number | undefined> = {
-  mana: 0, rage: 1, focus: 2, energy: 3, combo_points: 4, rune: 5, runic_power: 6, soul_shard: 7,
-  astral_power: 8, holy_power: 9, maelstrom: 11, chi: 12, insanity: 13, fury: 17, essence: 19,
-};
+const COST = /^(?:action\.(\w+)\.)?cost$/;
 const RESOURCE = /^([a-z_]+?)(?:\.(deficit|pct|max|regen|regen_combined|time_to_max))?$/;
 const COMBO_POINTS = 4;
 
@@ -23,16 +20,28 @@ export class ResourceFacts implements FactReader {
   readonly streams: FactStream[] = ['resources'];
 
   matches(name: string): boolean {
-    return name === 'cp_max_spend' || POOLS[RESOURCE.exec(name)?.[1] ?? ''] !== undefined;
+    return name === 'cp_max_spend' || name === 'energize_amount' || COST.test(name) || POOL_TYPES[RESOURCE.exec(name)?.[1] ?? ''] !== undefined;
   }
 
-  read(name: string, moment: CastMoment, _action: string, ctx: FactContext): Range {
+  read(name: string, moment: CastMoment, action: string, ctx: FactContext): Range {
+    const cost = COST.exec(name);
+    if (cost) return this.stated(ctx.list.spells[cost[1] ?? action]?.costs[0]?.amount);
+    if (name === 'energize_amount') return this.stated(ctx.list.spells[action]?.energize?.amount);
+    return this.pooled(name, moment, ctx);
+  }
+
+  private pooled(name: string, moment: CastMoment, ctx: FactContext): Range {
     const [, pool = '', field = ''] = RESOURCE.exec(name) ?? [];
-    const type = name === 'cp_max_spend' ? COMBO_POINTS : POOLS[pool] ?? -1;
+    const type = name === 'cp_max_spend' ? COMBO_POINTS : POOL_TYPES[pool] ?? -1;
     const at = this.poolAt(moment, type, ctx);
     if (!at) return UNKNOWN;
     const read = POOL_FIELDS[name === 'cp_max_spend' ? 'max' : field];
     return read ? read(at.amount, at.max) : this.regen(field, moment, type, ctx, at.max - at.amount[1]);
+  }
+
+  /** The spell data's own number, which talents and buffs may bend. */
+  private stated(amount: number | undefined): Range {
+    return amount === undefined ? UNKNOWN : [amount, amount];
   }
 
   /** Only a cast that touches a pool spends it, so between two such casts the logged changes are all it does, bar passive regen, which only ever adds. */

@@ -36,6 +36,15 @@ const DUMP = [
   record('Name             : Death Coil (id=47541)', 'Resource         : -30 Runic Power (6) (id=1)', 'Resource         : 2% Base Mana (0) (id=2)', 'Cast Time        : 1.5 seconds'),
   record('Name             : Demolish (id=436358)', 'Talent Entry     : Colossus (Arms, Protection) [tree=hero, row=1, col=1]'),
   record(
+    'Name             : Sinister Strike (id=193315) [Spell Family (8)] ',
+    'Effects          :',
+    '#1 (id=283619)   : School Damage (2): physical',
+    '                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | AP Coefficient: 1.223 | Target: Targeted Enemy (6)',
+    '#2 (id=283620)   : Energize Power (30)',
+    '                   Base Value: 1 | Scaled Value: 1 | Resource: combo_points | Target: Self (1)',
+  ),
+  record('Name             : New Moon (id=274281)', 'Effects          :', '#3 (id=726524)   : Energize Power (30)', '                   Base Value: 100 | Scaled Value: 100 | Resource: astral_power | Target: Self (1)'),
+  record(
     'Name             : Cloak of Shadows (id=31224) [Spell Family (8)] ',
     'Talent Entry     : Generic [free=(Subtlety), tree=class, row=1, col=6, max_rank=1, req_points=0]',
   ),
@@ -63,7 +72,7 @@ const named = (name: string) => records.find(entry => entry.name === name);
 
 describe('SpellDumpService.readDump', () => {
   it('reads one record per Name line, with its id and cooldown', () => {
-    expect(records).toHaveLength(13);
+    expect(records).toHaveLength(15);
     expect(named('Recklessness')).toMatchObject({ id: 1719, token: 'recklessness', cooldown: 90 });
   });
 
@@ -127,6 +136,12 @@ describe('SpellDumpService.readDump', () => {
 
   it('reads a dump written with Windows line endings the same', () => {
     expect(dumps.readDump(DUMP.replace(/\n/g, '\r\n'))).toEqual(records);
+  });
+
+  it('reads what a cast gives back, a pool the data keeps in tenths in the game\'s units, and nothing for a record that gives none', () => {
+    expect(named('Sinister Strike')?.energize).toEqual({ type: 4, amount: 1 });
+    expect(named('New Moon')?.energize).toEqual({ type: 8, amount: 10 });
+    expect(named('Eviscerate')?.energize).toBeNull();
   });
 
   it('reads each effect\'s base value under its own number', () => {

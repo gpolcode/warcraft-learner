@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { greatest } from 'd3-array';
+import { greatest, rollup } from 'd3-array';
 import { getOrInsert } from '../../analysis/analysis-math';
 import type { PriorityList } from '../../plan/plan.models';
-import type { WclEvent } from '../../wcl/wcl.models';
+import type { WclAbility, WclEvent } from '../../wcl/wcl.models';
+import { SpellDumpService } from '../../simc/spell-dump-service';
 import { WclProjectionsService, TimedEvent } from '../../analysis/wcl-projections-service';
 import { AuraWindowsService } from '../../analysis/aura-windows-service';
 import { BLOODLUST_IDS } from '../rotation-bloodlust-service';
@@ -24,6 +25,8 @@ const HASTE_FACTOR_MAX = 1;
 
 export interface FactInputs {
   list: PriorityList;
+  /** The report's own ability names, which stand in for a name the spell data lacks. */
+  abilities: WclAbility[];
   casts: TimedEvent[];
   buffs: TimedEvent[];
   /** Only the player's own, out of the raid-wide stream. */
@@ -45,15 +48,18 @@ export interface Pool {
 export class FactContextService {
   private readonly auraWindows = inject(AuraWindowsService);
   private readonly projections = inject(WclProjectionsService);
+  private readonly dumps = inject(SpellDumpService);
 
   build(input: FactInputs): FactContext {
     const { list, buffs, debuffs, damage } = input;
     const casts = input.casts.filter(event => event.type === 'cast').sort((a, b) => a.atS - b.atS);
-    const idsOf = this.perKey((token: string) => new Set(list.spells[token]?.ids ?? []));
+    const logged = this.lazy(() => rollup(input.abilities, same => same.map(ability => ability.gameID), ability => this.dumps.tokenize(ability.name)));
+    const ids = (token: string): number[] => list.spells[token]?.ids ?? logged().get(token) ?? [];
+    const idsOf = this.perKey((token: string) => new Set(ids(token)));
     const health = this.lazy(() => this.healthIndex(damage));
     const damageIndex = this.lazy(() => damage.map((event): DamageRow => [event.atS, this.projections.targetKey(event)]).sort((a, b) => a[0] - b[0]));
     const adds = this.lazy(() => ({ spans: this.addSpans(damage, damageIndex()) }));
-    const auraIds = this.perKey((key: string) => this.shownMost(list, key, key.startsWith('self:') ? buffs : debuffs));
+    const auraIds = this.perKey((key: string) => this.shownMost(ids, key, key.startsWith('self:') ? buffs : debuffs));
     const gcds = this.lazy(() => new Map(Object.values(list.spells).flatMap(spell => spell.ids.map(id => [id, spell.gcd] as const))));
     return {
       list, fightDurationS: input.fightDurationS, kill: input.kill, casts,
@@ -61,6 +67,7 @@ export class FactContextService {
       talents: input.talents,
       castIds: idsOf,
       castTimes: this.perKey((token: string) => casts.filter(event => idsOf(token).has(event.abilityGameID)).map(event => event.atS)),
+      landings: this.perKey((token: string) => damage.filter(event => !event.tick && idsOf(token).has(event.abilityGameID)).map(event => event.atS).sort((a, b) => a - b)),
       auraId: (token, on) => auraIds(`${on}:${token}`),
       selfSpans: this.perKey((id: number) => [...this.auraWindows.buildAuraSpansByTarget(buffs, id).values()].flat().sort((a, b) => a.startS - b.startS)),
       selfStacks: this.perKey((id: number) => this.auraWindows.buildStackTimeline(buffs, id)),
@@ -94,11 +101,11 @@ export class FactContextService {
   }
 
   /** `key` reads `self:token` or `target:token`, so one cache serves both streams; SimC's `bloodlust` is any raider's haste buff. */
-  private shownMost(list: PriorityList, key: string, events: TimedEvent[]): number | null {
+  private shownMost(ids: (token: string) => number[], key: string, events: TimedEvent[]): number | null {
     const token = key.slice(key.indexOf(':') + 1);
-    const ids = token === 'bloodlust' ? [...BLOODLUST_IDS] : list.spells[token]?.ids ?? [];
+    const named = token === 'bloodlust' ? [...BLOODLUST_IDS] : ids(token);
     const seen = (id: number): number => events.filter(event => event.abilityGameID === id).length;
-    const id = greatest(ids, seen);
+    const id = greatest(named, seen);
     return id !== undefined && seen(id) > 0 ? id : null;
   }
 

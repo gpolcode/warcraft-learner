@@ -5,9 +5,9 @@ import { planSpell } from '../../../../../../testing/builders/spec-plan';
 import { wclReport } from '../../../../../../testing/builders/wcl-fixtures';
 import { RUPTURE, SHADOW_DANCE, EVISCERATE } from '../../../../../../testing/spell-ids';
 import type { PlanLine } from '../../plan/plan.models';
-import type { WclCombatantInfo, WclEvent, WclFight } from '../../wcl/wcl.models';
+import type { WclCombatantInfo, WclEvent } from '../../wcl/wcl.models';
 import { WclApiService } from '../../wcl/wcl-api-service';
-import { ListLogService } from './list-log-service';
+import { ListLogService, ListPull } from './list-log-service';
 import { priorityList } from './priority-list-harness';
 
 const PLAYER_ID = 10;
@@ -37,10 +37,10 @@ function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclComba
   }] });
   return { calls, logs: TestBed.inject(ListLogService) };
 }
-const pull = (): { reportCode: string; fight: WclFight; playerId: number } => {
+const pull = (): ListPull => {
   const [fight] = wclReport({ endTimeMs: 120_000 }).fights;
   if (!fight) throw new Error('no pull in the fixture report');
-  return { reportCode: 'rX', fight, playerId: PLAYER_ID };
+  return { reportCode: 'rX', fight, playerId: PLAYER_ID, abilities: [] };
 };
 
 describe('ListLogService', () => {

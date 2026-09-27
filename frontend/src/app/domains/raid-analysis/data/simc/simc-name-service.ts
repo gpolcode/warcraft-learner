@@ -9,6 +9,7 @@ export interface SimcName {
 /** A declaration names its spell within the statement that holds the name's literal. */
 const STATEMENT_REACH = 400;
 const FIND_SPELL = /find_spell\(\s*(\d+)\s*\)/;
+const CREATE_ACTION = /create_action\(\s*"(\w+)"/;
 const MEMBER = /(?:\w+->)?((?:\w+\.)+\w+)\b(?!\s*\()/;
 const SPELL_ID = /\b(\d{4,})\b/g;
 const QUOTED = /"([^"]+)"/g;
@@ -17,7 +18,7 @@ const REGEX_SPECIAL = /[.*+?^${}()|[\]\\]/g;
 
 @Injectable({ providedIn: 'root' })
 export class SimcNameService {
-  /** Resolves a name SimC's code gives an aura, dot or action rather than taking it from the spell's own: `voidfall_spending`, `rend_dot`, `ca_inc`. */
+  /** Resolves a name SimC's code gives an aura, dot or action rather than taking it from the spell's own: `voidfall_spending`, `rend_dot`, `ca_inc`, `any_dnd`. */
   resolve(token: string, source: string): SimcName | null {
     return this.alias(token, source) ?? this.declared(token, source);
   }
@@ -34,6 +35,8 @@ export class SimcNameService {
       const statement = source.slice(at + literal.length, at + literal.length + STATEMENT_REACH).split(';')[0] ?? '';
       const found = FIND_SPELL.exec(statement);
       if (found) return { ids: [Number(found[1])], tokens: [] };
+      const created = CREATE_ACTION.exec(statement)?.[1];
+      if (created) return { ids: [], tokens: [created] };
       const member = MEMBER.exec(statement)?.[1];
       const resolved = member ? this.member(member, source, 0) : null;
       if (resolved) return resolved;

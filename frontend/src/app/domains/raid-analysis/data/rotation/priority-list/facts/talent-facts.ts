@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { max } from 'd3-array';
+import { sum } from 'd3-array';
 import { UNKNOWN, CastMoment, FactContext, FactReader, FactStream, Range } from '../priority-list.models';
 
 const TALENT = /^(talent\.\w+|hero_tree\.\w+|apex\.\d+)(?:\.(enabled|rank))?$/;
@@ -17,8 +17,8 @@ export class TalentFacts implements FactReader {
     const talent = ctx.list.talents[key];
     if (!talent || !ctx.talents) return UNKNOWN;
     const picked = ctx.talents;
-    const rank = max(talent.entries, entry => picked.get(entry) ?? 0) ?? 0;
-    const value = field === 'rank' ? rank : Number(rank > 0);
+    const rank = sum(talent.entries, entry => picked.get(entry) ?? 0);
+    const value = field === 'rank' ? rank : Number(rank >= (talent.points ?? 1));
     return [value, value];
   }
 }

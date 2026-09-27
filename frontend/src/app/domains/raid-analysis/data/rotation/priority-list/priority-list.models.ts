@@ -42,9 +42,11 @@ export interface FactContext {
   begincasts: readonly TimedEvent[];
   /** Picked talent entries and their ranks; null for a log with no talent tree. */
   talents: ReadonlyMap<number, number> | null;
-  /** Every id the list's name holds, since a cast under any of them is the same button. */
+  /** Every id the list's name holds, or the report names it with where the spell data lacks it, since a cast under any is the same button. */
   castIds: (token: string) => ReadonlySet<number>;
   castTimes: (token: string) => readonly number[];
+  /** When each hit of the name landed, ticks aside, so a projectile reads as in the air until its first. */
+  landings: (token: string) => readonly number[];
   /** The aura id this log shows most for the name, so a same-named passive never stands in for the buff; null when it shows none. */
   auraId: (token: string, on: 'self' | 'target') => number | null;
   selfSpans: (spellId: number) => readonly AuraSpan[];

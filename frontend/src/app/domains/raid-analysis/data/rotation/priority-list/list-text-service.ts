@@ -3,6 +3,7 @@ import type jsep from 'jsep';
 import { round } from '../../analysis/analysis-math';
 import type { PriorityList } from '../../plan/plan.models';
 import { AplNode, SimcAplService } from '../../simc/simc-apl-service';
+import { ConditionEvalService } from './condition-eval-service';
 import type { Range } from './priority-list.models';
 
 type Op = '<' | '<=' | '>' | '>=' | '=' | '!=';
@@ -32,7 +33,7 @@ const TALENT = /^(talent|hero_tree|apex)\.(\w+)(?:\.enabled)?$/;
 const POOL = /^(mana|rage|focus|energy|combo_points|rune|runic_power|soul_shard|astral_power|holy_power|maelstrom|chi|insanity|fury|essence)(?:\.(deficit|pct))?$/;
 const POOL_WORDS: Record<string, string | undefined> = { soul_shard: 'soul shards', rune: 'runes' };
 const AMOUNTS: Record<string, string | undefined> = { cp_max_spend: 'full', 'gcd.max': 'one GCD', gcd: 'one GCD' };
-const FLAG_VALUE = /(^|\.)(up|down|ticking|active|enabled|refreshable|ready|executing|exists)$|^(talent|hero_tree|apex)\./;
+const FLAG_VALUE = /(^|\.)(up|down|ticking|active|enabled|refreshable|ready|executing|exists|in_flight|placed)$|^(talent|hero_tree|apex|fight_style)\./;
 const SINGULAR = /^(stacks|charges|combo points|soul shards|runes)$/;
 
 const not = (holds: boolean): string => (holds ? '' : 'not ');
@@ -58,6 +59,9 @@ const FLAGS: FlagWords[] = [
   { match: /^raid_event\.adds\.exists$/, words: (_, holds) => `in a fight ${holds ? 'with' : 'without'} adds` },
   { match: /^raid_event\.adds\.up$/, words: (_, holds) => (holds ? 'while adds are up' : 'while no adds are up') },
   { match: /^raid_event\.pull\.exists$/, words: (_, holds) => (holds ? 'in a dungeon' : 'outside a dungeon') },
+  { match: /^fight_style\.\w+$/, words: (x, holds) => (x.endsWith('patchwerk') ? `${holds ? 'against' : 'away from'} a raid boss` : `${holds ? 'in' : 'outside'} a dungeon`) },
+  { match: /^(action\.\w+\.)?in_flight$/, words: (x, holds) => `while ${x} is ${not(holds)}in the air` },
+  { match: /^(action\.\w+\.)?placed$/, words: (x, holds) => `while ${x} is ${not(holds)}about to go off` },
   { match: /^variable\.\w+$/, words: (x, holds) => `${holds ? 'when' : 'unless'} ${x} holds` },
   { match: /^buff\.\w+\.(up|react|stack)$/, words: (x, holds) => `while ${x} is ${holds ? 'up' : 'down'}` },
   { match: /^buff\.\w+\.down$/, words: (x, holds) => `while ${x} is ${holds ? 'down' : 'up'}` },
@@ -83,6 +87,9 @@ const SUBJECTS: SubjectWords[] = [
   { match: /^((?:target\.)?(buff|debuff|dot)\.\w+\.)?remains$/, at: (x, op, n) => `with ${lessMore(op)} ${secs(n)} of ${x} left`, unit: 's left' },
   { match: /^cooldown\.\w+\.(remains|full_recharge_time)$/, at: (x, op, n) => (n === '0' && below(op) ? `when ${x} is ready` : `when ${x} is ${lessMore(op)} ${secs(n)} away`), unit: 's away' },
   { match: /^(cooldown\.\w+\.)?(charges|charges_fractional)$/, at: (x, op, n) => `at ${bound(op, n)} ${x} charges`, unit: 'charges' },
+  { match: /^(action\.\w+\.)?in_flight_count$/, at: (x, op, n) => `with ${bound(op, n)} ${x} in the air`, unit: 'in the air' },
+  { match: /^(action\.\w+\.)?in_flight_remains$/, at: (x, op, n) => `with ${lessMore(op)} ${secs(n)} until ${x} lands`, unit: 's to land' },
+  { match: /^(action\.\w+\.)?cost$/, at: (x, op, n) => `when ${x} costs ${bound(op, n)}`, unit: '' },
   { match: /^active_dots?\.\w+$/, at: (x, op, n) => `while ${x} is on ${bound(op, n)} enemies`, unit: 'enemies' },
   { match: /^target\.health\.pct$/, at: (_, op, n) => `${below(op) ? 'below' : 'above'} ${n}% target health`, unit: '% health' },
   { match: /^health\.pct$/, at: (_, op, n) => `${below(op) ? 'below' : 'above'} ${n}% health`, unit: '% health' },
@@ -94,6 +101,7 @@ const SUBJECTS: SubjectWords[] = [
 @Injectable({ providedIn: 'root' })
 export class ListTextService {
   private readonly apl = inject(SimcAplService);
+  private readonly evaluator = inject(ConditionEvalService);
 
   name(list: PriorityList, token: string): string {
     return list.spells[token]?.name ?? token.replace(/_/g, ' ');
@@ -112,12 +120,16 @@ export class ListTextService {
 
   /** `flag` marks a term that tests the value for truth alone, so a variable read that way shows as yes or no. */
   value(node: AplNode, [lo, hi]: Range, flag = false): string {
-    if (lo === -Infinity && hi === Infinity) return 'not in the log';
+    if (lo === -Infinity && hi === Infinity) return this.supported(node) ? 'not in the log' : 'not supported by warcraft-learner yet';
     const name = node.type === 'Identifier' ? (node as jsep.Identifier).name : '';
     if (this.readsAsFlag(name, flag)) return lo !== hi ? 'either' : this.flagValue(name, lo);
     const unit = this.unit(name, lo === 1 && hi === 1);
     const text = this.span(lo, hi);
     return unit ? `${text} ${unit}` : text;
+  }
+
+  private supported(node: AplNode): boolean {
+    return this.apl.identifiers(node).every(name => this.evaluator.readerFor(name) !== null);
   }
 
   private readsAsFlag(name: string, flag: boolean): boolean {

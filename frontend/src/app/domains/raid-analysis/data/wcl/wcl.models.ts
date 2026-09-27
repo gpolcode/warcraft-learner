@@ -55,6 +55,8 @@ export interface WclEvent {
   stack?: number;
   // Flattened onto the event by `includeResources: true`; `type` is WCL's power-type id (4 = combo points) and `amount` is the pool BEFORE `cost` is deducted.
   classResources?: { amount: number; max?: number; type: number; cost?: number }[];
+  // Set on a periodic hit, so a dot's ticks never pass for the cast landing.
+  tick?: boolean;
   // A `Resources` event's change to one pool: positive on a `resourcechange`, negative on a `drain`, with the overflow past the cap in `waste`.
   resourceChange?: number;
   resourceChangeType?: number;

@@ -25,6 +25,10 @@ const CODE = [
   '  splits[ 1 ] = talent.incarnation_moonkin.ok() ? "incarnation_chosen_of_elune" : "celestial_alignment";',
   '  return druid_t::create_expression( util::string_join( splits, "." ) );',
   '}',
+  'if ( name == "any_dnd" || name == "dnd_any" )',
+  '{',
+  '  return create_action( "death_and_decay", options_str );',
+  '}',
 ].join('\n');
 
 describe('SimcNameService.resolve', () => {
@@ -44,6 +48,10 @@ describe('SimcNameService.resolve', () => {
 
   it('reads an alias as every name it may stand for', () => {
     expect(names.resolve('ca_inc', CODE)?.tokens.sort()).toEqual(['celestial_alignment', 'incarnation_chosen_of_elune']);
+  });
+
+  it('reads a name as the button the code creates for it', () => {
+    expect(names.resolve('any_dnd', CODE)).toEqual({ ids: [], tokens: ['death_and_decay'] });
   });
 
   it('matches a name only as written, a dot in it standing for no other character', () => {

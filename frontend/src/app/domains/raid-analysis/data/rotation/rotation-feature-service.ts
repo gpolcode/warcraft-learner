@@ -123,11 +123,11 @@ export class RotationFeatureService {
     bench: RotationBench, pull: PullRef, playerId: number, context: PullContext,
   ): Promise<RotationPlayerView> {
     const { reportCode, fightId } = pull;
-    const { fight, fightDurationS } = context;
+    const { report, fight, fightDurationS } = context;
     const [casts, buffs, reading] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
-      this.listLogs.read(bench.list, { reportCode, fight, playerId }),
+      this.listLogs.read(bench.list, { reportCode, fight, playerId, abilities: report.masterData?.abilities ?? [] }),
     ]);
     const findings = this.analyzeRotationFindings({
       fightDurationS,

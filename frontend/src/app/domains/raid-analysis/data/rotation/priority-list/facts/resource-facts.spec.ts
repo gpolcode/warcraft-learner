@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { cast, resourceChange } from '../../../../../../../testing/builders/events';
+import { planSpell } from '../../../../../../../testing/builders/spec-plan';
 import type { WclEvent } from '../../../wcl/wcl.models';
 import { castAt, factContext, priorityList } from '../priority-list-harness';
 import { UNKNOWN } from '../priority-list.models';
@@ -12,11 +13,25 @@ const COMBO_POINTS = 4;
 const RAGE_TENTHS = 10;
 const MAX_CP = 7;
 const PROBE = 999;
+const FURY = 17;
+const ASTRAL_POWER = 8;
+const SOUL_CLEAVE_FURY = 30;
+const NEW_MOON_ASTRAL = 10;
 const resources = TestBed.inject(ResourceFacts);
+const spells = priorityList({
+  spells: {
+    soul_cleave: planSpell('Soul Cleave', [228477], { costs: [{ type: FURY, amount: SOUL_CLEAVE_FURY }] }),
+    new_moon: planSpell('New Moon', [274281], { energize: { type: ASTRAL_POWER, amount: NEW_MOON_ASTRAL } }),
+  },
+});
 
 const read = (name: string, events: { casts: WclEvent[]; changes?: WclEvent[] }, atS: number) => {
   const ctx = factContext(priorityList(), { casts: events.casts, resources: events.changes ?? [] });
   return resources.read(name, castAt(ctx, atS), 'x', ctx);
+};
+const stated = (name: string, action: string) => {
+  const ctx = factContext(spells, { casts: [cast(PROBE, 4)] });
+  return resources.read(name, castAt(ctx, 4), action, ctx);
 };
 const spend = (atS: number, cp: number, cost: number) => cast(1, atS, { resources: [{ type: COMBO_POINTS, amount: cp, max: MAX_CP, cost }] });
 
@@ -41,6 +56,17 @@ describe('ResourceFacts', () => {
 
   it('reads cp_max_spend as the combo point cap', () => {
     expect(read('cp_max_spend', { casts: [spend(1, 5, 5)] }, 1)).toEqual([MAX_CP, MAX_CP]);
+  });
+
+  it('reads a button\'s listed cost, the line\'s own or a named one\'s, and unknown for a button without spell data', () => {
+    expect(stated('cost', 'soul_cleave')).toEqual([SOUL_CLEAVE_FURY, SOUL_CLEAVE_FURY]);
+    expect(stated('action.soul_cleave.cost', 'x')).toEqual([SOUL_CLEAVE_FURY, SOUL_CLEAVE_FURY]);
+    expect(stated('cost', 'x')).toEqual(UNKNOWN);
+  });
+
+  it('reads what the line\'s button gives back from its spell data', () => {
+    expect(stated('energize_amount', 'new_moon')).toEqual([NEW_MOON_ASTRAL, NEW_MOON_ASTRAL]);
+    expect(stated('energize_amount', 'soul_cleave')).toEqual(UNKNOWN);
   });
 
   it('reads a pool no cast reports as unknown', () => {

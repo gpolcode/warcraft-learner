@@ -5,7 +5,7 @@ import { SHADOW_DANCE, SECRET_TECHNIQUE, RUPTURE } from '../../../../../../testi
 import { SimcAplService } from '../../simc/simc-apl-service';
 import { ListTextService } from './list-text-service';
 import { priorityList } from './priority-list-harness';
-import type { Range } from './priority-list.models';
+import { UNKNOWN, Range } from './priority-list.models';
 
 const list = priorityList({
   lines: [
@@ -93,6 +93,19 @@ describe('ListTextService phrases', () => {
     expect(phrase('variable.targets>2')).toBe('with targets over 2');
   });
 
+  it('reads a shot in the air, a sigil about to go off and what a button costs', () => {
+    expect(phrase('action.rupture.in_flight')).toBe('while Rupture is in the air');
+    expect(phrase('!in_flight', true, 'rupture')).toBe('while Rupture is not in the air');
+    expect(phrase('action.rupture.placed', false)).toBe('while Rupture is not about to go off');
+    expect(phrase('action.rupture.in_flight_remains<0.3')).toBe('with under 0.3 s until Rupture lands');
+    expect(phrase('action.rupture.cost>1')).toBe('when Rupture costs over 1');
+  });
+
+  it('reads the fight style as a raid boss or a dungeon', () => {
+    expect(phrase('fight_style.patchwerk')).toBe('against a raid boss');
+    expect(phrase('fight_style.dungeonslice', false)).toBe('outside a dungeon');
+  });
+
   it('reads a term no phrase covers as another condition, never as SimC wrote it', () => {
     expect(phrase('movement.distance>20')).toBe('when another condition holds');
     expect(phrase('movement.distance>20', false)).toBe('unless another condition holds');
@@ -111,8 +124,9 @@ describe('ListTextService values', () => {
     expect(value('talent.deathstalkers_mark', [1, 1])).toBe('picked');
   });
 
-  it('reads a bounded value as its span and an unknown one as such', () => {
+  it('reads a bounded value as its span, one the log cannot settle as such, and one no fact reads as unsupported', () => {
     expect(value('cooldown.shadow_dance.remains', [2, 6])).toBe('2 to 6 s away');
-    expect(value('raid_event.movement.in', [-Infinity, Infinity])).toBe('not in the log');
+    expect(value('cooldown.shadow_dance.remains', UNKNOWN)).toBe('not in the log');
+    expect(value('raid_event.movement.in', UNKNOWN)).toBe('not supported by warcraft-learner yet');
   });
 });

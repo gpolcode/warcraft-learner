@@ -89,11 +89,11 @@ export class RotationTransformService implements DataSource<RotationBench> {
     });
   }
 
-  private async parseRotation({ ranking, fight, player }: BenchParse, plan: SpecPlan): Promise<ParseRotation> {
+  private async parseRotation({ ranking, report, fight, player }: BenchParse, plan: SpecPlan): Promise<ParseRotation> {
     const [casts, buffs, reading] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
-      this.listLogs.read(plan, { reportCode: ranking.report_code, fight, playerId: player.id }),
+      this.listLogs.read(plan, { reportCode: ranking.report_code, fight, playerId: player.id, abilities: report.masterData?.abilities ?? [] }),
     ]);
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
     const castsTimed = this.wclProjections.withRelativeS(casts, fight.startTime);

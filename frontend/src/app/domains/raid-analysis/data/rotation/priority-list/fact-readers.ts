@@ -10,7 +10,7 @@ import { TimingFacts } from './facts/timing-facts';
 import { DebuffFacts } from './facts/debuff-facts';
 import { PriorCastFacts } from './facts/prior-cast-facts';
 import { HealthFacts } from './facts/health-facts';
-import { PetFacts } from './facts/pet-facts';
+import { RecentCastFacts } from './facts/recent-cast-facts';
 import { FightStyleFacts } from './facts/fight-style-facts';
 import { VariableFacts } from './facts/variable-facts';
 import { RaidEventFacts } from './facts/raid-event-facts';
@@ -19,6 +19,6 @@ import { RaidEventFacts } from './facts/raid-event-facts';
 export const FACT_READERS = new InjectionToken<readonly FactReader[]>('FACT_READERS', {
   factory: () => [
     TalentFacts, EnemyFacts, BuffFacts, CooldownFacts, ClockFacts, ResourceFacts, TimingFacts, DebuffFacts, PriorCastFacts,
-    HealthFacts, PetFacts, FightStyleFacts, VariableFacts, RaidEventFacts,
+    HealthFacts, RecentCastFacts, FightStyleFacts, VariableFacts, RaidEventFacts,
   ].map(reader => inject(reader)),
 });

@@ -49,12 +49,16 @@ export interface PlanSpell {
   max_stacks: number;
   /** Per WCL power type, in the game's own units. */
   costs: { type: number; amount: number }[];
+  /** What a cast gives the caster back, in the game's units; null for a button that gives nothing. */
+  energize: { type: number; amount: number } | null;
 }
 
 /** Picking any one of `entries` holds the talent. */
 export interface PlanTalent {
   name: string;
   entries: number[];
+  /** The ranks SimC's `talent.x_N` needs over a tiered node's entries together. */
+  points?: number;
 }
 
 export interface PriorityList {

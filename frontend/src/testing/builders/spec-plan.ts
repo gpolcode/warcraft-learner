@@ -25,7 +25,7 @@ export function specPlan(partial: {
 }
 
 export function planSpell(name: string, ids: number[], over: Partial<PlanSpell> = {}): PlanSpell {
-  return { name, ids, cooldown: 0, charges: 1, duration: 0, gcd: 1.5, cast_time: 0, max_stacks: 0, costs: [], ...over };
+  return { name, ids, cooldown: 0, charges: 1, duration: 0, gcd: 1.5, cast_time: 0, max_stacks: 0, costs: [], energize: null, ...over };
 }
 
 export function planLoader(plan: SpecPlan | Result<SpecPlan>): SpecPlanLoaderService {

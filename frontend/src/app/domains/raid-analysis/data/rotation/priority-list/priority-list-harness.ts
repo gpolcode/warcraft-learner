@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import type { PriorityList } from '../../plan/plan.models';
-import type { WclEvent } from '../../wcl/wcl.models';
+import type { WclAbility, WclEvent } from '../../wcl/wcl.models';
 import { WclProjectionsService } from '../../analysis/wcl-projections-service';
 import { FactContextService } from './fact-context-service';
 import type { CastMoment, FactContext } from './priority-list.models';
@@ -12,6 +12,7 @@ export function priorityList(over: Partial<PriorityList> = {}): PriorityList {
 }
 
 export interface LogEvents {
+  abilities?: WclAbility[];
   casts?: WclEvent[];
   buffs?: WclEvent[];
   debuffs?: WclEvent[];
@@ -26,7 +27,7 @@ export interface LogEvents {
 export function factContext(list: PriorityList, log: LogEvents = {}): FactContext {
   const timed = (events: WclEvent[] = []) => TestBed.inject(WclProjectionsService).withRelativeS(events, 0);
   return TestBed.inject(FactContextService).build({
-    list,
+    list, abilities: log.abilities ?? [],
     casts: timed(log.casts), buffs: timed(log.buffs), debuffs: timed(log.debuffs), damage: timed(log.damage), resources: timed(log.resources),
     talents: log.talents ? new Map(log.talents) : null,
     fightDurationS: log.fightDurationS ?? FIGHT_S,

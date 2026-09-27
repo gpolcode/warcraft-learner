@@ -14,6 +14,8 @@ export interface SpellRecord {
   gcd: number;
   castTime: number;
   costs: SpellCost[];
+  /** What a cast gives the caster back, in the game's units; null for a button that gives nothing. */
+  energize: SpellCost | null;
   maxStacks: number;
   /** Each effect's base value, `#1` first. */
   effects: number[];
@@ -30,6 +32,15 @@ export interface SpellCost {
   type: number;
   amount: number;
 }
+
+/** WCL's power type for each pool a SimC list or spell record names. */
+export const POOL_TYPES: Record<string, number | undefined> = {
+  mana: 0, rage: 1, focus: 2, energy: 3, combo_points: 4, rune: 5, runic_power: 6, soul_shard: 7,
+  astral_power: 8, holy_power: 9, maelstrom: 11, chi: 12, insanity: 13, fury: 17, essence: 19,
+};
+/** The data keeps these pools in tenths or hundredths of the game's units. */
+const POOL_SCALE: Record<string, number | undefined> = { rage: 10, runic_power: 10, astral_power: 10, soul_shard: 10, insanity: 100 };
+const ENERGIZE = /^#\d+ \(id=\d+\) +: Energize Power \(30\)\n +Base Value: (\d+(?:\.\d+)?) \|[^\n]*\| Resource: (\w+) \| Target: Self \(1\)/gm;
 
 @Injectable({ providedIn: 'root' })
 export class SpellDumpService {
@@ -54,6 +65,7 @@ export class SpellDumpService {
       gcd: this.seconds(block, 'GCD'),
       castTime: this.seconds(block, 'Cast Time'),
       costs: this.costs(block),
+      energize: this.energize(block),
       maxStacks: Number(/^Stacks +: (?:\d+ initial, )?(\d+) maximum/m.exec(block)?.[1] ?? 0),
       effects: this.effects(block),
       major: block.includes(': 690: Major Cooldowns'),
@@ -83,6 +95,14 @@ export class SpellDumpService {
   private costs(block: string): SpellCost[] {
     return [...block.matchAll(/^Resource +: (\d+)(?: - \d+)? [A-Z][A-Za-z ]+ \((\d+)\)/gm)]
       .map(([, amount, type]) => ({ type: Number(type), amount: Number(amount) }));
+  }
+
+  private energize(block: string): SpellCost | null {
+    for (const [, amount = '', pool = ''] of block.matchAll(ENERGIZE)) {
+      const type = POOL_TYPES[pool];
+      if (type !== undefined && Number(amount) > 0) return { type, amount: Number(amount) / (POOL_SCALE[pool] ?? 1) };
+    }
+    return null;
   }
 
   private effects(block: string): number[] {
