@@ -6,6 +6,8 @@ import { SimcAplService } from './simc-apl-service';
 const apl = TestBed.inject(SimcAplService);
 
 const lines = (...entries: string[]): PlanLine[] => apl.readApl(entries.join('\n')).lines;
+/** `v1` is rage and each `vN` is `v(N-1)+1`, so `vN` nests N deep. */
+const chain = (depth: number): string[] => Array.from({ length: depth }, (_, index) => `actions+=/variable,name=v${index + 1},value=${index ? `variable.v${index}+1` : 'rage'}`);
 
 describe('SimcAplService.readApl', () => {
   it('reads each button line of the default list with its top-level & terms', () => {
@@ -83,6 +85,23 @@ describe('SimcAplService.readApl', () => {
       'actions+=/rampage,if=variable.pool',
     );
     expect(line?.terms).toEqual(['variable.pool']);
+  });
+
+  it('inlines a chain of variables set once three deep', () => {
+    const [line] = lines(...chain(3), 'actions+=/rampage,if=variable.v3>5');
+    expect(line?.terms).toEqual(['rage+1+1>5']);
+  });
+
+  it('replays a variable set once whose chain nests four deep, the three below it inlined into its value', () => {
+    const read = apl.readApl([...chain(4), 'actions+=/rampage,if=variable.v4>5'].join('\n'));
+    expect(read.lines[0]?.terms).toEqual(['variable.v4>5']);
+    expect(read.variables).toEqual([{ name: 'v4', op: 'set', value: 'rage+1+1+1', terms: [] }]);
+  });
+
+  it('replays variables set once that read each other', () => {
+    const read = apl.readApl(['actions=variable,name=a,value=variable.b+1', 'actions+=/variable,name=b,value=variable.a+1', 'actions+=/rampage,if=variable.a>5'].join('\n'));
+    expect(read.lines[0]?.terms).toEqual(['variable.a>5']);
+    expect(read.variables.map(variable => variable.name)).toEqual(['a', 'b']);
   });
 
   it('stands an expression in for a name SimC computes, its & terms joining the line\'s own', () => {

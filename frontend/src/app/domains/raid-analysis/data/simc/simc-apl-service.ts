@@ -43,6 +43,7 @@ const NON_SPELL = new Set([
 ]);
 /** `min:` and `max:` only rank the targets; any other `target_if` skips the line when no target satisfies it. */
 const TARGET_RANKING = /^(min|max):/;
+/** Each level nests a variable's whole text in the line, so a deeper chain is replayed instead, which reads the same value. */
 const MAX_VARIABLE_DEPTH = 3;
 
 @Injectable({ providedIn: 'root' })
@@ -145,25 +146,40 @@ export class SimcAplService {
 
   private substitutes(variables: Map<string, string>, expressions: ReadonlyMap<string, string>): Map<string, AplNode> {
     const texts = [...[...variables].map(([name, text]) => [`variable.${name}`, text] as const), ...expressions];
-    return new Map(texts.flatMap(([name, text]) => {
+    const nodes = new Map(texts.flatMap(([name, text]) => {
       const node = this.parse(this.normalized(text));
       return node ? [[name, node] as const] : [];
     }));
+    const depth = this.depths(nodes);
+    return new Map([...nodes].filter(([name]) => depth(name) <= MAX_VARIABLE_DEPTH));
   }
 
-  private substitute(node: AplNode, substitutes: ReadonlyMap<string, AplNode>, depth = 0): AplNode {
+  /** How many substitutions deep a name's text nests; a name on a cycle nests forever. */
+  private depths(nodes: ReadonlyMap<string, AplNode>): (name: string) => number {
+    const known = new Map<string, number>();
+    const depth = (name: string, path: ReadonlySet<string>): number => {
+      const node = nodes.get(name);
+      if (!node) return 0;
+      if (path.has(name)) return Infinity;
+      const within = new Set([...path, name]);
+      return getOrInsert(known, name, () => 1 + Math.max(0, ...this.identifiers(node).map(id => depth(id, within))));
+    };
+    return name => depth(name, new Set());
+  }
+
+  private substitute(node: AplNode, substitutes: ReadonlyMap<string, AplNode>): AplNode {
     const swap = node.type === 'Identifier' ? substitutes.get((node as jsep.Identifier).name) : undefined;
-    if (swap) return depth < MAX_VARIABLE_DEPTH ? this.substitute(swap, substitutes, depth + 1) : node;
+    if (swap) return this.substitute(swap, substitutes);
     if (node.type === 'BinaryExpression') {
       const binary = node as jsep.BinaryExpression;
-      return { ...binary, left: this.substitute(binary.left, substitutes, depth), right: this.substitute(binary.right, substitutes, depth) };
+      return { ...binary, left: this.substitute(binary.left, substitutes), right: this.substitute(binary.right, substitutes) };
     }
     if (node.type === 'CallExpression') {
       const call = node as jsep.CallExpression;
-      return { ...call, arguments: call.arguments.map(argument => this.substitute(argument, substitutes, depth)) };
+      return { ...call, arguments: call.arguments.map(argument => this.substitute(argument, substitutes)) };
     }
     if (node.type !== 'UnaryExpression') return node;
-    return { ...node, argument: this.substitute((node as jsep.UnaryExpression).argument, substitutes, depth) };
+    return { ...node, argument: this.substitute((node as jsep.UnaryExpression).argument, substitutes) };
   }
 
   private normalized(text: string): string {

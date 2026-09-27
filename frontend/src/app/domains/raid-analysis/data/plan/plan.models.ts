@@ -21,7 +21,7 @@ export interface PlanLine {
   line_cd?: number;
 }
 
-/** A variable SimC sets during the fight, replayed at each cast in list order; one set once is inlined into the lines instead. */
+/** A variable SimC sets during the fight, replayed at each cast in list order; one set once is inlined into the lines instead, unless its chain of variables nests too deep. */
 export interface PlanVariable {
   name: string;
   op: string;
