@@ -167,7 +167,7 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
     expect(rows).toHaveLength(1);
     expect(rows[0]).toEqual({
       slotName: 'Main Hand', status: 'warn', name: 'Not enchanted',
-      note: 'Most top raiders run it. Apply it.', top: SOPHIC_ITEM,
+      note: 'Most top raiders use it. Apply it.', top: SOPHIC_ITEM,
     });
   });
 
@@ -179,7 +179,7 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
     expect(rows).toEqual([]);
   });
 
-  it('marks a slot on-plan when the player runs the consensus enchant', () => {
+  it('marks a slot on-plan when the player uses the consensus enchant', () => {
     const rows = gearComparison.buildEnchantRows(
       gear({ enchants: [{ slot: 15, id: 8041, name: 'Sophic Devotion' }] }),
       stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 90 }] } }),
@@ -187,13 +187,13 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
     expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion', note: null, top: null });
   });
 
-  it('carries the consensus enchant when the player runs a different one', () => {
+  it('carries the consensus enchant when the player uses a different one', () => {
     const rows = gearComparison.buildEnchantRows(
       gear({ enchants: [{ slot: 15, id: 8039, name: 'Burning Devotion' }] }),
       stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 90 }] } }),
     );
     expect(rows[0]).toMatchObject({
-      status: 'info', name: 'Burning Devotion', note: 'Most top raiders run it.', top: SOPHIC_ITEM,
+      status: 'info', name: 'Burning Devotion', note: 'Most top raiders use it.', top: SOPHIC_ITEM,
     });
   });
 

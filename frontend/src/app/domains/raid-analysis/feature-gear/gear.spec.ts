@@ -36,7 +36,7 @@ function comparisonView(): GearComparisonView {
     comparison: true,
     benchEnchantRows: [],
     enchantRows: [
-      { slotName: 'Legs', status: 'warn', name: 'Not enchanted', note: 'Most top raiders run it. Apply it.', top: ARMOR_KIT },
+      { slotName: 'Legs', status: 'warn', name: 'Not enchanted', note: 'Most top raiders use it. Apply it.', top: ARMOR_KIT },
       { slotName: 'Head', status: 'ok', name: HELM_ENCHANT.name, note: null, top: null },
     ],
   });
