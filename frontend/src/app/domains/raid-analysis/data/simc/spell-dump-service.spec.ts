@@ -25,6 +25,36 @@ const DUMP = [
     'Attributes       : Important Spell (491), Big Defensive (512)',
   ),
   record('Name             : Rallying Cry (id=97462) [Spell Family (4)] ', 'Attributes       : External Defensive (499)'),
+  record(
+    'Name             : Feint (id=1966) [Spell Family (8)] ',
+    'Charges          : 1 (15 seconds cooldown)',
+    '#1 (id=595)      : Apply Aura (6) | Modify AoE Damage Taken% (229)',
+    '                   Base Value: -40 | Scaled Value: -40 | Misc Value: 127 | Target: Self (1)',
+  ),
+  record(
+    'Name             : Evasion (id=5277) [Spell Family (8)] ',
+    'Cooldown         : 120 seconds',
+    '#1 (id=1892)     : Apply Aura (6) | Modify Dodge% (49)',
+    '                   Base Value: 200 | Scaled Value: 200 | Target: Self (1)',
+  ),
+  record(
+    'Name             : Divine Protection (id=498) [Spell Family (10)] ',
+    'Cooldown         : 60 seconds',
+    '#1 (id=512)      : Apply Aura (6) | Modify Damage Taken% (87)',
+    '                   Base Value: -20 | Scaled Value: -20 | Misc Value: 0x7f | Target: Self (1)',
+  ),
+  record(
+    'Name             : Bristle (desc=Special Ability) (id=388045) [Spell Family (9)] ',
+    'Cooldown         : 60 seconds',
+    '#1 (id=1)        : Apply Aura (6) | Modify Damage Taken% (87)',
+    '                   Base Value: -50 | Scaled Value: -50 | Misc Value: 0x7f | Target: Self (1)',
+  ),
+  record(
+    'Name             : Putrid Bulwark (id=91837) ',
+    'Cooldown         : 45 seconds',
+    '#1 (id=95586)    : Apply Aura (6) | Modify Damage Taken% (87)',
+    '                   Base Value: -50 | Scaled Value: -50 | Misc Value: 0x7f | Target: Self (1)',
+  ),
   record("Name             : Odyn's Fury (desc=Artifact) (id=205545) [Spell Family (4)] ", 'Cooldown         : 45 seconds'),
   record('Name             : Maelstrom Weapon (id=344179)', 'Stacks           : 1 initial, 10 maximum', 'Duration         : 30 seconds'),
   record(
@@ -34,7 +64,13 @@ const DUMP = [
     'GCD              : 1 seconds',
   ),
   record('Name             : Death Coil (id=47541)', 'Resource         : -30 Runic Power (6) (id=1)', 'Resource         : 2% Base Mana (0) (id=2)', 'Cast Time        : 1.5 seconds'),
-  record('Name             : Demolish (id=436358)', 'Talent Entry     : Colossus (Arms, Protection) [tree=hero, row=1, col=1]'),
+  record(
+    'Name             : Demolish (id=436358) [Spell Family (4)] ',
+    'Talent Entry     : Colossus (Arms, Protection) [tree=hero, row=1, col=1]',
+    'Cooldown         : 30 seconds',
+    '#4 (id=1145552)  : Apply Aura (6) | Modify Damage Taken% (87)',
+    '                   Base Value: -10 | Scaled Value: -10 | Misc Value: 0x7f | Target: Self (1)',
+  ),
   record(
     'Name             : Sinister Strike (id=193315) [Spell Family (8)] ',
     'Effects          :',
@@ -72,7 +108,7 @@ const named = (name: string) => records.find(entry => entry.name === name);
 
 describe('SpellDumpService.readDump', () => {
   it('reads one record per Name line, with its id and cooldown', () => {
-    expect(records).toHaveLength(15);
+    expect(records).toHaveLength(20);
     expect(named('Recklessness')).toMatchObject({ id: 1719, token: 'recklessness', cooldown: 90 });
   });
 
@@ -106,6 +142,19 @@ describe('SpellDumpService.readDump', () => {
     expect(named('Enraged Regeneration')?.defensive).toBe(true);
     expect(named('Rallying Cry')?.defensive).toBe(true);
     expect(named('Recklessness')?.defensive).toBe(false);
+  });
+
+  it('reads a player\'s own aura that cuts their damage taken, or adds dodge, by 20% or more as guarding them', () => {
+    expect(named('Feint')?.guards).toBe(true);
+    expect(named('Evasion')?.guards).toBe(true);
+    expect(named('Divine Protection')?.guards).toBe(true);
+    expect(named('Feint')?.defensive).toBe(false);
+  });
+
+  it('does not read a smaller cut, a pet\'s ability or a record of no spell family as guarding', () => {
+    expect(named('Demolish')?.guards).toBe(false);
+    expect(named('Bristle')?.guards).toBe(false);
+    expect(named('Putrid Bulwark')?.guards).toBe(false);
   });
 
   it('names a record as the game does, without SimC\'s desc suffix, and tokenizes it as an APL does', () => {

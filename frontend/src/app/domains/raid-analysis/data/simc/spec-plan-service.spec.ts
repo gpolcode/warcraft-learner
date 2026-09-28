@@ -41,6 +41,19 @@ const DUMP = [
   record('Scorch', 2948, '#2 (id=1154626)  : Dummy (3)', `                   Base Value: ${SCORCH_EXECUTE_PCT} | Scaled Value: ${SCORCH_EXECUTE_PCT}`),
   record('Vanish', VANISH, 'Duration         : 3 seconds'),
 ].join('\n\n');
+const guarding = (id: number, aura: string, value: number): string => [
+  `#1 (id=${id + 1})   : Apply Aura (6) | ${aura}`,
+  `                   Base Value: ${value} | Scaled Value: ${value} | Target: Self (1)`,
+].join('\n');
+const FEINT = 1966;
+const DANCING_RUNE_WEAPON = 49028;
+const DANCING_RUNE_WEAPON_BUFF = 81256;
+const GUARDED_DUMP = [
+  DUMP,
+  record('Feint', FEINT, 'Charges          : 1 (15 seconds cooldown)', guarding(FEINT, 'Modify AoE Damage Taken% (229)', -40)),
+  record('Dancing Rune Weapon', DANCING_RUNE_WEAPON, 'Cooldown         : 120 seconds', 'Labels           : 690: Major Cooldowns'),
+  record('Dancing Rune Weapon', DANCING_RUNE_WEAPON_BUFF, guarding(DANCING_RUNE_WEAPON_BUFF, 'Modify Parry% (47)', 30)),
+].join('\n\n');
 /** Declarations shaped like SimC's class modules. */
 const CODE = [
   'buff.enraged = make_buff( this, "enraged", find_spell( 184362 ) );',
@@ -85,6 +98,17 @@ describe('SpecPlanService.build', () => {
 
   it('plans the spec\'s own big and external defensives, leaving out a name only another spec\'s talent carries', () => {
     expect(fury().defensives.map(defensive => defensive.name)).toEqual(['Enraged Regeneration', 'Spell Reflection']);
+  });
+
+  it('plans a button whose own aura guards its caster as a defensive, though Blizzard labels it none', () => {
+    const plan = specPlans.build({ apl: APL, dump: GUARDED_DUMP, specLabel: 'Fury', talents: TREE, code: '' });
+    expect(plan.defensives.map(defensive => defensive.name)).toContain('Feint');
+  });
+
+  it('keeps a guarding button Blizzard labels a major cooldown a cooldown', () => {
+    const plan = specPlans.build({ apl: `${APL}\nactions+=/dancing_rune_weapon`, dump: GUARDED_DUMP, specLabel: 'Fury', talents: TREE, code: '' });
+    expect(plan.cooldowns.map(cooldown => cooldown.name)).toContain('Dancing Rune Weapon');
+    expect(plan.defensives.map(defensive => defensive.name)).not.toContain('Dancing Rune Weapon');
   });
 
   it('keeps a button another spec\'s talent carries when the spec\'s own APL presses it', () => {

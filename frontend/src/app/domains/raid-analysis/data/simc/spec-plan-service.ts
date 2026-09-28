@@ -193,17 +193,22 @@ export class SpecPlanService {
       const records = byToken.get(token) ?? [];
       const button = greatest(records, record => record.cooldown);
       const major = records.some(record => record.major) || (!!lines && (button?.cooldown ?? 0) >= MAJOR_COOLDOWN_S);
-      if (!button?.cooldown || !major || records.some(record => record.defensive)) return [];
+      if (!button?.cooldown || !major || this.defensive(records)) return [];
       return [this.button(button, records, tree)];
     }).map((cooldown, index) => (lines ? { ...cooldown, opener_priority: index + 1 } : cooldown));
   }
 
   private defensives(records: SpellRecord[], byToken: Map<string, SpellRecord[]>, tree: TalentTree | null): PlanDefensive[] {
-    return [...new Set(records.filter(record => record.defensive).map(record => record.token))].flatMap(token => {
+    return [...new Set(records.filter(record => record.defensive || record.guards).map(record => record.token))].flatMap(token => {
       const named = byToken.get(token) ?? [];
       const button = greatest(named, record => record.cooldown);
-      return button?.cooldown ? [this.button(button, named, tree)] : [];
+      return button?.cooldown && this.defensive(named) ? [this.button(button, named, tree)] : [];
     });
+  }
+
+  /** Blizzard's Major Cooldowns label outranks a guarding aura, so Dancing Rune Weapon's parry keeps it a Blood cooldown. */
+  private defensive(named: SpellRecord[]): boolean {
+    return named.some(record => record.defensive) || (named.some(record => record.guards) && !named.some(record => record.major));
   }
 
   private button(record: SpellRecord, named: SpellRecord[], tree: TalentTree | null): PlanCooldown {
