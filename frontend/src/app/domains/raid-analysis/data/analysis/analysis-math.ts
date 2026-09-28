@@ -66,6 +66,15 @@ export function isOutlierBelow(value: number, mean: number, stddev: number, sigm
   return value < mean - sigmas * stddev;
 }
 
+/** A talent-gated button counts as taken only when the pull's talents show one of its entries; with no entries or no talents to read, the pull cannot tell, so an unpressed one stays unjudged. */
+export function buttonTaken(
+  button: { talent_gated?: boolean; talent_entries?: number[] }, talents: ReadonlyMap<number, number> | null,
+): boolean {
+  if (!button.talent_gated) return true;
+  if (!talents || !button.talent_entries?.length) return false;
+  return button.talent_entries.some(entry => (talents.get(entry) ?? 0) > 0);
+}
+
 export function castEfficiencyPct(totalDowntimeS: number, fightDurS: number): number {
   return Math.max(0, (1 - totalDowntimeS / fightDurS) * 100);
 }

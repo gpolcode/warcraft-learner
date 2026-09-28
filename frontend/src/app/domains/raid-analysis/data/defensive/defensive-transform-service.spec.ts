@@ -40,6 +40,12 @@ describe('defensivePlanMeta', () => {
     expect(svc['defensivePlanMeta']([{ name: 'Evasion', spell_id: EVASION, cooldown: 120 }]))
       .toEqual([{ name: 'Evasion', spell_id: EVASION, cooldown: 120, talent_gated: false }]);
   });
+
+  it('carries the talent entries that grant a talent-gated defensive', () => {
+    const ENTRY = 90003;
+    expect(svc['defensivePlanMeta']([{ name: 'Evasion', spell_id: EVASION, cooldown: 120, talent_gated: true, talent_entries: [ENTRY] }]))
+      .toEqual([{ name: 'Evasion', spell_id: EVASION, cooldown: 120, talent_gated: true, talent_entries: [ENTRY] }]);
+  });
 });
 
 describe('summarizeDefensiveCasts', () => {

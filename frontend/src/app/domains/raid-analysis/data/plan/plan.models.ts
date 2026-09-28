@@ -4,6 +4,8 @@ export interface PlanCooldown {
   cooldown: number;
   opener_priority?: number;
   talent_gated?: boolean;
+  /** The talent entries that grant a talent-gated button, so a pull's own talents tell whether its player has it. */
+  talent_entries?: number[];
 }
 
 export interface PlanDefensive {
@@ -11,6 +13,7 @@ export interface PlanDefensive {
   spell_id: number;
   cooldown: number;
   talent_gated?: boolean;
+  talent_entries?: number[];
 }
 
 export interface PlanLine {

@@ -7,7 +7,7 @@ import { PlanCooldown } from '../plan/plan.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import {
   isOutlierBeyond, isOutlierBelow, castEfficiencyPct, OUTLIER_SIGMAS, TIMING_BAND_MIN_S,
-  closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
+  closestToZero, benchExpectedUses, fmtClock, sortBySeverity, buttonTaken,
 } from '../analysis/analysis-math';
 import { CadenceVoice } from '../analysis/cast-cadence-service';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../analysis/wcl-projections-service';
@@ -20,6 +20,7 @@ import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
+import { GearExtractService } from '../gear/gear-extract-service';
 
 export interface CdPlanRow {
   name: string;
@@ -68,6 +69,7 @@ export interface RotationScanInput {
   buffEvents: TimedEvent[];
   cooldowns: PlanCooldown[];
   bench: RotationBench;
+  talents: ReadonlyMap<number, number> | null;
 }
 
 interface CooldownScan { issues: AnalysisFinding[]; holds: AnalysisFinding[]; blAligned: boolean; }
@@ -99,6 +101,7 @@ export class RotationFeatureService {
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(ROTATION_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
+  private readonly gearExtract = inject(GearExtractService);
 
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
@@ -126,16 +129,18 @@ export class RotationFeatureService {
   ): Promise<RotationPlayerView> {
     const { reportCode, fightId } = pull;
     const { report, fight, fightDurationS } = context;
-    const [casts, buffs, reading] = await Promise.all([
+    const [casts, buffs, reading, combatants] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
       this.listLogs.read(bench.list, { reportCode, fight, playerId, abilities: report.masterData?.abilities ?? [] }),
+      this.wclApi.getCombatantInfo(reportCode, fightId, playerId),
     ]);
     const findings = this.analyzeRotationFindings({
       fightDurationS,
       castEvents: this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime),
       buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime),
       cooldowns: bench.major_cooldowns, bench,
+      talents: this.gearExtract.pickedTalents(this.gearExtract.selectCombatantInfo(combatants, playerId)),
     });
     const { downtimeRows, offensiveRows, onPlan } = this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
     return { buttonRows: this.listFindings.rows(bench, reading), downtimeRows, offensiveRows, onPlan };
@@ -212,14 +217,14 @@ export class RotationFeatureService {
       : null;
   }
 
-  /** `castTimesS` are fight-relative seconds, ascending. Null when the cooldown is talent-gated and unused. */
+  /** `castTimesS` are fight-relative seconds, ascending. Null when the cooldown went unused and the player's talents do not show it. */
   protected analyzeOneCooldown(
     cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark | undefined,
-    fightDurS: number, blTimeS: number | null,
+    fightDurS: number, blTimeS: number | null, talents: ReadonlyMap<number, number> | null,
   ): { success: AnalysisFinding | null; scan: CooldownScan } | null {
     const cdName = cd.name;
     const actual = castTimesS.length;
-    if (cd.talent_gated && actual === 0) return null;
+    if (actual === 0 && !buttonTaken(cd, talents)) return null;
 
     if (!cdBench) {
       const success = this.cooldownSuccess(cdName, actual, `: ${actual} casts (no bench data).`);
@@ -248,7 +253,7 @@ export class RotationFeatureService {
   }
 
   protected analyzeRotationFindings(input: RotationScanInput): AnalysisFinding[] {
-    const { fightDurationS: fightDurS, castEvents, buffEvents, cooldowns, bench } = input;
+    const { fightDurationS: fightDurS, castEvents, buffEvents, cooldowns, bench, talents } = input;
     const inFight = (event: TimedEvent): boolean => event.atS >= 0 && event.atS <= fightDurS;
     const casts = castEvents
       .filter(event => event.type === 'cast' && inFight(event))
@@ -266,7 +271,7 @@ export class RotationFeatureService {
         ...(upAtPull.has(cd.spell_id) ? [0] : []),
         ...casts.filter(cast => cast.abilityGameID === cd.spell_id).map(cast => cast.atS),
       ];
-      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], fightDurS, blTimeS);
+      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], fightDurS, blTimeS, talents);
       if (!result) continue;
       if (result.scan.issues.length) findings.push(...result.scan.issues);
       else if (result.success) findings.push(result.success);

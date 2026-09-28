@@ -39,7 +39,6 @@ export class ListLogService {
       this.wclApi.getCombatantInfo(reportCode, id, playerId),
     ]);
     const combatant = this.gearExtract.selectCombatantInfo(combatants, playerId);
-    const tree = combatant?.talentTree;
     return this.checks.read(this.contexts.build({
       list, abilities,
       casts: this.projections.withRelativeS(this.projections.presses(casts), startTime),
@@ -47,7 +46,7 @@ export class ListLogService {
       debuffs: this.projections.withRelativeS(enemyAuras.filter(event => event.sourceID === playerId), startTime),
       damage: this.projections.withRelativeS(damage, startTime),
       resources: this.projections.withRelativeS(resources, startTime),
-      talents: tree ? new Map(tree.flatMap(node => (node.id == null ? [] : [[node.id, node.rank ?? 1] as const]))) : null,
+      talents: this.gearExtract.pickedTalents(combatant),
       fightDurationS: this.projections.relativeS(endTime, startTime),
       kill: fight.kill,
     }));

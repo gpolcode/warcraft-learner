@@ -24,7 +24,7 @@ describe('analyzeDefensives', () => {
     const out = svc['analyzeDefensives'](
       [CLOAK_META],
       [], timed([applyBuff(CLOAK_OF_SHADOWS, 10), removeBuff(CLOAK_OF_SHADOWS, 15)], 0),
-      300, [],
+      300, [], null,
     );
     expect(out).toHaveLength(1);
     expect(out[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 1, cast_times_s: [10] });
@@ -38,7 +38,7 @@ describe('analyzeDefensives', () => {
     const out = svc['analyzeDefensives'](
       [CLOAK_META],
       [], timed([removeBuff(CLOAK_OF_SHADOWS, REMOVE_S)], 0),
-      300, [],
+      300, [], null,
     );
     expect(out[0]).toMatchObject({ uses: 1, cast_times_s: [0] });
     assert.exists(out[0]);
@@ -49,9 +49,24 @@ describe('analyzeDefensives', () => {
     const blur = { name: 'Blur', spell_id: BLUR, cooldown: 60, talent_gated: false };
     const abilities = [{ gameID: BLUR, name: 'Blur', icon: '' }, { gameID: BLUR_BUFF, name: 'Blur', icon: '' }];
     const out = svc['analyzeDefensives'](
-      [blur], timed([cast(BLUR, BUFF_START_S)], 0), timed([applyBuff(BLUR_BUFF, BUFF_START_S), removeBuff(BLUR_BUFF, BUFF_END_S)], 0), 300, abilities,
+      [blur], timed([cast(BLUR, BUFF_START_S)], 0), timed([applyBuff(BLUR_BUFF, BUFF_START_S), removeBuff(BLUR_BUFF, BUFF_END_S)], 0), 300, abilities, null,
     );
     expect(out[0]?.windows).toEqual([{ start_s: BUFF_START_S, end_s: BUFF_END_S }]);
+  });
+});
+
+describe('analyzeDefensives talent gate', () => {
+  const TALENT_ENTRY = 90002;
+  const gatedCloak = { ...CLOAK_META, talent_gated: true, talent_entries: [TALENT_ENTRY] };
+  const gatedFor = (talents: ReadonlyMap<number, number> | null) => svc['analyzeDefensives']([gatedCloak], [], [], 300, [], talents)[0]?.talent_gated;
+
+  it('leaves a talent-gated defensive the player\'s talents show open to judging', () => {
+    expect(gatedFor(new Map([[TALENT_ENTRY, 1]]))).toBeUndefined();
+  });
+
+  it('marks it gated when the talents do not show it, or the pull carries none', () => {
+    expect(gatedFor(new Map([[TALENT_ENTRY + 1, 1]]))).toBe(true);
+    expect(gatedFor(null)).toBe(true);
   });
 });
 

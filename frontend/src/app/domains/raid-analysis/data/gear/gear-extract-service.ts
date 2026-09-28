@@ -11,6 +11,12 @@ export class GearExtractService {
     return events.find(event => event.sourceID === playerId) ?? events[0] ?? null;
   }
 
+  /** Rank per talent entry the player picked; null when the combatant info carries no talents. */
+  pickedTalents(combatant: WclCombatantInfo | null): Map<number, number> | null {
+    const tree = combatant?.talentTree;
+    return tree ? new Map(tree.flatMap(node => (node.id == null ? [] : [[node.id, node.rank ?? 1] as const]))) : null;
+  }
+
   iconFile(icon?: string): string {
     return (icon ?? '').replace(/\.jpg$/i, '');
   }

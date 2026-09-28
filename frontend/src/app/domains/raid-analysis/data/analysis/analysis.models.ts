@@ -70,6 +70,7 @@ export interface PlayerDefensive {
   uses: number;
   cast_times_s?: number[];
   windows: DefensiveWindow[];
+  /** The defensive is talent-gated and the pull's talents do not show the player took it. */
   talent_gated?: boolean;
 }
 

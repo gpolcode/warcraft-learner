@@ -113,6 +113,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       spell_id: defensive.spell_id,
       cooldown: defensive.cooldown,
       talent_gated: !!defensive.talent_gated,
+      ...(defensive.talent_entries ? { talent_entries: defensive.talent_entries } : {}),
     }));
   }
 
