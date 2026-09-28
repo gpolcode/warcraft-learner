@@ -70,6 +70,14 @@ describe('SpecPlanService.build', () => {
     expect(fury().cooldowns[0]).toEqual({ name: 'Recklessness', spell_id: RECKLESSNESS, cooldown: 90, talent_gated: true, opener_priority: 1 });
   });
 
+  it('names the talent entry that grants a talented button, by the tree\'s own name for it', () => {
+    const RECKLESSNESS_ENTRY = 90010;
+    const tree: TalentTree = { ...TREE, talents: [...TREE.talents, { id: RECKLESSNESS_ENTRY, name: 'Recklessness' }] };
+    const plan = specPlans.build({ apl: APL, dump: DUMP, specLabel: 'Fury', talents: tree, code: '' });
+    expect(plan.cooldowns[0]?.talent_entries).toEqual([RECKLESSNESS_ENTRY]);
+    expect(plan.cooldowns[1]?.talent_entries).toBeUndefined();
+  });
+
   it('plans only the labelled cooldowns, in no order, for a spec SimC writes no APL for', () => {
     expect(fury(null).cooldowns.map(cooldown => [cooldown.name, cooldown.opener_priority])).toEqual([['Recklessness', undefined], ['Bladestorm', undefined]]);
     expect(fury(null).lines).toEqual([]);

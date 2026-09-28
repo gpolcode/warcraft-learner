@@ -9,7 +9,7 @@ import { PerDefensiveBenchmark } from '../encounter/encounter.models';
 import { ComparisonWindow, WindowStatus } from '../analysis/window-comparison.models';
 import { ClipAnchor } from '../capture/capture.models';
 import { Result, Results } from '../../../shared/util-http/result';
-import { benchExpectedUses, sortBySeverity } from '../analysis/analysis-math';
+import { benchExpectedUses, buttonTaken, sortBySeverity } from '../analysis/analysis-math';
 import { CadenceVoice } from '../analysis/cast-cadence-service';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../analysis/wcl-projections-service';
 import { WindowView, WindowViewAdapter } from '../analysis/window-view-service';
@@ -21,6 +21,7 @@ import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
+import { GearExtractService } from '../gear/gear-extract-service';
 import { WindowViewService } from '../analysis/window-view-service';
 import { DeathTimelineService, DeadSpan } from '../analysis/death-timeline-service';
 
@@ -100,6 +101,7 @@ export class DefensiveFeatureService {
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(DEFENSIVE_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
+  private readonly gearExtract = inject(GearExtractService);
 
   // A WCL fetch failure surfaces as an err, never a silent bench-only degrade.
   async loadAnalysisView(
@@ -127,12 +129,13 @@ export class DefensiveFeatureService {
     const { reportCode, fightId } = pull;
     const { fight, fightDurationS } = context;
 
-    const [casts, buffs, dtEvents, deaths] = await Promise.all([
+    const [casts, buffs, dtEvents, deaths, combatants] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
       this.wclApi.getAllEvents(reportCode, fightId, 'DamageTaken', fight.startTime, fight.endTime, playerId),
       // Raid-wide, the same read the pull overview makes, so the cache serves both.
       this.wclApi.getAllEvents(reportCode, fightId, 'Deaths', fight.startTime, fight.endTime),
+      this.wclApi.getCombatantInfo(reportCode, fightId, playerId),
     ]);
     const deadSpans = await this.playerDeadSpans(pull, context, playerId, deaths);
 
@@ -140,6 +143,7 @@ export class DefensiveFeatureService {
     const playerDefensives = this.analyzeDefensives(
       bench.defensives, this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime), this.wclProjections.withRelativeS(buffs, fight.startTime), fightDurationS,
       context.report.masterData?.abilities ?? [],
+      this.gearExtract.pickedTalents(this.gearExtract.selectCombatantInfo(combatants, playerId)),
     );
     const findings = bench.defensives.length && playerDefensives.length
       ? this.analyzeDefensiveFindings(playerDefensives, bench.per_defensive_benchmarks, fightDurationS)
@@ -209,6 +213,7 @@ export class DefensiveFeatureService {
     buffEvents: TimedEvent[],
     fightEndS: number,
     abilities: readonly WclAbility[],
+    talents: ReadonlyMap<number, number> | null,
   ): PlayerDefensive[] {
     if (!defensives.length) return [];
     const buffWin = this.auraWindows.buildAuraWindows(buffEvents);
@@ -218,7 +223,7 @@ export class DefensiveFeatureService {
       const windows = this.buildDefensiveUsageWindows(spellId, this.auraWindows.spansNamed(buffWin, defensive, abilities), castEvents, fightEndS);
       const cast_times_s = windows.map(window => window.start_s).sort((a, b) => a - b);
       const entry: PlayerDefensive = { name: defensive.name, uses: windows.length, cast_times_s, windows };
-      if (defensive.talent_gated) entry.talent_gated = true;
+      if (!buttonTaken(defensive, talents)) entry.talent_gated = true;
       return entry;
     });
   }

@@ -40,6 +40,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const report = wclReport({ playerName: 'P', abilities: [{ gameID: BOSS_HIT_SPELL_ID, name: 'Boss Hit', icon: 'hit' }] });
     const wcl = {
       getReport: async () => report,
+      getCombatantInfo: async () => [],
       getAllEvents: async (_c: string, _f: number, dataType: string) => {
         if (dataType === 'Buffs') return [applyBuff(CLOAK_OF_SHADOWS, 30), removeBuff(CLOAK_OF_SHADOWS, 35)];
         if (dataType === 'Casts') return [];
@@ -65,6 +66,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const OTHER_BACK_S = 25;
     const wcl = {
       getReport: async () => wclReport({ playerName: 'P' }),
+      getCombatantInfo: async () => [],
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
         dataType === 'Deaths' ? [death(PLAYER_ID, DIED_S), death(OTHER_PLAYER_ID, DIED_S)] : [],
       getResurrects: async () => [resurrect(OTHER_PLAYER_ID, OTHER_BACK_S)],
@@ -80,6 +82,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const ON_PLAN_USE_S = 40;
     const wcl = {
       getReport: async () => wclReport({ playerName: 'P' }),
+      getCombatantInfo: async () => [],
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
         dataType === 'Buffs' ? [applyBuff(EVASION, ON_PLAN_USE_S)] : [],
     };
@@ -96,7 +99,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
 
   it('does not throw and yields an empty icon when a cd spell id is missing from the ability map', async () => {
     const report = wclReport({ playerName: 'P' });
-    const wcl = { getReport: async () => report, getAllEvents: async () => [] };
+    const wcl = { getReport: async () => report, getAllEvents: async () => [], getCombatantInfo: async () => [] };
     // ability_icons intentionally omits CLOAK_OF_SHADOWS even though cd_spell_ids still references it.
     const bench = { ...fullBench(), ability_icons: {} };
     const service = serviceWith(Results.ok(bench), wcl);
@@ -116,6 +119,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
         if (code === FAILING_CODE) throw new Error('WCL down');
         return wclReport({ fights: [], actors: [] });
       },
+      getCombatantInfo: async () => [],
       getAllEvents: async () => [],
     });
 

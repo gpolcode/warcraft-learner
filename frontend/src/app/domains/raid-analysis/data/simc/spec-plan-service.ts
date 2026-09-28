@@ -109,8 +109,8 @@ export class SpecPlanService {
   private assemble(read: AplRead | null, records: SpellRecord[], sources: { records: SpellRecord[]; code: string; tree: TalentTree | null }): SpecPlan {
     const lines = read?.lines ?? null;
     const byToken = group(records, record => record.token);
-    const cooldowns = this.cooldowns(lines, byToken);
-    const defensives = this.defensives(records, byToken);
+    const cooldowns = this.cooldowns(lines, byToken, sources.tree);
+    const defensives = this.defensives(records, byToken, sources.tree);
     const texts = [...(lines ?? []).flatMap(line => line.terms ?? []), ...(read?.variables ?? []).flatMap(({ value, value_else, condition, terms }) => [value, value_else, condition, ...(terms ?? [])])];
     const names = texts.flatMap(text => {
       const node = text === undefined ? null : this.apl.parse(text);
@@ -186,26 +186,31 @@ export class SpecPlanService {
     return tree?.[bucket].filter(entry => this.dumps.tokenize(entry.name) === name) ?? [];
   }
 
-  private cooldowns(lines: PlanLine[] | null, byToken: Map<string, SpellRecord[]>): PlanCooldown[] {
+  private cooldowns(lines: PlanLine[] | null, byToken: Map<string, SpellRecord[]>, tree: TalentTree | null): PlanCooldown[] {
     const tokens = lines ? new Set(lines.map(line => line.action)) : byToken.keys();
     return [...tokens].flatMap(token => {
       const records = byToken.get(token) ?? [];
       const button = greatest(records, record => record.cooldown);
       const major = records.some(record => record.major) || (!!lines && (button?.cooldown ?? 0) >= MAJOR_COOLDOWN_S);
       if (!button?.cooldown || !major || records.some(record => record.defensive)) return [];
-      return [this.button(button, records)];
+      return [this.button(button, records, tree)];
     }).map((cooldown, index) => (lines ? { ...cooldown, opener_priority: index + 1 } : cooldown));
   }
 
-  private defensives(records: SpellRecord[], byToken: Map<string, SpellRecord[]>): PlanDefensive[] {
+  private defensives(records: SpellRecord[], byToken: Map<string, SpellRecord[]>, tree: TalentTree | null): PlanDefensive[] {
     return [...new Set(records.filter(record => record.defensive).map(record => record.token))].flatMap(token => {
       const named = byToken.get(token) ?? [];
       const button = greatest(named, record => record.cooldown);
-      return button?.cooldown ? [this.button(button, named)] : [];
+      return button?.cooldown ? [this.button(button, named, tree)] : [];
     });
   }
 
-  private button(record: SpellRecord, named: SpellRecord[]): PlanCooldown {
-    return { name: record.name, spell_id: record.id, cooldown: record.cooldown, talent_gated: named.some(entry => entry.talented) };
+  private button(record: SpellRecord, named: SpellRecord[], tree: TalentTree | null): PlanCooldown {
+    const talented = named.some(entry => entry.talented);
+    const entries = talented ? this.named(tree, 'talents', record.token).map(entry => entry.id) : [];
+    return {
+      name: record.name, spell_id: record.id, cooldown: record.cooldown, talent_gated: talented,
+      ...(entries.length ? { talent_entries: entries } : {}),
+    };
   }
 }

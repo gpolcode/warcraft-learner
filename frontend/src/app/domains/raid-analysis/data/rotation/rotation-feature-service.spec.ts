@@ -33,6 +33,7 @@ function scan(over: {
     castEvents: wclProjections.withRelativeS(over.castEvents ?? [], 0),
     buffEvents: wclProjections.withRelativeS(over.buffEvents ?? [], 0),
     cooldowns: over.cooldowns ?? over.bench.major_cooldowns,
+    talents: null,
   };
 }
 
@@ -257,26 +258,41 @@ describe('analyzeOneCooldown', () => {
   const MINORITY_USERS = 2;  // 2/10 = 20%
   const rareUse = cdBench({ sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS, uses_per_min: UPM });
 
-  it('skips a talent-gated cooldown that was never used', () => {
-    expect(svc['analyzeOneCooldown']({ ...cd, talent_gated: true }, [], single, 120, null)).toBeNull();
+  describe('a talent-gated cooldown that was never used', () => {
+    const TALENT_ENTRY = 90001;
+    const gated = { ...cd, talent_gated: true, talent_entries: [TALENT_ENTRY] };
+
+    it('is flagged as never used when the player\'s talents show it', () => {
+      const result = svc['analyzeOneCooldown'](gated, [], single, FIGHT_DUR_S, null, new Map([[TALENT_ENTRY, 1]]));
+      expect(result?.scan.issues[0]).toMatchObject({ category: 'lost_cooldown', measured: { value: '0 / 1' } });
+    });
+
+    it('is skipped when the player\'s talents do not show it', () => {
+      expect(svc['analyzeOneCooldown'](gated, [], single, FIGHT_DUR_S, null, new Map([[TALENT_ENTRY + 1, 1]]))).toBeNull();
+    });
+
+    it('is skipped when the pull carries no talents, or the bench names no entry to check', () => {
+      expect(svc['analyzeOneCooldown'](gated, [], single, FIGHT_DUR_S, null, null)).toBeNull();
+      expect(svc['analyzeOneCooldown']({ ...cd, talent_gated: true }, [], single, FIGHT_DUR_S, null, new Map([[TALENT_ENTRY, 1]]))).toBeNull();
+    });
   });
 
   it('reports success when a cooldown is used cleanly and BL-aligned', () => {
     // first cast 6s (under 9s open threshold), BL at 6s -> aligned.
-    const result = svc['analyzeOneCooldown'](cd, [6], single, 120, 6);
+    const result = svc['analyzeOneCooldown'](cd, [6], single, 120, 6, null);
     expect(result?.scan.issues).toEqual([]);
     expect(result?.success?.message).toContain('aligned with Bloodlust');
   });
 
   it('reports an issue (no success) when the opener is late', () => {
-    const result = svc['analyzeOneCooldown'](cd, [40], single, 120, 38);
+    const result = svc['analyzeOneCooldown'](cd, [40], single, 120, 38, null);
     expect(result?.success).toBeNull();
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(true);
   });
 
   it('does not flag an unused cooldown that only a minority of top parses use (use-share gate)', () => {
     // Matching the top parses by not pressing it is not a lost cast.
-    const result = svc['analyzeOneCooldown'](cd, [], rareUse, FIGHT_DUR_S, null);
+    const result = svc['analyzeOneCooldown'](cd, [], rareUse, FIGHT_DUR_S, null, null);
     expect(result?.scan.issues).toEqual([]);
     expect(result?.success).toBeNull();
   });
@@ -284,7 +300,7 @@ describe('analyzeOneCooldown', () => {
   it('does not flag a late opener of a minority-use cooldown (use-share gate)', () => {
     // Opened well past 2 sigma over the 5s top first cast, but the first-cast check is gated off.
     const LATE_OPENER_S = 40;
-    const result = svc['analyzeOneCooldown'](cd, [LATE_OPENER_S], rareUse, FIGHT_DUR_S, null);
+    const result = svc['analyzeOneCooldown'](cd, [LATE_OPENER_S], rareUse, FIGHT_DUR_S, null, null);
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(false);
   });
 });

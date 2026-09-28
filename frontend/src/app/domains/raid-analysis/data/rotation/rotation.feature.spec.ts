@@ -29,6 +29,7 @@ const REPORT = wclReport({ endTimeMs: FIGHT_END_MS, actors: [] });
 // Resolves a valid (empty) player log, so a test's outcome is driven by the bench Result rather than an incidental transport throw.
 const WORKING_WCL = {
   getReport: async () => REPORT,
+  getCombatantInfo: async () => [],
   getAllEvents: async () => [],
 };
 
@@ -89,6 +90,7 @@ describe('RotationFeatureService', () => {
       getReport: async () => wclReport({
         endTimeMs: FIGHT_END_MS, actors: [], abilities: [{ gameID: SHADOW_BLADES, name: 'Shadow Blades', icon: 'sb' }],
       }),
+      getCombatantInfo: async () => [],
       getAllEvents: async (_c: string, _f: number, dataType: string) =>
         dataType === 'Casts' ? [cast(SHADOW_BLADES, 6)] : [applyBuff(BLOODLUST, 6)],
     };
@@ -99,12 +101,29 @@ describe('RotationFeatureService', () => {
     if (result.ok) expect(result.value.onPlan).toEqual([{ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb' }]);
   });
 
+  it('flags a talented cooldown the player never pressed, reading their talents from the combatant info', async () => {
+    const PLAYER_ID = 10;
+    const SHADOW_BLADES_ENTRY = 90020;
+    const wcl = {
+      ...WORKING_WCL,
+      getCombatantInfo: async () => [{ sourceID: PLAYER_ID, talentTree: [{ id: SHADOW_BLADES_ENTRY, rank: 1 }] }],
+    };
+    const talented = bench({
+      major_cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90, talent_gated: true, talent_entries: [SHADOW_BLADES_ENTRY] }],
+      per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 0.5, stddev: 0.1 } }) },
+    });
+    const result = await withSource(Results.ok(talented), wcl).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
+    assert(result.ok);
+    expect(result.value.offensiveRows[0]).toMatchObject({ name: 'Shadow Blades', measured: { value: '0 / 1' } });
+  });
+
   it('counts a press WCL logs once per target as one use', async () => {
     const PRESS_S = 6;
     const ALLY_ID = 9;
     const PLAYER_ID = 10;
     const wcl = {
       getReport: async () => REPORT,
+      getCombatantInfo: async () => [],
       getAllEvents: async (_c: string, _f: number, dataType: string) => (dataType === 'Casts'
         ? [cast(SHADOW_BLADES, PRESS_S, { source: PLAYER_ID, target: ALLY_ID }), cast(SHADOW_BLADES, PRESS_S + 0.02, { source: PLAYER_ID, target: PLAYER_ID })]
         : []),

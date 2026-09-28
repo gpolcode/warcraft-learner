@@ -9,6 +9,7 @@ export interface DefensivePlanMeta {
   spell_id: number;
   cooldown: number;
   talent_gated: boolean;
+  talent_entries?: number[];
 }
 
 interface BakedAbility {
