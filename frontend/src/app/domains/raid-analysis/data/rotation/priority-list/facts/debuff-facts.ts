@@ -26,13 +26,18 @@ export class DebuffFacts implements FactReader {
     if (!spell) return UNKNOWN;
     if (field === 'duration') return spell.duration ? [spell.duration, spell.duration] : UNKNOWN;
     const id = ctx.auraId(token, 'target');
-    // As with buffs, an aura the log never shows may be SimC's own bookkeeping rather than a game debuff.
-    if (id === null) return UNKNOWN;
-    if (field === 'active_dots') return this.spread(ctx, id, moment.atS);
+    if (id === null) return this.unlogged(field, token, spell, moment.atS, ctx);
+    const readS = this.auras.readS(moment, ctx);
+    if (field === 'active_dots') return this.spread(ctx, id, readS);
     if (!moment.target) return UNKNOWN;
-    const aura = this.auras.auraAt(ctx.targetSpans(id).get(moment.target) ?? [], moment.atS);
-    if (field === 'stack' || field === 'react') return this.auras.stacks(ctx.targetStacks(id, moment.target), !!aura, spell.max_stacks, moment.atS);
+    const aura = this.auras.auraAt(ctx.targetSpans(id).get(moment.target) ?? [], readS);
+    if (field === 'stack' || field === 'react') return this.auras.stacks(ctx.targetStacks(id, moment.target), !!aura, spell.max_stacks, readS);
     return this.onTarget(field, aura, spell, moment.atS, ctx.fightDurationS);
+  }
+
+  /** As with buffs, an aura the log never shows may be SimC's own bookkeeping rather than a game debuff, unless only an untaken talent grants it. */
+  private unlogged(field: string, token: string, spell: PlanSpell, atS: number, ctx: FactContext): Range {
+    return this.auras.untaken(token, ctx) ? this.onTarget(field, null, spell, atS, ctx.fightDurationS) : UNKNOWN;
   }
 
   private onTarget(field: string, aura: AuraAt | null, spell: PlanSpell, atS: number, fightEndS: number): Range {

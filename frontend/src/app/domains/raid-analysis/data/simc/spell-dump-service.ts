@@ -23,6 +23,8 @@ export interface SpellRecord {
   major: boolean;
   /** Blizzard's `Big Defensive` or `External Defensive` attribute. */
   defensive: boolean;
+  /** An aura of the player's own button that cuts their damage taken or adds dodge or parry, which Blizzard labels only on the big ones. */
+  guards: boolean;
   talented: boolean;
   /** The specs a talent belongs to; null for a class-wide spell or class-tree talent. */
   specs: string[] | null;
@@ -41,6 +43,9 @@ export const POOL_TYPES: Record<string, number | undefined> = {
 /** The data keeps these pools in tenths or hundredths of the game's units. */
 const POOL_SCALE: Record<string, number | undefined> = { rage: 10, runic_power: 10, astral_power: 10, soul_shard: 10, insanity: 100 };
 const ENERGIZE = /^#\d+ \(id=\d+\) +: Energize Power \(30\)\n +Base Value: (\d+(?:\.\d+)?) \|[^\n]*\| Resource: (\w+) \| Target: Self \(1\)/gm;
+const SELF_GUARD = /^#\d+ \(id=\d+\) +: Apply Aura \(6\) \| Modify (AoE Damage Taken|Damage Taken|Dodge|Parry)% \(\d+\)\n +Base Value: (-?\d+(?:\.\d+)?) \|[^\n]*Target: Self \(1\)/gm;
+/** Well under Feint's 40% and Divine Protection's 20%, well over the 10% a Colossus Demolish grants in passing. */
+const SELF_GUARD_PCT = 20;
 
 @Injectable({ providedIn: 'root' })
 export class SpellDumpService {
@@ -70,6 +75,7 @@ export class SpellDumpService {
       effects: this.effects(block),
       major: block.includes(': 690: Major Cooldowns'),
       defensive: /(Big|External) Defensive \(\d+\)/.test(block),
+      guards: this.guards(block),
       ...this.talent(block),
     };
   }
@@ -80,6 +86,13 @@ export class SpellDumpService {
     if (!entry) return { talented: false, specs: null };
     const trees = [...entry.matchAll(/: (.+?) \[[^\]]*?\btree=(\w+)/g)].map(([, name = '', tree = '']) => this.talentSpecs(name, tree));
     return { talented: true, specs: trees.some(specs => specs === null) ? null : trees.flatMap(specs => specs ?? []) };
+  }
+
+  /** A pet's ability or a PvP talent carries a desc suffix. */
+  private guards(block: string): boolean {
+    const header = /^Name +: .*/.exec(block)?.[0] ?? '';
+    if (!header.includes('[Spell Family (') || header.includes('(desc=')) return false;
+    return [...block.matchAll(SELF_GUARD)].some(([, kind = '', value = '']) => (kind.includes('Damage Taken') ? -Number(value) : Number(value)) >= SELF_GUARD_PCT);
   }
 
   private cooldown(block: string): number {

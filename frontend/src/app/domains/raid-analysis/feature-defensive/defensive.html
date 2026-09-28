@@ -1,8 +1,7 @@
-@if (error() || !available()) {
-  <wl-load-state heading="Defensives" subtitle="How you used your survival cooldowns compared with the top logs." [error]="error()"></wl-load-state>
-}
-@else {
-  @if (findingRows().length || onPlan().length) {
+<div class="flex flex-col gap-6">
+  @if (error() || !available()) {
+    <wl-load-state heading="Defensives" subtitle="How you used your survival cooldowns compared with the top logs." [error]="error()"></wl-load-state>
+  } @else {
     <wl-finding-table
       heading="Defensives"
       subtitle="How you used your survival cooldowns compared with the top logs."
@@ -13,23 +12,22 @@
       (openMap)="onFindingMap($event)"
       (openClip)="onFindingClip($event)">
     </wl-finding-table>
-  }
 
-  @if (windows().length > 0) {
-    <wl-window-comparison
-      [class.mt-6]="findingRows().length > 0 || onPlan().length > 0"
-      [windows]="windows()"
-      [higherIsBetter]="false"
-      [showCasts]="false"
-      [showMap]="showMap()"
-      [showClip]="showClip()"
-      heading="Defensive windows"
-      subtitle="Damage taken in each defensive window vs top logs."
-      metricLabel="Damage taken"
-      chipsLabel="Defensives top raiders use here"
-      rangeLabel="Damage taken vs top range"
-      (openMap)="onOpenMap($event)"
-      (openClip)="onOpenClip($event)">
-    </wl-window-comparison>
+    @if (windows().length > 0) {
+      <wl-window-comparison
+        [windows]="windows()"
+        [higherIsBetter]="false"
+        [showCasts]="false"
+        [showMap]="showMap()"
+        [showClip]="showClip()"
+        heading="Defensive windows"
+        subtitle="Damage taken in each defensive window vs top logs."
+        metricLabel="Damage taken"
+        chipsLabel="Defensives top raiders use here"
+        rangeLabel="Damage taken vs top range"
+        (openMap)="onOpenMap($event)"
+        (openClip)="onOpenClip($event)">
+      </wl-window-comparison>
+    }
   }
-}
+</div>

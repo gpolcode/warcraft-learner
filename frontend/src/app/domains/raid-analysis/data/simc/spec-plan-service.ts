@@ -15,6 +15,7 @@ const KEY_LENGTH = 16;
 
 const SPELL_NAME = /^(?:target\.)?(?:buff|debuff|dot|cooldown|action|active_dots?|prev|prev_off_gcd|pet)\.(\w+)|^prev_gcd\.\d+\.(\w+)/;
 const TALENT_NAME = /^(talent|hero_tree|apex)\.\w+/;
+const AURA_NAME = /^(?:target\.)?(?:buff|debuff|dot)\.(\w+)/;
 const TIERED_TALENT = /^(\w+)_(\d+)$/;
 type EffectOf = (token: string, effect: number) => number | undefined;
 /** Whether the spec's own spell data holds the name. */
@@ -162,13 +163,13 @@ export class SpecPlanService {
     };
   }
 
-  /** The talent entries each `talent.x`, `hero_tree.x` and `apex.N` of the list names, by the tree's own names tokenized the way SimC does. */
+  /** The talent entries each `talent.x`, `hero_tree.x` and `apex.N` of the list names, and each aura it names after a talent, by the tree's own names tokenized the way SimC does. */
   private talents(names: string[], tree: TalentTree | null): Record<string, PlanTalent> {
-    const keys = new Set(names.flatMap(name => TALENT_NAME.exec(name)?.[0] ?? []));
-    return Object.fromEntries([...keys].flatMap(key => {
-      const { entries, points } = this.talentEntries(key, tree);
-      return entries[0] ? [[key, { name: entries[0].name, entries: entries.map(entry => entry.id), ...(points ? { points } : {}) }]] : [];
-    }));
+    const found = new Map<string, { entries: TalentName[]; points?: number }>();
+    for (const token of names.flatMap(name => AURA_NAME.exec(name)?.[1] ?? [])) found.set(`talent.${token}`, { entries: this.named(tree, 'talents', token) });
+    for (const key of names.flatMap(name => TALENT_NAME.exec(name)?.[0] ?? [])) found.set(key, this.talentEntries(key, tree));
+    return Object.fromEntries([...found].flatMap(([key, { entries, points }]) =>
+      entries[0] ? [[key, { name: entries[0].name, entries: entries.map(entry => entry.id), ...(points ? { points } : {}) }]] : []));
   }
 
   /** `talent.hand_of_frost_4` is the fourth rank in the tiered node of that name, counted over its tiers. */
@@ -192,17 +193,22 @@ export class SpecPlanService {
       const records = byToken.get(token) ?? [];
       const button = greatest(records, record => record.cooldown);
       const major = records.some(record => record.major) || (!!lines && (button?.cooldown ?? 0) >= MAJOR_COOLDOWN_S);
-      if (!button?.cooldown || !major || records.some(record => record.defensive)) return [];
+      if (!button?.cooldown || !major || this.defensive(records)) return [];
       return [this.button(button, records, tree)];
     }).map((cooldown, index) => (lines ? { ...cooldown, opener_priority: index + 1 } : cooldown));
   }
 
   private defensives(records: SpellRecord[], byToken: Map<string, SpellRecord[]>, tree: TalentTree | null): PlanDefensive[] {
-    return [...new Set(records.filter(record => record.defensive).map(record => record.token))].flatMap(token => {
+    return [...new Set(records.filter(record => record.defensive || record.guards).map(record => record.token))].flatMap(token => {
       const named = byToken.get(token) ?? [];
       const button = greatest(named, record => record.cooldown);
-      return button?.cooldown ? [this.button(button, named, tree)] : [];
+      return button?.cooldown && this.defensive(named) ? [this.button(button, named, tree)] : [];
     });
+  }
+
+  /** Blizzard's Major Cooldowns label outranks a guarding aura, so Dancing Rune Weapon's parry keeps it a Blood cooldown. */
+  private defensive(named: SpellRecord[]): boolean {
+    return named.some(record => record.defensive) || (named.some(record => record.guards) && !named.some(record => record.major));
   }
 
   private button(record: SpellRecord, named: SpellRecord[], tree: TalentTree | null): PlanCooldown {

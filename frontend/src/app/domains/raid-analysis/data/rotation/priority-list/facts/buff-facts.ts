@@ -14,19 +14,25 @@ export class BuffFacts implements FactReader {
     return BUFF.test(name);
   }
 
-  read(name: string, { atS }: CastMoment, _action: string, ctx: FactContext): Range {
+  read(name: string, moment: CastMoment, _action: string, ctx: FactContext): Range {
     const [, token = '', field = ''] = BUFF.exec(name) ?? [];
     const spell = ctx.list.spells[token];
     const id = ctx.auraId(token, 'self');
-    // SimC tracks some buffs no game aura backs (`buff.roll_the_bones`), so one the log never shows is unknown rather than down.
-    return this.spellData(field, spell) ?? (id === null ? UNKNOWN : this.logged(field, id, spell, atS, ctx));
+    return this.spellData(field, spell) ?? (id === null ? this.unlogged(field, token, ctx) : this.logged(field, id, spell, moment, ctx));
   }
 
-  private logged(field: string, id: number, spell: PlanSpell | undefined, atS: number, ctx: FactContext): Range {
-    const aura = this.auras.auraAt(ctx.selfSpans(id), atS);
+  /** SimC tracks some buffs no game aura backs (`buff.roll_the_bones`), so one the log never shows is unknown rather than down, unless only an untaken talent grants it. */
+  private unlogged(field: string, token: string, ctx: FactContext): Range {
+    if (!this.auras.untaken(token, ctx)) return UNKNOWN;
+    return field === 'down' ? [1, 1] : [0, 0];
+  }
+
+  private logged(field: string, id: number, spell: PlanSpell | undefined, moment: CastMoment, ctx: FactContext): Range {
+    const readS = this.auras.readS(moment, ctx);
+    const aura = this.auras.auraAt(ctx.selfSpans(id), readS);
     if (field === 'up' || field === 'down') return (field === 'up') === !!aura ? [1, 1] : [0, 0];
-    if (field === 'remains') return this.auras.remains(aura, spell?.duration ?? 0, atS, ctx.fightDurationS);
-    return this.stackField(field, this.stacks(ctx, id, aura, spell, atS), spell?.max_stacks ?? 0);
+    if (field === 'remains') return this.auras.remains(aura, spell?.duration ?? 0, moment.atS, ctx.fightDurationS);
+    return this.stackField(field, this.stacks(ctx, id, aura, spell, readS), spell?.max_stacks ?? 0);
   }
 
   private spellData(field: string, spell: PlanSpell | undefined): Range | null {

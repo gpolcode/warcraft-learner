@@ -159,8 +159,21 @@ describe('buildAuraSpansByTarget', () => {
     expect([...spans.values()].flat()).toHaveLength(1);
   });
 
-  it('does not back-fill a bare refresh, since the true pre-pull start is unknown', () => {
+  it('back-fills a bare refresh to an unknown start before the pull, since the aura was already up', () => {
     const spans = auraWindows.buildAuraSpansByTarget(timed([refreshDebuff(RUPTURE, REFRESH_S)], 0), RUPTURE);
-    expect(spans.get('0:0')).toEqual([{ startS: REFRESH_S, endS: null, endedByRefresh: false }]);
+    expect(spans.get('0:0')).toEqual([
+      { startS: -Infinity, endS: REFRESH_S, endedByRefresh: true },
+      { startS: REFRESH_S, endS: null, endedByRefresh: false },
+    ]);
+  });
+
+  it('back-fills a bare remove to an unknown start before the pull, since the aura was up until then', () => {
+    const spans = auraWindows.buildAuraSpansByTarget(timed([removeDebuff(RUPTURE, REMOVE_S)], 0), RUPTURE);
+    expect(spans.get('0:0')).toEqual([{ startS: -Infinity, endS: REMOVE_S, endedByRefresh: false }]);
+  });
+
+  it('does not back-fill a remove that closes a span the stream applied', () => {
+    const spans = auraWindows.buildAuraSpansByTarget(timed([applyDebuff(RUPTURE, APPLY_S), removeDebuff(RUPTURE, REMOVE_S)], 0), RUPTURE);
+    expect(spans.get('0:0')).toEqual([{ startS: APPLY_S, endS: REMOVE_S, endedByRefresh: false }]);
   });
 });

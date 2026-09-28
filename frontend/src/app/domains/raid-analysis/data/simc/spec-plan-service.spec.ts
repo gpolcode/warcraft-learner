@@ -17,6 +17,7 @@ const DIE_BY_THE_SWORD = 118038;
 const ENRAGE = 184362;
 const SUMMON_RAVAGER = 228920;
 const ANGER_MANAGEMENT_ENTRY = 90371;
+const RECKLESSNESS_ENTRY = 90010;
 const SLAYER_ENTRY = 123389;
 const APEX_TIER_ENTRIES = [137004, 137003, 137002];
 const SCORCH_EXECUTE_PCT = 30;
@@ -39,6 +40,19 @@ const DUMP = [
   record('Summon Ravager', SUMMON_RAVAGER, 'Duration         : 12 seconds', 'Cooldown         : 30 seconds', 'Charges          : 2 (30 seconds cooldown)'),
   record('Scorch', 2948, '#2 (id=1154626)  : Dummy (3)', `                   Base Value: ${SCORCH_EXECUTE_PCT} | Scaled Value: ${SCORCH_EXECUTE_PCT}`),
   record('Vanish', VANISH, 'Duration         : 3 seconds'),
+].join('\n\n');
+const guarding = (id: number, aura: string, value: number): string => [
+  `#1 (id=${id + 1})   : Apply Aura (6) | ${aura}`,
+  `                   Base Value: ${value} | Scaled Value: ${value} | Target: Self (1)`,
+].join('\n');
+const FEINT = 1966;
+const DANCING_RUNE_WEAPON = 49028;
+const DANCING_RUNE_WEAPON_BUFF = 81256;
+const GUARDED_DUMP = [
+  DUMP,
+  record('Feint', FEINT, 'Charges          : 1 (15 seconds cooldown)', guarding(FEINT, 'Modify AoE Damage Taken% (229)', -40)),
+  record('Dancing Rune Weapon', DANCING_RUNE_WEAPON, 'Cooldown         : 120 seconds', 'Labels           : 690: Major Cooldowns'),
+  record('Dancing Rune Weapon', DANCING_RUNE_WEAPON_BUFF, guarding(DANCING_RUNE_WEAPON_BUFF, 'Modify Parry% (47)', 30)),
 ].join('\n\n');
 /** Declarations shaped like SimC's class modules. */
 const CODE = [
@@ -71,7 +85,6 @@ describe('SpecPlanService.build', () => {
   });
 
   it('names the talent entry that grants a talented button, by the tree\'s own name for it', () => {
-    const RECKLESSNESS_ENTRY = 90010;
     const tree: TalentTree = { ...TREE, talents: [...TREE.talents, { id: RECKLESSNESS_ENTRY, name: 'Recklessness' }] };
     const plan = specPlans.build({ apl: APL, dump: DUMP, specLabel: 'Fury', talents: tree, code: '' });
     expect(plan.cooldowns[0]?.talent_entries).toEqual([RECKLESSNESS_ENTRY]);
@@ -85,6 +98,17 @@ describe('SpecPlanService.build', () => {
 
   it('plans the spec\'s own big and external defensives, leaving out a name only another spec\'s talent carries', () => {
     expect(fury().defensives.map(defensive => defensive.name)).toEqual(['Enraged Regeneration', 'Spell Reflection']);
+  });
+
+  it('plans a button whose own aura guards its caster as a defensive, though Blizzard labels it none', () => {
+    const plan = specPlans.build({ apl: APL, dump: GUARDED_DUMP, specLabel: 'Fury', talents: TREE, code: '' });
+    expect(plan.defensives.map(defensive => defensive.name)).toContain('Feint');
+  });
+
+  it('keeps a guarding button Blizzard labels a major cooldown a cooldown', () => {
+    const plan = specPlans.build({ apl: `${APL}\nactions+=/dancing_rune_weapon`, dump: GUARDED_DUMP, specLabel: 'Fury', talents: TREE, code: '' });
+    expect(plan.cooldowns.map(cooldown => cooldown.name)).toContain('Dancing Rune Weapon');
+    expect(plan.defensives.map(defensive => defensive.name)).not.toContain('Dancing Rune Weapon');
   });
 
   it('keeps a button another spec\'s talent carries when the spec\'s own APL presses it', () => {
@@ -115,6 +139,12 @@ describe('SpecPlanService.build', () => {
   it('reads a tiered talent\'s numbered name as that many ranks over the tiered node of the name', () => {
     const { talents } = fury(`${APL}\nactions+=/execute,if=talent.rampaging_berserker_3`);
     expect(talents).toEqual({ 'talent.rampaging_berserker_3': { name: 'Rampaging Berserker', entries: APEX_TIER_ENTRIES, points: 3 } });
+  });
+
+  it('names the talent an aura the list reads is called after, and none for an aura no talent carries', () => {
+    const tree: TalentTree = { ...TREE, talents: [...TREE.talents, { id: RECKLESSNESS_ENTRY, name: 'Recklessness' }] };
+    const { talents } = specPlans.build({ apl: APL, dump: DUMP, specLabel: 'Fury', talents: tree, code: '' });
+    expect(talents).toEqual({ 'talent.recklessness': { name: 'Recklessness', entries: [RECKLESSNESS_ENTRY] } });
   });
 
   it('leaves out a talent the tree does not carry, which the list then reads as unknown', () => {

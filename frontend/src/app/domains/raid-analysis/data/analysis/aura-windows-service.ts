@@ -118,7 +118,10 @@ export class AuraWindowsService {
     for (const event of events) {
       if (event.abilityGameID !== spellId) continue;
       const list = getOrInsert(spans, this.projections.targetKey(event), (): AuraSpan[] => []);
-      this.applySpanEdge(list, this.spanEdgeOf(event.type), event.atS);
+      const edge = this.spanEdgeOf(event.type);
+      // WCL logs no apply for an aura already up at the pull, and nothing says how long before it went up.
+      if (!list.length && (edge === 'refresh' || edge === 'close')) list.push({ startS: -Infinity, endS: event.atS, endedByRefresh: edge === 'refresh' });
+      this.applySpanEdge(list, edge, event.atS);
     }
     return spans;
   }

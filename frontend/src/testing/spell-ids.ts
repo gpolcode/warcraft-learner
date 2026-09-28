@@ -18,6 +18,8 @@ export const BACKSTAB = 53;
 export const BLACK_POWDER = 319175;
 
 export const RUPTURE = 1943;
+export const DEATHMARK = 360194;
+export const DARKEST_NIGHT = 457280;
 
 // Logged once on its target and once on the priest, a few ms apart, for one press.
 export const POWER_INFUSION = 10060;

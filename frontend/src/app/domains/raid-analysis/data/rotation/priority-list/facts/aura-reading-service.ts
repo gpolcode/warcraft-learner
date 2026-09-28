@@ -1,6 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { AuraWindowsService, AuraSpan, StackTimeline } from '../../../analysis/aura-windows-service';
-import type { Range } from '../priority-list.models';
+import type { CastMoment, FactContext, Range } from '../priority-list.models';
+
+/** The log stamps what a cast applies, refreshes or consumes up to a few ms ahead of the cast itself: Envenom's own buff 1 ms, the Stealth a Garrote breaks 13 ms. */
+export const CAST_EFFECTS_LEAD_S = 0.02;
+/** WCL stamps events to the millisecond. */
+const LOG_TICK_S = 0.001;
 
 /** Up going INTO a cast: an aura the cast itself applies is not up for it, one the cast consumes is. */
 export interface AuraAt {
@@ -13,6 +18,13 @@ export interface AuraAt {
 @Injectable({ providedIn: 'root' })
 export class AuraReadingService {
   private readonly auraWindows = inject(AuraWindowsService);
+
+  /** The instant whose auras a cast was pressed into: before its own effects, yet after an earlier press's, which a macro can fire inside the lead. */
+  readS({ atS, index }: CastMoment, ctx: FactContext): number {
+    let earlier = index - 1;
+    while ((ctx.casts[earlier]?.atS ?? -Infinity) >= atS) earlier--;
+    return Math.max(atS - CAST_EFFECTS_LEAD_S, (ctx.casts[earlier]?.atS ?? -Infinity) + LOG_TICK_S);
+  }
 
   /** `spans` are one aura's spans on one actor, time-ordered, a refresh ending one span and starting the next. */
   auraAt(spans: readonly AuraSpan[], atS: number): AuraAt | null {
@@ -42,5 +54,12 @@ export class AuraReadingService {
     const count = this.auraWindows.stacksAt(timeline, atS);
     if (count === null || count === 0) return [1, maxStacks || Infinity];
     return [count, count];
+  }
+
+  /** An aura a talent grants cannot be up for a player without the talent, even where the log shows no aura to prove it. */
+  untaken(token: string, ctx: FactContext): boolean {
+    const talent = ctx.list.talents[`talent.${token}`];
+    const picked = ctx.talents;
+    return !!talent && !!picked && talent.entries.every(entry => !picked.get(entry));
   }
 }
