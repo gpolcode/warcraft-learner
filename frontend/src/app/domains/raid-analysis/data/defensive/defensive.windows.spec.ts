@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { BurstWindow, PlayerBurstWindow, PlayerDefensive } from '../analysis/analysis.models';
 import { DefensiveFeatureService } from './defensive-feature-service';
-import { damageTaken } from '../../../../../testing/builders/events';
+import { damageTaken, death, resurrect } from '../../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { BOSS_HIT_SPELL_ID, timed } from './defensive-harness';
 import { TestBed } from '@angular/core/testing';
@@ -65,15 +65,76 @@ describe('defensiveWindowStatus', () => {
   const ABOVE_BAND = BAND_EDGE + 1;          // 1301 - strictly above the band
 
   it.each([
-    { name: 'is muted and unannotated when the window was not reached', player: WITHIN_BAND, notReached: true, covered: true, status: 'muted', icon: 'schedule', note: '' },
-    { name: 'is muted and unannotated when the player took no damage in the window', player: null, notReached: false, covered: true, status: 'muted', icon: 'help_outline', note: '' },
-    { name: 'is good with a covered note when damage taken is within the band and the defensive was pressed', player: WITHIN_BAND, notReached: false, covered: true, status: 'good', icon: 'check_circle', note: 'covered' },
-    { name: 'is good, noting no defensive used, when damage taken is within the band and none was pressed', player: WITHIN_BAND, notReached: false, covered: false, status: 'good', icon: 'check_circle', note: 'no defensive used' },
-    { name: 'is good, not bad, at the exact band edge', player: BAND_EDGE, notReached: false, covered: true, status: 'good', icon: 'check_circle', note: 'covered' },
-    { name: 'is bad, noting the defensive was used wrongly, when damage taken is above the band and it was pressed', player: ABOVE_BAND, notReached: false, covered: true, status: 'bad', icon: 'error', note: 'defensive used wrongly' },
-    { name: 'is bad, noting the defensive was needed and unused, when damage taken is above the band and none was pressed', player: ABOVE_BAND, notReached: false, covered: false, status: 'bad', icon: 'error', note: 'defensive needed, unused' },
-  ])('$name', ({ player, notReached, covered, status, icon, note }) => {
-    expect(svc['defensiveWindowStatus'](player, TOP_MAX, STDDEV, notReached, covered)).toEqual({ status, icon, note });
+    { name: 'is muted and unannotated when the window was not reached', player: WITHIN_BAND, notReached: true, covered: true, dead: false, status: 'muted', icon: 'schedule', note: '' },
+    { name: 'is muted and unannotated when the player took no damage in the window', player: null, notReached: false, covered: true, dead: false, status: 'muted', icon: 'help_outline', note: '' },
+    { name: 'is good with a covered note when damage taken is within the band and the defensive was pressed', player: WITHIN_BAND, notReached: false, covered: true, dead: false, status: 'good', icon: 'check_circle', note: 'covered' },
+    { name: 'is good, noting no defensive used, when damage taken is within the band and none was pressed', player: WITHIN_BAND, notReached: false, covered: false, dead: false, status: 'good', icon: 'check_circle', note: 'no defensive used' },
+    { name: 'is good, not bad, at the exact band edge', player: BAND_EDGE, notReached: false, covered: true, dead: false, status: 'good', icon: 'check_circle', note: 'covered' },
+    { name: 'is bad, noting the defensive was used wrongly, when damage taken is above the band and it was pressed', player: ABOVE_BAND, notReached: false, covered: true, dead: false, status: 'bad', icon: 'error', note: 'defensive used wrongly' },
+    { name: 'is bad, noting the defensive was needed and unused, when damage taken is above the band and none was pressed', player: ABOVE_BAND, notReached: false, covered: false, dead: false, status: 'bad', icon: 'error', note: 'defensive needed, unused' },
+    { name: 'is bad, noting the death, when the player was dead in the window even with damage taken inside the band', player: WITHIN_BAND, notReached: false, covered: true, dead: true, status: 'bad', icon: 'error', note: 'dead' },
+    { name: 'is bad, noting the death, when the player was dead through the whole window and took no damage', player: null, notReached: false, covered: false, dead: true, status: 'bad', icon: 'error', note: 'dead' },
+    { name: 'stays muted when the window was not reached, even with the player dead', player: null, notReached: true, covered: false, dead: true, status: 'muted', icon: 'schedule', note: '' },
+  ])('$name', ({ player, notReached, covered, dead, status, icon, note }) => {
+    expect(svc['defensiveWindowStatus'](player, TOP_MAX, STDDEV, notReached, covered, dead)).toEqual({ status, icon, note });
+  });
+});
+
+describe('deadSpans', () => {
+  const PLAYER_ID = 10;
+  const FIGHT_END_S = 300;
+  const DIED_S = 40;
+  const BACK_S = 70;
+
+  it('runs a death with no resurrect after it to the fight end', () => {
+    expect(svc['deadSpans'](timed([death(PLAYER_ID, DIED_S)], 0), [], FIGHT_END_S)).toEqual([[DIED_S, FIGHT_END_S]]);
+  });
+
+  it('ends a death at the resurrect after it', () => {
+    const spans = svc['deadSpans'](timed([death(PLAYER_ID, DIED_S)], 0), timed([resurrect(PLAYER_ID, BACK_S)], 0), FIGHT_END_S);
+    expect(spans).toEqual([[DIED_S, BACK_S]]);
+  });
+
+  it('does not end a death at a resurrect in the same instant, which lands before it', () => {
+    const spans = svc['deadSpans'](timed([death(PLAYER_ID, DIED_S)], 0), timed([resurrect(PLAYER_ID, DIED_S)], 0), FIGHT_END_S);
+    expect(spans).toEqual([[DIED_S, FIGHT_END_S]]);
+  });
+
+  it('pairs each of two deaths with the resurrect that followed it', () => {
+    const SECOND_DIED_S = 200;
+    const spans = svc['deadSpans'](
+      timed([death(PLAYER_ID, SECOND_DIED_S), death(PLAYER_ID, DIED_S)], 0), timed([resurrect(PLAYER_ID, BACK_S)], 0), FIGHT_END_S,
+    );
+    expect(spans).toEqual([[DIED_S, BACK_S], [SECOND_DIED_S, FIGHT_END_S]]);
+  });
+});
+
+describe('deadInWindow', () => {
+  const WIN_START_S = 30;
+  const WIN_LEN_S = 5;
+  const WIN_END_S = WIN_START_S + WIN_LEN_S;
+  const window = { time_s: WIN_START_S, window_length_s: WIN_LEN_S } as BurstWindow;
+  const JUST = 0.1;
+
+  it('is true for a death inside the window', () => {
+    expect(svc['deadInWindow'](window, [[WIN_START_S + 1, WIN_END_S + 60]])).toBe(true);
+  });
+
+  it('is true for a death before the window the player was not back from until inside it', () => {
+    expect(svc['deadInWindow'](window, [[WIN_START_S - 20, WIN_START_S + JUST]])).toBe(true);
+  });
+
+  it('is false for a death at the exact window end, which the window no longer counts', () => {
+    expect(svc['deadInWindow'](window, [[WIN_END_S, WIN_END_S + 60]])).toBe(false);
+    expect(svc['deadInWindow'](window, [[WIN_END_S - JUST, WIN_END_S + 60]])).toBe(true);
+  });
+
+  it('is false for a resurrect at the exact window start', () => {
+    expect(svc['deadInWindow'](window, [[WIN_START_S - 20, WIN_START_S]])).toBe(false);
+  });
+
+  it('is false with no deaths', () => {
+    expect(svc['deadInWindow'](window, [])).toBe(false);
   });
 });
 
@@ -142,7 +203,7 @@ describe('buildDefensiveWindows', () => {
     const player: PlayerBurstWindow[] = [{ window_damage: 1150, ability_breakdown: [{ spell_id: BOSS_HIT_SPELL_ID, damage: 700 }] }];
     // Covered the window (span 30-35); 1150 is within the band (max 1200 + stddev 100 = 1300) -> good, annotated covered.
     const playerDef: PlayerDefensive[] = [{ name: 'Cloak of Shadows', uses: 1, windows: [{ start_s: 30, end_s: 35 }] }];
-    const { windows, anchors, clipAnchors } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: playerDef, fightDurationS: FIGHT_DURATION_S, abilities });
+    const { windows, anchors, clipAnchors } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: playerDef, deadSpans: [], fightDurationS: FIGHT_DURATION_S, abilities });
     const defensiveWindow = first(windows);
     expect(defensiveWindow.overview.playerPct).toBe(1150);
     expect(defensiveWindow.status).toBe('good');
@@ -155,7 +216,7 @@ describe('buildDefensiveWindows', () => {
 
   it('names the defensive as a plain label when the bench window has no spell id', () => {
     const unbakedWindow: BurstWindow = { ...window, spell_id: undefined };
-    const { windows } = svc['buildDefensiveWindows']({ topWindows: [unbakedWindow], playerWindows: [], playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
+    const { windows } = svc['buildDefensiveWindows']({ topWindows: [unbakedWindow], playerWindows: [], playerDefensives: [], deadSpans: [], fightDurationS: FIGHT_DURATION_S, abilities });
     expect(first(windows).spells).toEqual([]);
     expect(first(windows).labels).toEqual(['Cloak of Shadows']);
   });
@@ -163,15 +224,23 @@ describe('buildDefensiveWindows', () => {
   it('marks an above-band window bad, annotated as needing an unused defensive', () => {
     // 1500 > band edge (max 1200 + stddev 100 = 1300); no covering defensive -> bad.
     const player: PlayerBurstWindow[] = [{ window_damage: 1500, ability_breakdown: [] }];
-    const { windows } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
+    const { windows } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: [], deadSpans: [], fightDurationS: FIGHT_DURATION_S, abilities });
     expect(first(windows).status).toBe('bad');
     expect(first(windows).note).toBe('defensive needed, unused');
+  });
+
+  it('marks a window the player was dead through bad, annotated dead, even with no damage taken', () => {
+    const DIED_S = 20;
+    const player: PlayerBurstWindow[] = [{ window_damage: 0, ability_breakdown: [] }];
+    const { windows } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: [], deadSpans: [[DIED_S, FIGHT_DURATION_S]], fightDurationS: FIGHT_DURATION_S, abilities });
+    expect(first(windows).status).toBe('bad');
+    expect(first(windows).note).toBe('dead');
   });
 
   it('keeps an uncovered within-band window good, annotated no defensive used', () => {
     // 900 is within the band; not pressing a defensive when damage stayed acceptable is not a miss.
     const player: PlayerBurstWindow[] = [{ window_damage: 900, ability_breakdown: [] }];
-    const { windows } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: [], fightDurationS: FIGHT_DURATION_S, abilities });
+    const { windows } = svc['buildDefensiveWindows']({ topWindows: [window], playerWindows: player, playerDefensives: [], deadSpans: [], fightDurationS: FIGHT_DURATION_S, abilities });
     expect(first(windows).status).toBe('good');
     expect(first(windows).note).toBe('no defensive used');
   });

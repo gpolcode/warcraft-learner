@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
+import { WclEvent } from '../wcl/wcl.models';
 import {
   AnalysisFinding, BurstWindow, PlayerBurstWindow, PlayerDefensive,
 } from '../analysis/analysis.models';
@@ -74,10 +75,16 @@ const NOTE_NO_DEFENSIVE = 'no defensive used';
 const NOTE_USED_WRONGLY = 'defensive used wrongly';
 const NOTE_NEEDED_UNUSED = 'defensive needed, unused';
 
+const NOTE_DEAD = 'dead';
+
+/** `[diedS, backS)`: from a death to the resurrect after it, or to the fight end. */
+type DeadSpan = [number, number];
+
 export interface DefensiveWindowsInput {
   topWindows: BurstWindow[];
   playerWindows: PlayerBurstWindow[];
   playerDefensives: PlayerDefensive[];
+  deadSpans: DeadSpan[];
   fightDurationS: number;
   abilities: AbilityIcons;
 }
@@ -121,11 +128,14 @@ export class DefensiveFeatureService {
     const { reportCode, fightId } = pull;
     const { fight, fightDurationS } = context;
 
-    const [casts, buffs, dtEvents] = await Promise.all([
+    const [casts, buffs, dtEvents, deaths] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
       this.wclApi.getAllEvents(reportCode, fightId, 'DamageTaken', fight.startTime, fight.endTime, playerId),
+      // Raid-wide, the same read the pull overview makes, so the cache serves both.
+      this.wclApi.getAllEvents(reportCode, fightId, 'Deaths', fight.startTime, fight.endTime),
     ]);
+    const deadSpans = await this.playerDeadSpans(pull, context, playerId, deaths);
 
     const dtEventsTimed = this.wclProjections.withRelativeS(dtEvents, fight.startTime);
     const playerDefensives = this.analyzeDefensives(
@@ -143,7 +153,7 @@ export class DefensiveFeatureService {
       iconByName[name] = ability?.icon ?? '';
     }
     const { windows, anchors, clipAnchors } = this.buildDefensiveWindows({
-      topWindows: bench.defensive_windows, playerWindows, playerDefensives, fightDurationS, abilities: bench.ability_icons,
+      topWindows: bench.defensive_windows, playerWindows, playerDefensives, deadSpans, fightDurationS, abilities: bench.ability_icons,
     });
     const entries = this.findingRows.bucketFindings(findings, {
       spellId: name => bench.cd_spell_ids[name] ?? null,
@@ -154,6 +164,32 @@ export class DefensiveFeatureService {
       onPlan: this.findingRows.onPlanFromEntries(entries),
       windows, anchors, clipAnchors,
     };
+  }
+
+  private async playerDeadSpans(
+    { reportCode, fightId }: PullRef, { fight, fightDurationS }: PullContext, playerId: number, deaths: WclEvent[],
+  ): Promise<DeadSpan[]> {
+    const own = (event: WclEvent): boolean => event.targetID === playerId;
+    const died = deaths.filter(event => event.type === 'death' && own(event));
+    if (!died.length) return [];
+    const resurrects = (await this.wclApi.getResurrects(reportCode, fightId, fight.startTime, fight.endTime)).filter(own);
+    return this.deadSpans(
+      this.wclProjections.withRelativeS(died, fight.startTime), this.wclProjections.withRelativeS(resurrects, fight.startTime), fightDurationS,
+    );
+  }
+
+  // A resurrect at the death's own timestamp lands before it, as in the pull overview, so it does not end that death.
+  protected deadSpans(deaths: TimedEvent[], resurrects: TimedEvent[], fightEndS: number): DeadSpan[] {
+    const backTimes = resurrects.map(event => event.atS).sort((a, b) => a - b);
+    return deaths
+      .map(event => event.atS)
+      .sort((a, b) => a - b)
+      .map(diedS => [diedS, backTimes.find(backS => backS > diedS) ?? fightEndS]);
+  }
+
+  protected deadInWindow(window: BurstWindow, deadSpans: DeadSpan[]): boolean {
+    const endS = window.time_s + window.window_length_s;
+    return deadSpans.some(([diedS, backS]) => diedS < endS && backS > window.time_s);
   }
 
   async loadPlan(spec: string, encounterId: number): Promise<Result<DefensivePlanView>> {
@@ -274,8 +310,11 @@ export class DefensiveFeatureService {
     stddev: number,
     notReached: boolean,
     covered: boolean,
+    dead: boolean,
   ): { status: WindowStatus; icon: string; note: string } {
     if (notReached) return { status: 'muted', icon: 'schedule', note: '' };
+    // A dead player takes no damage, so the band alone would read the death as a clean window.
+    if (dead) return { status: 'bad', icon: 'error', note: NOTE_DEAD };
     if (playerDamage === null) return { status: 'muted', icon: 'help_outline', note: '' };
     const aboveBand = playerDamage > topMax + stddev;
     if (aboveBand) {
@@ -301,12 +340,13 @@ export class DefensiveFeatureService {
     return { timeS: timestampS, windowLengthS: 0, key: `defensive-find-${timestampS}` };
   }
 
-  private defensiveAdapter(playerDefensives: PlayerDefensive[]): WindowViewAdapter<DefensiveMapAnchor> {
+  private defensiveAdapter(playerDefensives: PlayerDefensive[], deadSpans: DeadSpan[]): WindowViewAdapter<DefensiveMapAnchor> {
     const coveredBy = (window: BurstWindow): boolean =>
       this.playerCoveredWindow(window, playerDefensives.find(entry => entry.name === (window.defensive_name ?? '')));
     return {
-      status: (window, playerDamage, notReached) =>
-        this.defensiveWindowStatus(playerDamage, window.dmg_max, window.dmg_stddev, notReached, coveredBy(window)),
+      status: (window, playerDamage, notReached) => this.defensiveWindowStatus(
+        playerDamage, window.dmg_max, window.dmg_stddev, notReached, coveredBy(window), this.deadInWindow(window, deadSpans),
+      ),
       chips: window => ({
         spellIds: window.spell_id != null ? [window.spell_id] : [],
         labels: window.spell_id == null && window.defensive_name ? [window.defensive_name] : [],
@@ -317,10 +357,10 @@ export class DefensiveFeatureService {
   }
 
   protected buildDefensiveWindows(
-    { topWindows, playerWindows, playerDefensives, fightDurationS, abilities }: DefensiveWindowsInput,
+    { topWindows, playerWindows, playerDefensives, deadSpans, fightDurationS, abilities }: DefensiveWindowsInput,
   ): WindowView<DefensiveMapAnchor> {
     return this.windowView.buildWindowView({
-      topWindows, playerWindows, fightDurationS, abilities, adapter: this.defensiveAdapter(playerDefensives),
+      topWindows, playerWindows, fightDurationS, abilities, adapter: this.defensiveAdapter(playerDefensives, deadSpans),
     });
   }
 
