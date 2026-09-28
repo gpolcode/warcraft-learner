@@ -136,8 +136,11 @@ export function damageTaken(
 }
 
 /** A raid-wide `Deaths` event: the one who died is the target. */
-export function death(targetId: number, atS: number): WclEvent {
-  return { type: 'death', timestamp: atS * MS_PER_SECOND, abilityGameID: 0, targetID: targetId };
+export function death(targetId: number, atS: number, killingAbilityGameID?: number): WclEvent {
+  return {
+    type: 'death', timestamp: atS * MS_PER_SECOND, abilityGameID: 0, targetID: targetId,
+    ...(killingAbilityGameID !== undefined && { killingAbilityGameID }),
+  };
 }
 
 /** The one brought back is the target. */
