@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { BurstWindow, PlayerBurstWindow, PlayerDefensive } from '../analysis/analysis.models';
 import { DefensiveFeatureService } from './defensive-feature-service';
-import { damageTaken, death, resurrect } from '../../../../../testing/builders/events';
+import { damageTaken } from '../../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { BOSS_HIT_SPELL_ID, timed } from './defensive-harness';
 import { TestBed } from '@angular/core/testing';
@@ -77,64 +77,6 @@ describe('defensiveWindowStatus', () => {
     { name: 'stays muted when the window was not reached, even with the player dead', player: null, notReached: true, covered: false, dead: true, status: 'muted', icon: 'schedule', note: '' },
   ])('$name', ({ player, notReached, covered, dead, status, icon, note }) => {
     expect(svc['defensiveWindowStatus'](player, TOP_MAX, STDDEV, notReached, covered, dead)).toEqual({ status, icon, note });
-  });
-});
-
-describe('deadSpans', () => {
-  const PLAYER_ID = 10;
-  const FIGHT_END_S = 300;
-  const DIED_S = 40;
-  const BACK_S = 70;
-
-  it('runs a death with no resurrect after it to the fight end', () => {
-    expect(svc['deadSpans'](timed([death(PLAYER_ID, DIED_S)], 0), [], FIGHT_END_S)).toEqual([[DIED_S, FIGHT_END_S]]);
-  });
-
-  it('ends a death at the resurrect after it', () => {
-    const spans = svc['deadSpans'](timed([death(PLAYER_ID, DIED_S)], 0), timed([resurrect(PLAYER_ID, BACK_S)], 0), FIGHT_END_S);
-    expect(spans).toEqual([[DIED_S, BACK_S]]);
-  });
-
-  it('does not end a death at a resurrect in the same instant, which lands before it', () => {
-    const spans = svc['deadSpans'](timed([death(PLAYER_ID, DIED_S)], 0), timed([resurrect(PLAYER_ID, DIED_S)], 0), FIGHT_END_S);
-    expect(spans).toEqual([[DIED_S, FIGHT_END_S]]);
-  });
-
-  it('pairs each of two deaths with the resurrect that followed it', () => {
-    const SECOND_DIED_S = 200;
-    const spans = svc['deadSpans'](
-      timed([death(PLAYER_ID, SECOND_DIED_S), death(PLAYER_ID, DIED_S)], 0), timed([resurrect(PLAYER_ID, BACK_S)], 0), FIGHT_END_S,
-    );
-    expect(spans).toEqual([[DIED_S, BACK_S], [SECOND_DIED_S, FIGHT_END_S]]);
-  });
-});
-
-describe('deadInWindow', () => {
-  const WIN_START_S = 30;
-  const WIN_LEN_S = 5;
-  const WIN_END_S = WIN_START_S + WIN_LEN_S;
-  const window = { time_s: WIN_START_S, window_length_s: WIN_LEN_S } as BurstWindow;
-  const JUST = 0.1;
-
-  it('is true for a death inside the window', () => {
-    expect(svc['deadInWindow'](window, [[WIN_START_S + 1, WIN_END_S + 60]])).toBe(true);
-  });
-
-  it('is true for a death before the window the player was not back from until inside it', () => {
-    expect(svc['deadInWindow'](window, [[WIN_START_S - 20, WIN_START_S + JUST]])).toBe(true);
-  });
-
-  it('is false for a death at the exact window end, which the window no longer counts', () => {
-    expect(svc['deadInWindow'](window, [[WIN_END_S, WIN_END_S + 60]])).toBe(false);
-    expect(svc['deadInWindow'](window, [[WIN_END_S - JUST, WIN_END_S + 60]])).toBe(true);
-  });
-
-  it('is false for a resurrect at the exact window start', () => {
-    expect(svc['deadInWindow'](window, [[WIN_START_S - 20, WIN_START_S]])).toBe(false);
-  });
-
-  it('is false with no deaths', () => {
-    expect(svc['deadInWindow'](window, [])).toBe(false);
   });
 });
 

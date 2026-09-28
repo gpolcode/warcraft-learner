@@ -8,8 +8,10 @@ import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { death } from '../../../../../testing/builders/events';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
+const timed = (events: WclEvent[]) => wclProjections.withRelativeS(events, 0);
 TestBed.resetTestingModule();
 TestBed.configureTestingModule({ providers: [
   { provide: WCL_TRANSPORT, useValue: {} },
@@ -20,7 +22,6 @@ TestBed.resetTestingModule();
 
 const PLAYER_ID = 5;
 const OTHER_PLAYER = 9;
-const KILLER_ID = 88;
 const ABSENT_PLAYER_ID = 77; // a player with no row in the damage table (e.g. a healer)
 
 // A null/failed damage table blob is a permanent load failure, not a measured 0.
@@ -29,7 +30,6 @@ const MISSING_TABLE_ERROR = Results.permanent('Damage table missing for this pul
 const OVERWHELMING_BLAST = 214001;
 const FROST_BOMB = 198002;
 
-const FIGHT_START_MS = 1_000_000;
 const MS_PER_S = 1000;
 
 const FIGHT_DURATION_S = 132; // 2:12
@@ -46,17 +46,9 @@ function okValue<T>(result: Result<T>): T {
   return result.value;
 }
 
-function deathEvent(targetID: number, atS: number, killingAbilityGameID: number): WclEvent {
-  return { type: 'death', timestamp: FIGHT_START_MS + atS * MS_PER_S, abilityGameID: 0, targetID, sourceID: KILLER_ID, killingAbilityGameID };
-}
-
-function resEvent(targetID: number, atS: number): WclEvent {
-  return { type: 'resurrect', timestamp: FIGHT_START_MS + atS * MS_PER_S, abilityGameID: 0, targetID };
-}
-
 function fight(over: Partial<WclFight> = {}): WclFight {
   return {
-    id: 6, name: 'Boss', startTime: FIGHT_START_MS, endTime: FIGHT_START_MS + FIGHT_DURATION_S * MS_PER_S,
+    id: 6, name: 'Boss', startTime: 0, endTime: FIGHT_DURATION_S * MS_PER_S,
     kill: false, encounterID: 3183, attempt: 3, duration_s: FIGHT_DURATION_S, friendlyPlayers: [], fightPercentage: BOSS_PERCENTAGE,
     ...over,
   };
@@ -118,62 +110,28 @@ describe('buildDeathRows', () => {
 
   it('projects the player deaths oldest-first with 1-based index, relative time and ability', () => {
     const deaths = [
-      deathEvent(PLAYER_ID, DEATH_2_AT_S, FROST_BOMB),
-      deathEvent(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST),
-      deathEvent(OTHER_PLAYER, DEATH_1_AT_S, OVERWHELMING_BLAST), // a raidmate - excluded
+      death(PLAYER_ID, DEATH_2_AT_S, FROST_BOMB),
+      death(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST),
+      death(OTHER_PLAYER, DEATH_1_AT_S, OVERWHELMING_BLAST), // a raidmate - excluded
     ];
-    expect(svc['buildDeathRows'](wclProjections.withRelativeS(deaths, FIGHT_START_MS), PLAYER_ID, names)).toEqual([
+    expect(svc['buildDeathRows'](timed(deaths), PLAYER_ID, names)).toEqual([
       { index: 1, timeS: DEATH_1_AT_S, ability: 'Overwhelming Blast' },
       { index: 2, timeS: DEATH_2_AT_S, ability: 'Frost Bomb' },
     ]);
   });
 
   it('leaves the ability empty when the death carried no killing ability', () => {
-    const deaths = [deathEvent(PLAYER_ID, DEATH_1_AT_S, 0)];
-    expect(svc['buildDeathRows'](wclProjections.withRelativeS(deaths, FIGHT_START_MS), PLAYER_ID, names)).toEqual([
+    const deaths = [death(PLAYER_ID, DEATH_1_AT_S)];
+    expect(svc['buildDeathRows'](timed(deaths), PLAYER_ID, names)).toEqual([
       { index: 1, timeS: DEATH_1_AT_S, ability: '' },
     ]);
-  });
-});
-
-describe('wipeTimeS', () => {
-  const NO_REZ: WclEvent[] = [];
-
-  it('marks the wipe the instant 3 players are simultaneously dead, however far apart the deaths fall', () => {
-    const SPREAD_1_S = 20;
-    const SPREAD_2_S = 100;
-    const SPREAD_3_S = 200; // 49s+ gaps, no window - still the 3rd concurrent death
-    const deaths = [deathEvent(1, SPREAD_1_S, 0), deathEvent(2, SPREAD_2_S, 0), deathEvent(3, SPREAD_3_S, 0)];
-    expect(svc['wipeTimeS'](wclProjections.withRelativeS(deaths, FIGHT_START_MS), wclProjections.withRelativeS(NO_REZ, FIGHT_START_MS), FIGHT_DURATION_S)).toBe(SPREAD_3_S);
-  });
-
-  it('drops a battle-rezzed player from the dead count, so the wipe waits for a later death', () => {
-    const P1_DEATH_S = 20;
-    const P2_DEATH_S = 30;
-    const P1_REZ_S = 35; // player 1 back up before the 3rd death
-    const P3_DEATH_S = 40; // only P2 + P3 down here (not a wipe)
-    const P4_DEATH_S = 50; // P2 + P3 + P4 -> the wipe
-    const deaths = [deathEvent(1, P1_DEATH_S, 0), deathEvent(2, P2_DEATH_S, 0), deathEvent(3, P3_DEATH_S, 0), deathEvent(4, P4_DEATH_S, 0)];
-    expect(svc['wipeTimeS'](wclProjections.withRelativeS(deaths, FIGHT_START_MS), wclProjections.withRelativeS([resEvent(1, P1_REZ_S)], FIGHT_START_MS), FIGHT_DURATION_S)).toBe(P4_DEATH_S);
-  });
-
-  it('falls back to the fight end when resurrects keep fewer than 3 down at once, or nobody dies', () => {
-    const A_DEATH_S = 20;
-    const A_REZ_S = 25;
-    const B_DEATH_S = 30;
-    const B_REZ_S = 35;
-    const C_DEATH_S = 40;
-    const deaths = [deathEvent(1, A_DEATH_S, 0), deathEvent(2, B_DEATH_S, 0), deathEvent(3, C_DEATH_S, 0)];
-    const rez = [resEvent(1, A_REZ_S), resEvent(2, B_REZ_S)];
-    expect(svc['wipeTimeS'](wclProjections.withRelativeS(deaths, FIGHT_START_MS), wclProjections.withRelativeS(rez, FIGHT_START_MS), FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
-    expect(svc['wipeTimeS']([], [], FIGHT_DURATION_S)).toBe(FIGHT_DURATION_S);
   });
 });
 
 interface FakeCalls { dataTypes: string[] }
 
 function makeService(over: {
-  fight?: Partial<WclFight>; deaths?: WclEvent[]; resurrects?: WclEvent[];
+  fight?: Partial<WclFight>; deaths?: WclEvent[];
   table?: WclTableBlob | null;
 } = {}): {
   service: PullOverviewFeatureService; calls: FakeCalls;
@@ -187,7 +145,7 @@ function makeService(over: {
       calls.dataTypes.push(dataType);
       return dataType === 'Deaths' ? (over.deaths ?? []) : [];
     },
-    getResurrects: async () => over.resurrects ?? [],
+    getResurrects: async () => [],
   };
   TestBed.configureTestingModule({ providers: [{ provide: WclApiService, useValue: wcl as unknown as WclApiService }] });
   return { service: TestBed.inject(PullOverviewFeatureService), calls };
@@ -200,9 +158,9 @@ describe('PullOverviewFeatureService.loadView', () => {
   async function wipedPull(): Promise<{ view: PullOverviewView; calls: FakeCalls }> {
     const { service, calls } = makeService({
       deaths: [
-        deathEvent(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST),
-        deathEvent(OTHER_PLAYER, RAID_D2_AT_S, FROST_BOMB),
-        deathEvent(OTHER_PLAYER + 1, RAID_D3_AT_S, FROST_BOMB),
+        death(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST),
+        death(OTHER_PLAYER, RAID_D2_AT_S, FROST_BOMB),
+        death(OTHER_PLAYER + 1, RAID_D3_AT_S, FROST_BOMB),
       ],
     });
     return { view: okValue(await service.loadView('r', PLAYER_ID, fight())), calls };
@@ -232,7 +190,7 @@ describe('PullOverviewFeatureService.loadView', () => {
   });
 
   it('marks a clean kill at the fight end', async () => {
-    const { service } = makeService({ deaths: [deathEvent(OTHER_PLAYER, DEATH_1_AT_S, OVERWHELMING_BLAST)] });
+    const { service } = makeService({ deaths: [death(OTHER_PLAYER, DEATH_1_AT_S, OVERWHELMING_BLAST)] });
     const result = await service.loadView('r', PLAYER_ID, fight({ kill: true, fightPercentage: 0 }));
 
     expect(result.ok).toBe(true);
@@ -246,7 +204,7 @@ describe('PullOverviewFeatureService.loadView', () => {
   it('fails the load when the damage table is missing, so the pull is not scored a bogus 0 DPS', async () => {
     const { service } = makeService({
       table: null,
-      deaths: [deathEvent(OTHER_PLAYER, DEATH_1_AT_S, OVERWHELMING_BLAST)],
+      deaths: [death(OTHER_PLAYER, DEATH_1_AT_S, OVERWHELMING_BLAST)],
     });
     const result = await service.loadView('r', PLAYER_ID, fight({ kill: true, fightPercentage: 0 }));
 

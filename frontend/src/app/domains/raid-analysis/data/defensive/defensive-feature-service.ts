@@ -22,6 +22,7 @@ import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { WindowViewService } from '../analysis/window-view-service';
+import { DeathTimelineService, DeadSpan } from '../analysis/death-timeline-service';
 
 export interface DefensiveMapAnchor {
   timeS: number;
@@ -77,9 +78,6 @@ const NOTE_NEEDED_UNUSED = 'defensive needed, unused';
 
 const NOTE_DEAD = 'dead';
 
-/** `[diedS, backS)`: from a death to the resurrect after it, or to the fight end. */
-type DeadSpan = [number, number];
-
 export interface DefensiveWindowsInput {
   topWindows: BurstWindow[];
   playerWindows: PlayerBurstWindow[];
@@ -97,6 +95,7 @@ export class DefensiveFeatureService {
   private readonly auraWindows = inject(AuraWindowsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly windowView = inject(WindowViewService);
+  private readonly deathTimeline = inject(DeathTimelineService);
   private readonly pullContext = inject(PullContextService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(DEFENSIVE_DATA_SOURCE);
@@ -170,27 +169,12 @@ export class DefensiveFeatureService {
   private async playerDeadSpans(
     { reportCode, fightId }: PullRef, { fight, fightDurationS }: PullContext, playerId: number, deaths: WclEvent[],
   ): Promise<DeadSpan[]> {
-    const own = (event: WclEvent): boolean => event.targetID === playerId;
-    const died = deaths.filter(event => event.type === 'death' && own(event));
-    if (!died.length) return [];
-    const resurrects = (await this.wclApi.getResurrects(reportCode, fightId, fight.startTime, fight.endTime)).filter(own);
-    return this.deadSpans(
-      this.wclProjections.withRelativeS(died, fight.startTime), this.wclProjections.withRelativeS(resurrects, fight.startTime), fightDurationS,
+    if (!deaths.some(event => event.targetID === playerId)) return [];
+    const resurrects = await this.wclApi.getResurrects(reportCode, fightId, fight.startTime, fight.endTime);
+    const spans = this.deathTimeline.deadSpans(
+      this.wclProjections.withRelativeS(deaths, fight.startTime), this.wclProjections.withRelativeS(resurrects, fight.startTime), fightDurationS,
     );
-  }
-
-  // A resurrect at the death's own timestamp lands before it, as in the pull overview, so it does not end that death.
-  protected deadSpans(deaths: TimedEvent[], resurrects: TimedEvent[], fightEndS: number): DeadSpan[] {
-    const backTimes = resurrects.map(event => event.atS).sort((a, b) => a - b);
-    return deaths
-      .map(event => event.atS)
-      .sort((a, b) => a - b)
-      .map(diedS => [diedS, backTimes.find(backS => backS > diedS) ?? fightEndS]);
-  }
-
-  protected deadInWindow(window: BurstWindow, deadSpans: DeadSpan[]): boolean {
-    const endS = window.time_s + window.window_length_s;
-    return deadSpans.some(([diedS, backS]) => diedS < endS && backS > window.time_s);
+    return spans.get(playerId) ?? [];
   }
 
   async loadPlan(spec: string, encounterId: number): Promise<Result<DefensivePlanView>> {
@@ -347,7 +331,8 @@ export class DefensiveFeatureService {
       this.playerCoveredWindow(window, playerDefensives.find(entry => entry.name === (window.defensive_name ?? '')));
     return {
       status: (window, playerDamage, notReached) => this.defensiveWindowStatus(
-        playerDamage, window.dmg_max, window.dmg_stddev, notReached, coveredBy(window), this.deadInWindow(window, deadSpans),
+        playerDamage, window.dmg_max, window.dmg_stddev, notReached, coveredBy(window),
+        this.deathTimeline.deadWithin(deadSpans, window.time_s, window.time_s + window.window_length_s),
       ),
       chips: window => ({
         spellIds: window.spell_id != null ? [window.spell_id] : [],

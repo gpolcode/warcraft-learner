@@ -7,6 +7,7 @@ import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from '../http/http-load-error';
 import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
 import { JsonCodecService } from '../../../shared/util-validation/json-codec-service';
+import { DeathTimelineService } from '../analysis/death-timeline-service';
 
 type PullResult = 'kill' | 'wipe';
 
@@ -39,6 +40,7 @@ export class PullOverviewFeatureService {
   private readonly json = inject(JsonCodecService);
   private readonly logger = inject(LoggerService);
   private readonly wclProjections = inject(WclProjectionsService);
+  private readonly deathTimeline = inject(DeathTimelineService);
   private readonly wclApi = inject(WclApiService);
 
   async loadView(
@@ -63,7 +65,8 @@ export class PullOverviewFeatureService {
       let outcomeTimeS = fight.duration_s;
       if (result === 'wipe') {
         const resurrects = await this.wclApi.getResurrects(reportCode, fight.id, fight.startTime, fight.endTime);
-        outcomeTimeS = this.wipeTimeS(deathEventsTimed, this.wclProjections.withRelativeS(resurrects, fight.startTime), fight.duration_s);
+        const resurrectsTimed = this.wclProjections.withRelativeS(resurrects, fight.startTime);
+        outcomeTimeS = this.deathTimeline.firstDeadAtOnceS(deathEventsTimed, resurrectsTimed, WIPE_DEATHS) ?? fight.duration_s;
       }
 
       return Results.ok({
@@ -79,23 +82,6 @@ export class PullOverviewFeatureService {
       this.logger.logWarn('PullOverviewFeatureService.loadView', cause);
       return HttpLoadErrors.toLoadError(cause, 'pull-overview.view');
     }
-  }
-
-  // At a tied timestamp a resurrect is applied before a death, so a battle-rez in the same instant prevents the wipe.
-  protected wipeTimeS(
-    deathEvents: TimedEvent[], resurrectEvents: TimedEvent[], fightDurationS: number,
-  ): number {
-    const timeline = [
-      ...deathEvents.map(event => ({ t: event.atS, player: event.targetID, died: true })),
-      ...resurrectEvents.map(event => ({ t: event.atS, player: event.targetID, died: false })),
-    ].sort((a, b) => a.t - b.t || Number(a.died) - Number(b.died));
-    const dead = new Set<number | undefined>();
-    for (const event of timeline) {
-      if (event.died) dead.add(event.player);
-      else dead.delete(event.player);
-      if (dead.size >= WIPE_DEATHS) return event.t;
-    }
-    return fightDurationS;
   }
 
   // null means an unusable table (absent/unparseable/no entries array); a valid table can still have an empty entry list (a real 0-damage pull).
