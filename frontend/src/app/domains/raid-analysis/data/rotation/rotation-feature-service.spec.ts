@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { PlanCooldown } from '../plan/plan.models';
 import { SHADOW_BLADES, BLOODLUST } from '../../../../../testing/spell-ids';
-import { cast, applyBuff } from '../../../../../testing/builders/events';
+import { cast, applyBuff, removeBuff } from '../../../../../testing/builders/events';
 import { WclEvent } from '../wcl/wcl.models';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { RotationBench } from './rotation-data-source';
@@ -73,6 +73,18 @@ describe('analyzeRotationFindings', () => {
     expect(efficiency.label).toBeTruthy();
     assert.exists(efficiency);
     expect(efficiency.details?.remedy).toBeTruthy();
+  });
+});
+
+describe('analyzeRotationFindings pre-pull use', () => {
+  it('reads a use before the pull from its aura still up at it, so the opener is not late', () => {
+    // bench(): first cast 5s give or take 2, 1 use a minute; the aura drops at 0:20 with no apply before it.
+    const SECOND_CAST_S = 90;
+    const findings = svc['analyzeRotationFindings'](scan({
+      castEvents: [cast(SHADOW_BLADES, SECOND_CAST_S)], buffEvents: [removeBuff(SHADOW_BLADES, 20)], bench: bench(),
+    }));
+    expect(findings.filter(f => f.category === 'cooldown_delay')).toEqual([]);
+    expect(findings.find(f => f.severity === 'success')?.message).toBe('Shadow Blades - 2/2 casts.');
   });
 });
 

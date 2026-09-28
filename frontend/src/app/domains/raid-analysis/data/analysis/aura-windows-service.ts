@@ -38,6 +38,19 @@ export class AuraWindowsService {
     return windows;
   }
 
+  /** WCL logs no apply for an aura already up when the pull starts, so one whose first event is a remove or refresh went up before it. */
+  upAtPull(events: TimedEvent[]): Set<number> {
+    const seen = new Set<number>();
+    const up = new Set<number>();
+    for (const event of events) {
+      const edge = this.spanEdgeOf(event.type);
+      if (!edge || seen.has(event.abilityGameID)) continue;
+      seen.add(event.abilityGameID);
+      if (edge !== 'open') up.add(event.abilityGameID);
+    }
+    return up;
+  }
+
   /** A bare apply carries no count and means one; every stack event carries the new total, clamped so a reported drop below zero cannot leak through. */
   private stackEdgeOf(event: TimedEvent): { count: number; opens: boolean } | null {
     const type = event.type;

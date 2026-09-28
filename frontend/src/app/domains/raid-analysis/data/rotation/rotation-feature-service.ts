@@ -19,6 +19,7 @@ import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
+import { AuraWindowsService } from '../analysis/aura-windows-service';
 
 export interface CdPlanRow {
   name: string;
@@ -91,6 +92,7 @@ export class RotationFeatureService {
   private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly bloodlust = inject(RotationBloodlustService);
+  private readonly auraWindows = inject(AuraWindowsService);
   private readonly listLogs = inject(ListLogService);
   private readonly listFindings = inject(ListFindingService);
   private readonly pullContext = inject(PullContextService);
@@ -255,12 +257,15 @@ export class RotationFeatureService {
     const findings: AnalysisFinding[] = [];
 
     const blTimeS = this.bloodlust.detectBloodlust(buffEvents);
+    const upAtPull = this.auraWindows.upAtPull(buffEvents);
 
     const perCdBench = bench.per_cd_benchmarks;
     for (const cd of cooldowns) {
-      const castTimesS = casts
-        .filter(cast => cast.abilityGameID === cd.spell_id)
-        .map(cast => cast.atS);
+      const castTimesS = [
+        // A use before the pull logs no cast, only its aura still up when the pull starts.
+        ...(upAtPull.has(cd.spell_id) ? [0] : []),
+        ...casts.filter(cast => cast.abilityGameID === cd.spell_id).map(cast => cast.atS),
+      ];
       const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], fightDurS, blTimeS);
       if (!result) continue;
       if (result.scan.issues.length) findings.push(...result.scan.issues);
