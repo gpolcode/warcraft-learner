@@ -16,8 +16,7 @@ export interface ButtonRow {
   name: string;
   spellId: number;
   icon: string;
-  /** Null where the log settled none of the button's moments. */
-  you: number | null;
+  you: number;
   top: ShareRange;
   status: WindowStatus;
   occurrences: FindingOccurrence[];
@@ -32,7 +31,7 @@ export class ListFindingService {
   rows(bench: RotationBench, reading: LogReading): ButtonRow[] {
     const buttons = this.checks.buttons(bench.list);
     const rows = bench.buttons.flatMap(entry => this.row(bench, entry, buttons.get(entry.action) ?? [], reading) ?? []);
-    const shortfall = (row: ButtonRow): number => row.top.avg - (row.you ?? row.top.avg);
+    const shortfall = (row: ButtonRow): number => row.top.avg - row.you;
     return rows.sort((a, b) => shortfall(b) - shortfall(a));
   }
 
@@ -41,20 +40,20 @@ export class ListFindingService {
     const casts = (reading.casts.get(entry.action) ?? []).map(check => this.castOccurrence(list, lines, check));
     const skips = reading.order.filter(check => check.expected === entry.action && check.pressed !== entry.action).map(check => this.skipOccurrence(list, lines, check));
     const occurrences = [...casts, ...skips].sort((a, b) => a.atS - b.atS);
-    if (!occurrences.length) return null;
     const you = this.checks.rightShare(reading, entry.action);
+    // A button whose moments the log settled none of has no share to bar, only moments it cannot judge.
+    if (you === null) return null;
     const spellId = reading.ids.get(entry.action) ?? entry.spell_id;
     const icon = bench.ability_icons[spellId] ?? bench.ability_icons[entry.spell_id];
     return {
       name: icon?.name ?? this.text.name(list, entry.action), spellId, icon: icon?.icon ?? '',
-      you: you === null ? null : round(you, SHARE_DIGITS), top: entry.right, status: this.status(you, entry.right),
+      you: round(you, SHARE_DIGITS), top: entry.right, status: this.status(you, entry.right),
       occurrences: this.thinned(occurrences),
     };
   }
 
   /** The burst windows' reading: under every top log is bad, under their average a warning. */
-  private status(you: number | null, top: ShareRange): WindowStatus {
-    if (you === null) return 'muted';
+  private status(you: number, top: ShareRange): WindowStatus {
     if (you < top.lo) return 'bad';
     return you < top.avg ? 'warn' : 'good';
   }
@@ -83,17 +82,23 @@ export class ListFindingService {
   }
 
   private checklist(list: PriorityList, line: ReadLine, terms: TermReading[]): ConditionCheck[] {
-    return (line.terms ?? []).map((term, at) => this.check(list, term, terms[at], line.action));
+    return this.unsettled(line.terms ?? [], terms).map(([term, reading]) => this.check(list, term, reading, line.action));
+  }
+
+  /** Leaves out what the player's build alone settles, which holds on every cast. */
+  private unsettled(terms: AplNode[], readings: TermReading[] | undefined): [AplNode, TermReading | undefined][] {
+    return terms.flatMap((term, at) => (readings?.[at]?.build ? [] : [[term, readings?.[at]] as [AplNode, TermReading | undefined]]));
   }
 
   private check(list: PriorityList, term: AplNode, reading: TermReading | undefined, action: string): ConditionCheck {
-    const text = this.text.capitalized(this.text.phrase(list, term, true, action));
     const truth = reading?.truth ?? 'unknown';
     const junction = this.checks.junction(term);
     if (junction) {
-      const checks = junction.operands.map((operand, at) => this.check(list, operand, reading?.parts?.[at], action));
-      return { text, truth, value: '', group: { any: junction.any, checks } };
+      const checks = this.unsettled(junction.operands, reading?.parts).map(([operand, part]) => this.check(list, operand, part, action));
+      // The operands read one by one below, so a nested either-or never has to be said in one sentence.
+      return { text: junction.any ? 'Any one of these' : 'All of these', truth, value: '', group: { any: junction.any, checks } };
     }
+    const text = this.text.capitalized(this.text.phrase(list, term, true, action));
     const subject = this.checks.subject(term);
     return { text, truth, value: reading?.value && subject ? this.text.value(subject, reading.value, term.type !== 'BinaryExpression') : '' };
   }

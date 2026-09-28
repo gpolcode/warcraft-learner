@@ -7,8 +7,8 @@ import { ListCheckService, LogReading } from './list-check-service';
 
 /** Below this many top logs a share is one log's habit rather than the field's. */
 export const MIN_MEASURED_PARSES = 5;
-/** At or under this the field gets a button wrong at least half the time, so the list does not describe how it is played. */
-const MIN_FIELD_SHARE = 0.5;
+/** At or under this the field gets a button wrong three times in ten or more, so the list does not describe how it is played. */
+const MIN_FIELD_SHARE = 0.7;
 const SHARE_DIGITS = 3;
 
 @Injectable({ providedIn: 'root' })

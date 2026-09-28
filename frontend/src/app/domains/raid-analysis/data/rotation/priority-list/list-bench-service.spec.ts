@@ -29,8 +29,8 @@ const log = (casts: CastCheck[], opts: { order?: OrderCheck[]; id?: number } = {
 const field = (count: number, casts: CastCheck[], opts = {}): LogReading[] => Array.from({ length: count }, () => log(casts, opts));
 const benchOf = (readings: LogReading[]) => benches.bench(list, readings)[0];
 
-/** Two right casts of three settled ones. */
-const TWO_THIRDS = 0.667;
+/** Three right casts of four settled ones. */
+const THREE_QUARTERS = 0.75;
 /** Four right casts of five moments, the fifth a skip when due. */
 const FOUR_FIFTHS = 0.8;
 
@@ -49,16 +49,17 @@ describe('ListBenchService', () => {
     expect(benchOf(readings)?.right).toEqual({ lo: 0.75, avg: 0.95, hi: 1 });
   });
 
-  it('leaves out a button the field gets right only half the time, since the list does not describe how it is played', () => {
-    expect(benchOf(field(MIN_MEASURED_PARSES, [cast('off', 0, 3), cast('on')]))).toBeUndefined();
+  it('leaves out a button the field gets wrong three times in ten, since the list does not describe how it is played', () => {
+    const sevenOfTen = [...Array.from({ length: 3 }, () => cast('off', 0, 3)), ...Array.from({ length: 7 }, () => cast('on'))];
+    expect(benchOf(field(MIN_MEASURED_PARSES, sevenOfTen))).toBeUndefined();
   });
 
-  it('benches a button the field gets right more often than not', () => {
-    expect(benchOf(field(MIN_MEASURED_PARSES, [cast('off', 0, 3), cast('on'), cast('on')]))?.right.avg).toBe(TWO_THIRDS);
+  it('benches a button the field gets right three times in four', () => {
+    expect(benchOf(field(MIN_MEASURED_PARSES, quarterOff))?.right.avg).toBe(THREE_QUARTERS);
   });
 
   it('leaves the casts the logs could not settle out of the share', () => {
-    expect(benchOf(field(MIN_MEASURED_PARSES, [cast('unjudged'), cast('off', 0, 3), ...clean.slice(2)]))?.right.avg).toBe(TWO_THIRDS);
+    expect(benchOf(field(MIN_MEASURED_PARSES, [cast('unjudged'), ...quarterOff]))?.right.avg).toBe(THREE_QUARTERS);
   });
 
   it('counts a moment the button was due and something else was pressed against it', () => {

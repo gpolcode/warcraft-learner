@@ -68,9 +68,12 @@ describe('ListFindingService rows', () => {
     expect(row?.occurrences[0]?.checks).toEqual([{ text: 'At 5+ combo points', truth: 'false', value: '3 combo points' }]);
   });
 
-  it('leaves the casts the log could not settle out of your share, and reads no share where it settled none', () => {
+  it('leaves the casts the log could not settle out of your share', () => {
     expect(rowOf(reading([cast('unjudged', 10), cast('on', 20)]))?.you).toBe(1);
-    expect(rowOf(reading([cast('unjudged', 10)]))?.you).toBeNull();
+  });
+
+  it('shows no row for a button whose moments the log settled none of', () => {
+    expect(findings.rows(withButtons(), reading([cast('unjudged', 10)]))).toEqual([]);
   });
 
   it('tones a row under every top log as bad, and one at the lowest top log as only under their average', () => {
@@ -81,10 +84,6 @@ describe('ListFindingService rows', () => {
   it('tones a row under the top raiders\' average as a warning, and one at the average as good', () => {
     expect(rowOf(reading(share(8, 1)))?.status).toBe('warn');
     expect(rowOf(reading(share(9, 1)))?.status).toBe('good');
-  });
-
-  it('tones a row whose moments the log settled none of as muted', () => {
-    expect(rowOf(reading([cast('unjudged', 10)]))?.status).toBe('muted');
   });
 
   it('shows no row for a button the pull never pressed and never had due', () => {
@@ -122,7 +121,7 @@ describe('ListFindingService condition groups', () => {
   it('reads an either-or term operand by operand, each with its own value', () => {
     const row = rowOf(reading([offCast]), withButtons([button()], { list: grouped }));
     expect(row?.occurrences[0]?.checks).toEqual([{
-      text: 'Either at 5+ combo points or while Shadow Dance is up', truth: 'false', value: '',
+      text: 'Any one of these', truth: 'false', value: '',
       group: {
         any: true,
         checks: [
@@ -130,6 +129,23 @@ describe('ListFindingService condition groups', () => {
           { text: 'While Shadow Dance is up', truth: 'false', value: 'no' },
         ],
       },
+    }]);
+  });
+});
+
+describe('ListFindingService build terms', () => {
+  const built = priorityList({ ...list, lines: [{ action: 'eviscerate', terms: ['!talent.unseen_blade', 'combo_points>=5&!talent.unseen_blade'] }] });
+  const settled: TermReading = { truth: 'true', value: [0, 0], build: true };
+  const offCast: CastCheck = {
+    atS: 10, verdict: 'off', line: 0,
+    lines: [{ truth: 'false', terms: [settled, { truth: 'false', value: null, parts: [{ truth: 'false', value: [3, 3] }, settled] }] }],
+  };
+
+  it('leaves what the player\'s build alone settles out of every checklist, at any depth', () => {
+    const row = rowOf(reading([offCast]), withButtons([button()], { list: built }));
+    expect(row?.occurrences[0]?.checks).toEqual([{
+      text: 'All of these', truth: 'false', value: '',
+      group: { any: false, checks: [{ text: 'At 5+ combo points', truth: 'false', value: '3 combo points' }] },
     }]);
   });
 });
