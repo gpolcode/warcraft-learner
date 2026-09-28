@@ -17,6 +17,7 @@ const DIE_BY_THE_SWORD = 118038;
 const ENRAGE = 184362;
 const SUMMON_RAVAGER = 228920;
 const ANGER_MANAGEMENT_ENTRY = 90371;
+const RECKLESSNESS_ENTRY = 90010;
 const SLAYER_ENTRY = 123389;
 const APEX_TIER_ENTRIES = [137004, 137003, 137002];
 const SCORCH_EXECUTE_PCT = 30;
@@ -71,7 +72,6 @@ describe('SpecPlanService.build', () => {
   });
 
   it('names the talent entry that grants a talented button, by the tree\'s own name for it', () => {
-    const RECKLESSNESS_ENTRY = 90010;
     const tree: TalentTree = { ...TREE, talents: [...TREE.talents, { id: RECKLESSNESS_ENTRY, name: 'Recklessness' }] };
     const plan = specPlans.build({ apl: APL, dump: DUMP, specLabel: 'Fury', talents: tree, code: '' });
     expect(plan.cooldowns[0]?.talent_entries).toEqual([RECKLESSNESS_ENTRY]);
@@ -115,6 +115,12 @@ describe('SpecPlanService.build', () => {
   it('reads a tiered talent\'s numbered name as that many ranks over the tiered node of the name', () => {
     const { talents } = fury(`${APL}\nactions+=/execute,if=talent.rampaging_berserker_3`);
     expect(talents).toEqual({ 'talent.rampaging_berserker_3': { name: 'Rampaging Berserker', entries: APEX_TIER_ENTRIES, points: 3 } });
+  });
+
+  it('names the talent an aura the list reads is called after, and none for an aura no talent carries', () => {
+    const tree: TalentTree = { ...TREE, talents: [...TREE.talents, { id: RECKLESSNESS_ENTRY, name: 'Recklessness' }] };
+    const { talents } = specPlans.build({ apl: APL, dump: DUMP, specLabel: 'Fury', talents: tree, code: '' });
+    expect(talents).toEqual({ 'talent.recklessness': { name: 'Recklessness', entries: [RECKLESSNESS_ENTRY] } });
   });
 
   it('leaves out a talent the tree does not carry, which the list then reads as unknown', () => {

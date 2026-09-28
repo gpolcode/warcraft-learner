@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { applyDebuff, cast, refreshDebuff, removeDebuff } from '../../../../../../../testing/builders/events';
 import { planSpell } from '../../../../../../../testing/builders/spec-plan';
-import { RUPTURE } from '../../../../../../../testing/spell-ids';
+import { DEATHMARK, RUPTURE } from '../../../../../../../testing/spell-ids';
 import type { WclEvent } from '../../../wcl/wcl.models';
 import { castAt, factContext, priorityList } from '../priority-list-harness';
 import { UNKNOWN } from '../priority-list.models';
@@ -13,11 +13,16 @@ const PANDEMIC_S = (RUPTURE_S * 30) / 100;
 const BOSS = 1;
 const ADD = 2;
 const BOSS_KEY = `${BOSS}:0`;
-const list = priorityList({ spells: { rupture: planSpell('Rupture', [RUPTURE], { duration: RUPTURE_S }) } });
+const DEATHMARK_ENTRY = 112662;
+const OTHER_ENTRY = 117101;
+const list = priorityList({
+  spells: { rupture: planSpell('Rupture', [RUPTURE], { duration: RUPTURE_S }), deathmark: planSpell('Deathmark', [DEATHMARK]) },
+  talents: { 'talent.deathmark': { name: 'Deathmark', entries: [DEATHMARK_ENTRY] } },
+});
 const debuffs = TestBed.inject(DebuffFacts);
 
-const read = (name: string, events: WclEvent[], atS: number, target: string | null = BOSS_KEY) => {
-  const ctx = factContext(list, { casts: [cast(1, atS)], debuffs: events });
+const read = (name: string, events: WclEvent[], atS: number, target: string | null = BOSS_KEY, talents?: [number, number][]) => {
+  const ctx = factContext(list, { casts: [cast(1, atS)], debuffs: events, ...(talents ? { talents } : {}) });
   return debuffs.read(name, castAt(ctx, atS, target), 'rupture', ctx);
 };
 
@@ -55,5 +60,14 @@ describe('DebuffFacts', () => {
 
   it('reads a dot the log never shows as unknown', () => {
     expect(read('dot.rupture.ticking', [], 5)).toEqual(UNKNOWN);
+  });
+
+  it('reads a dot the log never shows as off when only a talent the player did not take grants it', () => {
+    expect(read('dot.deathmark.ticking', [], 5, BOSS_KEY, [[OTHER_ENTRY, 1]])).toEqual([0, 0]);
+    expect(read('dot.deathmark.refreshable', [], 5, BOSS_KEY, [[OTHER_ENTRY, 1]])).toEqual([1, 1]);
+  });
+
+  it('reads that dot as unknown when the player took the talent', () => {
+    expect(read('dot.deathmark.ticking', [], 5, BOSS_KEY, [[DEATHMARK_ENTRY, 1]])).toEqual(UNKNOWN);
   });
 });
