@@ -9,7 +9,7 @@ import { Result } from '../../../shared/util-http/result';
 import { mean, deviation, extent, group, mode } from 'd3-array';
 import { round, groupByTime, getOrInsert, avgOr, medianOr } from '../analysis/analysis-math';
 import { HoldWindow } from '../analysis/hold-targets-service';
-import { AuraWindowsService } from '../analysis/aura-windows-service';
+import { AuraWindows, AuraWindowsService } from '../analysis/aura-windows-service';
 import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
@@ -98,7 +98,9 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     ]);
 
     const fightDurationS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
-    const buffWindows = this.auraWindows.buildAuraWindows(this.wclProjections.withRelativeS(buffs, fight.startTime));
+    const auras = this.auraWindows.buildAuraWindows(this.wclProjections.withRelativeS(buffs, fight.startTime));
+    const abilities = report.masterData?.abilities ?? [];
+    const buffWindows: AuraWindows = new Map(defensives.map(defensive => [defensive.spell_id, this.auraWindows.spansNamed(auras, defensive, abilities)]));
     return {
       windows: this.findParseDefensiveWindows(this.wclProjections.withRelativeS(dmgTaken, fight.startTime), fightDurationS, buffWindows, defensives, gameIdByActorId),
       summaries: this.summarizeDefensiveCasts(defensives, buffWindows, this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime), fightDurationS),

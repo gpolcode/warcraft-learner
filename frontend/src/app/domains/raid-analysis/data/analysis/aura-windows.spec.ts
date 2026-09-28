@@ -4,7 +4,7 @@ import { WclProjectionsService } from './wcl-projections-service';
 import {
   applyBuff, removeBuff, applyBuffStack, applyDebuff, removeDebuff, refreshDebuff,
 } from '../../../../../testing/builders/events';
-import { CLOAK_OF_SHADOWS, RUPTURE, MAELSTROM_WEAPON } from '../../../../../testing/spell-ids';
+import { BLUR, BLUR_BUFF, CLOAK_OF_SHADOWS, RUPTURE, MAELSTROM_WEAPON } from '../../../../../testing/spell-ids';
 import { TestBed } from '@angular/core/testing';
 
 const auraWindows = TestBed.inject(AuraWindowsService);
@@ -56,6 +56,30 @@ describe('upAtPull', () => {
 
   it('does not name an aura that opens with an apply, even in the pull\'s first instant', () => {
     expect(auraWindows.upAtPull(timed([applyBuff(CLOAK_OF_SHADOWS, 0), removeBuff(CLOAK_OF_SHADOWS, REMOVE_S)], 0))).toEqual(new Set());
+  });
+});
+
+describe('spansNamed', () => {
+  const BLUR_BUTTON = { name: 'Blur', spell_id: BLUR };
+  const named = (name: string) => [{ gameID: BLUR, name: 'Blur', icon: '' }, { gameID: BLUR_BUFF, name, icon: '' }];
+
+  it('reads a buff logged under another id the report gives the button\'s name', () => {
+    const windows = new Map([[BLUR_BUFF, [[APPLY_S, REMOVE_S] as [number, number]]]]);
+    expect(auraWindows.spansNamed(windows, BLUR_BUTTON, named('Blur'))).toEqual([[APPLY_S, REMOVE_S]]);
+  });
+
+  it('ignores an aura the report names otherwise', () => {
+    const windows = new Map([[BLUR_BUFF, [[APPLY_S, REMOVE_S] as [number, number]]]]);
+    expect(auraWindows.spansNamed(windows, BLUR_BUTTON, named('Blur of Blades'))).toEqual([]);
+  });
+
+  it('merges spans of two same-named ids that touch or overlap, and keeps a later one apart', () => {
+    const LATER_S = 40;
+    const windows = new Map<number, [number, number | null][]>([
+      [BLUR, [[APPLY_S, REMOVE_S]]],
+      [BLUR_BUFF, [[REMOVE_S, REMOVE_S + 5], [LATER_S, null]]],
+    ]);
+    expect(auraWindows.spansNamed(windows, BLUR_BUTTON, named('Blur'))).toEqual([[APPLY_S, REMOVE_S + 5], [LATER_S, null]]);
   });
 });
 

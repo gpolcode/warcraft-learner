@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { getOrInsert } from './analysis-math';
 import { TimedEvent } from './wcl-projections-service';
+import { WclAbility } from '../wcl/wcl.models';
 import { WclProjectionsService } from './wcl-projections-service';
 
 @Injectable({ providedIn: 'root' })
@@ -49,6 +50,22 @@ export class AuraWindowsService {
       if (edge !== 'open') up.add(event.abilityGameID);
     }
     return up;
+  }
+
+  /** A button's aura can carry another id than its cast (Blur casts as 198589, its buff is 212800), so a button reads the spans of every id the report gives its name, overlapping ones as one. */
+  spansNamed(windows: AuraWindows, button: { name: string; spell_id: number }, abilities: readonly WclAbility[]): [number, number | null][] {
+    const ids = new Set([button.spell_id, ...abilities.filter(ability => ability.name === button.name).map(ability => ability.gameID)]);
+    const spans = [...ids].flatMap(id => windows.get(id) ?? []).sort((a, b) => a[0] - b[0]);
+    const merged: [number, number | null][] = [];
+    for (const [startS, endS] of spans) {
+      const last = merged[merged.length - 1];
+      if (last && (last[1] === null || startS <= last[1])) {
+        last[1] = last[1] === null || endS === null ? null : Math.max(last[1], endS);
+      } else {
+        merged.push([startS, endS]);
+      }
+    }
+    return merged;
   }
 
   /** A bare apply carries no count and means one; every stack event carries the new total, clamped so a reported drop below zero cannot leak through. */

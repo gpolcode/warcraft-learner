@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { WclEvent } from '../wcl/wcl.models';
+import { WclAbility, WclEvent } from '../wcl/wcl.models';
 import {
   AnalysisFinding, BurstWindow, PlayerBurstWindow, PlayerDefensive,
 } from '../analysis/analysis.models';
@@ -140,6 +140,7 @@ export class DefensiveFeatureService {
     const dtEventsTimed = this.wclProjections.withRelativeS(dtEvents, fight.startTime);
     const playerDefensives = this.analyzeDefensives(
       bench.defensives, this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime), this.wclProjections.withRelativeS(buffs, fight.startTime), fightDurationS,
+      context.report.masterData?.abilities ?? [],
     );
     const findings = bench.defensives.length && playerDefensives.length
       ? this.analyzeDefensiveFindings(playerDefensives, bench.per_defensive_benchmarks, fightDurationS)
@@ -223,13 +224,14 @@ export class DefensiveFeatureService {
     castEvents: TimedEvent[],
     buffEvents: TimedEvent[],
     fightEndS: number,
+    abilities: readonly WclAbility[],
   ): PlayerDefensive[] {
     if (!defensives.length) return [];
     const buffWin = this.auraWindows.buildAuraWindows(buffEvents);
 
     return defensives.map(defensive => {
       const spellId = defensive.spell_id;
-      const windows = this.buildDefensiveUsageWindows(spellId, buffWin.get(spellId) ?? [], castEvents, fightEndS);
+      const windows = this.buildDefensiveUsageWindows(spellId, this.auraWindows.spansNamed(buffWin, defensive, abilities), castEvents, fightEndS);
       const cast_times_s = windows.map(window => window.start_s).sort((a, b) => a - b);
       const entry: PlayerDefensive = { name: defensive.name, uses: windows.length, cast_times_s, windows };
       if (defensive.talent_gated) entry.talent_gated = true;

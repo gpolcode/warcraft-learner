@@ -5,7 +5,7 @@ import { applyBuff, removeBuff, damageTaken, cast } from '../../../../../testing
 import { planLoader, specPlan } from '../../../../../testing/builders/spec-plan';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
-import { CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
+import { BLUR, BLUR_BUFF, CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
@@ -266,6 +266,24 @@ describe('DefensiveTransformService (live, in-browser)', () => {
     expect(bench.value.defensive_windows).toHaveLength(1);
     expect(bench.value.defensive_windows[0]).toMatchObject({ defensive_name: 'Cloak of Shadows', dmg_avg: 1000, ref_game_id: 6666 });
     expect(bench.value.ability_icons[700]).toEqual({ icon: 'hit', name: 'Boss Hit' });
+  });
+
+  it('finds the window of a defensive whose buff the log carries under another id of its name', async () => {
+    const BLUR_PLAN = { name: 'Blur', spell_id: BLUR, cooldown: 60 };
+    const blurWcl = {
+      ...wclFake,
+      getReport: reportsByCode({ ...reportShape, abilities: [...reportShape.abilities, { gameID: BLUR, name: 'Blur', icon: '' }, { gameID: BLUR_BUFF, name: 'Blur', icon: '' }] }),
+      getAllEvents: async (_code: string, _fightId: number, dataType: string) => {
+        if (dataType === 'Buffs') return [applyBuff(BLUR_BUFF, 30), removeBuff(BLUR_BUFF, 40)];
+        if (dataType === 'Casts') return [cast(BLUR, 30)];
+        return [damageTaken(700, 32, 1000, { source: 9 })];
+      },
+    };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: blurWcl, plans: planLoader(specPlan({ defensives: [BLUR_PLAN] })) }) });
+    const bench = await TestBed.inject(DefensiveTransformService).getBench('HavocDemonHunter', 1);
+    assert(bench.ok);
+    expect(bench.value.defensive_windows).toHaveLength(1);
+    expect(bench.value.defensive_windows[0]).toMatchObject({ defensive_name: 'Blur', dmg_avg: 1000 });
   });
 
   it('reports missing when the spec\'s plan has no defensives', async () => {
