@@ -104,7 +104,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     const fightDurationS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
     const auras = this.auraWindows.buildAuraWindows(this.wclProjections.withRelativeS(buffs, fight.startTime));
     const abilities = report.masterData?.abilities ?? [];
-    const presses = this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime);
+    const presses = this.wclProjections.withRelativeS(this.wclProjections.presses(casts, this.wclProjections.pressFolds(defensives), { buffs, abilities }), fight.startTime);
     const uses: UsesBySpell = new Map(defensives.map(defensive => [defensive.spell_id, this.defensiveUses.uses(
       this.auraWindows.spansNamed(auras, defensive, abilities), this.defensiveUses.castTimesS(presses, defensive.spell_id), fightDurationS,
     )]));
@@ -119,6 +119,8 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       name: defensive.name,
       spell_id: defensive.spell_id,
       cooldown: defensive.cooldown,
+      duration: defensive.duration,
+      charges: defensive.charges,
       talent_gated: !!defensive.talent_gated,
       ...(defensive.talent_entries ? { talent_entries: defensive.talent_entries } : {}),
     }));

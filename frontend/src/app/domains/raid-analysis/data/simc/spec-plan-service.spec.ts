@@ -81,7 +81,7 @@ describe('SpecPlanService.build', () => {
   });
 
   it('plans each button under the record with its longest cooldown and marks a talented one', () => {
-    expect(fury().cooldowns[0]).toEqual({ name: 'Recklessness', spell_id: RECKLESSNESS, cooldown: 90, talent_gated: true, opener_priority: 1 });
+    expect(fury().cooldowns[0]).toEqual({ name: 'Recklessness', spell_id: RECKLESSNESS, cooldown: 90, duration: 0, charges: 1, talent_gated: true, opener_priority: 1 });
   });
 
   it('names the talent entry that grants a talented button, by the tree\'s own name for it', () => {
@@ -94,6 +94,19 @@ describe('SpecPlanService.build', () => {
   it('plans only the labelled cooldowns, in no order, for a spec SimC writes no APL for', () => {
     expect(fury(null).cooldowns.map(cooldown => [cooldown.name, cooldown.opener_priority])).toEqual([['Recklessness', undefined], ['Bladestorm', undefined]]);
     expect(fury(null).lines).toEqual([]);
+  });
+
+  it('carries each button\'s aura duration and charges, merged over every record of its name', () => {
+    const AVATAR_AURA_S = 20;
+    const REGENERATION_CHARGES = 2;
+    const dump = [
+      DUMP,
+      record('Avatar', AVATAR + 1, `Duration         : ${AVATAR_AURA_S} seconds`),
+      record('Enraged Regeneration', ENRAGED_REGENERATION + 1, `Charges          : ${REGENERATION_CHARGES} (120 seconds cooldown)`),
+    ].join('\n\n');
+    const plan = specPlans.build({ apl: APL, dump, specLabel: 'Fury', talents: TREE, code: '' });
+    expect(plan.cooldowns.find(cooldown => cooldown.name === 'Avatar')).toMatchObject({ spell_id: AVATAR, duration: AVATAR_AURA_S, charges: 1 });
+    expect(plan.defensives.find(defensive => defensive.name === 'Enraged Regeneration')).toMatchObject({ duration: 0, charges: REGENERATION_CHARGES });
   });
 
   it('plans the spec\'s own big and external defensives, leaving out a name only another spec\'s talent carries', () => {

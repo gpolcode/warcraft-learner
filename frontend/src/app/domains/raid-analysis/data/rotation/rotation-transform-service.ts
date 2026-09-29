@@ -92,13 +92,15 @@ export class RotationTransformService implements DataSource<RotationBench> {
   }
 
   private async parseRotation({ ranking, report, fight, player }: BenchParse, plan: SpecPlan): Promise<ParseRotation> {
+    const abilities = report.masterData?.abilities ?? [];
+    const folds = this.wclProjections.pressFolds(plan.cooldowns);
     const [casts, buffs, reading] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
-      this.listLogs.read(plan, { reportCode: ranking.report_code, fight, playerId: player.id, abilities: report.masterData?.abilities ?? [] }),
+      this.listLogs.read(plan, { reportCode: ranking.report_code, fight, playerId: player.id, abilities, folds }),
     ]);
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
-    const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime);
+    const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime);
     const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
     const blTimeS = this.bloodlust.detectBloodlust(buffsTimed);
     return {

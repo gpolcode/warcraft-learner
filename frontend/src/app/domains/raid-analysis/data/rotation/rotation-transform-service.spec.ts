@@ -218,6 +218,23 @@ describe('RotationTransformService (live, in-browser)', () => {
     expect(result.value.buttons.map(button => [button.action, button.spell_id, button.right])).toEqual([['shadow_blades', SHADOW_BLADES, { lo: 1, avg: 1, hi: 1 }]]);
   });
 
+  it('benches a press each top log casts twice as one use, and bakes the button\'s duration and charges', async () => {
+    const PRESS_S = 5;
+    const ECHO_S = 0.02;
+    const SHADOW_BLADES_S = 16;
+    const echoing = {
+      ...wclFake,
+      getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
+        (dataType === 'Casts' ? [cast(SHADOW_BLADES, PRESS_S), cast(SHADOW_BLADES, PRESS_S + ECHO_S)] : []),
+    };
+    const plan = specPlan({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90, duration: SHADOW_BLADES_S, charges: 1 }] });
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: echoing, plans: planLoader(plan) }) });
+    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
+    assert(result.ok);
+    expect(result.value.per_cd_benchmarks['Shadow Blades']?.median_uses).toBe(1);
+    expect(result.value.major_cooldowns[0]).toMatchObject({ duration: SHADOW_BLADES_S, charges: 1 });
+  });
+
   it('propagates a missing error when the spec\'s plan has neither cooldowns nor a list', async () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan()) }) });
     expect(await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1))

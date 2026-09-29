@@ -1,8 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach, MockInstance } from 'vitest';
-import { WclProjectionsService } from './wcl-projections-service';
-import { POWER_INFUSION, SHADOW_BLADES, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
-import { applyBuff, cast } from '../../../../../testing/builders/events';
-import { ParseRanking } from '../wcl/wcl.models';
+import { PressFold, PressLog, WclProjectionsService } from './wcl-projections-service';
+import {
+  ANTI_MAGIC_SHELL, BLUR, BLUR_BUFF, DIVINE_HYMN, DIVINE_HYMN_TICK, POWER_INFUSION, SHADOW_BLADES, THE_HUNT, THE_HUNT_LANDING,
+  WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
+} from '../../../../../testing/spell-ids';
+import { applyBuff, applyBuffStack, cast, refreshBuff } from '../../../../../testing/builders/events';
+import { ParseRanking, WclEvent } from '../wcl/wcl.models';
+import type { PlanCooldown } from '../plan/plan.models';
 import { TestBed } from '@angular/core/testing';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
@@ -195,31 +199,140 @@ describe('normalizeAbilityId', () => {
   });
 });
 
+const POWER_INFUSION_S = 15;
+const POWER_INFUSION_COOLDOWN_S = 120;
+const ANTI_MAGIC_SHELL_MERGED_DURATION_S = 45;
+const ANTI_MAGIC_SHELL_COOLDOWN_S = 60;
+const ANTI_MAGIC_SHELL_BUTTON = {
+  name: 'Anti-Magic Shell', spell_id: ANTI_MAGIC_SHELL, cooldown: ANTI_MAGIC_SHELL_COOLDOWN_S, duration: ANTI_MAGIC_SHELL_MERGED_DURATION_S, charges: 1,
+};
+const ability = (gameID: number, name: string) => ({ gameID, name, icon: '' });
+
+describe('pressFolds', () => {
+  // Mirrors the service's floor, so changing one without the other un-pins the boundary below.
+  const FOLDING_COOLDOWN_S = 60;
+  const powerInfusion = (over: Partial<PlanCooldown> = {}): PlanCooldown => ({
+    name: 'Power Infusion', spell_id: POWER_INFUSION, cooldown: POWER_INFUSION_COOLDOWN_S, duration: POWER_INFUSION_S, charges: 1, ...over,
+  });
+
+  it('folds a one-charge button inside its own aura duration', () => {
+    expect(wclProjections.pressFolds([powerInfusion()])).toEqual([{ name: 'Power Infusion', spell_id: POWER_INFUSION, window_s: POWER_INFUSION_S }]);
+  });
+
+  it('caps the window at half the cooldown when the merged duration runs longer', () => {
+    const HALF_COOLDOWN_S = ANTI_MAGIC_SHELL_COOLDOWN_S / 2;
+    expect(wclProjections.pressFolds([ANTI_MAGIC_SHELL_BUTTON])[0]?.window_s).toBe(HALF_COOLDOWN_S);
+  });
+
+  it('folds nothing for a button with a second charge, which presses again inside its own aura', () => {
+    expect(wclProjections.pressFolds([powerInfusion({ charges: 2 })])).toEqual([]);
+  });
+
+  it('folds a button on a minute-long cooldown, and nothing for one on a shorter cooldown', () => {
+    expect(wclProjections.pressFolds([powerInfusion({ cooldown: FOLDING_COOLDOWN_S })])).toHaveLength(1);
+    expect(wclProjections.pressFolds([powerInfusion({ cooldown: FOLDING_COOLDOWN_S - 1 })])).toEqual([]);
+  });
+
+  it('folds nothing for a button that a bench an older ingest wrote carries without its duration', () => {
+    expect(wclProjections.pressFolds([{ name: 'Power Infusion', spell_id: POWER_INFUSION, cooldown: POWER_INFUSION_COOLDOWN_S }])).toEqual([]);
+  });
+});
+
 describe('presses', () => {
   const PRIEST_ID = 5;
   const ALLY_ID = 9;
   const PRESS_S = 30;
-  const SAME_PRESS_S = 0.1;
-  const JUST_UNDER_S = 0.099;
-  const press = (atS: number, target: number) => cast(POWER_INFUSION, atS, { source: PRIEST_ID, target });
+  const ECHO_S = 0.01;
+  const JUST_UNDER_S = 0.001;
+  const NO_AURAS: PressLog = { buffs: [], abilities: [] };
+  const powerInfusion: PressFold = { name: 'Power Infusion', spell_id: POWER_INFUSION, window_s: POWER_INFUSION_S };
+  const press = (atS: number, target = ALLY_ID) => cast(POWER_INFUSION, atS, { source: PRIEST_ID, target });
+  const folded = (casts: WclEvent[], folds: PressFold[] = [powerInfusion], log = NO_AURAS) => wclProjections.presses(casts, folds, log);
 
-  it('keeps one cast for a press logged on its target and then on the caster', () => {
-    const out = wclProjections.presses([press(PRESS_S, ALLY_ID), press(PRESS_S + 0.02, PRIEST_ID)]);
-    expect(out).toEqual([press(PRESS_S, ALLY_ID)]);
+  it('keeps one cast for a press WCL logs on its target and again on the caster, in the same ms or a few ms later', () => {
+    expect(folded([press(PRESS_S), press(PRESS_S, PRIEST_ID)])).toEqual([press(PRESS_S)]);
+    expect(folded([press(PRESS_S), press(PRESS_S + ECHO_S, PRIEST_ID)])).toEqual([press(PRESS_S)]);
   });
 
-  it('folds a repeat just under the same-press gap, and keeps one at it', () => {
-    expect(wclProjections.presses([press(PRESS_S, ALLY_ID), press(PRESS_S + JUST_UNDER_S, PRIEST_ID)])).toHaveLength(1);
-    expect(wclProjections.presses([press(PRESS_S, ALLY_ID), press(PRESS_S + SAME_PRESS_S, PRIEST_ID)])).toHaveLength(2);
+  it('folds a repeat just under the fold window, and keeps one exactly at it', () => {
+    expect(folded([press(PRESS_S), press(PRESS_S + POWER_INFUSION_S - JUST_UNDER_S)])).toHaveLength(1);
+    expect(folded([press(PRESS_S), press(PRESS_S + POWER_INFUSION_S)])).toHaveLength(2);
+  });
+
+  it('folds a cast of another id the report names like the button, as The Hunt logs its landing', () => {
+    const LANDING_LAG_S = 0.3;
+    const LANDING_S = PRESS_S + LANDING_LAG_S;
+    const THE_HUNT_WINDOW_S = 30;
+    const theHunt = { name: 'The Hunt', spell_id: THE_HUNT, window_s: THE_HUNT_WINDOW_S };
+    const log = { buffs: [], abilities: [ability(THE_HUNT, 'The Hunt'), ability(THE_HUNT_LANDING, 'The Hunt')] };
+    expect(folded([cast(THE_HUNT, PRESS_S), cast(THE_HUNT_LANDING, LANDING_S)], [theHunt], log)).toEqual([cast(THE_HUNT, PRESS_S)]);
+  });
+
+  it('keeps a recast past half the cooldown although the merged duration runs longer', () => {
+    const RECAST_S = PRESS_S + ANTI_MAGIC_SHELL_COOLDOWN_S / 2 + 1;
+    const casts = [cast(ANTI_MAGIC_SHELL, PRESS_S), cast(ANTI_MAGIC_SHELL, RECAST_S)];
+    expect(folded(casts, wclProjections.pressFolds([ANTI_MAGIC_SHELL_BUTTON]))).toEqual(casts);
+  });
+
+  describe('Divine Hymn, one press and a cast per channel tick', () => {
+    const TICK_S = 1.05;
+    const SECOND_TICK_S = PRESS_S + 2 * TICK_S;
+    const DIVINE_HYMN_WINDOW_S = 15;
+    const hymn = { name: 'Divine Hymn', spell_id: DIVINE_HYMN, window_s: DIVINE_HYMN_WINDOW_S };
+    const names = [ability(DIVINE_HYMN, 'Divine Hymn'), ability(DIVINE_HYMN_TICK, 'Divine Hymn')];
+
+    it('counts the press under the button\'s own id when WCL logs its first tick a ms before it', () => {
+      const PRESS_LAG_S = 0.001;
+      const casts = [cast(DIVINE_HYMN_TICK, PRESS_S), cast(DIVINE_HYMN, PRESS_S + PRESS_LAG_S), cast(DIVINE_HYMN_TICK, PRESS_S + TICK_S)];
+      expect(folded(casts, [hymn], { buffs: [], abilities: names })).toEqual([cast(DIVINE_HYMN, PRESS_S)]);
+    });
+
+    it('folds a tick that refreshes the stacking aura the channel builds', () => {
+      const buffs = [
+        applyBuff(DIVINE_HYMN_TICK, PRESS_S), applyBuffStack(DIVINE_HYMN_TICK, PRESS_S + TICK_S, 2),
+        applyBuffStack(DIVINE_HYMN_TICK, SECOND_TICK_S, 3), refreshBuff(DIVINE_HYMN_TICK, SECOND_TICK_S),
+      ];
+      const casts = [cast(DIVINE_HYMN, PRESS_S), cast(DIVINE_HYMN_TICK, PRESS_S + TICK_S), cast(DIVINE_HYMN_TICK, SECOND_TICK_S)];
+      expect(folded(casts, [hymn], { buffs, abilities: names })).toEqual([cast(DIVINE_HYMN, PRESS_S)]);
+    });
+  });
+
+  describe('a repeat inside the window that refreshes the button\'s own aura', () => {
+    const DEMON_HUNTER_ID = 7;
+    const BLUR_WINDOW_S = 10;
+    const SECOND_CHARGE_S = PRESS_S + 9;
+    // Mirrors the service's skew, so changing one without the other un-pins the boundary below.
+    const CAST_AURA_SKEW_S = 0.05;
+    const ONE_MS_S = 0.001;
+    const blur = { name: 'Blur', spell_id: BLUR, window_s: BLUR_WINDOW_S };
+    const blurs = [cast(BLUR, PRESS_S, { source: DEMON_HUNTER_ID }), cast(BLUR, SECOND_CHARGE_S, { source: DEMON_HUNTER_ID })];
+    const refreshedAt = (atS: number): PressLog => ({
+      buffs: [applyBuff(BLUR_BUFF, PRESS_S, { target: DEMON_HUNTER_ID }), refreshBuff(BLUR_BUFF, atS, { target: DEMON_HUNTER_ID })],
+      abilities: [ability(BLUR, 'Blur'), ability(BLUR_BUFF, 'Blur')],
+    });
+
+    it('is kept, as a second charge the spell data leaves out', () => {
+      expect(folded(blurs, [blur], refreshedAt(SECOND_CHARGE_S))).toEqual(blurs);
+    });
+
+    it('is kept when the refresh lands the skew off the cast, and folded when it lands a ms further', () => {
+      expect(folded(blurs, [blur], refreshedAt(SECOND_CHARGE_S + CAST_AURA_SKEW_S))).toHaveLength(2);
+      expect(folded(blurs, [blur], refreshedAt(SECOND_CHARGE_S + CAST_AURA_SKEW_S + ONE_MS_S))).toHaveLength(1);
+    });
+  });
+
+  it('never folds an ability the plan does not name', () => {
+    const twice = [cast(SHADOW_BLADES, PRESS_S, { source: PRIEST_ID }), cast(SHADOW_BLADES, PRESS_S, { source: PRIEST_ID })];
+    expect(folded(twice)).toEqual(twice);
   });
 
   it('keeps two different buttons pressed in the same instant', () => {
-    const both = [press(PRESS_S, ALLY_ID), cast(SHADOW_BLADES, PRESS_S, { source: PRIEST_ID })];
-    expect(wclProjections.presses(both)).toEqual(both);
+    const both = [press(PRESS_S), cast(SHADOW_BLADES, PRESS_S, { source: PRIEST_ID })];
+    expect(folded(both)).toEqual(both);
   });
 
   it('passes every event that is not a cast through untouched', () => {
     const buffs = [applyBuff(POWER_INFUSION, PRESS_S, { target: ALLY_ID }), applyBuff(POWER_INFUSION, PRESS_S, { target: PRIEST_ID })];
-    expect(wclProjections.presses(buffs)).toEqual(buffs);
+    expect(folded(buffs)).toEqual(buffs);
   });
 });

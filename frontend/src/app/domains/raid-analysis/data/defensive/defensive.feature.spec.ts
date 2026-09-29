@@ -2,7 +2,7 @@ import { assert, describe, it, expect } from 'vitest';
 import { DEFENSIVE_DATA_SOURCE, DefensiveBench } from './defensive-data-source';
 import { featureService } from '../../../../../testing/service-harness';
 import { DefensiveFeatureService } from './defensive-feature-service';
-import { applyBuff, removeBuff, cast, damageTaken, death, resurrect } from '../../../../../testing/builders/events';
+import { applyBuff, cast, removeBuff, damageTaken, death, resurrect } from '../../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS, EVASION } from '../../../../../testing/spell-ids';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { Result, Results } from '../../../shared/util-http/result';
@@ -57,6 +57,27 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     expect(result.value.anchors[0]).toMatchObject({ refGameId: WINDOW_REF_GAME_ID });
     // 1 use vs avg ~2, but only one buff window -> first cast at 30 (late) gives a warning finding.
     expect(result.value.findingRows.length).toBeGreaterThan(0);
+  });
+
+  it('counts a press of a defensive the log casts twice, with no aura to read, as one use', async () => {
+    const PRESS_S = 30;
+    const ECHO_S = 0.02;
+    const CLOAK_S = 5;
+    const wcl = {
+      getReport: async () => wclReport({ playerName: 'P', endTimeMs: 120_000 }),
+      getCombatantInfo: async () => [],
+      getAllEvents: async (_c: string, _f: number, dataType: string) =>
+        (dataType === 'Casts' ? [cast(CLOAK_OF_SHADOWS, PRESS_S), cast(CLOAK_OF_SHADOWS, PRESS_S + ECHO_S)] : []),
+    };
+    // 1 use per minute over the 2-minute pull: 2 expected, and 2 is also the floor.
+    const twoExpected = benchWith({
+      per_defensive_benchmarks: { 'Cloak of Shadows': defBench({ uses_per_min: { avg: 1, stddev: 0.1 } }) },
+      defensives: [{ ...CLOAK_META, duration: CLOAK_S, charges: 1 }],
+      cd_spell_ids: { 'Cloak of Shadows': CLOAK_OF_SHADOWS },
+    });
+    const result = await serviceWith(Results.ok(twoExpected), wcl).loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
+    assert(result.ok);
+    expect(result.value.findingRows.map(row => row.measured.value)).toContain('1 / 2');
   });
 
   it('marks a window the player was dead in bad, reading only their own deaths and resurrects', async () => {

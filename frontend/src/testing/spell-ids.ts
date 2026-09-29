@@ -52,3 +52,6 @@ export const DIVINE_HYMN_TICK = 64844;
 // WCL quirk: The Hunt begins and casts under the press, then logs its landing as a cast under another record of the name.
 export const THE_HUNT = 370965;
 export const THE_HUNT_LANDING = 370966;
+
+// Its merged spell data reads a longer duration than its own aura.
+export const ANTI_MAGIC_SHELL = 48707;

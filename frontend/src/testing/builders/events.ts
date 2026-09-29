@@ -48,6 +48,15 @@ export function applyBuff(spellId: number, atS: number, opts?: { target?: number
   };
 }
 
+export function refreshBuff(spellId: number, atS: number, opts?: { target?: number }): WclEvent {
+  return {
+    type: 'refreshbuff',
+    timestamp: atS * MS_PER_SECOND,
+    abilityGameID: spellId,
+    ...(opts?.target !== undefined && { sourceID: opts.target, targetID: opts.target }),
+  };
+}
+
 export function removeBuff(spellId: number, atS: number, opts?: { target?: number }): WclEvent {
   return {
     type: 'removebuff',
