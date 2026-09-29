@@ -34,6 +34,18 @@ const value = (term: string, range: Range, flag = false): string => {
   if (!node) throw new Error(`unreadable ${term}`);
   return text.value(node, range, flag);
 };
+/** The value of a term that tests `name` for truth alone, as `name` or `!name` does. */
+const tested = (name: string, range: Range): string => value(name, range, true);
+
+const ON: Range = [1, 1];
+const OFF: Range = [0, 0];
+/** The log bounds the flag but cannot say which way it went. */
+const ON_OR_OFF: Range = [0, 1];
+/** Every count in the span holds, so the log settles the flag though not the count. */
+const ONE_TO_THREE_STACKS: Range = [1, 3];
+const THREE: Range = [3, 3];
+const FOUR_S_LEFT: Range = [4, 4];
+
 describe('ListTextService phrases', () => {
   it('reads a buff flag and its negation', () => {
     expect(phrase('buff.shadow_dance.up')).toBe('while Shadow Dance is up');
@@ -118,10 +130,67 @@ describe('ListTextService values', () => {
     expect(value('active_enemies', [1, 1])).toBe('1 enemy');
   });
 
-  it('reads a flag and a talent in words', () => {
-    expect(value('buff.shadow_dance.up', [0, 0])).toBe('no');
-    expect(value('variable.pool', [1, 1], true)).toBe('yes');
-    expect(value('talent.deathstalkers_mark', [1, 1])).toBe('picked');
+  it('reads a buff flag as up or down, whichever field names it', () => {
+    expect(tested('buff.shadow_dance.up', ON)).toBe('Up');
+    expect(tested('buff.shadow_dance.up', OFF)).toBe('Down');
+    expect(tested('buff.shadow_dance.down', ON)).toBe('Down');
+    expect(tested('buff.shadow_dance.down', OFF)).toBe('Up');
+  });
+
+  it('reads a negated flag by the state of what it negates, so a missed cast never shows a value that agrees with its phrase', () => {
+    expect(phrase('!cooldown.shadow_dance.ready')).toBe('while Shadow Dance is on cooldown');
+    expect(tested('cooldown.shadow_dance.ready', ON)).toBe('Ready');
+    expect(tested('cooldown.shadow_dance.ready', OFF)).toBe('On cooldown');
+  });
+
+  it('reads a dot as on or off the target, and its pandemic window by what is left', () => {
+    expect(tested('dot.rupture.ticking', ON)).toBe('On the target');
+    expect(tested('dot.rupture.ticking', OFF)).toBe('Not on the target');
+    expect(tested('dot.rupture.down', ON)).toBe('Not on the target');
+    expect(tested('dot.rupture.refreshable', ON)).toBe('Under 30% left');
+    expect(tested('dot.rupture.refreshable', OFF)).toBe('Over 30% left');
+  });
+
+  it('reads a talent and a hero tree as picked or not', () => {
+    expect(tested('talent.deathstalkers_mark', ON)).toBe('Picked');
+    expect(tested('hero_tree.trickster', OFF)).toBe('Not picked');
+  });
+
+  it('reads the last presses and a repeat as states, never as counts', () => {
+    expect(tested('prev_gcd.1.shadow_dance', ON)).toBe('Last press');
+    expect(tested('prev.shadow_dance', OFF)).toBe('Not last press');
+    expect(tested('prev_gcd.2.shadow_dance', ON)).toBe('2 presses back');
+    expect(tested('prev_gcd.2.shadow_dance', OFF)).toBe('Not 2 presses back');
+    expect(tested('combo_strike', ON)).toBe('Not a repeat');
+    expect(tested('combo_strike', OFF)).toBe('Repeats last press');
+  });
+
+  it('reads a variable tested alone as holding or not, and one compared as its number', () => {
+    expect(tested('variable.pool', ON)).toBe('Holds');
+    expect(tested('variable.pool', OFF)).toBe('Does not hold');
+    expect(value('variable.pool', THREE)).toBe('3');
+  });
+
+  it('reads the fight style and the pulls a fight brings as a raid boss or a dungeon', () => {
+    expect(tested('fight_style.patchwerk', ON)).toBe('Raid boss');
+    expect(tested('fight_style.dungeonslice', OFF)).toBe('Raid');
+    expect(tested('raid_event.pull.exists', OFF)).toBe('Raid');
+    expect(tested('raid_event.adds.exists', OFF)).toBe('No adds');
+  });
+
+  it('reads a name no flag phrase covers as holding or not, and one with a unit as its count', () => {
+    expect(tested('cooldown.shadow_dance.usable', ON)).toBe('Holds');
+    expect(tested('buff.shadow_dance.remains', FOUR_S_LEFT)).toBe('4 s left');
+  });
+
+  it('reads a stack count tested alone as up once every count in its span holds, and as could be either while it may be none', () => {
+    expect(tested('buff.shadow_dance.react', ONE_TO_THREE_STACKS)).toBe('Up');
+    expect(tested('buff.shadow_dance.react', ON_OR_OFF)).toBe('Could be either');
+    expect(value('buff.shadow_dance.react', THREE)).toBe('3 stacks');
+  });
+
+  it('reads a flag the log cannot settle as could be either', () => {
+    expect(tested('cooldown.shadow_dance.ready', ON_OR_OFF)).toBe('Could be either');
   });
 
   it('reads a bounded value as its span, one the log cannot settle as such, and one no fact reads as unsupported', () => {

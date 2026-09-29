@@ -4,14 +4,15 @@ import { round } from '../../analysis/analysis-math';
 import type { PriorityList } from '../../plan/plan.models';
 import { AplNode, SimcAplService } from '../../simc/simc-apl-service';
 import { ConditionEvalService } from './condition-eval-service';
-import type { Range } from './priority-list.models';
+import type { Range, Truth } from './priority-list.models';
 
 type Op = '<' | '<=' | '>' | '>=' | '=' | '!=';
 
-/** A flag in words, `x` the name of the spell it reads, `n` a count it carries (`prev_gcd.2`). */
+/** A flag in words, `x` the spell it reads, `n` a count it carries (`prev_gcd.2`); `state` names the flag's own state, never the phrase's, which may negate it. */
 interface FlagWords {
   match: RegExp;
   words: (x: string, holds: boolean, n: number) => string;
+  state: (holds: boolean, n: number) => string;
 }
 
 /** A number as a sentence reads it, with what bends it said after the bound: `full` and `one less while Darkest Night is down`. */
@@ -33,10 +34,15 @@ const TALENT = /^(talent|hero_tree|apex)\.(\w+)(?:\.enabled)?$/;
 const POOL = /^(mana|rage|focus|energy|combo_points|rune|runic_power|soul_shard|astral_power|holy_power|maelstrom|chi|insanity|fury|essence)(?:\.(deficit|pct))?$/;
 const POOL_WORDS: Record<string, string | undefined> = { soul_shard: 'soul shards', rune: 'runes' };
 const AMOUNTS: Record<string, string | undefined> = { cp_max_spend: 'full', 'gcd.max': 'one GCD', gcd: 'one GCD' };
-const FLAG_VALUE = /(^|\.)(up|down|ticking|active|enabled|refreshable|ready|executing|exists|in_flight|placed)$|^(talent|hero_tree|apex|fight_style)\./;
+const FLAG_VALUE = /(^|\.)(up|down|ticking|active|enabled|refreshable|ready|executing|exists|in_flight|placed)$/;
+const PREV_GCD = /^prev_gcd\.(\d+)\./;
 const SINGULAR = /^(stacks|charges|combo points|soul shards|runes)$/;
+const UNSETTLED = 'Could be either';
 
 const not = (holds: boolean): string => (holds ? '' : 'not ');
+const states = (on: string, off: string) => (holds: boolean): string => (holds ? on : off);
+const HOLDS = states('Holds', 'Does not hold');
+const PICKED = states('Picked', 'Not picked');
 const below = (op: Op): boolean => op.startsWith('<');
 const lessMore = (op: Op): string => ({ '<': 'under', '<=': 'at most', '>': 'over', '>=': 'at least', '=': 'exactly', '!=': 'other than' })[op];
 const secs = (n: string): string => (/^\d+(\.\d+)?$/.test(n) ? `${n} s` : n);
@@ -55,25 +61,26 @@ const enemies = (op: Op, n: string): string => {
 const OTHER = 'another condition';
 
 const FLAGS: FlagWords[] = [
-  { match: /^target\.debuff\.casting\.(up|react)$/, words: (_, holds) => `while the target is ${not(holds)}casting` },
-  { match: /^raid_event\.adds\.exists$/, words: (_, holds) => `in a fight ${holds ? 'with' : 'without'} adds` },
-  { match: /^raid_event\.adds\.up$/, words: (_, holds) => (holds ? 'while adds are up' : 'while no adds are up') },
-  { match: /^raid_event\.pull\.exists$/, words: (_, holds) => (holds ? 'in a dungeon' : 'outside a dungeon') },
-  { match: /^fight_style\.\w+$/, words: (x, holds) => (x.endsWith('patchwerk') ? `${holds ? 'against' : 'away from'} a raid boss` : `${holds ? 'in' : 'outside'} a dungeon`) },
-  { match: /^(action\.\w+\.)?in_flight$/, words: (x, holds) => `while ${x} is ${not(holds)}in the air` },
-  { match: /^(action\.\w+\.)?placed$/, words: (x, holds) => `while ${x} is ${not(holds)}about to go off` },
-  { match: /^variable\.\w+$/, words: (x, holds) => `${holds ? 'when' : 'unless'} ${x} holds` },
-  { match: /^buff\.\w+\.(up|react|stack)$/, words: (x, holds) => `while ${x} is ${holds ? 'up' : 'down'}` },
-  { match: /^buff\.\w+\.down$/, words: (x, holds) => `while ${x} is ${holds ? 'down' : 'up'}` },
-  { match: /^((?:target\.)?(dot|debuff)\.\w+\.(up|ticking)|ticking)$/, words: (x, holds) => `while ${x} is ${not(holds)}on the target` },
-  { match: /^(?:target\.)?(dot|debuff)\.\w+\.down$/, words: (x, holds) => `while ${x} is ${not(!holds)}on the target` },
-  { match: /^((?:target\.)?(dot|debuff)\.\w+\.)?refreshable$/, words: (x, holds) => (holds ? `once ${x} is in its last 30%` : `while ${x} has over 30% left`) },
-  { match: /^(cooldown\.\w+\.(ready|up)|cooldown_react)$/, words: (x, holds) => (holds ? `when ${x} is ready` : `while ${x} is on cooldown`) },
-  { match: /^pet\.\w+\.active$/, words: (x, holds) => `while ${x} is ${not(holds)}out` },
-  { match: /^action\.\w+\.executing$/, words: (x, holds) => `while ${not(holds)}casting ${x}` },
-  { match: /^(prev|prev_off_gcd|prev_gcd\.1)\.\w+$/, words: (x, holds) => `${not(holds)}right after ${x}` },
-  { match: /^prev_gcd\.\d+\.\w+$/, words: (x, holds, n) => `${not(holds)}with ${x} ${n} presses back` },
-  { match: /^combo_strike$/, words: (_, holds) => (holds ? 'when it does not repeat your last press' : 'when it repeats your last press') },
+  { match: /^target\.debuff\.casting\.(up|react)$/, words: (_, holds) => `while the target is ${not(holds)}casting`, state: states('Casting', 'Not casting') },
+  { match: /^raid_event\.adds\.exists$/, words: (_, holds) => `in a fight ${holds ? 'with' : 'without'} adds`, state: states('Adds', 'No adds') },
+  { match: /^raid_event\.adds\.up$/, words: (_, holds) => (holds ? 'while adds are up' : 'while no adds are up'), state: states('Adds up', 'No adds up') },
+  { match: /^raid_event\.pull\.exists$/, words: (_, holds) => (holds ? 'in a dungeon' : 'outside a dungeon'), state: states('Dungeon', 'Raid') },
+  { match: /^fight_style\.\w*patchwerk$/, words: (_, holds) => `${holds ? 'against' : 'away from'} a raid boss`, state: states('Raid boss', 'Not a raid boss') },
+  { match: /^fight_style\.\w+$/, words: (_, holds) => `${holds ? 'in' : 'outside'} a dungeon`, state: states('Dungeon', 'Raid') },
+  { match: /^(action\.\w+\.)?in_flight$/, words: (x, holds) => `while ${x} is ${not(holds)}in the air`, state: states('In the air', 'Not in the air') },
+  { match: /^(action\.\w+\.)?placed$/, words: (x, holds) => `while ${x} is ${not(holds)}about to go off`, state: states('Placed', 'Not placed') },
+  { match: /^variable\.\w+$/, words: (x, holds) => `${holds ? 'when' : 'unless'} ${x} holds`, state: HOLDS },
+  { match: /^buff\.\w+\.(up|react|stack)$/, words: (x, holds) => `while ${x} is ${holds ? 'up' : 'down'}`, state: states('Up', 'Down') },
+  { match: /^buff\.\w+\.down$/, words: (x, holds) => `while ${x} is ${holds ? 'down' : 'up'}`, state: states('Down', 'Up') },
+  { match: /^((?:target\.)?(dot|debuff)\.\w+\.(up|ticking)|ticking)$/, words: (x, holds) => `while ${x} is ${not(holds)}on the target`, state: states('On the target', 'Not on the target') },
+  { match: /^(?:target\.)?(dot|debuff)\.\w+\.down$/, words: (x, holds) => `while ${x} is ${not(!holds)}on the target`, state: states('Not on the target', 'On the target') },
+  { match: /^((?:target\.)?(dot|debuff)\.\w+\.)?refreshable$/, words: (x, holds) => (holds ? `once ${x} is in its last 30%` : `while ${x} has over 30% left`), state: states('Under 30% left', 'Over 30% left') },
+  { match: /^(cooldown\.\w+\.(ready|up)|cooldown_react)$/, words: (x, holds) => (holds ? `when ${x} is ready` : `while ${x} is on cooldown`), state: states('Ready', 'On cooldown') },
+  { match: /^pet\.\w+\.active$/, words: (x, holds) => `while ${x} is ${not(holds)}out`, state: states('Out', 'Not out') },
+  { match: /^action\.\w+\.executing$/, words: (x, holds) => `while ${not(holds)}casting ${x}`, state: states('Casting', 'Not casting') },
+  { match: /^(prev|prev_off_gcd|prev_gcd\.1)\.\w+$/, words: (x, holds) => `${not(holds)}right after ${x}`, state: states('Last press', 'Not last press') },
+  { match: /^prev_gcd\.\d+\.\w+$/, words: (x, holds, n) => `${not(holds)}with ${x} ${n} presses back`, state: (holds, n) => `${holds ? '' : 'Not '}${n} presses back` },
+  { match: /^combo_strike$/, words: (_, holds) => (holds ? 'when it does not repeat your last press' : 'when it repeats your last press'), state: states('Not a repeat', 'Repeats last press') },
 ];
 
 const SUBJECTS: SubjectWords[] = [
@@ -118,12 +125,13 @@ export class ListTextService {
     return node.type === 'BinaryExpression' ? this.binary(list, node as jsep.BinaryExpression, holds, action) : this.raw(holds);
   }
 
-  /** `flag` marks a term that tests the value for truth alone, so a variable read that way shows as yes or no. */
-  value(node: AplNode, [lo, hi]: Range, flag = false): string {
+  /** `flag` marks a term that tests the value for truth alone, which a count with no unit answers only as a state. */
+  value(node: AplNode, range: Range, flag = false): string {
+    const [lo, hi] = range;
     if (lo === -Infinity && hi === Infinity) return this.supported(node) ? 'not in the log' : 'not supported by warcraft-learner';
     const name = node.type === 'Identifier' ? (node as jsep.Identifier).name : '';
-    if (this.readsAsFlag(name, flag)) return lo !== hi ? 'either' : this.flagValue(name, lo);
     const unit = this.unit(name, lo === 1 && hi === 1);
+    if (this.readsAsState(name, flag, unit)) return this.state(name, this.evaluator.truth(range));
     const text = this.span(lo, hi);
     return unit ? `${text} ${unit}` : text;
   }
@@ -132,8 +140,8 @@ export class ListTextService {
     return this.apl.identifiers(node).every(name => this.evaluator.readerFor(name) !== null);
   }
 
-  private readsAsFlag(name: string, flag: boolean): boolean {
-    return FLAG_VALUE.test(name) || (flag && name.startsWith('variable.'));
+  private readsAsState(name: string, flag: boolean, unit: string): boolean {
+    return TALENT.test(name) || FLAG_VALUE.test(name) || (flag && (!unit || FLAGS.some(words => words.match.test(name))));
   }
 
   private span(lo: number, hi: number): string {
@@ -141,9 +149,12 @@ export class ListTextService {
     return hi === Infinity ? `${this.number(lo)}+` : `${this.number(lo)} to ${this.number(hi)}`;
   }
 
-  private flagValue(name: string, value: number): string {
-    if (TALENT.test(name)) return value ? 'picked' : 'not picked';
-    return value ? 'yes' : 'no';
+  /** A name no flag phrase covers reads as `another condition`, which holds or does not. */
+  private state(name: string, truth: Truth): string {
+    if (truth === 'unknown') return UNSETTLED;
+    const holds = truth === 'true';
+    if (TALENT.test(name)) return PICKED(holds);
+    return FLAGS.find(words => words.match.test(name))?.state(holds, this.presses(name)) ?? HOLDS(holds);
   }
 
   private unit(name: string, one: boolean): string {
@@ -173,7 +184,11 @@ export class ListTextService {
     const talent = TALENT.exec(name);
     if (talent) return `${holds ? 'with' : 'without'} ${this.talentName(list, name)}`;
     const words = FLAGS.find(flag => flag.match.test(name));
-    return words ? words.words(this.name(list, this.token(name, action)), holds, Number(/^prev_gcd\.(\d+)/.exec(name)?.[1] ?? 1)) : null;
+    return words ? words.words(this.name(list, this.token(name, action)), holds, this.presses(name)) : null;
+  }
+
+  private presses(name: string): number {
+    return Number(PREV_GCD.exec(name)?.[1] ?? 1);
   }
 
   private comparison(list: PriorityList, subject: AplNode, op: Op, amount: AplNode, action: string): string | null {

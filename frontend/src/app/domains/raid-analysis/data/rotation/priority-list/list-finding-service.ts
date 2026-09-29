@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import type jsep from 'jsep';
 import { round } from '../../analysis/analysis-math';
 import type { ConditionCheck, FindingOccurrence } from '../../analysis/analysis.models';
 import type { WindowStatus } from '../../analysis/window-comparison.models';
@@ -100,7 +101,12 @@ export class ListFindingService {
     }
     const text = this.text.capitalized(this.text.phrase(list, term, true, action));
     const subject = this.checks.subject(term);
-    return { text, truth, value: reading?.value && subject ? this.text.value(subject, reading.value, term.type !== 'BinaryExpression') : '' };
+    return { text, truth, value: reading?.value && subject ? this.text.value(subject, reading.value, this.readsAsFlag(term)) : '' };
+  }
+
+  /** `!(x>2)` names a subject too, yet compares it as a number rather than testing it as a flag. */
+  private readsAsFlag(term: AplNode): boolean {
+    return term.type === 'Identifier' || (term.type === 'UnaryExpression' && this.readsAsFlag((term as jsep.UnaryExpression).argument));
   }
 
   /** Keeps the strip's own share of misses, so a thinned strip never reads worse or better than the bar above it. */
