@@ -1,5 +1,6 @@
 import { deviation, least, mean, median, pairs } from 'd3-array';
 import { AnalysisFinding } from './analysis.models';
+import { CadenceBenchmark } from '../encounter/encounter.models';
 
 /** d3-array has no rounding helper. */
 export function round(value: number, decimals = 1): number {
@@ -83,11 +84,24 @@ export function closestToZero(values: number[]): number {
   return least(values, value => Math.abs(value)) ?? 0;
 }
 
+/** Absorbs float error in a quotient that is whole in exact arithmetic, so a cast landing on the pull's last second still counts. */
+const WHOLE_CAST_TOLERANCE = 1e-9;
+
+/** Paced by the top first cast and average gap, not the cooldown, since top raiders hold some buttons past it. */
+function castsCadenceFits(fightDurS: number, avgFirstCastS: number, avgGapS: number | null): number {
+  if (fightDurS < avgFirstCastS) return 0;
+  if (!avgGapS) return Infinity;
+  return 1 + Math.floor((fightDurS - avgFirstCastS) / avgGapS + WHOLE_CAST_TOLERANCE);
+}
+
 export function benchExpectedUses(
-  fightDurS: number, upm: { avg: number; stddev: number },
+  fightDurS: number, bench: Pick<CadenceBenchmark, 'uses_per_min' | 'avg_first_cast_s' | 'avg_gap_s'>,
 ): { expected: number; floor: number } {
   const fightMin = fightDurS / 60;
-  const expected = Math.round(upm.avg * fightMin);
+  const upm = bench.uses_per_min;
+  // The rate alone rounds 12.6 up to a 13th cast that would land after the pull ends.
+  const expected = Math.min(
+    Math.round(upm.avg * fightMin), castsCadenceFits(fightDurS, bench.avg_first_cast_s, bench.avg_gap_s));
   const floor = Math.max(0, Math.round(expected - upm.stddev * fightMin));
   return { expected, floor };
 }
