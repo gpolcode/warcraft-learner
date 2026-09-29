@@ -40,3 +40,11 @@ export const WCL_SYNTHETIC_SOURCE_FALLBACK_ID = 291807;
 // Bladestorm: SimC's spell data holds both records under the button's name, and a log casts only one of them.
 export const BLADESTORM = 227847;
 export const BLADESTORM_HERO = 446035;
+
+// WCL quirk: a Divine Hymn channel logs one cast under the press and one per tick under the tick record of the same name.
+export const DIVINE_HYMN = 64843;
+export const DIVINE_HYMN_TICK = 64844;
+
+// WCL quirk: The Hunt begins and casts under the press, then logs its landing as a cast under another record of the name.
+export const THE_HUNT = 370965;
+export const THE_HUNT_LANDING = 370966;

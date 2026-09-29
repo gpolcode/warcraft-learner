@@ -78,15 +78,24 @@ export class SpecPlanService {
     return records.filter(record => ownName(record.token) && (!record.specs || record.specs.includes(specLabel)));
   }
 
-  /** The id each button was cast under in one log, keyed by name; a button the log never cast is absent. */
+  /** The id each button was pressed under in one log, keyed by name; a button the log never cast is absent. */
   castIds(plan: SpecPlan, casts: WclEvent[]): Record<string, number> {
     const counts = rollup(casts.filter(event => event.type === 'cast'), events => events.length, event => event.abilityGameID);
+    const begun = new Set(casts.filter(event => event.type === 'begincast').map(event => event.abilityGameID));
     const ids: Record<string, number> = {};
     for (const { name, spell_id } of [...plan.cooldowns, ...plan.defensives]) {
-      const cast = greatest(this.spell(plan, name)?.ids ?? [spell_id], id => counts.get(id) ?? 0);
-      if (cast !== undefined && counts.has(cast)) ids[name] = cast;
+      const press = this.pressId((this.spell(plan, name)?.ids ?? [spell_id]).filter(id => counts.has(id)), spell_id, begun, counts);
+      if (press !== undefined) ids[name] = press;
     }
     return ids;
+  }
+
+  /** A hardcast begins under the press's id and its landing never does; a channel begins no cast, and its ticks log a cast each under the tick record, so the record the cooldown sits on is the press. */
+  private pressId(cast: number[], own: number, begun: ReadonlySet<number>, counts: Map<number, number>): number | undefined {
+    const began = cast.filter(id => begun.has(id));
+    if (began.length) return greatest(began, id => counts.get(id) ?? 0);
+    if (cast.includes(own)) return own;
+    return greatest(cast, id => counts.get(id) ?? 0);
   }
 
   inLog(plan: SpecPlan, ids: Record<string, number>): SpecPlan {
