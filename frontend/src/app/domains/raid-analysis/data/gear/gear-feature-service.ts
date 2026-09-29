@@ -112,16 +112,13 @@ export class GearFeatureService {
     return Results.ok({ talent_key, trinkets, enchants: this.nameEnchantsByItem(enchants, enchantItems, names) });
   }
 
-  // An enchant with an item is looked up by that item, so its WCL effect text is fetched only where Raidbots maps none.
+  // A mapped enchant still asks for its effect text, the fallback name where WCL names no item.
   protected gameNameIds(
     trinkets: { id: number }[], enchants: { id: number }[], enchantItems: EnchantItems,
   ): { itemIds: number[]; enchantIds: number[] } {
-    const worn = enchants.filter(enchant => enchant.id);
-    const enchantItemIds = worn.map(enchant => enchantItems[enchant.id]).filter(itemId => itemId !== undefined);
-    return {
-      itemIds: [...new Set([...trinkets.filter(trinket => trinket.id).map(trinket => trinket.id), ...enchantItemIds])],
-      enchantIds: [...new Set(worn.filter(enchant => enchantItems[enchant.id] === undefined).map(enchant => enchant.id))],
-    };
+    const enchantIds = [...new Set(enchants.filter(enchant => enchant.id).map(enchant => enchant.id))];
+    const enchantItemIds = enchantIds.map(enchantId => enchantItems[enchantId]).filter(itemId => itemId !== undefined);
+    return { itemIds: [...new Set([...trinkets.filter(trinket => trinket.id).map(trinket => trinket.id), ...enchantItemIds])], enchantIds };
   }
 
   // Names the player's enchant as the bench names the top one, so a row compares two items rather than stat text with an item.

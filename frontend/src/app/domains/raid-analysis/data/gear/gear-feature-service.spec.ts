@@ -107,18 +107,17 @@ describe('buildCharacterGear', () => {
 });
 
 describe('gameNameIds', () => {
-  it('looks up a mapped enchant by its item beside the trinkets, and an unmapped one by its enchant id', () => {
+  it('asks for a mapped enchant\'s item beside the trinkets, and for every enchant\'s effect text', () => {
     expect(svc['gameNameIds']([GAZE, PUZZLE_BOX], [{ id: ARMOR_KIT_ENCHANT }, { id: SOPHIC_ENCHANT }], RAIDBOTS_MAP))
-      .toEqual({ itemIds: [GAZE.id, PUZZLE_BOX.id, ARMOR_KIT_ITEM], enchantIds: [SOPHIC_ENCHANT] });
+      .toEqual({ itemIds: [GAZE.id, PUZZLE_BOX.id, ARMOR_KIT_ITEM], enchantIds: [ARMOR_KIT_ENCHANT, SOPHIC_ENCHANT] });
   });
 
-  it('asks once for an enchant worn on both rings, mapped or not', () => {
+  it('asks once for an enchant worn on both rings, and once for its item', () => {
     const bothRings = [{ id: RING_ENCHANT }, { id: RING_ENCHANT }];
-    expect(svc['gameNameIds']([], bothRings, RAIDBOTS_MAP)).toEqual({ itemIds: [RING_ENCHANT_ITEM], enchantIds: [] });
-    expect(svc['gameNameIds']([], bothRings, {})).toEqual({ itemIds: [], enchantIds: [RING_ENCHANT] });
+    expect(svc['gameNameIds']([], bothRings, RAIDBOTS_MAP)).toEqual({ itemIds: [RING_ENCHANT_ITEM], enchantIds: [RING_ENCHANT] });
   });
 
-  it('looks up every enchant by its enchant id when the Raidbots map is empty', () => {
+  it('asks for no enchant item when the Raidbots map is empty', () => {
     expect(svc['gameNameIds']([GAZE], [{ id: ARMOR_KIT_ENCHANT }, { id: SOPHIC_ENCHANT }], {}))
       .toEqual({ itemIds: [GAZE.id], enchantIds: [ARMOR_KIT_ENCHANT, SOPHIC_ENCHANT] });
   });
@@ -267,13 +266,13 @@ describe('GearFeatureService', () => {
     expect(result.value.talentStatus.status).toBe('ok');
   });
 
-  it('loadComparisonView names the player\'s enchants by their Raidbots item, asking WCL for effect text only where no item maps', async () => {
+  it('loadComparisonView names the player\'s enchants by their Raidbots item, asking WCL for every enchant\'s effect text as the fallback', async () => {
     const nameLookups: NameLookup[] = [];
     const service = configure(Results.ok(benchWith()), LOGGED_PLAYER, { enchantItems: Results.ok(RAIDBOTS_MAP), nameLookups });
 
     const view = await service.loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
 
-    expect(nameLookups).toEqual([{ itemIds: [GAZE.id, PUZZLE_BOX.id, ARMOR_KIT_ITEM], enchantIds: [SOPHIC_ENCHANT] }]);
+    expect(nameLookups).toEqual([{ itemIds: [GAZE.id, PUZZLE_BOX.id, ARMOR_KIT_ITEM], enchantIds: [ARMOR_KIT_ENCHANT, SOPHIC_ENCHANT] }]);
     expect(enchantNames(view)).toEqual([ARMOR_KIT_NAME, SOPHIC_EFFECT]);
   });
 
