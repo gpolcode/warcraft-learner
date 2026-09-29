@@ -1,11 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { WclCombatantInfo, WclGearItem } from '../wcl/wcl.models';
-import { TRINKET_SLOTS, GearExtractService } from './gear-extract-service';
+import { RING_SLOTS, TRINKET_SLOTS, GearExtractService } from './gear-extract-service';
 import { TestBed } from '@angular/core/testing';
 
 const gearExtract = TestBed.inject(GearExtractService);
 
-// Trinket slots are the WCL quirk indices 12/13; an enchant can sit on any slot - 15 is Main Hand.
+// Ring and trinket slots are the WCL quirk indices 10/11 and 12/13; an enchant can sit on any slot - 15 is Main Hand.
+const RING_1_SLOT = 10;
+const RING_2_SLOT = 11;
 const TRINKET_1_SLOT = 12;
 const TRINKET_2_SLOT = 13;
 const NON_TRINKET_SLOT = 5;
@@ -15,6 +17,12 @@ const TRINKET_B_ID = 201;
 const ENCHANT_ID = 8041;
 // WCL emits {id: 0} for an unfilled gear slot.
 const EMPTY_SLOT_ID = 0;
+
+describe('RING_SLOTS', () => {
+  it('is the two WCL ring slot indices, in slot order', () => {
+    expect([...RING_SLOTS]).toEqual([RING_1_SLOT, RING_2_SLOT]);
+  });
+});
 
 describe('TRINKET_SLOTS', () => {
   it('is the two WCL trinket slot indices, in slot order', () => {
