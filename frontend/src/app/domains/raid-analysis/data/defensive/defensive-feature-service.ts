@@ -9,7 +9,7 @@ import { PerDefensiveBenchmark } from '../encounter/encounter.models';
 import { ComparisonWindow, WindowStatus } from '../analysis/window-comparison.models';
 import { ClipAnchor } from '../capture/capture.models';
 import { Result, Results } from '../../../shared/util-http/result';
-import { benchExpectedUses, buttonTaken, sortBySeverity } from '../analysis/analysis-math';
+import { benchExpectedUses, buttonTaken, round, sortBySeverity } from '../analysis/analysis-math';
 import { CadenceVoice } from '../analysis/cast-cadence-service';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../analysis/wcl-projections-service';
 import { WindowView, WindowViewAdapter } from '../analysis/window-view-service';
@@ -24,6 +24,7 @@ import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { GearExtractService } from '../gear/gear-extract-service';
 import { WindowViewService } from '../analysis/window-view-service';
 import { DeathTimelineService, DeadSpan } from '../analysis/death-timeline-service';
+import { DefensiveUsesService } from './defensive-uses-service';
 
 export interface DefensiveMapAnchor {
   timeS: number;
@@ -65,8 +66,6 @@ const DEFENSIVE_VOICE: CadenceVoice = {
   gapRemedy: name => `Use ${name} sooner after it resets.`,
 };
 
-type DefensiveUsageWindow = PlayerDefensive['windows'][number];
-
 const TOP_DAMAGE_SOURCES = 6;
 
 const WINDOW_NEAR_S = 3;
@@ -94,6 +93,7 @@ export class DefensiveFeatureService {
   private readonly findingRows = inject(FindingRowsService);
   private readonly holdTargets = inject(HoldTargetsService);
   private readonly auraWindows = inject(AuraWindowsService);
+  private readonly defensiveUses = inject(DefensiveUsesService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly windowView = inject(WindowViewService);
   private readonly deathTimeline = inject(DeathTimelineService);
@@ -187,26 +187,6 @@ export class DefensiveFeatureService {
     return Results.ok({ rows: this.buildDefensivePlanRows(bench.value) });
   }
 
-  // Falls back to point casts (zero span) when there is no self-buff; never invents a fixed-duration span.
-  protected buildDefensiveUsageWindows(
-    spellId: number,
-    buffSpans: [number, number | null][],
-    castEvents: TimedEvent[],
-    fightEndS: number,
-  ): DefensiveUsageWindow[] {
-    const windows = buffSpans.map(([windowStartS, windowEndS]) => {
-      // An open buff (no remove) runs to fight end, never a fixed duration.
-      const end = windowEndS ?? fightEndS;
-      return { start_s: Math.round(windowStartS * 10) / 10, end_s: Math.round(end * 10) / 10 };
-    });
-    if (windows.length) return windows;
-    return castEvents
-      .filter(cast => cast.type === 'cast' && cast.abilityGameID === spellId)
-      .map(cast => cast.atS)
-      .filter(timeS => timeS >= 0 && timeS <= fightEndS)
-      .map(timeS => ({ start_s: Math.round(timeS * 10) / 10, end_s: Math.round(timeS * 10) / 10 }));
-  }
-
   protected analyzeDefensives(
     defensives: DefensivePlanMeta[],
     castEvents: TimedEvent[],
@@ -219,9 +199,10 @@ export class DefensiveFeatureService {
     const buffWin = this.auraWindows.buildAuraWindows(buffEvents);
 
     return defensives.map(defensive => {
-      const spellId = defensive.spell_id;
-      const windows = this.buildDefensiveUsageWindows(spellId, this.auraWindows.spansNamed(buffWin, defensive, abilities), castEvents, fightEndS);
-      const cast_times_s = windows.map(window => window.start_s).sort((a, b) => a - b);
+      const windows = this.defensiveUses.uses(
+        this.auraWindows.spansNamed(buffWin, defensive, abilities), this.defensiveUses.castTimesS(castEvents, defensive.spell_id), fightEndS,
+      ).map(use => ({ start_s: round(use.start_s), end_s: round(use.end_s) }));
+      const cast_times_s = windows.map(window => window.start_s);
       const entry: PlayerDefensive = { name: defensive.name, uses: windows.length, cast_times_s, windows };
       if (!buttonTaken(defensive, talents)) entry.talent_gated = true;
       return entry;

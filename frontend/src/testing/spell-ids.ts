@@ -24,6 +24,10 @@ export const DARKEST_NIGHT = 457280;
 // Logged once on its target and once on the priest, a few ms apart, for one press.
 export const POWER_INFUSION = 10060;
 
+// Returning to the marked spot logs a second cast under ALTER_TIME_RETURN, named Alter Time too, as the aura closes.
+export const ALTER_TIME = 342245;
+export const ALTER_TIME_RETURN = 342247;
+
 export const WRATH = 190984;
 export const STARFIRE = 194153;
 

@@ -7,12 +7,10 @@ import { abilityLookup, parseRankings, reportsByCode } from '../../../../../test
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { BLUR, BLUR_BUFF, CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
-import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
-const auraWindows = TestBed.inject(AuraWindowsService);
 TestBed.resetTestingModule();
 TestBed.configureTestingModule({ providers: [
   { provide: WCL_TRANSPORT, useValue: {} },
@@ -48,18 +46,18 @@ describe('defensivePlanMeta', () => {
   });
 });
 
+/** One parse's uses of Cloak, as `DefensiveUsesService.uses` reads them. */
+const cloakUses = (...uses: { start_s: number; end_s: number }[]) => new Map([[CLOAK_OF_SHADOWS, uses]]);
+
 describe('summarizeDefensiveCasts', () => {
-  it('builds one use per buff window and detects holds > 8s past cooldown', () => {
-    const FIRST_USE_S = 10, FIRST_REMOVE_S = 15;
-    const SECOND_USE_S = 200, SECOND_REMOVE_S = 205;
+  it('reads each use start as a cast, a point use included, and detects holds > 8s past cooldown', () => {
+    const FIRST_USE_S = 10, FIRST_AURA_END_S = 15;
+    const SECOND_USE_S = 200;  // a point use: an external on another raider
     const HELD_INDEX = 2;  // 1-based ordinal of the held (second) use
     // The second use lands SECOND_USE_S - (FIRST_USE_S + cooldown) past its reset, well over 8s.
     const EXPECTED_DELAY_S = SECOND_USE_S - (FIRST_USE_S + CLOAK.cooldown);
-    const windows = auraWindows.buildAuraWindows(timed([
-      applyBuff(CLOAK_OF_SHADOWS, FIRST_USE_S), removeBuff(CLOAK_OF_SHADOWS, FIRST_REMOVE_S),
-      applyBuff(CLOAK_OF_SHADOWS, SECOND_USE_S), removeBuff(CLOAK_OF_SHADOWS, SECOND_REMOVE_S),
-    ], 0));
-    const summaries = svc['summarizeDefensiveCasts']([CLOAK], windows, [], FIGHT_DUR_S);
+    const uses = cloakUses({ start_s: FIRST_USE_S, end_s: FIRST_AURA_END_S }, { start_s: SECOND_USE_S, end_s: SECOND_USE_S });
+    const summaries = svc['summarizeDefensiveCasts']([CLOAK], uses, FIGHT_DUR_S);
     expect(summaries).toHaveLength(1);
     expect(summaries[0]).toMatchObject({ name: 'Cloak of Shadows', cast_times_s: [FIRST_USE_S, SECOND_USE_S], first_cast_s: FIRST_USE_S, cast_pattern: 'hold' });
     // cast_index is 1-based (the 2nd use), matching rotation + the runtime's -1 decode.
@@ -67,24 +65,21 @@ describe('summarizeDefensiveCasts', () => {
     expect(summaries[0].hold_windows).toEqual([{ cast_index: HELD_INDEX, actual_s: SECOND_USE_S, delay_s: EXPECTED_DELAY_S }]);
   });
 
-  it('falls back to explicit casts when no buff windows exist', () => {
-    const CAST_S = 12;
-    const summaries = svc['summarizeDefensiveCasts']([CLOAK], new Map(), timed([cast(CLOAK_OF_SHADOWS, CAST_S)], 0), FIGHT_DUR_S);
-    expect(summaries[0]).toMatchObject({ cast_times_s: [CAST_S], first_cast_s: CAST_S, cast_pattern: 'on_cooldown' });
+  it('records no summary for a defensive the parse never used', () => {
+    expect(svc['summarizeDefensiveCasts']([CLOAK], new Map(), FIGHT_DUR_S)).toEqual([]);
   });
 });
 
 describe('findParseDefensiveWindows', () => {
-  it('slices damage taken by the buff span (inclusive end, amount + absorbed) and picks the dominant enemy', () => {
-    const windows = auraWindows.buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, 10), removeBuff(CLOAK_OF_SHADOWS, 15)], 0));
+  it('slices damage taken by the use window (inclusive end, amount + absorbed) and picks the dominant enemy', () => {
     const BOSS_ABSORB = 250;
     const result = svc['findParseDefensiveWindows'](
       timed([
         damageTaken(BOSS_HIT, 12, 500, { source: BOSS_ACTOR, absorbed: BOSS_ABSORB }),
-        damageTaken(ADD_HIT, 15, 200, { source: ADD_ACTOR }), // at the exact remove second: the inclusive end must count it
+        damageTaken(ADD_HIT, 15, 200, { source: ADD_ACTOR }), // at the exact aura-end second: the inclusive end must count it
         damageTaken(BOSS_HIT, 100, 999, { source: BOSS_ACTOR }),
       ], 0),
-      300, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID], [ADD_ACTOR, ADD_GAME_ID]]),
+      cloakUses({ start_s: 10, end_s: 15 }), [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID], [ADD_ACTOR, ADD_GAME_ID]]),
     );
     expect(result).toHaveLength(1);
     // window damage = (500 + 250 absorbed) + 200 at the inclusive end = 950.
@@ -93,25 +88,25 @@ describe('findParseDefensiveWindows', () => {
     expect(result[0].ability_breakdown[0]).toMatchObject({ spell_id: BOSS_HIT, damage: 750 });
   });
 
-  it('runs an open buff to fight end (no plan duration)', () => {
-    const windows = auraWindows.buildAuraWindows(timed([applyBuff(CLOAK_OF_SHADOWS, 10)], 0)); // no remove
+  it('builds no window from a point use, an external on another raider, even with a hit at its second', () => {
+    const PRESS_S = 40;
     const result = svc['findParseDefensiveWindows'](
-      timed([damageTaken(BOSS_HIT, 50, 400, { source: BOSS_ACTOR })], 0), 300, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]),
+      timed([damageTaken(BOSS_HIT, PRESS_S, 400, { source: BOSS_ACTOR })], 0),
+      cloakUses({ start_s: PRESS_S, end_s: PRESS_S }), [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]),
     );
-    assert.exists(result[0]);
-    expect(result[0].window_length_s).toBe(290); // 10 -> 300 (fight end), not 10 + duration
-    assert.exists(result[0]);
-    expect(result[0].window_damage).toBe(400);
+    expect(result).toEqual([]);
   });
 
-  it('includes a hit landing at the exact applybuff millisecond', () => {
-    // A hit at the exact buff-apply ms must count: rebuilding the bound from seconds overshoots (2.007 * 1000 = 2007.0000000000002).
-    const APPLY_MS = 2007;
+  it('includes a hit landing at the exact millisecond of the press', () => {
+    // A hit at the exact press ms must count: rebuilding the bound from seconds overshoots (2.007 * 1000 = 2007.0000000000002).
+    const PRESS_MS = 2007;
     const HIT_DAMAGE = 500;
-    const buffApply = { ...applyBuff(CLOAK_OF_SHADOWS, 0), timestamp: APPLY_MS };
-    const hit = { ...damageTaken(BOSS_HIT, 0, HIT_DAMAGE, { source: BOSS_ACTOR }), timestamp: APPLY_MS };
-    const windows = auraWindows.buildAuraWindows(timed([buffApply], 0));
-    const result = svc['findParseDefensiveWindows'](timed([hit], 0), FIGHT_DUR_S, windows, [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]));
+    const [press] = timed([{ ...cast(CLOAK_OF_SHADOWS, 0), timestamp: PRESS_MS }], 0);
+    const hit = { ...damageTaken(BOSS_HIT, 0, HIT_DAMAGE, { source: BOSS_ACTOR }), timestamp: PRESS_MS };
+    assert.exists(press);
+    const result = svc['findParseDefensiveWindows'](
+      timed([hit], 0), cloakUses({ start_s: press.atS, end_s: FIGHT_DUR_S }), [CLOAK], new Map([[BOSS_ACTOR, BOSS_GAME_ID]]),
+    );
     expect(result).toHaveLength(1);
     assert.exists(result[0]);
     expect(result[0].window_damage).toBe(HIT_DAMAGE);
