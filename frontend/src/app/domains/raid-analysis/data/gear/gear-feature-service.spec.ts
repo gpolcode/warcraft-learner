@@ -3,7 +3,9 @@ import { CharacterGear, WclCombatantInfo, WclGearItem } from '../wcl/wcl.models'
 import { GEAR_DATA_SOURCE, GearBench } from './gear-data-source';
 import { featureService } from '../../../../../testing/service-harness';
 import { Result, Results } from '../../../shared/util-http/result';
-import { GearFeatureService } from './gear-feature-service';
+import { GearComparisonView, GearFeatureService } from './gear-feature-service';
+import { GameNames } from './gear-extract-service';
+import { EnchantItemDataService, EnchantItems } from '../http/enchant-item-data-service';
 import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
@@ -22,6 +24,34 @@ const PUZZLE_BOX = { id: 200, name: 'B', icon: 'inv_b' };
 const STANDARD_PAIR = [{ items: [GAZE, PUZZLE_BOX], pct: 70 }];
 const STANDARD_TRINKETS = [{ slot: 12, id: GAZE.id, name: GAZE.name }, { slot: 13, id: PUZZLE_BOX.id, name: PUZZLE_BOX.name }];
 
+// WCL's enchant alias names only the effect (stat text for an armor kit); Raidbots maps the enchant to the item WCL names in game.
+const LEGS_SLOT = 6;
+const MAIN_HAND_SLOT = 15;
+const ARMOR_KIT_ENCHANT = 8159;
+const ARMOR_KIT_ITEM = 244641;
+const ARMOR_KIT_EFFECT = '+41 Agility/Strength & +115 Stamina';
+const ARMOR_KIT_NAME = "Forest Hunter's Armor Kit";
+const RING_ENCHANT = 7967;
+const RING_ENCHANT_ITEM = 243957;
+const SOPHIC_ENCHANT = 8041;
+const SOPHIC_EFFECT = 'Sophic Devotion';
+const RAIDBOTS_MAP: EnchantItems = { [ARMOR_KIT_ENCHANT]: ARMOR_KIT_ITEM, [RING_ENCHANT]: RING_ENCHANT_ITEM };
+
+const WCL_GAME_NAMES: GameNames = {
+  [`i${ARMOR_KIT_ITEM}`]: { id: ARMOR_KIT_ITEM, name: ARMOR_KIT_NAME },
+  [`e${ARMOR_KIT_ENCHANT}`]: { id: ARMOR_KIT_ENCHANT, name: ARMOR_KIT_EFFECT },
+  [`e${SOPHIC_ENCHANT}`]: { id: SOPHIC_ENCHANT, name: SOPHIC_EFFECT },
+};
+
+// WCL's gameData batch answers only the aliases the query asked for.
+function answerGameNames(itemIds: number[], enchantIds: number[]): GameNames {
+  const asked = [...itemIds.map(id => `i${id}`), ...enchantIds.map(id => `e${id}`)];
+  return Object.fromEntries(asked.flatMap(alias => {
+    const named = WCL_GAME_NAMES[alias];
+    return named ? [[alias, named]] : [];
+  }));
+}
+
 function benchWith(overrides: Partial<GearBench> = {}): GearBench {
   return {
     spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', sample_count: 10,
@@ -32,7 +62,7 @@ function benchWith(overrides: Partial<GearBench> = {}): GearBench {
   };
 }
 
-// Reconstructs a raw CombatantInfo event; names are baked onto the gear items, so getGameNames is not consulted.
+// Reconstructs a raw CombatantInfo event; a non-blank name is baked onto the gear item, so only a blank one is filled from getGameNames.
 function toRawEvent(gear: CharacterGear): WclCombatantInfo {
   const items: WclGearItem[] = [];
   for (const trinket of gear.trinkets ?? []) items[trinket.slot] = { id: trinket.id, name: trinket.name };
@@ -59,7 +89,7 @@ describe('benchToStats', () => {
 
 describe('buildCharacterGear', () => {
   it('is a permanent error when the log has no combatant info', () => {
-    expect(svc['buildCharacterGear'](null, {}))
+    expect(svc['buildCharacterGear'](null, {}, {}))
       .toEqual(Results.permanent('No combatant info in this log.', 'gear.combatant-info'));
   });
 
@@ -69,10 +99,46 @@ describe('buildCharacterGear', () => {
       trinkets: STANDARD_TRINKETS,
       enchants: [{ slot: 15, id: 8041, name: 'Sophic' }],
     });
-    const result = svc['buildCharacterGear'](event, {});
+    const result = svc['buildCharacterGear'](event, {}, {});
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value).toMatchObject({ talent_key: STANDARD_KEY });
+  });
+});
+
+describe('gameNameIds', () => {
+  it('looks up a mapped enchant by its item beside the trinkets, and an unmapped one by its enchant id', () => {
+    expect(svc['gameNameIds']([GAZE, PUZZLE_BOX], [{ id: ARMOR_KIT_ENCHANT }, { id: SOPHIC_ENCHANT }], RAIDBOTS_MAP))
+      .toEqual({ itemIds: [GAZE.id, PUZZLE_BOX.id, ARMOR_KIT_ITEM], enchantIds: [SOPHIC_ENCHANT] });
+  });
+
+  it('asks once for an enchant worn on both rings, mapped or not', () => {
+    const bothRings = [{ id: RING_ENCHANT }, { id: RING_ENCHANT }];
+    expect(svc['gameNameIds']([], bothRings, RAIDBOTS_MAP)).toEqual({ itemIds: [RING_ENCHANT_ITEM], enchantIds: [] });
+    expect(svc['gameNameIds']([], bothRings, {})).toEqual({ itemIds: [], enchantIds: [RING_ENCHANT] });
+  });
+
+  it('looks up every enchant by its enchant id when the Raidbots map is empty', () => {
+    expect(svc['gameNameIds']([GAZE], [{ id: ARMOR_KIT_ENCHANT }, { id: SOPHIC_ENCHANT }], {}))
+      .toEqual({ itemIds: [GAZE.id], enchantIds: [ARMOR_KIT_ENCHANT, SOPHIC_ENCHANT] });
+  });
+});
+
+describe('nameEnchantsByItem', () => {
+  const kitItemNamed: GameNames = { [`i${ARMOR_KIT_ITEM}`]: { id: ARMOR_KIT_ITEM, name: ARMOR_KIT_NAME } };
+  const kit = { slot: LEGS_SLOT, id: ARMOR_KIT_ENCHANT, name: ARMOR_KIT_EFFECT };
+  const sophic = { slot: MAIN_HAND_SLOT, id: SOPHIC_ENCHANT, name: SOPHIC_EFFECT };
+
+  it('names an enchant by the item Raidbots maps it to', () => {
+    expect(svc['nameEnchantsByItem']([kit], RAIDBOTS_MAP, kitItemNamed)).toEqual([{ ...kit, name: ARMOR_KIT_NAME }]);
+  });
+
+  it('keeps the effect text of an enchant Raidbots maps to no item', () => {
+    expect(svc['nameEnchantsByItem']([sophic], RAIDBOTS_MAP, kitItemNamed)).toEqual([sophic]);
+  });
+
+  it('keeps the effect text of a mapped enchant whose item WCL leaves unnamed', () => {
+    expect(svc['nameEnchantsByItem']([kit], RAIDBOTS_MAP, {})).toEqual([kit]);
   });
 });
 
@@ -148,13 +214,31 @@ describe('emptyGearView', () => {
   });
 });
 
-function configure(bench: Result<GearBench>, gear: CharacterGear | null): GearFeatureService {
+interface NameLookup { itemIds: number[]; enchantIds: number[] }
+
+function configure(
+  bench: Result<GearBench>, gear: CharacterGear | null,
+  { enchantItems = Results.ok({}), nameLookups = [] }: { enchantItems?: Result<EnchantItems>; nameLookups?: NameLookup[] } = {},
+): GearFeatureService {
   const wclFake = {
     getCombatantInfo: async (): Promise<WclCombatantInfo[]> => (gear ? [toRawEvent(gear)] : []),
-    getGameNames: async () => ({}),
+    getGameNames: async (itemIds: number[], enchantIds: number[]) => {
+      nameLookups.push({ itemIds, enchantIds });
+      return answerGameNames(itemIds, enchantIds);
+    },
   };
-  return featureService(GEAR_DATA_SOURCE, GearFeatureService, bench, wclFake);
+  const raidbotsFake = { getEnchantItems: async () => enchantItems };
+  return featureService(GEAR_DATA_SOURCE, GearFeatureService, bench, wclFake, [{ provide: EnchantItemDataService, useValue: raidbotsFake }]);
 }
+
+// WCL never fills permanentEnchantName, so each enchant name comes from the game-name lookup.
+const LOGGED_PLAYER: CharacterGear = {
+  talent_key: STANDARD_KEY,
+  trinkets: STANDARD_TRINKETS,
+  enchants: [{ slot: LEGS_SLOT, id: ARMOR_KIT_ENCHANT, name: '' }, { slot: MAIN_HAND_SLOT, id: SOPHIC_ENCHANT, name: '' }],
+};
+
+const enchantNames = (view: Result<GearComparisonView>): string[] => (view.ok ? view.value.enchantRows.map(row => row.name) : []);
 
 describe('GearFeatureService', () => {
   it('loadBenchView builds the bench-only view', async () => {
@@ -181,6 +265,25 @@ describe('GearFeatureService', () => {
     if (!result.ok) return;
     expect(result.value.comparison).toBe(true);
     expect(result.value.talentStatus.status).toBe('ok');
+  });
+
+  it('loadComparisonView names the player\'s enchants by their Raidbots item, asking WCL for effect text only where no item maps', async () => {
+    const nameLookups: NameLookup[] = [];
+    const service = configure(Results.ok(benchWith()), LOGGED_PLAYER, { enchantItems: Results.ok(RAIDBOTS_MAP), nameLookups });
+
+    const view = await service.loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
+
+    expect(nameLookups).toEqual([{ itemIds: [GAZE.id, PUZZLE_BOX.id, ARMOR_KIT_ITEM], enchantIds: [SOPHIC_ENCHANT] }]);
+    expect(enchantNames(view)).toEqual([ARMOR_KIT_NAME, SOPHIC_EFFECT]);
+  });
+
+  it('loadComparisonView keeps every enchant on its WCL effect text when the Raidbots read fails', async () => {
+    const service = configure(Results.ok(benchWith()), LOGGED_PLAYER, { enchantItems: Results.transient('Raidbots is unreachable right now.') });
+
+    const view = await service.loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
+
+    expect(view.ok).toBe(true);
+    expect(enchantNames(view)).toEqual([ARMOR_KIT_EFFECT, SOPHIC_EFFECT]);
   });
 
   it('loadComparisonView surfaces a permanent error when the player has no combatant info', async () => {

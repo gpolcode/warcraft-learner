@@ -55,4 +55,4 @@ Stored positions keep these raw WCL units; their on-disk shape lives in `domains
 
 ## External APIs
 
-Warcraft Logs v2 GraphQL at `/api/v2/client`, authenticated with the embedded pair (see the auth section above). Raidbots static JSON at `raidbots.com/static/data/live/*.json` needs no auth and is read only during ingest: `talents.json` for talent names and icons, `enchantments.json` for the enchant-id-to-item-id map.
+Warcraft Logs v2 GraphQL at `/api/v2/client`, authenticated with the embedded pair (see the auth section above). Raidbots static JSON at `raidbots.com/static/data/live/*.json` needs no auth: ingest reads `talents.json` for talent names and icons, and both ingest and the gear card's player comparison read `enchantments.json` for the enchant-id-to-item-id map, so the runtime CSP's `connect-src` lists `https://www.raidbots.com`.

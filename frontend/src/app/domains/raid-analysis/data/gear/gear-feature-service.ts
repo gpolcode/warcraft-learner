@@ -4,6 +4,7 @@ import { EncounterGearStats } from '../encounter/encounter.models';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from '../http/http-load-error';
+import { EnchantItemDataService, EnchantItems } from '../http/enchant-item-data-service';
 import { GearExtractService, GameNames } from './gear-extract-service';
 import { GearStatus, EnchantRow, TalentBuildRow, BenchEnchantRow, TrinketSetRow } from './gear-comparison-service';
 import { GEAR_DATA_SOURCE, GearBench } from './gear-data-source';
@@ -25,6 +26,8 @@ export interface GearComparisonView {
   benchEnchantRows: BenchEnchantRow[];
 }
 
+type PlayerEnchant = NonNullable<CharacterGear['enchants']>[number];
+
 @Injectable({ providedIn: 'root' })
 export class GearFeatureService {
   private readonly logger = inject(LoggerService);
@@ -33,6 +36,7 @@ export class GearFeatureService {
   private readonly gearExtract = inject(GearExtractService);
   private readonly source = inject(GEAR_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
+  private readonly enchantItemData = inject(EnchantItemDataService);
 
   // Propagates a non-ok bench and the player's own no-combatant-info error unchanged, never degrading to bench-only.
   async loadComparisonView(
@@ -57,19 +61,24 @@ export class GearFeatureService {
     reportCode: string, fightId: number, playerId: number,
   ): Promise<Result<CharacterGear>> {
     try {
-      const event = this.gearExtract.selectCombatantInfo(await this.wclApi.getCombatantInfo(reportCode, fightId, playerId), playerId);
+      const [combatants, enchantItemsRead] = await Promise.all([
+        this.wclApi.getCombatantInfo(reportCode, fightId, playerId),
+        this.enchantItemData.getEnchantItems(),
+      ]);
+      const event = this.gearExtract.selectCombatantInfo(combatants, playerId);
+      // A failed Raidbots read leaves every enchant on its WCL effect text rather than failing the card.
+      const enchantItems = enchantItemsRead.ok ? enchantItemsRead.value : {};
       let names: GameNames = {};
       if (event?.gear?.length) {
         const { trinkets, enchants } = this.gearExtract.extractGear(event.gear);
-        const itemIds = [...new Set(trinkets.filter(trinket => trinket.id).map(trinket => trinket.id))];
-        const enchantIds = [...new Set(enchants.filter(enchant => enchant.id).map(enchant => enchant.id))];
+        const { itemIds, enchantIds } = this.gameNameIds(trinkets, enchants, enchantItems);
         try {
           names = await this.wclApi.getGameNames(itemIds, enchantIds);
         } catch (err) {
           this.logger.logWarn(`GearFeatureService name resolution ${reportCode}:${fightId}:${playerId}`, err);
         }
       }
-      return this.buildCharacterGear(event, names);
+      return this.buildCharacterGear(event, names, enchantItems);
     } catch (cause) {
       this.logger.logWarn(`GearFeatureService player gear ${reportCode}:${fightId}:${playerId}`, cause);
       return HttpLoadErrors.toLoadError(cause, 'gear.player-view');
@@ -89,6 +98,7 @@ export class GearFeatureService {
   protected buildCharacterGear(
     event: WclCombatantInfo | null,
     names: GameNames,
+    enchantItems: EnchantItems,
   ): Result<CharacterGear> {
     if (!event?.gear?.length) {
       return Results.permanent('No combatant info in this log.', 'gear.combatant-info');
@@ -99,7 +109,24 @@ export class GearFeatureService {
     this.gearExtract.fillGameNames(trinkets, 'i', names);
     this.gearExtract.fillGameNames(enchants, 'e', names);
 
-    return Results.ok({ talent_key, trinkets, enchants });
+    return Results.ok({ talent_key, trinkets, enchants: this.nameEnchantsByItem(enchants, enchantItems, names) });
+  }
+
+  // An enchant with an item is looked up by that item, so its WCL effect text is fetched only where Raidbots maps none.
+  protected gameNameIds(
+    trinkets: { id: number }[], enchants: { id: number }[], enchantItems: EnchantItems,
+  ): { itemIds: number[]; enchantIds: number[] } {
+    const worn = enchants.filter(enchant => enchant.id);
+    const enchantItemIds = worn.map(enchant => enchantItems[enchant.id]).filter(itemId => itemId !== undefined);
+    return {
+      itemIds: [...new Set([...trinkets.filter(trinket => trinket.id).map(trinket => trinket.id), ...enchantItemIds])],
+      enchantIds: [...new Set(worn.filter(enchant => enchantItems[enchant.id] === undefined).map(enchant => enchant.id))],
+    };
+  }
+
+  // Names the player's enchant as the bench names the top one, so a row compares two items rather than stat text with an item.
+  protected nameEnchantsByItem(enchants: PlayerEnchant[], enchantItems: EnchantItems, names: GameNames): PlayerEnchant[] {
+    return enchants.map(enchant => ({ ...enchant, name: this.gearExtract.enchantItem(enchant.id, enchantItems, names)?.name ?? enchant.name }));
   }
 
   protected benchToStats(bench: GearBench): EncounterGearStats {

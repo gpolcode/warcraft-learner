@@ -117,10 +117,8 @@ export class GearTransformService implements DataSource<GearBench> {
     const named: EncounterGearStats['enchants'] = {};
     for (const [slot, enchants] of Object.entries(ranked)) {
       named[Number(slot)] = enchants.map(enchant => {
-        const itemId = enchantItems[enchant.id];
-        const item = itemId === undefined ? undefined : names[`i${itemId}`];
-        if (itemId === undefined || !item?.name) return { ...enchant, icon: '', item_id: null };
-        return { ...enchant, name: this.gearExtract.decodeHtmlEntities(item.name), icon: this.gearExtract.iconFile(item.icon), item_id: itemId };
+        const item = this.gearExtract.enchantItem(enchant.id, enchantItems, names);
+        return item ? { ...enchant, name: item.name, icon: item.icon, item_id: item.id } : { ...enchant, icon: '', item_id: null };
       });
     }
     return named;

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CharacterGear, WclCombatantInfo, WclGearItem } from '../wcl/wcl.models';
+import { EnchantItems } from '../http/enchant-item-data-service';
 
 @Injectable({ providedIn: 'root' })
 export class GearExtractService {
@@ -30,6 +31,14 @@ export class GearExtractService {
     for (const item of items) {
       if (!item.name && item.id) item.name = this.decodeHtmlEntities(names[`${prefix}${item.id}`]?.name ?? '');
     }
+  }
+
+  // Read from the `i` item alias: WCL's `e` enchant alias names only the effect (stat text for an armor kit).
+  enchantItem(enchantId: number, enchantItems: EnchantItems, names: GameNames): { id: number; name: string; icon: string } | null {
+    const itemId = enchantItems[enchantId];
+    const item = itemId === undefined ? undefined : names[`i${itemId}`];
+    if (itemId === undefined || !item?.name) return null;
+    return { id: itemId, name: this.decodeHtmlEntities(item.name), icon: this.iconFile(item.icon) };
   }
 
   extractGear(gear: WclGearItem[] | undefined): {

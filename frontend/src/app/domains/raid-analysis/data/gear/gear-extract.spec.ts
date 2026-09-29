@@ -57,6 +57,29 @@ describe('decodeHtmlEntities', () => {
   });
 });
 
+describe('enchantItem', () => {
+  // Raidbots maps the kit's enchant to the kit item; WCL names the item in game, HTML-escaped.
+  const ARMOR_KIT_ENCHANT = 8159;
+  const ARMOR_KIT_ITEM = 244641;
+  const ARMOR_KIT_ICON = 'inv_armor_kit';
+  const raidbotsMap = { [ARMOR_KIT_ENCHANT]: ARMOR_KIT_ITEM };
+  const itemNamed = (name: string) => ({ [`i${ARMOR_KIT_ITEM}`]: { id: ARMOR_KIT_ITEM, name, icon: `${ARMOR_KIT_ICON}.jpg` } });
+
+  it('is the item Raidbots maps the enchant to, with its decoded WCL name and icon file', () => {
+    expect(gearExtract.enchantItem(ARMOR_KIT_ENCHANT, raidbotsMap, itemNamed('Forest Hunter&#39;s Armor Kit')))
+      .toEqual({ id: ARMOR_KIT_ITEM, name: "Forest Hunter's Armor Kit", icon: ARMOR_KIT_ICON });
+  });
+
+  it('is null for an enchant Raidbots maps to no item', () => {
+    expect(gearExtract.enchantItem(ENCHANT_ID, raidbotsMap, itemNamed("Forest Hunter's Armor Kit"))).toBeNull();
+  });
+
+  it('is null for a mapped enchant whose item WCL names blank or not at all', () => {
+    expect(gearExtract.enchantItem(ARMOR_KIT_ENCHANT, raidbotsMap, itemNamed(''))).toBeNull();
+    expect(gearExtract.enchantItem(ARMOR_KIT_ENCHANT, raidbotsMap, {})).toBeNull();
+  });
+});
+
 describe('extractGear', () => {
   it('extracts trinkets from slots 12/13 (stripping .jpg, coercing string ids) and enchants from any slot', () => {
     const gear = Array<WclGearItem>(16).fill({});
