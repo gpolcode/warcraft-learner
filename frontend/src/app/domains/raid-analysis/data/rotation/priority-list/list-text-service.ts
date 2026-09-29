@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import type jsep from 'jsep';
 import { round } from '../../analysis/analysis-math';
+import { TERM_MARK } from '../../analysis/analysis.models';
 import type { PriorityList } from '../../plan/plan.models';
 import { AplNode, SimcAplService } from '../../simc/simc-apl-service';
 import { ConditionEvalService } from './condition-eval-service';
@@ -34,7 +35,7 @@ const TALENT = /^(talent|hero_tree|apex)\.(\w+)(?:\.enabled)?$/;
 const POOL = /^(mana|rage|focus|energy|combo_points|rune|runic_power|soul_shard|astral_power|holy_power|maelstrom|chi|insanity|fury|essence)(?:\.(deficit|pct))?$/;
 const POOL_WORDS: Record<string, string | undefined> = { soul_shard: 'soul shards', rune: 'runes' };
 const AMOUNTS: Record<string, string | undefined> = { cp_max_spend: 'full', 'gcd.max': 'one GCD', gcd: 'one GCD' };
-const FLAG_VALUE = /(^|\.)(up|down|ticking|active|enabled|refreshable|ready|executing|exists|in_flight|placed)$/;
+const FLAG_VALUE = /(^|\.)(up|down|ticking|active|enabled|refreshable|ready|executing|exists|in_flight|placed)$|^set_bonus\./;
 const PREV_GCD = /^prev_gcd\.(\d+)\./;
 const SINGULAR = /^(stacks|charges|combo points|soul shards|runes)$/;
 const UNSETTLED = 'Could be either';
@@ -56,9 +57,6 @@ const enemies = (op: Op, n: string): string => {
   if (op === '<' && count === 2) return 'on a single enemy';
   return op === '>' && Number.isInteger(count) ? `on ${count + 1}+ enemies` : `on ${bound(op, n)} enemies`;
 };
-
-/** What a term no phrase covers reads as, so the player never meets SimC's own syntax. */
-const OTHER = 'another condition';
 
 const FLAGS: FlagWords[] = [
   { match: /^target\.debuff\.casting\.(up|react)$/, words: (_, holds) => `while the target is ${not(holds)}casting`, state: states('Casting', 'Not casting') },
@@ -118,11 +116,15 @@ export class ListTextService {
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
 
-  /** The term in words; `holds` false phrases its negation, which a title uses to name what went wrong. */
+  /** The term in words; `holds` false phrases its negation. A part no phrase covers shows as SimC wrote it, between `TERM_MARK`s. */
   phrase(list: PriorityList, node: AplNode, holds: boolean, action: string): string {
     if (node.type === 'UnaryExpression' && (node as jsep.UnaryExpression).operator === '!') return this.phrase(list, (node as jsep.UnaryExpression).argument, !holds, action);
-    if (node.type === 'Identifier') return this.flag(list, (node as jsep.Identifier).name, holds, action) ?? this.raw(holds);
-    return node.type === 'BinaryExpression' ? this.binary(list, node as jsep.BinaryExpression, holds, action) : this.raw(holds);
+    if (node.type === 'Identifier') return this.flag(list, (node as jsep.Identifier).name, holds, action) ?? this.raw(node, holds);
+    return node.type === 'BinaryExpression' ? this.binary(list, node as jsep.BinaryExpression, holds, action) : this.raw(node, holds);
+  }
+
+  unphrased(text: string): boolean {
+    return text.includes(TERM_MARK);
   }
 
   /** `flag` marks a term that tests the value for truth alone, which a count with no unit answers only as a state. */
@@ -168,10 +170,10 @@ export class ListTextService {
     const { operator, left, right } = node;
     if (operator === '|' || operator === '&') return this.compound(list, node, operator, holds, action);
     const op = (operator === '==' ? '=' : operator) as Op;
-    if (!(op in FLIP)) return this.raw(holds);
+    if (!(op in FLIP)) return this.raw(node, holds);
     const facing = left.type === 'Literal' ? { subject: right, op: MIRROR[op], amount: left } : { subject: left, op, amount: right };
     const words = this.comparison(list, facing.subject, holds ? facing.op : FLIP[facing.op], facing.amount, action);
-    return words ?? this.raw(holds);
+    return words ?? this.raw(node, holds);
   }
 
   private compound(list: PriorityList, node: AplNode, operator: string, holds: boolean, action: string): string {
@@ -231,8 +233,10 @@ export class ListTextService {
     return base && { n: base.n, aside: `one less ${this.phrase(list, right, true, action)}` };
   }
 
+  /** Only a 0 or 1 takes one off, so `12-gcd.max` never reads as one less. */
   private isFlag(node: AplNode): boolean {
-    return node.type === 'Identifier' || (node.type === 'UnaryExpression' && (node as jsep.UnaryExpression).operator === '!');
+    if (node.type === 'UnaryExpression') return (node as jsep.UnaryExpression).operator === '!';
+    return node.type === 'Identifier' && (TALENT.test((node as jsep.Identifier).name) || FLAG_VALUE.test((node as jsep.Identifier).name));
   }
 
   private token(name: string, action: string): string {
@@ -247,8 +251,8 @@ export class ListTextService {
     return kind === 'hero_tree' ? `the ${named} hero tree` : named;
   }
 
-  private raw(holds: boolean): string {
-    return `${holds ? 'when' : 'unless'} ${OTHER} holds`;
+  private raw(node: AplNode, holds: boolean): string {
+    return `${holds ? 'when' : 'unless'} ${TERM_MARK}${this.apl.print(node)}${TERM_MARK} holds`;
   }
 
   private join(parts: string[], last = 'and'): string {

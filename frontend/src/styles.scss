@@ -67,6 +67,13 @@
   letter-spacing: 0.08em;
 }
 
+/* A term as SimC wrote it: the one text in a second font family, so it is a role of its own and `font-mono` stays removed. */
+@utility text-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: var(--text-body--line-height);
+}
+
 /* "On plan" markers: deliberately understated (muted surface tag, no green fill or check glyph) so a clean result reads calm, not celebratory. */
 @utility chip-onplan {
   display: inline-flex;

@@ -7,6 +7,7 @@ import { bench } from '../rotation-harness';
 import type { CastCheck, CastVerdict, LogReading, OrderCheck, TermReading } from './list-check-service';
 import { ListFindingService } from './list-finding-service';
 import { priorityList } from './priority-list-harness';
+import { UNKNOWN } from './priority-list.models';
 import type { Range, Truth } from './priority-list.models';
 
 /** Mirrors the strip cap in list-finding-service.ts. */
@@ -166,5 +167,20 @@ describe('ListFindingService build terms', () => {
       text: 'All of these', truth: 'false', value: '',
       group: { any: false, checks: [{ text: 'At 5+ combo points', truth: 'false', value: '3 combo points' }] },
     }]);
+  });
+});
+
+describe('ListFindingService terms no phrase covers', () => {
+  const unphrased = priorityList({ ...list, lines: [{ action: 'eviscerate', terms: ['combo_points>=5|movement.distance>20'] }] });
+  const offCast: CastCheck = {
+    atS: 10, verdict: 'off', line: 0,
+    lines: [{ truth: 'false', terms: [{ truth: 'false', value: null, parts: [{ truth: 'false', value: [3, 3] }, { truth: 'unknown', value: UNKNOWN }] }] }],
+  };
+
+  it('marks a row that shows its term as SimC wrote it, and leaves a phrased row unmarked', () => {
+    const row = rowOf(reading([offCast]), withButtons([button()], { list: unphrased }));
+    const [phrased, raw] = row?.occurrences[0]?.checks[0]?.group?.checks ?? [];
+    expect(raw).toEqual({ text: 'When `movement.distance>20` holds', truth: 'unknown', value: 'not supported by warcraft-learner', raw: true });
+    expect(phrased).not.toHaveProperty('raw');
   });
 });

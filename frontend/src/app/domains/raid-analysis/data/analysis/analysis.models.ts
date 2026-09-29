@@ -7,12 +7,17 @@ export interface FindingOccurrence {
   checks: ConditionCheck[];
 }
 
+/** Brackets a term in a `ConditionCheck` text that warcraft-learner has no words for, shown as SimC wrote it. */
+export const TERM_MARK = '`';
+
 export interface ConditionCheck {
   text: string;
   truth: 'true' | 'false' | 'unknown';
   value: string;
   /** An either-or or all-of term, read operand by operand in place of its own row. */
   group?: { any: boolean; checks: ConditionCheck[] };
+  /** The text shows a term as SimC wrote it; its truth and value still come from the log. */
+  raw?: true;
 }
 
 export interface AnalysisFinding {

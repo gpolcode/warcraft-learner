@@ -17,7 +17,7 @@ export default {
     docs: { description: 'templates style text only through the type roles and color tokens the theme in styles.scss defines' },
     schema: [],
     messages: {
-      banned: 'Found {{label}}. Use a type role (text-title, text-heading, text-label, text-name, text-body, text-caption, text-value, text-hero) and, where the color differs from the body default, a named color (text-muted, bg-surface, border-line).',
+      banned: 'Found {{label}}. Use a type role (text-title, text-heading, text-label, text-name, text-body, text-caption, text-value, text-hero, text-code) and, where the color differs from the body default, a named color (text-muted, bg-surface, border-line).',
     },
   },
   create(context) {

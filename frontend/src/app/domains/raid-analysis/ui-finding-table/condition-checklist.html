@@ -21,7 +21,18 @@
             <mat-icon class="icon-18 shrink-0 text-muted" aria-hidden="false" aria-label="Not in the log">help_outline</mat-icon>
           }
         }
-        <span class="min-w-0 flex-1">{{ check.text }}</span>
+        <span class="min-w-0 flex-1">
+          @for (part of check.text | codeParts; track $index) {
+            @if (part.code) {
+              <span class="text-code wrap-anywhere">{{ part.text }}</span>
+            } @else {
+              {{ part.text }}
+            }
+          }
+          @if (check.raw) {
+            <span class="ml-1.5 text-label text-muted whitespace-nowrap">Not supported</span>
+          }
+        </span>
         <span class="tabular-nums text-caption text-muted shrink-0 text-right">{{ check.value }}</span>
       </li>
     }

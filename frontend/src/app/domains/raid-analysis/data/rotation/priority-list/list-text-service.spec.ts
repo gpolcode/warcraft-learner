@@ -118,9 +118,23 @@ describe('ListTextService phrases', () => {
     expect(phrase('fight_style.dungeonslice', false)).toBe('outside a dungeon');
   });
 
-  it('reads a term no phrase covers as another condition, never as SimC wrote it', () => {
-    expect(phrase('movement.distance>20')).toBe('when another condition holds');
-    expect(phrase('movement.distance>20', false)).toBe('unless another condition holds');
+  it('shows a term no phrase covers as SimC wrote it, and its negation with unless', () => {
+    expect(phrase('movement.distance>20')).toBe('when `movement.distance>20` holds');
+    expect(phrase('movement.distance>20', false)).toBe('unless `movement.distance>20` holds');
+    expect(phrase('!set_bonus.midnight_season_2_4pc')).toBe('unless `set_bonus.midnight_season_2_4pc` holds');
+  });
+
+  it('shows only the operand no phrase covers as SimC wrote it inside a compound', () => {
+    expect(phrase('buff.shadow_dance.up|movement.distance>20')).toBe('either while Shadow Dance is up or when `movement.distance>20` holds');
+  });
+
+  it('reads a flag the list takes off a number as one less, showing one no phrase covers as SimC wrote it', () => {
+    expect(phrase('combo_points>=cp_max_spend-!buff.darkest_night.up')).toBe('at full combo points (one less while Darkest Night is down)');
+    expect(phrase('active_enemies<=2-set_bonus.midnight_season_2_2pc')).toBe('on 2 or fewer enemies (one less when `set_bonus.midnight_season_2_2pc` holds)');
+  });
+
+  it('shows a term that takes an amount off a number as SimC wrote it, never as one less', () => {
+    expect(phrase('cooldown.secret_technique.remains<=12-gcd.max')).toBe('when `cooldown.secret_technique.remains<=12-gcd.max` holds');
   });
 });
 

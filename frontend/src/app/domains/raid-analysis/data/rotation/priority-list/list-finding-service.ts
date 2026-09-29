@@ -101,7 +101,8 @@ export class ListFindingService {
     }
     const text = this.text.capitalized(this.text.phrase(list, term, true, action));
     const subject = this.checks.subject(term);
-    return { text, truth, value: reading?.value && subject ? this.text.value(subject, reading.value, this.readsAsFlag(term)) : '' };
+    const value = reading?.value && subject ? this.text.value(subject, reading.value, this.readsAsFlag(term)) : '';
+    return { text, truth, value, ...(this.text.unphrased(text) ? { raw: true as const } : {}) };
   }
 
   /** `!(x>2)` names a subject too, yet compares it as a number rather than testing it as a flag. */
