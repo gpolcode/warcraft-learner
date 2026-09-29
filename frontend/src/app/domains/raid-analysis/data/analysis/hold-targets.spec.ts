@@ -87,7 +87,7 @@ describe('buildHoldTargets', () => {
 
 describe('holdSuggestionFindings', () => {
   const NAME = 'Shadow Blades';
-  // Prior-relative band: flags only when the player's own gap from their prior cast falls more than HOLD_BAND_S below HOLD_DELAY_S; over-holding is tolerated.
+  // Prior-relative band: flags only when the player's own gap from their prior cast falls more than HOLD_BAND_S below HOLD_DELAY_S and the press is still on cooldown at the slot; over-holding is tolerated.
   const HELD_CAST_INDEX = 2;      // the second cast (1-based key)
   const EFFECTIVE_CD_S = 60;
   const HOLD_DELAY_S = 40;
@@ -97,16 +97,17 @@ describe('holdSuggestionFindings', () => {
   const TOTAL_SAMPLED = 10;
   const PRIOR_CAST_S = 10;
   const BAND_EDGE_S = PRIOR_CAST_S + EFFECTIVE_CD_S + (HOLD_DELAY_S - HOLD_BAND_S);
-  const UNDER_HELD_S = BAND_EDGE_S - 5;
+  const UNDER_HELD_S = BAND_EDGE_S - 5;  // back at 160, past the 01:50 slot
   const OVER_HELD_S = PRIOR_CAST_S + EFFECTIVE_CD_S + HOLD_DELAY_S + 20;
   const HOLD_TO_S = PRIOR_CAST_S + EFFECTIVE_CD_S + HOLD_DELAY_S; // 01:50, from the player's own prior cast
   const FIGHT_S = 300;
 
-  const targetAt = (castIndex: number): CdHoldTargets => ({
+  const targetAt = (castIndex: number, over: Partial<CdHoldTargets[string]> = {}): CdHoldTargets => ({
     [castIndex]: {
       target_s: TARGET_CLOCK_S,
       delay_s: HOLD_DELAY_S, band_s: HOLD_BAND_S, effective_cd_s: EFFECTIVE_CD_S,
       count: HELD_COUNT, total_samples: TOTAL_SAMPLED,
+      ...over,
     },
   });
   const holdTargets = targetAt(HELD_CAST_INDEX);
@@ -138,6 +139,26 @@ describe('holdSuggestionFindings', () => {
 
   it('does not suggest at the band edge (strict boundary)', () => {
     expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, BAND_EDGE_S], holdTargets, FIGHT_S)).toEqual([]);
+  });
+
+  it('suggests holding a long cooldown pressed on cooldown, since it is still on cooldown at the slot', () => {
+    const ON_COOLDOWN_S = PRIOR_CAST_S + EFFECTIVE_CD_S;  // back at 130, past the 01:50 slot
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, ON_COOLDOWN_S], holdTargets, FIGHT_S)).toHaveLength(1);
+  });
+
+  it('does not suggest holding a short cooldown pressed on cooldown, since it is back long before the slot', () => {
+    const SHORT_CD_S = 15;
+    const LONG_WAIT_S = 60;
+    const shortCooldown = targetAt(HELD_CAST_INDEX, { effective_cd_s: SHORT_CD_S, delay_s: LONG_WAIT_S });
+    const ON_COOLDOWN_S = PRIOR_CAST_S + SHORT_CD_S;  // back at 40, the slot is 10 + 15 + 60 = 85
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, ON_COOLDOWN_S], shortCooldown, FIGHT_S)).toEqual([]);
+  });
+
+  it('does not suggest a hold when the press is back exactly at the slot, only one back after it', () => {
+    const BACK_AT_SLOT_S = HOLD_TO_S - EFFECTIVE_CD_S;  // 50 + 60 = back at the 01:50 slot
+    const JUST_AFTER_S = 0.1;
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, BACK_AT_SLOT_S], holdTargets, FIGHT_S)).toEqual([]);
+    expect(holdTargetsSvc.holdSuggestionFindings(NAME, [PRIOR_CAST_S, BACK_AT_SLOT_S + JUST_AFTER_S], holdTargets, FIGHT_S)).toHaveLength(1);
   });
 
   it('tolerates over-holding (a later-than-band press is fine)', () => {
