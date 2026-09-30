@@ -233,7 +233,7 @@ export class RotationFeatureService {
 
     // BL alignment is data-driven: a cooldown "wants BL" when most top parses align it.
     const wantsBL = cdBench.bl_pct >= BL_CONSENSUS_PCT;
-    const { expected, floor } = benchExpectedUses(fightDurS, cdBench.uses_per_min);
+    const { expected, floor } = benchExpectedUses(fightDurS, cdBench);
 
     const issues: AnalysisFinding[] = [];
     if (this.castCadence.usedByMajority(cdBench)) {

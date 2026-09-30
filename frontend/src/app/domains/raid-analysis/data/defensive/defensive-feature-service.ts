@@ -251,7 +251,7 @@ export class DefensiveFeatureService {
 
     if (!defBench) return this.unbenchedFindings(name, uses);
 
-    const { expected, floor } = benchExpectedUses(fightDurS, defBench.uses_per_min);
+    const { expected, floor } = benchExpectedUses(fightDurS, defBench);
     const castTimesS = defensive.cast_times_s ?? [];
 
     const issues: AnalysisFinding[] = [];

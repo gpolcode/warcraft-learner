@@ -126,12 +126,65 @@ describe('closestToZero', () => {
 });
 
 describe('benchExpectedUses', () => {
+  type Cadence = Parameters<typeof benchExpectedUses>[1];
+  function cadence(over: Partial<Cadence> = {}): Cadence {
+    return { uses_per_min: { avg: 2, stddev: 0 }, avg_first_cast_s: 0, avg_gap_s: null, ...over };
+  }
   const FIGHT_DUR_S = 120;
-  it('scales avg uses/min by the fight length', () => {
-    expect(benchExpectedUses(FIGHT_DUR_S, { avg: 2, stddev: 0 }).expected).toBe(4);
+
+  it('scales the top uses per minute by the fight length when the top logs show no gap to pace by', () => {
+    // 2 per minute over 2 minutes.
+    expect(benchExpectedUses(FIGHT_DUR_S, cadence()).expected).toBe(4);
   });
   it('floors the -1 sigma estimate at zero', () => {
-    expect(benchExpectedUses(FIGHT_DUR_S, { avg: 1, stddev: 5 }).floor).toBe(0);
+    expect(benchExpectedUses(FIGHT_DUR_S, cadence({ uses_per_min: { avg: 1, stddev: 5 } })).floor).toBe(0);
+  });
+
+  describe('against the top cadence', () => {
+    // Top raiders open at 5s, then press it every 30s, 2.1 times a minute.
+    const TOP = cadence({ uses_per_min: { avg: 2.1, stddev: 0.06 }, avg_first_cast_s: 5, avg_gap_s: 30 });
+    // Casts at 5, 35, ..., 335.
+    const CASTS_BEFORE_IT = 12;
+    // 5 + 12 * 30.
+    const THIRTEENTH_CAST_S = 365;
+    const PULL_END_BEFORE_IT_S = THIRTEENTH_CAST_S - 1;
+
+    it('does not expect a cast the pull ends before, though the rate rounds up to it', () => {
+      // 2.1 * 364 / 60 = 12.74 rounds to 13.
+      expect(benchExpectedUses(PULL_END_BEFORE_IT_S, TOP).expected).toBe(CASTS_BEFORE_IT);
+    });
+    it('expects the cast that lands exactly as the pull ends', () => {
+      expect(benchExpectedUses(THIRTEENTH_CAST_S, TOP).expected).toBe(CASTS_BEFORE_IT + 1);
+    });
+    it('measures the floor from the casts that fit', () => {
+      // 12 - 0.06 * 364 / 60 = 11.64 rounds to 12; the rate's 13 would have put the floor at 13.
+      expect(benchExpectedUses(PULL_END_BEFORE_IT_S, TOP).floor).toBe(CASTS_BEFORE_IT);
+    });
+    it('keeps the rate count when top raiders press it less often than the cadence fits', () => {
+      const slower = cadence({ ...TOP, uses_per_min: { avg: 1, stddev: 0 } });
+      // 1 * 365 / 60 = 6.08, well under the 13 that fit.
+      const SLOWER_RATE_COUNT = 6;
+      expect(benchExpectedUses(THIRTEENTH_CAST_S, slower).expected).toBe(SLOWER_RATE_COUNT);
+    });
+    it('counts a cast on the last second of the pull despite float error in the gap count', () => {
+      // (33.3 - 3.3) / 30 computes as 0.9999999999999999; 4 * 33.3 / 60 = 2.22 rounds to 2.
+      const edge = cadence({ uses_per_min: { avg: 4, stddev: 0 }, avg_first_cast_s: 3.3, avg_gap_s: 30 });
+      const SECOND_CAST_S = 33.3;
+      expect(benchExpectedUses(SECOND_CAST_S, edge).expected).toBe(2);
+    });
+  });
+
+  describe('around the top first cast', () => {
+    // Top raiders first press it at 100s, then every 60s.
+    const LATE_OPENER = cadence({ uses_per_min: { avg: 0.9, stddev: 0 }, avg_first_cast_s: 100, avg_gap_s: 60 });
+
+    it('expects no cast from a pull that ends before top raiders first press it', () => {
+      // 0.9 * 99 / 60 = 1.49 rounds to 1, but no top raider has pressed it by 99s.
+      expect(benchExpectedUses(LATE_OPENER.avg_first_cast_s - 1, LATE_OPENER).expected).toBe(0);
+    });
+    it('expects the first cast from a pull that ends right on it', () => {
+      expect(benchExpectedUses(LATE_OPENER.avg_first_cast_s, LATE_OPENER).expected).toBe(1);
+    });
   });
 });
 
