@@ -210,6 +210,88 @@ describe('buildEnchantRows (comparison, real player gear)', () => {
   });
 });
 
+const RING_1_SLOT = 10;
+const RING_2_SLOT = 11;
+const MASTERY = { id: 7969, name: "Enchant Ring - Zul'jin's Mastery" };
+const ALACRITY = { id: 8025, name: "Enchant Ring - Silvermoon's Alacrity" };
+const HASTE = { id: 8021, name: 'Enchant Ring - Thalassian Haste' };
+// At or above the consensus share, so an un-enchanted ring warns; the pair match reads only which enchant ranks first.
+const RING_SHARE_PCT = 60;
+
+function ranked(enchant: { id: number; name: string }) {
+  return { ...enchant, icon: '', item_id: null, pct: RING_SHARE_PCT };
+}
+
+function asItem(enchant: { name: string }) {
+  return { name: enchant.name, itemId: null, icon: '' };
+}
+
+function rings(ring1: { id: number; name: string } | null, ring2: { id: number; name: string } | null): CharacterGear {
+  return gear({ enchants: [
+    ...(ring1 ? [{ slot: RING_1_SLOT, ...ring1 }] : []),
+    ...(ring2 ? [{ slot: RING_2_SLOT, ...ring2 }] : []),
+  ] });
+}
+
+// Mastery leads Ring 1 and Alacrity leads Ring 2, each also ranked second in the other slot.
+const TOP_RING_PAIR = stats({ enchants: {
+  [RING_1_SLOT]: [ranked(MASTERY), ranked(ALACRITY)],
+  [RING_2_SLOT]: [ranked(ALACRITY), ranked(MASTERY)],
+} });
+
+describe('buildEnchantRows (a ring pair matched against the top ring enchants)', () => {
+  it('marks both rings on plan with no top enchant when the player wears the top pair swapped', () => {
+    const rows = gearComparison.buildEnchantRows(rings(ALACRITY, MASTERY), TOP_RING_PAIR);
+    expect(rows).toEqual([
+      { slotName: 'Ring 1', status: 'ok', name: ALACRITY.name, note: null, top: null },
+      { slotName: 'Ring 2', status: 'ok', name: MASTERY.name, note: null, top: null },
+    ]);
+  });
+
+  it('marks both rings on plan when the player wears the top pair in the bench order', () => {
+    const rows = gearComparison.buildEnchantRows(rings(MASTERY, ALACRITY), TOP_RING_PAIR);
+    expect(rows).toEqual([
+      { slotName: 'Ring 1', status: 'ok', name: MASTERY.name, note: null, top: null },
+      { slotName: 'Ring 2', status: 'ok', name: ALACRITY.name, note: null, top: null },
+    ]);
+  });
+
+  it('reads each ring against its own slot when only one ring wears a top enchant', () => {
+    const rows = gearComparison.buildEnchantRows(rings(MASTERY, HASTE), TOP_RING_PAIR);
+    expect(rows).toEqual([
+      { slotName: 'Ring 1', status: 'ok', name: MASTERY.name, note: null, top: null },
+      { slotName: 'Ring 2', status: 'info', name: HASTE.name, note: 'Most top raiders use it.', top: asItem(ALACRITY) },
+    ]);
+  });
+
+  it('reads each ring against its own slot when both rings wear the same one of the top pair', () => {
+    const rows = gearComparison.buildEnchantRows(rings(MASTERY, MASTERY), TOP_RING_PAIR);
+    expect(rows).toEqual([
+      { slotName: 'Ring 1', status: 'ok', name: MASTERY.name, note: null, top: null },
+      { slotName: 'Ring 2', status: 'info', name: MASTERY.name, note: 'Most top raiders use it.', top: asItem(ALACRITY) },
+    ]);
+  });
+
+  it('reads each ring against its own slot when one ring is not enchanted', () => {
+    const rows = gearComparison.buildEnchantRows(rings(null, MASTERY), TOP_RING_PAIR);
+    expect(rows).toEqual([
+      { slotName: 'Ring 1', status: 'warn', name: 'Not enchanted', note: 'Most top raiders use it. Apply it.', top: asItem(MASTERY) },
+      { slotName: 'Ring 2', status: 'info', name: MASTERY.name, note: 'Most top raiders use it.', top: asItem(ALACRITY) },
+    ]);
+  });
+
+  it('reads each ring against its own slot when one ring slot has no top enchant', () => {
+    const rows = gearComparison.buildEnchantRows(
+      rings(ALACRITY, MASTERY),
+      stats({ enchants: { [RING_1_SLOT]: [ranked(MASTERY)] } }),
+    );
+    expect(rows).toEqual([
+      { slotName: 'Ring 1', status: 'info', name: ALACRITY.name, note: 'Most top raiders use it.', top: asItem(MASTERY) },
+      { slotName: 'Ring 2', status: 'ok', name: MASTERY.name, note: null, top: null },
+    ]);
+  });
+});
+
 const BASELINE = 'v3:11.1,22.2';
 const TALENTS: SpecTalents = {
   11: { name: 'Alpha', icon: 'icon_a', spellId: 111 },

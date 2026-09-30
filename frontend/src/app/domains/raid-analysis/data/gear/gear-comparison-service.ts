@@ -4,6 +4,7 @@ import { EncounterGearStats } from '../encounter/encounter.models';
 import { SpecTalents, TalentEntry, TalentDiff } from './talent.models';
 import { TalentPick } from './talent-key-service';
 import { TalentKeyService } from './talent-key-service';
+import { RING_SLOTS } from './gear-extract-service';
 
 @Injectable({ providedIn: 'root' })
 export class GearComparisonService {
@@ -37,6 +38,17 @@ export class GearComparisonService {
     return { slotName: name, status: 'ok', name: playerName, note: null, top: null };
   }
 
+  // Top raiders wear the two leading ring enchants in either order, so the pair compares as a multiset of ids.
+  private wearsTopRingPair(playerEnch: PlayerEnchant[], topEnch: EncounterGearStats['enchants']): boolean {
+    const worn = RING_SLOTS.map(slot => playerEnch.find(e => e.slot === slot)?.id).filter(id => id !== undefined);
+    const top = RING_SLOTS.map(slot => topEnch[slot]?.[0]?.id).filter(id => id !== undefined);
+    return worn.length === RING_SLOTS.length && this.sortedIdKey(worn) === this.sortedIdKey(top);
+  }
+
+  private sortedIdKey(ids: number[]): string {
+    return [...ids].sort((a, b) => a - b).join('-');
+  }
+
   buildEnchantRows(gear: CharacterGear, stats: EncounterGearStats | null): EnchantRow[] {
     const topEnch = stats?.enchants ?? {};
     const playerEnch = gear.enchants ?? [];
@@ -44,10 +56,14 @@ export class GearComparisonService {
     const slots = new Set<number>();
     for (const k of Object.keys(topEnch)) slots.add(Number(k));
     for (const e of playerEnch) slots.add(e.slot);
+    const ringPairOnPlan = this.wearsTopRingPair(playerEnch, topEnch);
 
     return [...slots]
       .sort((a, b) => a - b)
-      .map(slot => this.enchantRowFor(this.slotName(slot), playerEnch.find(e => e.slot === slot), topEnch[slot]?.[0]))
+      .map(slot => {
+        const top = ringPairOnPlan && (RING_SLOTS as readonly number[]).includes(slot) ? undefined : topEnch[slot]?.[0];
+        return this.enchantRowFor(this.slotName(slot), playerEnch.find(e => e.slot === slot), top);
+      })
       .filter(row => row !== null);
   }
 
@@ -143,7 +159,7 @@ export class GearComparisonService {
 
   /** Sorted-id identity of a worn trinket combination, so two parses using the same trinkets in opposite slots share one key. */
   trinketSetKey(trinkets: { id: number }[]): string {
-    return trinkets.map(trinket => trinket.id).sort((a, b) => a - b).join('-');
+    return this.sortedIdKey(trinkets.map(trinket => trinket.id));
   }
 
   buildTrinketSets(stats: EncounterGearStats | null, playerKey: string): TrinketSetRow[] {

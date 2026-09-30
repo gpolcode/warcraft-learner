@@ -58,7 +58,8 @@ export class GearExtractService {
   }
 }
 
-// WCL's CombatantInfo gear array is positionally indexed (the index IS the slot); trinkets are 12 and 13.
+// WCL's CombatantInfo gear array is positionally indexed (the index IS the slot).
+export const RING_SLOTS = [10, 11] as const;
 export const TRINKET_SLOTS = [12, 13] as const;
 
 const HTML_ENTITIES: Record<string, string> = {
