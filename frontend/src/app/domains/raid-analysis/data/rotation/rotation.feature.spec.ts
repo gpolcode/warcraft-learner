@@ -74,7 +74,7 @@ describe('RotationFeatureService', () => {
     const result = await service.loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
     assert(result.ok);
     expect(result.value.buttonRows).toMatchObject([{ name: 'Secret Technique', you: 0, top: ALWAYS_RIGHT.right }]);
-    expect(result.value.buttonRows[0]?.occurrences[0]?.checks).toEqual([{ text: 'While Shadow Dance is up', truth: 'false', value: 'no' }]);
+    expect(result.value.buttonRows[0]?.occurrences[0]?.checks).toEqual([{ text: 'While Shadow Dance is up', truth: 'false', value: 'Down' }]);
   });
 
   it('judges no button on a bench an older ingest wrote without a list, and still reads the offensives', async () => {

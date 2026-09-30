@@ -7,7 +7,7 @@ import { bench } from '../rotation-harness';
 import type { CastCheck, CastVerdict, LogReading, OrderCheck, TermReading } from './list-check-service';
 import { ListFindingService } from './list-finding-service';
 import { priorityList } from './priority-list-harness';
-import type { Truth } from './priority-list.models';
+import type { Range, Truth } from './priority-list.models';
 
 /** Mirrors the strip cap in list-finding-service.ts. */
 const MAX_OCCURRENCES = 24;
@@ -126,10 +126,29 @@ describe('ListFindingService condition groups', () => {
         any: true,
         checks: [
           { text: 'At 5+ combo points', truth: 'false', value: '3 combo points' },
-          { text: 'While Shadow Dance is up', truth: 'false', value: 'no' },
+          { text: 'While Shadow Dance is up', truth: 'false', value: 'Down' },
         ],
       },
     }]);
+  });
+});
+
+describe('ListFindingService checklist values', () => {
+  const READY: Range = [1, 1];
+  const THREE_STACKS: Range = [3, 3];
+  const negated = priorityList({ ...list, lines: [{ action: 'eviscerate', terms: ['!cooldown.shadow_dance.ready', '!(buff.shadow_dance.stack>2)'] }] });
+  const offCast: CastCheck = {
+    atS: 10, verdict: 'off', line: 0,
+    lines: [{ truth: 'false', terms: [{ truth: 'false', value: READY }, { truth: 'false', value: THREE_STACKS }] }],
+  };
+  const checks = () => rowOf(reading([offCast]), withButtons([button()], { list: negated }))?.occurrences[0]?.checks;
+
+  it('shows a negated flag with the state of what it negates, which the phrase then fails', () => {
+    expect(checks()?.[0]).toEqual({ text: 'While Shadow Dance is on cooldown', truth: 'false', value: 'Ready' });
+  });
+
+  it('shows a negated comparison with its subject\'s count, not as a flag', () => {
+    expect(checks()?.[1]).toEqual({ text: 'At 2 or fewer Shadow Dance stacks', truth: 'false', value: '3 stacks' });
   });
 });
 
