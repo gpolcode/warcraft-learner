@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { cast } from '../../../../../../testing/builders/events';
+import { applyBuff, cast, damage, removeBuff } from '../../../../../../testing/builders/events';
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
 import { BACKSTAB, EVISCERATE, SHADOW_DANCE } from '../../../../../../testing/spell-ids';
 import type { PlanLine } from '../../plan/plan.models';
@@ -50,6 +50,22 @@ describe('ListCheckService build terms', () => {
   });
 });
 
+describe('ListCheckService situation terms', () => {
+  const SITUATION_TERMS = [
+    'active_enemies>2', 'spell_targets.shuriken_storm>=2', 'target.health.pct<20', 'time<10', 'fight_remains<30',
+    'target.time_to_die>8', 'raid_event.adds.in>20', 'fight_style.patchwerk',
+  ];
+  const situationTerms = (terms: string[]) => checks.buttons(list([{ action: 'eviscerate', terms }])).get('eviscerate')?.[0]?.situationTerms;
+
+  it('marks a term that reads the enemy count, target health, the fight clock, a raid event or the fight style', () => {
+    expect(situationTerms(SITUATION_TERMS)).toEqual(SITUATION_TERMS.map(() => true));
+  });
+
+  it('marks a term that mixes a talent with the situation, and not one that reads the player alone', () => {
+    expect(situationTerms(['!(talent.unseen_blade&active_enemies>2)', 'talent.unseen_blade', 'combo_points>=5', 'health.pct<50'])).toEqual([true, false, false, false]);
+  });
+});
+
 describe('ListCheckService cast check', () => {
   const EVISCERATE_LINES: PlanLine[] = [
     { action: 'eviscerate', terms: ['combo_points>=5'] },
@@ -70,6 +86,45 @@ describe('ListCheckService cast check', () => {
     const lines: PlanLine[] = [{ action: 'eviscerate', terms: ['talent.unseen_blade'] }, { action: 'eviscerate', terms: ['combo_points>=5', 'time>100'] }];
     const [check] = read(lines, [pooled(EVISCERATE, 10, 3)]).casts.get('eviscerate') ?? [];
     expect(check).toMatchObject({ verdict: 'off', line: 1 });
+  });
+
+  describe('closest line', () => {
+    const CAST_S = 10;
+    const COMBO_POINTS_HELD = 3;
+    const BOSS = 1;
+    const AOE = 'active_enemies>2';
+    const SINGLE_TARGET = 'active_enemies<3';
+    /** Fails at the cast's own second, the boundary of the comparison. */
+    const LATE = `time>${CAST_S}`;
+    const HOLDS = `combo_points>=${COMBO_POINTS_HELD}`;
+    const SHORT = `combo_points>=${COMBO_POINTS_HELD + 1}`;
+    const DANCING = 'buff.shadow_dance.up';
+    /** The log shows Shadow Dance once, so the buff reads as down rather than unknown at the cast after it fades. */
+    const DANCE_BEFORE_CAST = [applyBuff(SHADOW_DANCE, CAST_S - 2), removeBuff(SHADOW_DANCE, CAST_S - 1)];
+    const line = (...terms: string[]): PlanLine => ({ action: 'eviscerate', terms });
+    const onBossAlone = (lines: PlanLine[]) => read(lines, [pooled(EVISCERATE, CAST_S, COMBO_POINTS_HELD)], {
+      buffs: DANCE_BEFORE_CAST, damage: [damage(BACKSTAB, CAST_S, 1, { target: BOSS })],
+    }).casts.get('eviscerate')?.[0];
+
+    it('ranks a line failing only an ordinary term ahead of an earlier line failing only a situation term', () => {
+      expect(onBossAlone([line(AOE), line(DANCING)])).toMatchObject({ verdict: 'off', line: 1 });
+    });
+
+    it('weighs one failing situation term above every ordinary term a line fails', () => {
+      expect(onBossAlone([line(AOE), line(DANCING, SHORT)])).toMatchObject({ verdict: 'off', line: 1 });
+    });
+
+    it('breaks a tie between lines for other situations toward the one more of whose terms hold', () => {
+      expect(onBossAlone([line(HOLDS, AOE), line(HOLDS, SINGLE_TARGET, LATE)])).toMatchObject({ verdict: 'off', line: 1 });
+    });
+
+    it('breaks a tie between lines for other situations with as many terms holding toward the earlier one', () => {
+      expect(onBossAlone([line(HOLDS, AOE), line(HOLDS, LATE)])).toMatchObject({ verdict: 'off', line: 0 });
+    });
+
+    it('ranks a line of another build behind a line failing only situation terms', () => {
+      expect(onBossAlone([line('talent.unseen_blade', HOLDS), line(AOE, LATE)])).toMatchObject({ verdict: 'off', line: 1 });
+    });
   });
 
   it('leaves a cast not judged when no line holds and one may', () => {

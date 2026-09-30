@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import type jsep from 'jsep';
-import { mode } from 'd3-array';
+import { least, mode } from 'd3-array';
 import { getOrInsert } from '../../analysis/analysis-math';
 import { WclProjectionsService } from '../../analysis/wcl-projections-service';
 import type { PlanLine, PriorityList } from '../../plan/plan.models';
@@ -13,6 +13,12 @@ import type { CastMoment, FactContext, FactStream, Range, Truth } from './priori
 
 const COMPARISONS = new Set(['=', '==', '!=', '<', '<=', '>', '>=']);
 const TALENT = /^(talent|hero_tree|apex)\./;
+/** `health.pct` is the player's own health, so only the target's reads the situation. */
+const SITUATION = /^(active_enemies|spell_targets(\.\w+)?|target\.health\.pct|time|fight_remains|expected_combat_length|(target\.)?time_to_die(\.remains)?|raid_event\..+|fight_style\..+)$/;
+/** Past any line's count of failing ordinary terms, so one failing situation term outweighs them all. */
+const SITUATION_MISS_WEIGHT = 100;
+/** Past any line's situation misses, so a line of another build ranks behind every line of the player's own. */
+const OFF_BUILD_WEIGHT = 10_000;
 
 export interface ReadLine {
   /** Across the whole list, not the button's own lines. */
@@ -22,6 +28,8 @@ export interface ReadLine {
   lineCdS: number;
   /** Per term, whether it reads talents alone: such a term says whose build the line is, not when to press. */
   talentTerms: boolean[];
+  /** Per term, whether it reads the encounter's state rather than the player's: failing, it says the line is for another situation. */
+  situationTerms: boolean[];
 }
 
 export interface TermReading {
@@ -121,6 +129,7 @@ export class ListCheckService {
     return {
       index, action: line.action, terms: parsed, lineCdS: line.line_cd ?? 0,
       talentTerms: (parsed ?? []).map(term => this.apl.identifiers(term).every(name => TALENT.test(name))),
+      situationTerms: (parsed ?? []).map(term => this.apl.identifiers(term).some(name => SITUATION.test(name))),
     };
   }
 
@@ -194,16 +203,23 @@ export class ListCheckService {
     return term.type === 'BinaryExpression' && COMPARISONS.has(operator) ? left : null;
   }
 
-  /** The closest line fails the fewest terms, a line of another build ranking behind every line of the player's own. */
   private castCheck(readings: LineReading[], atS: number, lines: ReadLine[]): CastCheck {
     const allowed = readings.findIndex(reading => reading.truth === 'true');
-    const rank = (reading: LineReading, index: number): number => {
-      const offBuild = reading.terms.some((term, at) => lines[index]?.talentTerms[at] && term.truth === 'false');
-      return (offBuild ? 1000 : 0) + reading.terms.filter(term => term.truth === 'false').length;
-    };
-    const closest = allowed >= 0 ? allowed : readings.reduce((best, reading, index) => (rank(reading, index) < rank(readings[best] ?? reading, best) ? index : best), 0);
     const verdict: CastVerdict = allowed >= 0 ? 'on' : readings.every(reading => reading.truth === 'false') ? 'off' : 'unjudged';
-    return { atS, verdict, line: closest, lines: readings };
+    return { atS, verdict, line: allowed >= 0 ? allowed : this.closest(readings, lines), lines: readings };
+  }
+
+  /** A tie goes to the line more of whose terms hold, as it matches more of the moment, then to the earlier line. */
+  private closest(readings: LineReading[], lines: ReadLine[]): number {
+    const ranked = readings.map((reading, index) => {
+      const line = lines[index];
+      const failing = reading.terms.flatMap((term, at) => (term.truth === 'false' ? [at] : []));
+      const situation = failing.filter(at => line?.situationTerms[at]).length;
+      const offBuild = failing.some(at => line?.talentTerms[at]);
+      const misses = (offBuild ? OFF_BUILD_WEIGHT : 0) + situation * SITUATION_MISS_WEIGHT + failing.length - situation;
+      return { index, misses, holds: reading.terms.filter(term => term.truth === 'true').length };
+    });
+    return least(ranked, (a, b) => a.misses - b.misses || b.holds - a.holds || a.index - b.index)?.index ?? 0;
   }
 
   /** A line above the first certain one that may or may not hold leaves the moment undecided. */
