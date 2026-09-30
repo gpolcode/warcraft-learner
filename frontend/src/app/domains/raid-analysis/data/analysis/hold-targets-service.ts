@@ -49,7 +49,7 @@ export class HoldTargetsService {
     return targets;
   }
 
-  /** Prior-relative (cascade-free): compares the player's own gap from their previous cast against the band; flags only a clear under-hold, tolerates over-holding. */
+  /** Prior-relative (cascade-free): compares the player's own gap from their previous cast against the band; flags only a clear under-hold whose press is still on cooldown at the recommended slot, tolerates over-holding. */
   holdSuggestionFindings(
     name: string, castTimesS: number[], holdTargets: CdHoldTargets, fightDurationS: number,
   ): AnalysisFinding[] {
@@ -70,8 +70,11 @@ export class HoldTargetsService {
       const readyS = prevCastS + target.effective_cd_s;
       // From the player's own cooldown, never the top logs' clock, since the band judges the gap from the prior cast.
       const holdToS = readyS + target.delay_s;
+      const underHeld = castS - readyS < target.delay_s - target.band_s;
+      // An early press already back by the slot costs nothing there, as with a short cooldown pressed on cooldown.
+      const blocksSlot = castS + target.effective_cd_s > holdToS;
       // A hold past the pull's end would mean not pressing it at all.
-      if (castS - readyS < target.delay_s - target.band_s && holdToS < fightDurationS) {
+      if (underHeld && blocksSlot && holdToS < fightDurationS) {
         findings.push({
           severity: 'info',
           category: 'hold_suggestion',

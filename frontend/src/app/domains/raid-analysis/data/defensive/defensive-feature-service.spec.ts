@@ -5,6 +5,7 @@ import { DefensiveFeatureService } from './defensive-feature-service';
 import { applyBuff, removeBuff, cast } from '../../../../../testing/builders/events';
 import { BLUR, BLUR_BUFF, CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { CLOAK_META, defBench, timed } from './defensive-harness';
+import { HOLD_BAND_MIN_S } from '../analysis/hold-targets-service';
 import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
@@ -137,6 +138,19 @@ describe('analyzeOneDefensive', () => {
   it('returns a success (no issues) when usage matches', () => {
     const out = svc['analyzeOneDefensive'](player({ uses: 2, cast_times_s: [10, 70] }), bench, 300);
     expect(out.some(finding => finding.severity === 'success')).toBe(true);
+  });
+
+  // Composition only: the band and the blocked slot are specced on holdSuggestionFindings.
+  it('suggests a hold on a used defensive pressed before the top raiders\' wait', () => {
+    const TOP_WAIT_S = 30;
+    const FIRST_S = 10;
+    const ON_COOLDOWN_S = FIRST_S + CLOAK_META.cooldown;  // back at 250, past the 10 + 120 + 30 = 160 slot
+    const heldSecond: PerDefensiveBenchmark = { ...bench, hold_targets: { '2': {
+      target_s: ON_COOLDOWN_S + TOP_WAIT_S, delay_s: TOP_WAIT_S, band_s: HOLD_BAND_MIN_S, effective_cd_s: CLOAK_META.cooldown,
+      count: bench.sample_count, total_samples: bench.sample_count,
+    } } };
+    const out = svc['analyzeOneDefensive'](player({ uses: 2, cast_times_s: [FIRST_S, ON_COOLDOWN_S] }), heldSecond, FIGHT_DUR_S);
+    expect(out.some(finding => finding.category === 'hold_suggestion')).toBe(true);
   });
 
   it('skips a talent-gated defensive that was never used', () => {
