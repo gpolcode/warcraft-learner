@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { Results } from '../../../shared/util-http/result';
 import { NorthernSkyTransformService } from './northern-sky-transform-service';
@@ -95,6 +95,22 @@ describe('NorthernSkyTransformService (live, in-browser)', () => {
     const phaseFake = { getPhases: async () => unreachable };
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: plansFake, northernSkyPhases: phaseFake }) });
     expect(await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', ENCOUNTER_ID)).toEqual(unreachable);
+  });
+
+  it('exports one cast time for a press the #1 log casts twice', async () => {
+    const PRESS_S = 10;
+    const ECHO_S = 0.02;
+    const SHADOW_BLADES_S = 16;
+    const echoing = {
+      ...wclFake,
+      getAllEvents: async (_c: string, _f: number, dataType: string) =>
+        (dataType === 'Casts' ? [cast(SHADOW_BLADES, PRESS_S), cast(SHADOW_BLADES, PRESS_S + ECHO_S)] : []),
+    };
+    const plans = planLoader(specPlan({ cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 180, duration: SHADOW_BLADES_S, charges: 1 }] }));
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: echoing, plans }) });
+    const bench = await TestBed.inject(NorthernSkyTransformService).getBench('SubtletyRogue', ENCOUNTER_ID);
+    assert(bench.ok);
+    expect(bench.value.abilities[0]?.cast_times_s).toEqual([PRESS_S]);
   });
 
   it('returns missing when the spec\'s plan has no cooldowns or defensives', async () => {

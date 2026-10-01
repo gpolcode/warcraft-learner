@@ -223,8 +223,9 @@ export class SpecPlanService {
   private button(record: SpellRecord, named: SpellRecord[], tree: TalentTree | null): PlanCooldown {
     const talented = named.some(entry => entry.talented);
     const entries = talented ? this.named(tree, 'talents', record.token).map(entry => entry.id) : [];
+    const { duration, charges } = this.planSpell(named);
     return {
-      name: record.name, spell_id: record.id, cooldown: record.cooldown, talent_gated: talented,
+      name: record.name, spell_id: record.id, cooldown: record.cooldown, duration, charges, talent_gated: talented,
       ...(entries.length ? { talent_entries: entries } : {}),
     };
   }

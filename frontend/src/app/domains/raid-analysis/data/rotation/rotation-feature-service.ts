@@ -129,15 +129,17 @@ export class RotationFeatureService {
   ): Promise<RotationPlayerView> {
     const { reportCode, fightId } = pull;
     const { report, fight, fightDurationS } = context;
+    const abilities = report.masterData?.abilities ?? [];
+    const folds = this.wclProjections.pressFolds(bench.major_cooldowns);
     const [casts, buffs, reading, combatants] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
-      this.listLogs.read(bench.list, { reportCode, fight, playerId, abilities: report.masterData?.abilities ?? [] }),
+      this.listLogs.read(bench.list, { reportCode, fight, playerId, abilities, folds }),
       this.wclApi.getCombatantInfo(reportCode, fightId, playerId),
     ]);
     const findings = this.analyzeRotationFindings({
       fightDurationS,
-      castEvents: this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime),
+      castEvents: this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime),
       buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime),
       cooldowns: bench.major_cooldowns, bench,
       talents: this.gearExtract.pickedTalents(this.gearExtract.selectCombatantInfo(combatants, playerId)),

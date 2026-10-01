@@ -57,6 +57,8 @@ export interface WclEvent {
   classResources?: { amount: number; max?: number; type: number; cost?: number }[];
   // Set on a periodic hit, so a dot's ticks never pass for the cast landing.
   tick?: boolean;
+  // Set on a cast WCL derives from another event (a Divine Hymn tick, The Hunt's landing), never on a press.
+  fake?: boolean;
   // A `Resources` event's change to one pool: positive on a `resourcechange`, negative on a `drain`, with the overflow past the cap in `waste`.
   resourceChange?: number;
   resourceChangeType?: number;

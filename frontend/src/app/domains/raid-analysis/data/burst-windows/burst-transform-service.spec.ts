@@ -5,7 +5,7 @@ import { Results } from '../../../shared/util-http/result';
 import { BurstTransformService, ParseWindow, BurstDetectorTuning, DEFAULT_BURST_TUNING } from './burst-transform-service';
 import {
   SHADOW_BLADES, SHADOW_BLADES_DAMAGE, EVISCERATE, BLACK_POWDER, CLOAK_OF_SHADOWS, WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
-  RUPTURE, VANISH, SECRET_TECHNIQUE, SHADOW_DANCE,
+  RUPTURE, VANISH, SECRET_TECHNIQUE, SHADOW_DANCE, THE_HUNT, THE_HUNT_LANDING,
 } from '../../../../../testing/spell-ids';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { cast, damage } from '../../../../../testing/builders/events';
@@ -426,6 +426,26 @@ describe('BurstTransformService (live, in-browser)', () => {
     // ability_icons is complete: header cooldown AND every window ability resolved by id.
     expect(bench.value.ability_icons[SHADOW_BLADES]).toEqual({ icon: `icon_${SHADOW_BLADES}`, name: `name_${SHADOW_BLADES}` });
     expect(bench.value.ability_icons[SHADOW_BLADES_DAMAGE]).toEqual({ icon: `icon_${SHADOW_BLADES_DAMAGE}`, name: `name_${SHADOW_BLADES_DAMAGE}` });
+  });
+
+  it('bakes each plan button\'s press fold and counts a press WCL logs under two ids once in its window', async () => {
+    const PRESS_S = 10;
+    const LANDING_S = PRESS_S + 0.3;
+    const THE_HUNT_S = 30;
+    const huntWcl = {
+      ...wclFake,
+      getReport: reportsByCode({ abilities: [{ gameID: THE_HUNT, name: 'The Hunt', icon: '' }, { gameID: THE_HUNT_LANDING, name: 'The Hunt', icon: '' }] }),
+      getAllEvents: async (_code: string, _fightId: number, dataType: string) => {
+        if (dataType === 'Casts') return [cast(THE_HUNT, PRESS_S), cast(THE_HUNT_LANDING, LANDING_S)];
+        return dataType === 'DamageDone' ? [PRESS_S, PRESS_S + 1, PRESS_S + 2].map(atS => damage(THE_HUNT_LANDING, atS, BIN_DAMAGE)) : [];
+      },
+    };
+    const plans = planLoader(specPlan({ cooldowns: [{ name: 'The Hunt', spell_id: THE_HUNT, cooldown: 90, duration: THE_HUNT_S, charges: 1 }] }));
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: huntWcl, plans }) });
+    const bench = await TestBed.inject(BurstTransformService).getBench('HavocDemonHunter', 1);
+    assert(bench.ok);
+    expect(bench.value.press_folds).toEqual([{ name: 'The Hunt', spell_id: THE_HUNT, window_s: THE_HUNT_S }]);
+    expect(bench.value.windows[0]?.ability_breakdown[0]).toMatchObject({ spell_id: THE_HUNT_LANDING, avg_casts: 1 });
   });
 
   it('returns missing when the spec\'s plan has no cooldowns', async () => {

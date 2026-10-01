@@ -286,6 +286,23 @@ describe('DefensiveTransformService (live, in-browser)', () => {
     expect(bench.value.defensive_windows[0]).toMatchObject({ defensive_name: 'Blur', dmg_avg: 1000 });
   });
 
+  it('benches a press of a defensive the log casts twice with no aura to read as one use, and bakes its duration and charges', async () => {
+    const PRESS_S = 30;
+    const ECHO_S = 0.02;
+    const CLOAK_S = 5;
+    const echoing = {
+      ...wclFake,
+      getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
+        (dataType === 'Casts' ? [cast(CLOAK_OF_SHADOWS, PRESS_S), cast(CLOAK_OF_SHADOWS, PRESS_S + ECHO_S)] : []),
+    };
+    const plans = planLoader(specPlan({ defensives: [{ ...CLOAK, duration: CLOAK_S, charges: 1 }] }));
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: echoing, plans }) });
+    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
+    assert(bench.ok);
+    expect(bench.value.per_defensive_benchmarks['Cloak of Shadows']?.median_uses).toBe(1);
+    expect(bench.value.defensives[0]).toMatchObject({ duration: CLOAK_S, charges: 1 });
+  });
+
   it('reports missing when the spec\'s plan has no defensives', async () => {
     TestBed.configureTestingModule({
       providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan()) }),

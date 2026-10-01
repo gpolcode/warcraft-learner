@@ -140,9 +140,11 @@ export class DefensiveFeatureService {
     const deadSpans = await this.playerDeadSpans(pull, context, playerId, deaths);
 
     const dtEventsTimed = this.wclProjections.withRelativeS(dtEvents, fight.startTime);
+    const abilities = context.report.masterData?.abilities ?? [];
+    const presses = this.wclProjections.presses(casts, this.wclProjections.pressFolds(bench.defensives), { buffs, abilities });
     const playerDefensives = this.analyzeDefensives(
-      bench.defensives, this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime), this.wclProjections.withRelativeS(buffs, fight.startTime), fightDurationS,
-      context.report.masterData?.abilities ?? [],
+      bench.defensives, this.wclProjections.withRelativeS(presses, fight.startTime), this.wclProjections.withRelativeS(buffs, fight.startTime), fightDurationS,
+      abilities,
       this.gearExtract.pickedTalents(this.gearExtract.selectCombatantInfo(combatants, playerId)),
     );
     const findings = bench.defensives.length && playerDefensives.length

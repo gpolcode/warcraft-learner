@@ -8,6 +8,8 @@ export interface DefensivePlanMeta {
   name: string;
   spell_id: number;
   cooldown: number;
+  duration?: number;
+  charges?: number;
   talent_gated: boolean;
   talent_entries?: number[];
 }

@@ -5,7 +5,7 @@ import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
 import { featureService } from '../../../../../testing/service-harness';
 import { BurstFeatureService } from './burst-feature-service';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
-import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE } from '../../../../../testing/spell-ids';
+import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE, THE_HUNT, THE_HUNT_LANDING } from '../../../../../testing/spell-ids';
 import { cast, damage } from '../../../../../testing/builders/events';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { TestBed } from '@angular/core/testing';
@@ -238,6 +238,27 @@ describe('BurstFeatureService', () => {
 
   it('labels a player detail row with the bench ability name', async () => {
     expect(first(first((await playerView()).windows).detailRows).label).toBe('Eviscerate');
+  });
+
+  it('counts a press the player\'s log casts under two ids once, by the press folds the bench carries', async () => {
+    const LANDING_S = PLAYER_CAST_S + 0.3;
+    const THE_HUNT_S = 30;
+    const huntBench: BurstBench = {
+      ...benchFixture,
+      press_folds: [{ name: 'The Hunt', spell_id: THE_HUNT, window_s: THE_HUNT_S }],
+      windows: benchFixture.windows.map(window => ({ ...window, ability_breakdown: [{ spell_id: THE_HUNT_LANDING, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 1 }] })),
+    };
+    const wcl = {
+      getReport: async () => wclReport({
+        actors: [], abilities: [{ gameID: THE_HUNT, name: 'The Hunt', icon: '' }, { gameID: THE_HUNT_LANDING, name: 'The Hunt', icon: '' }],
+      }),
+      getAllEvents: async (_code: string, _fightId: number, dataType: string) => {
+        if (dataType === 'Casts') return [cast(THE_HUNT, PLAYER_CAST_S), cast(THE_HUNT_LANDING, LANDING_S)];
+        return dataType === 'DamageDone' ? [damage(THE_HUNT_LANDING, PLAYER_HIT_S, PLAYER_WINDOW_DAMAGE)] : [];
+      },
+    };
+    const view = okValue(await withBench(Results.ok(huntBench), wcl).loadPlayerView('HavocDemonHunter', 1, 'rep', 1, 10));
+    expect(first(first(view.windows).detailRows).playerCasts).toBe(1);
   });
 
   it('anchors the player view on each window start and length', async () => {
