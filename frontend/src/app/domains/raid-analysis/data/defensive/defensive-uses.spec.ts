@@ -15,7 +15,6 @@ const PRESS_S = 20;
 const AURA_LENGTH_S = 10;
 const AURA_END_S = PRESS_S + AURA_LENGTH_S;
 
-/** A self aura of the button's name, as `AuraWindowsService.spansNamed` reads it; a null end outlived the fight. */
 const aura = (startS: number, endS: number | null): [number, number | null] => [startS, endS];
 const usesOf = (auras: [number, number | null][], pressesS: number[]) => defensiveUses.uses(auras, pressesS, FIGHT_END_S);
 const pointUse = (atS: number) => ({ start_s: atS, end_s: atS });

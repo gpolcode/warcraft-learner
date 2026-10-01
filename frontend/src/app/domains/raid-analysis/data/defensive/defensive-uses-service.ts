@@ -4,17 +4,17 @@ import { TimedEvent } from '../analysis/wcl-projections-service';
 
 type BuffSpan = readonly [number, number | null];
 
-// Covers the few ms a press and its self aura can land apart in either order; an aura from another source rarely opens this close to a press.
+// A press and its self aura log a few ms apart in either order; an aura from another source rarely opens this close to a press.
 const OPENS_WITHIN_S = 1;
 
 @Injectable({ providedIn: 'root' })
 export class DefensiveUsesService {
-  /** A button's return press logs under another id of its name (Alter Time returns as 342247), so only the button's own id is a press. */
+  // A return press logs under another id of the button's name (Alter Time returns as 342247).
   castTimesS(castEvents: readonly TimedEvent[], spellId: number): number[] {
     return castEvents.filter(event => event.type === 'cast' && event.abilityGameID === spellId).map(event => event.atS);
   }
 
-  /** WCL gives a self-cast the caster's enemy as target, so only a self aura of the button's name opening at the press tells a self-buff (its window) from an external (a point use); an aura no press opened came from elsewhere and counts only when up at the pull. */
+  // WCL gives a self-cast the caster's enemy as target, so only a self aura opening at the press tells a self-buff from an external.
   uses(spans: readonly BuffSpan[], castTimesS: readonly number[], fightEndS: number): DefensiveWindow[] {
     const endOf = (span: BuffSpan): number => span[1] ?? fightEndS;
     const unclaimed = [...spans];

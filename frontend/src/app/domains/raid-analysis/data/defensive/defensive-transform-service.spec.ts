@@ -46,13 +46,12 @@ describe('defensivePlanMeta', () => {
   });
 });
 
-/** One parse's uses of Cloak, as `DefensiveUsesService.uses` reads them. */
 const cloakUses = (...uses: { start_s: number; end_s: number }[]) => new Map([[CLOAK_OF_SHADOWS, uses]]);
 
 describe('summarizeDefensiveCasts', () => {
   it('reads each use start as a cast, a point use included, and detects holds > 8s past cooldown', () => {
     const FIRST_USE_S = 10, FIRST_AURA_END_S = 15;
-    const SECOND_USE_S = 200;  // a point use: an external on another raider
+    const SECOND_USE_S = 200;
     const HELD_INDEX = 2;  // 1-based ordinal of the held (second) use
     // The second use lands SECOND_USE_S - (FIRST_USE_S + cooldown) past its reset, well over 8s.
     const EXPECTED_DELAY_S = SECOND_USE_S - (FIRST_USE_S + CLOAK.cooldown);
