@@ -27,29 +27,20 @@ export class WclProjectionsService {
     });
   }
 
-  /** WCL logs one press of some buttons as several casts: Power Infusion once per target, The Hunt's leap and landing, each Divine Hymn tick. */
+  /** WCL logs one press of some buttons as several casts: Power Infusion once per target, Deep Breath's recast, Alter Time's return, each Divine Hymn tick. */
   presses(casts: WclEvent[], folds: readonly PressFold[], { buffs, abilities }: PressLog): WclEvent[] {
     const foldOf = this.foldsById(folds, abilities);
-    const refreshes = this.secondPressRefreshes(buffs, foldOf);
-    const kept = new Map<string, { index: number; press: WclEvent }>();
-    const out: WclEvent[] = [];
-    for (const event of casts) {
+    const kept = new Map<string, WclEvent>();
+    return casts.filter(event => {
       const fold = event.type === 'cast' ? foldOf.get(event.abilityGameID) : undefined;
-      if (!fold) { out.push(event); continue; }
+      if (!fold) return true;
+      if (event.fake) return false;
       const key = `${event.sourceID ?? 0}:${fold.name}`;
-      const last = kept.get(key);
-      if (last && this.samePress(event, last.press, fold, refreshes.get(fold) ?? [])) {
-        // WCL can log a channel's first tick a ms before its press (Divine Hymn), so the kept cast may carry the tick's id.
-        if (event.abilityGameID === fold.spell_id) {
-          last.press = { ...last.press, abilityGameID: fold.spell_id };
-          out[last.index] = last.press;
-        }
-        continue;
-      }
-      kept.set(key, { index: out.length, press: event });
-      out.push(event);
-    }
-    return out;
+      const press = kept.get(key);
+      if (press && this.samePress(event, press, fold, this.selfAuras(buffs, foldOf, fold, event.sourceID))) return false;
+      kept.set(key, event);
+      return true;
+    });
   }
 
   private foldsById(folds: readonly PressFold[], abilities: readonly WclAbility[]): Map<number, PressFold> {
@@ -61,21 +52,22 @@ export class WclProjectionsService {
     return foldOf;
   }
 
-  /** An aura that stacks refreshes as it gains a stack (Divine Hymn), so only a refresh of one that never stacks in the log shows a second press. */
-  private secondPressRefreshes(buffs: readonly WclEvent[], foldOf: ReadonlyMap<number, PressFold>): Map<PressFold, WclEvent[]> {
-    const stacking = new Set(buffs.filter(event => event.type === 'applybuffstack').map(event => event.abilityGameID));
-    const byFold = new Map<PressFold, WclEvent[]>();
-    for (const event of buffs) {
-      const fold = event.type === 'refreshbuff' && !stacking.has(event.abilityGameID) ? foldOf.get(event.abilityGameID) : undefined;
-      if (fold) getOrInsert(byFold, fold, (): WclEvent[] => []).push(event);
-    }
-    return byFold;
+  private selfAuras(buffs: readonly WclEvent[], foldOf: ReadonlyMap<number, PressFold>, fold: PressFold, casterId: number | undefined): WclEvent[] {
+    return buffs.filter(event => foldOf.get(event.abilityGameID) === fold && event.sourceID === casterId);
   }
 
-  /** Inside the window, a one-charge button refreshes its own aura only when a second charge the spell data leaves out (Obsidian Bulwark) is pressed while the first still runs. */
-  private samePress(cast: WclEvent, press: WclEvent, fold: PressFold, refreshes: readonly WclEvent[]): boolean {
-    return this.relativeS(cast.timestamp, press.timestamp) < fold.window_s
-      && !refreshes.some(refresh => refresh.sourceID === cast.sourceID && Math.abs(refresh.timestamp - cast.timestamp) <= CAST_AURA_SKEW_MS);
+  // A second press of a one-charge button shows only through the aura its first press opened: still up means a charge the spell data leaves out, and no self aura means an external.
+  private samePress(cast: WclEvent, press: WclEvent, fold: PressFold, selfAuras: readonly WclEvent[]): boolean {
+    if (this.relativeS(cast.timestamp, press.timestamp) >= fold.window_s) return false;
+    if (cast.abilityGameID !== fold.spell_id || cast.timestamp - press.timestamp <= CAST_AURA_SKEW_MS) return true;
+    const opened = selfAuras.some(aura => aura.type === 'applybuff' && Math.abs(aura.timestamp - press.timestamp) <= CAST_AURA_SKEW_MS);
+    return opened && !this.auraUpAt(selfAuras, cast.timestamp - CAST_AURA_SKEW_MS);
+  }
+
+  // WCL closes and reopens a running aura in one ms (Obsidian Scales), so only the last change at or before the moment says whether it is up.
+  private auraUpAt(auras: readonly WclEvent[], atMs: number): boolean {
+    const last = auras.filter(aura => aura.timestamp <= atMs).at(-1);
+    return last !== undefined && last.type !== 'removebuff';
   }
 
   normalizeAbilityId(id: number): number {
@@ -145,7 +137,6 @@ import { ParseRanking, WclAbility, WclEvent, WclRankingsBlob, WclRawAbility, Wcl
 import { WindowSpell } from './window-comparison.models';
 import { JsonCodecService } from '../../../shared/util-validation/json-codec-service';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
-import { getOrInsert } from './analysis-math';
 import type { PlanCooldown } from '../plan/plan.models';
 
 export type TimedEvent = WclEvent & { atS: number };
@@ -158,7 +149,7 @@ export interface PressFold {
 
 type FoldButton = Pick<PlanCooldown, 'name' | 'spell_id' | 'cooldown' | 'duration' | 'charges'>;
 
-/** The player's own auras show a second charge refreshing a button's aura, and the report's names tie a button's ids together. */
+/** The auras on the player show whether a press opened its own aura, and the report's names tie a button's ids together. */
 export interface PressLog {
   buffs: readonly WclEvent[];
   abilities: readonly WclAbility[];
@@ -170,7 +161,7 @@ const ANONYMIZED_NAME = /^Character \d+-\d+$/;
 // A button on a shorter cooldown can gain a second charge from a talent the spell data leaves out (Healing Stream Totem) or come back in under half of it (Preservation's Fire Breath).
 const FOLDING_COOLDOWN_S = 60;
 
-// WCL can stamp the aura change a cast causes a few tens of ms off the cast itself.
+// WCL can stamp a cast's echo, or the aura change it causes, a few tens of ms off the cast itself.
 const CAST_AURA_SKEW_MS = 50;
 
 // WCL reports the physical auto-attack as event ability id 1; the real spell is Auto Attack.

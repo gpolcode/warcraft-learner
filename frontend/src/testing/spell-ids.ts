@@ -45,13 +45,16 @@ export const WCL_SYNTHETIC_SOURCE_FALLBACK_ID = 291807;
 export const BLADESTORM = 227847;
 export const BLADESTORM_HERO = 446035;
 
-// WCL quirk: a Divine Hymn channel logs one cast under the press and one per tick under the tick record of the same name.
+// WCL quirk: a Divine Hymn channel logs one cast under the press and a fake cast per tick under the tick record of the same name.
 export const DIVINE_HYMN = 64843;
 export const DIVINE_HYMN_TICK = 64844;
 
-// WCL quirk: The Hunt begins and casts under the press, then logs its landing as a cast under another record of the name.
+// WCL quirk: The Hunt begins and casts under the press, then logs its landing as a fake cast under another record of the name.
 export const THE_HUNT = 370965;
 export const THE_HUNT_LANDING = 370966;
 
 // Its merged spell data reads a longer duration than its own aura.
 export const ANTI_MAGIC_SHELL = 48707;
+
+// WCL quirk: one use of Devastation's Deep Breath logs a second cast under the same id seconds later, after the first one's short aura closes.
+export const DEEP_BREATH = 433874;

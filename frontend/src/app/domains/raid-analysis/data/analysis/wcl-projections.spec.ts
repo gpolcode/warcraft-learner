@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach, MockInstance } from 'vitest';
 import { PressFold, PressLog, WclProjectionsService } from './wcl-projections-service';
 import {
-  ANTI_MAGIC_SHELL, BLUR, BLUR_BUFF, DIVINE_HYMN, DIVINE_HYMN_TICK, POWER_INFUSION, SHADOW_BLADES, THE_HUNT, THE_HUNT_LANDING,
-  WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
+  ALTER_TIME, ALTER_TIME_RETURN, ANTI_MAGIC_SHELL, BLUR, BLUR_BUFF, DEEP_BREATH, DIVINE_HYMN, DIVINE_HYMN_TICK, POWER_INFUSION, SHADOW_BLADES,
+  THE_HUNT, THE_HUNT_LANDING, WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
 } from '../../../../../testing/spell-ids';
-import { applyBuff, applyBuffStack, cast, refreshBuff } from '../../../../../testing/builders/events';
+import { applyBuff, cast, fakeCast, removeBuff } from '../../../../../testing/builders/events';
 import { ParseRanking, WclEvent } from '../wcl/wcl.models';
 import type { PlanCooldown } from '../plan/plan.models';
 import { TestBed } from '@angular/core/testing';
@@ -233,7 +233,7 @@ describe('pressFolds', () => {
     expect(wclProjections.pressFolds([powerInfusion({ cooldown: FOLDING_COOLDOWN_S - 1 })])).toEqual([]);
   });
 
-  it('folds nothing for a button that a bench an older ingest wrote carries without its duration', () => {
+  it('folds nothing for a button its bench carries without a duration', () => {
     expect(wclProjections.pressFolds([{ name: 'Power Infusion', spell_id: POWER_INFUSION, cooldown: POWER_INFUSION_COOLDOWN_S }])).toEqual([]);
   });
 });
@@ -243,7 +243,9 @@ describe('presses', () => {
   const ALLY_ID = 9;
   const PRESS_S = 30;
   const ECHO_S = 0.01;
-  const JUST_UNDER_S = 0.001;
+  // Mirrors the service's skew, so changing one without the other un-pins the boundaries below.
+  const CAST_AURA_SKEW_S = 0.05;
+  const ONE_MS_S = 0.001;
   const NO_AURAS: PressLog = { buffs: [], abilities: [] };
   const powerInfusion: PressFold = { name: 'Power Infusion', spell_id: POWER_INFUSION, window_s: POWER_INFUSION_S };
   const press = (atS: number, target = ALLY_ID) => cast(POWER_INFUSION, atS, { source: PRIEST_ID, target });
@@ -254,18 +256,34 @@ describe('presses', () => {
     expect(folded([press(PRESS_S), press(PRESS_S + ECHO_S, PRIEST_ID)])).toEqual([press(PRESS_S)]);
   });
 
-  it('folds a repeat just under the fold window, and keeps one exactly at it', () => {
-    expect(folded([press(PRESS_S), press(PRESS_S + POWER_INFUSION_S - JUST_UNDER_S)])).toHaveLength(1);
-    expect(folded([press(PRESS_S), press(PRESS_S + POWER_INFUSION_S)])).toHaveLength(2);
+  it('keeps a repeat of an external, whose press opens no aura on the caster, past the skew, and folds one at it', () => {
+    expect(folded([press(PRESS_S), press(PRESS_S + CAST_AURA_SKEW_S + ONE_MS_S)])).toHaveLength(2);
+    expect(folded([press(PRESS_S), press(PRESS_S + CAST_AURA_SKEW_S)])).toHaveLength(1);
   });
 
-  it('folds a cast of another id the report names like the button, as The Hunt logs its landing', () => {
-    const LANDING_LAG_S = 0.3;
-    const LANDING_S = PRESS_S + LANDING_LAG_S;
+  it('drops a cast WCL marks fake, as it logs The Hunt\'s landing', () => {
+    const LANDING_S = PRESS_S + 0.3;
     const THE_HUNT_WINDOW_S = 30;
     const theHunt = { name: 'The Hunt', spell_id: THE_HUNT, window_s: THE_HUNT_WINDOW_S };
     const log = { buffs: [], abilities: [ability(THE_HUNT, 'The Hunt'), ability(THE_HUNT_LANDING, 'The Hunt')] };
-    expect(folded([cast(THE_HUNT, PRESS_S), cast(THE_HUNT_LANDING, LANDING_S)], [theHunt], log)).toEqual([cast(THE_HUNT, PRESS_S)]);
+    expect(folded([cast(THE_HUNT, PRESS_S), fakeCast(THE_HUNT_LANDING, LANDING_S)], [theHunt], log)).toEqual([cast(THE_HUNT, PRESS_S)]);
+  });
+
+  it('keeps the press under the button\'s own id when WCL logs a Divine Hymn tick as a fake cast a ms before it', () => {
+    const TICK_S = 1.05;
+    const DIVINE_HYMN_WINDOW_S = 15;
+    const hymn = { name: 'Divine Hymn', spell_id: DIVINE_HYMN, window_s: DIVINE_HYMN_WINDOW_S };
+    const log = { buffs: [], abilities: [ability(DIVINE_HYMN, 'Divine Hymn'), ability(DIVINE_HYMN_TICK, 'Divine Hymn')] };
+    const casts = [fakeCast(DIVINE_HYMN_TICK, PRESS_S), cast(DIVINE_HYMN, PRESS_S + ONE_MS_S), fakeCast(DIVINE_HYMN_TICK, PRESS_S + TICK_S)];
+    expect(folded(casts, [hymn], log)).toEqual([cast(DIVINE_HYMN, PRESS_S + ONE_MS_S)]);
+  });
+
+  it('folds a cast of another id the report names like the button inside the window, as Alter Time logs its return', () => {
+    const RETURN_S = PRESS_S + 4;
+    const ALTER_TIME_WINDOW_S = 20;
+    const alterTime = { name: 'Alter Time', spell_id: ALTER_TIME, window_s: ALTER_TIME_WINDOW_S };
+    const log = { buffs: [], abilities: [ability(ALTER_TIME, 'Alter Time'), ability(ALTER_TIME_RETURN, 'Alter Time')] };
+    expect(folded([cast(ALTER_TIME, PRESS_S), cast(ALTER_TIME_RETURN, RETURN_S)], [alterTime], log)).toEqual([cast(ALTER_TIME, PRESS_S)]);
   });
 
   it('keeps a recast past half the cooldown although the merged duration runs longer', () => {
@@ -274,50 +292,58 @@ describe('presses', () => {
     expect(folded(casts, wclProjections.pressFolds([ANTI_MAGIC_SHELL_BUTTON]))).toEqual(casts);
   });
 
-  describe('Divine Hymn, one press and a cast per channel tick', () => {
-    const TICK_S = 1.05;
-    const SECOND_TICK_S = PRESS_S + 2 * TICK_S;
-    const DIVINE_HYMN_WINDOW_S = 15;
-    const hymn = { name: 'Divine Hymn', spell_id: DIVINE_HYMN, window_s: DIVINE_HYMN_WINDOW_S };
-    const names = [ability(DIVINE_HYMN, 'Divine Hymn'), ability(DIVINE_HYMN_TICK, 'Divine Hymn')];
-
-    it('counts the press under the button\'s own id when WCL logs its first tick a ms before it', () => {
-      const PRESS_LAG_S = 0.001;
-      const casts = [cast(DIVINE_HYMN_TICK, PRESS_S), cast(DIVINE_HYMN, PRESS_S + PRESS_LAG_S), cast(DIVINE_HYMN_TICK, PRESS_S + TICK_S)];
-      expect(folded(casts, [hymn], { buffs: [], abilities: names })).toEqual([cast(DIVINE_HYMN, PRESS_S)]);
+  describe('a repeat under the button\'s own id after the aura its press opened on the caster closed, as Deep Breath recasts', () => {
+    const EVOKER_ID = 7;
+    const DEEP_BREATH_WINDOW_S = 10;
+    const AURA_CLOSES_S = PRESS_S + 2;
+    const RECAST_S = PRESS_S + 5;
+    const deepBreath = { name: 'Deep Breath', spell_id: DEEP_BREATH, window_s: DEEP_BREATH_WINDOW_S };
+    const breath = (atS: number) => cast(DEEP_BREATH, atS, { source: EVOKER_ID });
+    const auraClosingAt = (closesS: number): PressLog => ({
+      buffs: [applyBuff(DEEP_BREATH, PRESS_S, { target: EVOKER_ID }), removeBuff(DEEP_BREATH, closesS, { target: EVOKER_ID })],
+      abilities: [ability(DEEP_BREATH, 'Deep Breath')],
     });
 
-    it('folds a tick that refreshes the stacking aura the channel builds', () => {
-      const buffs = [
-        applyBuff(DIVINE_HYMN_TICK, PRESS_S), applyBuffStack(DIVINE_HYMN_TICK, PRESS_S + TICK_S, 2),
-        applyBuffStack(DIVINE_HYMN_TICK, SECOND_TICK_S, 3), refreshBuff(DIVINE_HYMN_TICK, SECOND_TICK_S),
-      ];
-      const casts = [cast(DIVINE_HYMN, PRESS_S), cast(DIVINE_HYMN_TICK, PRESS_S + TICK_S), cast(DIVINE_HYMN_TICK, SECOND_TICK_S)];
-      expect(folded(casts, [hymn], { buffs, abilities: names })).toEqual([cast(DIVINE_HYMN, PRESS_S)]);
+    it('is folded', () => {
+      expect(folded([breath(PRESS_S), breath(RECAST_S)], [deepBreath], auraClosingAt(AURA_CLOSES_S))).toEqual([breath(PRESS_S)]);
+    });
+
+    it('is folded just under the fold window, and kept exactly at it', () => {
+      const log = auraClosingAt(AURA_CLOSES_S);
+      expect(folded([breath(PRESS_S), breath(PRESS_S + DEEP_BREATH_WINDOW_S - ONE_MS_S)], [deepBreath], log)).toHaveLength(1);
+      expect(folded([breath(PRESS_S), breath(PRESS_S + DEEP_BREATH_WINDOW_S)], [deepBreath], log)).toHaveLength(2);
+    });
+
+    it('is folded when the aura closes the skew before the recast, and kept when it closes a ms later', () => {
+      expect(folded([breath(PRESS_S), breath(RECAST_S)], [deepBreath], auraClosingAt(RECAST_S - CAST_AURA_SKEW_S))).toHaveLength(1);
+      expect(folded([breath(PRESS_S), breath(RECAST_S)], [deepBreath], auraClosingAt(RECAST_S - CAST_AURA_SKEW_S + ONE_MS_S))).toHaveLength(2);
+    });
+
+    it('is kept when the press opened no aura on the caster', () => {
+      expect(folded([breath(PRESS_S), breath(RECAST_S)], [deepBreath], { buffs: [], abilities: [ability(DEEP_BREATH, 'Deep Breath')] })).toHaveLength(2);
     });
   });
 
-  describe('a repeat inside the window that refreshes the button\'s own aura', () => {
+  describe('a repeat while the aura its press opened on the caster still runs, a second charge the spell data leaves out', () => {
     const DEMON_HUNTER_ID = 7;
     const BLUR_WINDOW_S = 10;
     const SECOND_CHARGE_S = PRESS_S + 9;
-    // Mirrors the service's skew, so changing one without the other un-pins the boundary below.
-    const CAST_AURA_SKEW_S = 0.05;
-    const ONE_MS_S = 0.001;
     const blur = { name: 'Blur', spell_id: BLUR, window_s: BLUR_WINDOW_S };
     const blurs = [cast(BLUR, PRESS_S, { source: DEMON_HUNTER_ID }), cast(BLUR, SECOND_CHARGE_S, { source: DEMON_HUNTER_ID })];
-    const refreshedAt = (atS: number): PressLog => ({
-      buffs: [applyBuff(BLUR_BUFF, PRESS_S, { target: DEMON_HUNTER_ID }), refreshBuff(BLUR_BUFF, atS, { target: DEMON_HUNTER_ID })],
-      abilities: [ability(BLUR, 'Blur'), ability(BLUR_BUFF, 'Blur')],
+    const abilities = [ability(BLUR, 'Blur'), ability(BLUR_BUFF, 'Blur')];
+
+    it('is kept', () => {
+      const buffs = [applyBuff(BLUR_BUFF, PRESS_S, { target: DEMON_HUNTER_ID })];
+      expect(folded(blurs, [blur], { buffs, abilities })).toEqual(blurs);
     });
 
-    it('is kept, as a second charge the spell data leaves out', () => {
-      expect(folded(blurs, [blur], refreshedAt(SECOND_CHARGE_S))).toEqual(blurs);
-    });
-
-    it('is kept when the refresh lands the skew off the cast, and folded when it lands a ms further', () => {
-      expect(folded(blurs, [blur], refreshedAt(SECOND_CHARGE_S + CAST_AURA_SKEW_S))).toHaveLength(2);
-      expect(folded(blurs, [blur], refreshedAt(SECOND_CHARGE_S + CAST_AURA_SKEW_S + ONE_MS_S))).toHaveLength(1);
+    it('is kept when WCL closes and reopens the running aura in one ms', () => {
+      const REOPEN_S = PRESS_S + 3;
+      const buffs = [
+        applyBuff(BLUR_BUFF, PRESS_S, { target: DEMON_HUNTER_ID }),
+        removeBuff(BLUR_BUFF, REOPEN_S, { target: DEMON_HUNTER_ID }), applyBuff(BLUR_BUFF, REOPEN_S, { target: DEMON_HUNTER_ID }),
+      ];
+      expect(folded(blurs, [blur], { buffs, abilities })).toEqual(blurs);
     });
   });
 
