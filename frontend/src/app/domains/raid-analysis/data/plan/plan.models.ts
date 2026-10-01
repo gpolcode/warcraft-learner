@@ -2,7 +2,7 @@ export interface PlanCooldown {
   name: string;
   spell_id: number;
   cooldown: number;
-  /** Merged over every record of the name, as `PlanSpell` is, so it can outlast the button's own aura; absent, like `charges`, on a bench an older ingest wrote. */
+  /** Merged over every record of the name, so it can outlast the button's own aura. */
   duration?: number;
   charges?: number;
   opener_priority?: number;

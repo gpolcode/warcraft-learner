@@ -7,7 +7,7 @@ import { PressFold } from '../analysis/wcl-projections-service';
 export interface BurstBench extends BenchHeader {
   windows: BurstWindow[];
   cd_spell_ids: Record<string, number>;
-  /** Baked because the runtime reads no plan, and a player's log has to fold presses the way the top logs did; absent on a bench an older ingest wrote. */
+  /** Baked because the runtime reads no plan and must fold a player's presses the way ingest folded the top logs'. */
   press_folds?: PressFold[];
   /** Complete over every cd_spell_ids id and every window ability so wl-game-icon renders without a report on /pre. */
   ability_icons: Record<number, { icon: string; name: string }>;

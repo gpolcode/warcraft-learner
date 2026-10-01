@@ -19,7 +19,7 @@ export class WclProjectionsService {
     return events.map(event => ({ ...event, atS: this.relativeS(event.timestamp, fightStartMs) }));
   }
 
-  /** A merged duration can outlast the button's own aura (Anti-Magic Shell reads 45 on a 60s button) and a talent shortens a cooldown but not below half, so half the cooldown caps the window; a button with no duration folds nothing. */
+  /** A merged duration can outlast the button's own aura (Anti-Magic Shell reads 45 on a 60s button), and a talent never shortens a cooldown below half. */
   pressFolds(buttons: readonly FoldButton[]): PressFold[] {
     return buttons.flatMap(({ name, spell_id, cooldown, duration = 0, charges = 1 }) => {
       const window_s = Math.min(duration, cooldown / 2);
@@ -27,7 +27,7 @@ export class WclProjectionsService {
     });
   }
 
-  /** WCL logs one press of some buttons as several casts (Power Infusion once per target, The Hunt's leap and landing under two ids, each Divine Hymn tick), so a cast of a button inside its fold window after the kept press is that press again. */
+  /** WCL logs one press of some buttons as several casts: Power Infusion once per target, The Hunt's leap and landing, each Divine Hymn tick. */
   presses(casts: WclEvent[], folds: readonly PressFold[], { buffs, abilities }: PressLog): WclEvent[] {
     const foldOf = this.foldsById(folds, abilities);
     const refreshes = this.secondPressRefreshes(buffs, foldOf);
@@ -39,7 +39,7 @@ export class WclProjectionsService {
       const key = `${event.sourceID ?? 0}:${fold.name}`;
       const last = kept.get(key);
       if (last && this.samePress(event, last.press, fold, refreshes.get(fold) ?? [])) {
-        // WCL can log a channel's first tick a ms before the press itself (Divine Hymn), and a use is counted under the button's own id.
+        // WCL can log a channel's first tick a ms before its press (Divine Hymn), so the kept cast may carry the tick's id.
         if (event.abilityGameID === fold.spell_id) {
           last.press = { ...last.press, abilityGameID: fold.spell_id };
           out[last.index] = last.press;
@@ -150,7 +150,6 @@ import type { PlanCooldown } from '../plan/plan.models';
 
 export type TimedEvent = WclEvent & { atS: number };
 
-/** A cast of the button named `name`, or cast as `spell_id`, less than `window_s` after its kept press is that press again. */
 export interface PressFold {
   name: string;
   spell_id: number;
