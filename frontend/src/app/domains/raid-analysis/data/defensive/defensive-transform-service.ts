@@ -3,19 +3,20 @@ import { WclApiService } from '../wcl/wcl-api-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
 import { PlanDefensive } from '../plan/plan.models';
-import { BurstWindow } from '../analysis/analysis.models';
+import { BurstWindow, DefensiveWindow } from '../analysis/analysis.models';
 import { PerDefensiveBenchmark } from '../encounter/encounter.models';
 import { Result } from '../../../shared/util-http/result';
 import { mean, deviation, extent, group, mode } from 'd3-array';
 import { round, groupByTime, getOrInsert, avgOr, medianOr } from '../analysis/analysis-math';
 import { HoldWindow } from '../analysis/hold-targets-service';
-import { AuraWindows, AuraWindowsService } from '../analysis/aura-windows-service';
+import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
 import { DefensiveBench, DefensivePlanMeta } from './defensive-data-source';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
+import { DefensiveUsesService } from './defensive-uses-service';
 
 const CONSENSUS_FRAC = 0.5;
 const MEMBER_MAJORITY_FRAC = 0.5;
@@ -47,11 +48,14 @@ export interface ParseDefWindow {
 /** One window hit: `[atS, damage, abilityId, sourceId]` (sorted by time). */
 type WindowHit = [number, number, number, number | null];
 
+type UsesBySpell = Map<number, DefensiveWindow[]>;
+
 @Injectable({ providedIn: 'root' })
 export class DefensiveTransformService implements DataSource<DefensiveBench> {
   private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly auraWindows = inject(AuraWindowsService);
+  private readonly defensiveUses = inject(DefensiveUsesService);
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
@@ -100,10 +104,13 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     const fightDurationS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
     const auras = this.auraWindows.buildAuraWindows(this.wclProjections.withRelativeS(buffs, fight.startTime));
     const abilities = report.masterData?.abilities ?? [];
-    const buffWindows: AuraWindows = new Map(defensives.map(defensive => [defensive.spell_id, this.auraWindows.spansNamed(auras, defensive, abilities)]));
+    const presses = this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime);
+    const uses: UsesBySpell = new Map(defensives.map(defensive => [defensive.spell_id, this.defensiveUses.uses(
+      this.auraWindows.spansNamed(auras, defensive, abilities), this.defensiveUses.castTimesS(presses, defensive.spell_id), fightDurationS,
+    )]));
     return {
-      windows: this.findParseDefensiveWindows(this.wclProjections.withRelativeS(dmgTaken, fight.startTime), fightDurationS, buffWindows, defensives, gameIdByActorId),
-      summaries: this.summarizeDefensiveCasts(defensives, buffWindows, this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime), fightDurationS),
+      windows: this.findParseDefensiveWindows(this.wclProjections.withRelativeS(dmgTaken, fight.startTime), uses, defensives, gameIdByActorId),
+      summaries: this.summarizeDefensiveCasts(defensives, uses, fightDurationS),
     };
   }
 
@@ -117,28 +124,15 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     }));
   }
 
-  private castTimesOf(spellId: number, castEvents: TimedEvent[]): number[] {
-    const times: number[] = [];
-    for (const cast of castEvents) {
-      if (cast.type === 'cast' && cast.abilityGameID === spellId) times.push(round(cast.atS));
-    }
-    return times;
-  }
-
   protected summarizeDefensiveCasts(
     defensives: PlanDefensive[],
-    buffWindows: Map<number, [number, number | null][]>,
-    castEvents: TimedEvent[],
+    uses: UsesBySpell,
     fightDurationS: number,
   ): ParseDefensiveSummary[] {
     const summaries: ParseDefensiveSummary[] = [];
     for (const defensive of defensives) {
-      const spellId = defensive.spell_id;
       const cooldownS = defensive.cooldown;
-      const buffTimes = (buffWindows.get(spellId) ?? []).map(buffWindow => round(buffWindow[0]));
-      const castTimes = buffTimes.length ? buffTimes : this.castTimesOf(spellId, castEvents);
-
-      castTimes.sort((a, b) => a - b);
+      const castTimes = (uses.get(defensive.spell_id) ?? []).map(use => round(use.start_s));
       const holdWindows = this.holdTargets.detectHoldWindows(castTimes, cooldownS);
 
       const firstCastS = castTimes[0];
@@ -179,10 +173,9 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     return topSource != null ? (gameIdByActorId.get(topSource) ?? null) : null;
   }
 
-  // Open buffs run to fight end, never a fixed duration.
   protected findParseDefensiveWindows(
-    damageTaken: TimedEvent[], fightDurationS: number,
-    buffWindows: Map<number, [number, number | null][]>,
+    damageTaken: TimedEvent[],
+    uses: UsesBySpell,
     defensives: PlanDefensive[],
     gameIdByActorId: Map<number, number>,
   ): ParseDefWindow[] {
@@ -196,9 +189,8 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     for (const defensive of defensives) {
       const spellId = defensive.spell_id;
 
-      for (const buffWindow of (buffWindows.get(spellId) ?? [])) {
-        const startS = buffWindow[0];
-        const endS = buffWindow[1] ?? fightDurationS;
+      // A point use is an external on another raider, so none of the caster's damage taken falls in its window.
+      for (const { start_s: startS, end_s: endS } of (uses.get(spellId) ?? []).filter(use => use.end_s > use.start_s)) {
         const windowHits = hits.filter(hit => hit[0] >= startS && hit[0] <= endS);
         const windowDmg = windowHits.reduce((sum, hit) => sum + hit[1], 0);
 

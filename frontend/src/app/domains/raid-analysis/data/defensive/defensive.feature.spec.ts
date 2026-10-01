@@ -2,7 +2,7 @@ import { assert, describe, it, expect } from 'vitest';
 import { DEFENSIVE_DATA_SOURCE, DefensiveBench } from './defensive-data-source';
 import { featureService } from '../../../../../testing/service-harness';
 import { DefensiveFeatureService } from './defensive-feature-service';
-import { applyBuff, removeBuff, damageTaken, death, resurrect } from '../../../../../testing/builders/events';
+import { applyBuff, removeBuff, cast, damageTaken, death, resurrect } from '../../../../../testing/builders/events';
 import { CLOAK_OF_SHADOWS, EVASION } from '../../../../../testing/spell-ids';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { Result, Results } from '../../../shared/util-http/result';
@@ -43,7 +43,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
       getCombatantInfo: async () => [],
       getAllEvents: async (_c: string, _f: number, dataType: string) => {
         if (dataType === 'Buffs') return [applyBuff(CLOAK_OF_SHADOWS, 30), removeBuff(CLOAK_OF_SHADOWS, 35)];
-        if (dataType === 'Casts') return [];
+        if (dataType === 'Casts') return [cast(CLOAK_OF_SHADOWS, 30)];
         return [damageTaken(BOSS_HIT_SPELL_ID, 32, 1150)]; // t=32 falls inside the 30-35 buff window
       },
     };
@@ -83,8 +83,11 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const wcl = {
       getReport: async () => wclReport({ playerName: 'P' }),
       getCombatantInfo: async () => [],
-      getAllEvents: async (_c: string, _f: number, dataType: string) =>
-        dataType === 'Buffs' ? [applyBuff(EVASION, ON_PLAN_USE_S)] : [],
+      getAllEvents: async (_c: string, _f: number, dataType: string) => {
+        if (dataType === 'Buffs') return [applyBuff(EVASION, ON_PLAN_USE_S)];
+        if (dataType === 'Casts') return [cast(EVASION, ON_PLAN_USE_S)];
+        return [];
+      },
     };
     const service = serviceWith(Results.ok(twoDefensiveBench()), wcl);
     const result = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);

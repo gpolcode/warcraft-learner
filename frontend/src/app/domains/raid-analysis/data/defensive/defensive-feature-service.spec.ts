@@ -20,17 +20,18 @@ const svc = TestBed.inject(DefensiveFeatureService);
 TestBed.resetTestingModule();
 
 describe('analyzeDefensives', () => {
-  // Composition only: span shapes and fallbacks are specced on buildDefensiveUsageWindows.
-  it('builds buff-window-centric uses', () => {
+  // Composition only: which presses and auras make a use is specced on DefensiveUsesService.uses.
+  it('reads a press that opens its self aura as one use over the aura', () => {
+    const PRESS_S = 10, AURA_END_S = 15;
     const out = svc['analyzeDefensives'](
       [CLOAK_META],
-      [], timed([applyBuff(CLOAK_OF_SHADOWS, 10), removeBuff(CLOAK_OF_SHADOWS, 15)], 0),
+      timed([cast(CLOAK_OF_SHADOWS, PRESS_S)], 0), timed([applyBuff(CLOAK_OF_SHADOWS, PRESS_S), removeBuff(CLOAK_OF_SHADOWS, AURA_END_S)], 0),
       300, [], null,
     );
     expect(out).toHaveLength(1);
-    expect(out[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 1, cast_times_s: [10] });
+    expect(out[0]).toMatchObject({ name: 'Cloak of Shadows', uses: 1, cast_times_s: [PRESS_S] });
     assert.exists(out[0]);
-    expect(out[0].windows[0]).toMatchObject({ start_s: 10, end_s: 15 });
+    expect(out[0].windows[0]).toMatchObject({ start_s: PRESS_S, end_s: AURA_END_S });
   });
 
   // Composition only: back-fill semantics are specced on buildAuraWindows.
@@ -68,34 +69,6 @@ describe('analyzeDefensives talent gate', () => {
   it('marks it gated when the talents do not show it, or the pull carries none', () => {
     expect(gatedFor(new Map([[TALENT_ENTRY + 1, 1]]))).toBe(true);
     expect(gatedFor(null)).toBe(true);
-  });
-});
-
-describe('buildDefensiveUsageWindows', () => {
-  const FIGHT_END_S = 300;
-
-  it('builds a measured buff span, open buff running to fight end', () => {
-    const BUFF_START_S = 10;
-    const out = svc['buildDefensiveUsageWindows'](CLOAK_OF_SHADOWS, [[BUFF_START_S, null]], [], FIGHT_END_S);
-    expect(out).toEqual([{ start_s: BUFF_START_S, end_s: FIGHT_END_S }]);
-  });
-
-  it('falls back to point casts (zero span) only when there is no buff span', () => {
-    const CAST_S = 20;
-    const out = svc['buildDefensiveUsageWindows'](
-      CLOAK_OF_SHADOWS, [], timed([cast(CLOAK_OF_SHADOWS, CAST_S)], 0),
-      FIGHT_END_S,
-    );
-    expect(out).toEqual([{ start_s: CAST_S, end_s: CAST_S }]);
-  });
-
-  it('ignores a cast outside the fight bounds (boundary)', () => {
-    const PAST_END_S = 301; // > FIGHT_END_S
-    const out = svc['buildDefensiveUsageWindows'](
-      CLOAK_OF_SHADOWS, [], timed([cast(CLOAK_OF_SHADOWS, PAST_END_S)], 0),
-      FIGHT_END_S,
-    );
-    expect(out).toEqual([]);
   });
 });
 

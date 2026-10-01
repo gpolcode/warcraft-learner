@@ -60,7 +60,7 @@ export interface PlayerBurstWindow {
   ability_breakdown?: { spell_id: number; damage: number; casts?: number }[];
 }
 
-interface DefensiveWindow {
+export interface DefensiveWindow {
   start_s: number;
   end_s: number;
 }
