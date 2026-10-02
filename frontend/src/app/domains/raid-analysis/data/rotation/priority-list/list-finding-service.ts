@@ -6,7 +6,7 @@ import type { WindowStatus } from '../../analysis/window-comparison.models';
 import type { PriorityList } from '../../plan/plan.models';
 import type { AplNode } from '../../simc/simc-apl-service';
 import type { ButtonBench, RotationBench, ShareRange } from '../rotation-data-source';
-import { CastCheck, CastVerdict, ListCheckService, LogReading, OrderCheck, ReadLine, TermReading } from './list-check-service';
+import { CastCheck, CastVerdict, Junction, ListCheckService, LogReading, OrderCheck, ReadLine, TermReading } from './list-check-service';
 import { ConditionEvalService } from './condition-eval-service';
 import { ListTextService } from './list-text-service';
 import type { Truth } from './priority-list.models';
@@ -114,7 +114,11 @@ export class ListFindingService {
     const { group } = check;
     if (!group) return check.truth !== 'true' || result === 'true' ? { ...check, role: 'decisive' } : check;
     const settling = group.any ? this.settling(group.checks, check.truth) : group.checks;
-    const parts = group.checks.map(part => (settling.includes(part) ? this.marked(part, result) : this.unneeded(part)));
+    // An either-or's order never changes its result, so the options that settled it lead.
+    const parts = [
+      ...settling.map(part => this.marked(part, result)),
+      ...group.checks.filter(part => !settling.includes(part)).map(part => this.unneeded(part)),
+    ];
     return { ...check, group: { ...group, checks: parts } };
   }
 
@@ -150,16 +154,19 @@ export class ListFindingService {
   }
 
   private check(list: PriorityList, term: AplNode, reading: TermReading | undefined, action: string): ConditionCheck {
-    const truth = reading?.truth ?? 'unknown';
     const junction = this.checks.junction(term);
-    if (junction) {
-      const checks = this.unsettled(junction.operands, reading?.parts).map(([operand, part]) => this.check(list, operand, part, action));
-      // The operands read one by one below, so a nested either-or never has to be said in one sentence.
-      return { text: junction.any ? 'One of' : 'All of', truth, value: '', group: { any: junction.any, checks } };
-    }
+    if (junction) return this.group(list, junction, reading, action);
     const text = this.text.capitalized(this.text.phrase(list, term, true, action));
     const subject = this.checks.subject(term);
-    return { text, truth, value: reading?.value && subject ? this.text.value(subject, reading.value, this.readsAsFlag(term)) : '' };
+    return { text, truth: reading?.truth ?? 'unknown', value: reading?.value && subject ? this.text.value(subject, reading.value, this.readsAsFlag(term)) : '' };
+  }
+
+  private group(list: PriorityList, junction: Junction, reading: TermReading | undefined, action: string): ConditionCheck {
+    const checks = this.unsettled(junction.operands, reading?.parts).map(([operand, part]) => this.check(list, operand, part, action));
+    // Dropping the build's own operands can leave an all-of holding a single condition.
+    if (checks.length === 1 && checks[0]) return checks[0];
+    // The operands read one by one below, so a nested either-or never has to be said in one sentence.
+    return { text: junction.any ? 'One of' : 'All of', truth: reading?.truth ?? 'unknown', value: '', group: { any: junction.any, checks } };
   }
 
   /** `!(x>2)` names a subject too, yet compares it as a number rather than testing it as a flag. */

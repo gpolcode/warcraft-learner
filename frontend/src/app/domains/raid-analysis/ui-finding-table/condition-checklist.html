@@ -4,22 +4,22 @@
     @let unneeded = check.role === 'unneeded';
     @let tone = check.truth === 'unknown' ? 'unknown' : (check.role === 'decisive' ? check.truth : 'quiet');
     <li class="contents">
-      <div class="flex min-h-6 pr-9">
-        <!-- left-2.25 is half of icon-18, so connectors drop from the icon center. -->
+      <div class="flex min-h-6 md:pr-9">
+        <!-- left-2.25 is half of icon-18, so connectors drop from the icon center; h-3 meets the first line on a phone, where the state wraps under it. -->
         @for (continues of node.continuing; track $index) {
-          <span class="relative w-6.5 shrink-0" aria-hidden="true">
+          <span class="relative w-4.25 shrink-0" aria-hidden="true">
             @if (continues) {
               <span class="absolute inset-y-0 left-2.25 border-l border-muted/30"></span>
             }
           </span>
         }
-        <span class="relative w-6.5 shrink-0" aria-hidden="true">
-          <span class="absolute top-0 left-2.25 w-4.25 h-1/2 border-l border-b border-muted/30"></span>
+        <span class="relative w-4.25 shrink-0" aria-hidden="true">
+          <span class="absolute top-0 left-2.25 w-2 h-3 md:h-1/2 border-l border-b border-muted/30"></span>
           @if (!node.last) {
-            <span class="absolute top-1/2 bottom-0 left-2.25 border-l border-muted/30"></span>
+            <span class="absolute top-3 md:top-1/2 bottom-0 left-2.25 border-l border-muted/30"></span>
           }
         </span>
-        <span class="flex items-center gap-2 min-w-0 py-0.5 text-body" [class.opacity-40]="unneeded">
+        <span class="flex items-start md:items-center gap-2 min-w-0 py-0.5 text-body" [class.opacity-40]="unneeded">
           @switch (check.truth) {
             @case ('true') {
               <mat-icon class="icon-18 shrink-0 text-success" aria-hidden="false" aria-label="Met">check</mat-icon>
@@ -31,11 +31,20 @@
               <mat-icon class="icon-18 shrink-0 text-warning" aria-hidden="false" aria-label="Not in the log">help_outline</mat-icon>
             }
           }
-          <span [class.text-muted]="!!check.group">{{ check.text }}</span>
+          <span class="flex flex-col min-w-0">
+            <span [class.text-muted]="!!check.group">{{ check.text }}</span>
+            @if (check.value) {
+              <span
+                class="md:hidden tabular-nums"
+                [class.text-warning]="tone === 'unknown'"
+                [class.text-critical]="tone === 'false'"
+                [class.text-muted]="tone === 'quiet'">{{ check.value }}</span>
+            }
+          </span>
         </span>
       </div>
       <span
-        class="flex items-center py-0.5 tabular-nums text-body"
+        class="hidden md:flex items-center py-0.5 tabular-nums text-body"
         [class.text-warning]="tone === 'unknown'"
         [class.text-critical]="tone === 'false'"
         [class.text-muted]="tone === 'quiet'"
@@ -49,11 +58,11 @@
   }
 </ng-template>
 
-<div class="grid grid-cols-[auto_auto] justify-start pl-3">
-  <span class="pr-9 pb-1.25 mb-1.25 border-b border-line text-body text-muted">Condition</span>
+<div class="grid grid-cols-1 md:grid-cols-[auto_auto] md:justify-start">
+  <span class="md:pr-9 md:pb-1.25 md:mb-1.25 md:border-b border-line text-body text-muted">Condition</span>
   <span class="pb-1.25 mb-1.25 border-b border-line text-body text-muted">State at {{ occurrence().atS | formatDuration }}</span>
 
-  <div class="flex items-center gap-2 min-h-5 pb-0.5 pr-9 text-body">
+  <div class="flex items-center gap-2 min-h-5 pb-0.5 md:pr-9 text-body">
     @if (occurrence().unjudged) {
       <mat-icon class="icon-18 shrink-0 text-warning">help_outline</mat-icon>
     } @else if (occurrence().ok) {
@@ -64,7 +73,7 @@
     <span>{{ occurrence().result }}</span>
     <span class="text-muted">All of</span>
   </div>
-  <span></span>
+  <span class="hidden md:block"></span>
 
   <ul class="contents" aria-label="Conditions for this cast">
     <ng-container *ngTemplateOutlet="list; context: { $implicit: nodes() }"></ng-container>

@@ -10,6 +10,7 @@ import { ConditionEvalService } from './condition-eval-service';
 import { ListFindingService } from './list-finding-service';
 import { priorityList } from './priority-list-harness';
 import type { Range, Truth } from './priority-list.models';
+import type { PriorityList } from '../../plan/plan.models';
 
 /** Mirrors the strip cap in list-finding-service.ts. */
 const MAX_OCCURRENCES = 24;
@@ -186,6 +187,18 @@ describe('ListFindingService condition paths', () => {
     expect(roles(up?.group?.checks)).toEqual(['decisive', 'plain']);
   });
 
+  it('leads an either-or with the option that settled it', () => {
+    const [either] = occurrenceOf(pressed('on', moment(['false', 'true'], ['true', 'true'])))?.checks ?? [];
+    const [first, second] = either?.group?.checks ?? [];
+    expect(first?.group?.checks.map(check => check.text)).toEqual(['While Darkest Night is up', 'With over 0 combo points missing']);
+    expect(second?.role).toBe('unneeded');
+  });
+
+  it('keeps the list\'s order in an either-or its first option settled', () => {
+    const [either] = occurrenceOf(pressed('on', moment(['true', 'true'], ['false', 'true'])))?.checks ?? [];
+    expect(either?.group?.checks[0]?.group?.checks.map(check => check.text)).toEqual(['While Darkest Night is down', 'At under 5 combo points']);
+  });
+
   it('marks the condition the log cannot read on a cast it could not judge, and fades the option that failed', () => {
     const { down, up, enemies } = parts(pressed('unjudged', moment(['true', 'unknown'], ['false', 'true'])));
     expect(roles(down?.group?.checks)).toEqual(['plain', 'decisive']);
@@ -244,11 +257,24 @@ describe('ListFindingService build terms', () => {
     lines: [{ truth: 'false', terms: [settled, { truth: 'false', value: null, parts: [{ truth: 'false', value: [3, 3] }, settled] }] }],
   };
 
+  const checksOf = (list: PriorityList, check: CastCheck) => rowOf(reading([check]), withButtons([button()], { list }))?.occurrences[0]?.checks;
+
   it('leaves what the player\'s build alone settles out of every checklist, at any depth', () => {
-    const row = rowOf(reading([offCast]), withButtons([button()], { list: built }));
-    expect(row?.occurrences[0]?.checks).toEqual([{
-      text: 'All of', truth: 'false', value: '',
-      group: { any: false, checks: [{ text: 'At 5+ combo points', truth: 'false', value: '3 combo points', role: 'decisive' }] },
-    }]);
+    expect(checksOf(built, offCast)?.map(check => check.text)).toEqual(['At 5+ combo points']);
+  });
+
+  it('reads an all-of the build leaves holding one condition as that condition', () => {
+    expect(checksOf(built, offCast)).toEqual([{ text: 'At 5+ combo points', truth: 'false', value: '3 combo points', role: 'decisive' }]);
+  });
+
+  it('keeps an all-of the build leaves holding two conditions as a group', () => {
+    const twoLeft = priorityList({ ...list, lines: [{ action: 'eviscerate', terms: ['combo_points>=5&buff.shadow_dance.up&!talent.unseen_blade'] }] });
+    const missed: CastCheck = {
+      atS: 10, verdict: 'off', line: 0,
+      lines: [{ truth: 'false', terms: [{ truth: 'false', value: null, parts: [{ truth: 'false', value: [3, 3] }, { truth: 'true', value: [1, 1] }, settled] }] }],
+    };
+    const [group] = checksOf(twoLeft, missed) ?? [];
+    expect(group?.text).toBe('All of');
+    expect(group?.group?.checks.map(check => check.text)).toEqual(['At 5+ combo points', 'While Shadow Dance is up']);
   });
 });
