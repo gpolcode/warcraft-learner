@@ -91,7 +91,7 @@ async function launchBrowser() {
 }
 
 async function main() {
-  // Resolved here, before any child, so a terminal prompt lands once and both children inherit the pair.
+  // Resolved before any child starts, so a terminal prompt lands once and the serve child inherits the pair.
   await requireWclCredentials();
   startChild('server', 'node', ['scripts/ingest-server.js']);
   startChild('serve', 'node', ['scripts/ng-env.mjs', 'serve', '--configuration', 'ingest']);

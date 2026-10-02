@@ -31,7 +31,7 @@ npm run schema:pull # refresh the WCL GraphQL schema and regenerate the typed op
 
 The ~100 MB of generated bench data (minified JSON) under `frontend/public/data/specs/**` is not tracked on `main`; it lives once on the `gh-pages` branch at the site root under `data/specs/`, the single shared copy the deployed site serves. `npm run data:pull` fetches `origin/gh-pages` and extracts those files into your working tree, where they remain gitignored. Re-run it whenever you want the latest parse data.
 
-The app is a fully static Angular SPA. It talks directly to the Warcraft Logs API from the browser using an OAuth2 client-credentials token (no user login); there is no backend. Every value the app reads from outside its own code (hosts, endpoints, local ports, the raids ingestion benches, the WCL pair) lives in `frontend/src/environments/`: `base-environment.ts` holds the defaults, each `environment.*.ts` overrides what differs for its build, and `.env` supplies the pair. GitHub holds nothing but the two secrets `WCL_CLIENT_ID` and `WCL_CLIENT_SECRET`.
+The app is a fully static Angular SPA. It talks directly to the Warcraft Logs API from the browser using an OAuth2 client-credentials token (no user login); there is no backend. Every value the app reads from outside its own code (hosts, endpoints, the dev and ingest server origins, the raids ingestion benches, the WCL pair) lives in `frontend/src/environments/`: `base-environment.ts` holds the defaults, each `environment.*.ts` overrides what differs for its build, and `.env` supplies the pair. GitHub holds secrets only, never configuration: the WCL pair as `WCL_CLIENT_ID` and `WCL_CLIENT_SECRET`, beside the deploy app's credentials.
 
 ## Documentation
 

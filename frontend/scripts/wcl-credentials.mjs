@@ -35,7 +35,7 @@ async function askForPair() {
   }
 }
 
-/** Resolves the pair, loading `.env` under whatever the environment already carries; on a terminal with no `.env` yet, asks and writes one. */
+/** The environment wins over `.env`, so a CI secret is never shadowed by a checked-out file; only a terminal with no `.env` is asked. */
 export async function requireWclCredentials() {
   const envFileExists = existsSync(ENV_FILE);
   if (envFileExists) process.loadEnvFile(ENV_FILE);

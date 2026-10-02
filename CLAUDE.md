@@ -28,7 +28,7 @@ flowchart LR
 
 Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
 
-Configuration lives in `frontend/src/environments/`: `base-environment.ts` is the `Environment` schema with the defaults (every external host and endpoint, the local ports, the raids ingestion benches), each `environment.*.ts` overrides what differs for its build through `fileReplacements`, and the WCL client pair reaches the bundle at build time as `--define` globals from `scripts/ng-env.mjs`, read from `frontend/.env` locally (`.env.example` names the keys) and from the `WCL_CLIENT_ID` / `WCL_CLIENT_SECRET` Actions secrets in CI, the repository's only secret input. Code reads it through `inject(ENVIRONMENT)` (`environment-token.ts`), never by importing the swapped file (eslint-enforced) and never as a literal in a service.
+Configuration lives in `frontend/src/environments/`: `base-environment.ts` is the `Environment` schema with the defaults (every external host and endpoint, the dev and ingest server origins, the raids ingestion benches), each `environment.*.ts` overrides what differs for its build through `fileReplacements`, and the WCL client pair reaches the bundle at build time as `--define` globals from `scripts/ng-env.mjs`, read from `frontend/.env` locally (`.env.example` names the keys) and from the `WCL_CLIENT_ID` / `WCL_CLIENT_SECRET` Actions secrets in CI; GitHub holds secrets only, never configuration. Code reads it through `inject(ENVIRONMENT)` (`environment-token.ts`), never by importing the swapped file (eslint-enforced) and never as a literal in a service.
 
 ## Commands (run from `frontend/`)
 

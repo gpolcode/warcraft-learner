@@ -14,7 +14,7 @@ The browser authenticates with the **client-credentials** grant against `/api/v2
 - The token reads only **public** WCL report data, and a client token has no user-scoped budget to lose.
 - The **only** risk is a stolen pair draining the shared hourly rate-limit budget. Rotation is manual, at `warcraftlogs.com/api/clients/`: WCL exposes **no API to rotate a client secret**; after rotating, update the two Actions secrets.
 - There is **no login UI, callback route, or PKCE flow**: a client token has no current user, so users always supply a report code or character name.
-- The deployed site, the E2E run and the hourly CI ingest share the repository's pair and its budget; a developer's `.env` holds their own pair, so local runs and local ingestion spend their own budget. The pair never appears in the repository: `WclAuthService` reads it from the injected `ENVIRONMENT` and refuses a build that carries none, and the Node scripts read the same `.env` through `scripts/wcl-credentials.mjs`.
+- The deployed site, the E2E run and the hourly CI ingest share the repository's pair and its budget; a developer's `.env` holds their own pair, so local runs and local ingestion spend their own budget. The pair never appears in the repository: `WclAuthService` reads it from the injected `ENVIRONMENT` and refuses a build that carries none, and `schema-pull.mjs` and the headless ingest read the same `.env` through `scripts/wcl-credentials.mjs`.
 
 ## WCL API quirks
 
