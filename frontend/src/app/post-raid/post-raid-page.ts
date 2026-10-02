@@ -60,7 +60,7 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
   const render = (): void => { fixture.detectChanges(); };
 
   const reportInput = (): HTMLInputElement => {
-    const input = host().querySelector<HTMLInputElement>('input[matInput]');
+    const input = host().querySelector<HTMLInputElement>('input[hlmInput]');
     assert.exists(input);
     return input;
   };
@@ -73,22 +73,26 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
   };
 
   const selectAt = (index: number): HTMLElement => {
-    const select = host().querySelectorAll<HTMLElement>('mat-select')[index];
+    const select = host().querySelectorAll<HTMLElement>('hlm-select')[index];
     assert.exists(select);
     return select;
   };
 
-  // Not a Material harness: it awaits a stability the parked fetches never reach.
-  const openOptions = (index: number): HTMLElement[] => {
-    const select = selectAt(index);
-    const trigger = select.querySelector<HTMLElement>('.mat-mdc-select-trigger');
+  const triggerAt = (index: number): HTMLElement => {
+    const trigger = selectAt(index).querySelector<HTMLElement>('button[role="combobox"]');
     assert.exists(trigger);
+    return trigger;
+  };
+
+  // Driven by hand: a stability wait never settles while the parked fetches are pending.
+  const openOptions = (index: number): HTMLElement[] => {
+    const trigger = triggerAt(index);
     trigger.click();
     render();
-    const panelId = select.getAttribute('aria-controls');
+    const panelId = trigger.getAttribute('aria-controls');
     const panel = panelId ? document.getElementById(panelId) : null;
     assert.exists(panel);
-    return Array.from(panel.querySelectorAll<HTMLElement>('mat-option'));
+    return Array.from(panel.querySelectorAll<HTMLElement>('[role="option"]'));
   };
 
   return {
@@ -112,7 +116,7 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
     reportValue: () => reportInput().value,
     options(index) {
       const labels = openOptions(index).map(clean);
-      document.querySelector<HTMLElement>('.cdk-overlay-backdrop')?.click();
+      triggerAt(index).click();
       render();
       return labels;
     },
@@ -123,8 +127,7 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
       render();
     },
     chosen(index) {
-      const trigger = selectAt(index).querySelector('.mat-mdc-select-value');
-      return trigger ? clean(trigger) : '';
+      return clean(triggerAt(index));
     },
     text: () => clean(host()),
     // A report load settles in stages (report, then player details), so one pass can return mid-flight.

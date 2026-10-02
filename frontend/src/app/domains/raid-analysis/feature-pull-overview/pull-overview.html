@@ -23,7 +23,7 @@
 
         @for (d of v.deaths; track d.index) {
           <div class="grid grid-cols-(--cols-death) gap-2.75 items-center py-2.5 border-t border-line">
-            <mat-icon class="icon-18 text-critical">skull</mat-icon>
+            <ng-icon class="icon-18 text-critical" name="skull" />
             <div class="min-w-0">
               <div class="text-body">Death {{ d.index }}</div>
               @if (d.ability) {
@@ -33,14 +33,14 @@
             <span class="tabular-nums text-body text-accent">{{ d.timeS | formatDuration }}</span>
             <div class="flex gap-0.5 pr-2">
               @if (showMap()) {
-                <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenMap(d.timeS)">
-                  <mat-icon>my_location</mat-icon>
+                <button hlmBtn variant="outline" size="sm" class="whitespace-nowrap" (click)="onOpenMap(d.timeS)">
+                  <ng-icon name="my_location" />
                   Show map
                 </button>
               }
               @if (showClip()) {
-                <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">
-                  <mat-icon>videocam</mat-icon>
+                <button hlmBtn variant="outline" size="sm" class="whitespace-nowrap" (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">
+                  <ng-icon name="videocam" />
                   Watch clip
                 </button>
               }
@@ -48,16 +48,16 @@
           </div>
         } @empty {
           <div class="flex items-center gap-2.5 py-2.5 border-t border-line">
-            <mat-icon class="icon-18 text-success">check_circle</mat-icon>
+            <ng-icon class="icon-18 text-success" name="check_circle" />
             <span class="text-body">No deaths - {{ v.result === 'kill' ? 'clean pull' : 'you survived' }}</span>
           </div>
         }
 
         <div class="grid grid-cols-(--cols-death) gap-2.75 items-center py-2.5 border-t border-line">
           @if (v.result === 'kill') {
-            <mat-icon class="icon-18 text-gold">emoji_events</mat-icon>
+            <ng-icon class="icon-18 text-gold" name="emoji_events" />
           } @else {
-            <mat-icon class="icon-18 text-warning">flag</mat-icon>
+            <ng-icon class="icon-18 text-warning" name="flag" />
           }
           <div class="min-w-0">
             <div class="text-body">{{ v.result === 'kill' ? 'Kill' : 'Wipe' }}</div>
@@ -69,14 +69,14 @@
           <span class="tabular-nums text-body text-accent">{{ v.outcomeTimeS | formatDuration }}</span>
           <div class="flex gap-0.5 pr-2">
             @if (showMap()) {
-              <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenMap(v.outcomeTimeS)">
-                <mat-icon>my_location</mat-icon>
+              <button hlmBtn variant="outline" size="sm" class="whitespace-nowrap" (click)="onOpenMap(v.outcomeTimeS)">
+                <ng-icon name="my_location" />
                 Show map
               </button>
             }
             @if (showClip()) {
-              <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">
-                <mat-icon>videocam</mat-icon>
+              <button hlmBtn variant="outline" size="sm" class="whitespace-nowrap" (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">
+                <ng-icon name="videocam" />
                 Watch clip
               </button>
             }

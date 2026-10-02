@@ -6,15 +6,18 @@
   </p>
 } @else {
   <div class="mb-2 flex flex-wrap items-center justify-end gap-2">
-    <mat-form-field appearance="outline" class="w-[200px]">
-      <mat-label>Reference</mat-label>
-      <mat-select [value]="refValue()" (selectionChange)="onRefChange($event.value)">
-        <mat-option value="boss">Boss</mat-option>
+    <label hlmLabel for="map-reference">Reference</label>
+    <hlm-select [value]="refValue()" (valueChange)="onRefChange($event)">
+      <hlm-select-trigger buttonId="map-reference" class="w-[200px]">
+        <span class="truncate">{{ refLabel() }}</span>
+      </hlm-select-trigger>
+      <hlm-select-content *hlmSelectPortal>
+        <hlm-select-item value="boss">Boss</hlm-select-item>
         @for (enemy of refEnemies(); track enemy.gameId) {
-          @if (!enemy.isBoss) { <mat-option [value]="enemy.gameId">{{ enemy.name }}</mat-option> }
+          @if (!enemy.isBoss) { <hlm-select-item [value]="enemy.gameId">{{ enemy.name }}</hlm-select-item> }
         }
-      </mat-select>
-    </mat-form-field>
+      </hlm-select-content>
+    </hlm-select>
   </div>
 
   <div class="relative rounded-lg border border-line bg-surface-alt">
@@ -30,8 +33,8 @@
   <p class="mt-1.5 text-caption text-muted">Every position is drawn relative to the reference, which sits at the centre facing up.</p>
 
   <div class="mt-2 flex items-center gap-2">
-    <button mat-icon-button [attr.aria-label]="playing() ? 'Pause' : 'Play'" (click)="togglePlay()">
-      <mat-icon>{{ playing() ? 'pause' : 'play_arrow' }}</mat-icon>
+    <button hlmBtn variant="ghost" size="icon" [attr.aria-label]="playing() ? 'Pause' : 'Play'" (click)="togglePlay()">
+      <ng-icon [name]="playing() ? 'pause' : 'play_arrow'" />
     </button>
     <div class="min-w-0 flex-1">
       <input type="range" class="block w-full cursor-pointer accent-gold"

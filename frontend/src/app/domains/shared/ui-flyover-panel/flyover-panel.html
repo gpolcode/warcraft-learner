@@ -9,7 +9,7 @@
       </div>
       <p class="mt-0.5 text-body text-muted">{{ intro() }}</p>
     </div>
-    <button mat-icon-button [attr.aria-label]="closeLabel()" (click)="closed.emit()"><mat-icon>close</mat-icon></button>
+    <button hlmBtn variant="ghost" size="icon" [attr.aria-label]="closeLabel()" (click)="closed.emit()"><ng-icon name="close" /></button>
   </div>
   <div class="flex-1 overflow-y-auto p-4">
     <ng-content />

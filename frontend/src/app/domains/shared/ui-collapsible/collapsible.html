@@ -9,6 +9,6 @@
     [attr.aria-expanded]="expanded()"
     (click)="toggle()">
     {{ expanded() ? 'Show less' : 'Show more' }}
-    <mat-icon class="icon-16">{{ expanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+    <ng-icon class="icon-16" [name]="expanded() ? 'expand_less' : 'expand_more'" />
   </button>
 }

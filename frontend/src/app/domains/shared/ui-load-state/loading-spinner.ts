@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HlmSpinner } from '@spartan-ng/helm/spinner';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-loading-spinner',
-  imports: [MatProgressSpinnerModule],
+  imports: [HlmSpinner],
   template: `    <div class="flex flex-col items-center gap-3 p-12 text-muted">
-      <mat-spinner [diameter]="36"></mat-spinner>
+      <hlm-spinner class="size-9" />
       @if (message()) {
         <span class="text-name">{{ message() }}</span>
       }

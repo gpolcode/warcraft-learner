@@ -28,6 +28,8 @@ flowchart LR
 
 Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
 
+UI primitives are [spartan](https://spartan.ng) helm components vendored under `frontend/libs/ui/` (imported as `@spartan-ng/helm/*`, kept out of lint), themed onto the app palette in `src/styles.scss`; icons are lucide, registered under their snake_case names in `shared/ui-icon/app-icons.ts`.
+
 ## Commands (run from `frontend/`)
 
 | Command | Description |

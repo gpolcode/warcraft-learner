@@ -57,14 +57,14 @@ test('following the latest pull hands the fight selection to the live poll', asy
 
   await follow.click();
   await expect(follow).toBeChecked();
-  await expect(fight).toHaveAttribute('aria-disabled', 'true');
+  await expect(fight).toBeDisabled();
   // The countdown ticks every second, so only its shape is pinned.
   const settled = /Next update in \d+s/;
   await expect(controls.getByText(settled)).toBeVisible({ timeout: LIVE_TIMEOUT_MS });
 
   // Left on, the poll keeps hitting Warcraft Logs under every later test.
   await follow.click();
-  await expect(fight).toHaveAttribute('aria-disabled', 'false');
+  await expect(fight).toBeEnabled();
   await expect(controls.getByText(settled)).toHaveCount(0);
 });
 

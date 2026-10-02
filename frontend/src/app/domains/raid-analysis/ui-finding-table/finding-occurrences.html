@@ -38,14 +38,14 @@
       }
     </span>
     @if (showMap()) {
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openMap.emit(occ.atS)">
-        <mat-icon>my_location</mat-icon>
+      <button hlmBtn variant="outline" size="sm" class="shrink-0 whitespace-nowrap" (click)="openMap.emit(occ.atS)">
+        <ng-icon name="my_location" />
         Show map
       </button>
     }
     @if (showClip()) {
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openClip.emit(occ.atS)">
-        <mat-icon>videocam</mat-icon>
+      <button hlmBtn variant="outline" size="sm" class="shrink-0 whitespace-nowrap" (click)="openClip.emit(occ.atS)">
+        <ng-icon name="videocam" />
         Watch clip
       </button>
     }

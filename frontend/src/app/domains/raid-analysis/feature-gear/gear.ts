@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { ToastService } from '../../shared/util-toast/toast-service';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { NgIcon } from '@ng-icons/core';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { Collapsible } from '../../shared/ui-collapsible/collapsible';
 import { LoadState } from '../../shared/ui-load-state/load-state';
@@ -15,14 +15,14 @@ const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [MatButtonModule, MatIconModule, GameIcon, Collapsible, LoadState],
+  imports: [HlmButtonImports, NgIcon, GameIcon, Collapsible, LoadState],
   templateUrl: './gear.html',
 })
 export class Gear {
   private readonly loadRes = inject(LoadResourceService);
   private readonly gear = inject(GearFeatureService);
   private readonly clipboard = inject(Clipboard);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly toast = inject(ToastService);
 
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
@@ -58,6 +58,6 @@ export class Gear {
   protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
 
   protected copy(name: string): void {
-    this.snackBar.open(this.clipboard.copy(name) ? COPIED_MESSAGE : COPY_FAILED_MESSAGE);
+    this.toast.show(this.clipboard.copy(name) ? COPIED_MESSAGE : COPY_FAILED_MESSAGE);
   }
 }

@@ -10,7 +10,7 @@
   }
   <div class="px-4 py-6 flex flex-col items-center gap-2 text-center {{ heading() ? 'border-t border-dashed border-line' : '' }}">
     @if (err) {
-      <mat-icon class="icon-seg text-accent">{{ err.kind === 'permanent' ? 'error' : 'cloud_off' }}</mat-icon>
+      <ng-icon class="icon-seg text-accent" [name]="err.kind === 'permanent' ? 'error' : 'cloud_off'" />
       <div class="text-body text-muted">{{ err.message }}</div>
       <div class="text-caption text-muted">
         {{ err.kind === 'permanent'
@@ -18,7 +18,7 @@
           : 'Retries on the next sync, or reselect the fight.' }}
       </div>
     } @else {
-      <mat-icon class="icon-seg text-muted">schedule</mat-icon>
+      <ng-icon class="icon-seg text-muted" name="schedule" />
       <div class="text-body text-muted">Waiting for top logs</div>
       @if (caption()) {
         <div class="text-caption text-muted">{{ caption() }}</div>

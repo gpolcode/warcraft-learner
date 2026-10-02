@@ -43,7 +43,7 @@
                 [attr.aria-selected]="active"
                 [attr.aria-label]="(w.timeStartS | formatDuration)"
                 (click)="select(cell.index)">
-                <mat-icon class="icon-seg">{{ w.statusIcon }}</mat-icon>
+                <ng-icon class="icon-seg" [name]="w.statusIcon" />
                 <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
               </button>
               <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted')">
@@ -92,14 +92,14 @@
         }
         <div class="ml-auto flex items-center gap-1.75 shrink-0">
           @if (showMap()) {
-            <button mat-stroked-button class="whitespace-nowrap" (click)="openMap.emit(activeIndex())">
-              <mat-icon>my_location</mat-icon>
+            <button hlmBtn variant="outline" size="sm" class="whitespace-nowrap" (click)="openMap.emit(activeIndex())">
+              <ng-icon name="my_location" />
               Show map
             </button>
           }
           @if (showClip()) {
-            <button mat-stroked-button class="whitespace-nowrap" (click)="openClip.emit(activeIndex())">
-              <mat-icon>videocam</mat-icon>
+            <button hlmBtn variant="outline" size="sm" class="whitespace-nowrap" (click)="openClip.emit(activeIndex())">
+              <ng-icon name="videocam" />
               Watch clip
             </button>
           }

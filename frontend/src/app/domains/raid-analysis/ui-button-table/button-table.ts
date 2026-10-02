@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import { PercentPipe } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { NgIcon } from '@ng-icons/core';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { FindingOccurrences } from '../ui-finding-table/finding-occurrences';
 import { RangeBar } from '../ui-range-bar/range-bar';
@@ -12,7 +12,7 @@ import type { ButtonRow } from '../data/rotation/priority-list/list-finding-serv
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-button-table',
   host: { class: 'block' },
-  imports: [PercentPipe, MatIconModule, MatButtonModule, GameIcon, FindingOccurrences, RangeBar, RangeLegend],
+  imports: [PercentPipe, NgIcon, HlmButtonImports, GameIcon, FindingOccurrences, RangeBar, RangeLegend],
   templateUrl: './button-table.html',
 })
 export class ButtonTable {

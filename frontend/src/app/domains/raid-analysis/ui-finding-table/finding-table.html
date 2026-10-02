@@ -16,12 +16,10 @@
       <div class="grid grid-cols-(--cols-drill-sm) md:grid-cols-(--cols-drill) gap-x-(--gap-card) gap-y-2 md:gap-y-0 px-4 py-2.5 items-start md:items-center">
 
         <div class="flex items-center justify-center self-start md:self-center">
-          <mat-icon class="icon-18"
+          <ng-icon class="icon-18"
             [class.text-critical]="row.severity === 'critical'"
             [class.text-warning]="row.severity === 'warning'"
-            [class.text-accent]="row.severity === 'info'">
-            {{ row.severity === 'critical' ? 'error' : row.severity === 'info' ? 'info' : 'warning_amber' }}
-          </mat-icon>
+            [class.text-accent]="row.severity === 'info'" [name]="row.severity === 'critical' ? 'error' : row.severity === 'info' ? 'info' : 'warning_amber'" />
         </div>
 
         <div class="min-w-0">
@@ -36,14 +34,14 @@
               @if (row.timestampS != null) {
                 <span class="tabular-nums text-body text-accent">{{ row.timestampS | formatDuration }}</span>
                 @if (showMap()) {
-                  <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openMap.emit(row)">
-                    <mat-icon>my_location</mat-icon>
+                  <button hlmBtn variant="outline" size="sm" class="shrink-0 whitespace-nowrap" (click)="openMap.emit(row)">
+                    <ng-icon name="my_location" />
                     Show map
                   </button>
                 }
                 @if (showClip()) {
-                  <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openClip.emit(row)">
-                    <mat-icon>videocam</mat-icon>
+                  <button hlmBtn variant="outline" size="sm" class="shrink-0 whitespace-nowrap" (click)="openClip.emit(row)">
+                    <ng-icon name="videocam" />
                     Watch clip
                   </button>
                 }
@@ -85,11 +83,11 @@
 
         <div class="row-start-1 col-start-3 md:row-auto md:col-start-5 flex items-center justify-center self-start md:self-center">
           @if (row.occurrences.length) {
-            <button mat-icon-button
+            <button hlmBtn variant="ghost" size="icon"
               [attr.aria-expanded]="openIndex() === $index"
               [attr.aria-label]="openIndex() === $index ? 'Hide instances' : 'Show instances'"
               (click)="toggle($index)">
-              <mat-icon class="icon-18 transition-transform" [class.rotate-180]="openIndex() === $index">expand_more</mat-icon>
+              <ng-icon class="icon-18 transition-transform" [class.rotate-180]="openIndex() === $index" name="expand_more" />
             </button>
           }
         </div>

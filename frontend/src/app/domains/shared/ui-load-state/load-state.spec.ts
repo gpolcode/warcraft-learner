@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { NgIcon } from '@ng-icons/core';
 import { LoadState, RenderableLoadError } from './load-state';
 
 const TRANSIENT_ERROR: RenderableLoadError = { kind: 'transient', message: 'WCL is unreachable right now.' };
@@ -25,7 +27,7 @@ function render(inputs: Record<string, unknown>): Rendered {
   const host = fixture.nativeElement as HTMLElement;
   return {
     text: host.textContent.replace(/\s+/g, ' ').trim(),
-    icon: (host.querySelector('mat-icon')?.textContent ?? '').trim(),
+    icon: (fixture.debugElement.query(By.directive(NgIcon)).componentInstance as NgIcon).name() ?? '',
   };
 }
 

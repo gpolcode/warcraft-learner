@@ -71,7 +71,7 @@ export class LiveCaptureFeatureService {
   readonly captureProfile = signal<CaptureProfile>(DEFAULT_CAPTURE_PROFILE);
   readonly captureError = signal<string | null>(null);
 
-  /** Includes `isStarting` so a cancelled picker moves the bound value, forcing Material to reset the switch - a plain `isCapturing` binding stays false and never re-writes it. */
+  /** Includes `isStarting` so a cancelled picker moves the bound value, forcing the switch to reset - a plain `isCapturing` binding stays false and never re-writes it. */
   readonly recordToggleOn = computed(() => this.isCapturing() || this.isStarting());
 
   private stream: MediaStream | null = null;

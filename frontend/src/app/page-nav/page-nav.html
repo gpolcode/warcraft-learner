@@ -1,78 +1,63 @@
-<!-- Toolbar background comes from mat.toolbar-overrides in styles.scss; a plain bg-* utility loses to Material's unlayered rule. -->
-<mat-toolbar class="border-b border-line gap-2 shrink-0">
-  <button mat-icon-button (click)="toggleNav()" aria-label="Toggle navigation menu">
-    <mat-icon>menu</mat-icon>
-  </button>
-
-  <a routerLink="/" class="flex items-center gap-2 no-underline text-heading text-gold" aria-label="warcraft-learner home">
-    <svg class="w-6 h-6 shrink-0" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      <path class="fill-gold" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
-      <g class="fill-surface">
-        <rect x="9.5" y="18" width="3" height="4" rx="1"/>
-        <rect x="14.5" y="14" width="3" height="8" rx="1"/>
-        <rect x="19.5" y="10" width="3" height="12" rx="1"/>
-      </g>
-    </svg>
-    <span>warcraft-learner</span>
-  </a>
-</mat-toolbar>
-
-<mat-sidenav-container class="flex-1 min-h-0">
-  <mat-sidenav class="border-r border-line"
-               [class.nav-drawer-modal]="isMobile()"
-               [class.nav-drawer-full]="!isMobile() && !railCollapsed()"
-               [class.nav-drawer-rail]="railCollapsed()"
-               [mode]="sidenavMode()" [opened]="sidenavOpened()"
-               (openedChange)="onOpenedChange($event)">
-    <div class="flex flex-col h-full py-2">
-      <div class="flex-1 px-3">
-        <mat-nav-list>
-          <a mat-list-item routerLink="/pre" routerLinkActive #pre="routerLinkActive"
-             [activated]="pre.isActive" (click)="onNavigate()" aria-label="Pre-fight"
-             [matTooltip]="railCollapsed() ? 'Pre-fight' : ''" matTooltipPosition="right">
-            <mat-icon matListItemIcon>lightbulb</mat-icon>
-            @if (!railCollapsed()) {
-              <span matListItemTitle>Pre-fight</span>
-            }
-          </a>
-          <a mat-list-item routerLink="/" routerLinkActive #post="routerLinkActive"
-             [routerLinkActiveOptions]="{exact:true}" [activated]="post.isActive" (click)="onNavigate()"
-             aria-label="Analyze"
-             [matTooltip]="railCollapsed() ? 'Analyze' : ''" matTooltipPosition="right">
-            <mat-icon matListItemIcon>analytics</mat-icon>
-            @if (!railCollapsed()) {
-              <span matListItemTitle>Analyze</span>
-            }
-          </a>
-        </mat-nav-list>
-      </div>
-
-      <div class="px-3 pt-1">
-        <mat-nav-list>
-          <a mat-list-item [href]="githubUrl" target="_blank" rel="noopener noreferrer"
-             aria-label="View on GitHub"
-             [matTooltip]="railCollapsed() ? 'View on GitHub' : ''" matTooltipPosition="right">
-            <mat-icon matListItemIcon svgIcon="github"></mat-icon>
-            @if (!railCollapsed()) {
-              <span matListItemTitle>View on GitHub</span>
-            }
-          </a>
-          <a mat-list-item [href]="newIssueUrl" target="_blank" rel="noopener noreferrer"
-             aria-label="Report an issue on GitHub"
-             [matTooltip]="railCollapsed() ? 'Report an issue' : ''" matTooltipPosition="right">
-            <mat-icon matListItemIcon>bug_report</mat-icon>
-            @if (!railCollapsed()) {
-              <span matListItemTitle>Report an issue</span>
-            }
-          </a>
-        </mat-nav-list>
+<div hlmSidebarWrapper>
+  <hlm-sidebar collapsible="icon" srOnlySheetTitle="Navigation" srOnlySheetDescription="Pages of warcraft-learner">
+    <div hlmSidebarContent>
+      <div hlmSidebarGroup>
+        <ul hlmSidebarMenu>
+          <li hlmSidebarMenuItem>
+            <a hlmSidebarMenuButton routerLink="/pre" routerLinkActive #pre="routerLinkActive" [isActive]="pre.isActive"
+               tooltip="Pre-fight" closeMobileSidebarOnClick>
+              <ng-icon name="lightbulb" />
+              <span>Pre-fight</span>
+            </a>
+          </li>
+          <li hlmSidebarMenuItem>
+            <a hlmSidebarMenuButton routerLink="/" routerLinkActive #post="routerLinkActive"
+               [routerLinkActiveOptions]="{exact:true}" [isActive]="post.isActive"
+               tooltip="Analyze" closeMobileSidebarOnClick>
+              <ng-icon name="analytics" />
+              <span>Analyze</span>
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
-  </mat-sidenav>
 
-  <mat-sidenav-content class="overflow-auto">
-    <main class="block">
+    <div hlmSidebarFooter>
+      <ul hlmSidebarMenu>
+        <li hlmSidebarMenuItem>
+          <a hlmSidebarMenuButton [href]="githubUrl" target="_blank" rel="noopener noreferrer" tooltip="View on GitHub">
+            <ng-icon name="github" />
+            <span>View on GitHub</span>
+          </a>
+        </li>
+        <li hlmSidebarMenuItem>
+          <a hlmSidebarMenuButton [href]="newIssueUrl" target="_blank" rel="noopener noreferrer"
+             aria-label="Report an issue on GitHub" tooltip="Report an issue">
+            <ng-icon name="bug_report" />
+            <span>Report an issue</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="min-w-0">
+    <header class="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-2 border-b border-line bg-bg px-2">
+      <button hlmSidebarTrigger aria-label="Toggle navigation menu"></button>
+      <a routerLink="/" class="flex items-center gap-2 no-underline text-heading text-gold" aria-label="warcraft-learner home">
+        <svg class="w-6 h-6 shrink-0" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <path class="fill-gold" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
+          <g class="fill-surface">
+            <rect x="9.5" y="18" width="3" height="4" rx="1"/>
+            <rect x="14.5" y="14" width="3" height="8" rx="1"/>
+            <rect x="19.5" y="10" width="3" height="12" rx="1"/>
+          </g>
+        </svg>
+        <span>warcraft-learner</span>
+      </a>
+    </header>
+    <div class="block">
       <ng-content></ng-content>
-    </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    </div>
+  </main>
+</div>

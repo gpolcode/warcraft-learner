@@ -1,8 +1,9 @@
 <div class="mt-2 flex flex-col gap-3">
   <div class="flex items-center gap-3">
-    <mat-slide-toggle [checked]="capture.liveEnabled()" (change)="onLiveToggle($event.checked)">
+    <label hlmLabel class="flex items-center gap-2">
+      <hlm-switch [checked]="capture.liveEnabled()" (checkedChange)="onLiveToggle($event)" />
       Follow latest pull
-    </mat-slide-toggle>
+    </label>
     @if (capture.liveEnabled()) {
       @if (capture.statusText()) {
         <span class="ml-auto flex items-center gap-2 text-body text-muted">
@@ -15,12 +16,13 @@
   </div>
 
   <div class="flex items-center gap-3">
-    <mat-slide-toggle [checked]="capture.recordToggleOn()" [disabled]="capture.isStarting()" (change)="onRecordToggle($event.checked)">
+    <label hlmLabel class="flex items-center gap-2">
+      <hlm-switch [checked]="capture.recordToggleOn()" [disabled]="capture.isStarting()" (checkedChange)="onRecordToggle($event)" />
       Record game client
-    </mat-slide-toggle>
+    </label>
     <span class="ml-auto flex items-center gap-2 text-body text-muted">
       @if (capture.isStarting()) {
-        <mat-progress-spinner mode="indeterminate" diameter="15"></mat-progress-spinner>
+        <hlm-spinner />
         <span>Pick a window...</span>
       } @else if (capture.isCapturing()) {
         <span class="h-[9px] w-[9px] rounded-full bg-critical"></span>

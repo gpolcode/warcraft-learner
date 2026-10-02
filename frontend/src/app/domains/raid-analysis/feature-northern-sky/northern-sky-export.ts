@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ToastService } from '../../shared/util-toast/toast-service';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmCheckboxImports } from '@spartan-ng/helm/checkbox';
+import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { FlyoverPanel } from '../../shared/ui-flyover-panel/flyover-panel';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { LoadState } from '../../shared/ui-load-state/load-state';
@@ -16,14 +17,14 @@ const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-northern-sky-export',
-  imports: [MatButtonModule, MatCheckboxModule, FlyoverPanel, GameIcon, LoadState],
+  imports: [HlmButtonImports, HlmCheckboxImports, HlmLabelImports, FlyoverPanel, GameIcon, LoadState],
   templateUrl: './northern-sky-export.html',
 })
 export class NorthernSkyExport {
   private readonly loadRes = inject(LoadResourceService);
   private readonly feature = inject(NorthernSkyFeatureService);
   private readonly clipboard = inject(Clipboard);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly toast = inject(ToastService);
 
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
@@ -68,7 +69,7 @@ export class NorthernSkyExport {
     const bench = this.bench();
     if (!bench) return;
     const note = this.feature.buildNorthernSkyNote(bench, this.feature.selectedIds(this.abilities(), this.excluded()));
-    this.snackBar.open(this.clipboard.copy(note) ? COPIED_MESSAGE : COPY_FAILED_MESSAGE);
+    this.toast.show(this.clipboard.copy(note) ? COPIED_MESSAGE : COPY_FAILED_MESSAGE);
   }
 
   private persist(excluded: ReadonlySet<number>): void {

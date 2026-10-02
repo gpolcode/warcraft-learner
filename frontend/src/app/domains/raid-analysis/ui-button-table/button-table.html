@@ -24,11 +24,11 @@
           You {{ row.you | percent }}.
           Top raiders {{ row.top.lo | percent }} to {{ row.top.hi | percent }}, {{ row.top.avg | percent }} on average.
         </span>
-        <button mat-icon-button
+        <button hlmBtn variant="ghost" size="icon"
           [attr.aria-expanded]="open"
           [attr.aria-label]="open ? 'Hide instances' : 'Show instances'"
           (click)="toggle($index)">
-          <mat-icon class="icon-18 transition-transform" [class.rotate-180]="open">expand_more</mat-icon>
+          <ng-icon class="icon-18 transition-transform" [class.rotate-180]="open" name="expand_more" />
         </button>
       </div>
 

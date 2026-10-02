@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { NgIcon } from '@ng-icons/core';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-flyover-panel',
-  imports: [MatButtonModule, MatIconModule],
+  imports: [HlmButtonImports, NgIcon],
   templateUrl: './flyover-panel.html',
 })
 export class FlyoverPanel {

@@ -6,11 +6,10 @@ import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-i
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { EMPTY, combineLatest, from, merge, of } from 'rxjs';
 import { distinctUntilChanged, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { HlmCardImports } from '@spartan-ng/helm/card';
+import { HlmInputImports } from '@spartan-ng/helm/input';
+import { HlmLabelImports } from '@spartan-ng/helm/label';
+import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { POLL_INTERVAL_S } from '../domains/raid-analysis/data/wcl/live-report-sync-service';
 import { WclFight, WclPlayer, PlayerDetailGroups } from '../domains/raid-analysis/data/wcl/wcl.models';
 import { ClipAnchor } from '../domains/raid-analysis/data/capture/capture.models';
@@ -56,14 +55,11 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-post-raid',
   imports: [
-    ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatButtonModule, MatCardModule,
+    ReactiveFormsModule, HlmCardImports, HlmInputImports, HlmLabelImports, HlmSelectImports,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
     Defensive, Gear, MapPanel, LiveControls, ClipPanel,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
-  // Provided here, not app.config: only this page's form fields want dynamic subscript sizing.
-  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
   // Covers only a real navigation away (refresh, close, another site); an in-app route change goes through LeaveLiveSessionGuard instead.
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
   templateUrl: './post-raid.html',
@@ -302,6 +298,13 @@ export class PostRaid {
 
   private _pollSuperseded(code: string): boolean {
     return !this.liveSyncEnabled() || this.reportCode() !== code;
+  }
+
+  // The select emits valueChange before it writes the control, and on programmatic writes too; only a user pick differs from the control.
+  protected picked<T>(control: FormControl<T>, value: T): boolean {
+    if (value === control.value) return false;
+    control.setValue(value);
+    return true;
   }
 
   protected async onFightChange(): Promise<void> {

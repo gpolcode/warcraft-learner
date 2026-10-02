@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, PendingTasks, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCardModule } from '@angular/material/card';
+import { HlmCardImports } from '@spartan-ng/helm/card';
+import { HlmLabelImports } from '@spartan-ng/helm/label';
+import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { SelectionStore } from '../domains/raid-analysis/data/selection/selection-store';
 import { SpecEntry, EncounterEntry } from '../domains/raid-analysis/data/encounter/encounter.models';
 import { LoadError } from '../domains/shared/util-http/result';
@@ -40,14 +40,12 @@ export const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pre-fight',
   imports: [
-    ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatCardModule,
+    ReactiveFormsModule, HlmCardImports, HlmLabelImports, HlmSelectImports,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
     RotationCdPlan, DefensivePlan, BurstWindows,
     Gear, MapPanel, NorthernSkyExport,
   ],
-  // Provided per lazy page so form-field stays out of the initial bundle.
-  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
   templateUrl: './pre-fight.html',
 })
 export class PreFight implements OnInit {
@@ -124,6 +122,13 @@ export class PreFight implements OnInit {
       this.specControl.setValue(autoSpec);
       void this._onSpecSelected(autoSpec);
     }
+  }
+
+  // The select emits valueChange before it writes the control, and on programmatic writes too; only a user pick differs from the control.
+  protected picked<T>(control: FormControl<T>, value: T): boolean {
+    if (value === control.value) return false;
+    control.setValue(value);
+    return true;
   }
 
   protected onClassChange(): void {
