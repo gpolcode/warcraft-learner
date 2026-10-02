@@ -1,7 +1,7 @@
 export interface FindingOccurrence {
   atS: number;
   ok: boolean;
-  /** Where `rule` is set, a lowercase continuation of `At <time>`, never shown on its own. */
+  /** Where `rule` is set, it continues `At <time>` mid-sentence, so it never stands on its own. */
   detail: string;
   /** A cast the log could not settle: `ok` is false, yet it is no miss. */
   unjudged?: boolean;
