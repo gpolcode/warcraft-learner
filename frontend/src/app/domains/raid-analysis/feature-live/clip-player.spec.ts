@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
@@ -9,6 +9,7 @@ import { ClipPlayer } from './clip-player';
 const FULL_PULL_BUTTON = 'button[mat-stroked-button]';
 const NO_FOOTAGE_MESSAGE = 'No footage for this pull.';
 const DOWNLOAD_FAILED_MESSAGE = 'Download failed. Retry it.';
+const CLIP_URL = 'blob:clip';
 const HANDLE: ClipHandle = { blob: new Blob([]), startOffsetS: 0, endOffsetS: 1 };
 
 interface Mounted {
@@ -43,6 +44,16 @@ async function saveFullPull(outcome: DownloadOutcome): Promise<string[]> {
 }
 
 describe('ClipPlayer full-pull download', () => {
+  // Vitest's createObjectURL shim cannot read a jsdom Blob, and these tests never play the clip.
+  beforeEach(() => {
+    vi.spyOn(URL, 'createObjectURL').mockReturnValue(CLIP_URL);
+    vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('says the buffer holds nothing for the pull, so the reader does not retry a download that cannot work', async () => {
     expect(await saveFullPull('no-footage')).toEqual([NO_FOOTAGE_MESSAGE]);
   });
