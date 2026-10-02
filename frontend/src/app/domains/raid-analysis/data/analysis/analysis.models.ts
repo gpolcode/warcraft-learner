@@ -1,16 +1,21 @@
 export interface FindingOccurrence {
   atS: number;
   ok: boolean;
+  /** Where `rule` is set, it continues `At <time>` mid-sentence, so it never stands on its own. */
   detail: string;
   /** A cast the log could not settle: `ok` is false, yet it is no miss. */
   unjudged?: boolean;
   checks: ConditionCheck[];
+  rule?: string;
+  result?: string;
 }
 
 export interface ConditionCheck {
   text: string;
   truth: 'true' | 'false' | 'unknown';
   value: string;
+  /** Absent on a met condition of a missed press: on the path, yet not what to change. */
+  role?: 'decisive' | 'unneeded';
   /** An either-or or all-of term, read operand by operand in place of its own row. */
   group?: { any: boolean; checks: ConditionCheck[] };
 }
