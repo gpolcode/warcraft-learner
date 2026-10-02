@@ -6,18 +6,25 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import writeFileAtomic from 'write-file-atomic';
+import { withEnvironment } from '../src/environments/base-environment.ts';
 
-const PORT = 3000;
+const { appUrl, ingestServerUrl } = withEnvironment({});
+const PORT = Number(new URL(ingestServerUrl).port);
 const DATA_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public/data');
 // Position payloads reach tens of MB; express's default 100kb body cap would reject them.
 const BODY_LIMIT = '200mb';
 
 // A wildcard origin would let any site open in the dev's browser drive this unauthenticated, write-capable store.
-const ALLOWED_ORIGINS = ['http://localhost:4200', 'http://127.0.0.1:4200'];
+const ALLOWED_ORIGINS = [appUrl, loopbackTwin(appUrl)];
 // Reject any other Host so a rebound DNS name resolving to loopback cannot reach the store.
-const ALLOWED_HOSTS = new Set([`localhost:${PORT}`, `127.0.0.1:${PORT}`]);
+const ALLOWED_HOSTS = new Set([new URL(ingestServerUrl).host, loopbackTwin(new URL(ingestServerUrl).host)]);
 
 const REQUESTS_PER_MINUTE = 5_000;
+
+// Browsers treat the two loopback spellings as different origins, and either may be the one typed into the address bar.
+function loopbackTwin(address) {
+  return address.replace('localhost', '127.0.0.1');
+}
 
 // A crafted path must never read or write outside the data root.
 function resolveContained(segments) {
@@ -89,5 +96,5 @@ app.get('/api/dirs/*path', async (req, res) => {
 });
 
 app.listen(PORT, '127.0.0.1', () => {
-  console.log(`[ingest-server] file store for ${DATA_ROOT} listening on http://localhost:${PORT}`);
+  console.log(`[ingest-server] file store for ${DATA_ROOT} listening on ${ingestServerUrl}`);
 });

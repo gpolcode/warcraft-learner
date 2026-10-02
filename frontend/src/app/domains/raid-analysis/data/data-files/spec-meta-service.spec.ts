@@ -95,23 +95,26 @@ describe('specsForClass', () => {
   });
 });
 
+// The icon roots come from the injected environment, so these two groups use an injected instance.
+const injected = (): SpecMetaService => serviceWith(async () => Results.ok([]));
+
 describe('classIconUrl', () => {
   it('builds a class icon URL', () => {
-    expect(specMeta['classIconUrlOf'](UNIVERSE, 'Rogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/class_rogue.jpg');
+    expect(injected()['classIconUrlOf'](UNIVERSE, 'Rogue')).toBe('https://wow.zamimg.com/images/wow/icons/small/class_rogue.jpg');
   });
 
   it('returns empty for an unknown or missing class name', () => {
-    expect(specMeta['classIconUrlOf'](UNIVERSE, '')).toBe('');
-    expect(specMeta['classIconUrlOf'](UNIVERSE, 'Unknown')).toBe('');
+    expect(injected()['classIconUrlOf'](UNIVERSE, '')).toBe('');
+    expect(injected()['classIconUrlOf'](UNIVERSE, 'Unknown')).toBe('');
   });
 });
 
 describe('specIconUrl', () => {
   it('builds the spec icon URL from the class and spec slugs', () => {
-    expect(specMeta['specIconUrlOf'](UNIVERSE, 'SubtletyRogue')).toBe('https://assets.rpglogs.com/img/warcraft/icons/Rogue-Subtlety.jpg');
+    expect(injected()['specIconUrlOf'](UNIVERSE, 'SubtletyRogue')).toBe('https://assets.rpglogs.com/img/warcraft/icons/Rogue-Subtlety.jpg');
   });
 
   it('returns empty for an unknown spec', () => {
-    expect(specMeta['specIconUrlOf'](UNIVERSE, 'Bogus')).toBe('');
+    expect(injected()['specIconUrlOf'](UNIVERSE, 'Bogus')).toBe('');
   });
 });

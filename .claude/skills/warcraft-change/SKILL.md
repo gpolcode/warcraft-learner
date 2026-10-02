@@ -39,6 +39,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 - **Page shells** (`src/app/post-raid/`, `src/app/pre-fight/`) resolve selection through a page-local selection service (`pre-fight/encounter-selection-service.ts`, `post-raid/report-selection-service.ts`) that wraps the API services and owns the pure selection helpers.
   They compose feature components, pass selection as inputs, and route card anchors to the page-level overlays through `MapFeatureService` and `LiveCaptureFeatureService`.
 - **Presentational leaves** - inputs/outputs only, no services beyond framework tokens.
+- **Configuration** - a value that names something outside the app (a host, URL, port, id, secret) or differs per build is a field of `Environment`: `src/environments/base-environment.ts` holds the defaults, `environment.*.ts` the per-build overrides, and code reads it through `inject(ENVIRONMENT)`, never as a literal in a service and never by importing the swapped `environment.ts`. A method, game, parser or copy constant stays a named `const` beside its code.
 
 ## Failure handling
 
@@ -76,6 +77,8 @@ npm run knip
 npm test
 npm run build
 ```
+
+`npm run build` runs through `scripts/ng-env.mjs`, so it needs the WCL pair in `frontend/.env` (or as `WCL_CLIENT_ID` / `WCL_CLIENT_SECRET` in the environment); the other three need nothing.
 
 Then check what no tool does: every new behavior has a spec at the lowest altitude, every "triggers" case has its boundary partner, `INGEST_VERSION` bumped exactly per the ingest-version rule, every finding populates `occurrences`.
 

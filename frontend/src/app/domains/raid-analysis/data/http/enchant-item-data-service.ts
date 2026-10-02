@@ -4,8 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from './http-load-error';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
-
-const DUMP_URL = 'https://www.raidbots.com/static/data/live/enchantments.json';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 interface RaidbotsEnchantment { id?: number; itemId?: number }
 
@@ -15,10 +14,11 @@ export type EnchantItems = Record<number, number>;
 export class EnchantItemDataService {
   private readonly logger = inject(LoggerService);
   private readonly http = inject(HttpClient);
+  private readonly dumpUrl = inject(ENVIRONMENT).raidbotsEnchantmentsUrl;
 
   async getEnchantItems(): Promise<Result<EnchantItems>> {
     try {
-      const dump = await firstValueFrom(this.http.get<RaidbotsEnchantment[]>(DUMP_URL));
+      const dump = await firstValueFrom(this.http.get<RaidbotsEnchantment[]>(this.dumpUrl));
       return Results.ok(this.indexEnchantItems(dump));
     } catch (cause) {
       this.logger.logWarn('EnchantItemDataService dump fetch', cause);

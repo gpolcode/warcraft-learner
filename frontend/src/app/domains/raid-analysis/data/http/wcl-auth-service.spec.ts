@@ -3,9 +3,16 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { WclAuthService } from './wcl-auth-service';
+import { WclTransportError, WCL_UNUSABLE_STATUS } from '../wcl/wcl-transport';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
+import { withEnvironment } from '../../../../../environments/base-environment';
 
-/** The client-credentials token endpoint the service posts to (mirrors TOKEN_URL in the source). */
+/** The client-credentials token endpoint the service posts to (mirrors the environment default). */
 const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
+
+/** A pair the way scripts/ng-env.mjs defines it; the unit-test build itself carries none. */
+const CLIENT_ID = 'test-client-id';
+const CLIENT_SECRET = 'test-client-secret';
 
 /** Distinct tokens so a "reused vs refetched" assertion reads as documentation. */
 const FIRST_TOKEN = 'wcl-access-token-first';
@@ -26,9 +33,14 @@ const JUST_INSIDE_REUSE_MS = REUSE_WINDOW_MS - 1;
 /** A fixed, arbitrary base clock so `Date.now()` at issue time is deterministic under fake timers. */
 const START_TIME_MS = 1_000_000_000;
 
-function setup(): { service: WclAuthService; httpMock: HttpTestingController } {
+function setup(credentials = { wclClientId: CLIENT_ID, wclClientSecret: CLIENT_SECRET }): { service: WclAuthService; httpMock: HttpTestingController } {
   TestBed.configureTestingModule({
-    providers: [WclAuthService, provideHttpClient(), provideHttpClientTesting()],
+    providers: [
+      WclAuthService,
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      { provide: ENVIRONMENT, useValue: withEnvironment(credentials) },
+    ],
   });
   return {
     service: TestBed.inject(WclAuthService),
@@ -51,16 +63,26 @@ describe('WclAuthService', () => {
     vi.useRealTimers();
   });
 
-  it('fetches a token via the client-credentials grant and returns it', async () => {
+  it('fetches a token via the client-credentials grant with the built-in pair and returns it', async () => {
     const { service, httpMock } = setup();
 
     const pending = service.getToken();
     const req = httpMock.expectOne(WCL_TOKEN_URL);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toContain('grant_type=client_credentials');
+    expect(req.request.body).toContain(`client_id=${CLIENT_ID}`);
+    expect(req.request.body).toContain(`client_secret=${CLIENT_SECRET}`);
     req.flush({ access_token: FIRST_TOKEN, expires_in: TOKEN_LIFETIME_S });
 
     expect(await pending).toBe(FIRST_TOKEN);
+  });
+
+  it('refuses without a request when the build carries no client pair', async () => {
+    const { service, httpMock } = setup({ wclClientId: '', wclClientSecret: '' });
+
+    await expect(service.getToken()).rejects.toMatchObject({ status: WCL_UNUSABLE_STATUS } satisfies Partial<WclTransportError>);
+    await expect(service.getToken()).rejects.toThrow(/npm start/);
+    httpMock.expectNone(WCL_TOKEN_URL);
   });
 
   it('reuses the cached token for a call just inside the reuse window', async () => {

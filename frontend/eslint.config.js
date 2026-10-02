@@ -42,10 +42,10 @@ const within = (...types) =>
 
 // Last match wins.
 const layerPolicies = [
-  { from: [{ element: { type: 'feature' } }], allow: [...within('ui', 'data', 'util'), ...to('testing')] },
-  { from: [{ element: { type: 'ui' } }], allow: [...within('ui', 'data', 'util'), ...to('testing')] },
+  { from: [{ element: { type: 'feature' } }], allow: [...within('ui', 'data', 'util'), ...to('environments', 'testing')] },
+  { from: [{ element: { type: 'ui' } }], allow: [...within('ui', 'data', 'util'), ...to('environments', 'testing')] },
   { from: [{ element: { type: 'data' } }], allow: [...within('data', 'util'), ...to('environments', 'testing')] },
-  { from: [{ element: { type: 'util' } }], allow: [...within('util'), ...to('testing')] },
+  { from: [{ element: { type: 'util' } }], allow: [...within('util'), ...to('environments', 'testing')] },
   { from: [{ element: { type: 'shell' } }], allow: to('feature', 'ui', 'data', 'util', 'environments', 'testing') },
   { from: [{ element: { type: 'environments' } }], allow: to('feature', 'data', 'util') },
   { from: [{ element: { type: 'bootstrap' } }], allow: to('shell', 'util') },
@@ -94,6 +94,16 @@ const restrictHttpImports = {
       importNames: httpClientImports,
       message:
         'Only the transports behind WclApiService and DataFileApiService issue HTTP requests. Go through those two API services instead.',
+    },
+  ],
+};
+
+// app.config provides the swapped file once, as ENVIRONMENT; importing it elsewhere drags its providers along and cannot be overridden in a TestBed.
+const restrictEnvironmentImports = {
+  patterns: [
+    {
+      group: ['**/environments/environment', '**/environments/environment.*'],
+      message: 'Inject ENVIRONMENT (src/environments/environment-token.ts) instead of importing the swapped environment file.',
     },
   ],
 };
@@ -220,7 +230,15 @@ export default defineConfig([
   {
     // Both http folders are chokepoints, so narrowing this to one of them re-bans the other's HttpClient.
     files: ['src/**/*.ts'],
-    ignores: ['src/app/domains/shared/util-http/**', 'src/app/domains/raid-analysis/data/http/**'],
+    ignores: ['src/app/domains/shared/util-http/**', 'src/app/domains/raid-analysis/data/http/**', 'src/app/app.config.ts', 'src/environments/**'],
+    rules: { 'no-restricted-imports': ['error', { ...restrictHttpImports, ...restrictEnvironmentImports }] },
+  },
+  {
+    files: ['src/app/domains/shared/util-http/**', 'src/app/domains/raid-analysis/data/http/**'],
+    rules: { 'no-restricted-imports': ['error', restrictEnvironmentImports] },
+  },
+  {
+    files: ['src/app/app.config.ts'],
     rules: { 'no-restricted-imports': ['error', restrictHttpImports] },
   },
   {

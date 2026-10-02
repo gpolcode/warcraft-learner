@@ -9,11 +9,7 @@ import { LoggerService } from '../../../shared/util-logging/logger-service';
 export class CurrentRaidsService {
   private readonly logger = inject(LoggerService);
 
-  parseRaidNames(raw: string | null | undefined): string[] {
-    return (raw ?? '').split(',').map(name => name.trim()).filter(name => name.length > 0);
-  }
-
-  async discoverCurrentRaids(wclApi: WclApiService, raidNames: string[]): Promise<CurrentRaids> {
+  async discoverCurrentRaids(wclApi: WclApiService, raidNames: readonly string[]): Promise<CurrentRaids> {
     const expansions = await wclApi.getZoneTree();
     // An absent expansion tree would resolve no encounter and prune every spec's data.
     if (!expansions) throw new Error('WCL returned no worldData.expansions.');
@@ -41,12 +37,12 @@ export class CurrentRaidsService {
     return matches.sort((a, b) => b.id - a.id)[0] ?? null;
   }
 
-  private encountersForRaids(expansions: WclExpansion[], raidNames: string[]): IngestEncounter[] {
+  private encountersForRaids(expansions: WclExpansion[], raidNames: readonly string[]): IngestEncounter[] {
     const result: IngestEncounter[] = [];
     for (const name of raidNames) {
       const zone = this.currentZoneNamed(expansions, name);
       if (!zone) {
-        this.logger.logWarn('encountersForRaids', `no current WCL zone named "${name}" - check the CURRENT_RAIDS variable`);
+        this.logger.logWarn('encountersForRaids', `no current WCL zone named "${name}" - check currentRaids in environment.ingest.ts`);
         continue;
       }
       const partitionIds = (zone.partitions ?? []).map(partition => partition.id).sort((a, b) => b - a);

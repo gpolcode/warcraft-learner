@@ -11,9 +11,8 @@ import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NavStateStore } from './nav-state-store';
+import { ENVIRONMENT } from '../../environments/environment-token';
 
-const GITHUB_URL = 'https://github.com/gpolcode/warcraft-learner';
-const NEW_ISSUE_URL = `${GITHUB_URL}/issues/new`;
 const MOBILE_QUERY = '(max-width: 600px)';
 
 const GITHUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -38,8 +37,8 @@ const GITHUB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
   host: { class: 'flex flex-col h-[100dvh]' },
 })
 export class PageNav {
-  protected readonly githubUrl = GITHUB_URL;
-  protected readonly newIssueUrl = NEW_ISSUE_URL;
+  protected readonly githubUrl = inject(ENVIRONMENT).repoUrl;
+  protected readonly newIssueUrl = `${this.githubUrl}/issues/new`;
   private readonly breakpoints = inject(BreakpointObserver);
   private readonly navState = inject(NavStateStore);
 

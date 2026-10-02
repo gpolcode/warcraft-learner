@@ -57,13 +57,12 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      # CURRENT_RAIDS: WCL zone names to bench, comma separated (e.g. "The Venomous Abyss"). Anything else is pruned; unset prunes nothing.
-      # PRIORITY_SPECS (repo variable) is optional: unset or malformed falls back safely (see parsePrioritySpecs in ingest-ordering-service.ts).
+      # The raids and priority specs a run benches live in frontend/src/environments/environment.ingest.ts; the WCL pair is the repository's only secret input.
       - name: Run parse ingestion
         working-directory: frontend
         env:
-          CURRENT_RAIDS: ${{ vars.CURRENT_RAIDS }}
-          PRIORITY_SPECS: ${{ vars.PRIORITY_SPECS }}
+          WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
+          WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
         run: npm run ingest
 
       # Pruning never removes whole spec dirs, so this trips only on an overlay catastrophe, not a quiet hour.

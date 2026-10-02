@@ -46,7 +46,11 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       # Shell only: the site reads the shared data/specs/ copy at the gh-pages root via the absolute dataBaseHref.
+      # The WCL pair ships inside the bundle by design (warcraft-wcl-data skill); it is a secret only to stay out of the repository.
       - name: Build the site
+        env:
+          WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
+          WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
         run: |
           set -euo pipefail
           npm --prefix frontend ci

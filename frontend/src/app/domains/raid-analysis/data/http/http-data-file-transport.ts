@@ -5,7 +5,7 @@ import { DataFileTransport } from '../data-files/data-file-transport';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from './http-load-error';
-import { environment } from '../../../../../environments/environment';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 const BROWSER_READONLY = 'DataFileApiService is read-only in the browser';
 
@@ -14,7 +14,7 @@ export class HttpDataFileTransport implements DataFileTransport {
   private readonly logger = inject(LoggerService);
   private readonly http = inject(HttpClient);
   // Deployed builds set an absolute `dataBaseHref` pointing at the single shared gh-pages-root data copy; empty (development) resolves relative to `document.baseURI`.
-  private readonly base = new URL(environment.dataBaseHref || 'data/specs/', document.baseURI).href;
+  private readonly base = new URL(inject(ENVIRONMENT).dataBaseHref || 'data/specs/', document.baseURI).href;
 
   async readJson<T>(relPath: string): Promise<Result<T>> {
     try {

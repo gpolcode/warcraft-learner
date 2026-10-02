@@ -2,15 +2,6 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class IngestOrderingService {
-
-  // Malformed input falls back to no priority spec rather than throwing, so a typo'd repo variable can't break a run.
-  parsePrioritySpecs(raw: string | null | undefined): readonly string[] {
-    if (!raw) return [];
-    const tokens = raw.split(',').map(token => token.trim()).filter(token => token.length > 0);
-    if (tokens.length === 0 || !tokens.every(token => SPEC_TOKEN.test(token))) return [];
-    return tokens;
-  }
-
   /** Order within each version group is randomized per call so every spec gets a turn at the front over many runs. */
   orderSpecsByVersion(
     entries: readonly SpecOrderEntry[],
@@ -59,8 +50,6 @@ export class IngestOrderingService {
 
 /** Cap on how many specs one run ingests, so a single run stays within the WCL point budget. */
 export const SPEC_LIMIT = 10;
-
-const SPEC_TOKEN = /^[A-Za-z]+$/;
 
 export interface SpecOrderEntry {
   spec: string;
