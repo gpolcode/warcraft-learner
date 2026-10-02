@@ -13,12 +13,12 @@ const nodesOf = (checks: ConditionCheck[]) => mountVm(ConditionChecklist, { occu
 describe('ConditionChecklist', () => {
   it('carries a level\'s connector through the rows nested under a row with siblings below it', () => {
     const [group] = nodesOf([oneOf(met('Stealth is up'), met('Vanish is up')), met('At 5+ combo points')]);
-    expect(group?.children.map(node => node.rails)).toEqual([[true], [true]]);
+    expect(group?.children.map(node => node.continuing)).toEqual([[true], [true]]);
   });
 
   it('ends a level\'s connector at its last row, so the rows nested under it carry none of it', () => {
     const nodes = nodesOf([met('At 5+ combo points'), oneOf(met('Stealth is up'), met('Vanish is up'))]);
     expect(nodes.map(node => node.last)).toEqual([false, true]);
-    expect(nodes[1]?.children.map(node => node.rails)).toEqual([[false], [false]]);
+    expect(nodes[1]?.children.map(node => node.continuing)).toEqual([[false], [false]]);
   });
 });

@@ -6,8 +6,7 @@ import type { ConditionCheck, FindingOccurrence } from '../data/analysis/analysi
 
 interface ChecklistNode {
   check: ConditionCheck;
-  /** Per level above the row, whether that level's branch runs on below it, so its connector passes through. */
-  rails: boolean[];
+  continuing: boolean[];
   last: boolean;
   children: ChecklistNode[];
 }
@@ -24,10 +23,10 @@ export class ConditionChecklist {
 
   protected readonly nodes = computed(() => this.placed(this.occurrence().checks, []));
 
-  private placed(checks: ConditionCheck[], rails: boolean[]): ChecklistNode[] {
+  private placed(checks: ConditionCheck[], continuing: boolean[]): ChecklistNode[] {
     return checks.map((check, at) => {
       const last = at === checks.length - 1;
-      return { check, rails, last, children: this.placed(check.group?.checks ?? [], [...rails, !last]) };
+      return { check, continuing, last, children: this.placed(check.group?.checks ?? [], [...continuing, !last]) };
     });
   }
 }

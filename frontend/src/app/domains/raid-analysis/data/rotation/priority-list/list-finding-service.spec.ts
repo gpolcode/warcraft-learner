@@ -140,7 +140,6 @@ describe('ListFindingService condition paths', () => {
   });
   const read = (truth: Truth): TermReading => ({ truth, value: null });
   const both = (first: Truth, second: Truth): TermReading => ({ truth: logic.and(first, second), value: null, parts: [read(first), read(second)] });
-  /** Darkest Night down at under 5 combo points, or up with combo points missing; then more than one enemy. */
   const moment = (down: [Truth, Truth], up: [Truth, Truth], enemies: Truth = 'true'): TermReading[] => {
     const options = [both(...down), both(...up)];
     return [{ truth: logic.or(...options.map(option => option.truth)), value: null, parts: options }, read(enemies)];
@@ -148,7 +147,7 @@ describe('ListFindingService condition paths', () => {
   const pressed = (verdict: CastVerdict, terms: TermReading[], atS = 10): CastCheck => ({
     atS, verdict, line: 0, lines: [{ truth: logic.and(...terms.map(term => term.truth)), terms }],
   });
-  /** A row shows only beside a moment the log settled, so every press under test sits before this one. */
+  /** A row shows only beside a moment the log settled. */
   const settled = pressed('on', moment(['true', 'true'], ['true', 'true']), 20);
   const occurrenceOf = (check: CastCheck) => rowOf(reading([check, settled]), withButtons([button()], { list: pathed }))?.occurrences[0];
   const roles = (checks: ConditionCheck[] = []): string[] => checks.map(check => check.role ?? 'plain');

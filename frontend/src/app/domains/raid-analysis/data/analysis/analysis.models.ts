@@ -1,14 +1,12 @@
 export interface FindingOccurrence {
   atS: number;
   ok: boolean;
-  /** Follows the occurrence's time; where `rule` is set, it continues `At <time>` mid-sentence. */
+  /** Where `rule` is set, a lowercase continuation of `At <time>`, never shown on its own. */
   detail: string;
   /** A cast the log could not settle: `ok` is false, yet it is no miss. */
   unjudged?: boolean;
   checks: ConditionCheck[];
-  /** Set with `checks`: what they decide, said before the time. */
   rule?: string;
-  /** Set with `checks`: the press's result, which heads them. */
   result?: string;
 }
 
@@ -16,7 +14,7 @@ export interface ConditionCheck {
   text: string;
   truth: 'true' | 'false' | 'unknown';
   value: string;
-  /** Decisive: settled the press's result. Unneeded: off the path that settled it. */
+  /** Absent on a met condition of a missed press: on the path, yet not what to change. */
   role?: 'decisive' | 'unneeded';
   /** An either-or or all-of term, read operand by operand in place of its own row. */
   group?: { any: boolean; checks: ConditionCheck[] };

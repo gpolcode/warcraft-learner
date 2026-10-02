@@ -5,10 +5,10 @@
     @let tone = check.truth === 'unknown' ? 'unknown' : (check.role === 'decisive' ? check.truth : 'quiet');
     <li class="contents">
       <div class="flex min-h-6 pr-9">
-        <!-- left-2.25 is half the 18px icon, so each connector drops from the center of the icon it hangs from. -->
-        @for (rail of node.rails; track $index) {
+        <!-- left-2.25 is half of icon-18, so connectors drop from the icon center. -->
+        @for (continues of node.continuing; track $index) {
           <span class="relative w-6.5 shrink-0" aria-hidden="true">
-            @if (rail) {
+            @if (continues) {
               <span class="absolute inset-y-0 left-2.25 border-l border-muted/30"></span>
             }
           </span>

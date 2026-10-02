@@ -16,7 +16,6 @@ const MAX_OCCURRENCES = 24;
 const SHARE_DIGITS = 3;
 const FADED = 'Conditions that were not needed are faded.';
 
-/** `detail` follows `At <time>` after the rule; `alone` stands in for it on a cast with no conditions to show. */
 const CAST_READS: Record<CastVerdict, { result: string; detail: string; alone: string }> = {
   on: { result: 'Right time', detail: 'they did.', alone: 'Right time.' },
   off: { result: 'Wrong time', detail: 'they did not. Wait for the conditions marked with a cross.', alone: 'Wrong time. Wait for the conditions marked with a cross.' },
@@ -110,7 +109,7 @@ export class ListFindingService {
     return checks.map(check => this.marked(check, result));
   }
 
-  /** A met condition decides only a press whose conditions all held; on any other press the unmet ones on the path do. */
+  /** A met condition is not what to change on a missed press, so it decides only when every condition held. */
   private marked(check: ConditionCheck, result: Truth): ConditionCheck {
     const { group } = check;
     if (!group) return check.truth !== 'true' || result === 'true' ? { ...check, role: 'decisive' } : check;
@@ -124,7 +123,7 @@ export class ListFindingService {
     return { ...check, role: 'unneeded', ...(group ? { group: { ...group, checks: group.checks.map(part => this.unneeded(part)) } } : {}) };
   }
 
-  /** An either-or's path runs through its met options, else those the log cannot read, else every option nearest to holding, so no tie reads as the one to aim for. */
+  /** Every option tied for nearest stays, so none reads as the one to aim for over an equally near one. */
   private settling(options: ConditionCheck[], truth: Truth): ConditionCheck[] {
     if (truth !== 'false') return options.filter(option => option.truth === truth);
     const shares = options.map(option => this.metShare(option));
