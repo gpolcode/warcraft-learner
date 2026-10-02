@@ -24,6 +24,10 @@ export const DARKEST_NIGHT = 457280;
 // Logged once on its target and once on the priest, a few ms apart, for one press.
 export const POWER_INFUSION = 10060;
 
+// Returning to the marked spot logs a second cast under ALTER_TIME_RETURN, named Alter Time too, as the aura closes.
+export const ALTER_TIME = 342245;
+export const ALTER_TIME_RETURN = 342247;
+
 export const WRATH = 190984;
 export const STARFIRE = 194153;
 
@@ -40,3 +44,17 @@ export const WCL_SYNTHETIC_SOURCE_FALLBACK_ID = 291807;
 // Bladestorm: SimC's spell data holds both records under the button's name, and a log casts only one of them.
 export const BLADESTORM = 227847;
 export const BLADESTORM_HERO = 446035;
+
+// WCL quirk: a Divine Hymn channel logs one cast under the press and a fake cast per tick under the tick record of the same name.
+export const DIVINE_HYMN = 64843;
+export const DIVINE_HYMN_TICK = 64844;
+
+// WCL quirk: The Hunt begins and casts under the press, then logs its landing as a fake cast under another record of the name.
+export const THE_HUNT = 370965;
+export const THE_HUNT_LANDING = 370966;
+
+// Its merged spell data reads a longer duration than its own aura.
+export const ANTI_MAGIC_SHELL = 48707;
+
+// WCL quirk: one use of Devastation's Deep Breath logs a second cast under the same id seconds later, after the first one's short aura closes.
+export const DEEP_BREATH = 433874;

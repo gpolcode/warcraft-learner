@@ -21,6 +21,11 @@ export function cast(
   };
 }
 
+/** A cast WCL derives from another event, such as a channel tick, rather than a press. */
+export function fakeCast(spellId: number, atS: number): WclEvent {
+  return { ...cast(spellId, atS), fake: true };
+}
+
 export function beginCast(spellId: number, atS: number): WclEvent {
   return { type: 'begincast', timestamp: atS * MS_PER_SECOND, abilityGameID: spellId };
 }

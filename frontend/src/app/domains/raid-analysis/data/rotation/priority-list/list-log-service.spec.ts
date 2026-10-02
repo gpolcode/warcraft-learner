@@ -40,7 +40,7 @@ function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclComba
 const pull = (): ListPull => {
   const [fight] = wclReport({ endTimeMs: 120_000 }).fights;
   if (!fight) throw new Error('no pull in the fixture report');
-  return { reportCode: 'rX', fight, playerId: PLAYER_ID, abilities: [] };
+  return { reportCode: 'rX', fight, playerId: PLAYER_ID, abilities: [], folds: [] };
 };
 
 describe('ListLogService', () => {
@@ -89,6 +89,16 @@ describe('ListLogService', () => {
     const { calls, logs } = recording();
     await logs.read(list(['combo_points>=5']), pull());
     expect(calls.map(call => call.dataType)).toContain('Resources');
+  });
+
+  it('reads one cast of a button for a press the log casts twice', async () => {
+    const PRESS_S = 5;
+    const ECHO_S = 0.02;
+    const FOLD_WINDOW_S = 10;
+    const { logs } = recording({ Casts: [cast(EVISCERATE, PRESS_S), cast(EVISCERATE, PRESS_S + ECHO_S)] });
+    const folds = [{ name: 'Eviscerate', spell_id: EVISCERATE, window_s: FOLD_WINDOW_S }];
+    const reading = await logs.read(list([]), { ...pull(), folds });
+    expect(reading.casts.get('eviscerate')).toHaveLength(1);
   });
 
   it('reads an aura up at the pull from the combatant info, since the stream never applies it', async () => {

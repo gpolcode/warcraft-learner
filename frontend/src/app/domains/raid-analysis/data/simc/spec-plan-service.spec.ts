@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { cast } from '../../../../../testing/builders/events';
-import { BLADESTORM, BLADESTORM_HERO, VANISH } from '../../../../../testing/spell-ids';
+import { beginCast, cast } from '../../../../../testing/builders/events';
+import { BLADESTORM, BLADESTORM_HERO, DIVINE_HYMN, DIVINE_HYMN_TICK, THE_HUNT, THE_HUNT_LANDING, VANISH } from '../../../../../testing/spell-ids';
 import { planSpell, specPlan } from '../../../../../testing/builders/spec-plan';
 import type { TalentTree } from '../http/talent-data-service';
 import { SpecPlanService } from './spec-plan-service';
@@ -81,7 +81,7 @@ describe('SpecPlanService.build', () => {
   });
 
   it('plans each button under the record with its longest cooldown and marks a talented one', () => {
-    expect(fury().cooldowns[0]).toEqual({ name: 'Recklessness', spell_id: RECKLESSNESS, cooldown: 90, talent_gated: true, opener_priority: 1 });
+    expect(fury().cooldowns[0]).toEqual({ name: 'Recklessness', spell_id: RECKLESSNESS, cooldown: 90, duration: 0, charges: 1, talent_gated: true, opener_priority: 1 });
   });
 
   it('names the talent entry that grants a talented button, by the tree\'s own name for it', () => {
@@ -94,6 +94,19 @@ describe('SpecPlanService.build', () => {
   it('plans only the labelled cooldowns, in no order, for a spec SimC writes no APL for', () => {
     expect(fury(null).cooldowns.map(cooldown => [cooldown.name, cooldown.opener_priority])).toEqual([['Recklessness', undefined], ['Bladestorm', undefined]]);
     expect(fury(null).lines).toEqual([]);
+  });
+
+  it('carries each button\'s aura duration and charges, merged over every record of its name', () => {
+    const AVATAR_AURA_S = 20;
+    const REGENERATION_CHARGES = 2;
+    const dump = [
+      DUMP,
+      record('Avatar', AVATAR + 1, `Duration         : ${AVATAR_AURA_S} seconds`),
+      record('Enraged Regeneration', ENRAGED_REGENERATION + 1, `Charges          : ${REGENERATION_CHARGES} (120 seconds cooldown)`),
+    ].join('\n\n');
+    const plan = specPlans.build({ apl: APL, dump, specLabel: 'Fury', talents: TREE, code: '' });
+    expect(plan.cooldowns.find(cooldown => cooldown.name === 'Avatar')).toMatchObject({ spell_id: AVATAR, duration: AVATAR_AURA_S, charges: 1 });
+    expect(plan.defensives.find(defensive => defensive.name === 'Enraged Regeneration')).toMatchObject({ duration: 0, charges: REGENERATION_CHARGES });
   });
 
   it('plans the spec\'s own big and external defensives, leaving out a name only another spec\'s talent carries', () => {
@@ -198,6 +211,32 @@ describe('SpecPlanService button ids', () => {
 
   it('leaves out a button the log never cast', () => {
     expect(specPlans.castIds(plan, [])).toEqual({});
+  });
+
+  it('reads a hardcast under the record it began under, not the landing the log casts as often', () => {
+    const hunt = specPlan({
+      cooldowns: [{ name: 'The Hunt', spell_id: THE_HUNT_LANDING, cooldown: 90 }],
+      spells: { the_hunt: planSpell('The Hunt', [THE_HUNT, THE_HUNT_LANDING]) },
+    });
+    const press = [beginCast(THE_HUNT, 2), cast(THE_HUNT, 3), cast(THE_HUNT_LANDING, 3.3)];
+    expect(specPlans.castIds(hunt, press)).toEqual({ 'The Hunt': THE_HUNT });
+  });
+
+  it('reads a channel under the record its cooldown sits on, not the tick record the log casts once a second', () => {
+    const hymn = specPlan({
+      cooldowns: [{ name: 'Divine Hymn', spell_id: DIVINE_HYMN, cooldown: 180 }],
+      spells: { divine_hymn: planSpell('Divine Hymn', [DIVINE_HYMN, DIVINE_HYMN_TICK]) },
+    });
+    const channel = [cast(DIVINE_HYMN, 50), ...[50, 51, 52, 53, 54].map(atS => cast(DIVINE_HYMN_TICK, atS))];
+    expect(specPlans.castIds(hymn, channel)).toEqual({ 'Divine Hymn': DIVINE_HYMN });
+  });
+
+  it('falls back to the most cast record when the log neither began nor cast the button\'s own', () => {
+    const hymn = specPlan({
+      cooldowns: [{ name: 'Divine Hymn', spell_id: DIVINE_HYMN, cooldown: 180 }],
+      spells: { divine_hymn: planSpell('Divine Hymn', [DIVINE_HYMN, DIVINE_HYMN_TICK]) },
+    });
+    expect(specPlans.castIds(hymn, [cast(DIVINE_HYMN_TICK, 50), cast(DIVINE_HYMN_TICK, 51)])).toEqual({ 'Divine Hymn': DIVINE_HYMN_TICK });
   });
 
   it('plans a log\'s buttons under the ids that log cast them with', () => {

@@ -45,16 +45,19 @@ export class BurstFeatureService {
   ): Promise<BurstView> {
     const { reportCode, fightId } = pull;
     const { report, fight, fightDurationS } = context;
+    const abilities = report.masterData?.abilities ?? [];
     // Names only, to attribute the player's casts by ability name in each window.
     const abilityNames = new Map<number, string>();
-    for (const ability of report.masterData?.abilities ?? []) abilityNames.set(ability.gameID, ability.name);
+    for (const ability of abilities) abilityNames.set(ability.gameID, ability.name);
 
-    const [casts, damage] = await Promise.all([
+    const [casts, buffs, damage] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
+      this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
       this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId),
     ]);
+    const presses = this.wclProjections.presses(casts, bench.press_folds ?? [], { buffs, abilities });
     const playerWindows = this.findPlayerBurstWindows(
-      bench.windows, this.wclProjections.withRelativeS(damage, fight.startTime), this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime), abilityNames,
+      bench.windows, this.wclProjections.withRelativeS(damage, fight.startTime), this.wclProjections.withRelativeS(presses, fight.startTime), abilityNames,
     );
     return this.buildBurstView(bench.windows, playerWindows, fightDurationS, bench.cd_spell_ids, bench.ability_icons);
   }

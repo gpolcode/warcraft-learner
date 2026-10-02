@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../wcl/wcl-api-service';
 import type { WclAbility, WclEvent, WclFight } from '../../wcl/wcl.models';
 import type { PriorityList } from '../../plan/plan.models';
-import { WclProjectionsService } from '../../analysis/wcl-projections-service';
+import { PressFold, WclProjectionsService } from '../../analysis/wcl-projections-service';
 import { GearExtractService } from '../../gear/gear-extract-service';
 import { FactContextService } from './fact-context-service';
 import { ListCheckService, LogReading } from './list-check-service';
@@ -13,6 +13,7 @@ export interface ListPull {
   playerId: number;
   /** The report's own ability names, which stand in for a name the spell data lacks. */
   abilities: WclAbility[];
+  folds: readonly PressFold[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,7 +24,7 @@ export class ListLogService {
   private readonly contexts = inject(FactContextService);
   private readonly checks = inject(ListCheckService);
 
-  async read(list: PriorityList, { reportCode, fight, playerId, abilities }: ListPull): Promise<LogReading> {
+  async read(list: PriorityList, { reportCode, fight, playerId, abilities, folds }: ListPull): Promise<LogReading> {
     if (!list.lines.length) return { casts: new Map(), order: [], ids: new Map() };
     const streams = this.checks.streams(list);
     const { startTime, endTime, id } = fight;
@@ -41,7 +42,7 @@ export class ListLogService {
     const combatant = this.gearExtract.selectCombatantInfo(combatants, playerId);
     return this.checks.read(this.contexts.build({
       list, abilities,
-      casts: this.projections.withRelativeS(this.projections.presses(casts), startTime),
+      casts: this.projections.withRelativeS(this.projections.presses(casts, folds, { buffs, abilities }), startTime),
       buffs: this.projections.withRelativeS([...this.upAtPull(combatant?.auras ?? [], startTime), ...buffs], startTime),
       debuffs: this.projections.withRelativeS(enemyAuras.filter(event => event.sourceID === playerId), startTime),
       damage: this.projections.withRelativeS(damage, startTime),

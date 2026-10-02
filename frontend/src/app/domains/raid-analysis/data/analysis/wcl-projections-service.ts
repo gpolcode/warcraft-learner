@@ -19,17 +19,55 @@ export class WclProjectionsService {
     return events.map(event => ({ ...event, atS: this.relativeS(event.timestamp, fightStartMs) }));
   }
 
-  /** WCL logs some presses once per target a few ms apart (Power Infusion on its target, then on the priest), so a cast of the same button that close to the last kept one is that press again. */
-  presses(events: WclEvent[]): WclEvent[] {
-    const lastPressMs = new Map<string, number>();
-    return events.filter(event => {
-      if (event.type !== 'cast') return true;
-      const key = `${event.sourceID ?? 0}:${event.abilityGameID}`;
-      const last = lastPressMs.get(key);
-      if (last !== undefined && event.timestamp - last < SAME_PRESS_MS) return false;
-      lastPressMs.set(key, event.timestamp);
+  /** A merged duration can outlast the button's own aura (Anti-Magic Shell reads 45 on a 60s button), and a talent never shortens a cooldown below half. */
+  pressFolds(buttons: readonly FoldButton[]): PressFold[] {
+    return buttons.flatMap(({ name, spell_id, cooldown, duration = 0, charges = 1 }) => {
+      const window_s = Math.min(duration, cooldown / 2);
+      return charges <= 1 && cooldown >= FOLDING_COOLDOWN_S && window_s > 0 ? [{ name, spell_id, window_s }] : [];
+    });
+  }
+
+  /** WCL logs one press of some buttons as several casts: Power Infusion once per target, Deep Breath's recast, Alter Time's return, each Divine Hymn tick. */
+  presses(casts: WclEvent[], folds: readonly PressFold[], { buffs, abilities }: PressLog): WclEvent[] {
+    const foldOf = this.foldsById(folds, abilities);
+    const kept = new Map<string, WclEvent>();
+    return casts.filter(event => {
+      const fold = event.type === 'cast' ? foldOf.get(event.abilityGameID) : undefined;
+      if (!fold) return true;
+      if (event.fake) return false;
+      const key = `${event.sourceID ?? 0}:${fold.name}`;
+      const press = kept.get(key);
+      if (press && this.samePress(event, press, fold, this.selfAuras(buffs, foldOf, fold, event.sourceID))) return false;
+      kept.set(key, event);
       return true;
     });
+  }
+
+  private foldsById(folds: readonly PressFold[], abilities: readonly WclAbility[]): Map<number, PressFold> {
+    const foldOf = new Map<number, PressFold>();
+    for (const fold of folds) {
+      for (const ability of abilities) if (ability.name === fold.name) foldOf.set(ability.gameID, fold);
+      foldOf.set(fold.spell_id, fold);
+    }
+    return foldOf;
+  }
+
+  private selfAuras(buffs: readonly WclEvent[], foldOf: ReadonlyMap<number, PressFold>, fold: PressFold, casterId: number | undefined): WclEvent[] {
+    return buffs.filter(event => foldOf.get(event.abilityGameID) === fold && event.sourceID === casterId);
+  }
+
+  // A second press of a one-charge button shows only through the aura its first press opened: still up means a charge the spell data leaves out, and no self aura means an external.
+  private samePress(cast: WclEvent, press: WclEvent, fold: PressFold, selfAuras: readonly WclEvent[]): boolean {
+    if (this.relativeS(cast.timestamp, press.timestamp) >= fold.window_s) return false;
+    if (cast.abilityGameID !== fold.spell_id || cast.timestamp - press.timestamp <= CAST_AURA_SKEW_MS) return true;
+    const opened = selfAuras.some(aura => aura.type === 'applybuff' && Math.abs(aura.timestamp - press.timestamp) <= CAST_AURA_SKEW_MS);
+    return opened && !this.auraUpAt(selfAuras, cast.timestamp - CAST_AURA_SKEW_MS);
+  }
+
+  // WCL closes and reopens a running aura in one ms (Obsidian Scales), so only the last change at or before the moment says whether it is up.
+  private auraUpAt(auras: readonly WclEvent[], atMs: number): boolean {
+    const last = auras.filter(aura => aura.timestamp <= atMs).at(-1);
+    return last !== undefined && last.type !== 'removebuff';
   }
 
   normalizeAbilityId(id: number): number {
@@ -95,18 +133,36 @@ export class WclProjectionsService {
 }
 
 import * as z from '../../../shared/util-validation/zod-mini';
-import { ParseRanking, WclEvent, WclRankingsBlob, WclRawAbility, WclRawRanking, WclReport } from '../wcl/wcl.models';
+import { ParseRanking, WclAbility, WclEvent, WclRankingsBlob, WclRawAbility, WclRawRanking, WclReport } from '../wcl/wcl.models';
 import { WindowSpell } from './window-comparison.models';
 import { JsonCodecService } from '../../../shared/util-validation/json-codec-service';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
+import type { PlanCooldown } from '../plan/plan.models';
 
 export type TimedEvent = WclEvent & { atS: number };
+
+export interface PressFold {
+  name: string;
+  spell_id: number;
+  window_s: number;
+}
+
+type FoldButton = Pick<PlanCooldown, 'name' | 'spell_id' | 'cooldown' | 'duration' | 'charges'>;
+
+/** The auras on the player show whether a press opened its own aura, and the report's names tie a button's ids together. */
+export interface PressLog {
+  buffs: readonly WclEvent[];
+  abilities: readonly WclAbility[];
+}
 
 // WCL anonymizes a privacy-protected parse's player name to "Character <id>-<id>", unfetchable since it can never match a report actor.
 const ANONYMIZED_NAME = /^Character \d+-\d+$/;
 
-/** Well under any button's fastest repeat, well over the few ms between one press's per-target casts. */
-const SAME_PRESS_MS = 100;
+// A button on a shorter cooldown can gain a second charge from a talent the spell data leaves out (Healing Stream Totem) or come back in under half of it (Preservation's Fire Breath).
+const FOLDING_COOLDOWN_S = 60;
+
+// WCL can stamp a cast's echo, or the aura change it causes, a few tens of ms off the cast itself.
+const CAST_AURA_SKEW_MS = 50;
 
 // WCL reports the physical auto-attack as event ability id 1; the real spell is Auto Attack.
 const WCL_MELEE_EVENT_ABILITY_ID = 1;

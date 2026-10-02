@@ -2,6 +2,9 @@ export interface PlanCooldown {
   name: string;
   spell_id: number;
   cooldown: number;
+  /** Merged over every record of the name, so it can outlast the button's own aura. */
+  duration?: number;
+  charges?: number;
   opener_priority?: number;
   talent_gated?: boolean;
   /** The talent entries that grant a talent-gated button, so a pull's own talents tell whether its player has it. */
@@ -12,6 +15,8 @@ export interface PlanDefensive {
   name: string;
   spell_id: number;
   cooldown: number;
+  duration?: number;
+  charges?: number;
   talent_gated?: boolean;
   talent_entries?: number[];
 }

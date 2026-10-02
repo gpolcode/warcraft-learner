@@ -104,32 +104,34 @@ export class BurstTransformService implements DataSource<BurstBench> {
         ...Object.values(bench.cd_spell_ids),
         ...bench.windows.flatMap(window => window.ability_breakdown.map(ability => ability.spell_id)),
       ],
-      parse: (parse, plan) => this.parseWindows(parse, plan.cooldowns),
+      parse: (parse, plan) => this.parseWindows(parse, plan),
       bench: ({ parses }, plan) => {
         const allWindows = parses.flatMap(
           (windows, parseIndex) => windows.map(window => ({ ...window, parse_index: parseIndex })));
         return {
           windows: this.clusterParseWindows(allWindows, parses.length),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
+          press_folds: this.wclProjections.pressFolds([...plan.cooldowns, ...plan.defensives]),
         };
       },
     });
   }
 
-  private async parseWindows({ ranking, report, fight, player }: BenchParse, cooldowns: PlanCooldown[]): Promise<ParseWindow[]> {
+  private async parseWindows({ ranking, report, fight, player }: BenchParse, plan: BurstPlan): Promise<ParseWindow[]> {
+    const abilities = report.masterData?.abilities ?? [];
     // Names only, to attribute casts by ability name inside a parse window.
-    const abilityNames = new Map<number, string>(
-      (report.masterData?.abilities ?? []).map(ability => [ability.gameID, ability.name]),
-    );
-    const [casts, damage] = await Promise.all([
+    const abilityNames = new Map<number, string>(abilities.map(ability => [ability.gameID, ability.name]));
+    const [casts, buffs, damage] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id),
+      this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id),
     ]);
 
-    const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts), fight.startTime);
+    const folds = this.wclProjections.pressFolds([...plan.cooldowns, ...plan.defensives]);
+    const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime);
     return this.findParseWindows({
       damage: this.wclProjections.withRelativeS(damage, fight.startTime), fightLenS: this.wclProjections.relativeS(fight.endTime, fight.startTime),
-      timings: this.cdTimings(castsTimed, cooldowns), casts: castsTimed, abilityNames,
+      timings: this.cdTimings(castsTimed, plan.cooldowns), casts: castsTimed, abilityNames,
     });
   }
 

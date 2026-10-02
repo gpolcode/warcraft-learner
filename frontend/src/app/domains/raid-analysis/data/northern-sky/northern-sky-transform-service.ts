@@ -4,6 +4,7 @@ import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { NorthernSkyPhaseDataService } from '../http/northern-sky-phase-data-service';
 import { TopParseSelection } from '../wcl/wcl.models';
 import type { SpecPlan } from '../simc/spec-plan-service';
+import type { PlanCooldown } from '../plan/plan.models';
 import { Result } from '../../../shared/util-http/result';
 import { round } from '../analysis/analysis-math';
 import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
@@ -12,7 +13,7 @@ import { DataSource } from '../data-source/data-source';
 import { NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
 import { NorthernSkyPhase, NorthernSkyPhases } from './northern-sky-phases';
 
-interface ExportAbility { spell_id: number; name: string; kind: NorthernSkyAbility['kind']; }
+type ExportAbility = Pick<PlanCooldown, 'spell_id' | 'name' | 'cooldown' | 'duration' | 'charges'> & { kind: NorthernSkyAbility['kind'] };
 
 // Scan this far down the ranking to skip private/unfetchable logs before giving up.
 const CANDIDATE_POOL_COUNT = 10;
@@ -58,11 +59,14 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
 
   // A parse that cast none of the exported abilities is no schedule at all, never an empty export.
   private async parseCastTimes(
-    { ranking, fight, player }: BenchParse, abilities: ExportAbility[],
+    { ranking, report, fight, player }: BenchParse, abilities: ExportAbility[],
   ): Promise<NorthernSkyAbility[] | null> {
-    const casts = this.wclProjections.withRelativeS(
-      this.wclProjections.presses(await this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id)), fight.startTime,
-    );
+    const [raw, buffs] = await Promise.all([
+      this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id),
+      this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
+    ]);
+    const presses = this.wclProjections.presses(raw, this.wclProjections.pressFolds(abilities), { buffs, abilities: report.masterData?.abilities ?? [] });
+    const casts = this.wclProjections.withRelativeS(presses, fight.startTime);
     const built: NorthernSkyAbility[] = [];
     for (const ability of abilities) {
       const cast_times_s = this.cooldownCastTimes(casts, ability.spell_id);
@@ -73,8 +77,8 @@ export class NorthernSkyTransformService implements DataSource<NorthernSkyBench>
 
   private exportAbilities(plan: SpecPlan): ExportAbility[] | null {
     const abilities: ExportAbility[] = [
-      ...plan.cooldowns.map(cd => ({ spell_id: cd.spell_id, name: cd.name, kind: 'cooldown' as const })),
-      ...plan.defensives.map(def => ({ spell_id: def.spell_id, name: def.name, kind: 'defensive' as const })),
+      ...plan.cooldowns.map(({ spell_id, name, cooldown, duration, charges }) => ({ spell_id, name, cooldown, duration, charges, kind: 'cooldown' as const })),
+      ...plan.defensives.map(({ spell_id, name, cooldown, duration, charges }) => ({ spell_id, name, cooldown, duration, charges, kind: 'defensive' as const })),
     ].filter(ability => ability.spell_id);
     return abilities.length ? abilities : null;
   }

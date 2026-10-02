@@ -128,8 +128,12 @@ describe('RotationFeatureService', () => {
         ? [cast(SHADOW_BLADES, PRESS_S, { source: PLAYER_ID, target: ALLY_ID }), cast(SHADOW_BLADES, PRESS_S + 0.02, { source: PLAYER_ID, target: PLAYER_ID })]
         : []),
     };
+    const SHADOW_BLADES_S = 16;
     // 1 use per minute over the 2-minute pull: 2 expected, and 2 is also the floor.
-    const twoExpected = bench({ per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 1, stddev: 0.1 } }) } });
+    const twoExpected = bench({
+      major_cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90, duration: SHADOW_BLADES_S, charges: 1 }],
+      per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 1, stddev: 0.1 } }) },
+    });
     const result = await withSource(Results.ok(twoExpected), wcl).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     assert(result.ok);
     expect(result.value.offensiveRows[0]?.measured).toMatchObject({ value: '1 / 2' });
