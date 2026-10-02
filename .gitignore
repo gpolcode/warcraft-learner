@@ -41,3 +41,6 @@ node_modules/
 .DS_Store
 Thumbs.db
 frontend/playwright.local.config.ts
+
+# The Angular CLI writes its cache beside whichever directory a command treats as the workspace root, so the root needs the rule too.
+.angular/
