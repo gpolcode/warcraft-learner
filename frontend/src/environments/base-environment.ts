@@ -1,5 +1,4 @@
 export interface Environment {
-  /** Empty when the build did not run through `scripts/ng-env.mjs`, which is the only thing that defines the pair. */
   wclClientId: string;
   wclClientSecret: string;
   wclTokenUrl: string;
@@ -19,7 +18,7 @@ export interface Environment {
   ingestServerUrl: string;
   /** An empty `dataBaseHref` resolves `data/specs/` relative to `document.baseURI`. */
   dataBaseHref: string;
-  /** WCL zone names ingestion benches; every other raid's data is pruned, and an empty list prunes nothing. */
+  /** WCL zone names to bench; an empty list benches and prunes nothing. */
   currentRaids: readonly string[];
   prioritySpecs: readonly string[];
 }

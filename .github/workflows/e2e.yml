@@ -40,7 +40,6 @@ jobs:
         run: npx playwright install --with-deps chromium
         working-directory: frontend
 
-      # The served production build needs the WCL pair the way every build does; it is a secret only to stay out of the repository.
       - name: Run e2e tests
         env:
           WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}

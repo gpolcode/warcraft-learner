@@ -10,7 +10,7 @@ import { withEnvironment } from '../../../../../environments/base-environment';
 /** The client-credentials token endpoint the service posts to (mirrors the environment default). */
 const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
 
-/** A pair the way scripts/ng-env.mjs defines it; the unit-test build itself carries none. */
+/** The unit-test build defines no pair, so the spec provides one. */
 const CLIENT_ID = 'test-client-id';
 const CLIENT_SECRET = 'test-client-secret';
 

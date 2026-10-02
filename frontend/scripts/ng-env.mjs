@@ -1,4 +1,4 @@
-// Every `ng` build or serve runs through here, so the WCL client pair reaches the bundle as a `define`d constant and never as a committed literal.
+// The WCL client pair reaches the bundle only as the `define`d constants passed here, so a bare `ng` build ships none.
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { requireWclCredentials } from './wcl-credentials.mjs';

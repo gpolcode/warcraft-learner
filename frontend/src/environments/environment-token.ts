@@ -3,5 +3,5 @@ import { Environment, withEnvironment } from './base-environment';
 
 export type { Environment };
 
-// The factory serves the defaults to a TestBed that provides nothing; app.config provides the build's environment over it.
+// The factory default is for a TestBed that provides nothing; a build provides its own environment over it.
 export const ENVIRONMENT = new InjectionToken<Environment>('ENVIRONMENT', { factory: () => withEnvironment({}) });

@@ -1,4 +1,4 @@
-// The one reader of the WCL client pair outside the browser: `frontend/.env` on a developer machine, the environment itself in CI.
+// The one reader of the WCL client pair outside the browser.
 import { existsSync, writeFileSync } from 'node:fs';
 import { createInterface } from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
@@ -35,7 +35,7 @@ async function askForPair() {
   }
 }
 
-/** The environment wins over `.env`, so a CI secret is never shadowed by a checked-out file; only a terminal with no `.env` is asked. */
+/** The environment wins over `.env`, so an exported pair is never shadowed by a stray file; only a terminal with no `.env` is asked. */
 export async function requireWclCredentials() {
   const envFileExists = existsSync(ENV_FILE);
   if (envFileExists) process.loadEnvFile(ENV_FILE);
@@ -49,7 +49,7 @@ export async function requireWclCredentials() {
     process.exit(1);
   }
   writeFileSync(ENV_FILE, `WCL_CLIENT_ID=${entered.clientId}\nWCL_CLIENT_SECRET=${entered.clientSecret}\n`);
-  // Child processes (ng, the ingest file server) inherit the environment, not the file read.
+  // A child process inherits the environment, not the file this process read.
   process.env.WCL_CLIENT_ID = entered.clientId;
   process.env.WCL_CLIENT_SECRET = entered.clientSecret;
   console.log(`Wrote ${ENV_FILE}.`);

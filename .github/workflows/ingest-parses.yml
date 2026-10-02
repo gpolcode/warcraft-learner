@@ -57,7 +57,6 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      # The raids and priority specs a run benches live in frontend/src/environments/environment.ingest.ts.
       - name: Run parse ingestion
         working-directory: frontend
         env:
