@@ -128,7 +128,7 @@ export class ListTextService {
   /** `flag` marks a term that tests the value for truth alone, which a count with no unit answers only as a state. */
   value(node: AplNode, range: Range, flag = false): string {
     const [lo, hi] = range;
-    if (lo === -Infinity && hi === Infinity) return this.supported(node) ? 'not in the log' : 'not supported by warcraft-learner';
+    if (lo === -Infinity && hi === Infinity) return this.supported(node) ? 'Not in the log' : 'Not supported by warcraft-learner';
     const name = node.type === 'Identifier' ? (node as jsep.Identifier).name : '';
     const unit = this.unit(name, lo === 1 && hi === 1);
     if (this.readsAsState(name, flag, unit)) return this.state(name, this.evaluator.truth(range));

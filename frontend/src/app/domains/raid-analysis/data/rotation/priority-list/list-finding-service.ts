@@ -6,12 +6,25 @@ import type { WindowStatus } from '../../analysis/window-comparison.models';
 import type { PriorityList } from '../../plan/plan.models';
 import type { AplNode } from '../../simc/simc-apl-service';
 import type { ButtonBench, RotationBench, ShareRange } from '../rotation-data-source';
-import { CastCheck, ListCheckService, LogReading, OrderCheck, ReadLine, TermReading } from './list-check-service';
+import { CastCheck, CastVerdict, ListCheckService, LogReading, OrderCheck, ReadLine, TermReading } from './list-check-service';
+import { ConditionEvalService } from './condition-eval-service';
 import { ListTextService } from './list-text-service';
+import type { Truth } from './priority-list.models';
 
 /** A fight can carry far more casts than a chip row should render. */
 const MAX_OCCURRENCES = 24;
 const SHARE_DIGITS = 3;
+const FADED = 'Conditions that were not needed are faded.';
+
+/** `detail` follows `At <time>` after the rule; `alone` stands in for it on a cast with no conditions to show. */
+const CAST_READS: Record<CastVerdict, { result: string; detail: string; alone: string }> = {
+  on: { result: 'Right time', detail: 'they did.', alone: 'Right time.' },
+  off: { result: 'Wrong time', detail: 'they did not. Wait for the conditions marked with a cross.', alone: 'Wrong time. Wait for the conditions marked with a cross.' },
+  unjudged: {
+    result: 'Not judged', detail: 'your log does not show all of them, so this cast is not judged.',
+    alone: 'The log does not show every condition, so this cast is not judged.',
+  },
+};
 
 export interface ButtonRow {
   name: string;
@@ -26,6 +39,7 @@ export interface ButtonRow {
 @Injectable({ providedIn: 'root' })
 export class ListFindingService {
   private readonly checks = inject(ListCheckService);
+  private readonly evaluator = inject(ConditionEvalService);
   private readonly text = inject(ListTextService);
 
   /** The buttons furthest under the top raiders' average lead. */
@@ -38,16 +52,17 @@ export class ListFindingService {
 
   private row(bench: RotationBench, entry: ButtonBench, lines: ReadLine[], reading: LogReading): ButtonRow | null {
     const { list } = bench;
-    const casts = (reading.casts.get(entry.action) ?? []).map(check => this.castOccurrence(list, lines, check));
-    const skips = reading.order.filter(check => check.expected === entry.action && check.pressed !== entry.action).map(check => this.skipOccurrence(list, lines, check));
-    const occurrences = [...casts, ...skips].sort((a, b) => a.atS - b.atS);
     const you = this.checks.rightShare(reading, entry.action);
     // A button whose moments the log settled none of has no share to bar, only moments it cannot judge.
     if (you === null) return null;
     const spellId = reading.ids.get(entry.action) ?? entry.spell_id;
     const icon = bench.ability_icons[spellId] ?? bench.ability_icons[entry.spell_id];
+    const name = icon?.name ?? this.text.name(list, entry.action);
+    const casts = (reading.casts.get(entry.action) ?? []).map(check => this.castOccurrence(list, lines, check, name));
+    const skips = reading.order.filter(check => check.expected === entry.action && check.pressed !== entry.action).map(check => this.skipOccurrence(list, lines, check, name));
+    const occurrences = [...casts, ...skips].sort((a, b) => a.atS - b.atS);
     return {
-      name: icon?.name ?? this.text.name(list, entry.action), spellId, icon: icon?.icon ?? '',
+      name, spellId, icon: icon?.icon ?? '',
       you: round(you, SHARE_DIGITS), top: entry.right, status: this.status(you, entry.right),
       occurrences: this.thinned(occurrences),
     };
@@ -59,31 +74,75 @@ export class ListFindingService {
     return you < top.avg ? 'warn' : 'good';
   }
 
-  private castOccurrence(list: PriorityList, lines: ReadLine[], check: CastCheck): FindingOccurrence {
+  private castOccurrence(list: PriorityList, lines: ReadLine[], check: CastCheck, name: string): FindingOccurrence {
     const line = lines[check.line];
-    const detail = {
-      on: 'Right time.',
-      off: 'Wrong time. Wait for the conditions marked with a cross.',
-      unjudged: 'The log does not show every condition, so this cast is not judged.',
-    }[check.verdict];
+    const checks = line ? this.checklist(list, line, check.lines[check.line]?.terms ?? []) : [];
+    const { result, detail, alone } = CAST_READS[check.verdict];
+    const faded = check.verdict === 'on' && this.anyUnneeded(checks) ? ` ${FADED}` : '';
     return {
       atS: round(check.atS, 3), ok: check.verdict === 'on',
       ...(check.verdict === 'unjudged' ? { unjudged: true } : {}),
-      detail, checks: line ? this.checklist(list, line, check.lines[check.line]?.terms ?? []) : [],
+      ...(checks.length ? { rule: this.rule(name), result, detail: detail + faded } : { detail: alone }),
+      checks,
     };
   }
 
-  private skipOccurrence(list: PriorityList, lines: ReadLine[], check: OrderCheck): FindingOccurrence {
+  private skipOccurrence(list: PriorityList, lines: ReadLine[], check: OrderCheck, name: string): FindingOccurrence {
     const line = lines[check.line];
+    const checks = line ? this.checklist(list, line, check.terms) : [];
+    const pressed = this.text.name(list, check.pressed);
     return {
       atS: round(check.atS, 3), ok: false,
-      detail: `Skipped when due. You pressed ${this.text.name(list, check.pressed)} instead.`,
-      checks: line ? this.checklist(list, line, check.terms) : [],
+      ...(checks.length
+        ? { rule: this.rule(name), result: 'Skipped when due', detail: `they all held, but you pressed ${pressed} instead.` }
+        : { detail: `Skipped when due. You pressed ${pressed} instead.` }),
+      checks,
     };
+  }
+
+  private rule(name: string): string {
+    return `${name} is only right when these conditions hold.`;
   }
 
   private checklist(list: PriorityList, line: ReadLine, terms: TermReading[]): ConditionCheck[] {
-    return this.unsettled(line.terms ?? [], terms).map(([term, reading]) => this.check(list, term, reading, line.action));
+    const checks = this.unsettled(line.terms ?? [], terms).map(([term, reading]) => this.check(list, term, reading, line.action));
+    const result = this.evaluator.and(...checks.map(check => check.truth));
+    return checks.map(check => this.marked(check, result));
+  }
+
+  /** A met condition decides only a press whose conditions all held; on any other press the unmet ones on the path do. */
+  private marked(check: ConditionCheck, result: Truth): ConditionCheck {
+    const { group } = check;
+    if (!group) return check.truth !== 'true' || result === 'true' ? { ...check, role: 'decisive' } : check;
+    const settling = group.any ? this.settling(group.checks, check.truth) : group.checks;
+    const parts = group.checks.map(part => (settling.includes(part) ? this.marked(part, result) : this.unneeded(part)));
+    return { ...check, group: { ...group, checks: parts } };
+  }
+
+  private unneeded(check: ConditionCheck): ConditionCheck {
+    const { group } = check;
+    return { ...check, role: 'unneeded', ...(group ? { group: { ...group, checks: group.checks.map(part => this.unneeded(part)) } } : {}) };
+  }
+
+  /** An either-or's path runs through its met options, else those the log cannot read, else every option nearest to holding, so no tie reads as the one to aim for. */
+  private settling(options: ConditionCheck[], truth: Truth): ConditionCheck[] {
+    if (truth !== 'false') return options.filter(option => option.truth === truth);
+    const shares = options.map(option => this.metShare(option));
+    const nearest = Math.max(...shares);
+    return options.filter((_, at) => shares[at] === nearest);
+  }
+
+  private metShare(check: ConditionCheck): number {
+    const leaves = this.leaves(check);
+    return leaves.filter(leaf => leaf.truth === 'true').length / leaves.length;
+  }
+
+  private leaves(check: ConditionCheck): ConditionCheck[] {
+    return check.group ? check.group.checks.flatMap(part => this.leaves(part)) : [check];
+  }
+
+  private anyUnneeded(checks: ConditionCheck[]): boolean {
+    return checks.some(check => check.role === 'unneeded' || this.anyUnneeded(check.group?.checks ?? []));
   }
 
   /** Leaves out what the player's build alone settles, which holds on every cast. */
@@ -97,7 +156,7 @@ export class ListFindingService {
     if (junction) {
       const checks = this.unsettled(junction.operands, reading?.parts).map(([operand, part]) => this.check(list, operand, part, action));
       // The operands read one by one below, so a nested either-or never has to be said in one sentence.
-      return { text: junction.any ? 'Any one of these' : 'All of these', truth, value: '', group: { any: junction.any, checks } };
+      return { text: junction.any ? 'One of' : 'All of', truth, value: '', group: { any: junction.any, checks } };
     }
     const text = this.text.capitalized(this.text.phrase(list, term, true, action));
     const subject = this.checks.subject(term);

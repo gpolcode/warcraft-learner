@@ -195,7 +195,7 @@ describe('ListTextService values', () => {
 
   it('reads a bounded value as its span, one the log cannot settle as such, and one no fact reads as unsupported', () => {
     expect(value('cooldown.shadow_dance.remains', [2, 6])).toBe('2 to 6 s away');
-    expect(value('cooldown.shadow_dance.remains', UNKNOWN)).toBe('not in the log');
-    expect(value('raid_event.movement.in', UNKNOWN)).toBe('not supported by warcraft-learner');
+    expect(value('cooldown.shadow_dance.remains', UNKNOWN)).toBe('Not in the log');
+    expect(value('raid_event.movement.in', UNKNOWN)).toBe('Not supported by warcraft-learner');
   });
 });
