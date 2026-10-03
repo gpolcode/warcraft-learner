@@ -457,4 +457,13 @@ describe('BurstTransformService (live, in-browser)', () => {
     expect(bench.value.windows).toHaveLength(1);
     expect(bench.value.windows[0]?.common_cds).toEqual([]);
   });
+
+  it('benches the damage windows when no top log casts any of the plan\'s cooldowns', async () => {
+    const uncast = planLoader(specPlan({ cooldowns: [{ name: 'Vanish', spell_id: VANISH, cooldown: 120 }] }));
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: uncast }) });
+    const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
+    assert(bench.ok);
+    expect(bench.value.cd_spell_ids).toEqual({});
+    expect(bench.value.windows).toHaveLength(1);
+  });
 });
