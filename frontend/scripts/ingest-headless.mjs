@@ -2,9 +2,10 @@
 import { spawn } from 'child_process';
 import { once } from 'events';
 import { chromium } from 'playwright';
+import { baseEnvironment } from '../src/environments/base-environment.ts';
 
-const APP_URL = 'http://localhost:4200';
-const SERVER_PROBE_URL = 'http://localhost:3000/api/dirs/specs';
+const { appUrl: APP_URL, ingestServerUrl } = baseEnvironment;
+const SERVER_PROBE_URL = `${ingestServerUrl}/api/dirs/specs`;
 const READY_TIMEOUT_MS = 5 * 60_000;
 const READY_POLL_MS = 500;
 const DONE_POLL_MS = 1_000;
@@ -102,10 +103,7 @@ async function main() {
     if (line) console.log(`[app] ${line}`);
   });
   page.on('pageerror', err => console.error(`[app] pageerror: ${err.message}`));
-  const params = new URLSearchParams();
-  if (process.env.CURRENT_RAIDS) params.set('currentRaids', process.env.CURRENT_RAIDS);
-  if (process.env.PRIORITY_SPECS) params.set('prioritySpecs', process.env.PRIORITY_SPECS);
-  await page.goto(params.size ? `${APP_URL}?${params}` : APP_URL);
+  await page.goto(APP_URL);
 
   // Bound the wait so a bootstrap failure fails fast instead of hanging the job and stalling the shared gh-pages group.
   try {

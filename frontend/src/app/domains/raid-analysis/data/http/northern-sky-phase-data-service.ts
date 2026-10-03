@@ -5,8 +5,8 @@ import type { NorthernSkyPhase, NorthernSkyPhases } from '../northern-sky/northe
 import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from './http-load-error';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
-const ADDON_ROOT = 'https://raw.githubusercontent.com/Reloe/NorthernSkyRaidTools/main/NorthernSkyRaidTools';
 const TOC = 'NorthernSkyRaidTools.toc';
 const TIMELINE_MANIFEST = 'BossTimelines/BossTimelines.xml';
 const HTTP_NOT_FOUND = 404;
@@ -22,6 +22,7 @@ const PHASE_ENTRY = /\[(\d+(?:\.\d+)?)\]\s*=\s*\{[^}]*start\s*=\s*(-?\d+(?:\.\d+
 export class NorthernSkyPhaseDataService {
   private readonly logger = inject(LoggerService);
   private readonly http = inject(HttpClient);
+  private readonly addonRoot = inject(ENVIRONMENT).northernSkyRawUrl;
   private _phases: Promise<Result<NorthernSkyPhases>> | null = null;
 
   // Only WCL responses are cached, so without this the addon is re-read for every spec's every bench.
@@ -49,7 +50,7 @@ export class NorthernSkyPhaseDataService {
   }
 
   private fetchFile(path: string): Promise<string> {
-    return firstValueFrom(this.http.get(`${ADDON_ROOT}/${path.replace(/\\/g, '/')}`, { responseType: 'text' }));
+    return firstValueFrom(this.http.get(`${this.addonRoot}/${path.replace(/\\/g, '/')}`, { responseType: 'text' }));
   }
 
   // Only a 404 is a misspelt .toc entry to drop; swallowing any other failure bakes that boss pull-relative.

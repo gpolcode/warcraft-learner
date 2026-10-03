@@ -18,9 +18,12 @@ Every threshold is derived from the top 10 Mythic parses for the same encounter 
 
 ## Run locally
 
+The app talks to the Warcraft Logs API with a client-credentials pair that is compiled into the bundle, so the first step is a pair of your own: create an API client at https://www.warcraftlogs.com/api/clients/ (any WCL account; no redirect URL needed) and put it in the gitignored client file under `frontend/src/environments/`, next to the committed example that shows its shape. Your own client spends your own hourly WCL budget, not the deployed site's.
+
 ```bash
 cd frontend
 npm install
+cp src/environments/wcl-client.example.ts src/environments/wcl-client.ts  # then paste your WCL client id and secret
 npm run data:pull   # fetch the generated bench data from the `gh-pages` branch (see below)
 npm start           # Angular dev server on http://localhost:4200
 npm run schema:pull # refresh the WCL GraphQL schema and regenerate the typed operations
@@ -28,7 +31,7 @@ npm run schema:pull # refresh the WCL GraphQL schema and regenerate the typed op
 
 The ~100 MB of generated bench data (minified JSON) under `frontend/public/data/specs/**` is not tracked on `main`; it lives once on the `gh-pages` branch at the site root under `data/specs/`, the single shared copy the deployed site serves. `npm run data:pull` fetches `origin/gh-pages` and extracts those files into your working tree, where they remain gitignored. Re-run it whenever you want the latest parse data.
 
-The app is a fully static Angular SPA. It talks directly to the Warcraft Logs API from the browser using an OAuth2 client-credentials token (no user login); there is no backend.
+The app is a fully static Angular SPA. It talks directly to the Warcraft Logs API from the browser using an OAuth2 client-credentials token (no user login); there is no backend. Every value the app reads from outside its own code (hosts, endpoints, the dev and ingest server origins, the raids ingestion benches, the WCL pair) lives under `frontend/src/environments/`: the defaults in one schema, an override file per build configuration, and a gitignored client file for the WCL pair that CI writes from the repository secrets. GitHub holds secrets only, never configuration.
 
 ## Documentation
 

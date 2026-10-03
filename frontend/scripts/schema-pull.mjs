@@ -5,7 +5,8 @@ import { buildClientSchema, getIntrospectionQuery, lexicographicSortSchema, pars
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { WCL_PUBLIC_CLIENT_ID, WCL_PUBLIC_CLIENT_SECRET } from '../src/app/domains/raid-analysis/data/http/wcl-public-client.ts';
+import { baseEnvironment } from '../src/environments/base-environment.ts';
+import { WCL_CLIENT_ID, WCL_CLIENT_SECRET } from '../src/environments/wcl-client.ts';
 import { nameJsonFieldScalars } from './wcl-json-scalars.mjs';
 
 const SDL = fileURLToPath(new URL('../schema/wcl.graphql', import.meta.url));
@@ -32,9 +33,10 @@ async function post(url, headers, body) {
   return response.json();
 }
 
-const { access_token } = await post('https://www.warcraftlogs.com/oauth/token', {},
-  new URLSearchParams({ grant_type: 'client_credentials', client_id: WCL_PUBLIC_CLIENT_ID, client_secret: WCL_PUBLIC_CLIENT_SECRET }));
-const { data, errors } = await post('https://www.warcraftlogs.com/api/v2/client', { 'Content-Type': 'application/json', Authorization: `Bearer ${access_token}` },
+const { wclTokenUrl, wclApiUrl } = baseEnvironment;
+const { access_token } = await post(wclTokenUrl, {},
+  new URLSearchParams({ grant_type: 'client_credentials', client_id: WCL_CLIENT_ID, client_secret: WCL_CLIENT_SECRET }));
+const { data, errors } = await post(wclApiUrl, { 'Content-Type': 'application/json', Authorization: `Bearer ${access_token}` },
   JSON.stringify({ query: getIntrospectionQuery({ descriptions: false }) }));
 if (errors) throw new Error(`introspection responded 200 with errors: ${JSON.stringify(errors)}`);
 

@@ -49,17 +49,6 @@ const wclWithClasses = (playable: WclClass[]): WclApiService =>
 const wclWithBudget = (budget: PointsBudget): WclApiService =>
   ({ getPointsBudget: async () => budget }) as unknown as WclApiService;
 
-describe('parseRaidNames', () => {
-  it('splits on commas and trims, so the repo variable can be written with spaces', () => {
-    expect(currentRaids.parseRaidNames('The Venomous Abyss, Sporefall')).toEqual(['The Venomous Abyss', 'Sporefall']);
-  });
-
-  it('yields no raid for unset or blank input, which leaves the dataset alone rather than pruning it', () => {
-    expect(currentRaids.parseRaidNames(null)).toEqual([]);
-    expect(currentRaids.parseRaidNames('  ,  ')).toEqual([]);
-  });
-});
-
 describe('discoverCurrentRaids', () => {
   it('returns the named raids\' encounters, in the order they were named', async () => {
     const { encounters } = await currentRaids.discoverCurrentRaids(wclWithZoneTree(expansions), ['The Venomous Abyss', 'Sporefall']);

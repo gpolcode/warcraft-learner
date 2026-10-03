@@ -28,6 +28,8 @@ flowchart LR
 
 Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
 
+Configuration lives under `frontend/src/environments/`: one `Environment` schema with the defaults (every external host and endpoint, the dev and ingest server origins, the raids ingestion benches), one override file per build configuration swapped by `fileReplacements`, and a gitignored client file for the WCL pair, copied from the committed example on a developer machine and written from the repository secrets in CI; GitHub holds secrets only, never configuration. Code reads it through `inject(ENVIRONMENT)`, never by importing the swapped file (eslint-enforced) and never as a literal in a service.
+
 ## Commands (run from `frontend/`)
 
 | Command | Description |
@@ -51,7 +53,7 @@ The detailed conventions live in the `warcraft-*` skills under `.claude/skills/`
 |---|---|
 | Building or changing any code (finding, fact family, feature, page, component) | **warcraft-change** |
 | Writing or changing any string a user sees | **warcraft-writing** |
-| Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
+| Touching WCL queries, gear / spec / talent / enchant extraction, positions, or the WCL client pair and how it reaches a build | **warcraft-wcl-data** |
 | Reviewing code, a diff, or a PR | **warcraft-change** (the verification section applies) |
 
 On any conflict between a skill and this file, **this file wins**.

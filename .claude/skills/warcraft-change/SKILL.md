@@ -39,6 +39,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 - **Page shells** (`src/app/post-raid/`, `src/app/pre-fight/`) resolve selection through a page-local selection service (`pre-fight/encounter-selection-service.ts`, `post-raid/report-selection-service.ts`) that wraps the API services and owns the pure selection helpers.
   They compose feature components, pass selection as inputs, and route card anchors to the page-level overlays through `MapFeatureService` and `LiveCaptureFeatureService`.
 - **Presentational leaves** - inputs/outputs only, no services beyond framework tokens.
+- **Configuration** - a value that names something outside the app (a host, URL, port, id, secret) or differs per build is a field of `Environment` under `src/environments/`, with its default in the schema and any per-build override in that build's file, read through `inject(ENVIRONMENT)`, never as a literal in a service and never by importing the swapped environment file. A method, game, parser or copy constant stays a named `const` beside its code.
 
 ## Failure handling
 
@@ -76,6 +77,8 @@ npm run knip
 npm test
 npm run build
 ```
+
+All four resolve the gitignored WCL client file under `src/environments/`; a blank copy of its example satisfies everything but a real WCL call.
 
 Then check what no tool does: every new behavior has a spec at the lowest altitude, every "triggers" case has its boundary partner, `INGEST_VERSION` bumped exactly per the ingest-version rule, every finding populates `occurrences`.
 

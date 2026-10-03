@@ -6,15 +6,10 @@ import { Result, Results } from '../../../shared/util-http/result';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { HttpLoadErrors } from './http-load-error';
 import { IngestStampService } from '../ingest/ingest-stamp-service';
-
-const INGEST_SERVER_URL = 'http://localhost:3000';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 // The file server is rooted one level up at data/ so a single containment guard covers the whole data folder.
 const SPECS_PREFIX = 'specs/';
-
-function fileUrl(relPath: string): string {
-  return `${INGEST_SERVER_URL}/api/data/${SPECS_PREFIX}${relPath}`;
-}
 
 /** The server returns an exact 404 for an absent file - the `missing` signal. */
 @Injectable({ providedIn: 'root' })
@@ -22,11 +17,16 @@ export class IngestHttpDataFileTransport implements DataFileTransport {
   private readonly logger = inject(LoggerService);
   private readonly stamp = inject(IngestStampService);
   private readonly http = inject(HttpClient);
+  private readonly serverUrl = inject(ENVIRONMENT).ingestServerUrl;
+
+  private fileUrl(relPath: string): string {
+    return `${this.serverUrl}/api/data/${SPECS_PREFIX}${relPath}`;
+  }
 
   async readJson<T>(relPath: string): Promise<Result<T>> {
     let parsed: unknown;
     try {
-      parsed = await firstValueFrom(this.http.get<unknown>(fileUrl(relPath)));
+      parsed = await firstValueFrom(this.http.get<unknown>(this.fileUrl(relPath)));
     } catch (cause) {
       const result = HttpLoadErrors.toLoadError(cause, `data-file.${relPath}`);
       // An un-ingested file is the orchestrator's normal case, so only real failures log.
@@ -43,14 +43,14 @@ export class IngestHttpDataFileTransport implements DataFileTransport {
   }
 
   async writeJson(relPath: string, data: unknown): Promise<void> {
-    await firstValueFrom(this.http.put(fileUrl(relPath), data));
+    await firstValueFrom(this.http.put(this.fileUrl(relPath), data));
   }
 
   async remove(relPath: string): Promise<void> {
-    await firstValueFrom(this.http.delete(fileUrl(relPath)));
+    await firstValueFrom(this.http.delete(this.fileUrl(relPath)));
   }
 
   async list(relDir: string): Promise<string[]> {
-    return await firstValueFrom(this.http.get<string[]>(`${INGEST_SERVER_URL}/api/dirs/${SPECS_PREFIX}${relDir}`));
+    return await firstValueFrom(this.http.get<string[]>(`${this.serverUrl}/api/dirs/${SPECS_PREFIX}${relDir}`));
   }
 }

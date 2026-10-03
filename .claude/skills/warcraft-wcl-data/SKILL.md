@@ -1,20 +1,20 @@
 ---
 name: warcraft-wcl-data
-description: warcraft-learner Warcraft Logs (WCL) integration - the intentional embedded client-credentials secret, and the WCL API quirks that bite when reading gear, spec, talent, enchant, event, and position data. Load this before touching WCL queries, wcl-auth, the embedded secret, or reading any new WCL field.
+description: warcraft-learner Warcraft Logs (WCL) integration - the intentional public client-credentials pair and how it reaches a build, and the WCL API quirks that bite when reading gear, spec, talent, enchant, event, and position data. Load this before touching WCL queries, wcl-auth, the client pair, or reading any new WCL field.
 ---
 
 # warcraft-learner WCL integration
 
 **What good looks like:** every WCL read anticipates the quirks table below. Check it before fetching a new stream or field.
 
-## Browser auth model (intentional embedded secret)
+## Browser auth model (intentional public pair)
 
-The browser authenticates with the **client-credentials** grant against `/api/v2/client`, using an id + secret **hardcoded in `src/app/domains/raid-analysis/data/http/wcl-public-client.ts`** and therefore public in the shipped JS bundle. A deliberate trade-off, not a leak to fix:
+The browser authenticates with the **client-credentials** grant against `/api/v2/client`, using a client id + secret from a gitignored client file under `src/environments/` (a committed example beside it shows the shape; CI writes it from the repository secrets), and therefore public in the shipped JS bundle. A deliberate trade-off, not a leak to fix:
 
 - The token reads only **public** WCL report data, and a client token has no user-scoped budget to lose.
-- The **only** risk is a stolen pair draining the shared hourly rate-limit budget. Rotation is manual, at `warcraftlogs.com/api/clients/`: WCL exposes **no API to rotate a client secret**.
+- The **only** risk is a stolen pair draining the shared hourly rate-limit budget. Rotation is manual, at `warcraftlogs.com/api/clients/`: WCL exposes **no API to rotate a client secret**; after rotating, update the two Actions secrets.
 - There is **no login UI, callback route, or PKCE flow**: a client token has no current user, so users always supply a report code or character name.
-- The app, local ingest runs, and the hourly CI ingest share this one pair and its budget; to ingest on a dedicated client's budget, edit the pair locally, and never commit a private pair.
+- The deployed site, the E2E run and the hourly CI ingest share the repository's pair and its budget; a developer's client file holds their own pair, so local runs and local ingestion spend their own budget. The pair never reaches the repository: code reads it through the injected environment and refuses a blank pair.
 
 ## WCL API quirks
 
@@ -56,4 +56,4 @@ Stored positions keep these raw WCL units; their on-disk shape lives in `domains
 
 ## External APIs
 
-Warcraft Logs v2 GraphQL at `/api/v2/client`, authenticated with the embedded pair (see the auth section above). Raidbots static JSON at `raidbots.com/static/data/live/*.json` needs no auth and is read only during ingest: `talents.json` for talent names and icons, `enchantments.json` for the enchant-id-to-item-id map.
+Every host and endpoint below is an environment default, read through the `ENVIRONMENT` token. Warcraft Logs v2 GraphQL at `/api/v2/client`, authenticated with the built-in pair (see the auth section above). Raidbots static JSON at `raidbots.com/static/data/live/*.json` needs no auth and is read only during ingest: `talents.json` for talent names and icons, `enchantments.json` for the enchant-id-to-item-id map.

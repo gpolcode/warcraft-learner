@@ -26,6 +26,11 @@ jobs:
         run: npm ci
         working-directory: frontend
 
+      # Nothing in this workflow reaches WCL, so the blank example stands in for a real pair.
+      - name: Stand in for the WCL client file
+        run: cp src/environments/wcl-client.example.ts src/environments/wcl-client.ts
+        working-directory: frontend
+
       - name: Lint
         run: npm run lint
         working-directory: frontend
