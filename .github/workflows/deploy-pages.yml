@@ -8,11 +8,6 @@ on:
   schedule:
     - cron: '40 5 * * *'
   workflow_dispatch:
-    inputs:
-      pr:
-        description: 'Pull request number to deploy as its pr-N preview; blank deploys main'
-        required: false
-        default: ''
 
 # gh-pages pushes use the per-job app token, so the default token never needs repo write.
 permissions:
@@ -24,8 +19,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # A pull request event deploys its own preview; a dispatch deploys the pull request it names, or main without one.
-  TARGET_FOLDER: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || inputs.pr && format('pr-{0}', inputs.pr) || 'main' }}
+  TARGET_FOLDER: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
 
 jobs:
   # Runs untrusted PR head code, so no write credential here; persist-credentials:false keeps even the read-only token out of .git/config.
@@ -42,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event_name == 'pull_request' && format('refs/pull/{0}/head', github.event.pull_request.number) || inputs.pr && format('refs/pull/{0}/head', inputs.pr) || 'main' }}
+          ref: ${{ github.event_name == 'pull_request' && format('refs/pull/{0}/head', github.event.pull_request.number) || 'main' }}
           persist-credentials: false
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
