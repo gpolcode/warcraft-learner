@@ -13,7 +13,7 @@ const BROWSER_READONLY = 'DataFileApiService is read-only in the browser';
 export class HttpDataFileTransport implements DataFileTransport {
   private readonly logger = inject(LoggerService);
   private readonly http = inject(HttpClient);
-  // Deployed builds set an absolute `dataBaseHref` pointing at the single shared gh-pages-root data copy; empty (development) resolves relative to `document.baseURI`.
+  // An empty href means the page's own data folder, resolved against wherever the app is mounted.
   private readonly base = new URL(inject(ENVIRONMENT).dataBaseHref || 'data/specs/', document.baseURI).href;
 
   async readJson<T>(relPath: string): Promise<Result<T>> {

@@ -27,7 +27,7 @@ const OTHER_GRAPHQL_MESSAGE = 'Unknown fight id.';
 
 function setup(): { transport: HttpWclTransport; httpMock: HttpTestingController } {
   TestBed.configureTestingModule({
-    // The real caching interceptor is part of the contract under test, so it joins the chain exactly as in app.config.ts.
+    // The real caching interceptor is part of the contract under test, so the production provider joins the chain.
     providers: [provideWclCaching(WCL_API_URL), provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
   });
   return {

@@ -2,9 +2,9 @@
 import { spawn } from 'child_process';
 import { once } from 'events';
 import { chromium } from 'playwright';
-import { withEnvironment } from '../src/environments/base-environment.ts';
+import { baseEnvironment } from '../src/environments/base-environment.ts';
 
-const { appUrl: APP_URL, ingestServerUrl } = withEnvironment({});
+const { appUrl: APP_URL, ingestServerUrl } = baseEnvironment;
 const SERVER_PROBE_URL = `${ingestServerUrl}/api/dirs/specs`;
 const READY_TIMEOUT_MS = 5 * 60_000;
 const READY_POLL_MS = 500;

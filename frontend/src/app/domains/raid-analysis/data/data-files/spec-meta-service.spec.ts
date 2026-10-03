@@ -95,7 +95,7 @@ describe('specsForClass', () => {
   });
 });
 
-// The icon roots come from the injected environment, so these two groups use an injected instance.
+// Object.create skips the constructor, so a method reading injected state needs this instance.
 const injected = (): SpecMetaService => serviceWith(async () => Results.ok([]));
 
 describe('classIconUrl', () => {

@@ -42,7 +42,7 @@ export class CurrentRaidsService {
     for (const name of raidNames) {
       const zone = this.currentZoneNamed(expansions, name);
       if (!zone) {
-        this.logger.logWarn('encountersForRaids', `no current WCL zone named "${name}" - check currentRaids in environment.ingest.ts`);
+        this.logger.logWarn('encountersForRaids', `no current WCL zone named "${name}" - check the configured raid names`);
         continue;
       }
       const partitionIds = (zone.partitions ?? []).map(partition => partition.id).sort((a, b) => b - a);

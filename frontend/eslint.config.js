@@ -98,7 +98,7 @@ const restrictHttpImports = {
   ],
 };
 
-// app.config provides the swapped file once, as ENVIRONMENT; importing it elsewhere drags its providers along and cannot be overridden in a TestBed.
+// A direct import of the swapped file cannot be overridden in a TestBed; the token can.
 const restrictEnvironmentImports = {
   patterns: [
     {

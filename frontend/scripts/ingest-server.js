@@ -6,9 +6,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import writeFileAtomic from 'write-file-atomic';
-import { withEnvironment } from '../src/environments/base-environment.ts';
+import { baseEnvironment } from '../src/environments/base-environment.ts';
 
-const { appUrl, ingestServerUrl } = withEnvironment({});
+const { appUrl, ingestServerUrl } = baseEnvironment;
 const PORT = Number(new URL(ingestServerUrl).port);
 const DATA_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public/data');
 // Position payloads reach tens of MB; express's default 100kb body cap would reject them.

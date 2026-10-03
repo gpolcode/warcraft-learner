@@ -16,7 +16,7 @@ import { HttpDataFileTransport } from './domains/raid-analysis/data/http/http-da
 import { provideAppHttp } from './domains/shared/util-http/http-providers';
 import { ENVIRONMENT } from '../environments/environment-token';
 import { environment, environmentProviders } from '../environments/environment';
-// A missing module here means the gitignored copy of wcl-client.example.ts has not been made yet.
+// A missing module here means wcl-client.example.ts has not been copied to wcl-client.ts yet.
 import { WCL_CLIENT_ID, WCL_CLIENT_SECRET } from '../environments/wcl-client';
 
 // Material's default duration is 0, which never dismisses, and these bars carry no dismiss action.

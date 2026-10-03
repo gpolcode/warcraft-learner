@@ -5,12 +5,11 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { WclAuthService } from './wcl-auth-service';
 import { WclTransportError, WCL_UNUSABLE_STATUS } from '../wcl/wcl-transport';
 import { ENVIRONMENT } from '../../../../../environments/environment-token';
-import { withEnvironment } from '../../../../../environments/base-environment';
+import { baseEnvironment } from '../../../../../environments/base-environment';
 
-/** The client-credentials token endpoint the service posts to (mirrors the environment default). */
+/** Spelled out rather than read from the environment, so moving the service off this endpoint fails the assertions. */
 const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
 
-/** The example client file is blank, so the spec provides a pair. */
 const CLIENT_ID = 'test-client-id';
 const CLIENT_SECRET = 'test-client-secret';
 
@@ -39,7 +38,7 @@ function setup(credentials = { wclClientId: CLIENT_ID, wclClientSecret: CLIENT_S
       WclAuthService,
       provideHttpClient(),
       provideHttpClientTesting(),
-      { provide: ENVIRONMENT, useValue: withEnvironment(credentials) },
+      { provide: ENVIRONMENT, useValue: { ...baseEnvironment, ...credentials } },
     ],
   });
   return {

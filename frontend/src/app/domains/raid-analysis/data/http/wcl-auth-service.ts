@@ -33,7 +33,7 @@ export class WclAuthService {
 
   private async _fetchToken(): Promise<string> {
     const { wclClientId, wclClientSecret, wclTokenUrl } = this.environment;
-    // A blank wcl-client.ts carries no pair; naming that beats a 401 that reads like a WCL outage.
+    // An empty pair earns a 401 from WCL that reads like an outage.
     if (!wclClientId || !wclClientSecret) throw new WclTransportError(NO_CLIENT_MESSAGE, WCL_UNUSABLE_STATUS);
     const params = new URLSearchParams({
       grant_type: 'client_credentials',

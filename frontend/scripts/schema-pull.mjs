@@ -5,7 +5,7 @@ import { buildClientSchema, getIntrospectionQuery, lexicographicSortSchema, pars
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { withEnvironment } from '../src/environments/base-environment.ts';
+import { baseEnvironment } from '../src/environments/base-environment.ts';
 import { WCL_CLIENT_ID, WCL_CLIENT_SECRET } from '../src/environments/wcl-client.ts';
 import { nameJsonFieldScalars } from './wcl-json-scalars.mjs';
 
@@ -33,7 +33,7 @@ async function post(url, headers, body) {
   return response.json();
 }
 
-const { wclTokenUrl, wclApiUrl } = withEnvironment({});
+const { wclTokenUrl, wclApiUrl } = baseEnvironment;
 const { access_token } = await post(wclTokenUrl, {},
   new URLSearchParams({ grant_type: 'client_credentials', client_id: WCL_CLIENT_ID, client_secret: WCL_CLIENT_SECRET }));
 const { data, errors } = await post(wclApiUrl, { 'Content-Type': 'application/json', Authorization: `Bearer ${access_token}` },

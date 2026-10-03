@@ -19,7 +19,7 @@ import { SpecPlanLoaderService } from '../data/simc/spec-plan-loader-service';
 import type { SpecPlan } from '../data/simc/spec-plan-service';
 import { PLAN_KEY, planLoader, specPlan } from '../../../../testing/builders/spec-plan';
 import { ENVIRONMENT } from '../../../../environments/environment-token';
-import { withEnvironment } from '../../../../environments/base-environment';
+import { baseEnvironment } from '../../../../environments/base-environment';
 
 const signatures = TestBed.inject(IngestSignatureService);
 TestBed.resetTestingModule();
@@ -111,7 +111,7 @@ const cleanTransport: Pick<WclTransport, 'withFetchOutcomes'> = {
 function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string, plans = planLoader(specPlan())): Promise<void> {
   TestBed.configureTestingModule({
     providers: [
-      { provide: ENVIRONMENT, useValue: withEnvironment({ currentRaids: currentRaids ? [currentRaids] : [] }) },
+      { provide: ENVIRONMENT, useValue: { ...baseEnvironment, currentRaids: currentRaids ? [currentRaids] : [] } },
       { provide: DATA_FILE_TRANSPORT, useValue: disk },
       { provide: WclApiService, useValue: wcl },
       { provide: WCL_TRANSPORT, useValue: cleanTransport },
