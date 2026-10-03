@@ -28,9 +28,9 @@ export async function showsEntity(scope: Locator): Promise<void> {
   await expect(scope.locator('wl-game-icon').first()).toBeVisible();
 }
 
-/** A bare `div.border-t` also matches the on-plan strip, the empty state, and the Fix cell itself, so a row is narrowed to a top-level band of the card that owns a Fix. */
+/** A bare `div.border-t` also matches the on-plan strip, the empty state, and the Fix cell itself, so a row is narrowed to a top-level band of the card that carries a Fix label. */
 function findingRows(table: Locator): Locator {
-  return table.locator(':scope > section > div > div.border-t').filter({ has: table.page().locator('wl-collapsible') });
+  return table.locator(':scope > section > div > div.border-t').filter({ has: table.page().getByText('Fix', { exact: true }) });
 }
 
 /** Which findings a pull produces moves with every re-ingest of the bench, so a card is pinned by the shape of each row it drew, never by one named finding. */
@@ -46,7 +46,7 @@ export async function showsFindingRows(table: Locator, chip?: RegExp): Promise<v
     const row = rows.nth(i);
     if (chip) await expect(row.locator('[tuiBadge]')).toHaveText(chip);
     await expect(row).toHaveText(MEASURE);
-    await expect(row.locator('wl-collapsible')).not.toHaveText('');
+    await expect(row.getByText('Fix', { exact: true }).locator('..')).toHaveText(/Fix\s*\S/);
   }
 }
 

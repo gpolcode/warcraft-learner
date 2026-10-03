@@ -3,7 +3,6 @@ import { TuiButton, TuiIcon, TuiLink, TuiTitle } from '@taiga-ui/core';
 import { TUI_COPY_TEXTS, TuiChip, TuiItemsWithMore } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { GameIcon } from '../ui-game-icon/game-icon';
-import { Collapsible } from '../../shared/ui-collapsible/collapsible';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { GearFeatureService } from '../data/gear/gear-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
@@ -14,7 +13,7 @@ const CHIP_LINES = 2;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiIcon, TuiLink, TuiChip, TuiItemsWithMore, GameIcon, Collapsible, LoadState],
+  imports: [TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiIcon, TuiLink, TuiChip, TuiItemsWithMore, GameIcon, LoadState],
   templateUrl: './gear.html',
   providers: [{ provide: TUI_COPY_TEXTS, useValue: signal(COPY_TEXTS) }],
 })

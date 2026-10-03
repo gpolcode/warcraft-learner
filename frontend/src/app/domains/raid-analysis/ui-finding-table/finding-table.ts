@@ -4,7 +4,6 @@ import { TuiButton, TuiExpand, TuiIcon, TuiTitle } from '@taiga-ui/core';
 import { TuiBadge, TuiChevron, TuiChip } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { GameIcon } from '../ui-game-icon/game-icon';
-import { Collapsible } from '../../shared/ui-collapsible/collapsible';
 import { FindingOccurrences } from './finding-occurrences';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
@@ -18,7 +17,7 @@ export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-servi
   host: { class: 'block' },
   imports: [
     TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChevron, TuiExpand, TuiItem, TuiBadge, TuiChip,
-    GameIcon, Collapsible, FindingOccurrences, FormatDurationPipe,
+    GameIcon, FindingOccurrences, FormatDurationPipe,
   ],
   templateUrl: './finding-table.html',
 })
