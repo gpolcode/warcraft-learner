@@ -6,7 +6,7 @@ import { TUI_DARK_MODE, TUI_OPTIONS } from '@taiga-ui/core';
 export default [
   // Taiga's own templates bind `.self`, `.prevent` and `.zoneless` event modifiers, which do nothing without its plugins.
   provideEventPlugins(),
-  { provide: TUI_OPTIONS, useValue: { apis: 'stable', fontScaling: false, scrollbars: 'native' } },
+  { provide: TUI_OPTIONS, useValue: { apis: 'stable', fontScaling: false, scrollbars: 'custom' } },
   // The default signal reads localStorage on first inject, which a spec that makes storage throw must not trip.
   { provide: TUI_DARK_MODE, useValue: Object.assign(signal(true), { reset: () => undefined }) },
 ];

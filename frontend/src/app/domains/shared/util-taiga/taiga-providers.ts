@@ -86,7 +86,7 @@ const TAIGA_ICONS: Record<string, string> = {
 
 export const TAIGA_PROVIDERS: (Provider | EnvironmentProviders)[] = [
   // Text is sized in px roles, so the OS font scale must not grow Taiga's rem-based text alone.
-  ...provideTaiga({ fontScaling: false, scrollbars: 'native' }),
+  ...provideTaiga({ fontScaling: false }),
   // Dark-only: a fixed signal, since Taiga's own would follow the OS theme or, once pinned, write the choice to localStorage.
   { provide: TUI_DARK_MODE, useValue: Object.assign(signal(true), { reset: () => undefined }) },
   tuiIconsProvider({ ...TAIGA_ICONS, ...APP_ICONS }),
