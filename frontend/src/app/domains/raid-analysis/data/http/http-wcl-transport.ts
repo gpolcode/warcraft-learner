@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { FetchOutcomes, WclTransport, WclTransportError, WCL_API_URL, WCL_UNUSABLE_STATUS } from '../wcl/wcl-transport';
+import { FetchOutcomes, WclTransport, WclTransportError, WCL_UNUSABLE_STATUS } from '../wcl/wcl-transport';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
 import { WclCaching } from '../wcl/wcl-caching';
 
 interface GraphQLResponse<TData> {
@@ -18,6 +19,7 @@ interface OpenScope {
 @Injectable({ providedIn: 'root' })
 export class HttpWclTransport implements WclTransport {
   private readonly http = inject(HttpClient);
+  private readonly apiUrl = inject(ENVIRONMENT).wclApiUrl;
   private scope: OpenScope | null = null;
 
   async withFetchOutcomes<T>(run: () => Promise<T>): Promise<{ result: T; outcomes: FetchOutcomes }> {
@@ -43,7 +45,7 @@ export class HttpWclTransport implements WclTransport {
     let body: GraphQLResponse<TData>;
     try {
       body = await firstValueFrom(this.http.post<GraphQLResponse<TData>>(
-        WCL_API_URL,
+        this.apiUrl,
         { query: gqlString, variables },
         { headers },
       ));

@@ -1,8 +1,5 @@
 import { InjectionToken } from '@angular/core';
 
-// The app authenticates with the client-credentials grant, so it targets the `/client` endpoint.
-export const WCL_API_URL = 'https://www.warcraftlogs.com/api/v2/client';
-
 // `status` is the HTTP status when known (e.g. 401 for a rejected token), or 0 for a GraphQL-level / network error.
 export class WclTransportError extends Error {
   constructor(message: string, readonly status: number) {

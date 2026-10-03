@@ -1,6 +1,7 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { WowheadTooltipsService } from '../util-wowhead/wowhead-tooltips-service';
+import { ENVIRONMENT } from '../../../../environments/environment-token';
 
 export type GameIconKind = 'spell' | 'item';
 
@@ -12,6 +13,8 @@ export type GameIconKind = 'spell' | 'item';
   templateUrl: './game-icon.html',
 })
 export class GameIcon {
+  private readonly environment = inject(ENVIRONMENT);
+
   constructor() {
     // Load the tooltip enhancer on first render; afterNextRender is browser-only, so prerender skips it.
     const tooltips = inject(WowheadTooltipsService);
@@ -34,11 +37,11 @@ export class GameIcon {
   // WCL's master-data icons may already carry a `.jpg` extension; strip it first so the zamimg URL never doubles up.
   protected readonly iconUrl = computed(() => {
     const file = this.icon().replace(/\.(jpg|jpeg|png|gif|webp)$/i, '');
-    return file ? `https://wow.zamimg.com/images/wow/icons/small/${file}.jpg` : null;
+    return file ? `${this.environment.zamimgIconUrl}/${file}.jpg` : null;
   });
 
   protected readonly wowheadUrl = computed(() => {
     const id = this.id();
-    return id ? `https://www.wowhead.com/${this.kind()}=${id}` : null;
+    return id ? `${this.environment.wowheadUrl}/${this.kind()}=${id}` : null;
   });
 }

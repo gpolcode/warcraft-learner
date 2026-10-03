@@ -5,8 +5,7 @@ import type { SpecTalents } from '../gear/talent.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from './http-load-error';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
-
-const DUMP_URL = 'https://www.raidbots.com/static/data/live/talents.json';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 // subTreeNodes carries the hero-tree pick.
 const NODE_BUCKETS = ['classNodes', 'specNodes', 'heroNodes', 'subTreeNodes'] as const;
@@ -31,6 +30,7 @@ export interface TalentTree {
 export class TalentDataService {
   private readonly logger = inject(LoggerService);
   private readonly http = inject(HttpClient);
+  private readonly dumpUrl = inject(ENVIRONMENT).raidbotsTalentsUrl;
 
   async getTalents(spec: string): Promise<Result<SpecTalents>> {
     const trees = await this.fetchTrees();
@@ -47,7 +47,7 @@ export class TalentDataService {
 
   private async fetchTrees(): Promise<Result<RaidbotsTree[]>> {
     try {
-      const trees = await firstValueFrom(this.http.get<unknown>(DUMP_URL));
+      const trees = await firstValueFrom(this.http.get<unknown>(this.dumpUrl));
       if (!Array.isArray(trees)) throw new TypeError('talents.json is not a tree list');
       return Results.ok(trees as RaidbotsTree[]);
     } catch (cause) {

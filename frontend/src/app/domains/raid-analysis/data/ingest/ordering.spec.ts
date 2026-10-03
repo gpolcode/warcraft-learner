@@ -142,28 +142,6 @@ describe('orderSpecsByVersion', () => {
   });
 });
 
-describe('parsePrioritySpecs', () => {
-  it('splits a comma-separated list, trimming whitespace', () => {
-    expect(ordering.parsePrioritySpecs('SubtletyRogue, ArmsWarrior')).toEqual(['SubtletyRogue', 'ArmsWarrior']);
-  });
-
-  it('falls back to no priority spec for missing input', () => {
-    expect(ordering.parsePrioritySpecs(undefined)).toEqual([]);
-    expect(ordering.parsePrioritySpecs(null)).toEqual([]);
-    expect(ordering.parsePrioritySpecs('')).toEqual([]);
-  });
-
-  it('falls back to no priority spec for a blank or malformed list', () => {
-    expect(ordering.parsePrioritySpecs('  , , ')).toEqual([]);
-    expect(ordering.parsePrioritySpecs('["SubtletyRogue"]')).toEqual([]);
-    expect(ordering.parsePrioritySpecs('SubtletyRogue;ArmsWarrior')).toEqual([]);
-  });
-
-  it('rejects the whole list when any single token is malformed', () => {
-    expect(ordering.parsePrioritySpecs('SubtletyRogue,Arms Warrior')).toEqual([]);
-  });
-});
-
 describe('orderEncountersByMissingFirst', () => {
   const encounters = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }];
 

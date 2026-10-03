@@ -6,7 +6,10 @@ import { NgHttpCachingHeaders } from 'ng-http-caching';
 import { HttpWclTransport } from './http-wcl-transport';
 import { provideWclCaching } from '../wcl/wcl-caching';
 import { RATE_LIMIT_Q } from '../wcl/wcl-queries';
-import { WCL_API_URL, WCL_UNUSABLE_STATUS, WclTransportError } from '../wcl/wcl-transport';
+import { WCL_UNUSABLE_STATUS, WclTransportError } from '../wcl/wcl-transport';
+
+/** Spelled out rather than read from the environment, so moving the transport off this URL fails the assertions. */
+const WCL_API_URL = 'https://www.warcraftlogs.com/api/v2/client';
 
 // A generic (default-cached) query, distinct from the volatile/uncached app queries.
 const QUERY = 'query Report($code: String!) { reportData { report(code: $code) { title } } }';
@@ -24,8 +27,8 @@ const OTHER_GRAPHQL_MESSAGE = 'Unknown fight id.';
 
 function setup(): { transport: HttpWclTransport; httpMock: HttpTestingController } {
   TestBed.configureTestingModule({
-    // The real caching interceptor is part of the contract under test, so it joins the chain exactly as in app.config.ts.
-    providers: [provideWclCaching(), provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
+    // The real caching interceptor is part of the contract under test, so the production provider joins the chain.
+    providers: [provideWclCaching(WCL_API_URL), provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()],
   });
   return {
     transport: TestBed.inject(HttpWclTransport),

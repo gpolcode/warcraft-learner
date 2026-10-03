@@ -1,9 +1,9 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { LoggerService } from '../../shared/util-logging/logger-service';
+import { ENVIRONMENT } from '../../../../environments/environment-token';
 
 const CONFIG_SRC = 'wh-tooltips-config.js';
-const TOOLTIPS_SRC = 'https://wow.zamimg.com/js/tooltips.js';
 
 interface WowheadPower {
   refreshLinks?: () => void;
@@ -14,6 +14,7 @@ type WowheadWindow = Window & { $WowheadPower?: WowheadPower };
 export class WowheadTooltipsService {
   private readonly logger = inject(LoggerService);
   private readonly document = inject(DOCUMENT);
+  private readonly tooltipsSrc = inject(ENVIRONMENT).zamimgTooltipsUrl;
   private loaded = false;
   // tooltips.js enhances each link once on load and never re-observes the DOM.
   private ready = false;
@@ -29,7 +30,7 @@ export class WowheadTooltipsService {
     // Chain tooltips.js off config's load: it needs the whTooltips global, and dynamically inserted scripts have no execution-order guarantee.
     config.addEventListener('load', () => {
       const tooltips = this.document.createElement('script');
-      tooltips.src = TOOLTIPS_SRC;
+      tooltips.src = this.tooltipsSrc;
       tooltips.addEventListener('error', (err) => { this.logger.logWarn('wowhead tooltips script load', err); });
       tooltips.addEventListener('load', () => {
         this.ready = true;

@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 import { BossIconPipe } from './boss-icon-pipe';
 
-const pipe = new BossIconPipe();
+function setup(): BossIconPipe {
+  TestBed.configureTestingModule({ providers: [BossIconPipe] });
+  return TestBed.inject(BossIconPipe);
+}
 
 describe('BossIconPipe', () => {
   it.each([
@@ -14,7 +18,7 @@ describe('BossIconPipe', () => {
   ] as { input: number | null | undefined; expected: string; why: string }[])(
     'transform($input) === "$expected" ($why)',
     ({ input, expected }) => {
-      expect(pipe.transform(input)).toBe(expected);
+      expect(setup().transform(input)).toBe(expected);
     },
   );
 });

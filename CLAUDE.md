@@ -30,6 +30,8 @@ Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest w
 
 UI primitives are [spartan](https://spartan.ng) helm components, generated into `frontend/libs/ui/` by the spartan CLI (`frontend/components.json`) and imported as `@spartan-ng/helm/*`; the generated code is never hand-edited and is kept out of lint. The app themes them through spartan's own color names in `src/styles.scss`; icons are lucide, registered under their snake_case names in `shared/ui-icon/app-icons.ts`.
 
+Configuration lives under `frontend/src/environments/`: one `Environment` schema with the defaults (every external host and endpoint, the dev and ingest server origins, the raids ingestion benches), one override file per build configuration swapped by `fileReplacements`, and a gitignored client file for the WCL pair, copied from the committed example on a developer machine and written from the repository secrets in CI; GitHub holds secrets only, never configuration. Code reads it through `inject(ENVIRONMENT)`, never by importing the swapped file (eslint-enforced) and never as a literal in a service.
+
 ## Commands (run from `frontend/`)
 
 | Command | Description |
@@ -54,7 +56,7 @@ The detailed conventions live in the `warcraft-*` skills under `.claude/skills/`
 |---|---|
 | Building or changing any code (finding, fact family, feature, page, component) | **warcraft-change** |
 | Writing or changing any string a user sees | **warcraft-writing** |
-| Touching WCL queries, gear / spec / talent / enchant extraction, positions, or `wcl-auth` / the embedded secret | **warcraft-wcl-data** |
+| Touching WCL queries, gear / spec / talent / enchant extraction, positions, or the WCL client pair and how it reaches a build | **warcraft-wcl-data** |
 | Reviewing code, a diff, or a PR | **warcraft-change** (the verification section applies) |
 
 On any conflict between a skill and this file, **this file wins**.

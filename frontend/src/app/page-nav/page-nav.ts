@@ -7,9 +7,7 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmSeparator } from '@spartan-ng/helm/separator';
 import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
 import { filter, map } from 'rxjs';
-
-const GITHUB_URL = 'https://github.com/gpolcode/warcraft-learner';
-const NEW_ISSUE_URL = `${GITHUB_URL}/issues/new`;
+import { ENVIRONMENT } from '../../environments/environment-token';
 
 interface NavPage {
   readonly path: string;
@@ -31,8 +29,8 @@ const PAGES: readonly NavPage[] = [
   host: { class: 'block' },
 })
 export class PageNav {
-  protected readonly githubUrl = GITHUB_URL;
-  protected readonly newIssueUrl = NEW_ISSUE_URL;
+  protected readonly githubUrl = inject(ENVIRONMENT).repoUrl;
+  protected readonly newIssueUrl = `${this.githubUrl}/issues/new`;
   protected readonly pages = PAGES;
 
   private readonly router = inject(Router);

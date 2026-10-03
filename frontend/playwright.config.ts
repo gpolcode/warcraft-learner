@@ -1,8 +1,9 @@
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
+import { baseEnvironment } from './src/environments/base-environment';
 
-const APP_URL = 'http://localhost:4200';
+const APP_URL = baseEnvironment.appUrl;
 
 // Covers the optimized ng build that precedes serving.
 const SERVE_TIMEOUT_MS = 300_000;

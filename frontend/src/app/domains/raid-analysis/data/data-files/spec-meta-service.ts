@@ -1,11 +1,9 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { DataFileApiService } from './data-file-api-service';
 import type { SpecMeta } from './spec-meta.models';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 export type { SpecMeta };
-
-const ZAM = 'https://wow.zamimg.com/images/wow/icons/small';
-const WCL_ICONS = 'https://assets.rpglogs.com/img/warcraft/icons';
 
 export interface SpecUniverse {
   metas: Record<string, SpecMeta>;
@@ -14,6 +12,7 @@ export interface SpecUniverse {
 
 @Injectable({ providedIn: 'root' })
 export class SpecMetaService {
+  private readonly environment = inject(ENVIRONMENT);
   private readonly universe = signal<SpecUniverse>(this.buildUniverse([]));
   private markHydrated!: () => void;
   private readonly hydrated = new Promise<void>(resolve => { this.markHydrated = resolve; });
@@ -86,12 +85,12 @@ export class SpecMetaService {
   // Returns '' for an unknown class, so a name-only fallback never shows a broken image.
   protected classIconUrlOf(universe: SpecUniverse, className: string): string {
     const stem = this.classIconStem(className);
-    return universe.classIcons.has(stem) ? `${ZAM}/${stem}.jpg` : '';
+    return universe.classIcons.has(stem) ? `${this.environment.zamimgIconUrl}/${stem}.jpg` : '';
   }
 
   // WCL's asset host keys spec art by the class and spec slugs the rankings query already carries; its API has no icon field.
   protected specIconUrlOf(universe: SpecUniverse, spec: string): string {
     const meta = universe.metas[spec];
-    return meta ? `${WCL_ICONS}/${meta.className}-${meta.specName}.jpg` : '';
+    return meta ? `${this.environment.rpglogsSpecIconUrl}/${meta.className}-${meta.specName}.jpg` : '';
   }
 }

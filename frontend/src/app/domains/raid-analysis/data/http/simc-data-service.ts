@@ -4,9 +4,8 @@ import { firstValueFrom } from 'rxjs';
 import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from './http-load-error';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
-/** SimC's default branch, which SimC moves to each new expansion. */
-const SIMC_RAW = 'https://raw.githubusercontent.com/simulationcraft/simc/HEAD';
 /** Where SimC's class code names the auras, dots and actions a list reads; `player.cpp` holds the racials every class shares. */
 const CLASS_SOURCES: Record<string, string[] | undefined> = {
   deathknight: ['class_modules/sc_death_knight.cpp'],
@@ -29,15 +28,16 @@ const SHARED_SOURCE = 'player/player.cpp';
 export class SimcDataService {
   private readonly logger = inject(LoggerService);
   private readonly http = inject(HttpClient);
+  private readonly rawUrl = inject(ENVIRONMENT).simcRawUrl;
 
   /** Unlike the tier profiles, written for every spec SimC keeps a list for; a 404 is a spec with none, which reads as `missing`. */
   getApl(className: string, specLabel: string): Promise<Result<string>> {
     const file = `${className.toLowerCase()}_${specLabel.toLowerCase().replace(/ /g, '_')}.simc`;
-    return this.getText(`${SIMC_RAW}/ActionPriorityLists/default/${file}`, 'simc.apl');
+    return this.getText(`${this.rawUrl}/ActionPriorityLists/default/${file}`, 'simc.apl');
   }
 
   getSpellDump(className: string): Promise<Result<string>> {
-    return this.getText(`${SIMC_RAW}/SpellDataDump/${className.toLowerCase()}.txt`, 'simc.spell-dump');
+    return this.getText(`${this.rawUrl}/SpellDataDump/${className.toLowerCase()}.txt`, 'simc.spell-dump');
   }
 
   sourcePaths(className: string): string[] {
@@ -45,7 +45,7 @@ export class SimcDataService {
   }
 
   getSource(path: string): Promise<Result<string>> {
-    return this.getText(`${SIMC_RAW}/engine/${path}`, 'simc.source');
+    return this.getText(`${this.rawUrl}/engine/${path}`, 'simc.source');
   }
 
   private async getText(url: string, id: string): Promise<Result<string>> {

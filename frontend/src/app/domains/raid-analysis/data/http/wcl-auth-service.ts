@@ -2,12 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import * as z from '../../../shared/util-validation/zod-mini';
-import { WclTransportError } from '../wcl/wcl-transport';
-import { WCL_PUBLIC_CLIENT_ID, WCL_PUBLIC_CLIENT_SECRET } from './wcl-public-client';
-
-const TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
+import { WclTransportError, WCL_UNUSABLE_STATUS } from '../wcl/wcl-transport';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 const DEFAULT_TOKEN_LIFETIME_S = 3600;
+
+const NO_CLIENT_MESSAGE = 'No Warcraft Logs client is filled in. Copy frontend/src/environments/wcl-client.example.ts to wcl-client.ts beside it and paste your client id and secret.';
 
 const TOKEN_RESPONSE_SCHEMA = z.looseObject({
   access_token: z.string().check(z.minLength(1)),
@@ -18,6 +18,7 @@ const TOKEN_RESPONSE_SCHEMA = z.looseObject({
 @Injectable({ providedIn: 'root' })
 export class WclAuthService {
   private readonly http = inject(HttpClient);
+  private readonly environment = inject(ENVIRONMENT);
   private _token: string | null = null;
   private _expiry = 0;
   private _inFlight: Promise<string> | null = null;
@@ -31,15 +32,18 @@ export class WclAuthService {
   }
 
   private async _fetchToken(): Promise<string> {
+    const { wclClientId, wclClientSecret, wclTokenUrl } = this.environment;
+    // An empty pair earns a 401 from WCL that reads like an outage.
+    if (!wclClientId || !wclClientSecret) throw new WclTransportError(NO_CLIENT_MESSAGE, WCL_UNUSABLE_STATUS);
     const params = new URLSearchParams({
       grant_type: 'client_credentials',
-      client_id: WCL_PUBLIC_CLIENT_ID,
-      client_secret: WCL_PUBLIC_CLIENT_SECRET,
+      client_id: wclClientId,
+      client_secret: wclClientSecret,
     });
     let data: unknown;
     try {
       data = await firstValueFrom(this.http.post<unknown>(
-        TOKEN_URL,
+        wclTokenUrl,
         params.toString(),
         { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
       ));

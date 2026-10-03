@@ -57,13 +57,18 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      # CURRENT_RAIDS: WCL zone names to bench, comma separated (e.g. "The Venomous Abyss"). Anything else is pruned; unset prunes nothing.
-      # PRIORITY_SPECS (repo variable) is optional: unset or malformed falls back safely (see parsePrioritySpecs in ingest-ordering-service.ts).
+      - name: Write the WCL client file
+        env:
+          WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
+          WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          [ -n "$WCL_CLIENT_ID" ] && [ -n "$WCL_CLIENT_SECRET" ] || { echo "::error::Set the WCL_CLIENT_ID and WCL_CLIENT_SECRET repository secrets."; exit 1; }
+          printf "export const WCL_CLIENT_ID = '%s';\nexport const WCL_CLIENT_SECRET = '%s';\n" "$WCL_CLIENT_ID" "$WCL_CLIENT_SECRET" > src/environments/wcl-client.ts
+        working-directory: frontend
+
       - name: Run parse ingestion
         working-directory: frontend
-        env:
-          CURRENT_RAIDS: ${{ vars.CURRENT_RAIDS }}
-          PRIORITY_SPECS: ${{ vars.PRIORITY_SPECS }}
         run: npm run ingest
 
       # Pruning never removes whole spec dirs, so this trips only on an overlay catastrophe, not a quiet hour.

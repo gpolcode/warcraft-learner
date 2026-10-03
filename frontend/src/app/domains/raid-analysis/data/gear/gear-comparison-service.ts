@@ -5,10 +5,12 @@ import { SpecTalents, TalentEntry, TalentDiff } from './talent.models';
 import { TalentPick } from './talent-key-service';
 import { TalentKeyService } from './talent-key-service';
 import { RING_SLOTS } from './gear-extract-service';
+import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 @Injectable({ providedIn: 'root' })
 export class GearComparisonService {
   private readonly talentKeys = inject(TalentKeyService);
+  private readonly environment = inject(ENVIRONMENT);
 
   private slotName(slot: number): string { return SLOT_NAMES[slot] ?? `Slot ${slot}`; }
 
@@ -78,7 +80,7 @@ export class GearComparisonService {
       pct: b.pct,
       isPlayer: !!playerKey && b.key === playerKey,
       // Deep-link to the example parse: select the fight, the summary tab, and the player (`source` = their actor id within that report).
-      link: `https://www.warcraftlogs.com/reports/${b.report_code}?fight=${b.fight_id}&type=summary&source=${b.source_id}`,
+      link: `${this.environment.wclReportUrl}/${b.report_code}?fight=${b.fight_id}&type=summary&source=${b.source_id}`,
       playerName: b.player_name,
       label: this.rankLabel(i, 'build'),
       added: (b.diff ?? []).filter(d => d.kind === 'added').map(d => d.talent),

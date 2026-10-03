@@ -21,6 +21,7 @@ import { IngestStateService, type SpecIngestState } from '../data/ingest/ingest-
 import { SpecReportService, SELECTED_MARKER, type SpecReportRow } from '../data/ingest/spec-report-service';
 import { SpecPlanLoaderService } from '../data/simc/spec-plan-loader-service';
 import type { IngestEncounter } from '../data/ingest/ingest.models';
+import { ENVIRONMENT } from '../../../../environments/environment-token';
 
 const TOP_N = 10;
 const POINTS_MARGIN = 500;
@@ -60,6 +61,7 @@ function encounterIndexEntries(current: IngestEncounter[], onDisk: EncounterEntr
 @Injectable({ providedIn: 'root' })
 export class IngestOrchestratorService {
   private readonly currentRaids = inject(CurrentRaidsService);
+  private readonly environment = inject(ENVIRONMENT);
   private readonly ingestState = inject(IngestStateService);
   private readonly logger = inject(LoggerService);
   private readonly ordering = inject(IngestOrderingService);
@@ -93,10 +95,10 @@ export class IngestOrchestratorService {
 
     const knownSpecs = await this.resolveSpecMetas();
 
-    const raidNames = this.currentRaids.parseRaidNames(new URLSearchParams(globalThis.location.search).get('currentRaids'));
+    const raidNames = this.environment.currentRaids;
     console.log(raidNames.length
-      ? `Current raids (CURRENT_RAIDS): ${raidNames.join(', ')}`
-      : 'CURRENT_RAIDS is unset - nothing to ingest, nothing pruned.');
+      ? `Current raids: ${raidNames.join(', ')}`
+      : 'No current raids configured - nothing to ingest, nothing pruned.');
     const { encounters, protectedIds } = await this.currentRaids.discoverCurrentRaids(this.wclApi, raidNames);
     console.log(`${encounters.length} encounters`);
     await this.pruneRetiredRaids(protectedIds);
@@ -124,7 +126,7 @@ export class IngestOrchestratorService {
 
   /** Pruning only the selected specs would leave them at zero data and permanently re-selected. */
   private async pruneRetiredRaids(protectedIds: Set<number>): Promise<void> {
-    // An unset CURRENT_RAIDS names no raid, which must not read as "prune everything".
+    // An empty currentRaids names no raid, which must not read as "prune everything".
     if (protectedIds.size === 0) return;
     for (const spec of await this.dataFile.listSpecs()) {
       const pruned = await this.pruneStaleEncounters(spec, protectedIds);
@@ -205,8 +207,7 @@ export class IngestOrchestratorService {
       const displayIngestedAtS = storedTimes.length ? Math.max(...storedTimes) : null;
       return { entry, displayVersion, displayIngestedAtS, emptyCount: emptyIds.length };
     }));
-    const prioritySpecs = this.ordering.parsePrioritySpecs(new URLSearchParams(globalThis.location.search).get('prioritySpecs'));
-    const { ordered, selected } = this.ordering.specsForRun(orderInputs.map(input => input.entry), prioritySpecs);
+    const { ordered, selected } = this.ordering.specsForRun(orderInputs.map(input => input.entry), this.environment.prioritySpecs);
     const displayBySpec = new Map(orderInputs.map(input => [input.entry.spec, input] as const));
     const selectedSpecs = new Set(selected);
     const rows: SpecReportRow[] = ordered.map(spec => ({
