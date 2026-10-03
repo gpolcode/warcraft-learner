@@ -70,6 +70,8 @@ const TAIGA_ICONS: Record<string, string> = {
   '@tui.check': check,
   '@tui.chevron-down': chevronDown,
   '@tui.chevron-right': chevronRight,
+  // The copy buttons swap to it once copied; unregistered, the confirmation shows as an empty box.
+  '@tui.circle-check': circleCheck,
   '@tui.copy': copy,
   '@tui.info': info,
   '@tui.x': x,

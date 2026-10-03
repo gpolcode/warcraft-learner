@@ -131,10 +131,8 @@ html {
   --tui-status-info-pale-hover: color-mix(in srgb, var(--color-accent) 24%, transparent);
   --tui-status-neutral: var(--color-muted);
 
-  /* A phone taps where a mouse clicks, so Taiga's small controls (the tiles, buttons and fields) take the 44px touch target on coarse pointers alone. */
-  @media (pointer: coarse) {
-    --tui-height-s: 2.75rem;
-  }
+  /* Taiga's small controls (the tiles, buttons and fields) keep their compact padding and type but take the 44px target. */
+  --tui-height-s: 2.75rem;
 }
 
 body {

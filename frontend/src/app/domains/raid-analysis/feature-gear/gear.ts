@@ -7,7 +7,7 @@ import { LoadState } from '../../shared/ui-load-state/load-state';
 import { GearFeatureService } from '../data/gear/gear-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
 
-const COPY_TEXTS = ['Copy name', 'Copied. Paste it into the auction house search.'] as const;
+const COPY_TEXTS = ['Copy name', 'Copied'] as const;
 const CHIP_LINES = 2;
 
 @Component({

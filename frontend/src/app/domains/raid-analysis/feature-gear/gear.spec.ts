@@ -8,10 +8,10 @@ import { GearComparisonView, GearFeatureService } from '../data/gear/gear-featur
 
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER_ID = 3379;
-const COPY_BUTTON = 'wl-game-icon button[tuiIconButton]';
+const COPY_BUTTON = 'wl-game-icon button[tuiButton]';
 const ITEM_LINK = 'a[href*="wowhead.com/item="]';
 const COPY_LABEL = 'Copy name';
-const COPIED_LABEL = 'Copied. Paste it into the auction house search.';
+const COPIED_LABEL = 'Copied';
 // The rows a talent list shows until its own +N more is pressed, as gear.ts clamps it.
 const CHIP_ROWS = 2;
 const ARMOR_KIT_ITEM_ID = 244641;
