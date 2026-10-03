@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { TuiIcon, TuiTitle } from '@taiga-ui/core';
+import { TuiBlockStatus, TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { LoadError } from '../util-http/result';
 
 /** The hard-error kinds this panel renders; a null error is the waiting (not-yet-ingested) state. */
@@ -8,7 +9,7 @@ export type RenderableLoadError = Extract<LoadError, { kind: 'transient' | 'perm
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-load-state',
-  imports: [MatIconModule],
+  imports: [TuiCardLarge, TuiHeader, TuiTitle, TuiBlockStatus, TuiIcon],
   host: { class: 'block' },
   templateUrl: './load-state.html',
 })

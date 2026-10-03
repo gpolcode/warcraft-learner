@@ -3,7 +3,8 @@ import { Result, Results } from '../../shared/util-http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { whenStable } from '../../../../testing/when-stable';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { EMPTY } from 'rxjs';
+import { TuiToastService } from '@taiga-ui/kit';
 import { Gear } from './gear';
 import { GearComparisonView, GearFeatureService } from '../data/gear/gear-feature-service';
 
@@ -63,7 +64,7 @@ async function mount(view: GearComparisonView, copySucceeds = true): Promise<Mou
   const dom = mountDom(Gear, inputs, [
     { provide: GearFeatureService, useValue: feature },
     { provide: Clipboard, useValue: { copy: (text: string) => { copies.push(text); return copySucceeds; } } },
-    { provide: MatSnackBar, useValue: { open: (message: string) => { messages.push(message); } } },
+    { provide: TuiToastService, useValue: { open: (message: string) => { messages.push(message); return EMPTY; } } },
   ]);
   await whenStable();
   dom.detectChanges();

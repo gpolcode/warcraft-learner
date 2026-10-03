@@ -25,7 +25,8 @@ function render(inputs: Record<string, unknown>): Rendered {
   const host = fixture.nativeElement as HTMLElement;
   return {
     text: host.textContent.replace(/\s+/g, ' ').trim(),
-    icon: (host.querySelector('mat-icon')?.textContent ?? '').trim(),
+    // tui-icon reflects an unprefixed registry name (the data layer's snake_case) as its icon mode.
+    icon: host.querySelector('tui-icon')?.getAttribute('data-icon-start') ?? '',
   };
 }
 

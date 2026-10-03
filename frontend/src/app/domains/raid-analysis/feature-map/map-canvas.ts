@@ -2,10 +2,9 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, effect,
   inject, signal, viewChild,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { TuiButton, TuiDataList, TuiLabel, TuiSlider, TuiTextfield } from '@taiga-ui/core';
+import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
 import { ReferenceSelector } from '../data/encounter/positioning.models';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import { LoadState, RenderableLoadError } from '../../shared/ui-load-state/load-state';
@@ -19,7 +18,10 @@ const MAX_FRAME_DT_S = 0.1;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-map-canvas',
-  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, FormatDurationPipe, LoadState],
+  imports: [
+    FormsModule, TuiTextfield, TuiLabel, TuiSelect, TuiChevron, TuiDataList, TuiButton, TuiSlider,
+    FormatDurationPipe, LoadState,
+  ],
   templateUrl: './map-canvas.html',
 })
 export class MapCanvas {
@@ -45,6 +47,9 @@ export class MapCanvas {
     const positions = this.positions();
     return positions ? this.map.listReferenceEnemies(positions) : [];
   });
+
+  protected readonly referenceName = (value: 'boss' | number): string =>
+    value === 'boss' ? 'Boss' : this.refEnemies().find(enemy => enemy.gameId === value)?.name ?? '';
 
   protected readonly refValue = computed(() => {
     const selector = this.selector();

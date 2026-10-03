@@ -1,4 +1,3 @@
-@use '@angular/material' as mat;
 @use "tailwindcss";
 
 // Sass cannot parse Tailwind's `--name-*` wildcard, so the wildcard names are interpolated.
@@ -67,64 +66,66 @@
   letter-spacing: 0.08em;
 }
 
-/* "On plan" markers: deliberately understated (muted surface tag, no green fill or check glyph) so a clean result reads calm, not celebratory. */
-@utility chip-onplan {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--color-line);
-  background-color: var(--color-surface-alt);
-  color: var(--color-muted);
-  font-size: var(--text-body);
-  line-height: var(--text-body--line-height);
-}
-
 html {
   height: 100%;
   color-scheme: dark;
 
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-      theme-type: dark,
-    ),
-    typography: 'Schibsted Grotesk',
-    density: 0,
-  ));
-
-  /* Material text on the app's type roles: inputs, options and nav items read body-large; checkbox and toggle labels read body-medium. */
-  --mat-sys-body-large-size: var(--text-name);
-  --mat-sys-body-medium-size: var(--text-body);
-
   /* Outline behind the map player marker, visible over any trail color; read at draw time via getComputedStyle (map-canvas.ts). */
   --map-dot-outline: rgba(0, 0, 0, 0.55);
+}
 
-  /* Restyle Material through its override mixins: its unlayered styles beat layered Tailwind utilities, so mixins are the only no-!important lever. */
-  @include mat.card-overrides((
-    outlined-container-color: var(--color-surface),
-    outlined-outline-color: var(--color-line),
-    outlined-container-shape: 12px,
-  ));
-  @include mat.toolbar-overrides((
-    container-background-color: var(--color-surface),
-  ));
-  // A dark M3 theme puts the snack bar on `inverse-surface`: a light bar with dark text.
-  @include mat.snack-bar-overrides((
-    container-color: var(--color-surface-alt),
-    container-shape: 10px,
-    supporting-text-color: var(--color-text),
-    supporting-text-size: var(--text-body),
-    supporting-text-line-height: var(--text-body--line-height),
-  ));
-  @include mat.list-overrides((
-    active-indicator-shape: 9999px,
-    list-item-one-line-container-height: 48px,
-    list-item-leading-icon-start-space: 16px,
-    list-item-leading-icon-end-space: 16px,
-  ));
+/* Taiga's dark palette re-applies on every element that sets tuiTheme="dark" (the body, the navigation), so the app tokens are pinned there too, not only on the root. */
+:root,
+[tuiTheme='dark'] {
+  --tui-typography-family-text: var(--font-sans);
+  --tui-typography-family-display: var(--font-sans);
+  /* Taiga's default text (the root, cards, subtitles) reads the body role, and a body-l header (every card title) reads the title role. */
+  --tui-typography-body-s: normal var(--text-body) / var(--text-body--line-height) var(--font-sans);
+  --tui-typography-body-l: var(--text-title--font-weight) var(--text-title) / var(--text-title--line-height) var(--font-sans);
+  /* Chips, small controls and data lists read the body role; badges read the label role's font, and wear text-label for its case and tracking. */
+  --tui-typography-ui-s: normal var(--text-body) / var(--text-body--line-height) var(--font-sans);
+  --tui-typography-ui-2xs: 500 11px / 1.3 var(--font-sans);
+
+  --tui-background-base: var(--color-bg);
+  --tui-background-base-alt: var(--color-surface);
+  --tui-background-elevation-1: var(--color-surface);
+  --tui-background-elevation-2: var(--color-surface);
+  --tui-background-elevation-3: var(--color-surface-alt);
+  --tui-background-accent-1: var(--color-accent);
+  --tui-background-accent-1-hover: color-mix(in srgb, var(--color-accent) 85%, var(--color-text));
+  --tui-background-accent-1-pressed: color-mix(in srgb, var(--color-accent) 80%, var(--color-bg));
+  --tui-background-accent-2: var(--color-accent);
+  --tui-background-accent-2-hover: color-mix(in srgb, var(--color-accent) 85%, var(--color-text));
+  --tui-background-accent-2-pressed: color-mix(in srgb, var(--color-accent) 80%, var(--color-bg));
+  --tui-theme-color: var(--color-surface);
+
+  --tui-border-normal: var(--color-line);
+  --tui-border-hover: var(--color-muted);
+  --tui-border-focus: var(--color-accent);
+
+  --tui-text-primary: var(--color-text);
+  --tui-text-secondary: var(--color-muted);
+  --tui-text-tertiary: var(--color-muted);
+  --tui-text-primary-on-accent-1: var(--color-bg);
+  --tui-text-primary-on-accent-2: var(--color-bg);
+  --tui-text-action: var(--color-accent);
+  --tui-text-action-hover: color-mix(in srgb, var(--color-accent) 85%, var(--color-text));
+  --tui-text-positive: var(--color-success);
+  --tui-text-negative: var(--color-critical);
+
+  --tui-status-negative: var(--color-critical);
+  --tui-status-negative-pale: color-mix(in srgb, var(--color-critical) 16%, transparent);
+  --tui-status-negative-pale-hover: color-mix(in srgb, var(--color-critical) 24%, transparent);
+  --tui-status-positive: var(--color-success);
+  --tui-status-positive-pale: color-mix(in srgb, var(--color-success) 16%, transparent);
+  --tui-status-positive-pale-hover: color-mix(in srgb, var(--color-success) 24%, transparent);
+  --tui-status-warning: var(--color-warning);
+  --tui-status-warning-pale: color-mix(in srgb, var(--color-warning) 16%, transparent);
+  --tui-status-warning-pale-hover: color-mix(in srgb, var(--color-warning) 24%, transparent);
+  --tui-status-info: var(--color-accent);
+  --tui-status-info-pale: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  --tui-status-info-pale-hover: color-mix(in srgb, var(--color-accent) 24%, transparent);
+  --tui-status-neutral: var(--color-muted);
 }
 
 body {
@@ -141,65 +142,63 @@ body {
 ::-webkit-scrollbar-track { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 3px; }
 
-/* Drawer widths (modal / expanded / collapsed rail): element+class (0,1,1) outranks Material's unlayered .mat-drawer (0,1,0) without !important. */
-mat-sidenav.nav-drawer-modal { width: 18rem; }
-mat-sidenav.nav-drawer-full { width: 16rem; }
-mat-sidenav.nav-drawer-rail { width: 5rem; }
-
-/* 12px icon inset (both drawer states) centers the 24px icon in the collapsed rail's round 48px target and keeps it fixed when the rail toggles. */
-mat-nav-list .mdc-list-item { margin-block: 4px; }
-/* mat-nav-list plus the two leading-icon classes (0,2,1) outranks Material's icon-inset rule (0,2,0) without !important. */
-mat-nav-list .mdc-list-item--with-leading-icon .mdc-list-item__start {
-  margin-inline-start: 12px;
-  margin-inline-end: 12px;
+/* "On plan" tags: deliberately understated (muted surface, no green fill or check glyph) so a clean result reads calm, not celebratory. */
+[tuiAppearance][data-appearance='quiet'] {
+  background: var(--color-surface-alt);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+  color: var(--color-muted);
 }
 
-/* Collapsed rail: a 48px circular target flush with the expanded row's left edge (no shift on toggle); hiding the flex:1 content span centers the lone icon. Element selectors outrank Material's unlayered rules without !important. */
-mat-sidenav.nav-drawer-rail .mdc-list-item {
-  width: 48px;
-  padding: 0;
-  align-items: center;
+/* Bloodlust, the one game-state tag in the gold the brand shares with Warcraft Logs' top parses. */
+[tuiAppearance][data-appearance='gold'] {
+  background: color-mix(in srgb, var(--color-gold) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 35%, transparent);
+  color: var(--color-gold);
 }
-mat-sidenav.nav-drawer-rail .mdc-list-item__content { display: none; }
 
-/* mat-icon sizes: element+class (0,1,1) beats Material's unlayered .mat-icon and the 24px symbol font, which layered Tailwind utilities cannot. */
-
-/* Pin line-height so the glyph does not inherit ambient line-height and sit off-center in the button. */
-.mdc-icon-button { line-height: 1; }
-
-/* Top-align the trigger so a custom icon+text trigger's bottom-edge baseline does not leave line-height strut space below the value, floating it above the field center. Element+class (0,1,1) beats Material's rule without !important. */
-mat-select .mat-mdc-select-trigger { vertical-align: top; }
-
-/* A checkbox's label wraps projected content in a block line box, so a flex-row label (icon + name) sits on the baseline instead of centered against the checkmark. Element+class (0,1,1) beats Material's unlayered rule without !important. */
-mat-checkbox .mat-internal-form-field-label { display: flex; align-items: center; }
-
-mat-icon.icon-16 { font-size: 16px; width: 16px; height: 16px; line-height: 16px; }
-mat-icon.icon-18 { font-size: 18px; width: 18px; height: 18px; line-height: 18px; }
-
-/* Material colors mat-icon outside any layer, which outranks a layered text-* tone on the icon itself; element+class (0,1,1) restores the tone. */
-@each $tone in (text, muted, accent, critical, warning, success, "gold") {
-  mat-icon.text-#{$tone} { color: var(--color-#{$tone}); }
+/* Table cards: rows run edge to edge with their own 16px gutters, so the card adds no padding or gap. Element + doubled attribute + class (0,3,1) outranks Taiga's per-space rules, [tuiCardLarge][data-space][data-space=normal] (0,3,0). */
+section[tuiCardLarge][tuiCardLarge].card-flush {
+  --t-padding: 0;
+  --tui-padding-inline: 0;
+  --t-space: 0;
+  --t-comp: 0;
+  --t-radius: var(--tui-radius-l);
 }
+
+/* Unclassed card text reads the body role, as it does outside a card; Taiga's own card default is 16px. */
+[tuiCardLarge]:not([tuiHeader]) { font: var(--tui-typography-body-s); }
+
+/* Card and drawer headings wear the title role's weight, which Taiga's header sets to 700; their intros read the body role, which it sets to 16px. */
+[tuiHeader] [tuiTitle] { font-weight: var(--text-title--font-weight); }
+[tuiHeader] [tuiSubtitle] { font: var(--tui-typography-body-s); }
+
+/* A notification's title wears the heading role, where Taiga sets 16px bold; the div outranks its [tuiNotification][data-size] [tuiTitle] rule (0,3,0). */
+div[tuiNotification][data-size] [tuiTitle] { font: var(--text-heading--font-weight) var(--text-heading) / var(--text-heading--line-height) var(--font-sans); }
+
+/* Switch and checkbox labels: the name role over a body-role description, matching the rows they sit beside. */
+[tuiLabel] [tuiTitle] { font: 400 var(--text-name) / var(--text-name--line-height) var(--font-sans); }
+[tuiLabel] [tuiSubtitle] { font: var(--tui-typography-body-s); }
+
+/* tui-icon sizes: element+class (0,1,1) beats Taiga's unlayered 24px tui-icon rule, which layered Tailwind utilities cannot. */
+tui-icon.icon-16 { font-size: 16px; }
+tui-icon.icon-18 { font-size: 18px; }
 
 /* Timeline glyphs: 22px in the 42px mobile tap targets, 18px on the md rail (48rem = Tailwind md). */
-mat-icon.icon-seg { font-size: 22px; width: 22px; height: 22px; line-height: 1; }
+tui-icon.icon-seg { font-size: 22px; }
 @media (min-width: 48rem) {
-  mat-icon.icon-seg { font-size: 18px; width: 18px; height: 18px; }
+  tui-icon.icon-seg { font-size: 18px; }
 }
 
-/* Icon font class for MatIconRegistry's default set; the face itself is declared in index.html beside its preload. */
-.material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: 'liga';
-  -webkit-font-smoothing: antialiased;
+/* Flyover panels: a 460px side drawer on desktop and a bottom sheet on phones. The direction attribute outranks the drawer's own per-direction rules. */
+tui-drawer.flyover[data-direction] { inline-size: 28.75rem; }
+@media (max-width: 47.99rem) {
+  tui-drawer.flyover[data-direction] {
+    inset-block-start: auto;
+    inset-inline: 0;
+    inline-size: auto;
+    max-inline-size: none;
+    block-size: 85dvh;
+    border-radius: 1.25rem 1.25rem 0 0;
+    --tui-from: translateY(100%);
+  }
 }

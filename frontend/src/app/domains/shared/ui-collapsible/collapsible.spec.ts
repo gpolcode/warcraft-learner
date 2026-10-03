@@ -10,7 +10,7 @@ interface CollapsibleVm {
 }
 
 const CLAMPED_H = 60;
-const CHIP_ROW_H = 26;
+const CHIP_ROW_H = 24;
 
 function box(scrollHeight: number, clientHeight: number): HTMLElement {
   return { scrollHeight, clientHeight } as HTMLElement;

@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { TuiItem } from '@taiga-ui/cdk';
+import { TuiButton, TuiExpand, TuiIcon, TuiTitle } from '@taiga-ui/core';
+import { TuiBadge, TuiChevron, TuiChip, TuiStatus } from '@taiga-ui/kit';
+import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { Collapsible } from '../../shared/ui-collapsible/collapsible';
 import { FindingOccurrences } from './finding-occurrences';
@@ -15,8 +17,8 @@ export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-servi
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    MatIconModule, MatButtonModule, GameIcon, Collapsible, FindingOccurrences,
-    FormatDurationPipe,
+    TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChevron, TuiExpand, TuiItem, TuiBadge, TuiStatus, TuiChip,
+    GameIcon, Collapsible, FindingOccurrences, FormatDurationPipe,
   ],
   templateUrl: './finding-table.html',
 })

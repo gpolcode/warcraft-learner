@@ -4,16 +4,18 @@
   <!-- No error and no view: the pull's own log was not found (a missing result). -->
   <wl-load-state caption="" />
 } @else if (view(); as v) {
-  <div class="bg-surface border border-line rounded-[10px] overflow-hidden">
+  <section tuiCardLarge appearance="outline-grayscale" class="card-flush">
 
     <!-- Pull time + boss % live in the stat column, not here. -->
-    <div class="px-4 pt-3 pb-2">
-      <h2 class="text-title">Pull overview</h2>
-      <div class="text-body text-muted mt-0.5">
-        @if (v.result === 'kill') { Pull {{ v.attempt }} - kill. }
-        @else { Pull {{ v.attempt }} of this session. }
-      </div>
-    </div>
+    <header tuiHeader="body-l" class="px-4 pt-3 pb-2">
+      <h2 tuiTitle>
+        Pull overview
+        <span tuiSubtitle>
+          @if (v.result === 'kill') { Pull {{ v.attempt }} - kill. }
+          @else { Pull {{ v.attempt }} of this session. }
+        </span>
+      </h2>
+    </header>
 
     <!-- The stat column names the finding cards' own fix track, so the two line up. -->
     <div class="px-4 md:grid md:grid-cols-(--cols-stat)">
@@ -23,7 +25,7 @@
 
         @for (d of v.deaths; track d.index) {
           <div class="grid grid-cols-(--cols-death) gap-2.75 items-center py-2.5 border-t border-line">
-            <mat-icon class="icon-18 text-critical">skull</mat-icon>
+            <tui-icon class="icon-18 text-critical" icon="skull" />
             <div class="min-w-0">
               <div class="text-body">Death {{ d.index }}</div>
               @if (d.ability) {
@@ -33,31 +35,25 @@
             <span class="tabular-nums text-body text-accent">{{ d.timeS | formatDuration }}</span>
             <div class="flex gap-0.5 pr-2">
               @if (showMap()) {
-                <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenMap(d.timeS)">
-                  <mat-icon>my_location</mat-icon>
-                  Show map
-                </button>
+                <button tuiButton type="button" appearance="outline-grayscale" size="s" iconStart="my_location" (click)="onOpenMap(d.timeS)">Show map</button>
               }
               @if (showClip()) {
-                <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">
-                  <mat-icon>videocam</mat-icon>
-                  Watch clip
-                </button>
+                <button tuiButton type="button" appearance="outline-grayscale" size="s" iconStart="videocam" (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">Watch clip</button>
               }
             </div>
           </div>
         } @empty {
           <div class="flex items-center gap-2.5 py-2.5 border-t border-line">
-            <mat-icon class="icon-18 text-success">check_circle</mat-icon>
+            <tui-icon class="icon-18 text-success" icon="check_circle" />
             <span class="text-body">No deaths - {{ v.result === 'kill' ? 'clean pull' : 'you survived' }}</span>
           </div>
         }
 
         <div class="grid grid-cols-(--cols-death) gap-2.75 items-center py-2.5 border-t border-line">
           @if (v.result === 'kill') {
-            <mat-icon class="icon-18 text-gold">emoji_events</mat-icon>
+            <tui-icon class="icon-18 text-gold" icon="emoji_events" />
           } @else {
-            <mat-icon class="icon-18 text-warning">flag</mat-icon>
+            <tui-icon class="icon-18 text-warning" icon="flag" />
           }
           <div class="min-w-0">
             <div class="text-body">{{ v.result === 'kill' ? 'Kill' : 'Wipe' }}</div>
@@ -69,16 +65,10 @@
           <span class="tabular-nums text-body text-accent">{{ v.outcomeTimeS | formatDuration }}</span>
           <div class="flex gap-0.5 pr-2">
             @if (showMap()) {
-              <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenMap(v.outcomeTimeS)">
-                <mat-icon>my_location</mat-icon>
-                Show map
-              </button>
+              <button tuiButton type="button" appearance="outline-grayscale" size="s" iconStart="my_location" (click)="onOpenMap(v.outcomeTimeS)">Show map</button>
             }
             @if (showClip()) {
-              <button mat-stroked-button class="whitespace-nowrap" (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">
-                <mat-icon>videocam</mat-icon>
-                Watch clip
-              </button>
+              <button tuiButton type="button" appearance="outline-grayscale" size="s" iconStart="videocam" (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">Watch clip</button>
             }
           </div>
         </div>
@@ -108,5 +98,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 }

@@ -1,43 +1,40 @@
-<div class="bg-surface border border-line rounded-[10px] p-4">
-  <div class="flex items-start gap-2.5">
-    <mat-icon class="icon-18 text-accent mt-px shrink-0">info</mat-icon>
-    <div>
-      <div class="text-heading">No benchmark for {{ encounter() }} yet</div>
-      <div class="text-body text-muted mt-0.5">
-        @if (variant() === 'pre') {
-          The pre-fight plan is built entirely from top-parse logs. Gear, cooldown, defensive and burst plans all need parses - none are in yet. Here's what has to happen first:
-        } @else {
-          Rotation rules and the cooldown, burst, defensive and gear comparisons all need top-parse logs - none are in yet. Here's what has to happen first:
-        }
-      </div>
-    </div>
+<div tuiNotification appearance="info" size="m">
+  <div tuiTitle>
+    No benchmark for {{ encounter() }} yet
+    <span tuiSubtitle class="text-muted">
+      @if (variant() === 'pre') {
+        The pre-fight plan is built entirely from top-parse logs. Gear, cooldown, defensive and burst plans all need parses - none are in yet. Here's what has to happen first:
+      } @else {
+        Rotation rules and the cooldown, burst, defensive and gear comparisons all need top-parse logs - none are in yet. Here's what has to happen first:
+      }
+    </span>
   </div>
 
   <div class="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch gap-1 bg-bg border border-line rounded-lg px-4 py-3.5 mt-3.5">
     <div class="flex flex-col gap-1.5">
-      <mat-icon class="icon-seg text-muted">military_tech</mat-icon>
+      <tui-icon class="icon-seg text-muted" icon="military_tech" />
       <div class="text-heading">Mythic kills logged</div>
       <div class="text-caption text-muted">Players upload to WCL.</div>
       <div class="text-label text-critical mt-px">Waiting</div>
     </div>
 
     <div class="flex items-center justify-center">
-      <mat-icon class="icon-16 text-line">arrow_forward</mat-icon>
+      <tui-icon class="icon-16 text-line" icon="arrow_forward" />
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <mat-icon class="icon-seg text-muted">cloud_sync</mat-icon>
+      <tui-icon class="icon-seg text-muted" icon="cloud_sync" />
       <div class="text-heading">Ingest samples them</div>
       <div class="text-caption text-muted">We pull new top rankings.</div>
       <div class="text-label text-warning mt-px">Hourly</div>
     </div>
 
     <div class="flex items-center justify-center">
-      <mat-icon class="icon-16 text-line">arrow_forward</mat-icon>
+      <tui-icon class="icon-16 text-line" icon="arrow_forward" />
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <mat-icon class="icon-seg text-success">check_circle</mat-icon>
+      <tui-icon class="icon-seg text-success" icon="check_circle" />
       @if (variant() === 'pre') {
         <div class="text-heading">Plan unlocks</div>
         <div class="text-caption text-muted">The cards below fill in.</div>

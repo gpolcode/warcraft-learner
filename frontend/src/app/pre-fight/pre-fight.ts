@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, PendingTasks, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCardModule } from '@angular/material/card';
+import { TuiDataList, TuiTextfield } from '@taiga-ui/core';
+import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
+import { TuiCardLarge } from '@taiga-ui/layout';
 import { SelectionStore } from '../domains/raid-analysis/data/selection/selection-store';
 import { SpecEntry, EncounterEntry } from '../domains/raid-analysis/data/encounter/encounter.models';
 import { LoadError } from '../domains/shared/util-http/result';
@@ -40,14 +40,12 @@ export const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pre-fight',
   imports: [
-    ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatCardModule,
+    ReactiveFormsModule, TuiCardLarge, TuiTextfield, TuiSelect, TuiChevron, TuiDataList,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
     RotationCdPlan, DefensivePlan, BurstWindows,
     Gear, MapPanel, NorthernSkyExport,
   ],
-  // Provided per lazy page so form-field stays out of the initial bundle.
-  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
   templateUrl: './pre-fight.html',
 })
 export class PreFight implements OnInit {
@@ -75,6 +73,12 @@ export class PreFight implements OnInit {
     this.encounterSelection.specsForClass(this.selectedClass(), this.specs().map(entry => entry.spec)));
   protected readonly selectedEncounter = computed(() =>
     this.encounters().find(entry => entry.id === this.selectedEncId()));
+  protected readonly classLabel = (className: string): string =>
+    this.classes().find(entry => entry.className === className)?.classLabel ?? '';
+  protected readonly specLabel = (spec: string): string =>
+    this.specsForSelectedClass().find(entry => entry.spec === spec)?.specLabel ?? '';
+  protected readonly encounterLabel = (encounterId: number): string =>
+    this.encounters().find(entry => entry.id === encounterId)?.name ?? '';
   protected readonly loading = signal(false);
   protected readonly loadingEncounters = signal(false);
   protected readonly error = signal<RenderableLoadError | null>(null);
@@ -119,20 +123,20 @@ export class PreFight implements OnInit {
     const autoSpec = this.selectionStore.loadPreFight()?.spec ?? '';
     const meta = await this.encounterSelection.resolve(autoSpec);
     if (autoSpec && meta && this.specs().some(specEntry => specEntry.spec === autoSpec)) {
-      this.classControl.setValue(meta.className);
+      this.setProgrammatically(this.classControl, meta.className);
       this.specControl.enable({ emitEvent: false });
-      this.specControl.setValue(autoSpec);
+      this.setProgrammatically(this.specControl, autoSpec);
       void this._onSpecSelected(autoSpec);
     }
   }
 
   protected onClassChange(): void {
-    // Emit so the selectedSpec signal (and select trigger) clears; suppressing it would leave the trigger showing the now-invalid spec from the old class.
-    this.specControl.setValue('', { emitEvent: true });
+    // Emit so the selectedSpec signal (and the select's shown value) clears; suppressing it would leave the select showing the now-invalid spec from the old class.
+    this.setProgrammatically(this.specControl, '');
     this.selectionStore.savePreFight({ spec: null });
     this.mapFeature.clear();
     // selectedEncId mirrors valueChanges; emit so the reset closes the encounter-gated cards.
-    this.encControl.setValue(0, { emitEvent: true });
+    this.setProgrammatically(this.encControl, 0);
     this.encControl.disable({ emitEvent: false });
     this.encounters.set([]);
     const available = this.specs().map(entry => entry.spec);
@@ -148,7 +152,7 @@ export class PreFight implements OnInit {
     this.selectionStore.savePreFight({ spec: spec || null });
     this.mapFeature.clear();
     // selectedEncId mirrors valueChanges; emit so the reset closes the encounter-gated cards.
-    this.encControl.setValue(0, { emitEvent: true });
+    this.setProgrammatically(this.encControl, 0);
     this.encControl.disable({ emitEvent: false });
     this.encounters.set([]);
     if (!spec) return;
@@ -186,6 +190,11 @@ export class PreFight implements OnInit {
   private surfaceLoadError(error: LoadError): void {
     if (error.kind === 'permanent') this.logger.logWarn(error.id, error.context);
     this.error.set(error.kind === 'missing' ? null : error);
+  }
+
+  // A write from code must not echo through the select's (ngModelChange), which the template reserves for real picks.
+  private setProgrammatically<T>(control: FormControl<T>, value: T): void {
+    control.setValue(value, { emitViewToModelChange: false });
   }
 
   protected onEncChange(): void {

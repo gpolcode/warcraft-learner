@@ -61,8 +61,12 @@
               }
             ],
             "styles": [
+              "node_modules/@taiga-ui/styles/taiga-ui-theme.less",
               "src/styles.scss"
-            ]
+            ],
+            "loader": {
+              ".svg": "text"
+            }
           },
           "configurations": {
             "production": {
@@ -154,7 +158,11 @@
             "tsConfig": "tsconfig.spec.json",
             "runner": "vitest",
             "buildTarget": "frontend:build",
-            "watch": false
+            "watch": false,
+            "setupFiles": [
+              "src/testing/dom-stubs.ts"
+            ],
+            "providersFile": "src/testing/test-providers.ts"
           },
           "configurations": {
             "ci": {

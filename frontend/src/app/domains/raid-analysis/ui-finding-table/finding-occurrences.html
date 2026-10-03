@@ -38,16 +38,10 @@
       }
     </span>
     @if (showMap()) {
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openMap.emit(occ.atS)">
-        <mat-icon>my_location</mat-icon>
-        Show map
-      </button>
+      <button tuiButton type="button" appearance="outline-grayscale" size="xs" iconStart="my_location" (click)="openMap.emit(occ.atS)">Show map</button>
     }
     @if (showClip()) {
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openClip.emit(occ.atS)">
-        <mat-icon>videocam</mat-icon>
-        Watch clip
-      </button>
+      <button tuiButton type="button" appearance="outline-grayscale" size="xs" iconStart="videocam" (click)="openClip.emit(occ.atS)">Watch clip</button>
     }
   </div>
   @if (occ.checks.length) {

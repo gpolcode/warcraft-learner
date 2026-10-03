@@ -3,7 +3,6 @@ import { LoggerService } from '../domains/shared/util-logging/logger-service';
 
 const NAV_COLLAPSED_KEY = 'wl.nav.collapsed';
 
-// The mobile overlay's open state is deliberately not persisted, since a drawer sitting open over the content on load would be jarring.
 @Injectable({ providedIn: 'root' })
 export class NavStateStore {
   private readonly logger = inject(LoggerService);

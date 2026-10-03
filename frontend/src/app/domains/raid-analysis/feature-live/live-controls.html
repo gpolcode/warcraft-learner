@@ -1,35 +1,31 @@
-<div class="mt-2 flex flex-col gap-3">
-  <div class="flex items-center gap-3">
-    <mat-slide-toggle [checked]="capture.liveEnabled()" (change)="onLiveToggle($event.checked)">
-      Follow latest pull
-    </mat-slide-toggle>
-    @if (capture.liveEnabled()) {
-      @if (capture.statusText()) {
-        <span class="ml-auto flex items-center gap-2 text-body text-muted">
-          <span class="h-[9px] w-[9px] rounded-full bg-accent"></span>{{ capture.statusText() }}
-        </span>
-      }
-    } @else {
-      <span class="ml-auto text-body text-muted">Re-analyzes as new pulls upload during a live log.</span>
+<div class="mt-3 flex flex-col gap-3">
+  <div class="flex flex-col gap-1.5">
+    <label tuiLabel>
+      <input tuiSwitch type="checkbox" size="s" [ngModel]="capture.liveEnabled()" (ngModelChange)="onLiveToggle($event)" />
+      <span tuiTitle>
+        Follow latest pull
+        <span tuiSubtitle>Re-analyzes as new pulls upload during a live log.</span>
+      </span>
+    </label>
+    @if (capture.liveEnabled() && capture.statusText()) {
+      <span tuiStatus="var(--tui-status-info)" class="text-body text-muted">{{ capture.statusText() }}</span>
     }
   </div>
 
-  <div class="flex items-center gap-3">
-    <mat-slide-toggle [checked]="capture.recordToggleOn()" [disabled]="capture.isStarting()" (change)="onRecordToggle($event.checked)">
-      Record game client
-    </mat-slide-toggle>
-    <span class="ml-auto flex items-center gap-2 text-body text-muted">
-      @if (capture.isStarting()) {
-        <mat-progress-spinner mode="indeterminate" diameter="15"></mat-progress-spinner>
-        <span>Pick a window...</span>
-      } @else if (capture.isCapturing()) {
-        <span class="h-[9px] w-[9px] rounded-full bg-critical"></span>
-        <span>Recording "{{ capture.sourceLabel() }}" in the background</span>
-      } @else if (capture.captureError()) {
-        <span class="text-critical">{{ capture.captureError() }}</span>
-      } @else {
-        <span>Stays in this browser session, nothing is uploaded</span>
-      }
-    </span>
+  <div class="flex flex-col gap-1.5">
+    <label tuiLabel>
+      <input tuiSwitch type="checkbox" size="s" [ngModel]="capture.recordToggleOn()" [disabled]="capture.isStarting()" (ngModelChange)="onRecordToggle($event)" />
+      <span tuiTitle>
+        Record game client
+        <span tuiSubtitle>Stays in this browser session, nothing is uploaded</span>
+      </span>
+    </label>
+    @if (capture.isStarting()) {
+      <tui-loader size="xs" class="self-start text-muted" [inheritColor]="true" textContent="Pick a window..." />
+    } @else if (capture.isCapturing()) {
+      <span tuiStatus="var(--tui-status-negative)" class="text-body text-muted">Recording "{{ capture.sourceLabel() }}" in the background</span>
+    } @else if (capture.captureError()) {
+      <span class="text-body text-critical">{{ capture.captureError() }}</span>
+    }
   </div>
 </div>

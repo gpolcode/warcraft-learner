@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { TuiButton, TuiIcon, TuiTitle } from '@taiga-ui/core';
+import { TuiChip } from '@taiga-ui/kit';
+import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { CompactAbilityRow } from './compact-ability-row';
 import { RangeBar } from '../ui-range-bar/range-bar';
@@ -23,7 +24,7 @@ let nextInstanceSeq = 0;
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    MatIconModule, MatButtonModule, GameIcon, CompactAbilityRow, RangeBar, RangeLegend,
+    TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChip, GameIcon, CompactAbilityRow, RangeBar, RangeLegend,
     FormatDurationPipe, FormatDamagePipe, SignedPercentPipe,
   ],
   templateUrl: './window-comparison.html',

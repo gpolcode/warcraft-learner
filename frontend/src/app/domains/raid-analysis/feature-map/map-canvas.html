@@ -6,15 +6,16 @@
   </p>
 } @else {
   <div class="mb-2 flex flex-wrap items-center justify-end gap-2">
-    <mat-form-field appearance="outline" class="w-[200px]">
-      <mat-label>Reference</mat-label>
-      <mat-select [value]="refValue()" (selectionChange)="onRefChange($event.value)">
-        <mat-option value="boss">Boss</mat-option>
+    <tui-textfield tuiChevron tuiTextfieldSize="s" class="w-[200px]" [tuiTextfieldCleaner]="false" [stringify]="referenceName">
+      <label tuiLabel for="map-reference-select">Reference</label>
+      <input id="map-reference-select" tuiSelect [ngModel]="refValue()" (ngModelChange)="onRefChange($event)" />
+      <tui-data-list *tuiDropdown>
+        <button tuiOption type="button" value="boss">Boss</button>
         @for (enemy of refEnemies(); track enemy.gameId) {
-          @if (!enemy.isBoss) { <mat-option [value]="enemy.gameId">{{ enemy.name }}</mat-option> }
+          @if (!enemy.isBoss) { <button tuiOption type="button" [value]="enemy.gameId">{{ enemy.name }}</button> }
         }
-      </mat-select>
-    </mat-form-field>
+      </tui-data-list>
+    </tui-textfield>
   </div>
 
   <div class="relative rounded-lg border border-line bg-surface-alt">
@@ -30,13 +31,11 @@
   <p class="mt-1.5 text-caption text-muted">Every position is drawn relative to the reference, which sits at the centre facing up.</p>
 
   <div class="mt-2 flex items-center gap-2">
-    <button mat-icon-button [attr.aria-label]="playing() ? 'Pause' : 'Play'" (click)="togglePlay()">
-      <mat-icon>{{ playing() ? 'pause' : 'play_arrow' }}</mat-icon>
-    </button>
+    <button tuiIconButton type="button" appearance="flat-grayscale" size="s" [iconStart]="playing() ? 'pause' : 'play_arrow'" (click)="togglePlay()">{{ playing() ? 'Pause' : 'Play' }}</button>
     <div class="min-w-0 flex-1">
-      <input type="range" class="block w-full cursor-pointer accent-gold"
+      <input #scrubber tuiSlider type="range" aria-label="Replay position"
         [min]="windowStart()" [max]="windowEnd()" step="0.25"
-        [value]="scrubT()" (input)="onScrub($any($event.target).valueAsNumber)" />
+        [value]="scrubT()" (input)="onScrub(scrubber.value)" />
       <div class="mt-1 flex justify-between text-caption text-muted">
         <span>{{ windowStart() | formatDuration }}</span>
         <span>Opened at {{ anchorTime() | formatDuration }}</span>

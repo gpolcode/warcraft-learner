@@ -1,27 +1,29 @@
-<div class="bg-surface border border-line rounded-[10px] overflow-hidden">
+<section tuiCardLarge appearance="outline-grayscale" class="card-flush">
 
-  <div class="px-4 pt-3 pb-2 md:grid md:grid-cols-(--cols-drill) md:gap-(--gap-card) md:items-baseline">
-    <div class="md:col-span-2">
-      <h2 class="text-title">{{ heading() }}</h2>
-      @if (subtitle()) {
-        <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
-      }
+  <header class="px-4 pt-3 pb-2 md:grid md:grid-cols-(--cols-drill) md:gap-(--gap-card) md:items-baseline">
+    <div tuiHeader="body-l" class="md:col-span-2">
+      <h2 tuiTitle>
+        {{ heading() }}
+        @if (subtitle()) {
+          <span tuiSubtitle>{{ subtitle() }}</span>
+        }
+      </h2>
     </div>
     <div class="tabular-nums hidden md:block text-label text-muted text-right">Measured</div>
     <div class="hidden md:block text-label text-muted pl-(--gap-card)">Fix</div>
-  </div>
+  </header>
 
   @for (row of rows(); track $index) {
+    @let open = openIndex() === $index;
     <div [class]="'border-t border-line' + (row.severity === 'critical' ? ' bg-critical/4' : '')">
       <div class="grid grid-cols-(--cols-drill-sm) md:grid-cols-(--cols-drill) gap-x-(--gap-card) gap-y-2 md:gap-y-0 px-4 py-2.5 items-start md:items-center">
 
         <div class="flex items-center justify-center self-start md:self-center">
-          <mat-icon class="icon-18"
+          <tui-icon class="icon-18"
             [class.text-critical]="row.severity === 'critical'"
             [class.text-warning]="row.severity === 'warning'"
-            [class.text-accent]="row.severity === 'info'">
-            {{ row.severity === 'critical' ? 'error' : row.severity === 'info' ? 'info' : 'warning_amber' }}
-          </mat-icon>
+            [class.text-accent]="row.severity === 'info'"
+            [icon]="row.severity === 'critical' ? 'error' : row.severity === 'info' ? 'info' : 'warning_amber'" />
         </div>
 
         <div class="min-w-0">
@@ -36,33 +38,17 @@
               @if (row.timestampS != null) {
                 <span class="tabular-nums text-body text-accent">{{ row.timestampS | formatDuration }}</span>
                 @if (showMap()) {
-                  <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openMap.emit(row)">
-                    <mat-icon>my_location</mat-icon>
-                    Show map
-                  </button>
+                  <button tuiButton type="button" appearance="outline-grayscale" size="xs" iconStart="my_location" (click)="openMap.emit(row)">Show map</button>
                 }
                 @if (showClip()) {
-                  <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openClip.emit(row)">
-                    <mat-icon>videocam</mat-icon>
-                    Watch clip
-                  </button>
+                  <button tuiButton type="button" appearance="outline-grayscale" size="xs" iconStart="videocam" (click)="openClip.emit(row)">Watch clip</button>
                 }
               }
             } @else {
               <span class="text-name">{{ row.what }}</span>
             }
             @if (row.chip) {
-              @switch (row.severity) {
-                @case ('critical') {
-                  <span class="tabular-nums text-label rounded-sm px-1.25 text-critical bg-critical/10 border border-critical/25">{{ row.chip }}</span>
-                }
-                @case ('info') {
-                  <span class="tabular-nums text-label rounded-sm px-1.25 text-accent bg-accent/10 border border-accent/25">{{ row.chip }}</span>
-                }
-                @default {
-                  <span class="tabular-nums text-label rounded-sm px-1.25 text-warning bg-warning/10 border border-warning/25">{{ row.chip }}</span>
-                }
-              }
+              <span tuiBadge tuiStatus size="s" class="tabular-nums text-label" [appearance]="row.severity === 'critical' ? 'negative' : row.severity">{{ row.chip }}</span>
             }
           </div>
         </div>
@@ -85,29 +71,29 @@
 
         <div class="row-start-1 col-start-3 md:row-auto md:col-start-5 flex items-center justify-center self-start md:self-center">
           @if (row.occurrences.length) {
-            <button mat-icon-button
-              [attr.aria-expanded]="openIndex() === $index"
-              [attr.aria-label]="openIndex() === $index ? 'Hide instances' : 'Show instances'"
-              (click)="toggle($index)">
-              <mat-icon class="icon-18 transition-transform" [class.rotate-180]="openIndex() === $index">expand_more</mat-icon>
-            </button>
+            <button tuiIconButton type="button" appearance="flat-grayscale" size="xs"
+              [tuiChevron]="open"
+              [attr.aria-expanded]="open"
+              (click)="toggle($index)">{{ open ? 'Hide instances' : 'Show instances' }}</button>
           }
         </div>
 
       </div>
 
-      @if (row.occurrences.length && openIndex() === $index) {
-        <div class="px-4 pb-4 pt-2 border-t border-dashed border-line md:grid md:grid-cols-(--cols-drill) md:gap-x-(--gap-card)">
-          <div class="md:col-start-2 md:col-span-4">
-            <wl-finding-occurrences
-              [occurrences]="row.occurrences"
-              [showMap]="showMap()"
-              [showClip]="showClip()"
-              (openMap)="openMap.emit(moment(row, $event))"
-              (openClip)="openClip.emit(moment(row, $event))">
-            </wl-finding-occurrences>
+      @if (row.occurrences.length) {
+        <tui-expand [expanded]="open">
+          <div *tuiItem class="px-4 pb-4 pt-2 border-t border-dashed border-line md:grid md:grid-cols-(--cols-drill) md:gap-x-(--gap-card)">
+            <div class="md:col-start-2 md:col-span-4">
+              <wl-finding-occurrences
+                [occurrences]="row.occurrences"
+                [showMap]="showMap()"
+                [showClip]="showClip()"
+                (openMap)="openMap.emit(moment(row, $event))"
+                (openClip)="openClip.emit(moment(row, $event))">
+              </wl-finding-occurrences>
+            </div>
           </div>
-        </div>
+        </tui-expand>
       }
     </div>
   }
@@ -120,16 +106,16 @@
     <div class="flex items-center gap-2 flex-wrap border-t border-line px-4 py-2.5">
       <span class="text-label text-muted mr-0.5">On plan</span>
       @for (c of onPlan(); track c.name) {
-        <span class="chip-onplan">
+        <span tuiChip appearance="quiet" size="xs">
           @if (c.spellId; as spellId) {
             <wl-game-icon [id]="spellId" [icon]="c.icon" [name]="c.name"></wl-game-icon>
           } @else {
             <!-- No spell identity: a plain text chip, matching the gear card's chips. -->
-            <span>{{ c.name }}</span>
+            {{ c.name }}
           }
         </span>
       }
     </div>
   }
 
-</div>
+</section>

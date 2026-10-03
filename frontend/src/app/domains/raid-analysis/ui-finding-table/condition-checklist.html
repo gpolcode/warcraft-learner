@@ -22,13 +22,13 @@
         <span class="flex items-start md:items-center gap-2 min-w-0 py-0.5 text-body" [class.opacity-40]="unneeded">
           @switch (check.truth) {
             @case ('true') {
-              <mat-icon class="icon-18 shrink-0 text-success" aria-hidden="false" aria-label="Met">check</mat-icon>
+              <tui-icon class="icon-18 shrink-0 text-success" role="img" aria-label="Met" icon="check" />
             }
             @case ('false') {
-              <mat-icon class="icon-18 shrink-0 text-critical" aria-hidden="false" aria-label="Not met">close</mat-icon>
+              <tui-icon class="icon-18 shrink-0 text-critical" role="img" aria-label="Not met" icon="close" />
             }
             @default {
-              <mat-icon class="icon-18 shrink-0 text-warning" aria-hidden="false" aria-label="Not in the log">help_outline</mat-icon>
+              <tui-icon class="icon-18 shrink-0 text-warning" role="img" aria-label="Not in the log" icon="help_outline" />
             }
           }
           <span class="flex flex-col min-w-0">
@@ -64,11 +64,11 @@
 
   <div class="flex items-center gap-2 min-h-5 pb-0.5 md:pr-9 text-body">
     @if (occurrence().unjudged) {
-      <mat-icon class="icon-18 shrink-0 text-warning">help_outline</mat-icon>
+      <tui-icon class="icon-18 shrink-0 text-warning" icon="help_outline" />
     } @else if (occurrence().ok) {
-      <mat-icon class="icon-18 shrink-0 text-success">check</mat-icon>
+      <tui-icon class="icon-18 shrink-0 text-success" icon="check" />
     } @else {
-      <mat-icon class="icon-18 shrink-0 text-critical">close</mat-icon>
+      <tui-icon class="icon-18 shrink-0 text-critical" icon="close" />
     }
     <span>{{ occurrence().result }}</span>
     <span class="text-muted">All of</span>

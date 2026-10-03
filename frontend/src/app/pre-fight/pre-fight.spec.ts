@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { EncounterEntry, SpecEntry } from '../domains/raid-analysis/data/encounter/encounter.models';
 import { Result, Results } from '../domains/shared/util-http/result';
+import { PreFightSelection } from '../domains/raid-analysis/data/selection/selection-store';
 import {
   CLASS_SELECT, ENCOUNTER_SELECT, EncounterReads, FROST_MAGE, SPEC_INDEX, SPEC_SELECT, SUBTLETY_ROGUE,
   ParkedEncounterSelection, preFightPage,
@@ -59,6 +60,28 @@ describe('PreFight encounter selection', () => {
     page.render();
 
     expect(page.cardsShown()).toBe(true);
+  });
+});
+
+describe('PreFight saved spec', () => {
+  it('saves the cleared spec once on a class change, since the reset of the spec select is not itself a pick', async () => {
+    const saves: PreFightSelection[] = [];
+    const page = preFightPage(staticSelection(), {
+      loadPreFight: () => null,
+      savePreFight: selection => { saves.push(selection); },
+    });
+    await page.settled();
+    page.render();
+    page.choose(CLASS_SELECT, 'Rogue');
+    await page.settled();
+    page.choose(SPEC_SELECT, 'Subtlety');
+    await page.settled();
+    page.render();
+
+    page.choose(CLASS_SELECT, 'Mage');
+    await page.settled();
+
+    expect(saves).toEqual([{ spec: null }, { spec: SUBTLETY_ROGUE }, { spec: null }]);
   });
 });
 

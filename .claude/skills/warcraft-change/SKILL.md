@@ -48,7 +48,10 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 
 ## UI
 
-- Templates style text through one type role plus, where the color differs from the body default, one color token from `frontend/src/styles.scss`; the `theme-utilities-only` lint message lists them. `text-accent` doubles as the informational severity; there is no info token.
+- Templates style text through one type role plus, where the color differs from the body default, one color token from `frontend/src/styles.scss`; the `theme-utilities-only` lint message lists them. `text-accent` doubles as the informational severity, and Taiga's `info` appearance reads the same accent; there is no info token.
+- Stock UI is Taiga UI, used natively wherever it has the part: `tuiCardLarge` with a `tuiHeader` / `tuiTitle` / `tuiSubtitle` header (`class="card-flush"` for a table card whose rows run edge to edge), `tuiBadge` / `tuiChip`, `tui-expand` for a row drill-down, `wl-flyover-panel` (a `tui-drawer`) for a side panel, `tui-loader`, `tui-block-status`, `tuiNotification`, `TuiToastService`. Taiga's styles are unlayered and beat Tailwind's layered utilities, so a Taiga part is restyled through its inputs, its appearances, and the `--tui-*` variables `styles.scss` points at the app tokens, never a utility on its host.
+- Icons are `tui-icon` (or a Taiga `iconStart` / `iconEnd`) named in the snake_case the data layer emits; every name, Taiga's own included, is registered inline in `shared/util-taiga/taiga-providers.ts`, and an unregistered one renders blank.
+- A Taiga select reports a real pick through `(ngModelChange)`; a page that writes the same reactive control from code passes `emitViewToModelChange: false`, or the write echoes back as a pick.
 - `computed()` exposes semantic state only; the template maps that state to a class.
 - All formatting goes through Angular pipes (`shared/ui-format/` and the `raid-analysis/ui-*` pipes).
 
@@ -61,6 +64,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 - **Never load a WCL JSON blob** - build minimal event streams from the factories in `src/testing/builders/events.ts`.
 - **Bench fixtures are local to each feature spec:** a small `bench(over: Partial<...Bench>)` factory that defaults every field and spreads overrides.
 - A service under test is resolved with `TestBed.inject`, protected members read through bracket access. Presentational leaves read `computed()` signals via `mountVm` (`src/testing/component-harness.ts`), no DOM assertions.
+- Taiga renders drawers, dropdowns and toasts in its portal layer, outside the component: a spec that opens one mounts with `mountDom(..., { portals: true })` and reads `dom.portal`, and an e2e test finds a panel by its `dialog` role.
 
 ## E2E (page changes)
 

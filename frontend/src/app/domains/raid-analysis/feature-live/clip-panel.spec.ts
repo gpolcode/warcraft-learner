@@ -8,18 +8,19 @@ const INTRO = 'Plays your screen recording of this moment on a loop.';
 
 describe('ClipPanel', () => {
   it('says what the replay plays under the heading', async () => {
-    const dom = mountDom(ClipPanel, {}, [], { manualDeferBlocks: true });
+    const dom = mountDom(ClipPanel, {}, [], { manualDeferBlocks: true, portals: true });
     TestBed.inject(LiveCaptureFeatureService).open.set(true);
     await dom.completeDeferBlocks();
 
-    expect(dom.text()).toContain('Replay');
-    expect(dom.text()).toContain(INTRO);
+    expect(dom.portal.text()).toContain('Replay');
+    expect(dom.portal.text()).toContain(INTRO);
   });
 
   it('renders nothing while no clip is open', async () => {
-    const dom = mountDom(ClipPanel, {}, [], { manualDeferBlocks: true });
+    const dom = mountDom(ClipPanel, {}, [], { manualDeferBlocks: true, portals: true });
     await dom.completeDeferBlocks();
 
     expect(dom.text()).toBe('');
+    expect(dom.portal.text()).toBe('');
   });
 });

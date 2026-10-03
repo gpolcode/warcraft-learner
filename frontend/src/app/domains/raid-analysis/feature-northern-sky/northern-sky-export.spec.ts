@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { Result, Results } from '../../shared/util-http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { EMPTY } from 'rxjs';
+import { TuiToastService } from '@taiga-ui/kit';
 import { NorthernSkyExport } from './northern-sky-export';
 import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
 import { NorthernSkyAbility, NorthernSkyBench } from '../data/northern-sky/northern-sky-data-source';
@@ -11,9 +12,10 @@ import { whenStable } from '../../../../testing/when-stable';
 import { NORTHERN_SKY_ENCOUNTER_ID, NORTHERN_SKY_SPEC, bench } from '../data/northern-sky/northern-sky-harness';
 
 const CAST_TIMES_S = [10, 30];
-const EXPORT_BUTTON = 'button[mat-stroked-button]';
-const COPY_BUTTON = 'button[mat-flat-button]';
-const CHECKBOX = 'mat-checkbox input[type="checkbox"]';
+const EXPORT_BUTTON = 'button[tuiButton]';
+const COPY_BUTTON = 'button[tuiButton][appearance="primary"]';
+const SELECT_ALL_BUTTON = 'button[tuiButton][appearance="flat"]';
+const CHECKBOX = 'input[tuiCheckbox]';
 const PANEL_INTRO = 'Pick the abilities you want timings for, copy the note, and paste it into your Northern Sky addon.';
 const COPIED_MESSAGE = 'Copied to clipboard. Paste it into your Northern Sky note.';
 const FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
@@ -46,8 +48,8 @@ async function mount(
   const dom = mountDom(NorthernSkyExport, { spec: NORTHERN_SKY_SPEC, encounterId: NORTHERN_SKY_ENCOUNTER_ID }, [
     { provide: NorthernSkyFeatureService, useValue: feature },
     { provide: Clipboard, useValue: { copy: (text: string) => { copies.push(text); return copySucceeds; } } },
-    { provide: MatSnackBar, useValue: { open: (message: string) => { messages.push(message); } } },
-  ]);
+    { provide: TuiToastService, useValue: { open: (message: string) => { messages.push(message); return EMPTY; } } },
+  ], { portals: true });
   await whenStable();
   dom.detectChanges();
   return { dom, copies, messages };
@@ -89,20 +91,20 @@ describe('NorthernSkyExport copy', () => {
   it('opens the export panel with a copy action and one checkbox per ability', async () => {
     const { dom } = await openPanel();
 
-    expect(dom.query(COPY_BUTTON)).not.toBeNull();
-    expect(dom.queryAll(CHECKBOX)).toHaveLength(POPULATED_ABILITIES.length);
+    expect(dom.portal.query(COPY_BUTTON)).not.toBeNull();
+    expect(dom.portal.queryAll(CHECKBOX)).toHaveLength(POPULATED_ABILITIES.length);
   });
 
   it('says what the export panel does under its heading', async () => {
     const { dom } = await openPanel();
 
-    expect(dom.text()).toContain(PANEL_INTRO);
+    expect(dom.portal.text()).toContain(PANEL_INTRO);
   });
 
   it('confirms the copy, and hands the clipboard a note naming every selected ability', async () => {
     const { dom, copies, messages } = await openPanel();
 
-    dom.click(COPY_BUTTON);
+    dom.portal.click(COPY_BUTTON);
 
     expect(messages).toEqual([COPIED_MESSAGE]);
     expect(copies).toHaveLength(1);
@@ -113,7 +115,7 @@ describe('NorthernSkyExport copy', () => {
   it('reports the failure, and no confirmation, when the clipboard write is refused', async () => {
     const { dom, messages } = await openPanel(false);
 
-    dom.click(COPY_BUTTON);
+    dom.portal.click(COPY_BUTTON);
 
     expect(messages).toEqual([FAILED_MESSAGE]);
   });
@@ -121,17 +123,17 @@ describe('NorthernSkyExport copy', () => {
   it('keeps the confirmation off the panel, so the ability list never shifts under the copy button', async () => {
     const { dom } = await openPanel();
 
-    dom.click(COPY_BUTTON);
+    dom.portal.click(COPY_BUTTON);
 
-    expect(dom.text()).not.toContain(COPIED_MESSAGE);
+    expect(dom.portal.text()).not.toContain(COPIED_MESSAGE);
   });
 
   it('leaves a deselected ability out of the copied note', async () => {
     const { dom, copies } = await openPanel();
 
-    dom.queryAll(CHECKBOX)[0]?.click();
+    dom.portal.queryAll(CHECKBOX)[0]?.click();
     dom.detectChanges();
-    dom.click(COPY_BUTTON);
+    dom.portal.click(COPY_BUTTON);
 
     expect(copies[0]).not.toContain(`spellid:${SHADOW_BLADES}`);
     expect(copies[0]).toContain(`spellid:${EVASION}`);
@@ -140,8 +142,8 @@ describe('NorthernSkyExport copy', () => {
   it('drops every ability from the note on deselect all', async () => {
     const { dom, copies } = await openPanel();
 
-    dom.click('button[mat-button]');
-    dom.click(COPY_BUTTON);
+    dom.portal.click(SELECT_ALL_BUTTON);
+    dom.portal.click(COPY_BUTTON);
 
     expect(copies[0]).not.toContain('spellid:');
   });

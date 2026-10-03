@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
+import { TuiIcon } from '@taiga-ui/core';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import type { ConditionCheck, FindingOccurrence } from '../data/analysis/analysis.models';
 
@@ -15,7 +15,7 @@ interface ChecklistNode {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-condition-checklist',
   host: { class: 'block' },
-  imports: [MatIconModule, NgTemplateOutlet, FormatDurationPipe],
+  imports: [TuiIcon, NgTemplateOutlet, FormatDurationPipe],
   templateUrl: './condition-checklist.html',
 })
 export class ConditionChecklist {

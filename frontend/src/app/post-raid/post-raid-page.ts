@@ -2,6 +2,7 @@ import { assert } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { Provider } from '@angular/core';
 import { mapFeatureStub, stubBenchTokens } from '../../testing/page-stubs';
+import { mountPortalLayer } from '../../testing/component-harness';
 import { BURST_DATA_SOURCE } from '../domains/raid-analysis/data/burst-windows/burst-data-source';
 import { ROTATION_DATA_SOURCE } from '../domains/raid-analysis/data/rotation/rotation-data-source';
 import { DEFENSIVE_DATA_SOURCE } from '../domains/raid-analysis/data/defensive/defensive-data-source';
@@ -52,6 +53,8 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
     ] as never[],
   });
 
+  // A select's options open in the portal layer, outside the page.
+  const portal = mountPortalLayer();
   const fixture = TestBed.createComponent(PostRaid);
   fixture.detectChanges();
 
@@ -60,7 +63,7 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
   const render = (): void => { fixture.detectChanges(); };
 
   const reportInput = (): HTMLInputElement => {
-    const input = host().querySelector<HTMLInputElement>('input[matInput]');
+    const input = host().querySelector<HTMLInputElement>('input#report-input');
     assert.exists(input);
     return input;
   };
@@ -72,23 +75,17 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
     render();
   };
 
-  const selectAt = (index: number): HTMLElement => {
-    const select = host().querySelectorAll<HTMLElement>('mat-select')[index];
+  const selectAt = (index: number): HTMLInputElement => {
+    const select = host().querySelectorAll<HTMLInputElement>('input[tuiSelect]')[index];
     assert.exists(select);
     return select;
   };
 
-  // Not a Material harness: it awaits a stability the parked fetches never reach.
+  // Driven by hand rather than awaited: the parked fetches never let the page reach stability.
   const openOptions = (index: number): HTMLElement[] => {
-    const select = selectAt(index);
-    const trigger = select.querySelector<HTMLElement>('.mat-mdc-select-trigger');
-    assert.exists(trigger);
-    trigger.click();
+    selectAt(index).click();
     render();
-    const panelId = select.getAttribute('aria-controls');
-    const panel = panelId ? document.getElementById(panelId) : null;
-    assert.exists(panel);
-    return Array.from(panel.querySelectorAll<HTMLElement>('mat-option'));
+    return Array.from(portal.querySelectorAll<HTMLElement>('[tuiOption]'));
   };
 
   return {
@@ -112,7 +109,8 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
     reportValue: () => reportInput().value,
     options(index) {
       const labels = openOptions(index).map(clean);
-      document.querySelector<HTMLElement>('.cdk-overlay-backdrop')?.click();
+      // A second click on the select closes its options again.
+      selectAt(index).click();
       render();
       return labels;
     },
@@ -122,10 +120,7 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
       option.click();
       render();
     },
-    chosen(index) {
-      const trigger = selectAt(index).querySelector('.mat-mdc-select-value');
-      return trigger ? clean(trigger) : '';
-    },
+    chosen: (index) => selectAt(index).value,
     text: () => clean(host()),
     // A report load settles in stages (report, then player details), so one pass can return mid-flight.
     async settled() {

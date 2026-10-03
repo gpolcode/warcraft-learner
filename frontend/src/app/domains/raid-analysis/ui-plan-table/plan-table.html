@@ -1,11 +1,13 @@
 @if (state() === 'unavailable') {
   <wl-load-state [heading]="heading()" [subtitle]="subtitle()" [error]="error()"></wl-load-state>
 } @else if (state() === 'rows') {
-  <div class="bg-surface border border-line rounded-[10px] overflow-hidden">
-    <div class="px-4 pt-3 pb-2">
-      <h2 class="text-title">{{ heading() }}</h2>
-      <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
-    </div>
+  <section tuiCardLarge appearance="outline-grayscale" class="card-flush">
+    <header tuiHeader="body-l" class="px-4 pt-3 pb-2">
+      <h2 tuiTitle>
+        {{ heading() }}
+        <span tuiSubtitle>{{ subtitle() }}</span>
+      </h2>
+    </header>
 
     <div class="hidden md:grid grid-cols-(--cols-plan) gap-(--gap-card) px-4 pb-1">
       <div class="col-start-2 text-label text-muted text-right">Plan</div>
@@ -23,7 +25,7 @@
             <span class="text-name whitespace-nowrap">{{ row.name }}</span>
           }
           @if (row.bloodlust) {
-            <span class="inline-flex items-center gap-1.5 bg-gold/10 border border-gold/35 rounded-[4px] px-2 py-0.5 text-label text-gold whitespace-nowrap">Bloodlust</span>
+            <span tuiBadge appearance="gold" size="s" class="text-label">Bloodlust</span>
           }
         </div>
 
@@ -47,15 +49,14 @@
           </span>
           <div class="flex flex-wrap items-baseline gap-1.5 md:justify-end">
             <span class="text-label text-muted">Hold until</span>
-              @for (hold of row.holds; track hold.castIndex) {
-                <span class="tabular-nums text-body text-accent bg-surface-alt border border-line rounded-[4px] px-1.5 py-px whitespace-nowrap">{{ hold.targetS | formatDuration }}</span>
-              }
-            @empty {
+            @for (hold of row.holds; track hold.castIndex) {
+              <span tuiChip appearance="quiet" size="xs" class="tabular-nums"><span class="text-accent">{{ hold.targetS | formatDuration }}</span></span>
+            } @empty {
               <span class="text-body text-muted">None</span>
             }
           </div>
         </div>
       </div>
     }
-  </div>
+  </section>
 }

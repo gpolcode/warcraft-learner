@@ -41,12 +41,13 @@ test.afterAll(async () => {
 test('analyzing the report selects the last pull and the sticky player', async () => {
   await shows(page, 'Paste a Warcraft Logs report to see how your Mythic pulls compare with the top logs for your spec.');
   const fight = page.getByRole('combobox', { name: 'Fight' });
-  await expect(fight).toContainText("Nek'zali the Soulcoiler");
-  await expect(fight).toContainText('Kill');
-  await expect(fight).toContainText(CLOCK);
+  await expect(fight).toHaveValue(/Nek'zali the Soulcoiler/);
+  await expect(fight).toHaveValue(/Kill/);
+  await expect(fight).toHaveValue(CLOCK);
   const player = page.getByRole('combobox', { name: 'Player' });
-  await expect(player).toContainText(PLAYER_NAME);
-  await expect(player.getByAltText('Balance Druid')).toBeVisible();
+  await expect(player).toHaveValue(PLAYER_NAME);
+  // The spec icon sits in the field's shown value, beside the input rather than inside it.
+  await expect(page.locator('tui-textfield', { has: player }).getByAltText('Balance Druid')).toBeVisible();
 });
 
 test('following the latest pull hands the fight selection to the live poll', async () => {
@@ -57,14 +58,14 @@ test('following the latest pull hands the fight selection to the live poll', asy
 
   await follow.click();
   await expect(follow).toBeChecked();
-  await expect(fight).toHaveAttribute('aria-disabled', 'true');
+  await expect(fight).toBeDisabled();
   // The countdown ticks every second, so only its shape is pinned.
   const settled = /Next update in \d+s/;
   await expect(controls.getByText(settled)).toBeVisible({ timeout: LIVE_TIMEOUT_MS });
 
   // Left on, the poll keeps hitting Warcraft Logs under every later test.
   await follow.click();
-  await expect(fight).toHaveAttribute('aria-disabled', 'false');
+  await expect(fight).toBeEnabled();
   await expect(controls.getByText(settled)).toHaveCount(0);
 });
 
@@ -191,11 +192,12 @@ test('the positioning map opens anchored on the death', async () => {
   const openMap = page.getByRole('button', { name: 'Show map', exact: true }).first();
   await expect(openMap).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
   await openMap.click();
-  await shows(page, 'Positioning');
-  await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
-  await shows(page, /Opened at -?\d+:\d{2}/);
-  await shows(page, '● Top logs');
+  const panel = page.getByRole('dialog', { name: 'Positioning' });
+  await expect(panel.locator('wl-map-canvas canvas')).toBeVisible();
+  await shows(panel, /Opened at -?\d+:\d{2}/);
+  await shows(panel, '● Top logs');
   // The gold marker renders only once the player's own trail has loaded.
-  await expect(page.getByText('◆ You')).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
-  await page.getByRole('button', { name: 'Close map' }).click();
+  await expect(panel.getByText('◆ You')).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
+  await panel.getByRole('button', { name: 'Close map' }).click();
+  await expect(panel).toHaveCount(0);
 });

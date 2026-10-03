@@ -1,17 +1,27 @@
-<div class="fixed inset-0 z-50 flex flex-col bg-bg md:inset-y-0 md:left-auto md:right-0 md:w-[460px] md:border-l md:border-line md:shadow-2xl">
-  <div class="flex items-start justify-between gap-2 border-b border-line px-4 py-2">
-    <div class="min-w-0">
-      <div class="flex items-center gap-2">
-        <span class="text-title">{{ heading() }}</span>
-        @if (loadingText()) {
-          <span>{{ loadingText() }}</span>
-        }
+<!-- Non-modal on purpose: the page behind stays live, so another moment's "Show map" retargets the open panel instead of having to close it first. -->
+<tui-drawer
+  *tuiPopup="true"
+  class="flyover"
+  role="dialog"
+  aria-modal="false"
+  [attr.aria-labelledby]="headingId"
+  [attr.aria-describedby]="introId"
+  (keydown.escape)="closed.emit()">
+  <header>
+    <div tuiHeader="body-l">
+      <h2 tuiTitle>
+        <span class="flex items-center gap-2">
+          <span [id]="headingId">{{ heading() }}</span>
+          @if (loadingText()) {
+            <tui-loader size="xs" [textContent]="loadingText()" />
+          }
+        </span>
+        <span tuiSubtitle class="text-muted" [id]="introId">{{ intro() }}</span>
+      </h2>
+      <div tuiAccessories>
+        <button tuiIconButton type="button" appearance="icon" size="s" iconStart="close" (click)="closed.emit()">{{ closeLabel() }}</button>
       </div>
-      <p class="mt-0.5 text-body text-muted">{{ intro() }}</p>
     </div>
-    <button mat-icon-button [attr.aria-label]="closeLabel()" (click)="closed.emit()"><mat-icon>close</mat-icon></button>
-  </div>
-  <div class="flex-1 overflow-y-auto p-4">
-    <ng-content />
-  </div>
-</div>
+  </header>
+  <ng-content />
+</tui-drawer>

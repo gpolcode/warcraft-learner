@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { TuiButton, TuiIcon, TuiTitle } from '@taiga-ui/core';
+import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { WclFight } from '../data/wcl/wcl.models';
 import { ClipAnchor } from '../data/capture/capture.models';
 import { MapAnchor } from '../data/map/map-feature-service';
@@ -15,7 +15,7 @@ import { LoadResourceService } from '../../shared/ui-load-state/load-resource-se
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pull-overview',
-  imports: [DecimalPipe, MatIconModule, MatButtonModule, FormatDurationPipe, FormatDamagePipe, LoadState],
+  imports: [DecimalPipe, TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, FormatDurationPipe, FormatDamagePipe, LoadState],
   templateUrl: './pull-overview.html',
   host: { class: 'block' },
 })

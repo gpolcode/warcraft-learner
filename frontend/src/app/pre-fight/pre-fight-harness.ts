@@ -5,6 +5,7 @@ import { EncounterEntry, SpecEntry } from '../domains/raid-analysis/data/encount
 import { SpecMeta } from '../domains/raid-analysis/data/data-files/spec-meta.models';
 import { Result, Results } from '../domains/shared/util-http/result';
 import { mapFeatureStub, stubBenchTokens } from '../../testing/page-stubs';
+import { mountPortalLayer } from '../../testing/component-harness';
 import { BURST_DATA_SOURCE } from '../domains/raid-analysis/data/burst-windows/burst-data-source';
 import { ROTATION_DATA_SOURCE } from '../domains/raid-analysis/data/rotation/rotation-data-source';
 import { DEFENSIVE_DATA_SOURCE } from '../domains/raid-analysis/data/defensive/defensive-data-source';
@@ -64,7 +65,11 @@ export interface PreFightPage {
   render(): void;
 }
 
-export function preFightPage(encounterSelection: EncounterReads): PreFightPage {
+export type SavedSelection = Pick<SelectionStore, 'loadPreFight' | 'savePreFight'>;
+
+const NO_SAVED_SELECTION: SavedSelection = { loadPreFight: () => null, savePreFight: () => undefined };
+
+export function preFightPage(encounterSelection: EncounterReads, savedSelection: SavedSelection = NO_SAVED_SELECTION): PreFightPage {
   TestBed.resetTestingModule();
   TestBed.configureTestingModule({
     imports: [PreFight],
@@ -73,10 +78,7 @@ export function preFightPage(encounterSelection: EncounterReads): PreFightPage {
       { provide: MapFeatureService, useValue: mapFeatureStub() },
       {
         provide: SelectionStore,
-        useValue: {
-          savePreFight: () => undefined, loadPreFight: () => null,
-          loadNorthernSky: () => null, saveNorthernSky: () => undefined,
-        },
+        useValue: { ...savedSelection, loadNorthernSky: () => null, saveNorthernSky: () => undefined },
       },
       {
         provide: DataFileApiService,
@@ -92,6 +94,8 @@ export function preFightPage(encounterSelection: EncounterReads): PreFightPage {
     ] as never[],
   });
 
+  // A select's options open in the portal layer, outside the page.
+  const portal = mountPortalLayer();
   const fixture = TestBed.createComponent(PreFight);
   fixture.detectChanges();
 
@@ -100,34 +104,28 @@ export function preFightPage(encounterSelection: EncounterReads): PreFightPage {
   const render = (): void => { fixture.detectChanges(); };
 
   // Driven by hand: the page holds a pending task while encounters load, so `whenStable()` deadlocks on a parked read.
-  const selectAt = (index: number): HTMLElement => {
-    const select = host().querySelectorAll<HTMLElement>('mat-select')[index];
+  const selectAt = (index: number): HTMLInputElement => {
+    const select = host().querySelectorAll<HTMLInputElement>('input[tuiSelect]')[index];
     assert.exists(select);
     return select;
   };
   const openOptions = (index: number): HTMLElement[] => {
-    const select = selectAt(index);
-    const trigger = select.querySelector<HTMLElement>('.mat-mdc-select-trigger');
-    assert.exists(trigger);
-    trigger.click();
+    selectAt(index).click();
     render();
-    // A closed panel can linger in the document, so follow this select's own aria-controls to the live one.
-    const panelId = select.getAttribute('aria-controls');
-    const panel = panelId ? document.getElementById(panelId) : null;
-    assert.exists(panel);
-    return Array.from(panel.querySelectorAll<HTMLElement>('mat-option'));
+    return Array.from(portal.querySelectorAll<HTMLElement>('[tuiOption]'));
   };
-  const closePanel = (): void => {
-    document.querySelector<HTMLElement>('.cdk-overlay-backdrop')?.click();
+  // A second click on the select closes its options again.
+  const closeOptions = (index: number): void => {
+    selectAt(index).click();
     render();
   };
 
   return {
     fixture,
-    selectCount: () => host().querySelectorAll('mat-select').length,
+    selectCount: () => host().querySelectorAll('input[tuiSelect]').length,
     options(index) {
       const labels = openOptions(index).map(clean);
-      closePanel();
+      closeOptions(index);
       return labels;
     },
     choose(index, optionText) {

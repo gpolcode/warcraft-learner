@@ -1,12 +1,14 @@
-<div class="bg-surface border border-line rounded-[10px] overflow-hidden">
+<section tuiCardLarge appearance="outline-grayscale" class="card-flush">
 
   @if (heading()) {
-    <div class="px-4 pt-3 pb-2">
-      <h2 class="text-title">{{ heading() }}</h2>
-      @if (subtitle()) {
-        <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
-      }
-    </div>
+    <header tuiHeader="body-l" class="px-4 pt-3 pb-2">
+      <h2 tuiTitle>
+        {{ heading() }}
+        @if (subtitle()) {
+          <span tuiSubtitle>{{ subtitle() }}</span>
+        }
+      </h2>
+    </header>
   }
 
   <!-- Chip size is decoupled from fight time, so windows never overlap however tightly they fire. -->
@@ -43,7 +45,7 @@
                 [attr.aria-selected]="active"
                 [attr.aria-label]="(w.timeStartS | formatDuration)"
                 (click)="select(cell.index)">
-                <mat-icon class="icon-seg">{{ w.statusIcon }}</mat-icon>
+                <tui-icon class="icon-seg" [icon]="w.statusIcon" />
                 <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
               </button>
               <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted')">
@@ -92,16 +94,10 @@
         }
         <div class="ml-auto flex items-center gap-1.75 shrink-0">
           @if (showMap()) {
-            <button mat-stroked-button class="whitespace-nowrap" (click)="openMap.emit(activeIndex())">
-              <mat-icon>my_location</mat-icon>
-              Show map
-            </button>
+            <button tuiButton type="button" appearance="outline-grayscale" size="s" iconStart="my_location" (click)="openMap.emit(activeIndex())">Show map</button>
           }
           @if (showClip()) {
-            <button mat-stroked-button class="whitespace-nowrap" (click)="openClip.emit(activeIndex())">
-              <mat-icon>videocam</mat-icon>
-              Watch clip
-            </button>
+            <button tuiButton type="button" appearance="outline-grayscale" size="s" iconStart="videocam" (click)="openClip.emit(activeIndex())">Watch clip</button>
           }
         </div>
       </div>
@@ -110,14 +106,12 @@
           <span class="block text-label text-muted mb-1.5">{{ chipsLabel() }}</span>
           <div class="flex flex-wrap items-center gap-2">
             @for (spell of w.spells; track spell.id) {
-              <span class="chip-onplan">
+              <span tuiChip appearance="quiet" size="xs">
                 <wl-game-icon [id]="spell.id" [icon]="spell.icon" [name]="spell.name"></wl-game-icon>
               </span>
             }
             @for (lbl of w.labels; track lbl) {
-              <span class="chip-onplan">
-                <span>{{ lbl }}</span>
-              </span>
+              <span tuiChip appearance="quiet" size="xs">{{ lbl }}</span>
             }
           </div>
         </div>
@@ -125,9 +119,7 @@
       @if (w.note) {
         <div class="mt-2.5">
           <span class="block text-label text-muted mb-1.5">What you did</span>
-          <span class="chip-onplan">
-            <span>{{ w.note }}</span>
-          </span>
+          <span tuiChip appearance="quiet" size="xs">{{ w.note }}</span>
         </div>
       }
     </div>
@@ -169,4 +161,4 @@
 
   }
 
-</div>
+</section>

@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
+import { TuiButton, TuiCheckbox, TuiLabel, TuiTitle } from '@taiga-ui/core';
+import { TuiToastService } from '@taiga-ui/kit';
+import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { FlyoverPanel } from '../../shared/ui-flyover-panel/flyover-panel';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { LoadState } from '../../shared/ui-load-state/load-state';
@@ -16,14 +17,14 @@ const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-northern-sky-export',
-  imports: [MatButtonModule, MatCheckboxModule, FlyoverPanel, GameIcon, LoadState],
+  imports: [FormsModule, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiCheckbox, TuiLabel, FlyoverPanel, GameIcon, LoadState],
   templateUrl: './northern-sky-export.html',
 })
 export class NorthernSkyExport {
   private readonly loadRes = inject(LoadResourceService);
   private readonly feature = inject(NorthernSkyFeatureService);
   private readonly clipboard = inject(Clipboard);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly toast = inject(TuiToastService);
 
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
@@ -68,7 +69,7 @@ export class NorthernSkyExport {
     const bench = this.bench();
     if (!bench) return;
     const note = this.feature.buildNorthernSkyNote(bench, this.feature.selectedIds(this.abilities(), this.excluded()));
-    this.snackBar.open(this.clipboard.copy(note) ? COPIED_MESSAGE : COPY_FAILED_MESSAGE);
+    this.toast.open(this.clipboard.copy(note) ? COPIED_MESSAGE : COPY_FAILED_MESSAGE).subscribe();
   }
 
   private persist(excluded: ReadonlySet<number>): void {

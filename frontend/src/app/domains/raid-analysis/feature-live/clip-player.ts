@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inject, viewChild } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { TuiButton } from '@taiga-ui/core';
+import { TuiToastService } from '@taiga-ui/kit';
 import { LoadingSpinner } from '../../shared/ui-load-state/loading-spinner';
 import { DownloadOutcome, LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
 
@@ -11,12 +10,12 @@ const DOWNLOAD_FAILED_MESSAGE = 'Download failed. Retry it.';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-clip-player',
-  imports: [MatButtonModule, MatIconModule, LoadingSpinner],
+  imports: [TuiButton, LoadingSpinner],
   templateUrl: './clip-player.html',
 })
 export class ClipPlayer {
   protected readonly clip = inject(LiveCaptureFeatureService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly toast = inject(TuiToastService);
   private readonly player = viewChild<ElementRef<HTMLVideoElement>>('player');
 
   private srcUrl = '';
@@ -39,8 +38,8 @@ export class ClipPlayer {
   }
 
   private reportDownload(outcome: DownloadOutcome): void {
-    if (outcome === 'no-footage') this.snackBar.open(NO_FOOTAGE_MESSAGE);
-    else if (outcome === 'failed') this.snackBar.open(DOWNLOAD_FAILED_MESSAGE);
+    if (outcome === 'no-footage') this.toast.open(NO_FOOTAGE_MESSAGE).subscribe();
+    else if (outcome === 'failed') this.toast.open(DOWNLOAD_FAILED_MESSAGE).subscribe();
   }
 
   protected onLoaded(video: HTMLVideoElement): void {
