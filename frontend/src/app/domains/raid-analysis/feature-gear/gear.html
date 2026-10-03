@@ -62,7 +62,7 @@
                     <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(build.label + ':added')">
                       @for (talent of build.added; track talent.name) {
                         <span *tuiItem tuiChip appearance="neutral" size="xs" class="mr-2 mb-2">
-                          <wl-game-icon [id]="talent.spellId ?? null" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
+                          <wl-game-icon [id]="talent.spellId" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
                         </span>
                       }
                       <ng-template tuiMore let-last>
@@ -77,7 +77,7 @@
                     <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(build.label + ':dropped')">
                       @for (talent of build.dropped; track talent.name) {
                         <span *tuiItem tuiChip appearance="neutral" size="xs" class="mr-2 mb-2">
-                          <wl-game-icon [id]="talent.spellId ?? null" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
+                          <wl-game-icon [id]="talent.spellId" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
                         </span>
                       }
                       <ng-template tuiMore let-last>
@@ -92,7 +92,7 @@
                     <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(build.label + ':ranks')">
                       @for (r of build.ranks; track r.talent.name) {
                         <span *tuiItem tuiChip appearance="neutral" size="xs" class="mr-2 mb-2">
-                          <wl-game-icon [id]="r.talent.spellId ?? null" [icon]="r.talent.icon" [name]="r.talent.name"></wl-game-icon>
+                          <wl-game-icon [id]="r.talent.spellId" [icon]="r.talent.icon" [name]="r.talent.name"></wl-game-icon>
                           <span class="tabular-nums text-body text-muted ml-1">{{ r.standardRank }}&#8594;{{ r.rank }}</span>
                         </span>
                       }

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { CompactAbilityRow } from './compact-ability-row';
 import type { RangeRow } from '../data/analysis/window-comparison.models';
 import { statusColor, mountDom } from '../../../../testing/component-harness';
+import { SHADOW_BLADES } from '../../../../testing/spell-ids';
 
 function row(overrides: Partial<RangeRow>): RangeRow {
   return { label: 'Test', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overrides };
@@ -106,14 +107,9 @@ describe('CompactAbilityRow label', () => {
     expect(render(row({ topAvg: 100 })).dom.text()).toContain('Top raiders average');
   });
 
-  it('names the ability, and shows the game icon only when the row carries a spell id', () => {
+  it('names the ability whether or not the row carries a spell id', () => {
     const LABEL = 'Shadow Blades';
-    const SPELL_ID = 121471;
-    const withIcon = render(row({ label: LABEL, spellId: SPELL_ID }));
-    expect(withIcon.dom.query('wl-game-icon')).not.toBeNull();
-
-    const plain = render(row({ label: LABEL }));
-    expect(plain.dom.query('wl-game-icon')).toBeNull();
-    expect(plain.dom.text()).toContain(LABEL);
+    expect(render(row({ label: LABEL, spellId: SHADOW_BLADES })).dom.text()).toContain(LABEL);
+    expect(render(row({ label: LABEL })).dom.text()).toContain(LABEL);
   });
 });

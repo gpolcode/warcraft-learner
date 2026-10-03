@@ -26,8 +26,8 @@ export class GameIcon {
     });
   }
 
-  // A null id renders the name alone, so a caller with no game identity never wraps this in an @if with a text fallback.
-  readonly id = input<number | null>(null);
+  // A missing id renders the name alone, so a caller with no game identity never wraps this in an @if with a text fallback.
+  readonly id = input<number | null | undefined>(null);
   readonly kind = input<GameIconKind>('spell');
   readonly name = input.required<string>();
   readonly icon = input.required<string>();

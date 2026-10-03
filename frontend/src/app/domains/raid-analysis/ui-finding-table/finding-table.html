@@ -108,12 +108,7 @@
         <span class="text-label text-muted mr-0.5">On plan</span>
         @for (c of onPlan(); track c.name) {
           <span tuiChip appearance="neutral" size="xs">
-            @if (c.spellId; as spellId) {
-              <wl-game-icon [id]="spellId" [icon]="c.icon" [name]="c.name"></wl-game-icon>
-            } @else {
-              <!-- No spell identity: a plain text chip, matching the gear card's chips. -->
-              {{ c.name }}
-            }
+            <wl-game-icon [id]="c.spellId" [icon]="c.icon" [name]="c.name"></wl-game-icon>
           </span>
         }
       </div>
