@@ -13,17 +13,20 @@
         <tui-icon class="icon-18 shrink-0 text-warning" role="img" aria-label="Not in the log" icon="help_outline" />
       }
     }
-    <span class="min-w-0 flex-1">
-      <span [class.text-muted]="!!check.group && !root">{{ check.text }}</span>
-      @if (root) {
-        <span class="ml-2 text-muted">All of</span>
-      }
+    <!-- On a phone the value drops under the text, so a long value never squeezes a nested condition into a word-wide column. -->
+    <span class="flex min-w-0 flex-1 flex-col md:flex-row md:justify-between md:gap-2">
+      <span>
+        <span [class.text-muted]="!!check.group && !root">{{ check.text }}</span>
+        @if (root) {
+          <span class="ml-2 text-muted">All of</span>
+        }
+      </span>
+      <span
+        class="tabular-nums md:shrink-0 md:text-right"
+        [class.text-warning]="tone === 'unknown'"
+        [class.text-critical]="tone === 'false'"
+        [class.text-muted]="tone === 'quiet'">{{ check.value }}</span>
     </span>
-    <span
-      class="shrink-0 text-right tabular-nums"
-      [class.text-warning]="tone === 'unknown'"
-      [class.text-critical]="tone === 'false'"
-      [class.text-muted]="tone === 'quiet'">{{ check.value }}</span>
   </span>
 </ng-template>
 
@@ -32,5 +35,5 @@
     <span>Condition</span>
     <span>State at {{ occurrence().atS | formatDuration }}</span>
   </div>
-  <tui-tree aria-label="Conditions for this cast" [value]="tree()" [childrenHandler]="operands" [content]="row" [tuiTreeController]="true" />
+  <tui-tree class="max-md:[--tui-tree-item-indent:1rem]" aria-label="Conditions for this cast" [value]="tree()" [childrenHandler]="operands" [content]="row" [tuiTreeController]="true" />
 </div>
