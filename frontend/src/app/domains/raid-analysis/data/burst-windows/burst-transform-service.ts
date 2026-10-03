@@ -97,7 +97,8 @@ export class BurstTransformService implements DataSource<BurstBench> {
       noRankingsMessage: 'Not yet ingested.',
       plan: {
         plans: this.specPlanLoader,
-        pick: (plan): BurstPlan | null => plan.cooldowns.length ? { cooldowns: plan.cooldowns, defensives: plan.defensives } : null,
+        // Never null: burst leads the ingest, and a lead missing for a spec with no plan cooldowns holds that spec at its last version.
+        pick: (plan): BurstPlan => ({ cooldowns: plan.cooldowns, defensives: plan.defensives }),
         missingMessage: 'Not yet ingested.',
       },
       iconSpellIds: bench => [

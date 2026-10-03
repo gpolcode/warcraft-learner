@@ -98,17 +98,28 @@ const TRANSFORMS = [
   GearTransformService, MapTransformService, NorthernSkyTransformService,
 ];
 
-const stubTransform = {
-  getBench: async (_spec: string, encId: number) =>
+type BenchTransform = (typeof TRANSFORMS)[number];
+
+interface StubTransform {
+  getBench(spec: string, encId: number): Promise<Result<object>>;
+}
+
+const stubTransform: StubTransform = {
+  getBench: async (_spec, encId) =>
     Results.ok({ encounter_id: encId, encounter_name: bossName(encId), sample_count: FRESH_SAMPLES }),
 };
+
+const benchReturning = (result: Result<object>): StubTransform => ({ getBench: async () => result });
 
 const cleanTransport: Pick<WclTransport, 'withFetchOutcomes'> = {
   withFetchOutcomes: async run =>
     ({ result: await run(), outcomes: { inaccessibleCodes: new Set(), failedCodes: new Set() } }),
 };
 
-function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string, plans = planLoader(specPlan())): Promise<void> {
+function ingest(
+  disk: FakeDisk, wcl: WclApiService, currentRaids: string, plans = planLoader(specPlan()),
+  benches = new Map<BenchTransform, StubTransform>(),
+): Promise<void> {
   TestBed.configureTestingModule({
     providers: [
       { provide: ENVIRONMENT, useValue: { ...baseEnvironment, currentRaids: currentRaids ? [currentRaids] : [] } },
@@ -117,7 +128,7 @@ function ingest(disk: FakeDisk, wcl: WclApiService, currentRaids: string, plans 
       { provide: WCL_TRANSPORT, useValue: cleanTransport },
       { provide: NgHttpCachingService, useValue: { clearCache: () => undefined } },
       { provide: SpecPlanLoaderService, useValue: plans },
-      ...TRANSFORMS.map(transform => ({ provide: transform, useValue: stubTransform })),
+      ...TRANSFORMS.map(transform => ({ provide: transform, useValue: benches.get(transform) ?? stubTransform })),
     ],
   });
   return TestBed.inject(IngestOrchestratorService).run();
@@ -230,6 +241,40 @@ describe('IngestOrchestratorService.run', () => {
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 
     expect(disk.files.has(benchPath(CURRENT_BOSS.id))).toBe(true);
+  });
+
+  describe('with an earlier rotation file on disk', () => {
+    const ROTATION_PATH = benchPath(CURRENT_BOSS.id, 'rotation');
+    const EARLIER_ROTATION = { encounter_id: CURRENT_BOSS.id, ingest_version: INGEST_VERSION };
+    const nothingToBench = benchReturning(Results.missing('No cooldowns or rotation for this spec.'));
+    const unreachable = benchReturning(Results.transient('WCL is unreachable right now.'));
+    const run = (disk: FakeDisk, benches: [BenchTransform, StubTransform][]): Promise<void> =>
+      ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID, undefined, new Map(benches));
+
+    it('clears it once rotation has nothing for the parses the lead benched', async () => {
+      const disk = fakeDisk({ [ROTATION_PATH]: EARLIER_ROTATION });
+
+      await run(disk, [[RotationTransformService, nothingToBench]]);
+
+      expect(disk.files.has(benchPath(CURRENT_BOSS.id))).toBe(true);
+      expect(disk.files.has(ROTATION_PATH)).toBe(false);
+    });
+
+    it('keeps it when rotation failed to load', async () => {
+      const disk = fakeDisk({ [ROTATION_PATH]: EARLIER_ROTATION });
+
+      await run(disk, [[RotationTransformService, unreachable]]);
+
+      expect(disk.files.get(ROTATION_PATH)).toEqual(EARLIER_ROTATION);
+    });
+
+    it('keeps it when the lead has nothing to bench either', async () => {
+      const disk = fakeDisk({ [ROTATION_PATH]: EARLIER_ROTATION });
+
+      await run(disk, [[BurstTransformService, nothingToBench], [RotationTransformService, nothingToBench]]);
+
+      expect(disk.files.get(ROTATION_PATH)).toEqual(EARLIER_ROTATION);
+    });
   });
 
   it('fails a spec whose plan cannot load without writing any of its benches', async () => {
