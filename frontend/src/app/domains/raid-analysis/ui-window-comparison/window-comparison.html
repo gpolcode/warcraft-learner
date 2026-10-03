@@ -15,6 +15,7 @@
     <!-- Chip size is decoupled from fight time, so windows never overlap however tightly they fire. -->
     <div>
       <div
+        #listbox
         class="pt-2 pb-1"
         role="listbox"
         tabindex="0"
@@ -47,7 +48,7 @@
                   [id]="optionId(cell.index)"
                   [attr.aria-selected]="active"
                   [attr.aria-label]="(w.timeStartS | formatDuration)"
-                  (click)="select(cell.index)">
+                  (click)="select(cell.index); listbox.focus()">
                   <tui-icon [class]="iconTone" [icon]="w.statusIcon" />
                   <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
                 </button>

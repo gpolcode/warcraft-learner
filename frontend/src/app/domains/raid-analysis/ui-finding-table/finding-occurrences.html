@@ -1,6 +1,7 @@
 <div class="text-label text-muted mb-1.5">Instances</div>
 
 <div
+  #listbox
   role="listbox"
   tabindex="0"
   aria-label="Finding instances"
@@ -21,7 +22,7 @@
         [id]="optionId($index)"
         [attr.aria-selected]="active"
         [attr.aria-describedby]="active ? detailId : null"
-        (click)="select($index)">
+        (click)="select($index); listbox.focus()">
         <span [class]="'tabular-nums ' + tone">{{ occ.atS | formatDuration }}</span>
         <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
       </button>

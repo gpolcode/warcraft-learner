@@ -44,7 +44,7 @@ export class FindingOccurrences {
 
   readonly detailId = `${this.instanceId}-detail`;
 
-  // The listbox keeps focus; aria-activedescendant points screen readers at the active chip.
+  // The listbox keeps focus (a clicked chip hands it back); aria-activedescendant points screen readers at the active chip.
   readonly activeOptionId = computed(() => this.optionId(this.activeIndex()));
 
   select(index: number): void {

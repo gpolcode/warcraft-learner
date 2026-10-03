@@ -83,7 +83,7 @@ export class WindowComparison {
     return `${this.instanceId}-opt-${index}`;
   }
 
-  // The listbox keeps focus; aria-activedescendant points screen readers at the active chip.
+  // The listbox keeps focus (a clicked chip hands it back); aria-activedescendant points screen readers at the active chip.
   protected readonly activeOptionId = computed(() => this.optionId(this.activeIndex()));
 
   // Flat sequence of chips interleaved with dashed pacing slots so the template renders one row without measuring time.

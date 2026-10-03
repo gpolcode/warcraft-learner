@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { mountVm } from '../../../../testing/component-harness';
+import { mountDom, mountVm } from '../../../../testing/component-harness';
 import { FindingOccurrences } from './finding-occurrences';
 import type { FindingOccurrence } from '../data/analysis/analysis.models';
 
@@ -51,5 +51,14 @@ describe('FindingOccurrences', () => {
 
     expect(vm.activeIndex()).toBe(NEW_FIRST_BAD_INDEX);
     expect(vm.active()).toEqual(nextOccurrences[NEW_FIRST_BAD_INDEX]);
+  });
+
+  it('hands focus back to the listbox when a chip is clicked, so arrow keys never leave the clicked chip ringed', () => {
+    const occurrences = [occ({ atS: FIRST_S }), occ({ atS: SECOND_S })];
+    const dom = mountDom(FindingOccurrences, { occurrences });
+
+    dom.queryAll('button[role="option"]')[1]?.click();
+
+    expect(document.activeElement).toBe(dom.query('[role="listbox"]'));
   });
 });
