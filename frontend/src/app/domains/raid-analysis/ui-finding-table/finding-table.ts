@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { NgIcon } from '@ng-icons/core';
+import { HlmBadge } from '@spartan-ng/helm/badge';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmCardImports } from '@spartan-ng/helm/card';
+import { HlmCollapsibleImports } from '@spartan-ng/helm/collapsible';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { Collapsible } from '../../shared/ui-collapsible/collapsible';
 import { FindingOccurrences } from './finding-occurrences';
@@ -15,7 +18,7 @@ export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-servi
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    MatIconModule, MatButtonModule, GameIcon, Collapsible, FindingOccurrences,
+    NgIcon, HlmBadge, HlmButtonImports, HlmCardImports, HlmCollapsibleImports, GameIcon, Collapsible, FindingOccurrences,
     FormatDurationPipe,
   ],
   templateUrl: './finding-table.html',

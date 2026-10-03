@@ -4,7 +4,7 @@ import type { WindowStatus } from '../data/analysis/window-comparison.models';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-range-legend',
-  host: { class: 'flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-muted' },
+  host: { class: 'flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-muted-foreground' },
   templateUrl: './range-legend.html',
 })
 export class RangeLegend {

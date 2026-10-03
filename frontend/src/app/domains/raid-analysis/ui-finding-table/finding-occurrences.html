@@ -1,4 +1,4 @@
-<div class="text-label text-muted mb-1.5">Instances</div>
+<div class="text-label text-muted-foreground mb-1.5">Instances</div>
 
 <div
   role="listbox"
@@ -8,15 +8,15 @@
   (keydown)="onKeydown($event)">
   <div class="flex flex-wrap items-start gap-1.5">
     @for (occ of occurrences(); track $index) {
-      @let tone = occ.unjudged ? 'text-muted' : (occ.ok ? 'text-success' : 'text-critical');
-      @let barTone = occ.unjudged ? 'bg-muted' : (occ.ok ? 'bg-success' : 'bg-critical');
+      @let tone = occ.unjudged ? 'text-muted-foreground' : (occ.ok ? 'text-success' : 'text-critical');
+      @let barTone = occ.unjudged ? 'bg-muted-foreground' : (occ.ok ? 'bg-success' : 'bg-critical');
       @let active = activeIndex() === $index;
       <button
         type="button"
         role="option"
         tabindex="-1"
         [id]="optionId($index)"
-        [class]="'relative flex items-center justify-center cursor-pointer min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-bg border border-line text-caption tabular-nums whitespace-nowrap shrink-0 ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
+        [class]="'relative flex items-center justify-center cursor-pointer min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-background border text-caption tabular-nums whitespace-nowrap shrink-0 ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
         [attr.aria-selected]="active"
         [attr.aria-describedby]="active ? detailId : null"
         (click)="select($index)">
@@ -28,24 +28,24 @@
 </div>
 
 @if (active(); as occ) {
-  <div [id]="detailId" class="mt-2.5 pt-2.5 border-t border-line flex flex-wrap items-center gap-x-2 gap-y-1.5">
-    <span class="min-w-0 flex-1 text-body text-muted">
+  <div [id]="detailId" class="mt-2.5 pt-2.5 border-t flex flex-wrap items-center gap-x-2 gap-y-1.5">
+    <span class="min-w-0 flex-1 text-body text-muted-foreground">
       @if (occ.rule) {
         {{ occ.rule }} At {{ occ.atS | formatDuration }} {{ occ.detail }}
       } @else {
-        <span class="text-accent mr-0.5">{{ occ.atS | formatDuration }}</span>
+        <span class="text-primary mr-0.5">{{ occ.atS | formatDuration }}</span>
         {{ occ.detail }}
       }
     </span>
     @if (showMap()) {
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openMap.emit(occ.atS)">
-        <mat-icon>my_location</mat-icon>
+      <button hlmBtn variant="outline" size="sm" class="shrink-0 whitespace-nowrap" (click)="openMap.emit(occ.atS)">
+        <ng-icon name="my_location" />
         Show map
       </button>
     }
     @if (showClip()) {
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openClip.emit(occ.atS)">
-        <mat-icon>videocam</mat-icon>
+      <button hlmBtn variant="outline" size="sm" class="shrink-0 whitespace-nowrap" (click)="openClip.emit(occ.atS)">
+        <ng-icon name="videocam" />
         Watch clip
       </button>
     }

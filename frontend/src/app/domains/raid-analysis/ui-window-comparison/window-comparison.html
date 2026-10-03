@@ -1,10 +1,10 @@
-<div class="bg-surface border border-line rounded-[10px] overflow-hidden">
+<section hlmCard size="sm" class="gap-0 py-0">
 
   @if (heading()) {
-    <div class="px-4 pt-3 pb-2">
-      <h2 class="text-title">{{ heading() }}</h2>
+    <div hlmCardHeader class="pt-4 pb-2">
+      <h2 hlmCardTitle>{{ heading() }}</h2>
       @if (subtitle()) {
-        <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
+        <p hlmCardDescription>{{ subtitle() }}</p>
       }
     </div>
   }
@@ -27,33 +27,33 @@
               w.status === 'good' ? 'text-success' :
               w.status === 'warn' ? 'text-warning' :
               w.status === 'bad' ? 'text-critical' :
-              w.status === 'info' ? 'text-accent' : 'text-muted';
+              w.status === 'info' ? 'text-primary' : 'text-muted-foreground';
             @let barTone =
               w.status === 'good' ? 'bg-success' :
               w.status === 'warn' ? 'bg-warning' :
               w.status === 'bad' ? 'bg-critical' :
-              w.status === 'info' ? 'bg-accent' : 'bg-muted';
+              w.status === 'info' ? 'bg-primary' : 'bg-muted-foreground';
             <div class="flex flex-col items-center gap-1.5 shrink-0">
               <button
                 type="button"
                 role="option"
                 tabindex="-1"
                 [id]="optionId(cell.index)"
-                [class]="'relative flex items-center justify-center cursor-pointer w-10 h-10 rounded-lg overflow-hidden bg-bg border border-line ' + iconTone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
+                [class]="'relative flex items-center justify-center cursor-pointer w-10 h-10 rounded-lg overflow-hidden bg-background border ' + iconTone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
                 [attr.aria-selected]="active"
                 [attr.aria-label]="(w.timeStartS | formatDuration)"
                 (click)="select(cell.index)">
-                <mat-icon class="icon-seg">{{ w.statusIcon }}</mat-icon>
+                <ng-icon class="icon-seg" [name]="w.statusIcon" />
                 <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
               </button>
-              <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted')">
+              <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted-foreground')">
                 {{ w.timeStartS | formatDuration }}
               </span>
             </div>
           } @else {
             <!-- The hidden label keeps this box top-aligned with the chips' timestamp row. -->
             <div class="flex flex-col items-center gap-1.5 shrink-0" aria-hidden="true">
-              <div class="w-5 h-10 rounded-md border border-dashed border-line opacity-40"></div>
+              <div class="w-5 h-10 rounded-md border border-dashed opacity-40"></div>
               <span class="text-caption invisible">0</span>
             </div>
           }
@@ -63,43 +63,43 @@
   </div>
 
   @if (activeWindow(); as w) {
-    <div class="px-4 py-2.5 bg-surface border-t border-line">
+    <div class="px-4 py-2.5 bg-card border-t">
       <div class="flex flex-wrap items-center gap-4 gap-y-2 md:gap-x-5.5">
         <div class="flex flex-col shrink-0">
-          <span class="text-label text-muted">Window</span>
+          <span class="text-label text-muted-foreground">Window</span>
           <span class="tabular-nums text-value whitespace-nowrap">
             {{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}
           </span>
         </div>
         <div class="flex flex-col shrink-0">
-          <span class="text-label text-muted">{{ metricLabel() }}</span>
+          <span class="text-label text-muted-foreground">{{ metricLabel() }}</span>
           @if (!activeIsMuted()) {
             <span class="tabular-nums text-value">{{ w.overview.playerPct | formatDamage }}</span>
           } @else if (activeIsBenchOnly()) {
             <span class="tabular-nums text-value">{{ w.overview.topAvg | formatDamage }}</span>
           } @else {
-            <span class="text-value text-muted">Not reached</span>
+            <span class="text-value text-muted-foreground">Not reached</span>
           }
         </div>
         @if (!activeIsMuted() && overviewDelta() !== null) {
           <div class="flex flex-col shrink-0">
-            <span class="text-label text-muted">Vs top raiders average</span>
+            <span class="text-label text-muted-foreground">Vs top raiders average</span>
             <span class="tabular-nums text-value"
-              [class.text-muted]="overviewDeltaStatus() === 'muted'"
+              [class.text-muted-foreground]="overviewDeltaStatus() === 'muted'"
               [class.text-success]="overviewDeltaStatus() === 'better'"
               [class.text-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDelta() | signedPercent }}</span>
           </div>
         }
         <div class="ml-auto flex items-center gap-1.75 shrink-0">
           @if (showMap()) {
-            <button mat-stroked-button class="whitespace-nowrap" (click)="openMap.emit(activeIndex())">
-              <mat-icon>my_location</mat-icon>
+            <button hlmBtn variant="outline" size="sm" class="whitespace-nowrap" (click)="openMap.emit(activeIndex())">
+              <ng-icon name="my_location" />
               Show map
             </button>
           }
           @if (showClip()) {
-            <button mat-stroked-button class="whitespace-nowrap" (click)="openClip.emit(activeIndex())">
-              <mat-icon>videocam</mat-icon>
+            <button hlmBtn variant="outline" size="sm" class="whitespace-nowrap" (click)="openClip.emit(activeIndex())">
+              <ng-icon name="videocam" />
               Watch clip
             </button>
           }
@@ -107,15 +107,15 @@
       </div>
       @if (w.spells.length || w.labels.length) {
         <div class="mt-2.5">
-          <span class="block text-label text-muted mb-1.5">{{ chipsLabel() }}</span>
+          <span class="block text-label text-muted-foreground mb-1.5">{{ chipsLabel() }}</span>
           <div class="flex flex-wrap items-center gap-2">
             @for (spell of w.spells; track spell.id) {
-              <span class="chip-onplan">
+              <span hlmBadge variant="secondary" class="text-muted-foreground">
                 <wl-game-icon [id]="spell.id" [icon]="spell.icon" [name]="spell.name"></wl-game-icon>
               </span>
             }
             @for (lbl of w.labels; track lbl) {
-              <span class="chip-onplan">
+              <span hlmBadge variant="secondary" class="text-muted-foreground">
                 <span>{{ lbl }}</span>
               </span>
             }
@@ -124,8 +124,8 @@
       }
       @if (w.note) {
         <div class="mt-2.5">
-          <span class="block text-label text-muted mb-1.5">What you did</span>
-          <span class="chip-onplan">
+          <span class="block text-label text-muted-foreground mb-1.5">What you did</span>
+          <span hlmBadge variant="secondary" class="text-muted-foreground">
             <span>{{ w.note }}</span>
           </span>
         </div>
@@ -134,7 +134,7 @@
 
     @if (!activeIsBenchOnly()) {
       <div class="px-4 pb-2">
-        <span class="block text-label text-muted mb-1.5">{{ rangeLabel() }}</span>
+        <span class="block text-label text-muted-foreground mb-1.5">{{ rangeLabel() }}</span>
         <wl-range-bar class="h-5"
           [you]="overviewPlayerWidthPct()" [rangeLeft]="overviewRangeLeftPct()" [rangeWidth]="overviewRangeWidthPct()" [avg]="overviewAvgLeftPct()"
           [status]="w.status">
@@ -145,15 +145,15 @@
 
     @if (w.detailRows.length) {
       <!-- Border is desktop-only so it does not double up with the mobile per-row borders. -->
-      <div class="md:border-t border-line pt-2 pb-2">
+      <div class="md:border-t pt-2 pb-2">
         <div class="hidden md:grid grid-cols-(--cols-ability) gap-x-(--gap-card) items-center px-4 pb-1">
-          <span class="col-start-1 text-label text-muted">Ability</span>
+          <span class="col-start-1 text-label text-muted-foreground">Ability</span>
           @if (showCasts() && !activeIsMuted()) {
-            <span class="col-start-2 text-right text-label text-muted">Casts</span>
+            <span class="col-start-2 text-right text-label text-muted-foreground">Casts</span>
           }
-          <span class="col-start-3 text-left text-label text-muted">Top raiders average</span>
+          <span class="col-start-3 text-left text-label text-muted-foreground">Top raiders average</span>
           @if (!activeIsMuted()) {
-            <span class="col-start-4 text-right text-label text-muted">Gap</span>
+            <span class="col-start-4 text-right text-label text-muted-foreground">Gap</span>
           }
         </div>
         @for (row of activeDetailRows(); track row.spellId) {
@@ -169,4 +169,4 @@
 
   }
 
-</div>
+</section>

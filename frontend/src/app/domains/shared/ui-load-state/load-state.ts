@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { NgIcon } from '@ng-icons/core';
+import { HlmCardImports } from '@spartan-ng/helm/card';
+import { HlmEmptyImports } from '@spartan-ng/helm/empty';
 import { LoadError } from '../util-http/result';
 
 /** The hard-error kinds this panel renders; a null error is the waiting (not-yet-ingested) state. */
@@ -8,7 +10,7 @@ export type RenderableLoadError = Extract<LoadError, { kind: 'transient' | 'perm
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-load-state',
-  imports: [MatIconModule],
+  imports: [NgIcon, HlmCardImports, HlmEmptyImports],
   host: { class: 'block' },
   templateUrl: './load-state.html',
 })

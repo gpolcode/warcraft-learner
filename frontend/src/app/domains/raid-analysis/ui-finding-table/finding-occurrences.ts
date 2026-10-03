@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { NgIcon } from '@ng-icons/core';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import type { FindingOccurrence } from '../data/analysis/analysis.models';
 import { ConditionChecklist } from './condition-checklist';
@@ -12,7 +12,7 @@ let nextInstanceSeq = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-finding-occurrences',
   host: { class: 'block' },
-  imports: [MatIconModule, MatButtonModule, FormatDurationPipe, ConditionChecklist],
+  imports: [NgIcon, HlmButtonImports, FormatDurationPipe, ConditionChecklist],
   templateUrl: './finding-occurrences.html',
 })
 export class FindingOccurrences {

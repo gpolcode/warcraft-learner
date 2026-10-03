@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { HlmFieldImports } from '@spartan-ng/helm/field';
+import { HlmMarkerImports } from '@spartan-ng/helm/marker';
+import { HlmSpinner } from '@spartan-ng/helm/spinner';
+import { HlmSwitchImports } from '@spartan-ng/helm/switch';
 import { LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-live-controls',
-  imports: [MatSlideToggleModule, MatProgressSpinnerModule],
+  imports: [HlmSwitchImports, HlmFieldImports, HlmMarkerImports, HlmSpinner],
   templateUrl: './live-controls.html',
 })
 export class LiveControls {

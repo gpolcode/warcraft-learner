@@ -38,11 +38,11 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
   await shows(card, 'Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.');
 
   await card.getByRole('button', { name: 'Export note' }).click();
-  const panel = page.locator('wl-flyover-panel');
+  const panel = page.getByRole('dialog', { name: 'Northern Sky export' });
   await expect(panel.getByRole('button', { name: 'Copy note' })).toBeVisible();
   await shows(panel, 'Cooldowns');
   await shows(panel, 'Defensives');
-  const checkboxes = panel.locator('mat-checkbox');
+  const checkboxes = panel.locator('label').filter({ has: page.locator('hlm-checkbox') });
   const checkboxCount = await checkboxes.count();
   expect(checkboxCount).toBeGreaterThan(0);
   for (let i = 0; i < checkboxCount; i++) await expect(checkboxes.nth(i)).toContainText(/×\d+/);

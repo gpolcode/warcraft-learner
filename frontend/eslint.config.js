@@ -58,12 +58,12 @@ const COLOR_FUNCTION = String.raw`\brgba?\(`;
 const COLOR_LITERAL = `${HEX_COLOR}|${COLOR_FUNCTION}`;
 
 // Anchored at a token start so module specifiers like './class-icon-pipe' are not class names.
-const DESIGN_SYSTEM_CLASS = String.raw`(?:^|\s)(?:icon-|chip-|text-label)`;
+const DESIGN_SYSTEM_CLASS = String.raw`(?:^|\s)(?:icon-|text-label)`;
 
 const styleFileMessage =
-  'Zero per-component style files: styling is Angular Material + Tailwind utilities over the tokens in src/styles.scss.';
+  'Zero per-component style files: styling is spartan helm components + Tailwind utilities over the tokens in src/styles.scss.';
 const colorMessage =
-  'No hardcoded colors: use a src/styles.scss color token through its named utility (text-muted, bg-surface).';
+  'No hardcoded colors: use a src/styles.scss color token through its named utility (text-muted-foreground, bg-card).';
 const classProductionMessage =
   'Component TS never produces CSS classes: expose semantic state and let the template pick the class.';
 
@@ -309,6 +309,8 @@ export default defineConfig([
       '@angular-eslint/template/no-empty-control-flow': 'error',
       '@angular-eslint/template/prefer-built-in-pipes': 'error',
       '@angular-eslint/template/prefer-contextual-for-variables': 'error',
+      // A wrapping label names the spartan toggles: their inner button is the labelable control.
+      '@angular-eslint/template/label-has-associated-control': ['error', { controlComponents: ['hlm-checkbox', 'hlm-switch'] }],
       'max-lines': ['error', { max: 500, skipBlankLines: false, skipComments: false }],
       'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 0, maxEOF: 0 }],
       'local/single-line-comment': 'error',

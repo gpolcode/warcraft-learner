@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HlmToasterImports } from '@spartan-ng/helm/sonner';
 import { PageNav } from './page-nav/page-nav';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-root',
-  imports: [RouterOutlet, PageNav],
+  imports: [RouterOutlet, PageNav, HlmToasterImports],
   templateUrl: './app.html',
   host: { class: 'block' },
 })

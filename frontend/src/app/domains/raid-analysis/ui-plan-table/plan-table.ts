@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { HlmBadge } from '@spartan-ng/helm/badge';
+import { HlmCardImports } from '@spartan-ng/helm/card';
 import { DecimalPipe } from '@angular/common';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { LoadState, RenderableLoadError } from '../../shared/ui-load-state/load-state';
@@ -21,7 +23,7 @@ type PlanTableState = 'unavailable' | 'rows' | 'empty';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-plan-table',
-  imports: [DecimalPipe, GameIcon, LoadState, FormatDurationPipe],
+  imports: [DecimalPipe, HlmBadge, HlmCardImports, GameIcon, LoadState, FormatDurationPipe],
   templateUrl: './plan-table.html',
 })
 export class PlanTable {

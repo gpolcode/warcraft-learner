@@ -1,15 +1,15 @@
 @if (error() || !available()) {
   <wl-load-state heading="Northern Sky export" subtitle="Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon." [error]="error()"></wl-load-state>
 } @else {
-  <div class="bg-surface border border-line rounded-[10px] overflow-hidden">
-    <div class="px-4 pt-3 pb-3 flex items-start justify-between gap-3">
-      <div>
-        <h2 class="text-title">Northern Sky export</h2>
-        <div class="text-body text-muted mt-0.5">Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.</div>
+  <section hlmCard size="sm">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle>Northern Sky export</h2>
+      <p hlmCardDescription>Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.</p>
+      <div hlmCardAction>
+        <button hlmBtn variant="outline" size="sm" type="button" (click)="open.set(true)">Export note</button>
       </div>
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" type="button" (click)="open.set(true)">Export note</button>
     </div>
-  </div>
+  </section>
 }
 
 @if (panelOpen()) {
@@ -20,34 +20,32 @@
     (closed)="open.set(false)">
     <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between gap-2">
-        <button mat-button type="button" (click)="toggleAll()">{{ allSelected() ? 'Deselect all' : 'Select all' }}</button>
-        <button mat-flat-button type="button" (click)="copyNote()">Copy note</button>
+        <button hlmBtn variant="ghost" size="sm" type="button" (click)="toggleAll()">{{ allSelected() ? 'Deselect all' : 'Select all' }}</button>
+        <button hlmBtn size="sm" type="button" (click)="copyNote()">Copy note</button>
       </div>
 
       @if (cooldowns().length > 0) {
-        <div class="text-label text-muted">Cooldowns</div>
+        <div class="text-label text-muted-foreground">Cooldowns</div>
         <div class="flex flex-col gap-1.5">
           @for (ability of cooldowns(); track ability.spell_id) {
-            <mat-checkbox [checked]="isSelected(ability.spell_id)" (change)="toggle(ability.spell_id, $event.checked)">
-              <span class="inline-flex items-center gap-2">
-                <wl-game-icon [id]="ability.spell_id" [icon]="ability.icon" [name]="ability.name"></wl-game-icon>
-                <span class="text-caption text-muted">&times;{{ ability.cast_times_s.length }}</span>
-              </span>
-            </mat-checkbox>
+            <label hlmLabel class="flex items-center gap-2">
+              <hlm-checkbox [checked]="isSelected(ability.spell_id)" (checkedChange)="toggle(ability.spell_id, $event)" />
+              <wl-game-icon [id]="ability.spell_id" [icon]="ability.icon" [name]="ability.name"></wl-game-icon>
+              <span class="text-caption text-muted-foreground">&times;{{ ability.cast_times_s.length }}</span>
+            </label>
           }
         </div>
       }
 
       @if (defensives().length > 0) {
-        <div class="text-label text-muted">Defensives</div>
+        <div class="text-label text-muted-foreground">Defensives</div>
         <div class="flex flex-col gap-1.5">
           @for (ability of defensives(); track ability.spell_id) {
-            <mat-checkbox [checked]="isSelected(ability.spell_id)" (change)="toggle(ability.spell_id, $event.checked)">
-              <span class="inline-flex items-center gap-2">
-                <wl-game-icon [id]="ability.spell_id" [icon]="ability.icon" [name]="ability.name"></wl-game-icon>
-                <span class="text-caption text-muted">&times;{{ ability.cast_times_s.length }}</span>
-              </span>
-            </mat-checkbox>
+            <label hlmLabel class="flex items-center gap-2">
+              <hlm-checkbox [checked]="isSelected(ability.spell_id)" (checkedChange)="toggle(ability.spell_id, $event)" />
+              <wl-game-icon [id]="ability.spell_id" [icon]="ability.icon" [name]="ability.name"></wl-game-icon>
+              <span class="text-caption text-muted-foreground">&times;{{ ability.cast_times_s.length }}</span>
+            </label>
           }
         </div>
       }

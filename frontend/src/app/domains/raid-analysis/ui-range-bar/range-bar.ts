@@ -4,7 +4,7 @@ import type { WindowStatus } from '../data/analysis/window-comparison.models';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-range-bar',
-  host: { class: 'relative block rounded bg-bg', 'aria-hidden': 'true' },
+  host: { class: 'relative block rounded bg-background', 'aria-hidden': 'true' },
   templateUrl: './range-bar.html',
 })
 export class RangeBar {

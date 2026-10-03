@@ -2,13 +2,13 @@
   status() === 'good' ? 'bg-success' :
   status() === 'warn' ? 'bg-warning' :
   status() === 'bad' ? 'bg-critical' :
-  status() === 'muted' ? 'bg-muted' : 'bg-accent';
+  status() === 'muted' ? 'bg-muted-foreground' : 'bg-primary';
 @if (you() !== null) {
   <div [class]="'absolute inset-y-0 left-0 rounded opacity-65 ' + fill" [style.width.%]="you()"></div>
 }
 @if (rangeLeft() !== null) {
-  <div class="absolute inset-y-0 rounded bg-accent/30 border border-accent" [style.left.%]="rangeLeft()" [style.width.%]="rangeWidth()"></div>
+  <div class="absolute inset-y-0 rounded bg-primary/30 border border-primary" [style.left.%]="rangeLeft()" [style.width.%]="rangeWidth()"></div>
 }
 @if (avg() !== null) {
-  <div class="absolute inset-y-0 w-0.5 bg-accent" [style.left.%]="avg()"></div>
+  <div class="absolute inset-y-0 w-0.5 bg-primary" [style.left.%]="avg()"></div>
 }

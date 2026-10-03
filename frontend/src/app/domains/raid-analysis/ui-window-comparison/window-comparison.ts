@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { NgIcon } from '@ng-icons/core';
+import { HlmBadge } from '@spartan-ng/helm/badge';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmCardImports } from '@spartan-ng/helm/card';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { CompactAbilityRow } from './compact-ability-row';
 import { RangeBar } from '../ui-range-bar/range-bar';
@@ -23,7 +25,7 @@ let nextInstanceSeq = 0;
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    MatIconModule, MatButtonModule, GameIcon, CompactAbilityRow, RangeBar, RangeLegend,
+    NgIcon, HlmBadge, HlmButtonImports, HlmCardImports, GameIcon, CompactAbilityRow, RangeBar, RangeLegend,
     FormatDurationPipe, FormatDamagePipe, SignedPercentPipe,
   ],
   templateUrl: './window-comparison.html',

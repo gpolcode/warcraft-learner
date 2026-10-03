@@ -101,33 +101,36 @@ export function preFightPage(encounterSelection: EncounterReads): PreFightPage {
 
   // Driven by hand: the page holds a pending task while encounters load, so `whenStable()` deadlocks on a parked read.
   const selectAt = (index: number): HTMLElement => {
-    const select = host().querySelectorAll<HTMLElement>('mat-select')[index];
+    const select = host().querySelectorAll<HTMLElement>('hlm-select')[index];
     assert.exists(select);
     return select;
   };
-  const openOptions = (index: number): HTMLElement[] => {
-    const select = selectAt(index);
-    const trigger = select.querySelector<HTMLElement>('.mat-mdc-select-trigger');
+  const triggerAt = (index: number): HTMLElement => {
+    const trigger = selectAt(index).querySelector<HTMLElement>('button[role="combobox"]');
     assert.exists(trigger);
+    return trigger;
+  };
+  const openOptions = (index: number): HTMLElement[] => {
+    const trigger = triggerAt(index);
     trigger.click();
     render();
-    // A closed panel can linger in the document, so follow this select's own aria-controls to the live one.
-    const panelId = select.getAttribute('aria-controls');
+    // A closed panel can linger in the document, so follow this trigger's own aria-controls to the live one.
+    const panelId = trigger.getAttribute('aria-controls');
     const panel = panelId ? document.getElementById(panelId) : null;
     assert.exists(panel);
-    return Array.from(panel.querySelectorAll<HTMLElement>('mat-option'));
+    return Array.from(panel.querySelectorAll<HTMLElement>('[role="option"]'));
   };
-  const closePanel = (): void => {
-    document.querySelector<HTMLElement>('.cdk-overlay-backdrop')?.click();
+  const closePanel = (index: number): void => {
+    triggerAt(index).click();
     render();
   };
 
   return {
     fixture,
-    selectCount: () => host().querySelectorAll('mat-select').length,
+    selectCount: () => host().querySelectorAll('hlm-select').length,
     options(index) {
       const labels = openOptions(index).map(clean);
-      closePanel();
+      closePanel(index);
       return labels;
     },
     choose(index, optionText) {

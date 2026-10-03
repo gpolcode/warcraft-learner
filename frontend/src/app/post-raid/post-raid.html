@@ -1,79 +1,96 @@
 <div class="mx-auto max-w-[860px] px-3 md:px-4 pt-4 pb-12">
-    <mat-card appearance="outlined" class="mb-5 p-4">
-      <p class="mb-3.5 text-body text-muted">Paste a Warcraft Logs report to see how your Mythic pulls compare with the top logs for your spec.</p>
+    <section hlmCard size="sm" class="mb-5">
+      <div hlmCardHeader>
+        <p hlmCardDescription>Paste a Warcraft Logs report to see how your Mythic pulls compare with the top logs for your spec.</p>
+      </div>
 
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Warcraft Logs report URL or code</mat-label>
-        <input matInput #reportInput [formControl]="reportControl" placeholder="https://www.warcraftlogs.com/reports/AbCdEfGh…"
-               (keydown.enter)="loadReport()" (paste)="onPaste($event, reportInput)" />
-        <!-- Unconditional: `@if`-gating this leaves the field red with no message (MAT_ERROR misses a conditional child). -->
-        <mat-error>Paste a Warcraft Logs report URL or a 16-character report code.</mat-error>
-      </mat-form-field>
-
-      <wl-live-controls></wl-live-controls>
-
-      @if (fights().length) {
-        <div class="mt-4 border-t border-line pt-4">
-          <div class="flex flex-wrap gap-3.5">
-            <!-- Disabled via the form control while live sync drives the selection, so keyboard changes are blocked too. -->
-            <mat-form-field appearance="outline" class="flex-[1_1_200px]">
-              <mat-label>Fight</mat-label>
-              <mat-select [formControl]="fightControl" (selectionChange)="onFightChange()">
-                <mat-select-trigger>
-                  @if (selectedFight(); as sf) {
-                    <span class="flex items-center gap-2">
-                      <wl-art-icon [src]="sf.encounterID | bossIcon" [alt]="sf.name"></wl-art-icon>
-                      <span class="truncate">{{ sf.name }} - {{ sf.kill ? 'Kill' : 'Wipe #' + sf.attempt }} - {{ sf.duration_s | formatDuration }}</span>
-                    </span>
-                  }
-                </mat-select-trigger>
-                @for (f of fights(); track f.id) {
-                  <mat-option [value]="f.id">
-                    <span class="flex items-center gap-2">
-                      <wl-art-icon [src]="f.encounterID | bossIcon" [alt]="f.name"></wl-art-icon>
-                      <span class="truncate">{{ f.name }} - {{ f.kill ? 'Kill' : 'Wipe #' + f.attempt }} - {{ f.duration_s | formatDuration }}</span>
-                    </span>
-                  </mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="flex-[1_1_200px]">
-              <mat-label>Player</mat-label>
-              <mat-select [formControl]="playerControl" (selectionChange)="onPlayerChange()">
-                <mat-select-trigger>
-                  @if (selectedPlayer(); as sp) {
-                    <span class="flex items-center gap-2">
-                      @if (playerSpecs()[sp.id]; as specFolder) {
-                        <wl-art-icon [src]="specFolder | specIcon" [alt]="specFolder | formatSpec"></wl-art-icon>
-                      } @else {
-                        <wl-art-icon [src]="sp.spec | classIcon" [alt]="sp.spec"></wl-art-icon>
-                      }
-                      <span class="truncate">{{ sp.name }}</span>
-                    </span>
-                  }
-                </mat-select-trigger>
-                @for (p of visiblePlayers(); track p.id) {
-                  <mat-option [value]="p.id">
-                    <span class="flex items-center gap-2">
-                      @if (playerSpecs()[p.id]; as specFolder) {
-                        <wl-art-icon [src]="specFolder | specIcon" [alt]="specFolder | formatSpec"></wl-art-icon>
-                      } @else {
-                        <wl-art-icon [src]="p.spec | classIcon" [alt]="p.spec"></wl-art-icon>
-                      }
-                      <span class="truncate">{{ p.name }}</span>
-                    </span>
-                  </mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
+      <div hlmCardContent>
+        <div hlmField>
+          <label hlmFieldLabel for="post-report">Warcraft Logs report URL or code</label>
+          <div hlmInputGroup>
+            <input hlmInputGroupInput id="post-report" #reportInput [formControl]="reportControl" placeholder="https://www.warcraftlogs.com/reports/AbCdEfGh…"
+                   (keydown.enter)="loadReport()" (paste)="onPaste($event, reportInput)" />
+            <div hlmInputGroupAddon>
+              <ng-icon name="link" />
+            </div>
+            <div hlmInputGroupAddon align="inline-end">
+              <button hlmInputGroupButton variant="default" (click)="loadReport()">Analyze</button>
+            </div>
           </div>
+          <hlm-field-error>Paste a Warcraft Logs report URL or a 16-character report code.</hlm-field-error>
         </div>
-      }
-    </mat-card>
+
+        <wl-live-controls></wl-live-controls>
+
+        @if (fights().length) {
+          <div class="mt-4 border-t pt-4">
+            <div class="flex flex-wrap gap-3.5">
+              <!-- Disabled via the form control while live sync drives the selection, so keyboard changes are blocked too. -->
+              <div hlmField class="flex-[1_1_200px]">
+                <label hlmFieldLabel for="post-fight">Fight</label>
+                <hlm-select [formControl]="fightControl" (valueChange)="picked(fightControl, $event) && onFightChange()">
+                  <hlm-select-trigger buttonId="post-fight" class="w-full">
+                    @if (selectedFight(); as sf) {
+                      <span class="flex min-w-0 items-center gap-2">
+                        <wl-art-icon [src]="sf.encounterID | bossIcon" [alt]="sf.name"></wl-art-icon>
+                        <span class="truncate">{{ sf.name }} - {{ sf.kill ? 'Kill' : 'Wipe #' + sf.attempt }} - {{ sf.duration_s | formatDuration }}</span>
+                      </span>
+                    }
+                  </hlm-select-trigger>
+                  <hlm-select-content *hlmSelectPortal>
+                    @for (f of fights(); track f.id) {
+                      <hlm-select-item [value]="f.id">
+                        <span class="flex items-center gap-2">
+                          <wl-art-icon [src]="f.encounterID | bossIcon" [alt]="f.name"></wl-art-icon>
+                          <span class="truncate">{{ f.name }} - {{ f.kill ? 'Kill' : 'Wipe #' + f.attempt }} - {{ f.duration_s | formatDuration }}</span>
+                        </span>
+                      </hlm-select-item>
+                    }
+                  </hlm-select-content>
+                </hlm-select>
+              </div>
+
+              <div hlmField class="flex-[1_1_200px]">
+                <label hlmFieldLabel for="post-player">Player</label>
+                <hlm-select [formControl]="playerControl" (valueChange)="picked(playerControl, $event) && onPlayerChange()">
+                  <hlm-select-trigger buttonId="post-player" class="w-full">
+                    @if (selectedPlayer(); as sp) {
+                      <span class="flex min-w-0 items-center gap-2">
+                        @if (playerSpecs()[sp.id]; as specFolder) {
+                          <wl-art-icon [src]="specFolder | specIcon" [alt]="specFolder | formatSpec"></wl-art-icon>
+                        } @else {
+                          <wl-art-icon [src]="sp.spec | classIcon" [alt]="sp.spec"></wl-art-icon>
+                        }
+                        <span class="truncate">{{ sp.name }}</span>
+                      </span>
+                    }
+                  </hlm-select-trigger>
+                  <hlm-select-content *hlmSelectPortal>
+                    @for (p of visiblePlayers(); track p.id) {
+                      <hlm-select-item [value]="p.id">
+                        <span class="flex items-center gap-2">
+                          @if (playerSpecs()[p.id]; as specFolder) {
+                            <wl-art-icon [src]="specFolder | specIcon" [alt]="specFolder | formatSpec"></wl-art-icon>
+                          } @else {
+                            <wl-art-icon [src]="p.spec | classIcon" [alt]="p.spec"></wl-art-icon>
+                          }
+                          <span class="truncate">{{ p.name }}</span>
+                        </span>
+                      </hlm-select-item>
+                    }
+                  </hlm-select-content>
+                </hlm-select>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
 
     @if (notice()) {
-      <div class="mb-4 rounded-lg border border-line bg-surface px-4 py-3.5 text-body text-muted">{{ notice() }}</div>
+      <div hlmAlert class="mb-4">
+        <p hlmAlertDescription>{{ notice() }}</p>
+      </div>
     }
 
     @if (loadError(); as err) {

@@ -153,6 +153,7 @@
           "options": {
             "tsConfig": "tsconfig.spec.json",
             "runner": "vitest",
+            "setupFiles": ["src/testing/jsdom-layout.ts"],
             "buildTarget": "frontend:build",
             "watch": false
           },

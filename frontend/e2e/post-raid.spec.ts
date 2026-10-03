@@ -57,14 +57,14 @@ test('following the latest pull hands the fight selection to the live poll', asy
 
   await follow.click();
   await expect(follow).toBeChecked();
-  await expect(fight).toHaveAttribute('aria-disabled', 'true');
+  await expect(fight).toBeDisabled();
   // The countdown ticks every second, so only its shape is pinned.
   const settled = /Next update in \d+s/;
   await expect(controls.getByText(settled)).toBeVisible({ timeout: LIVE_TIMEOUT_MS });
 
   // Left on, the poll keeps hitting Warcraft Logs under every later test.
   await follow.click();
-  await expect(fight).toHaveAttribute('aria-disabled', 'false');
+  await expect(fight).toBeEnabled();
   await expect(controls.getByText(settled)).toHaveCount(0);
 });
 
@@ -91,10 +91,10 @@ test('pull overview reports the DPS, the death, and the kill', async () => {
   await shows(pullOverview, DAMAGE);
   await shows(pullOverview, /Death \d+/);
   const deathRow = pullOverview.locator('div.grid', { hasText: /Death \d+/ }).first();
-  await expect(deathRow.locator('span.text-accent')).toHaveText(CLOCK);
+  await expect(deathRow.locator('span.text-primary')).toHaveText(CLOCK);
   const outcomeRow = pullOverview.locator('div.grid', { hasText: 'Boss defeated' }).first();
   await expect(outcomeRow).toContainText('Kill');
-  await expect(outcomeRow.locator('span.text-accent')).toHaveText(CLOCK);
+  await expect(outcomeRow.locator('span.text-primary')).toHaveText(CLOCK);
 });
 
 test('rotation rules bar each button against the top logs and open a row into the moments behind its bar', async () => {

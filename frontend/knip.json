@@ -2,15 +2,18 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": [
     "src/**/*.spec.ts",
+    "src/testing/jsdom-layout.ts",
     "scripts/ingest-server.js",
     "e2e/**/*.spec.ts",
-    "playwright.config.ts"
+    "playwright.config.ts",
+    "libs/ui/**/*.ts"
   ],
   "project": [
     "src/**/*.ts",
     "scripts/**/*.{js,mjs}",
     "e2e/**/*.ts",
-    "eslint-rules/*.js"
+    "eslint-rules/*.js",
+    "libs/ui/**/*.ts"
   ],
   "ignore": ["src/environments/wcl-client.example.ts"],
   "playwright": false

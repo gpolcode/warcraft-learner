@@ -1,78 +1,96 @@
-<!-- Toolbar background comes from mat.toolbar-overrides in styles.scss; a plain bg-* utility loses to Material's unlayered rule. -->
-<mat-toolbar class="border-b border-line gap-2 shrink-0">
-  <button mat-icon-button (click)="toggleNav()" aria-label="Toggle navigation menu">
-    <mat-icon>menu</mat-icon>
-  </button>
+<div hlmSidebarWrapper>
+  <hlm-sidebar collapsible="icon" srOnlySheetTitle="Navigation" srOnlySheetDescription="Pages of warcraft-learner">
+    <div hlmSidebarHeader>
+      <ul hlmSidebarMenu>
+        <li hlmSidebarMenuItem>
+          <a hlmSidebarMenuButton size="lg" routerLink="/" tooltip="warcraft-learner" aria-label="warcraft-learner home">
+            <span class="flex size-8 shrink-0 items-center justify-center">
+              <ng-container *ngTemplateOutlet="logo" />
+            </span>
+            <span class="text-heading text-gold">warcraft-learner</span>
+          </a>
+        </li>
+      </ul>
+    </div>
 
-  <a routerLink="/" class="flex items-center gap-2 no-underline text-heading text-gold" aria-label="warcraft-learner home">
-    <svg class="w-6 h-6 shrink-0" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      <path class="fill-gold" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
-      <g class="fill-surface">
-        <rect x="9.5" y="18" width="3" height="4" rx="1"/>
-        <rect x="14.5" y="14" width="3" height="8" rx="1"/>
-        <rect x="19.5" y="10" width="3" height="12" rx="1"/>
-      </g>
-    </svg>
-    <span>warcraft-learner</span>
-  </a>
-</mat-toolbar>
-
-<mat-sidenav-container class="flex-1 min-h-0">
-  <mat-sidenav class="border-r border-line"
-               [class.nav-drawer-modal]="isMobile()"
-               [class.nav-drawer-full]="!isMobile() && !railCollapsed()"
-               [class.nav-drawer-rail]="railCollapsed()"
-               [mode]="sidenavMode()" [opened]="sidenavOpened()"
-               (openedChange)="onOpenedChange($event)">
-    <div class="flex flex-col h-full py-2">
-      <div class="flex-1 px-3">
-        <mat-nav-list>
-          <a mat-list-item routerLink="/pre" routerLinkActive #pre="routerLinkActive"
-             [activated]="pre.isActive" (click)="onNavigate()" aria-label="Pre-fight"
-             [matTooltip]="railCollapsed() ? 'Pre-fight' : ''" matTooltipPosition="right">
-            <mat-icon matListItemIcon>lightbulb</mat-icon>
-            @if (!railCollapsed()) {
-              <span matListItemTitle>Pre-fight</span>
-            }
-          </a>
-          <a mat-list-item routerLink="/" routerLinkActive #post="routerLinkActive"
-             [routerLinkActiveOptions]="{exact:true}" [activated]="post.isActive" (click)="onNavigate()"
-             aria-label="Analyze"
-             [matTooltip]="railCollapsed() ? 'Analyze' : ''" matTooltipPosition="right">
-            <mat-icon matListItemIcon>analytics</mat-icon>
-            @if (!railCollapsed()) {
-              <span matListItemTitle>Analyze</span>
-            }
-          </a>
-        </mat-nav-list>
-      </div>
-
-      <div class="px-3 pt-1">
-        <mat-nav-list>
-          <a mat-list-item [href]="githubUrl" target="_blank" rel="noopener noreferrer"
-             aria-label="View on GitHub"
-             [matTooltip]="railCollapsed() ? 'View on GitHub' : ''" matTooltipPosition="right">
-            <mat-icon matListItemIcon svgIcon="github"></mat-icon>
-            @if (!railCollapsed()) {
-              <span matListItemTitle>View on GitHub</span>
-            }
-          </a>
-          <a mat-list-item [href]="newIssueUrl" target="_blank" rel="noopener noreferrer"
-             aria-label="Report an issue on GitHub"
-             [matTooltip]="railCollapsed() ? 'Report an issue' : ''" matTooltipPosition="right">
-            <mat-icon matListItemIcon>bug_report</mat-icon>
-            @if (!railCollapsed()) {
-              <span matListItemTitle>Report an issue</span>
-            }
-          </a>
-        </mat-nav-list>
+    <div hlmSidebarContent>
+      <div hlmSidebarGroup>
+        <ul hlmSidebarMenu>
+          @for (page of pages; track page.path) {
+            <li hlmSidebarMenuItem>
+              <a hlmSidebarMenuButton [routerLink]="page.path" routerLinkActive #active="routerLinkActive"
+                 [routerLinkActiveOptions]="{ exact: page.exact }" [isActive]="active.isActive" [tooltip]="page.label">
+                <ng-icon [name]="page.icon" />
+                <span>{{ page.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
       </div>
     </div>
-  </mat-sidenav>
 
-  <mat-sidenav-content class="overflow-auto">
-    <main class="block">
-      <ng-content></ng-content>
-    </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    <div hlmSidebarFooter>
+      <ul hlmSidebarMenu>
+        <li hlmSidebarMenuItem>
+          <a hlmSidebarMenuButton [href]="githubUrl" target="_blank" rel="noopener noreferrer" tooltip="View on GitHub">
+            <ng-icon name="github" />
+            <span>View on GitHub</span>
+          </a>
+        </li>
+        <li hlmSidebarMenuItem>
+          <a hlmSidebarMenuButton [href]="newIssueUrl" target="_blank" rel="noopener noreferrer"
+             aria-label="Report an issue on GitHub" tooltip="Report an issue">
+            <ng-icon name="bug_report" />
+            <span>Report an issue</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <button hlmSidebarRail aria-label="Toggle navigation menu"></button>
+  </hlm-sidebar>
+
+  <main hlmSidebarInset class="min-w-0 pb-16 md:pb-0">
+    <header class="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-2 border-b bg-background px-3 md:px-4">
+      <button hlmSidebarTrigger class="-ml-1 hidden md:inline-flex" aria-label="Toggle navigation menu"></button>
+      <hlm-separator orientation="vertical" class="mr-1 hidden data-vertical:h-4 data-vertical:self-center md:block" />
+      <a routerLink="/" class="flex size-7 shrink-0 items-center justify-center md:hidden" aria-label="warcraft-learner home">
+        <ng-container *ngTemplateOutlet="logo" />
+      </a>
+      @if (currentPage(); as page) {
+        <h1 class="text-heading">{{ page.label }}</h1>
+      }
+      <div class="ml-auto flex items-center md:hidden">
+        <a hlmBtn variant="ghost" size="icon" [href]="githubUrl" target="_blank" rel="noopener noreferrer" aria-label="View on GitHub">
+          <ng-icon name="github" />
+        </a>
+        <a hlmBtn variant="ghost" size="icon" [href]="newIssueUrl" target="_blank" rel="noopener noreferrer" aria-label="Report an issue on GitHub">
+          <ng-icon name="bug_report" />
+        </a>
+      </div>
+    </header>
+    <ng-content></ng-content>
+  </main>
+
+  <!-- Phones navigate from a bottom tab bar, where the thumb rests, instead of the sidebar's sheet. -->
+  <nav class="fixed inset-x-0 bottom-0 z-20 flex border-t bg-background pb-[env(safe-area-inset-bottom)] md:hidden" aria-label="Pages">
+    @for (page of pages; track page.path) {
+      <a hlmBtn variant="ghost" [routerLink]="page.path" routerLinkActive ariaCurrentWhenActive="page"
+         [routerLinkActiveOptions]="{ exact: page.exact }"
+         class="h-14 flex-1 flex-col gap-1 rounded-none text-muted-foreground aria-[current=page]:text-primary">
+        <ng-icon [name]="page.icon" />
+        <span class="text-caption">{{ page.label }}</span>
+      </a>
+    }
+  </nav>
+</div>
+
+<ng-template #logo>
+  <svg class="size-6" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+    <path class="fill-gold" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
+    <g class="fill-card">
+      <rect x="9.5" y="18" width="3" height="4" rx="1"/>
+      <rect x="14.5" y="14" width="3" height="8" rx="1"/>
+      <rect x="19.5" y="10" width="3" height="12" rx="1"/>
+    </g>
+  </svg>
+</ng-template>
