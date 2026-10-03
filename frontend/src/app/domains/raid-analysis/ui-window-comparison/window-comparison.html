@@ -15,9 +15,10 @@
     <!-- Chip size is decoupled from fight time, so windows never overlap however tightly they fire. -->
     <div>
       <!-- The checked tile marks where the arrow keys are, so the row draws no focus ring of its own. -->
+      <!-- The tiles are the strip's only targets, so they take the 44px size on every pointer; the pacing slot reads the same height. -->
       <div
         #listbox
-        class="pt-2 pb-1 outline-hidden"
+        class="pt-2 pb-1 outline-hidden [--tui-height-s:2.75rem]"
         role="listbox"
         tabindex="0"
         [attr.aria-label]="heading()"
