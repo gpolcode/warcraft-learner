@@ -1,5 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
+import { TuiButtonCopy } from '@taiga-ui/kit';
 import { WowheadTooltipsService } from '../util-wowhead/wowhead-tooltips-service';
 import { ENVIRONMENT } from '../../../../environments/environment-token';
 
@@ -9,7 +10,7 @@ export type GameIconKind = 'spell' | 'item';
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-game-icon',
   host: { class: 'inline-flex items-center' },
-  imports: [NgOptimizedImage],
+  imports: [NgOptimizedImage, TuiButtonCopy],
   templateUrl: './game-icon.html',
 })
 export class GameIcon {
@@ -25,11 +26,12 @@ export class GameIcon {
     });
   }
 
-  // A null id renders the name alone, so a caller with no game identity never wraps this in an @if with a text fallback.
-  readonly id = input<number | null>(null);
+  // A missing id renders the name alone, so a caller with no game identity never wraps this in an @if with a text fallback.
+  readonly id = input<number | null | undefined>(null);
   readonly kind = input<GameIconKind>('spell');
   readonly name = input.required<string>();
   readonly icon = input.required<string>();
+  readonly copyable = input(false);
 
   // Tracks the URL that last failed to load so the template hides it and degrades to name-only; a changed `icon` retries.
   protected readonly failedSrc = signal<string | null>(null);

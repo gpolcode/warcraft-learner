@@ -1,28 +1,25 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { Clipboard } from '@angular/cdk/clipboard';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { TuiButton, TuiIcon, TuiLink, TuiTitle } from '@taiga-ui/core';
+import { TUI_COPY_TEXTS, TuiChip, TuiItemsWithMore } from '@taiga-ui/kit';
+import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { GameIcon } from '../ui-game-icon/game-icon';
-import { Collapsible } from '../../shared/ui-collapsible/collapsible';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { GearFeatureService } from '../data/gear/gear-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
 
-const COPIED_MESSAGE = 'Copied to clipboard. Paste it into the auction house search.';
-const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
+const COPY_TEXTS = ['Copy name', 'Copied'] as const;
+const CHIP_LINES = 2;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [MatButtonModule, MatIconModule, GameIcon, Collapsible, LoadState],
+  imports: [TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiIcon, TuiLink, TuiChip, TuiItemsWithMore, GameIcon, LoadState],
   templateUrl: './gear.html',
+  providers: [{ provide: TUI_COPY_TEXTS, useValue: signal(COPY_TEXTS) }],
 })
 export class Gear {
   private readonly loadRes = inject(LoadResourceService);
   private readonly gear = inject(GearFeatureService);
-  private readonly clipboard = inject(Clipboard);
-  private readonly snackBar = inject(MatSnackBar);
 
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
@@ -56,8 +53,13 @@ export class Gear {
 
   protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
   protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
+  private readonly openChipLists = signal<ReadonlySet<readonly unknown[]>>(new Set());
 
-  protected copy(name: string): void {
-    this.snackBar.open(this.clipboard.copy(name) ? COPIED_MESSAGE : COPY_FAILED_MESSAGE);
+  protected chipLines(list: readonly unknown[]): number {
+    return this.openChipLists().has(list) ? Number.POSITIVE_INFINITY : CHIP_LINES;
+  }
+
+  protected showAllChips(list: readonly unknown[]): void {
+    this.openChipLists.update(open => new Set(open).add(list));
   }
 }

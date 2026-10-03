@@ -1,12 +1,8 @@
-<div class="md:grid md:grid-cols-(--cols-ability) md:gap-x-(--gap-card) md:items-center px-4 py-1.5 min-w-0 border-t md:border-t-0 border-line">
+<div class="md:grid md:grid-cols-(--cols-ability) md:gap-x-(--gap-card) md:items-center py-1.5 min-w-0 border-t md:border-t-0 border-line">
 
   <div class="flex items-baseline gap-2 min-w-0 md:contents">
     <div class="flex-1 min-w-0 overflow-hidden md:col-start-1 md:row-start-1">
-      @if (row().spellId; as spellId) {
-        <wl-game-icon [id]="spellId" [icon]="row().icon" [name]="row().label"></wl-game-icon>
-      } @else {
-        <span class="truncate text-name">{{ row().label }}</span>
-      }
+      <wl-game-icon [id]="row().spellId" [icon]="row().icon" [name]="row().label"></wl-game-icon>
     </div>
 
     @if (!hidePlayer()) {
@@ -31,15 +27,15 @@
 
     @if (showCasts() && !hidePlayer()) {
       @if (isPassive()) {
-        <span class="shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-label rounded px-2 py-0.5 border border-current text-muted">Passive</span>
+        <span tuiBadge appearance="neutral" size="m" class="text-label md:col-start-2 md:row-start-1 md:justify-self-end">Passive</span>
       } @else {
+        @let casts =
+          castsStatus() === 'success' ? 'positive' :
+          castsStatus() === 'warning' ? 'warning' :
+          castsStatus() === 'critical' ? 'negative' : 'neutral';
         <span class="md:hidden text-label text-muted">Casts</span>
-        <span class="tabular-nums shrink-0 md:col-start-2 md:row-start-1 w-auto text-center text-body rounded px-2 py-0.5 border border-current"
-              [class.text-success]="castsStatus() === 'success'"
-              [class.text-warning]="castsStatus() === 'warning'"
-              [class.text-critical]="castsStatus() === 'critical'"
-              [class.text-muted]="castsStatus() === 'muted'">
-          {{ row().playerCasts ?? 0 }}<span class="text-muted"> / {{ row().topCasts ?? '-' }}</span>
+        <span tuiBadge size="m" class="md:col-start-2 md:row-start-1 md:justify-self-end" [appearance]="casts">
+          <span class="tabular-nums">{{ row().playerCasts ?? 0 }} / {{ row().topCasts ?? '-' }}</span>
         </span>
       }
     }

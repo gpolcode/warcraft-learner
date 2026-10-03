@@ -1,15 +1,18 @@
 @if (error() || !available()) {
   <wl-load-state heading="Northern Sky export" subtitle="Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon." [error]="error()"></wl-load-state>
 } @else {
-  <div class="bg-surface border border-line rounded-[10px] overflow-hidden">
-    <div class="px-4 pt-3 pb-3 flex items-start justify-between gap-3">
-      <div>
-        <h2 class="text-title">Northern Sky export</h2>
-        <div class="text-body text-muted mt-0.5">Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.</div>
+  <section tuiCardLarge appearance="outline-grayscale">
+    <header tuiHeader="body-l">
+      <hgroup tuiTitle>
+        <h2>Northern Sky export</h2>
+        <p tuiSubtitle>Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.</p>
+      </hgroup>
+      <div tuiAccessories>
+        <!-- A body-l header sizes its buttons xs; the explicit s keeps the app-wide size. -->
+        <button tuiButton type="button" appearance="outline-grayscale" size="s" (click)="open.set(true)">Export note</button>
       </div>
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" type="button" (click)="open.set(true)">Export note</button>
-    </div>
-  </div>
+    </header>
+  </section>
 }
 
 @if (panelOpen()) {
@@ -20,20 +23,21 @@
     (closed)="open.set(false)">
     <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between gap-2">
-        <button mat-button type="button" (click)="toggleAll()">{{ allSelected() ? 'Deselect all' : 'Select all' }}</button>
-        <button mat-flat-button type="button" (click)="copyNote()">Copy note</button>
+        <button tuiButton type="button" appearance="flat" (click)="toggleAll()">{{ allSelected() ? 'Deselect all' : 'Select all' }}</button>
+        <button [tuiButtonCopy]="note()">Copy note</button>
       </div>
 
       @if (cooldowns().length > 0) {
         <div class="text-label text-muted">Cooldowns</div>
         <div class="flex flex-col gap-1.5">
           @for (ability of cooldowns(); track ability.spell_id) {
-            <mat-checkbox [checked]="isSelected(ability.spell_id)" (change)="toggle(ability.spell_id, $event.checked)">
+            <label tuiLabel>
+              <input tuiCheckbox type="checkbox" size="s" [ngModel]="isSelected(ability.spell_id)" (ngModelChange)="toggle(ability.spell_id, $event)" />
               <span class="inline-flex items-center gap-2">
                 <wl-game-icon [id]="ability.spell_id" [icon]="ability.icon" [name]="ability.name"></wl-game-icon>
                 <span class="text-caption text-muted">&times;{{ ability.cast_times_s.length }}</span>
               </span>
-            </mat-checkbox>
+            </label>
           }
         </div>
       }
@@ -42,12 +46,13 @@
         <div class="text-label text-muted">Defensives</div>
         <div class="flex flex-col gap-1.5">
           @for (ability of defensives(); track ability.spell_id) {
-            <mat-checkbox [checked]="isSelected(ability.spell_id)" (change)="toggle(ability.spell_id, $event.checked)">
+            <label tuiLabel>
+              <input tuiCheckbox type="checkbox" size="s" [ngModel]="isSelected(ability.spell_id)" (ngModelChange)="toggle(ability.spell_id, $event)" />
               <span class="inline-flex items-center gap-2">
                 <wl-game-icon [id]="ability.spell_id" [icon]="ability.icon" [name]="ability.name"></wl-game-icon>
                 <span class="text-caption text-muted">&times;{{ ability.cast_times_s.length }}</span>
               </span>
-            </mat-checkbox>
+            </label>
           }
         </div>
       }

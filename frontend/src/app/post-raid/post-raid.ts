@@ -4,13 +4,11 @@ import {
 } from '@angular/core';
 import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
-import { EMPTY, combineLatest, from, merge, of } from 'rxjs';
-import { distinctUntilChanged, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { EMPTY, Observable, combineLatest, from, merge, of } from 'rxjs';
+import { distinctUntilChanged, exhaustMap, filter, map, switchMap, tap } from 'rxjs/operators';
+import { TUI_VALIDATION_ERRORS, TuiDataList, TuiError, TuiInput, TuiNotification, TuiTextfield } from '@taiga-ui/core';
+import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
+import { TuiCardLarge } from '@taiga-ui/layout';
 import { POLL_INTERVAL_S } from '../domains/raid-analysis/data/wcl/live-report-sync-service';
 import { WclFight, WclPlayer, PlayerDetailGroups } from '../domains/raid-analysis/data/wcl/wcl.models';
 import { ClipAnchor } from '../domains/raid-analysis/data/capture/capture.models';
@@ -51,19 +49,22 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
   { id: 'gear', hasBench: true },
 ];
 
-// Selection is NOT mirrored to the URL: a report loads only via an explicit Analyze action, never auto-run from a query param, so a crawled link never spends the shared WCL rate-limit budget.
+const INVALID_REPORT_CODE_MESSAGE = 'Paste a Warcraft Logs report URL or a 16-character report code.';
+
+// Selection is NOT mirrored to the URL: a report loads only on an explicit Enter or paste, never auto-run from a query param, so a crawled link never spends the shared WCL rate-limit budget.
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-post-raid',
   imports: [
-    ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatButtonModule, MatCardModule,
+    ReactiveFormsModule, TuiCardLarge, TuiTextfield, TuiInput, TuiError, TuiSelect, TuiChevron,
+    TuiDataList, TuiNotification,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
     Defensive, Gear, MapPanel, LiveControls, ClipPanel,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
-  // Provided here, not app.config: only this page's form fields want dynamic subscript sizing.
-  providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { subscriptSizing: 'dynamic' } }],
+  providers: [
+    { provide: TUI_VALIDATION_ERRORS, useValue: { invalidReportCode: INVALID_REPORT_CODE_MESSAGE } },
+  ],
   // Covers only a real navigation away (refresh, close, another site); an in-app route change goes through LeaveLiveSessionGuard instead.
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
   templateUrl: './post-raid.html',
@@ -73,17 +74,21 @@ export class PostRaid {
   private readonly mapFeature = inject(MapFeatureService);
   protected readonly liveCapture = inject(LiveCaptureFeatureService);
   private readonly selectionStore = inject(SelectionStore);
+  // The fight select's text value, which a screen reader announces, reads the same clock as its visible content.
+  private readonly duration = new FormatDurationPipe();
 
   protected readonly reportControl = new FormControl('', { nonNullable: true, validators: [control => this.reportCodeValidator(control)] });
   protected readonly fightControl = new FormControl<number | null>(null);
   protected readonly playerControl = new FormControl<number | null>(null);
 
   constructor() {
-    // Live sync owns the fight selection: disable the control while it drives it (setValue from the poll still works on a disabled control).
+    // Live sync owns the fight selection: disable the control while it drives it (setValue from the poll still works on a disabled control). Silently, or picks() would read the re-enable as a pick.
     effect(() => {
-      if (this.liveCapture.liveEnabled()) this.fightControl.disable();
-      else this.fightControl.enable();
+      if (this.liveCapture.liveEnabled()) this.fightControl.disable({ emitEvent: false });
+      else this.fightControl.enable({ emitEvent: false });
     });
+    this.picks(this.fightControl).pipe(takeUntilDestroyed()).subscribe(() => void this.onFightChange());
+    this.picks(this.playerControl).pipe(takeUntilDestroyed()).subscribe(() => void this.onPlayerChange());
   }
 
   protected onBeforeUnload(event: BeforeUnloadEvent): void {
@@ -141,6 +146,14 @@ export class PostRaid {
 
   protected readonly selectedPlayer = computed(() =>
     this.visiblePlayers().find(p => p.id === this.selectedPlayerId()));
+
+  protected readonly fightLabel = (fightId: number | null): string => {
+    const fight = this.fights().find(f => f.id === fightId);
+    return fight ? `${fight.name} - ${fight.kill ? 'Kill' : `Wipe #${fight.attempt}`} - ${this.duration.transform(fight.duration_s)}` : '';
+  };
+
+  protected readonly playerLabel = (playerId: number | null): string =>
+    this.visiblePlayers().find(p => p.id === playerId)?.name ?? '';
 
   protected readonly selectedEncounterId = computed(() =>
     this.fights().find(f => f.id === this.selectedFightId())?.encounterID ?? 0);
@@ -211,7 +224,7 @@ export class PostRaid {
     this.notice.set('');
     const rawInput = this.reportControl.value;
     const code = this.selection.extractCode(rawInput.trim());
-    // The Analyze button is already disabled while invalid; this guard also covers the Enter-key path.
+    // Enter and paste both land here whatever the field holds, so this guard is what keeps an invalid code from reaching WCL.
     if (!this.selection.isValidReportCode(code)) {
       if (code) this.notice.set('Enter a valid Warcraft Logs report URL or 16-character report code.');
       return;
@@ -239,7 +252,7 @@ export class PostRaid {
     }
     this._applyReport(loaded.value);
 
-    this.fightControl.setValue(this.selection.targetFightId(this.fights(), this.selection.extractFightId(rawInput)));
+    this.setProgrammatically(this.fightControl, this.selection.targetFightId(this.fights(), this.selection.extractFightId(rawInput)));
     // Without this a zero-pull log is a successful load that looks like nothing happened.
     if (!this.fights().length) this.notice.set('No boss pulls found in this report.');
     this._applyAutoPlayer();
@@ -296,8 +309,8 @@ export class PostRaid {
     this.notice.set('');
     const currentName = this.players().find(player => player.id === this.selectedPlayerId())?.name ?? null;
     const visible = this.selection.visiblePlayersOf(this.fights(), this.players(), latest.id);
-    this.fightControl.setValue(latest.id);
-    this.playerControl.setValue(this.selection.pickLivePlayerId(visible, currentName));
+    this.setProgrammatically(this.fightControl, latest.id);
+    this.setProgrammatically(this.playerControl, this.selection.pickLivePlayerId(visible, currentName));
   }
 
   private _pollSuperseded(code: string): boolean {
@@ -367,7 +380,7 @@ export class PostRaid {
   private _applyAutoPlayer(): void {
     // Sticks to the saved player NAME, not actor id, since actor ids are not stable across reports.
     const stickyName = this.selectionStore.loadPostRaid()?.playerName ?? null;
-    this.playerControl.setValue(this.selection.pickLivePlayerId(this.visiblePlayers(), stickyName));
+    this.setProgrammatically(this.playerControl, this.selection.pickLivePlayerId(this.visiblePlayers(), stickyName));
   }
 
   private _persistPlayerName(): void {
@@ -376,10 +389,23 @@ export class PostRaid {
     if (playerName) this.selectionStore.savePostRaid({ playerName });
   }
 
-  // Keeps the Analyze button disabled - and no WCL request firing - until the input resolves to a usable report code.
+  // valueChanges carries the page's own writes along with the user's picks, so a write raises this flag for its synchronous emission and picks() passes only the rest.
+  private writing = false;
+
+  private setProgrammatically(control: FormControl<number | null>, value: number | null): void {
+    const outer = this.writing;
+    this.writing = true;
+    control.setValue(value);
+    this.writing = outer;
+  }
+
+  private picks<T>(control: FormControl<T>): Observable<T> {
+    return control.valueChanges.pipe(filter(() => !this.writing));
+  }
+
   private reportCodeValidator(control: AbstractControl): ValidationErrors | null {
     const value = ((control.value as string | null) ?? '').trim();
-    if (!value) return null; // empty is not an error (no red field); the button is disabled separately
+    if (!value) return null; // empty is not an error, so a blank field never shows red
     return this.selection.isValidReportCode(this.selection.extractCode(value)) ? null : { invalidReportCode: true };
   }
 }

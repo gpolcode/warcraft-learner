@@ -25,9 +25,9 @@ test.afterAll(async () => {
 
 test('selecting class, spec, and encounter loads that spec\'s plan', async () => {
   await shows(page, 'Pick a spec and a boss to see the plan top raiders run there.');
-  await expect(page.getByRole('combobox', { name: 'Class' })).toContainText('Warrior');
-  await expect(page.getByRole('combobox', { name: 'Spec' })).toContainText('Arms');
-  await expect(page.getByRole('combobox', { name: 'Encounter' })).toContainText("Nek'zali the Soulcoiler");
+  await expect(page.getByRole('combobox', { name: 'Class' })).toHaveValue('Warrior');
+  await expect(page.getByRole('combobox', { name: 'Spec' })).toHaveValue('Arms');
+  await expect(page.getByRole('combobox', { name: 'Encounter' })).toHaveValue("Nek'zali the Soulcoiler");
   const cooldownPlan = page.locator('wl-rotation-cd-plan');
   await showsEntity(cooldownPlan);
   await shows(cooldownPlan, CLOCK);
@@ -38,20 +38,21 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
   await shows(card, 'Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.');
 
   await card.getByRole('button', { name: 'Export note' }).click();
-  const panel = page.locator('wl-flyover-panel');
+  // The panel opens in Taiga's portal layer, outside the card, so it is found by its dialog role.
+  const panel = page.getByRole('dialog', { name: 'Northern Sky export' });
   await expect(panel.getByRole('button', { name: 'Copy note' })).toBeVisible();
   await shows(panel, 'Cooldowns');
   await shows(panel, 'Defensives');
-  const checkboxes = panel.locator('mat-checkbox');
-  const checkboxCount = await checkboxes.count();
-  expect(checkboxCount).toBeGreaterThan(0);
-  for (let i = 0; i < checkboxCount; i++) await expect(checkboxes.nth(i)).toContainText(/×\d+/);
+  const abilities = panel.locator('label', { has: page.getByRole('checkbox') });
+  const abilityCount = await abilities.count();
+  expect(abilityCount).toBeGreaterThan(0);
+  for (let i = 0; i < abilityCount; i++) await expect(abilities.nth(i)).toContainText(/×\d+/);
 
   await panel.getByRole('button', { name: 'Copy note' }).click();
-  await shows(page, 'Copied to clipboard. Paste it into your Northern Sky note.');
-  await expect(panel).not.toContainText('Copied to clipboard');
+  await expect(panel.getByRole('button', { name: 'Copied', exact: true })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Close export' }).click();
+  await panel.getByRole('button', { name: 'Close export' }).click();
+  await expect(panel).toHaveCount(0);
 });
 
 test('gear shows the top-parse talent, trinket, and enchant consensus, and how a lower-ranked build differs', async () => {
@@ -108,9 +109,10 @@ test('the positioning map opens anchored on the selected burst window', async ()
   const openMap = page.getByRole('button', { name: 'Show map', exact: true }).first();
   await expect(openMap).toBeVisible();
   await openMap.click();
-  await shows(page, 'Positioning');
-  await expect(page.locator('wl-map-canvas canvas')).toBeVisible();
-  await shows(page, /Opened at -?\d+:\d{2}/);
-  await shows(page, '● Top logs');
-  await page.getByRole('button', { name: 'Close map' }).click();
+  const panel = page.getByRole('dialog', { name: 'Positioning' });
+  await expect(panel.locator('wl-map-canvas canvas')).toBeVisible();
+  await shows(panel, /Opened at -?\d+:\d{2}/);
+  await shows(panel, '● Top logs');
+  await panel.getByRole('button', { name: 'Close map' }).click();
+  await expect(panel).toHaveCount(0);
 });

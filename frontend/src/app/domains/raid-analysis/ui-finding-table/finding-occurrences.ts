@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { TuiButton } from '@taiga-ui/core';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import type { FindingOccurrence } from '../data/analysis/analysis.models';
 import { ConditionChecklist } from './condition-checklist';
@@ -12,7 +11,7 @@ let nextInstanceSeq = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-finding-occurrences',
   host: { class: 'block' },
-  imports: [MatIconModule, MatButtonModule, FormatDurationPipe, ConditionChecklist],
+  imports: [TuiButton, FormatDurationPipe, ConditionChecklist],
   templateUrl: './finding-occurrences.html',
 })
 export class FindingOccurrences {
@@ -45,7 +44,7 @@ export class FindingOccurrences {
 
   readonly detailId = `${this.instanceId}-detail`;
 
-  // The listbox keeps focus; aria-activedescendant points screen readers at the active chip.
+  // The listbox keeps focus (a clicked chip hands it back); aria-activedescendant points screen readers at the active chip.
   readonly activeOptionId = computed(() => this.optionId(this.activeIndex()));
 
   select(index: number): void {

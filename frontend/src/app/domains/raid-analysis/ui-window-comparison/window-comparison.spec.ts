@@ -169,6 +169,14 @@ describe('WindowComparison keyboard navigation', () => {
     expect(selectedChip(dom)).toBe(1);
   });
 
+  it('hands focus back to the listbox when a chip is clicked, so arrow keys never leave the clicked chip ringed', () => {
+    const dom = render(threeWindows());
+
+    dom.queryAll(CHIP)[2]?.click();
+
+    expect(document.activeElement).toBe(dom.query(LISTBOX));
+  });
+
   it('points aria-activedescendant at exactly the active chip, so a screen reader follows the selection', () => {
     const dom = render(threeWindows());
     const activeId = () => dom.query(LISTBOX)?.getAttribute('aria-activedescendant');

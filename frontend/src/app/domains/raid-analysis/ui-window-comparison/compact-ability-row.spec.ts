@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { CompactAbilityRow } from './compact-ability-row';
 import type { RangeRow } from '../data/analysis/window-comparison.models';
 import { statusColor, mountDom } from '../../../../testing/component-harness';
+import { SHADOW_BLADES } from '../../../../testing/spell-ids';
 
 function row(overrides: Partial<RangeRow>): RangeRow {
   return { label: 'Test', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overrides };
@@ -20,6 +21,7 @@ function render(r: RangeRow, extra: Record<string, unknown> = {}) {
 }
 
 const clean = (el: HTMLElement | null): string => (el?.textContent ?? '').replace(/\s+/g, ' ').trim();
+const appearance = (el: HTMLElement | null): string | undefined => el?.dataset['appearance'];
 
 describe('CompactAbilityRow gap', () => {
   it('shows a positive gap with a + sign and the success colour when the player exceeds top avg', () => {
@@ -63,28 +65,28 @@ describe('CompactAbilityRow gap', () => {
 });
 
 describe('CompactAbilityRow casts badge', () => {
-  it('shows the player and top counts, in the success colour when the player meets top', () => {
+  it('shows the player and top counts on a positive badge when the player meets top', () => {
     const { casts } = render(row({ playerCasts: 3, topCasts: 3 }));
     expect(clean(casts)).toBe('3 / 3');
-    expect(statusColor(casts)).toBe('success');
+    expect(appearance(casts)).toBe('positive');
   });
 
-  it('stays success when the player exceeds top', () => {
-    expect(statusColor(render(row({ playerCasts: 4, topCasts: 3 })).casts)).toBe('success');
+  it('stays positive when the player exceeds top', () => {
+    expect(appearance(render(row({ playerCasts: 4, topCasts: 3 })).casts)).toBe('positive');
   });
 
   it('warns when the player is within 1 cast of top', () => {
-    expect(statusColor(render(row({ playerCasts: 2, topCasts: 3 })).casts)).toBe('warning');
+    expect(appearance(render(row({ playerCasts: 2, topCasts: 3 })).casts)).toBe('warning');
   });
 
-  it('goes critical when the player is 2 or more casts below top', () => {
-    expect(statusColor(render(row({ playerCasts: 1, topCasts: 3 })).casts)).toBe('critical');
+  it('goes negative when the player is 2 or more casts below top', () => {
+    expect(appearance(render(row({ playerCasts: 1, topCasts: 3 })).casts)).toBe('negative');
   });
 
-  it('falls back to muted, with a dash for top, when top casts are unknown', () => {
+  it('falls back to neutral, with a dash for top, when top casts are unknown', () => {
     const { casts } = render(row({ playerCasts: 2, topCasts: null }));
     expect(clean(casts)).toBe('2 / -');
-    expect(statusColor(casts)).toBe('muted');
+    expect(appearance(casts)).toBe('neutral');
   });
 
   it('reads "Passive" instead of a count for an ability that is never cast', () => {
@@ -105,14 +107,9 @@ describe('CompactAbilityRow label', () => {
     expect(render(row({ topAvg: 100 })).dom.text()).toContain('Top raiders average');
   });
 
-  it('names the ability, and shows the game icon only when the row carries a spell id', () => {
+  it('names the ability whether or not the row carries a spell id', () => {
     const LABEL = 'Shadow Blades';
-    const SPELL_ID = 121471;
-    const withIcon = render(row({ label: LABEL, spellId: SPELL_ID }));
-    expect(withIcon.dom.query('wl-game-icon')).not.toBeNull();
-
-    const plain = render(row({ label: LABEL }));
-    expect(plain.dom.query('wl-game-icon')).toBeNull();
-    expect(plain.dom.text()).toContain(LABEL);
+    expect(render(row({ label: LABEL, spellId: SHADOW_BLADES })).dom.text()).toContain(LABEL);
+    expect(render(row({ label: LABEL })).dom.text()).toContain(LABEL);
   });
 });

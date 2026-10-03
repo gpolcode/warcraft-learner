@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, linkedSignal, output } from '@angular/core';
 import { PercentPipe } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { TuiItem } from '@taiga-ui/cdk';
+import { TuiButton, TuiExpand, TuiTitle } from '@taiga-ui/core';
+import { TuiChevron } from '@taiga-ui/kit';
+import { TuiCardCollapsed, TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { FindingOccurrences } from '../ui-finding-table/finding-occurrences';
 import { RangeBar } from '../ui-range-bar/range-bar';
@@ -12,7 +14,10 @@ import type { ButtonRow } from '../data/rotation/priority-list/list-finding-serv
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-button-table',
   host: { class: 'block' },
-  imports: [PercentPipe, MatIconModule, MatButtonModule, GameIcon, FindingOccurrences, RangeBar, RangeLegend],
+  imports: [
+    PercentPipe, TuiCardLarge, TuiCardCollapsed, TuiHeader, TuiTitle, TuiButton, TuiChevron, TuiExpand, TuiItem,
+    GameIcon, FindingOccurrences, RangeBar, RangeLegend,
+  ],
   templateUrl: './button-table.html',
 })
 export class ButtonTable {

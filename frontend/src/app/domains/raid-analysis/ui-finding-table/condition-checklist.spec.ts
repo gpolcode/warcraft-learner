@@ -8,17 +8,24 @@ const oneOf = (...checks: ConditionCheck[]): ConditionCheck => ({ text: 'One of'
 const rightPress = (checks: ConditionCheck[]): FindingOccurrence => ({
   atS: 10, ok: true, rule: 'Eviscerate is only right when these conditions hold.', result: 'Right time', detail: 'they did.', checks,
 });
-const nodesOf = (checks: ConditionCheck[]) => mountVm(ConditionChecklist, { occurrence: rightPress(checks) }).vm['nodes']();
+const checklistOf = (checks: ConditionCheck[]) => mountVm(ConditionChecklist, { occurrence: rightPress(checks) }).vm;
 
 describe('ConditionChecklist', () => {
-  it('carries a level\'s connector through the rows nested under a row with siblings below it', () => {
-    const [group] = nodesOf([oneOf(met('Stealth is up'), met('Vanish is up')), met('At 5+ combo points')]);
-    expect(group?.children.map(node => node.continuing)).toEqual([[true], [true]]);
+  it('heads the tree with the press verdict as one all-of term over every condition', () => {
+    const checks = [met('At 5+ combo points'), met('Shadow Dance is up')];
+    const tree = checklistOf(checks)['tree']();
+    expect(tree.text).toBe('Right time');
+    expect(tree.group).toEqual({ any: false, checks });
   });
 
-  it('ends a level\'s connector at its last row, so the rows nested under it carry none of it', () => {
-    const nodes = nodesOf([met('At 5+ combo points'), oneOf(met('Stealth is up'), met('Vanish is up'))]);
-    expect(nodes.map(node => node.last)).toEqual([false, true]);
-    expect(nodes[1]?.children.map(node => node.continuing)).toEqual([[false], [false]]);
+  it('nests an either-or term\'s operands under its own row', () => {
+    const operands = [met('Stealth is up'), met('Vanish is up')];
+    const checklist = checklistOf([oneOf(...operands)]);
+    expect(checklist['operands'](oneOf(...operands))).toEqual(operands);
+  });
+
+  it('leaves a plain condition with no rows under it', () => {
+    const checklist = checklistOf([met('At 5+ combo points')]);
+    expect(checklist['operands'](met('At 5+ combo points'))).toEqual([]);
   });
 });

@@ -2,10 +2,10 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, effect,
   inject, signal, viewChild,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { TuiButton, TuiDataList, TuiLabel, TuiSlider, TuiTextfield } from '@taiga-ui/core';
+import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
+import { TuiCardLarge } from '@taiga-ui/layout';
 import { ReferenceSelector } from '../data/encounter/positioning.models';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import { LoadState, RenderableLoadError } from '../../shared/ui-load-state/load-state';
@@ -19,7 +19,10 @@ const MAX_FRAME_DT_S = 0.1;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-map-canvas',
-  imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, FormatDurationPipe, LoadState],
+  imports: [
+    FormsModule, TuiTextfield, TuiLabel, TuiSelect, TuiChevron, TuiDataList, TuiButton, TuiSlider, TuiCardLarge,
+    FormatDurationPipe, LoadState,
+  ],
   templateUrl: './map-canvas.html',
 })
 export class MapCanvas {
@@ -46,6 +49,9 @@ export class MapCanvas {
     return positions ? this.map.listReferenceEnemies(positions) : [];
   });
 
+  protected readonly referenceName = (value: 'boss' | number): string =>
+    value === 'boss' ? 'Boss' : this.refEnemies().find(enemy => enemy.gameId === value)?.name ?? '';
+
   protected readonly refValue = computed(() => {
     const selector = this.selector();
     return selector.kind === 'boss' ? 'boss' : selector.gameId;
@@ -55,6 +61,7 @@ export class MapCanvas {
   protected readonly postS = this.map.postS;
   protected readonly windowStart = computed(() => this.anchorTime() - this.preS());
   protected readonly windowEnd = computed(() => this.anchorTime() + this.postS());
+  protected readonly windowMid = computed(() => (this.windowStart() + this.windowEnd()) / 2);
 
   /** Scaling every stored row into a sample is the expensive step, so caching it here keeps playback cheap: each frame just interpolates the cached timelines. */
   private readonly parseTimelines = computed(() => this.map.parseTimelinesFor(this.positions(), this.selector()));

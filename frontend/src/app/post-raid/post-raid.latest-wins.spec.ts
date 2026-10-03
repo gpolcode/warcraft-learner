@@ -10,6 +10,7 @@ import { ReportSelectionService } from './report-selection-service';
 
 interface SelectionHandle {
   onFightChange(): Promise<void>;
+  setProgrammatically(control: FormControl<number | null>, value: number | null): void;
   reportCode: WritableSignal<string>;
   fights: WritableSignal<WclFight[]>;
   players: WritableSignal<WclPlayer[]>;
@@ -62,8 +63,9 @@ describe('PostRaid selection latest-wins', () => {
     return { api, vm };
   }
 
+  // Written as the page writes it, then resolved by hand: a bare setValue reads as a pick and starts a second resolve this spec could not await.
   function selectFight(vm: SelectionHandle, fightId: number): Promise<void> {
-    vm.fightControl.setValue(fightId);
+    vm.setProgrammatically(vm.fightControl, fightId);
     return vm.onFightChange();
   }
 

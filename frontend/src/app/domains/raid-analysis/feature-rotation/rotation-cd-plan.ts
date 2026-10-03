@@ -6,6 +6,8 @@ import { LoadResourceService } from '../../shared/ui-load-state/load-resource-se
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-rotation-cd-plan',
+  // No box of its own, so a plan with no rows leaves no empty flex item (and no extra gap) in the page column.
+  host: { class: 'contents' },
   imports: [PlanTable],
   templateUrl: './rotation-cd-plan.html',
 })

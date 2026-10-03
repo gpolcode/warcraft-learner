@@ -32,7 +32,7 @@ async function render(open: boolean): Promise<MountedDom> {
     MapPanel,
     {},
     [{ provide: MapFeatureService, useValue: stub(open) }],
-    { manualDeferBlocks: true },
+    { manualDeferBlocks: true, portals: true },
   );
   await dom.completeDeferBlocks();
   return dom;
@@ -42,13 +42,14 @@ describe('MapPanel', () => {
   it('says what the map replays under the heading', async () => {
     const dom = await render(true);
 
-    expect(dom.text()).toContain('Positioning');
-    expect(dom.text()).toContain(INTRO);
+    expect(dom.portal.text()).toContain('Positioning');
+    expect(dom.portal.text()).toContain(INTRO);
   });
 
   it('renders nothing while the map is closed', async () => {
     const dom = await render(false);
 
     expect(dom.text()).toBe('');
+    expect(dom.portal.text()).toBe('');
   });
 });

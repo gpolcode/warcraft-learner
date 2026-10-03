@@ -1,6 +1,9 @@
 <div class="text-label text-muted mb-1.5">Instances</div>
 
+<!-- The checked tile marks where the arrow keys are, so the row draws no focus ring of its own. -->
 <div
+  #listbox
+  class="outline-hidden [--tui-height-s:2.75rem]"
   role="listbox"
   tabindex="0"
   aria-label="Finding instances"
@@ -12,15 +15,17 @@
       @let barTone = occ.unjudged ? 'bg-muted' : (occ.ok ? 'bg-success' : 'bg-critical');
       @let active = activeIndex() === $index;
       <button
+        tuiButton
         type="button"
         role="option"
         tabindex="-1"
+        appearance="outline-grayscale"
+        [tuiAppearanceMode]="active ? 'checked' : null"
         [id]="optionId($index)"
-        [class]="'relative flex items-center justify-center cursor-pointer min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-bg border border-line text-caption tabular-nums whitespace-nowrap shrink-0 ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
         [attr.aria-selected]="active"
         [attr.aria-describedby]="active ? detailId : null"
-        (click)="select($index)">
-        {{ occ.atS | formatDuration }}
+        (click)="select($index); listbox.focus()">
+        <span [class]="'tabular-nums ' + tone">{{ occ.atS | formatDuration }}</span>
         <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
       </button>
     }
@@ -38,16 +43,10 @@
       }
     </span>
     @if (showMap()) {
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openMap.emit(occ.atS)">
-        <mat-icon>my_location</mat-icon>
-        Show map
-      </button>
+      <button tuiButton type="button" appearance="outline-grayscale" iconStart="my_location" (click)="openMap.emit(occ.atS)">Show map</button>
     }
     @if (showClip()) {
-      <button mat-stroked-button class="shrink-0 whitespace-nowrap" (click)="openClip.emit(occ.atS)">
-        <mat-icon>videocam</mat-icon>
-        Watch clip
-      </button>
+      <button tuiButton type="button" appearance="outline-grayscale" iconStart="videocam" (click)="openClip.emit(occ.atS)">Watch clip</button>
     }
   </div>
   @if (occ.checks.length) {

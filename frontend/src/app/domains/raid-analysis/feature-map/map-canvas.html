@@ -6,40 +6,43 @@
   </p>
 } @else {
   <div class="mb-2 flex flex-wrap items-center justify-end gap-2">
-    <mat-form-field appearance="outline" class="w-[200px]">
-      <mat-label>Reference</mat-label>
-      <mat-select [value]="refValue()" (selectionChange)="onRefChange($event.value)">
-        <mat-option value="boss">Boss</mat-option>
-        @for (enemy of refEnemies(); track enemy.gameId) {
-          @if (!enemy.isBoss) { <mat-option [value]="enemy.gameId">{{ enemy.name }}</mat-option> }
-        }
-      </mat-select>
-    </mat-form-field>
+    <label tuiLabel class="w-[200px]">
+      Reference
+      <tui-textfield tuiChevron [stringify]="referenceName">
+        <input tuiSelect [ngModel]="refValue()" (ngModelChange)="onRefChange($event)" />
+        <tui-data-list *tuiDropdown>
+          <button tuiOption type="button" value="boss">Boss</button>
+          @for (enemy of refEnemies(); track enemy.gameId) {
+            @if (!enemy.isBoss) { <button tuiOption type="button" [value]="enemy.gameId">{{ enemy.name }}</button> }
+          }
+        </tui-data-list>
+      </tui-textfield>
+    </label>
   </div>
 
-  <div class="relative rounded-lg border border-line bg-surface-alt">
-    <canvas #canvas class="block h-[420px] w-full"></canvas>
-    <div class="pointer-events-none absolute bottom-2 left-2 flex flex-col gap-0.5 text-caption">
-      @if (live()) { <span class="text-gold">◆ You</span> }
-      <span class="text-muted">● Top logs</span>
-      <span class="text-accent">◯ Top-log centre</span>
-      <span class="text-critical">▲ Reference (facing up)</span>
+  <div tuiCardLarge appearance="outline-grayscale">
+    <div class="relative">
+      <canvas #canvas class="block h-[420px] w-full"></canvas>
+      <div class="pointer-events-none absolute bottom-0 left-0 flex flex-col gap-0.5 text-caption">
+        @if (live()) { <span class="text-gold">◆ You</span> }
+        <span class="text-muted">● Top logs</span>
+        <span class="text-accent">◯ Top-log centre</span>
+        <span class="text-critical">▲ Reference (facing up)</span>
+      </div>
     </div>
   </div>
 
-  <p class="mt-1.5 text-caption text-muted">Every position is drawn relative to the reference, which sits at the centre facing up.</p>
+  <p class="mt-1.5 text-caption text-muted">Opened at {{ anchorTime() | formatDuration }}. Every position is drawn relative to the reference, which sits at the centre facing up.</p>
 
-  <div class="mt-2 flex items-center gap-2">
-    <button mat-icon-button [attr.aria-label]="playing() ? 'Pause' : 'Play'" (click)="togglePlay()">
-      <mat-icon>{{ playing() ? 'pause' : 'play_arrow' }}</mat-icon>
-    </button>
-    <div class="min-w-0 flex-1">
-      <input type="range" class="block w-full cursor-pointer accent-gold"
-        [min]="windowStart()" [max]="windowEnd()" step="0.25"
-        [value]="scrubT()" (input)="onScrub($any($event.target).valueAsNumber)" />
+  <div class="mt-2 flex items-start gap-2">
+    <button tuiIconButton type="button" appearance="flat-grayscale" [iconStart]="playing() ? 'pause' : 'play_arrow'" (click)="togglePlay()">{{ playing() ? 'Pause' : 'Play' }}</button>
+    <div class="min-w-0 flex-1 pt-2.5">
+      <input #scrubber tuiSlider type="range" aria-label="Replay position"
+        [min]="windowStart()" [max]="windowEnd()" step="0.25" [segments]="2"
+        [value]="scrubT()" (input)="onScrub(scrubber.value)" />
       <div class="mt-1 flex justify-between text-caption text-muted">
         <span>{{ windowStart() | formatDuration }}</span>
-        <span>Opened at {{ anchorTime() | formatDuration }}</span>
+        <span>{{ windowMid() | formatDuration }}</span>
         <span>{{ windowEnd() | formatDuration }}</span>
       </div>
     </div>

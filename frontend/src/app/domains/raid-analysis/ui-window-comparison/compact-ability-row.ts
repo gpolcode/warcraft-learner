@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TuiBadge } from '@taiga-ui/kit';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { FormatDamagePipe } from '../../shared/ui-format/format-damage-pipe';
 import type { RangeRow } from '../data/analysis/window-comparison.models';
@@ -8,7 +9,7 @@ export type RowStatus = 'success' | 'warning' | 'critical' | 'muted';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-compact-ability-row',
-  imports: [GameIcon, FormatDamagePipe],
+  imports: [TuiBadge, GameIcon, FormatDamagePipe],
   templateUrl: './compact-ability-row.html',
 })
 export class CompactAbilityRow {

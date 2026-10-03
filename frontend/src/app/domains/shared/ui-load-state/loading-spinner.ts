@@ -1,17 +1,12 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TuiLoader } from '@taiga-ui/core';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-loading-spinner',
-  imports: [MatProgressSpinnerModule],
-  template: `    <div class="flex flex-col items-center gap-3 p-12 text-muted">
-      <mat-spinner [diameter]="36"></mat-spinner>
-      @if (message()) {
-        <span class="text-name">{{ message() }}</span>
-      }
-    </div>
-`,
+  imports: [TuiLoader],
+  host: { class: 'block p-12' },
+  template: `<tui-loader size="l" [textContent]="message()" />`,
 })
 export class LoadingSpinner {
   readonly message = input<string>('');

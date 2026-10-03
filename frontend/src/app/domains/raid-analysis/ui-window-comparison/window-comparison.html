@@ -1,172 +1,171 @@
-<div class="bg-surface border border-line rounded-[10px] overflow-hidden">
+<section tuiCardLarge appearance="outline-grayscale">
+  <div>
 
-  @if (heading()) {
-    <div class="px-4 pt-3 pb-2">
-      <h2 class="text-title">{{ heading() }}</h2>
-      @if (subtitle()) {
-        <div class="text-body text-muted mt-0.5">{{ subtitle() }}</div>
-      }
-    </div>
-  }
-
-  <!-- Chip size is decoupled from fight time, so windows never overlap however tightly they fire. -->
-  <div class="px-4" [class.pt-3]="!heading()" [class.pb-3]="!activeWindow()">
-    <div
-      class="pt-2 pb-1"
-      role="listbox"
-      tabindex="0"
-      [attr.aria-label]="heading()"
-      [attr.aria-activedescendant]="activeOptionId()"
-      (keydown)="onKeydown($event)">
-      <div class="flex flex-wrap items-start gap-1.5 px-0.5">
-        @for (cell of timelineCells(); track cell.kind === 'window' ? 'w' + cell.index : 'g' + cell.id) {
-          @if (cell.kind === 'window') {
-            @let w = cell.window;
-            @let active = activeIndex() === cell.index;
-            @let iconTone =
-              w.status === 'good' ? 'text-success' :
-              w.status === 'warn' ? 'text-warning' :
-              w.status === 'bad' ? 'text-critical' :
-              w.status === 'info' ? 'text-accent' : 'text-muted';
-            @let barTone =
-              w.status === 'good' ? 'bg-success' :
-              w.status === 'warn' ? 'bg-warning' :
-              w.status === 'bad' ? 'bg-critical' :
-              w.status === 'info' ? 'bg-accent' : 'bg-muted';
-            <div class="flex flex-col items-center gap-1.5 shrink-0">
-              <button
-                type="button"
-                role="option"
-                tabindex="-1"
-                [id]="optionId(cell.index)"
-                [class]="'relative flex items-center justify-center cursor-pointer w-10 h-10 rounded-lg overflow-hidden bg-bg border border-line ' + iconTone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
-                [attr.aria-selected]="active"
-                [attr.aria-label]="(w.timeStartS | formatDuration)"
-                (click)="select(cell.index)">
-                <mat-icon class="icon-seg">{{ w.statusIcon }}</mat-icon>
-                <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
-              </button>
-              <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted')">
-                {{ w.timeStartS | formatDuration }}
-              </span>
-            </div>
-          } @else {
-            <!-- The hidden label keeps this box top-aligned with the chips' timestamp row. -->
-            <div class="flex flex-col items-center gap-1.5 shrink-0" aria-hidden="true">
-              <div class="w-5 h-10 rounded-md border border-dashed border-line opacity-40"></div>
-              <span class="text-caption invisible">0</span>
-            </div>
+    @if (heading()) {
+      <header tuiHeader="body-l" class="pb-2">
+        <hgroup tuiTitle>
+          <h2>{{ heading() }}</h2>
+          @if (subtitle()) {
+            <p tuiSubtitle>{{ subtitle() }}</p>
           }
-        }
+        </hgroup>
+      </header>
+    }
+
+    <!-- Chip size is decoupled from fight time, so windows never overlap however tightly they fire. -->
+    <div>
+      <!-- The checked tile marks where the arrow keys are, so the row draws no focus ring of its own. -->
+      <!-- The tiles are the strip's only targets, so they take the 44px size on every pointer; the pacing slot reads the same height. -->
+      <div
+        #listbox
+        class="pt-2 pb-1 outline-hidden [--tui-height-s:2.75rem]"
+        role="listbox"
+        tabindex="0"
+        [attr.aria-label]="heading()"
+        [attr.aria-activedescendant]="activeOptionId()"
+        (keydown)="onKeydown($event)">
+        <div class="flex flex-wrap items-start gap-1.5 px-0.5">
+          @for (cell of timelineCells(); track cell.kind === 'window' ? 'w' + cell.index : 'g' + cell.id) {
+            @if (cell.kind === 'window') {
+              @let w = cell.window;
+              @let active = activeIndex() === cell.index;
+              @let iconTone =
+                w.status === 'good' ? 'text-success' :
+                w.status === 'warn' ? 'text-warning' :
+                w.status === 'bad' ? 'text-critical' :
+                w.status === 'info' ? 'text-accent' : 'text-muted';
+              @let barTone =
+                w.status === 'good' ? 'bg-success' :
+                w.status === 'warn' ? 'bg-warning' :
+                w.status === 'bad' ? 'bg-critical' :
+                w.status === 'info' ? 'bg-accent' : 'bg-muted';
+              <div class="flex flex-col items-center gap-1.5 shrink-0">
+                <button
+                  tuiIconButton
+                  type="button"
+                  role="option"
+                  tabindex="-1"
+                  appearance="outline-grayscale"
+                  [tuiAppearanceMode]="active ? 'checked' : null"
+                  [id]="optionId(cell.index)"
+                  [attr.aria-selected]="active"
+                  [attr.aria-label]="(w.timeStartS | formatDuration)"
+                  (click)="select(cell.index); listbox.focus()">
+                  <tui-icon [class]="iconTone" [icon]="w.statusIcon" />
+                  <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
+                </button>
+                <span [class]="'tabular-nums text-caption ' + (active ? 'text-accent' : 'text-muted')">
+                  {{ w.timeStartS | formatDuration }}
+                </span>
+              </div>
+            } @else {
+              <!-- The hidden label keeps this box top-aligned with the chips' timestamp row. -->
+              <div class="flex flex-col items-center gap-1.5 shrink-0" aria-hidden="true">
+                <div class="w-5 h-(--tui-height-s) rounded-md border border-dashed border-line opacity-40"></div>
+                <span class="text-caption invisible">0</span>
+              </div>
+            }
+          }
+        </div>
       </div>
     </div>
-  </div>
 
-  @if (activeWindow(); as w) {
-    <div class="px-4 py-2.5 bg-surface border-t border-line">
-      <div class="flex flex-wrap items-center gap-4 gap-y-2 md:gap-x-5.5">
-        <div class="flex flex-col shrink-0">
-          <span class="text-label text-muted">Window</span>
-          <span class="tabular-nums text-value whitespace-nowrap">
-            {{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}
-          </span>
-        </div>
-        <div class="flex flex-col shrink-0">
-          <span class="text-label text-muted">{{ metricLabel() }}</span>
-          @if (!activeIsMuted()) {
-            <span class="tabular-nums text-value">{{ w.overview.playerPct | formatDamage }}</span>
-          } @else if (activeIsBenchOnly()) {
-            <span class="tabular-nums text-value">{{ w.overview.topAvg | formatDamage }}</span>
-          } @else {
-            <span class="text-value text-muted">Not reached</span>
-          }
-        </div>
-        @if (!activeIsMuted() && overviewDelta() !== null) {
+    @if (activeWindow(); as w) {
+      <div class="py-2.5 border-t border-line">
+        <div class="flex flex-wrap items-center gap-4 gap-y-2 md:gap-x-5.5">
           <div class="flex flex-col shrink-0">
-            <span class="text-label text-muted">Vs top raiders average</span>
-            <span class="tabular-nums text-value"
-              [class.text-muted]="overviewDeltaStatus() === 'muted'"
-              [class.text-success]="overviewDeltaStatus() === 'better'"
-              [class.text-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDelta() | signedPercent }}</span>
+            <span class="text-label text-muted">Window</span>
+            <span class="tabular-nums text-value whitespace-nowrap">
+              {{ w.timeStartS | formatDuration }} - {{ w.timeEndS | formatDuration }}
+            </span>
           </div>
-        }
-        <div class="ml-auto flex items-center gap-1.75 shrink-0">
-          @if (showMap()) {
-            <button mat-stroked-button class="whitespace-nowrap" (click)="openMap.emit(activeIndex())">
-              <mat-icon>my_location</mat-icon>
-              Show map
-            </button>
-          }
-          @if (showClip()) {
-            <button mat-stroked-button class="whitespace-nowrap" (click)="openClip.emit(activeIndex())">
-              <mat-icon>videocam</mat-icon>
-              Watch clip
-            </button>
-          }
-        </div>
-      </div>
-      @if (w.spells.length || w.labels.length) {
-        <div class="mt-2.5">
-          <span class="block text-label text-muted mb-1.5">{{ chipsLabel() }}</span>
-          <div class="flex flex-wrap items-center gap-2">
-            @for (spell of w.spells; track spell.id) {
-              <span class="chip-onplan">
-                <wl-game-icon [id]="spell.id" [icon]="spell.icon" [name]="spell.name"></wl-game-icon>
-              </span>
+          <div class="flex flex-col shrink-0">
+            <span class="text-label text-muted">{{ metricLabel() }}</span>
+            @if (!activeIsMuted()) {
+              <span class="tabular-nums text-value">{{ w.overview.playerPct | formatDamage }}</span>
+            } @else if (activeIsBenchOnly()) {
+              <span class="tabular-nums text-value">{{ w.overview.topAvg | formatDamage }}</span>
+            } @else {
+              <span class="text-value text-muted">Not reached</span>
             }
-            @for (lbl of w.labels; track lbl) {
-              <span class="chip-onplan">
-                <span>{{ lbl }}</span>
-              </span>
+          </div>
+          @if (!activeIsMuted() && overviewDelta() !== null) {
+            <div class="flex flex-col shrink-0">
+              <span class="text-label text-muted">Vs top raiders average</span>
+              <span class="tabular-nums text-value"
+                [class.text-muted]="overviewDeltaStatus() === 'muted'"
+                [class.text-success]="overviewDeltaStatus() === 'better'"
+                [class.text-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDelta() | signedPercent }}</span>
+            </div>
+          }
+          <div class="ml-auto flex items-center gap-1.75 shrink-0">
+            @if (showMap()) {
+              <button tuiButton type="button" appearance="outline-grayscale" iconStart="my_location" (click)="openMap.emit(activeIndex())">Show map</button>
+            }
+            @if (showClip()) {
+              <button tuiButton type="button" appearance="outline-grayscale" iconStart="videocam" (click)="openClip.emit(activeIndex())">Watch clip</button>
             }
           </div>
         </div>
-      }
-      @if (w.note) {
-        <div class="mt-2.5">
-          <span class="block text-label text-muted mb-1.5">What you did</span>
-          <span class="chip-onplan">
-            <span>{{ w.note }}</span>
-          </span>
-        </div>
-      }
-    </div>
-
-    @if (!activeIsBenchOnly()) {
-      <div class="px-4 pb-2">
-        <span class="block text-label text-muted mb-1.5">{{ rangeLabel() }}</span>
-        <wl-range-bar class="h-5"
-          [you]="overviewPlayerWidthPct()" [rangeLeft]="overviewRangeLeftPct()" [rangeWidth]="overviewRangeWidthPct()" [avg]="overviewAvgLeftPct()"
-          [status]="w.status">
-        </wl-range-bar>
-        <wl-range-legend class="mt-1.5" [status]="w.status"></wl-range-legend>
-      </div>
-    }
-
-    @if (w.detailRows.length) {
-      <!-- Border is desktop-only so it does not double up with the mobile per-row borders. -->
-      <div class="md:border-t border-line pt-2 pb-2">
-        <div class="hidden md:grid grid-cols-(--cols-ability) gap-x-(--gap-card) items-center px-4 pb-1">
-          <span class="col-start-1 text-label text-muted">Ability</span>
-          @if (showCasts() && !activeIsMuted()) {
-            <span class="col-start-2 text-right text-label text-muted">Casts</span>
-          }
-          <span class="col-start-3 text-left text-label text-muted">Top raiders average</span>
-          @if (!activeIsMuted()) {
-            <span class="col-start-4 text-right text-label text-muted">Gap</span>
-          }
-        </div>
-        @for (row of activeDetailRows(); track row.spellId) {
-          <wl-compact-ability-row
-            [row]="row"
-            [higherIsBetter]="higherIsBetter()"
-            [showCasts]="showCasts()"
-            [hidePlayer]="activeIsMuted()">
-          </wl-compact-ability-row>
+        @if (w.spells.length || w.labels.length) {
+          <div class="mt-2.5">
+            <span class="block text-label text-muted mb-1.5">{{ chipsLabel() }}</span>
+            <div class="flex flex-wrap items-center gap-2">
+              @for (spell of w.spells; track spell.id) {
+                <span tuiChip appearance="neutral" size="xs">
+                  <wl-game-icon [id]="spell.id" [icon]="spell.icon" [name]="spell.name"></wl-game-icon>
+                </span>
+              }
+              @for (lbl of w.labels; track lbl) {
+                <span tuiChip appearance="neutral" size="xs">{{ lbl }}</span>
+              }
+            </div>
+          </div>
+        }
+        @if (w.note) {
+          <div class="mt-2.5">
+            <span class="block text-label text-muted mb-1.5">What you did</span>
+            <span tuiChip appearance="neutral" size="xs">{{ w.note }}</span>
+          </div>
         }
       </div>
+
+      @if (!activeIsBenchOnly()) {
+        <div class="pb-2">
+          <span class="block text-label text-muted mb-1.5">{{ rangeLabel() }}</span>
+          <wl-range-bar class="h-5"
+            [you]="overviewPlayerWidthPct()" [rangeLeft]="overviewRangeLeftPct()" [rangeWidth]="overviewRangeWidthPct()" [avg]="overviewAvgLeftPct()"
+            [status]="w.status">
+          </wl-range-bar>
+          <wl-range-legend class="mt-1.5" [status]="w.status"></wl-range-legend>
+        </div>
+      }
+
+      @if (w.detailRows.length) {
+        <!-- Border is desktop-only so it does not double up with the mobile per-row borders. -->
+        <div class="md:border-t border-line pt-2 pb-2">
+          <div class="hidden md:grid grid-cols-(--cols-ability) gap-x-(--gap-card) items-center pb-1">
+            <span class="col-start-1 text-label text-muted">Ability</span>
+            @if (showCasts() && !activeIsMuted()) {
+              <span class="col-start-2 text-right text-label text-muted">Casts</span>
+            }
+            <span class="col-start-3 text-left text-label text-muted">Top raiders average</span>
+            @if (!activeIsMuted()) {
+              <span class="col-start-4 text-right text-label text-muted">Gap</span>
+            }
+          </div>
+          @for (row of activeDetailRows(); track row.spellId) {
+            <wl-compact-ability-row
+              [row]="row"
+              [higherIsBetter]="higherIsBetter()"
+              [showCasts]="showCasts()"
+              [hidePlayer]="activeIsMuted()">
+            </wl-compact-ability-row>
+          }
+        </div>
+      }
+
     }
 
-  }
-
-</div>
+  </div>
+</section>

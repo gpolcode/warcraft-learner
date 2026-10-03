@@ -1,12 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { signal } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { EMPTY } from 'rxjs';
+import { TuiToastService } from '@taiga-ui/kit';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { whenStable } from '../../../../testing/when-stable';
 import { ClipHandle, DownloadOutcome, LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
 import { ClipPlayer } from './clip-player';
 
-const FULL_PULL_BUTTON = 'button[mat-stroked-button]';
+const FULL_PULL_BUTTON = 'button[tuiButton]';
 const NO_FOOTAGE_MESSAGE = 'No footage for this pull.';
 const DOWNLOAD_FAILED_MESSAGE = 'Download failed. Retry it.';
 const CLIP_URL = 'blob:clip';
@@ -31,7 +32,7 @@ function mount(outcome: DownloadOutcome): Mounted {
 
   const dom = mountDom(ClipPlayer, {}, [
     { provide: LiveCaptureFeatureService, useValue: clip },
-    { provide: MatSnackBar, useValue: { open: (message: string) => { messages.push(message); } } },
+    { provide: TuiToastService, useValue: { open: (message: string) => { messages.push(message); return EMPTY; } } },
   ]);
   return { dom, messages };
 }
