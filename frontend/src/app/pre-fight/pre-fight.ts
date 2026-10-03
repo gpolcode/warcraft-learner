@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, PendingTasks, computed, eff
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HlmCardImports } from '@spartan-ng/helm/card';
-import { HlmLabelImports } from '@spartan-ng/helm/label';
+import { HlmFieldImports } from '@spartan-ng/helm/field';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { SelectionStore } from '../domains/raid-analysis/data/selection/selection-store';
 import { SpecEntry, EncounterEntry } from '../domains/raid-analysis/data/encounter/encounter.models';
@@ -40,7 +40,7 @@ export const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pre-fight',
   imports: [
-    ReactiveFormsModule, HlmCardImports, HlmLabelImports, HlmSelectImports,
+    ReactiveFormsModule, HlmCardImports, HlmFieldImports, HlmSelectImports,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
     RotationCdPlan, DefensivePlan, BurstWindows,

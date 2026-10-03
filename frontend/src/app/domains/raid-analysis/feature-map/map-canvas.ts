@@ -6,6 +6,7 @@ import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { NgIcon } from '@ng-icons/core';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
+import { HlmSlider } from '@spartan-ng/helm/slider';
 import { ReferenceSelector } from '../data/encounter/positioning.models';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import { LoadState, RenderableLoadError } from '../../shared/ui-load-state/load-state';
@@ -19,7 +20,7 @@ const MAX_FRAME_DT_S = 0.1;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-map-canvas',
-  imports: [HlmButtonImports, NgIcon, HlmLabelImports, HlmSelectImports, FormatDurationPipe, LoadState],
+  imports: [HlmButtonImports, NgIcon, HlmLabelImports, HlmSelectImports, HlmSlider, FormatDurationPipe, LoadState],
   templateUrl: './map-canvas.html',
 })
 export class MapCanvas {
@@ -94,7 +95,11 @@ export class MapCanvas {
     this.selector.set(typeof value === 'number' ? { kind: 'enemy', gameId: value } : { kind: 'boss' });
   }
 
-  protected onScrub(value: number): void { this.pause(); this.scrubT.set(value); }
+  protected onScrub([value]: number[]): void {
+    if (value === undefined) return;
+    this.pause();
+    this.scrubT.set(value);
+  }
 
   protected togglePlay(): void {
     if (this.playing()) this.pause();
@@ -183,10 +188,10 @@ function readPalette(canvas: HTMLCanvasElement): Palette {
   const token = (name: string): string => css.getPropertyValue(name).trim();
   return {
     gold: token('--color-gold'),
-    border: token('--color-line'),
-    muted: token('--color-muted'),
+    border: token('--color-border'),
+    muted: token('--color-muted-foreground'),
     enemy: token('--color-critical'),
-    ranked: token('--color-accent'),
+    ranked: token('--color-primary'),
     outline: token('--map-dot-outline'),
   };
 }

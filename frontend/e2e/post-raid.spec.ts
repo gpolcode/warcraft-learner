@@ -91,10 +91,10 @@ test('pull overview reports the DPS, the death, and the kill', async () => {
   await shows(pullOverview, DAMAGE);
   await shows(pullOverview, /Death \d+/);
   const deathRow = pullOverview.locator('div.grid', { hasText: /Death \d+/ }).first();
-  await expect(deathRow.locator('span.text-accent')).toHaveText(CLOCK);
+  await expect(deathRow.locator('span.text-primary')).toHaveText(CLOCK);
   const outcomeRow = pullOverview.locator('div.grid', { hasText: 'Boss defeated' }).first();
   await expect(outcomeRow).toContainText('Kill');
-  await expect(outcomeRow.locator('span.text-accent')).toHaveText(CLOCK);
+  await expect(outcomeRow.locator('span.text-primary')).toHaveText(CLOCK);
 });
 
 test('rotation rules bar each button against the top logs and open a row into the moments behind its bar', async () => {

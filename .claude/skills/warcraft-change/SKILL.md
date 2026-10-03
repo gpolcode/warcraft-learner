@@ -47,7 +47,8 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 
 ## UI
 
-- Templates style text through one type role plus, where the color differs from the body default, one color token from `frontend/src/styles.scss`; the `theme-utilities-only` lint message lists them. `text-accent` doubles as the informational severity; there is no info token.
+- Templates style text through one type role plus, where the color differs from the body default, one color token from `frontend/src/styles.scss`; the `theme-utilities-only` lint message lists them. `text-primary` doubles as the informational severity; there is no info token.
+- Compose UI from spartan helm components before hand-rolling markup: a card is `hlmCard` with its header, title and description, a status line `hlmMarker`, a tag `hlmBadge`, a drill-down `hlmCollapsible`. Put a type role on a child, never on a helm host: tailwind-merge reads `text-title` as a color and drops the host's own color class.
 - `computed()` exposes semantic state only; the template maps that state to a class.
 - All formatting goes through Angular pipes (`shared/ui-format/` and the `raid-analysis/ui-*` pipes).
 

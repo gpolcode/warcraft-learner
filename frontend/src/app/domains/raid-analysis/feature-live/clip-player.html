@@ -1,12 +1,12 @@
 @if (clip.playbackFailed()) {
-  <div class="text-body text-muted">This clip could not be played.</div>
+  <div class="text-body text-muted-foreground">This clip could not be played.</div>
 } @else if (clip.preparing()) {
   <wl-loading-spinner />
 } @else if (clip.handle()) {
   <!-- No [src] binding: it would create an object URL nothing revokes. -->
   <video
     #player
-    class="w-full rounded-[10px] border border-line bg-bg"
+    class="w-full rounded-[10px] border bg-background"
     controls
     (loadedmetadata)="onLoaded(player)"
     (timeupdate)="onTick(player)"
@@ -23,5 +23,5 @@
     </button>
   </div>
 } @else {
-  <div class="text-body text-muted">No footage for this window.</div>
+  <div class="text-body text-muted-foreground">No footage for this window.</div>
 }

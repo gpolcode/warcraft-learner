@@ -1,37 +1,36 @@
-<div class="mt-2 flex flex-col gap-3">
-  <div class="flex items-center gap-3">
-    <label hlmLabel class="flex items-center gap-2">
-      <hlm-switch [checked]="capture.liveEnabled()" (checkedChange)="onLiveToggle($event)" />
-      Follow latest pull
-    </label>
-    @if (capture.liveEnabled()) {
-      @if (capture.statusText()) {
-        <span class="ml-auto flex items-center gap-2 text-body text-muted">
-          <span class="h-[9px] w-[9px] rounded-full bg-accent"></span>{{ capture.statusText() }}
-        </span>
+<div class="mt-4 flex flex-col gap-4">
+  <div hlmField orientation="horizontal">
+    <hlm-switch inputId="live-follow" [checked]="capture.liveEnabled()" (checkedChange)="onLiveToggle($event)" />
+    <div hlmFieldContent>
+      <label hlmFieldLabel for="live-follow">Follow latest pull</label>
+      @if (!capture.liveEnabled()) {
+        <p hlmFieldDescription>Re-analyzes as new pulls upload during a live log.</p>
+      } @else if (capture.statusText()) {
+        <div hlmMarker role="status">
+          <span hlmMarkerIcon><span class="block size-2 rounded-full bg-primary"></span></span>
+          <span hlmMarkerContent>{{ capture.statusText() }}</span>
+        </div>
       }
-    } @else {
-      <span class="ml-auto text-body text-muted">Re-analyzes as new pulls upload during a live log.</span>
-    }
+    </div>
   </div>
 
-  <div class="flex items-center gap-3">
-    <label hlmLabel class="flex items-center gap-2">
-      <hlm-switch [checked]="capture.recordToggleOn()" [disabled]="capture.isStarting()" (checkedChange)="onRecordToggle($event)" />
-      Record game client
-    </label>
-    <span class="ml-auto flex items-center gap-2 text-body text-muted">
-      @if (capture.isStarting()) {
-        <hlm-spinner />
-        <span>Pick a window...</span>
-      } @else if (capture.isCapturing()) {
-        <span class="h-[9px] w-[9px] rounded-full bg-critical"></span>
-        <span>Recording "{{ capture.sourceLabel() }}" in the background</span>
-      } @else if (capture.captureError()) {
-        <span class="text-critical">{{ capture.captureError() }}</span>
-      } @else {
-        <span>Stays in this browser session, nothing is uploaded</span>
-      }
-    </span>
+  <div hlmField orientation="horizontal">
+    <hlm-switch inputId="live-record" [checked]="capture.recordToggleOn()" [disabled]="capture.isStarting()" (checkedChange)="onRecordToggle($event)" />
+    <div hlmFieldContent>
+      <label hlmFieldLabel for="live-record">Record game client</label>
+      <div hlmMarker role="status">
+        @if (capture.isStarting()) {
+          <span hlmMarkerIcon><hlm-spinner /></span>
+          <span hlmMarkerContent class="shimmer">Pick a window...</span>
+        } @else if (capture.isCapturing()) {
+          <span hlmMarkerIcon><span class="block size-2 rounded-full bg-critical"></span></span>
+          <span hlmMarkerContent>Recording "{{ capture.sourceLabel() }}" in the background</span>
+        } @else if (capture.captureError()) {
+          <span hlmMarkerContent class="text-critical">{{ capture.captureError() }}</span>
+        } @else {
+          <span hlmMarkerContent>Stays in this browser session, nothing is uploaded</span>
+        }
+      </div>
+    </div>
   </div>
 </div>

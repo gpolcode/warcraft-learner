@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { signal } from '@angular/core';
-import { mountDom, MountedDom } from '../../../../testing/component-harness';
+import { mountDom, MountedDom, overlayOf } from '../../../../testing/component-harness';
 import { mapFeatureStub } from '../../../../testing/page-stubs';
 import { MapFeatureService } from '../data/map/map-feature-service';
 import { MapPanel } from './map-panel';
@@ -42,8 +42,8 @@ describe('MapPanel', () => {
   it('says what the map replays under the heading', async () => {
     const dom = await render(true);
 
-    expect(dom.text()).toContain('Positioning');
-    expect(dom.text()).toContain(INTRO);
+    expect(overlayOf(dom).text()).toContain('Positioning');
+    expect(overlayOf(dom).text()).toContain(INTRO);
   });
 
   it('renders nothing while the map is closed', async () => {

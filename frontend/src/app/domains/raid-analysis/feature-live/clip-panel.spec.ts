@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { mountDom } from '../../../../testing/component-harness';
+import { mountDom, overlayOf } from '../../../../testing/component-harness';
 import { LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
 import { ClipPanel } from './clip-panel';
 
@@ -12,8 +12,8 @@ describe('ClipPanel', () => {
     TestBed.inject(LiveCaptureFeatureService).open.set(true);
     await dom.completeDeferBlocks();
 
-    expect(dom.text()).toContain('Replay');
-    expect(dom.text()).toContain(INTRO);
+    expect(overlayOf(dom).text()).toContain('Replay');
+    expect(overlayOf(dom).text()).toContain(INTRO);
   });
 
   it('renders nothing while no clip is open', async () => {

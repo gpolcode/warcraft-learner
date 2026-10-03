@@ -4,19 +4,7 @@
 // Sass cannot parse Tailwind's `--name-*` wildcard, so the wildcard names are interpolated.
 @theme static {
   --#{'color-*'}: initial;
-  --color-bg: #101216;
-  --color-surface: #16181c;
-  --color-surface-alt: #20242b;
-  --color-line: #282e35;
-  --color-text: #e6edf3;
-  --color-muted: #8b949e;
-  --color-accent: #58a6ff;
-  --color-critical: #f85149;
-  --color-warning: #d29922;
-  --color-success: #3fb950;
-  --color-gold: #e5cc80; /* Warcraft Logs 100-parse ("Astounding") gold - brand color */
-
-  /* The spartan helm tokens, re-declared after the reset above wipes the preset's; helm code reads bg-subtle and bg-highlight where upstream says bg-muted and bg-accent, which name app tokens here. */
+  /* Spartan's color names, which helm and the app share; the reset above drops the preset's mapping, so it is restated. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -27,9 +15,9 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-subtle: var(--color-surface-alt);
+  --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-highlight: var(--color-surface-alt);
+  --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-border: var(--border);
@@ -43,6 +31,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* Severity and brand colors spartan has no name for. */
+  --color-critical: #f85149;
+  --color-warning: #d29922;
+  --color-success: #3fb950;
+  --color-gold: #e5cc80; /* Warcraft Logs 100-parse ("Astounding") gold - brand color */
 
   --font-sans: 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: initial;
@@ -82,9 +75,21 @@
   --text-hero: 32px;
   --text-hero--line-height: 1;
   --text-hero--font-weight: 600;
+  /* Helm's own sizes, which app templates never name (theme-utilities-only); sm matches the body role. */
+  --text-xs: 12px;
+  --text-xs--line-height: 1.33;
+  --text-sm: 13px;
+  --text-sm--line-height: 1.45;
+  --text-base: 16px;
+  --text-base--line-height: 1.5;
+  --text-lg: 18px;
+  --text-lg--line-height: 1.55;
 
   --#{'leading-*'}: initial;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
   --#{'tracking-*'}: initial;
+  --tracking-tight: -0.025em;
 }
 
 @utility text-label {
@@ -95,63 +100,48 @@
   letter-spacing: 0.08em;
 }
 
-/* "On plan" markers: deliberately understated (muted surface tag, no green fill or check glyph) so a clean result reads calm, not celebratory. */
-@utility chip-onplan {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--color-line);
-  background-color: var(--color-surface-alt);
-  color: var(--color-muted);
-  font-size: var(--text-body);
-  line-height: var(--text-body--line-height);
-}
-
 html {
   height: 100%;
   color-scheme: dark;
 
-  /* Spartan helm's raw variables, on the app palette. */
-  --background: var(--color-bg);
-  --foreground: var(--color-text);
-  --card: var(--color-surface);
-  --card-foreground: var(--color-text);
-  --popover: var(--color-surface-alt);
-  --popover-foreground: var(--color-text);
-  --primary: var(--color-accent);
-  --primary-foreground: var(--color-bg);
-  --secondary: var(--color-surface-alt);
-  --secondary-foreground: var(--color-text);
-  --muted-foreground: var(--color-muted);
-  --accent-foreground: var(--color-text);
+  --background: #101216;
+  --foreground: #e6edf3;
+  --card: #16181c;
+  --card-foreground: var(--foreground);
+  --popover: #20242b;
+  --popover-foreground: var(--foreground);
+  --primary: #58a6ff;
+  --primary-foreground: var(--background);
+  --secondary: #20242b;
+  --secondary-foreground: var(--foreground);
+  --muted: #20242b;
+  --muted-foreground: #8b949e;
+  --accent: #20242b;
+  --accent-foreground: var(--foreground);
   --destructive: var(--color-critical);
-  --border: var(--color-line);
-  --input: var(--color-line);
-  --ring: var(--color-accent);
+  --border: #282e35;
+  --input: var(--border);
+  --ring: var(--primary);
   --radius: 0.625rem;
-  --sidebar: var(--color-surface);
-  --sidebar-foreground: var(--color-text);
-  --sidebar-primary: var(--color-accent);
-  --sidebar-primary-foreground: var(--color-bg);
-  --sidebar-accent: var(--color-surface-alt);
-  --sidebar-accent-foreground: var(--color-text);
-  --sidebar-border: var(--color-line);
-  --sidebar-ring: var(--color-accent);
+  --sidebar: var(--card);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--background);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 
   /* Outline behind the map player marker, visible over any trail color; read at draw time via getComputedStyle (map-canvas.ts). */
   --map-dot-outline: rgba(0, 0, 0, 0.55);
 }
 
 @layer base {
-  /* Helm borders name no color of their own, and Tailwind's default is currentColor. */
-  *, ::before, ::after { border-color: var(--color-line); }
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; }
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
   font-family: var(--font-sans);
   font-size: var(--text-body);
   line-height: var(--text-body--line-height);
@@ -160,8 +150,8 @@ body {
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--color-bg); }
-::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--color-background); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
 
 /* Icon sizes: ng-icon draws its svg at 1em, so a size is a font-size on the host. */
 ng-icon.icon-16 { font-size: 16px; }

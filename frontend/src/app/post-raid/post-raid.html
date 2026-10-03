@@ -1,84 +1,96 @@
 <div class="mx-auto max-w-[860px] px-3 md:px-4 pt-4 pb-12">
-    <section hlmCard class="mb-5 p-4">
-      <p class="mb-3.5 text-body text-muted">Paste a Warcraft Logs report to see how your Mythic pulls compare with the top logs for your spec.</p>
-
-      <div class="flex flex-col gap-1.5">
-        <label hlmLabel for="post-report">Warcraft Logs report URL or code</label>
-        <input hlmInput id="post-report" #reportInput [formControl]="reportControl" placeholder="https://www.warcraftlogs.com/reports/AbCdEfGh…"
-               (keydown.enter)="loadReport()" (paste)="onPaste($event, reportInput)" />
-        @if (reportControl.invalid && reportControl.touched) {
-          <p class="text-caption text-critical">Paste a Warcraft Logs report URL or a 16-character report code.</p>
-        }
+    <section hlmCard size="sm" class="mb-5">
+      <div hlmCardHeader>
+        <p hlmCardDescription>Paste a Warcraft Logs report to see how your Mythic pulls compare with the top logs for your spec.</p>
       </div>
 
-      <wl-live-controls></wl-live-controls>
-
-      @if (fights().length) {
-        <div class="mt-4 border-t border-line pt-4">
-          <div class="flex flex-wrap gap-3.5">
-            <!-- Disabled via the form control while live sync drives the selection, so keyboard changes are blocked too. -->
-            <div class="flex flex-[1_1_200px] flex-col gap-1.5">
-              <label hlmLabel for="post-fight">Fight</label>
-              <hlm-select [formControl]="fightControl" (valueChange)="picked(fightControl, $event) && onFightChange()">
-                <hlm-select-trigger buttonId="post-fight" class="w-full">
-                  @if (selectedFight(); as sf) {
-                    <span class="flex min-w-0 items-center gap-2">
-                      <wl-art-icon [src]="sf.encounterID | bossIcon" [alt]="sf.name"></wl-art-icon>
-                      <span class="truncate">{{ sf.name }} - {{ sf.kill ? 'Kill' : 'Wipe #' + sf.attempt }} - {{ sf.duration_s | formatDuration }}</span>
-                    </span>
-                  }
-                </hlm-select-trigger>
-                <hlm-select-content *hlmSelectPortal>
-                  @for (f of fights(); track f.id) {
-                    <hlm-select-item [value]="f.id">
-                      <span class="flex items-center gap-2">
-                        <wl-art-icon [src]="f.encounterID | bossIcon" [alt]="f.name"></wl-art-icon>
-                        <span class="truncate">{{ f.name }} - {{ f.kill ? 'Kill' : 'Wipe #' + f.attempt }} - {{ f.duration_s | formatDuration }}</span>
-                      </span>
-                    </hlm-select-item>
-                  }
-                </hlm-select-content>
-              </hlm-select>
+      <div hlmCardContent>
+        <div hlmField>
+          <label hlmFieldLabel for="post-report">Warcraft Logs report URL or code</label>
+          <div hlmInputGroup>
+            <input hlmInputGroupInput id="post-report" #reportInput [formControl]="reportControl" placeholder="https://www.warcraftlogs.com/reports/AbCdEfGh…"
+                   (keydown.enter)="loadReport()" (paste)="onPaste($event, reportInput)" />
+            <div hlmInputGroupAddon>
+              <ng-icon name="link" />
             </div>
-
-            <div class="flex flex-[1_1_200px] flex-col gap-1.5">
-              <label hlmLabel for="post-player">Player</label>
-              <hlm-select [formControl]="playerControl" (valueChange)="picked(playerControl, $event) && onPlayerChange()">
-                <hlm-select-trigger buttonId="post-player" class="w-full">
-                  @if (selectedPlayer(); as sp) {
-                    <span class="flex min-w-0 items-center gap-2">
-                      @if (playerSpecs()[sp.id]; as specFolder) {
-                        <wl-art-icon [src]="specFolder | specIcon" [alt]="specFolder | formatSpec"></wl-art-icon>
-                      } @else {
-                        <wl-art-icon [src]="sp.spec | classIcon" [alt]="sp.spec"></wl-art-icon>
-                      }
-                      <span class="truncate">{{ sp.name }}</span>
-                    </span>
-                  }
-                </hlm-select-trigger>
-                <hlm-select-content *hlmSelectPortal>
-                  @for (p of visiblePlayers(); track p.id) {
-                    <hlm-select-item [value]="p.id">
-                      <span class="flex items-center gap-2">
-                        @if (playerSpecs()[p.id]; as specFolder) {
-                          <wl-art-icon [src]="specFolder | specIcon" [alt]="specFolder | formatSpec"></wl-art-icon>
-                        } @else {
-                          <wl-art-icon [src]="p.spec | classIcon" [alt]="p.spec"></wl-art-icon>
-                        }
-                        <span class="truncate">{{ p.name }}</span>
-                      </span>
-                    </hlm-select-item>
-                  }
-                </hlm-select-content>
-              </hlm-select>
+            <div hlmInputGroupAddon align="inline-end">
+              <button hlmInputGroupButton variant="default" (click)="loadReport()">Analyze</button>
             </div>
           </div>
+          <hlm-field-error>Paste a Warcraft Logs report URL or a 16-character report code.</hlm-field-error>
         </div>
-      }
+
+        <wl-live-controls></wl-live-controls>
+
+        @if (fights().length) {
+          <div class="mt-4 border-t pt-4">
+            <div class="flex flex-wrap gap-3.5">
+              <!-- Disabled via the form control while live sync drives the selection, so keyboard changes are blocked too. -->
+              <div hlmField class="flex-[1_1_200px]">
+                <label hlmFieldLabel for="post-fight">Fight</label>
+                <hlm-select [formControl]="fightControl" (valueChange)="picked(fightControl, $event) && onFightChange()">
+                  <hlm-select-trigger buttonId="post-fight" class="w-full">
+                    @if (selectedFight(); as sf) {
+                      <span class="flex min-w-0 items-center gap-2">
+                        <wl-art-icon [src]="sf.encounterID | bossIcon" [alt]="sf.name"></wl-art-icon>
+                        <span class="truncate">{{ sf.name }} - {{ sf.kill ? 'Kill' : 'Wipe #' + sf.attempt }} - {{ sf.duration_s | formatDuration }}</span>
+                      </span>
+                    }
+                  </hlm-select-trigger>
+                  <hlm-select-content *hlmSelectPortal>
+                    @for (f of fights(); track f.id) {
+                      <hlm-select-item [value]="f.id">
+                        <span class="flex items-center gap-2">
+                          <wl-art-icon [src]="f.encounterID | bossIcon" [alt]="f.name"></wl-art-icon>
+                          <span class="truncate">{{ f.name }} - {{ f.kill ? 'Kill' : 'Wipe #' + f.attempt }} - {{ f.duration_s | formatDuration }}</span>
+                        </span>
+                      </hlm-select-item>
+                    }
+                  </hlm-select-content>
+                </hlm-select>
+              </div>
+
+              <div hlmField class="flex-[1_1_200px]">
+                <label hlmFieldLabel for="post-player">Player</label>
+                <hlm-select [formControl]="playerControl" (valueChange)="picked(playerControl, $event) && onPlayerChange()">
+                  <hlm-select-trigger buttonId="post-player" class="w-full">
+                    @if (selectedPlayer(); as sp) {
+                      <span class="flex min-w-0 items-center gap-2">
+                        @if (playerSpecs()[sp.id]; as specFolder) {
+                          <wl-art-icon [src]="specFolder | specIcon" [alt]="specFolder | formatSpec"></wl-art-icon>
+                        } @else {
+                          <wl-art-icon [src]="sp.spec | classIcon" [alt]="sp.spec"></wl-art-icon>
+                        }
+                        <span class="truncate">{{ sp.name }}</span>
+                      </span>
+                    }
+                  </hlm-select-trigger>
+                  <hlm-select-content *hlmSelectPortal>
+                    @for (p of visiblePlayers(); track p.id) {
+                      <hlm-select-item [value]="p.id">
+                        <span class="flex items-center gap-2">
+                          @if (playerSpecs()[p.id]; as specFolder) {
+                            <wl-art-icon [src]="specFolder | specIcon" [alt]="specFolder | formatSpec"></wl-art-icon>
+                          } @else {
+                            <wl-art-icon [src]="p.spec | classIcon" [alt]="p.spec"></wl-art-icon>
+                          }
+                          <span class="truncate">{{ p.name }}</span>
+                        </span>
+                      </hlm-select-item>
+                    }
+                  </hlm-select-content>
+                </hlm-select>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
     </section>
 
     @if (notice()) {
-      <div class="mb-4 rounded-lg border border-line bg-surface px-4 py-3.5 text-body text-muted">{{ notice() }}</div>
+      <div hlmAlert class="mb-4">
+        <p hlmAlertDescription>{{ notice() }}</p>
+      </div>
     }
 
     @if (loadError(); as err) {

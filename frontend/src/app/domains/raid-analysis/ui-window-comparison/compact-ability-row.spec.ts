@@ -53,7 +53,7 @@ describe('CompactAbilityRow gap', () => {
   });
 
   it('falls back to the muted colour when top avg is unknown', () => {
-    expect(statusColor(render(row({ playerPct: 100, topAvg: null })).gap)).toBe('muted');
+    expect(statusColor(render(row({ playerPct: 100, topAvg: null })).gap)).toBe('muted-foreground');
   });
 
   it('renders no player cell at all when the player column is hidden', () => {
@@ -84,7 +84,7 @@ describe('CompactAbilityRow casts badge', () => {
   it('falls back to muted, with a dash for top, when top casts are unknown', () => {
     const { casts } = render(row({ playerCasts: 2, topCasts: null }));
     expect(clean(casts)).toBe('2 / -');
-    expect(statusColor(casts)).toBe('muted');
+    expect(statusColor(casts)).toBe('muted-foreground');
   });
 
   it('reads "Passive" instead of a count for an ability that is never cast', () => {

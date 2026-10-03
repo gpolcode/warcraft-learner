@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { HlmLabelImports } from '@spartan-ng/helm/label';
+import { HlmFieldImports } from '@spartan-ng/helm/field';
+import { HlmMarkerImports } from '@spartan-ng/helm/marker';
 import { HlmSpinner } from '@spartan-ng/helm/spinner';
 import { HlmSwitchImports } from '@spartan-ng/helm/switch';
 import { LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
@@ -7,7 +8,7 @@ import { LiveCaptureFeatureService } from '../data/live/live-capture-feature-ser
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-live-controls',
-  imports: [HlmSwitchImports, HlmLabelImports, HlmSpinner],
+  imports: [HlmSwitchImports, HlmFieldImports, HlmMarkerImports, HlmSpinner],
   templateUrl: './live-controls.html',
 })
 export class LiveControls {

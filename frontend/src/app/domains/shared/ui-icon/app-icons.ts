@@ -1,7 +1,7 @@
 import {
   lucideArrowRight, lucideBug, lucideChartColumn, lucideCheck, lucideChevronDown, lucideChevronUp, lucideCircleAlert,
   lucideCircleCheck, lucideCircleHelp, lucideClock, lucideCloudOff, lucideCopy, lucideDownload, lucideFlag,
-  lucideInfo, lucideLightbulb, lucideLocateFixed, lucideMedal, lucideMenu, lucidePause, lucidePlay, lucideRefreshCw,
+  lucideInfo, lucideLightbulb, lucideLink, lucideLocateFixed, lucideMedal, lucidePause, lucidePlay, lucideRefreshCw,
   lucideSkull, lucideTrendingUp, lucideTriangleAlert, lucideTrophy, lucideVideo, lucideX,
 } from '@ng-icons/lucide';
 
@@ -39,7 +39,7 @@ export const APP_ICONS = {
   info: lucideInfo,
   insights: lucideTrendingUp,
   lightbulb: lucideLightbulb,
-  menu: lucideMenu,
+  link: lucideLink,
   militaryTech: lucideMedal,
   myLocation: lucideLocateFixed,
   pause: lucidePause,

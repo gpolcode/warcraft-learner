@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ToastService } from '../../shared/util-toast/toast-service';
+import { HlmBadge } from '@spartan-ng/helm/badge';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmCardImports } from '@spartan-ng/helm/card';
 import { NgIcon } from '@ng-icons/core';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { Collapsible } from '../../shared/ui-collapsible/collapsible';
@@ -15,7 +17,7 @@ const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [HlmButtonImports, NgIcon, GameIcon, Collapsible, LoadState],
+  imports: [HlmBadge, HlmButtonImports, HlmCardImports, NgIcon, GameIcon, Collapsible, LoadState],
   templateUrl: './gear.html',
 })
 export class Gear {

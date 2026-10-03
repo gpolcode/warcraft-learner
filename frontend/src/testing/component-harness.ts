@@ -88,7 +88,26 @@ export function mountDom<T>(
   };
 }
 
-const STATUS_COLOR_CLASS = /^text-(critical|warning|success|accent|muted)$/;
+export type MountedOverlay = Pick<MountedDom, 'text' | 'query' | 'queryAll' | 'click'>;
+
+/** A drawer or select renders its content in the CDK overlay container on document.body, outside every component host. */
+export function overlayOf(dom: MountedDom): MountedOverlay {
+  const root = (): HTMLElement => document.querySelector<HTMLElement>('.cdk-overlay-container') ?? document.body;
+  const query = (selector: string): HTMLElement | null => root().querySelector<HTMLElement>(selector);
+  return {
+    text: () => root().textContent.replace(/\s+/g, ' ').trim(),
+    query,
+    queryAll: (selector) => Array.from(root().querySelectorAll<HTMLElement>(selector)),
+    click: (selector) => {
+      const el = query(selector);
+      if (!el) throw new Error(`click: no overlay element matches ${selector}`);
+      el.click();
+      dom.detectChanges();
+    },
+  };
+}
+
+const STATUS_COLOR_CLASS = /^text-(critical|warning|success|primary|muted-foreground)$/;
 
 export function statusColor(el: HTMLElement | null): string | null {
   for (const cls of Array.from(el?.classList ?? [])) {

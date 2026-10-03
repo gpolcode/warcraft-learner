@@ -1,6 +1,7 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
+import { provideHlmSidebarConfig } from '@spartan-ng/helm/sidebar';
 import { provideSpartanHlm } from '@spartan-ng/helm/utils';
 import { routes } from './app.routes';
 import { WCL_TRANSPORT } from './domains/raid-analysis/data/wcl/wcl-transport';
@@ -19,6 +20,8 @@ export const appConfig: ApplicationConfig = {
     provideAppHttp(),
     provideWclCaching(),
     provideSpartanHlm(),
+    // Every project on the github.io origin shares its cookies, so the remembered rail state gets an app-specific name.
+    provideHlmSidebarConfig({ sidebarCookieName: 'wl_sidebar_state', sidebarCookieMaxAge: 60 * 60 * 24 * 365 }),
     // Root-level so a status icon named by the data layer resolves in any component.
     provideIcons(APP_ICONS),
     { provide: WCL_TRANSPORT, useExisting: HttpWclTransport },

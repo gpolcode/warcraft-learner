@@ -2,6 +2,7 @@ import {
   afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, signal, viewChild,
 } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
+import { HlmButtonImports } from '@spartan-ng/helm/button';
 
 type CollapsibleMode = 'prose' | 'chips';
 
@@ -10,7 +11,7 @@ type CollapsibleMode = 'prose' | 'chips';
   selector: 'wl-collapsible',
   // Angular custom elements default to display:inline; block keeps the clamp + toggle stacked.
   host: { class: 'block' },
-  imports: [NgIcon],
+  imports: [NgIcon, HlmButtonImports],
   templateUrl: './collapsible.html',
 })
 export class Collapsible {

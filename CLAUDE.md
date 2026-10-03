@@ -28,7 +28,7 @@ flowchart LR
 
 Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
 
-UI primitives are [spartan](https://spartan.ng) helm components vendored under `frontend/libs/ui/` (imported as `@spartan-ng/helm/*`, kept out of lint), themed onto the app palette in `src/styles.scss`; icons are lucide, registered under their snake_case names in `shared/ui-icon/app-icons.ts`.
+UI primitives are [spartan](https://spartan.ng) helm components, generated into `frontend/libs/ui/` by the spartan CLI (`frontend/components.json`) and imported as `@spartan-ng/helm/*`; the generated code is never hand-edited and is kept out of lint. The app themes them through spartan's own color names in `src/styles.scss`; icons are lucide, registered under their snake_case names in `shared/ui-icon/app-icons.ts`.
 
 ## Commands (run from `frontend/`)
 
@@ -40,6 +40,7 @@ UI primitives are [spartan](https://spartan.ng) helm components vendored under `
 | `npm run e2e` | Playwright suite over both pages, run by the E2E workflow on every PR push; never locally, as each run spends one WCL analysis |
 | `npm run lint` | `ng lint` over `src/**` then `eslint` over `scripts/**`, `e2e/**`, and the Playwright config |
 | `npm run knip` | Dead-code check: unused files, exports, and dependencies (`knip.json`) |
+| `npx ng g @spartan-ng/cli:ui <name>` | Generate a spartan helm component into `libs/ui/`; the CLI stays out of `package.json`, so first `npm i --no-save @spartan-ng/cli@<the @spartan-ng/brain version>` |
 | `npm run schema:pull` | Re-introspect the WCL v2 schema and regenerate `wcl-operations.generated.ts` in one run; commit only the regenerated types |
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |
 | `node scripts/ingest-server.js` | Ingest file server on :3000; interactive ingestion is this plus `ng serve --configuration ingest` in a second terminal |

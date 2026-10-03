@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output, si
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ToastService } from '../../shared/util-toast/toast-service';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
+import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmCheckboxImports } from '@spartan-ng/helm/checkbox';
 import { HlmLabelImports } from '@spartan-ng/helm/label';
 import { FlyoverPanel } from '../../shared/ui-flyover-panel/flyover-panel';
@@ -17,7 +18,7 @@ const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-northern-sky-export',
-  imports: [HlmButtonImports, HlmCheckboxImports, HlmLabelImports, FlyoverPanel, GameIcon, LoadState],
+  imports: [HlmButtonImports, HlmCardImports, HlmCheckboxImports, HlmLabelImports, FlyoverPanel, GameIcon, LoadState],
   templateUrl: './northern-sky-export.html',
 })
 export class NorthernSkyExport {

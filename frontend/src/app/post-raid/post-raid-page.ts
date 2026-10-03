@@ -60,7 +60,7 @@ export function postRaidPage(wclApi: unknown, extraProviders: Provider[] = []): 
   const render = (): void => { fixture.detectChanges(); };
 
   const reportInput = (): HTMLInputElement => {
-    const input = host().querySelector<HTMLInputElement>('input[hlmInput]');
+    const input = host().querySelector<HTMLInputElement>('input[hlmInputGroupInput]');
     assert.exists(input);
     return input;
   };

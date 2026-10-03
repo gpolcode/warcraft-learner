@@ -6,9 +6,11 @@ import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-i
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { EMPTY, combineLatest, from, merge, of } from 'rxjs';
 import { distinctUntilChanged, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
+import { NgIcon } from '@ng-icons/core';
+import { HlmAlertImports } from '@spartan-ng/helm/alert';
 import { HlmCardImports } from '@spartan-ng/helm/card';
-import { HlmInputImports } from '@spartan-ng/helm/input';
-import { HlmLabelImports } from '@spartan-ng/helm/label';
+import { HlmFieldImports } from '@spartan-ng/helm/field';
+import { HlmInputGroupImports } from '@spartan-ng/helm/input-group';
 import { HlmSelectImports } from '@spartan-ng/helm/select';
 import { POLL_INTERVAL_S } from '../domains/raid-analysis/data/wcl/live-report-sync-service';
 import { WclFight, WclPlayer, PlayerDetailGroups } from '../domains/raid-analysis/data/wcl/wcl.models';
@@ -55,7 +57,7 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-post-raid',
   imports: [
-    ReactiveFormsModule, HlmCardImports, HlmInputImports, HlmLabelImports, HlmSelectImports,
+    ReactiveFormsModule, NgIcon, HlmAlertImports, HlmCardImports, HlmFieldImports, HlmInputGroupImports, HlmSelectImports,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
     Defensive, Gear, MapPanel, LiveControls, ClipPanel,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
