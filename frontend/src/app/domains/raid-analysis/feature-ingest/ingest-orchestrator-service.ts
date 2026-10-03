@@ -345,6 +345,10 @@ export class IngestOrchestratorService {
     for (const { bench, result } of rest) {
       if (result.ok) {
         writes.push(bench.write(spec, encId, this.stamp.stampSignature(result.value, signature, stamp)));
+      } else if (burst.ok && result.error.kind === 'missing') {
+        // The lead read these parses, so the bench has nothing for them; its earlier file belongs to another plan or parse set.
+        console.log(`    [${encounter.name}] ${bench.file}: no data, cleared`);
+        writes.push(this.dataFile.removeBench(spec, encId, bench.file));
       } else { console.log(skipNote(bench.file, result.error)); }
     }
 

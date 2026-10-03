@@ -1,7 +1,6 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclEvent } from '../wcl/wcl.models';
-import { Results } from '../../../shared/util-http/result';
 import { BurstTransformService, ParseWindow, BurstDetectorTuning, DEFAULT_BURST_TUNING } from './burst-transform-service';
 import {
   SHADOW_BLADES, SHADOW_BLADES_DAMAGE, EVISCERATE, BLACK_POWDER, CLOAK_OF_SHADOWS, WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
@@ -448,11 +447,23 @@ describe('BurstTransformService (live, in-browser)', () => {
     expect(bench.value.windows[0]?.ability_breakdown[0]).toMatchObject({ spell_id: THE_HUNT_LANDING, avg_casts: 1 });
   });
 
-  it('returns missing when the spec\'s plan has no cooldowns', async () => {
+  it('benches the damage windows of a spec whose plan names no cooldowns, labelling none of them', async () => {
     TestBed.configureTestingModule({
       providers: provideApiFakes({ wcl: wclFake, plans: planLoader(specPlan()) }),
     });
-    expect(await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1))
-      .toEqual(Results.missing('Not yet ingested.'));
+    const bench = await TestBed.inject(BurstTransformService).getBench('DisciplinePriest', 1);
+    assert(bench.ok);
+    expect(bench.value.cd_spell_ids).toEqual({});
+    expect(bench.value.windows).toHaveLength(1);
+    expect(bench.value.windows[0]?.common_cds).toEqual([]);
+  });
+
+  it('benches the damage windows when no top log casts any of the plan\'s cooldowns', async () => {
+    const uncast = planLoader(specPlan({ cooldowns: [{ name: 'Vanish', spell_id: VANISH, cooldown: 120 }] }));
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: uncast }) });
+    const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
+    assert(bench.ok);
+    expect(bench.value.cd_spell_ids).toEqual({});
+    expect(bench.value.windows).toHaveLength(1);
   });
 });
