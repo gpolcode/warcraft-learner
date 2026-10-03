@@ -2,7 +2,6 @@
 import { spawn } from 'child_process';
 import { once } from 'events';
 import { chromium } from 'playwright';
-import { requireWclCredentials } from './wcl-credentials.mjs';
 import { withEnvironment } from '../src/environments/base-environment.ts';
 
 const { appUrl: APP_URL, ingestServerUrl } = withEnvironment({});
@@ -91,10 +90,8 @@ async function launchBrowser() {
 }
 
 async function main() {
-  // Resolved before any child starts, so a terminal prompt lands once and the serve child inherits the pair.
-  await requireWclCredentials();
   startChild('server', 'node', ['scripts/ingest-server.js']);
-  startChild('serve', 'node', ['scripts/ng-env.mjs', 'serve', '--configuration', 'ingest']);
+  startChild('serve', 'npx', ['ng', 'serve', '--configuration', 'ingest']);
   await waitForHttp(SERVER_PROBE_URL, 'ingest file server');
   await waitForHttp(APP_URL, 'ng serve');
 

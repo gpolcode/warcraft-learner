@@ -44,3 +44,6 @@ frontend/playwright.local.config.ts
 
 # The Angular CLI writes its cache beside whichever directory a command treats as the workspace root, so the root needs the rule too.
 .angular/
+
+# A developer's WCL client pair; CI writes this file from the repository secrets.
+frontend/src/environments/wcl-client.ts

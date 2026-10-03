@@ -16,6 +16,8 @@ import { HttpDataFileTransport } from './domains/raid-analysis/data/http/http-da
 import { provideAppHttp } from './domains/shared/util-http/http-providers';
 import { ENVIRONMENT } from '../environments/environment-token';
 import { environment, environmentProviders } from '../environments/environment';
+// A missing module here means the gitignored copy of wcl-client.example.ts has not been made yet.
+import { WCL_CLIENT_ID, WCL_CLIENT_SECRET } from '../environments/wcl-client';
 
 // Material's default duration is 0, which never dismisses, and these bars carry no dismiss action.
 const SNACK_BAR_DURATION_MS = 3000;
@@ -30,7 +32,7 @@ export const appConfig: ApplicationConfig = {
       inject(MatIconRegistry).setDefaultFontSetClass('material-symbols-outlined');
     }),
     { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: SNACK_BAR_DURATION_MS } },
-    { provide: ENVIRONMENT, useValue: environment },
+    { provide: ENVIRONMENT, useValue: { ...environment, wclClientId: WCL_CLIENT_ID, wclClientSecret: WCL_CLIENT_SECRET } },
     { provide: WCL_TRANSPORT, useExisting: HttpWclTransport },
     { provide: DATA_FILE_TRANSPORT, useExisting: HttpDataFileTransport },
     // Last so an environment can override the bindings above (the ingest one swaps the data-file transport).

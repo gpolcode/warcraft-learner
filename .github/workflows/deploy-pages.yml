@@ -45,11 +45,17 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      # Shell only: the site reads the shared data/specs/ copy at the gh-pages root via the absolute dataBaseHref.
-      - name: Build the site
+      - name: Write the WCL client file
         env:
           WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
           WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          [ -n "$WCL_CLIENT_ID" ] && [ -n "$WCL_CLIENT_SECRET" ] || { echo "::error::Set the WCL_CLIENT_ID and WCL_CLIENT_SECRET repository secrets."; exit 1; }
+          printf "export const WCL_CLIENT_ID = '%s';\nexport const WCL_CLIENT_SECRET = '%s';\n" "$WCL_CLIENT_ID" "$WCL_CLIENT_SECRET" > frontend/src/environments/wcl-client.ts
+
+      # Shell only: the site reads the shared data/specs/ copy at the gh-pages root via the absolute dataBaseHref.
+      - name: Build the site
         run: |
           set -euo pipefail
           npm --prefix frontend ci

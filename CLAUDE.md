@@ -28,21 +28,21 @@ flowchart LR
 
 Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
 
-Configuration lives in `frontend/src/environments/`: `base-environment.ts` is the `Environment` schema with the defaults (every external host and endpoint, the dev and ingest server origins, the raids ingestion benches), each `environment.*.ts` overrides what differs for its build through `fileReplacements`, and the WCL client pair reaches the bundle at build time as `--define` globals from `scripts/ng-env.mjs`, read from `frontend/.env` locally (`.env.example` names the keys) and from the `WCL_CLIENT_ID` / `WCL_CLIENT_SECRET` Actions secrets in CI; GitHub holds secrets only, never configuration. Code reads it through `inject(ENVIRONMENT)` (`environment-token.ts`), never by importing the swapped file (eslint-enforced) and never as a literal in a service.
+Configuration lives under `frontend/src/environments/`: one `Environment` schema with the defaults (every external host and endpoint, the dev and ingest server origins, the raids ingestion benches), one override file per build configuration swapped by `fileReplacements`, and a gitignored client file for the WCL pair, copied from the committed example on a developer machine and written from the repository secrets in CI; GitHub holds secrets only, never configuration. Code reads it through `inject(ENVIRONMENT)`, never by importing the swapped file (eslint-enforced) and never as a literal in a service.
 
 ## Commands (run from `frontend/`)
 
 | Command | Description |
 |---|---|
-| `npm start` | Angular dev server on http://localhost:4200, through `scripts/ng-env.mjs`, which reads the WCL pair from `.env` and asks for it on a terminal without one |
-| `npm run build` | Production build to `../static/angular/`, through the same wrapper |
+| `npm start` | Angular dev server on http://localhost:4200 |
+| `npm run build` | Production build to `../static/angular/` |
 | `npm test` | `ng test` (Vitest, the one unit-test suite) |
 | `npm run e2e` | Playwright suite over both pages, run by the E2E workflow on every PR push; never locally, as each run spends one WCL analysis |
 | `npm run lint` | `ng lint` over `src/**` then `eslint` over `scripts/**`, `e2e/**`, and the Playwright config |
 | `npm run knip` | Dead-code check: unused files, exports, and dependencies (`knip.json`) |
 | `npm run schema:pull` | Re-introspect the WCL v2 schema and regenerate `wcl-operations.generated.ts` in one run; commit only the regenerated types |
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |
-| `node scripts/ingest-server.js` | Ingest file server on :3000; interactive ingestion is this plus `npm start -- --configuration ingest` in a second terminal |
+| `node scripts/ingest-server.js` | Ingest file server on :3000; interactive ingestion is this plus `ng serve --configuration ingest` in a second terminal |
 | `npm run ingest` | Headless ingestion (CI entry): starts both of the above, then drives the app in a headless browser |
 
 ## Development workflow router

@@ -7,7 +7,7 @@ import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 const DEFAULT_TOKEN_LIFETIME_S = 3600;
 
-const NO_CLIENT_MESSAGE = 'No Warcraft Logs client is built in. Put WCL_CLIENT_ID and WCL_CLIENT_SECRET in frontend/.env and start the app with npm start.';
+const NO_CLIENT_MESSAGE = 'No Warcraft Logs client is filled in. Copy frontend/src/environments/wcl-client.example.ts to wcl-client.ts beside it and paste your client id and secret.';
 
 const TOKEN_RESPONSE_SCHEMA = z.looseObject({
   access_token: z.string().check(z.minLength(1)),
@@ -33,7 +33,7 @@ export class WclAuthService {
 
   private async _fetchToken(): Promise<string> {
     const { wclClientId, wclClientSecret, wclTokenUrl } = this.environment;
-    // A build that skipped scripts/ng-env.mjs carries no pair; naming that beats a 401 that reads like a WCL outage.
+    // A blank wcl-client.ts carries no pair; naming that beats a 401 that reads like a WCL outage.
     if (!wclClientId || !wclClientSecret) throw new WclTransportError(NO_CLIENT_MESSAGE, WCL_UNUSABLE_STATUS);
     const params = new URLSearchParams({
       grant_type: 'client_credentials',

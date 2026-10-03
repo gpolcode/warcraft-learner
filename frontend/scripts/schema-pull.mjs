@@ -6,7 +6,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { withEnvironment } from '../src/environments/base-environment.ts';
-import { requireWclCredentials } from './wcl-credentials.mjs';
+import { WCL_CLIENT_ID, WCL_CLIENT_SECRET } from '../src/environments/wcl-client.ts';
 import { nameJsonFieldScalars } from './wcl-json-scalars.mjs';
 
 const SDL = fileURLToPath(new URL('../schema/wcl.graphql', import.meta.url));
@@ -34,9 +34,8 @@ async function post(url, headers, body) {
 }
 
 const { wclTokenUrl, wclApiUrl } = withEnvironment({});
-const { clientId, clientSecret } = await requireWclCredentials();
 const { access_token } = await post(wclTokenUrl, {},
-  new URLSearchParams({ grant_type: 'client_credentials', client_id: clientId, client_secret: clientSecret }));
+  new URLSearchParams({ grant_type: 'client_credentials', client_id: WCL_CLIENT_ID, client_secret: WCL_CLIENT_SECRET }));
 const { data, errors } = await post(wclApiUrl, { 'Content-Type': 'application/json', Authorization: `Bearer ${access_token}` },
   JSON.stringify({ query: getIntrospectionQuery({ descriptions: false }) }));
 if (errors) throw new Error(`introspection responded 200 with errors: ${JSON.stringify(errors)}`);

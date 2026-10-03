@@ -21,6 +21,10 @@
                     {
                         "type": "command",
                         "command": ". /opt/nvm/nvm.sh && nvm install 24 --no-progress && ln -sf \"$(nvm which 24)\" /opt/node22/bin/node"
+                    },
+                    {
+                        "type": "command",
+                        "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && [ -z \"$WCL_CLIENT_ID\" ] || printf \"export const WCL_CLIENT_ID = '%s';\\nexport const WCL_CLIENT_SECRET = '%s';\\n\" \"$WCL_CLIENT_ID\" \"$WCL_CLIENT_SECRET\" > frontend/src/environments/wcl-client.ts"
                     }
                 ]
             }

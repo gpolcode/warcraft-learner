@@ -9,12 +9,12 @@ description: warcraft-learner Warcraft Logs (WCL) integration - the intentional 
 
 ## Browser auth model (intentional public pair)
 
-The browser authenticates with the **client-credentials** grant against `/api/v2/client`, using a client id + secret that `scripts/ng-env.mjs` compiles into the bundle through the builder's `define` option: locally from `frontend/.env` (`.env.example` names the two keys; on a terminal without a `.env` the wrapper asks for them and writes it), in CI from the `WCL_CLIENT_ID` / `WCL_CLIENT_SECRET` Actions secrets. The pair is therefore public in the shipped JS. A deliberate trade-off, not a leak to fix:
+The browser authenticates with the **client-credentials** grant against `/api/v2/client`, using a client id + secret from a gitignored client file under `src/environments/` (a committed example beside it shows the shape; CI writes it from the repository secrets), and therefore public in the shipped JS bundle. A deliberate trade-off, not a leak to fix:
 
 - The token reads only **public** WCL report data, and a client token has no user-scoped budget to lose.
 - The **only** risk is a stolen pair draining the shared hourly rate-limit budget. Rotation is manual, at `warcraftlogs.com/api/clients/`: WCL exposes **no API to rotate a client secret**; after rotating, update the two Actions secrets.
 - There is **no login UI, callback route, or PKCE flow**: a client token has no current user, so users always supply a report code or character name.
-- The deployed site, the E2E run and the hourly CI ingest share the repository's pair and its budget; a developer's `.env` holds their own pair, so local runs and local ingestion spend their own budget. The pair never appears in the repository: `WclAuthService` reads it from the injected `ENVIRONMENT` and refuses a build that carries none, and `schema-pull.mjs` and the headless ingest read the same `.env` through `scripts/wcl-credentials.mjs`.
+- The deployed site, the E2E run and the hourly CI ingest share the repository's pair and its budget; a developer's client file holds their own pair, so local runs and local ingestion spend their own budget. The pair never reaches the repository: code reads it through the injected environment and refuses a blank pair.
 
 ## WCL API quirks
 
@@ -56,4 +56,4 @@ Stored positions keep these raw WCL units; their on-disk shape lives in `domains
 
 ## External APIs
 
-Every host and endpoint below is a default in `src/environments/base-environment.ts`, read through the `ENVIRONMENT` token. Warcraft Logs v2 GraphQL at `/api/v2/client`, authenticated with the built-in pair (see the auth section above). Raidbots static JSON at `raidbots.com/static/data/live/*.json` needs no auth and is read only during ingest: `talents.json` for talent names and icons, `enchantments.json` for the enchant-id-to-item-id map.
+Every host and endpoint below is an environment default, read through the `ENVIRONMENT` token. Warcraft Logs v2 GraphQL at `/api/v2/client`, authenticated with the built-in pair (see the auth section above). Raidbots static JSON at `raidbots.com/static/data/live/*.json` needs no auth and is read only during ingest: `talents.json` for talent names and icons, `enchantments.json` for the enchant-id-to-item-id map.

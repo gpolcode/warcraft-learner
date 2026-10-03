@@ -23,12 +23,11 @@ export interface Environment {
   prioritySpecs: readonly string[];
 }
 
-/** URL roots carry no trailing slash. The Node scripts read these defaults too, so this module imports nothing. */
+/** URL roots carry no trailing slash. The Node scripts load this module too, so it imports nothing from Angular. */
 export function withEnvironment(deltas: Partial<Environment>): Environment {
   return {
-    // `typeof` because unit tests and the Node scripts load this outside an `ng` build, where neither global exists.
-    wclClientId: typeof WCL_CLIENT_ID === 'string' ? WCL_CLIENT_ID : '',
-    wclClientSecret: typeof WCL_CLIENT_SECRET === 'string' ? WCL_CLIENT_SECRET : '',
+    wclClientId: '',
+    wclClientSecret: '',
     wclTokenUrl: 'https://www.warcraftlogs.com/oauth/token',
     wclApiUrl: 'https://www.warcraftlogs.com/api/v2/client',
     wclReportUrl: 'https://www.warcraftlogs.com/reports',

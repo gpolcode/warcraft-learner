@@ -57,11 +57,18 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Run parse ingestion
-        working-directory: frontend
+      - name: Write the WCL client file
         env:
           WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
           WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          [ -n "$WCL_CLIENT_ID" ] && [ -n "$WCL_CLIENT_SECRET" ] || { echo "::error::Set the WCL_CLIENT_ID and WCL_CLIENT_SECRET repository secrets."; exit 1; }
+          printf "export const WCL_CLIENT_ID = '%s';\nexport const WCL_CLIENT_SECRET = '%s';\n" "$WCL_CLIENT_ID" "$WCL_CLIENT_SECRET" > src/environments/wcl-client.ts
+        working-directory: frontend
+
+      - name: Run parse ingestion
+        working-directory: frontend
         run: npm run ingest
 
       # Pruning never removes whole spec dirs, so this trips only on an overlay catastrophe, not a quiet hour.

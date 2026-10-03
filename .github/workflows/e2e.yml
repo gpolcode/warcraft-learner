@@ -40,10 +40,17 @@ jobs:
         run: npx playwright install --with-deps chromium
         working-directory: frontend
 
-      - name: Run e2e tests
+      - name: Write the WCL client file
         env:
           WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
           WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          [ -n "$WCL_CLIENT_ID" ] && [ -n "$WCL_CLIENT_SECRET" ] || { echo "::error::Set the WCL_CLIENT_ID and WCL_CLIENT_SECRET repository secrets."; exit 1; }
+          printf "export const WCL_CLIENT_ID = '%s';\nexport const WCL_CLIENT_SECRET = '%s';\n" "$WCL_CLIENT_ID" "$WCL_CLIENT_SECRET" > src/environments/wcl-client.ts
+        working-directory: frontend
+
+      - name: Run e2e tests
         run: npm run e2e
         working-directory: frontend
 

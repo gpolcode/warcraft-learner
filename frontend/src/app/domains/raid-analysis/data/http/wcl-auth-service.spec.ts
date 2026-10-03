@@ -10,7 +10,7 @@ import { withEnvironment } from '../../../../../environments/base-environment';
 /** The client-credentials token endpoint the service posts to (mirrors the environment default). */
 const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
 
-/** The unit-test build defines no pair, so the spec provides one. */
+/** The example client file is blank, so the spec provides a pair. */
 const CLIENT_ID = 'test-client-id';
 const CLIENT_SECRET = 'test-client-secret';
 
@@ -77,11 +77,11 @@ describe('WclAuthService', () => {
     expect(await pending).toBe(FIRST_TOKEN);
   });
 
-  it('refuses without a request when the build carries no client pair', async () => {
+  it('refuses without a request when the client file is blank', async () => {
     const { service, httpMock } = setup({ wclClientId: '', wclClientSecret: '' });
 
     await expect(service.getToken()).rejects.toMatchObject({ status: WCL_UNUSABLE_STATUS } satisfies Partial<WclTransportError>);
-    await expect(service.getToken()).rejects.toThrow(/npm start/);
+    await expect(service.getToken()).rejects.toThrow(/wcl-client/);
     httpMock.expectNone(WCL_TOKEN_URL);
   });
 
