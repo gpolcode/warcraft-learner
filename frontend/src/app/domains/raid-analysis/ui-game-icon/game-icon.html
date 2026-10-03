@@ -1,31 +1,21 @@
-<ng-template #art>
-  @if (iconUrl(); as src) {
-    @if (failedSrc() !== src) {
-      <img [ngSrc]="src" [width]="18" [height]="18" alt="" class="rounded-sm" (error)="failedSrc.set(src)" />
-    }
-  }
-</ng-template>
-
 @if (wowheadUrl(); as url) {
-  @if (copyable()) {
-    <!-- Only the icon links out: tui-copy copies on any click inside it, so a linked name would also open Wowhead. -->
-    <a [href]="url" target="_blank" rel="noopener" class="inline-flex no-underline hover:brightness-125" [attr.aria-label]="name()">
-      <ng-container [ngTemplateOutlet]="art" />
-    </a>
-    <tui-copy class="ml-1.5 text-name">{{ name() }}</tui-copy>
-  } @else {
-    <a
-      [href]="url"
-      target="_blank"
-      rel="noopener"
-      class="inline-flex items-center gap-1.5 no-underline hover:brightness-125">
-      <ng-container [ngTemplateOutlet]="art" />
-      <!-- text-name keeps names the same size as the no-icon fallback names next to this component. -->
-      <span class="text-name">{{ name() }}</span>
-    </a>
-  }
-} @else if (copyable()) {
-  <tui-copy class="text-name">{{ name() }}</tui-copy>
+  <a
+    [href]="url"
+    target="_blank"
+    rel="noopener"
+    class="inline-flex items-center gap-1.5 no-underline hover:brightness-125">
+    @if (iconUrl(); as src) {
+      @if (failedSrc() !== src) {
+        <img [ngSrc]="src" [width]="18" [height]="18" alt="" class="rounded-sm" (error)="failedSrc.set(src)" />
+      }
+    }
+    <!-- text-name keeps names the same size as the no-icon fallback names next to this component. -->
+    <span class="text-name">{{ name() }}</span>
+  </a>
 } @else {
   <span class="text-name">{{ name() }}</span>
+}
+@if (copyable()) {
+  <!-- Not tui-copy: its copy icon shows only to a hovering mouse, so on a phone nothing would mark the name as copyable. -->
+  <button class="ml-2" [tuiButtonCopy]="name()">Copy name</button>
 }

@@ -22,7 +22,7 @@
             <label tuiLabel class="flex-[1_1_200px]">
               Fight
               <tui-textfield tuiChevron [content]="selectedFight() ? fightContent : ''" [stringify]="fightLabel">
-                <input id="fight-select" tuiSelect [formControl]="fightControl" (ngModelChange)="onFightChange()" />
+                <input tuiSelect [formControl]="fightControl" />
                 <tui-data-list *tuiDropdown>
                   @for (f of fights(); track f.id) {
                     <button tuiOption type="button" [value]="f.id">
@@ -47,7 +47,7 @@
             <label tuiLabel class="flex-[1_1_200px]">
               Player
               <tui-textfield tuiChevron [content]="selectedPlayer() ? playerContent : ''" [stringify]="playerLabel">
-                <input id="player-select" tuiSelect [formControl]="playerControl" (ngModelChange)="onPlayerChange()" />
+                <input tuiSelect [formControl]="playerControl" />
                 <tui-data-list *tuiDropdown>
                   @for (p of visiblePlayers(); track p.id) {
                     <button tuiOption type="button" [value]="p.id">

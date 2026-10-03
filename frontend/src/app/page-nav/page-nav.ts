@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRouteSnapshot, NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { TUI_BREAKPOINT, TuiButton } from '@taiga-ui/core';
 import { TuiTabBar } from '@taiga-ui/addon-mobile';
-import { TuiFade } from '@taiga-ui/kit';
 import { TuiNavigation } from '@taiga-ui/layout';
 import { NavStateStore } from './nav-state-store';
 import { ENVIRONMENT } from '../../environments/environment-token';
@@ -13,7 +11,7 @@ import { ENVIRONMENT } from '../../environments/environment-token';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-page-nav',
-  imports: [NgTemplateOutlet, RouterLink, RouterLinkActive, TuiNavigation, TuiButton, TuiFade, TuiTabBar],
+  imports: [RouterLink, RouterLinkActive, TuiNavigation, TuiButton, TuiTabBar],
   templateUrl: './page-nav.html',
   host: { class: 'block' },
 })

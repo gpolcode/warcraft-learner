@@ -130,6 +130,11 @@ html {
   --tui-status-info-pale: color-mix(in srgb, var(--color-accent) 16%, transparent);
   --tui-status-info-pale-hover: color-mix(in srgb, var(--color-accent) 24%, transparent);
   --tui-status-neutral: var(--color-muted);
+
+  /* A phone taps where a mouse clicks, so Taiga's small controls take the 44px touch target on coarse pointers. */
+  @media (pointer: coarse) {
+    --tui-height-s: 2.75rem;
+  }
 }
 
 body {
@@ -141,10 +146,6 @@ body {
   margin: 0;
   height: 100%;
 }
-
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--color-bg); }
-::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 3px; }
 
 /* Taiga sizes an icon by its font-size and pins 24px outside any layer, so the app's 18px row icons need this element+class rule (0,1,1) to win. */
 tui-icon.icon-18 { font-size: 18px; }

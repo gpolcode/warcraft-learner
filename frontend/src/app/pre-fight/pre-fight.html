@@ -15,7 +15,7 @@
         <label tuiLabel class="flex-[1_1_200px]">
           Class
           <tui-textfield tuiChevron [content]="selectedClass() ? classContent : ''" [stringify]="classLabel">
-            <input id="class-select" tuiSelect [formControl]="classControl" (ngModelChange)="onClassChange()" />
+            <input tuiSelect [formControl]="classControl" />
             <tui-data-list *tuiDropdown>
               @for (c of classes(); track c.className) {
                 <button tuiOption type="button" [value]="c.className">
@@ -39,7 +39,7 @@
           <label tuiLabel class="flex-[1_1_200px]">
             Spec
             <tui-textfield tuiChevron [content]="selectedSpec() ? specContent : ''" [stringify]="specLabel">
-              <input id="spec-select" tuiSelect [formControl]="specControl" (ngModelChange)="onSpecChange()" />
+              <input tuiSelect [formControl]="specControl" />
               <tui-data-list *tuiDropdown>
                 @for (m of specsForSelectedClass(); track m.spec) {
                   <button tuiOption type="button" [value]="m.spec">
@@ -67,7 +67,7 @@
         <label tuiLabel>
           Encounter
           <tui-textfield tuiChevron [content]="selectedEncounter() ? encounterContent : ''" [stringify]="encounterLabel">
-            <input id="encounter-select" tuiSelect [formControl]="encControl" (ngModelChange)="onEncChange()" />
+            <input tuiSelect [formControl]="encControl" />
             <tui-data-list *tuiDropdown>
               @for (e of encounters(); track e.id) {
                 <button tuiOption type="button" [value]="e.id">

@@ -59,14 +59,14 @@
                 @if (build.added.length) {
                   <div>
                     <span class="block text-label text-muted mb-1.5">Added</span>
-                    <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(build.label + ':added')">
+                    <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(build.added)">
                       @for (talent of build.added; track talent.name) {
                         <span *tuiItem tuiChip appearance="neutral" size="xs" class="mr-2 mb-2">
                           <wl-game-icon [id]="talent.spellId" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
                         </span>
                       }
                       <ng-template tuiMore let-last>
-                        <button tuiLink type="button" class="mb-2 text-caption" (click)="showAllChips(build.label + ':added')">+{{ build.added.length - last - 1 }} more</button>
+                        <button tuiLink type="button" class="mb-2 text-caption" (click)="showAllChips(build.added)">+{{ build.added.length - last - 1 }} more</button>
                       </ng-template>
                     </tui-items-with-more>
                   </div>
@@ -74,14 +74,14 @@
                 @if (build.dropped.length) {
                   <div>
                     <span class="block text-label text-muted mb-1.5">Dropped</span>
-                    <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(build.label + ':dropped')">
+                    <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(build.dropped)">
                       @for (talent of build.dropped; track talent.name) {
                         <span *tuiItem tuiChip appearance="neutral" size="xs" class="mr-2 mb-2">
                           <wl-game-icon [id]="talent.spellId" [icon]="talent.icon" [name]="talent.name"></wl-game-icon>
                         </span>
                       }
                       <ng-template tuiMore let-last>
-                        <button tuiLink type="button" class="mb-2 text-caption" (click)="showAllChips(build.label + ':dropped')">+{{ build.dropped.length - last - 1 }} more</button>
+                        <button tuiLink type="button" class="mb-2 text-caption" (click)="showAllChips(build.dropped)">+{{ build.dropped.length - last - 1 }} more</button>
                       </ng-template>
                     </tui-items-with-more>
                   </div>
@@ -89,7 +89,7 @@
                 @if (build.ranks.length) {
                   <div>
                     <span class="block text-label text-muted mb-1.5">Points</span>
-                    <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(build.label + ':ranks')">
+                    <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(build.ranks)">
                       @for (r of build.ranks; track r.talent.name) {
                         <span *tuiItem tuiChip appearance="neutral" size="xs" class="mr-2 mb-2">
                           <wl-game-icon [id]="r.talent.spellId" [icon]="r.talent.icon" [name]="r.talent.name"></wl-game-icon>
@@ -97,7 +97,7 @@
                         </span>
                       }
                       <ng-template tuiMore let-last>
-                        <button tuiLink type="button" class="mb-2 text-caption" (click)="showAllChips(build.label + ':ranks')">+{{ build.ranks.length - last - 1 }} more</button>
+                        <button tuiLink type="button" class="mb-2 text-caption" (click)="showAllChips(build.ranks)">+{{ build.ranks.length - last - 1 }} more</button>
                       </ng-template>
                     </tui-items-with-more>
                   </div>

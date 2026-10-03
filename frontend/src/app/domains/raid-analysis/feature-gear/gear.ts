@@ -7,7 +7,7 @@ import { LoadState } from '../../shared/ui-load-state/load-state';
 import { GearFeatureService } from '../data/gear/gear-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
 
-const COPY_TEXTS = ['Copy name', 'Copied. Paste it into the auction house search.'] as const;
+const COPY_TEXTS = ['Copy name', 'Copied'] as const;
 const CHIP_LINES = 2;
 
 @Component({
@@ -53,13 +53,13 @@ export class Gear {
 
   protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
   protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
-  private readonly openChipLists = signal<ReadonlySet<string>>(new Set());
+  private readonly openChipLists = signal<ReadonlySet<readonly unknown[]>>(new Set());
 
-  protected chipLines(list: string): number {
+  protected chipLines(list: readonly unknown[]): number {
     return this.openChipLists().has(list) ? Number.POSITIVE_INFINITY : CHIP_LINES;
   }
 
-  protected showAllChips(list: string): void {
+  protected showAllChips(list: readonly unknown[]): void {
     this.openChipLists.update(open => new Set(open).add(list));
   }
 }
