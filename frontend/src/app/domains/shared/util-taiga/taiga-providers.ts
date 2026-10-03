@@ -1,5 +1,6 @@
 import { EnvironmentProviders, Provider, signal } from '@angular/core';
 import { TUI_DARK_MODE, provideTaiga, tuiButtonOptionsProvider, tuiIconsProvider, tuiTextfieldOptionsProvider } from '@taiga-ui/core';
+import { tuiCardOptionsProvider } from '@taiga-ui/layout';
 import arrowRight from '@taiga-ui/icons/src/arrow-right.svg';
 import bug from '@taiga-ui/icons/src/bug.svg';
 import chartColumn from '@taiga-ui/icons/src/chart-column.svg';
@@ -92,4 +93,6 @@ export const TAIGA_PROVIDERS: (Provider | EnvironmentProviders)[] = [
   // One control size app-wide, so a button or field never sizes by where it sits; every select also has a value, so none offers a clear button.
   tuiButtonOptionsProvider({ size: 's' }),
   tuiTextfieldOptionsProvider({ size: signal('s'), cleaner: signal(false) }),
+  // Taiga's tightest card spacing, so a data card reads as a dense table rather than its roomier default.
+  tuiCardOptionsProvider({ space: '' }),
 ];

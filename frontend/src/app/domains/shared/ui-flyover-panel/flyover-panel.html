@@ -1,28 +1,40 @@
-<!-- Non-modal on purpose: the page behind stays live, so another moment's "Show map" retargets the open panel instead of having to close it first. -->
-<tui-drawer
-  *tuiPopup="true"
-  class="flyover"
-  role="dialog"
-  aria-modal="false"
-  [attr.aria-labelledby]="headingId"
-  [attr.aria-describedby]="introId"
-  (keydown.escape)="closed.emit()">
-  <header>
-    <div tuiHeader="body-l">
-      <hgroup tuiTitle>
-        <div class="flex items-center gap-2">
-          <h2 [id]="headingId">{{ heading() }}</h2>
-          @if (loadingText()) {
-            <tui-loader size="xs" [textContent]="loadingText()" />
-          }
+<ng-template #body><ng-content /></ng-template>
+
+@if (isMobile()) {
+  <!-- Phones get Taiga's bottom sheet, which owns its swipe and backdrop dismissal. -->
+  <ng-template [tuiSheetDialog]="true" [tuiSheetDialogOptions]="{ label: heading() }" (tuiSheetDialogChange)="closed.emit()">
+    <p class="mb-3 text-body text-muted" [id]="introId">{{ intro() }}</p>
+    @if (loadingText()) {
+      <tui-loader size="xs" class="mb-3 self-start" [textContent]="loadingText()" />
+    }
+    <ng-container [ngTemplateOutlet]="body" />
+  </ng-template>
+} @else {
+  <!-- Non-modal on purpose: the page behind stays live, so another moment's "Show map" retargets the open panel instead of having to close it first. -->
+  <tui-drawer
+    *tuiPopup="true"
+    role="dialog"
+    aria-modal="false"
+    [attr.aria-labelledby]="headingId"
+    [attr.aria-describedby]="introId"
+    (keydown.escape)="closed.emit()">
+    <header>
+      <div tuiHeader="body-l">
+        <hgroup tuiTitle>
+          <div class="flex items-center gap-2">
+            <h2 [id]="headingId">{{ heading() }}</h2>
+            @if (loadingText()) {
+              <tui-loader size="xs" [textContent]="loadingText()" />
+            }
+          </div>
+          <p tuiSubtitle class="text-muted" [id]="introId">{{ intro() }}</p>
+        </hgroup>
+        <div tuiAccessories>
+          <!-- A body-l header sizes its buttons xs; the explicit s keeps the app-wide size. -->
+          <button tuiIconButton type="button" appearance="icon" size="s" iconStart="close" (click)="closed.emit()">{{ closeLabel() }}</button>
         </div>
-        <p tuiSubtitle class="text-muted" [id]="introId">{{ intro() }}</p>
-      </hgroup>
-      <div tuiAccessories>
-        <!-- A body-l header sizes its buttons xs; the explicit s keeps the app-wide size. -->
-        <button tuiIconButton type="button" appearance="icon" size="s" iconStart="close" (click)="closed.emit()">{{ closeLabel() }}</button>
       </div>
-    </div>
-  </header>
-  <ng-content />
-</tui-drawer>
+    </header>
+    <ng-container [ngTemplateOutlet]="body" />
+  </tui-drawer>
+}

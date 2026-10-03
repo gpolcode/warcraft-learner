@@ -1,5 +1,5 @@
 <div class="mx-auto max-w-[860px] px-3 md:px-4 pt-4 pb-12">
-    <section tuiCardLarge="compact" appearance="outline-grayscale" class="mb-5">
+    <section tuiCardLarge appearance="outline-grayscale" class="mb-5">
       <p class="text-body text-muted">Paste a Warcraft Logs report to see how your Mythic pulls compare with the top logs for your spec.</p>
 
       <div class="flex flex-col gap-1">
@@ -8,7 +8,6 @@
           <tui-textfield iconStart="link">
             <input #reportInput id="report-input" tuiInput [formControl]="reportControl" placeholder="https://www.warcraftlogs.com/reports/AbCdEfGh…"
                    (keydown.enter)="loadReport()" (paste)="onPaste($event, reportInput)" />
-            <button tuiButton type="button" appearance="primary" [disabled]="!canAnalyze()" (click)="loadReport()">Analyze</button>
           </tui-textfield>
         </label>
         <tui-error [formControl]="reportControl" />
@@ -17,7 +16,7 @@
       <wl-live-controls></wl-live-controls>
 
       @if (fights().length) {
-        <div class="border-t border-line pt-4">
+        <div class="border-t border-line pt-3">
           <div class="flex flex-wrap gap-3.5">
             <!-- Disabled via the form control while live sync drives the selection, so keyboard changes are blocked too. -->
             <label tuiLabel class="flex-[1_1_200px]">

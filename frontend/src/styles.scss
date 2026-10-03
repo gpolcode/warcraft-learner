@@ -74,16 +74,16 @@ html {
   --map-dot-outline: rgba(0, 0, 0, 0.55);
 }
 
-/* Taiga's dark palette re-applies on every element that sets tuiTheme="dark" (the body, the navigation), so the app tokens are pinned there too, not only on the root. */
+/* Taiga reads its palette and type scale from these variables, so pointing them at the app tokens gives every Taiga part the app's colors and type roles. Taiga re-applies its dark palette on each tuiTheme="dark" element (the body, the navigation), so the mapping is pinned there too. */
 :root,
 [tuiTheme='dark'] {
   --tui-typography-family-text: var(--font-sans);
   --tui-typography-family-display: var(--font-sans);
-  /* Taiga's default text (the root, cards, subtitles) reads the body role, and a body-l header (every card title) reads the title role. */
   --tui-typography-body-s: normal var(--text-body) / var(--text-body--line-height) var(--font-sans);
+  --tui-typography-body-m: normal var(--text-body) / var(--text-body--line-height) var(--font-sans);
   --tui-typography-body-l: var(--text-title--font-weight) var(--text-title) / var(--text-title--line-height) var(--font-sans);
-  /* Chips, small controls and data lists read the body role; badges read the label role's font, and wear text-label for its case and tracking. */
   --tui-typography-ui-s: normal var(--text-body) / var(--text-body--line-height) var(--font-sans);
+  --tui-typography-ui-m: normal var(--text-name) / var(--text-name--line-height) var(--font-sans);
   --tui-typography-ui-2xs: 500 11px / 1.3 var(--font-sans);
 
   --tui-background-base: var(--color-bg);
@@ -91,6 +91,10 @@ html {
   --tui-background-elevation-1: var(--color-surface);
   --tui-background-elevation-2: var(--color-surface);
   --tui-background-elevation-3: var(--color-surface-alt);
+  --tui-background-neutral-1: var(--color-surface-alt);
+  --tui-background-neutral-1-hover: var(--color-line);
+  --tui-background-neutral-1-pressed: var(--color-line);
+  --tui-background-neutral-2: var(--color-line);
   --tui-background-accent-1: var(--color-accent);
   --tui-background-accent-1-hover: color-mix(in srgb, var(--color-accent) 85%, var(--color-text));
   --tui-background-accent-1-pressed: color-mix(in srgb, var(--color-accent) 80%, var(--color-bg));
@@ -142,85 +146,5 @@ body {
 ::-webkit-scrollbar-track { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 3px; }
 
-/* "On plan" tags: deliberately understated (muted surface, no green fill or check glyph) so a clean result reads calm, not celebratory. */
-[tuiAppearance][data-appearance='quiet'] {
-  background: var(--color-surface-alt);
-  box-shadow: inset 0 0 0 1px var(--color-line);
-  color: var(--color-muted);
-}
-
-/* Bloodlust, the one game-state tag in the gold the brand shares with Warcraft Logs' top parses. */
-[tuiAppearance][data-appearance='gold'] {
-  background: color-mix(in srgb, var(--color-gold) 10%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 35%, transparent);
-  color: var(--color-gold);
-}
-
-/* Table cards: rows run edge to edge with their own 16px gutters, so the card adds no padding or gap. Element + doubled attribute + class (0,3,1) outranks Taiga's per-space rules, [tuiCardLarge][data-space][data-space=normal] (0,3,0). */
-section[tuiCardLarge][tuiCardLarge].card-flush {
-  --t-padding: 0;
-  --tui-padding-inline: 0;
-  --t-space: 0;
-  --t-comp: 0;
-  --t-radius: var(--tui-radius-l);
-}
-
-/* Unclassed card text reads the body role, as it does outside a card; Taiga's own card default is 16px. */
-[tuiCardLarge]:not([tuiHeader]) { font: var(--tui-typography-body-s); }
-
-/* Card and drawer headings wear the title role's weight, which Taiga's header sets to 700; their intros read the body role, which it sets to 16px. */
-[tuiHeader] [tuiTitle] { font-weight: var(--text-title--font-weight); }
-[tuiHeader] [tuiSubtitle] { font: var(--tui-typography-body-s); }
-
-/* A notification's title wears the heading role, where Taiga sets 16px bold; the div outranks its [tuiNotification][data-size] [tuiTitle] rule (0,3,0). */
-div[tuiNotification][data-size] [tuiTitle] { font: var(--text-heading--font-weight) var(--text-heading) / var(--text-heading--line-height) var(--font-sans); }
-
-/* Switch and checkbox labels: the name role over a body-role description, matching the rows they sit beside. */
-[tuiLabel] [tuiTitle] { font: 400 var(--text-name) / var(--text-name--line-height) var(--font-sans); }
-[tuiLabel] [tuiSubtitle] { font: var(--tui-typography-body-s); }
-
-/* The recording pulse is the critical red of a record light; element+class (0,1,1) beats Taiga's host rule that pins the pulse to the accent. */
-tui-pulse.text-critical { color: var(--color-critical); }
-
-/* tui-icon sizes: element+class (0,1,1) beats Taiga's unlayered 24px tui-icon rule, which layered Tailwind utilities cannot. */
-tui-icon.icon-16 { font-size: 16px; }
+/* Taiga sizes an icon by its font-size and pins 24px outside any layer, so the app's 18px row icons need this element+class rule (0,1,1) to win. */
 tui-icon.icon-18 { font-size: 18px; }
-
-/* Timeline glyphs: 22px in the 42px mobile tap targets, 18px on the md rail (48rem = Tailwind md). */
-tui-icon.icon-seg { font-size: 22px; }
-@media (min-width: 48rem) {
-  tui-icon.icon-seg { font-size: 18px; }
-}
-
-/* Labels under a tuiSlider's segment ticks, Taiga's ticks-labels layout: the end labels sit flush with the track ends, every other label centres on its tick. */
-.slider-ticks { display: flex; margin: 0.25rem 0.375rem 0; }
-.slider-ticks > * { position: relative; flex: 2; text-align: center; }
-.slider-ticks > :first-child { inset-inline-start: -0.375rem; flex: 1; text-align: start; }
-.slider-ticks > :last-child { inset-inline-end: -0.375rem; flex: 1; text-align: end; }
-
-/* Condition tree connectors, after Taiga's custom tree example: each nested row hangs off a line dropped from its parent's icon centre, and the last row's line stops at its own elbow. The 17px indent puts that line at the 18px icon's centre; 11px is a row's icon centre. */
-tui-tree.condition-tree { --tui-tree-item-indent: 1.0625rem; }
-tui-tree.condition-tree tui-tree::before,
-tui-tree.condition-tree tui-tree::after {
-  content: '';
-  position: absolute;
-  inset-inline-start: -0.5rem;
-  border-color: color-mix(in srgb, var(--color-muted) 30%, transparent);
-}
-tui-tree.condition-tree tui-tree::before { inset-block: 0; border-inline-start-width: 1px; }
-tui-tree.condition-tree tui-tree:last-child::before { inset-block-end: auto; block-size: 0.6875rem; }
-tui-tree.condition-tree tui-tree::after { inset-block-start: 0.6875rem; inline-size: 0.5rem; border-block-start-width: 1px; }
-
-/* Flyover panels: a 460px side drawer on desktop and a bottom sheet on phones. The direction attribute outranks the drawer's own per-direction rules. */
-tui-drawer.flyover[data-direction] { inline-size: 28.75rem; }
-@media (max-width: 47.99rem) {
-  tui-drawer.flyover[data-direction] {
-    inset-block-start: auto;
-    inset-inline: 0;
-    inline-size: auto;
-    max-inline-size: none;
-    block-size: 85dvh;
-    border-radius: 1.25rem 1.25rem 0 0;
-    --tui-from: translateY(100%);
-  }
-}

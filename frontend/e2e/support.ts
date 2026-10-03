@@ -30,7 +30,7 @@ export async function showsEntity(scope: Locator): Promise<void> {
 
 /** A bare `div.border-t` also matches the on-plan strip, the empty state, and the Fix cell itself, so a row is narrowed to a top-level band of the card that owns a Fix. */
 function findingRows(table: Locator): Locator {
-  return table.locator(':scope > section > div.border-t').filter({ has: table.page().locator('wl-collapsible') });
+  return table.locator(':scope > section > div > div.border-t').filter({ has: table.page().locator('wl-collapsible') });
 }
 
 /** Which findings a pull produces moves with every re-ingest of the bench, so a card is pinned by the shape of each row it drew, never by one named finding. */
@@ -52,5 +52,5 @@ export async function showsFindingRows(table: Locator, chip?: RegExp): Promise<v
 
 export async function showsOnPlan(table: Locator): Promise<void> {
   await shows(table, 'On plan');
-  await expect(table.locator('[tuiChip][data-appearance="quiet"]').first()).toBeVisible();
+  await expect(table.locator('[tuiChip][data-appearance="neutral"]').first()).toBeVisible();
 }

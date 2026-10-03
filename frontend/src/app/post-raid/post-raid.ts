@@ -6,7 +6,7 @@ import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-i
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { EMPTY, combineLatest, from, merge, of } from 'rxjs';
 import { distinctUntilChanged, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
-import { TUI_VALIDATION_ERRORS, TuiButton, TuiDataList, TuiError, TuiInput, TuiNotification, TuiTextfield } from '@taiga-ui/core';
+import { TUI_VALIDATION_ERRORS, TuiDataList, TuiError, TuiInput, TuiNotification, TuiTextfield } from '@taiga-ui/core';
 import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import { POLL_INTERVAL_S } from '../domains/raid-analysis/data/wcl/live-report-sync-service';
@@ -51,12 +51,12 @@ const POST_RAID_CARDS: readonly CardEntry<PostRaidCardId>[] = [
 
 const INVALID_REPORT_CODE_MESSAGE = 'Paste a Warcraft Logs report URL or a 16-character report code.';
 
-// Selection is NOT mirrored to the URL: a report loads only via an explicit Analyze action, never auto-run from a query param, so a crawled link never spends the shared WCL rate-limit budget.
+// Selection is NOT mirrored to the URL: a report loads only on an explicit Enter or paste, never auto-run from a query param, so a crawled link never spends the shared WCL rate-limit budget.
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-post-raid',
   imports: [
-    ReactiveFormsModule, TuiCardLarge, TuiTextfield, TuiInput, TuiButton, TuiError, TuiSelect, TuiChevron,
+    ReactiveFormsModule, TuiCardLarge, TuiTextfield, TuiInput, TuiError, TuiSelect, TuiChevron,
     TuiDataList, TuiNotification,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
     Defensive, Gear, MapPanel, LiveControls, ClipPanel,
@@ -78,8 +78,6 @@ export class PostRaid {
   private readonly duration = new FormatDurationPipe();
 
   protected readonly reportControl = new FormControl('', { nonNullable: true, validators: [control => this.reportCodeValidator(control)] });
-  private readonly reportValue = toSignal(this.reportControl.valueChanges, { initialValue: this.reportControl.value });
-  protected readonly canAnalyze = computed(() => this.selection.isValidReportCode(this.selection.extractCode(this.reportValue().trim())));
   protected readonly fightControl = new FormControl<number | null>(null);
   protected readonly playerControl = new FormControl<number | null>(null);
 
@@ -224,7 +222,7 @@ export class PostRaid {
     this.notice.set('');
     const rawInput = this.reportControl.value;
     const code = this.selection.extractCode(rawInput.trim());
-    // The Analyze button is already disabled while invalid; this guard also covers the Enter-key path.
+    // Enter and paste both land here whatever the field holds, so this guard is what keeps an invalid code from reaching WCL.
     if (!this.selection.isValidReportCode(code)) {
       if (code) this.notice.set('Enter a valid Warcraft Logs report URL or 16-character report code.');
       return;
@@ -394,10 +392,10 @@ export class PostRaid {
     control.setValue(value, { emitViewToModelChange: false });
   }
 
-  // Keeps the Analyze button disabled - and no WCL request firing - until the input resolves to a usable report code.
+  // Turns the field red, with the message under it, until the input resolves to a usable report code.
   private reportCodeValidator(control: AbstractControl): ValidationErrors | null {
     const value = ((control.value as string | null) ?? '').trim();
-    if (!value) return null; // empty is not an error (no red field); the button is disabled separately
+    if (!value) return null; // empty is not an error, so a blank field never shows red
     return this.selection.isValidReportCode(this.selection.extractCode(value)) ? null : { invalidReportCode: true };
   }
 }

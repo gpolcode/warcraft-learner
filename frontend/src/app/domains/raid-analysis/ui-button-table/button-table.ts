@@ -3,7 +3,7 @@ import { PercentPipe } from '@angular/common';
 import { TuiItem } from '@taiga-ui/cdk';
 import { TuiButton, TuiExpand, TuiTitle } from '@taiga-ui/core';
 import { TuiChevron } from '@taiga-ui/kit';
-import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
+import { TuiCardCollapsed, TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { FindingOccurrences } from '../ui-finding-table/finding-occurrences';
 import { RangeBar } from '../ui-range-bar/range-bar';
@@ -15,7 +15,7 @@ import type { ButtonRow } from '../data/rotation/priority-list/list-finding-serv
   selector: 'wl-button-table',
   host: { class: 'block' },
   imports: [
-    PercentPipe, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiChevron, TuiExpand, TuiItem,
+    PercentPipe, TuiCardLarge, TuiCardCollapsed, TuiHeader, TuiTitle, TuiButton, TuiChevron, TuiExpand, TuiItem,
     GameIcon, FindingOccurrences, RangeBar, RangeLegend,
   ],
   templateUrl: './button-table.html',

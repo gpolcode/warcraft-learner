@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TuiIcon } from '@taiga-ui/core';
-import { TUI_TREE_CONTENT, TuiTree } from '@taiga-ui/kit';
-import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
+import { TuiTree } from '@taiga-ui/kit';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
-import { ConditionTreeRow } from './condition-tree-row';
 import type { ConditionCheck, FindingOccurrence } from '../data/analysis/analysis.models';
 
 @Component({
@@ -12,7 +10,6 @@ import type { ConditionCheck, FindingOccurrence } from '../data/analysis/analysi
   host: { class: 'block' },
   imports: [TuiIcon, TuiTree, FormatDurationPipe],
   templateUrl: './condition-checklist.html',
-  providers: [{ provide: TUI_TREE_CONTENT, useValue: new PolymorpheusComponent(ConditionTreeRow) }],
 })
 export class ConditionChecklist {
   readonly occurrence = input.required<FindingOccurrence>();
