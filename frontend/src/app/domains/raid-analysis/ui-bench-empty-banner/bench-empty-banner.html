@@ -10,39 +10,41 @@
     </span>
   </div>
 
-  <div class="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch gap-1 bg-bg border border-line rounded-lg px-4 py-3.5 mt-3.5">
-    <div class="flex flex-col gap-1.5">
-      <tui-icon class="icon-18 text-muted" icon="military_tech" />
-      <div class="text-heading">Mythic kills logged</div>
-      <div class="text-caption text-muted">Players upload to WCL.</div>
-      <div class="text-label text-critical mt-px">Waiting</div>
-    </div>
+  <div tuiCardLarge appearance="outline-grayscale" class="mt-3.5">
+    <div class="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch gap-1">
+      <div class="flex flex-col gap-1.5">
+        <tui-icon class="icon-18 text-muted" icon="military_tech" />
+        <div class="text-heading">Mythic kills logged</div>
+        <div class="text-caption text-muted">Players upload to WCL.</div>
+        <div class="text-label text-critical mt-px">Waiting</div>
+      </div>
 
-    <div class="flex items-center justify-center">
-      <tui-icon class="icon-18 text-line" icon="arrow_forward" />
-    </div>
+      <div class="flex items-center justify-center">
+        <tui-icon class="icon-18 text-line" icon="arrow_forward" />
+      </div>
 
-    <div class="flex flex-col gap-1.5">
-      <tui-icon class="icon-18 text-muted" icon="cloud_sync" />
-      <div class="text-heading">Ingest samples them</div>
-      <div class="text-caption text-muted">We pull new top rankings.</div>
-      <div class="text-label text-warning mt-px">Hourly</div>
-    </div>
+      <div class="flex flex-col gap-1.5">
+        <tui-icon class="icon-18 text-muted" icon="cloud_sync" />
+        <div class="text-heading">Ingest samples them</div>
+        <div class="text-caption text-muted">We pull new top rankings.</div>
+        <div class="text-label text-warning mt-px">Hourly</div>
+      </div>
 
-    <div class="flex items-center justify-center">
-      <tui-icon class="icon-18 text-line" icon="arrow_forward" />
-    </div>
+      <div class="flex items-center justify-center">
+        <tui-icon class="icon-18 text-line" icon="arrow_forward" />
+      </div>
 
-    <div class="flex flex-col gap-1.5">
-      <tui-icon class="icon-18 text-success" icon="check_circle" />
-      @if (variant() === 'pre') {
-        <div class="text-heading">Plan unlocks</div>
-        <div class="text-caption text-muted">The cards below fill in.</div>
-      } @else {
-        <div class="text-heading">Comparisons unlock</div>
-        <div class="text-caption text-muted">The sections below fill in.</div>
-      }
-      <div class="text-label text-success mt-px">Automatic</div>
+      <div class="flex flex-col gap-1.5">
+        <tui-icon class="icon-18 text-success" icon="check_circle" />
+        @if (variant() === 'pre') {
+          <div class="text-heading">Plan unlocks</div>
+          <div class="text-caption text-muted">The cards below fill in.</div>
+        } @else {
+          <div class="text-heading">Comparisons unlock</div>
+          <div class="text-caption text-muted">The sections below fill in.</div>
+        }
+        <div class="text-label text-success mt-px">Automatic</div>
+      </div>
     </div>
   </div>
 </div>

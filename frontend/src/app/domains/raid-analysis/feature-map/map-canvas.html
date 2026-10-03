@@ -20,13 +20,15 @@
     </label>
   </div>
 
-  <div class="relative rounded-lg border border-line bg-surface-alt">
-    <canvas #canvas class="block h-[420px] w-full"></canvas>
-    <div class="pointer-events-none absolute bottom-2 left-2 flex flex-col gap-0.5 text-caption">
-      @if (live()) { <span class="text-gold">◆ You</span> }
-      <span class="text-muted">● Top logs</span>
-      <span class="text-accent">◯ Top-log centre</span>
-      <span class="text-critical">▲ Reference (facing up)</span>
+  <div tuiCardLarge appearance="outline-grayscale">
+    <div class="relative">
+      <canvas #canvas class="block h-[420px] w-full"></canvas>
+      <div class="pointer-events-none absolute bottom-0 left-0 flex flex-col gap-0.5 text-caption">
+        @if (live()) { <span class="text-gold">◆ You</span> }
+        <span class="text-muted">● Top logs</span>
+        <span class="text-accent">◯ Top-log centre</span>
+        <span class="text-critical">▲ Reference (facing up)</span>
+      </div>
     </div>
   </div>
 

@@ -12,15 +12,17 @@
       @let barTone = occ.unjudged ? 'bg-muted' : (occ.ok ? 'bg-success' : 'bg-critical');
       @let active = activeIndex() === $index;
       <button
+        tuiButton
         type="button"
         role="option"
         tabindex="-1"
+        appearance="outline-grayscale"
+        [tuiAppearanceMode]="active ? 'checked' : null"
         [id]="optionId($index)"
-        [class]="'relative flex items-center justify-center cursor-pointer min-w-10 h-10 px-2 rounded-lg overflow-hidden bg-bg border border-line text-caption tabular-nums whitespace-nowrap shrink-0 ' + tone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
         [attr.aria-selected]="active"
         [attr.aria-describedby]="active ? detailId : null"
         (click)="select($index)">
-        {{ occ.atS | formatDuration }}
+        <span [class]="'tabular-nums ' + tone">{{ occ.atS | formatDuration }}</span>
         <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
       </button>
     }

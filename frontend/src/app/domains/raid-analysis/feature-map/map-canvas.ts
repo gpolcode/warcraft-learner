@@ -5,6 +5,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiDataList, TuiLabel, TuiSlider, TuiTextfield } from '@taiga-ui/core';
 import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
+import { TuiCardLarge } from '@taiga-ui/layout';
 import { ReferenceSelector } from '../data/encounter/positioning.models';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import { LoadState, RenderableLoadError } from '../../shared/ui-load-state/load-state';
@@ -19,7 +20,7 @@ const MAX_FRAME_DT_S = 0.1;
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-map-canvas',
   imports: [
-    FormsModule, TuiTextfield, TuiLabel, TuiSelect, TuiChevron, TuiDataList, TuiButton, TuiSlider,
+    FormsModule, TuiTextfield, TuiLabel, TuiSelect, TuiChevron, TuiDataList, TuiButton, TuiSlider, TuiCardLarge,
     FormatDurationPipe, LoadState,
   ],
   templateUrl: './map-canvas.html',

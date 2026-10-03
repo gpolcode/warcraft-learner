@@ -38,25 +38,27 @@
                 w.status === 'info' ? 'bg-accent' : 'bg-muted';
               <div class="flex flex-col items-center gap-1.5 shrink-0">
                 <button
+                  tuiIconButton
                   type="button"
                   role="option"
                   tabindex="-1"
+                  appearance="outline-grayscale"
+                  [tuiAppearanceMode]="active ? 'checked' : null"
                   [id]="optionId(cell.index)"
-                  [class]="'relative flex items-center justify-center cursor-pointer w-10 h-10 rounded-lg overflow-hidden bg-bg border border-line ' + iconTone + (active ? ' outline outline-2 outline-offset-0 outline-gold' : ' focus:outline-none')"
                   [attr.aria-selected]="active"
                   [attr.aria-label]="(w.timeStartS | formatDuration)"
                   (click)="select(cell.index)">
-                  <tui-icon class="icon-18" [icon]="w.statusIcon" />
+                  <tui-icon [class]="iconTone" [icon]="w.statusIcon" />
                   <span [class]="'absolute bottom-0 left-0 right-0 h-1 ' + barTone" aria-hidden="true"></span>
                 </button>
-                <span [class]="'tabular-nums text-caption ' + (active ? 'text-gold' : 'text-muted')">
+                <span [class]="'tabular-nums text-caption ' + (active ? 'text-accent' : 'text-muted')">
                   {{ w.timeStartS | formatDuration }}
                 </span>
               </div>
             } @else {
               <!-- The hidden label keeps this box top-aligned with the chips' timestamp row. -->
               <div class="flex flex-col items-center gap-1.5 shrink-0" aria-hidden="true">
-                <div class="w-5 h-10 rounded-md border border-dashed border-line opacity-40"></div>
+                <div class="w-5 h-8 rounded-md border border-dashed border-line opacity-40"></div>
                 <span class="text-caption invisible">0</span>
               </div>
             }
