@@ -17,6 +17,7 @@ interface PollHandle {
   players: WritableSignal<WclPlayer[]>;
   fightControl: FormControl<number | null>;
   playerControl: FormControl<number | null>;
+  setProgrammatically(control: FormControl<number | null>, value: number | null): void;
   selectedFightId: Signal<number | null>;
   selectedPlayerId: Signal<number | null>;
   loadError: Signal<unknown>;
@@ -55,7 +56,8 @@ describe('PostRaid live-sync poll', () => {
     comp.reportCode.set(REPORT_A);
     comp.fights.set([pull1()]);
     comp.players.set([player({ id: PLAYER_ID, name: PLAYER_NAME })]);
-    comp.fightControl.setValue(SELECTED_PULL_ID);
+    // Written as the page writes it: a bare setValue reads as a pick and starts a resolve these polls never settle.
+    comp.setProgrammatically(comp.fightControl, SELECTED_PULL_ID);
     liveCapture.setLive(true);
   }
 

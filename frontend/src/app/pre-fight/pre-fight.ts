@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, PendingTasks, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Observable, filter } from 'rxjs';
 import { TuiDataList, TuiTextfield } from '@taiga-ui/core';
 import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
@@ -101,6 +102,9 @@ export class PreFight implements OnInit {
     effect(() => {
       if (this.classes().length) this.classControl.enable({ emitEvent: false });
     });
+    this.picks(this.classControl).pipe(takeUntilDestroyed()).subscribe(() => { this.onClassChange(); });
+    this.picks(this.specControl).pipe(takeUntilDestroyed()).subscribe(() => { this.onSpecChange(); });
+    this.picks(this.encControl).pipe(takeUntilDestroyed()).subscribe(() => { this.onEncChange(); });
   }
 
   ngOnInit(): void {
@@ -192,9 +196,18 @@ export class PreFight implements OnInit {
     this.error.set(error.kind === 'missing' ? null : error);
   }
 
-  // A write from code must not echo through the select's (ngModelChange), which the template reserves for real picks.
+  // valueChanges carries the page's own writes along with the user's picks, so a write raises this flag for its synchronous emission and picks() passes only the rest.
+  private writing = false;
+
   private setProgrammatically<T>(control: FormControl<T>, value: T): void {
-    control.setValue(value, { emitViewToModelChange: false });
+    const outer = this.writing;
+    this.writing = true;
+    control.setValue(value);
+    this.writing = outer;
+  }
+
+  private picks<T>(control: FormControl<T>): Observable<T> {
+    return control.valueChanges.pipe(filter(() => !this.writing));
   }
 
   protected onEncChange(): void {

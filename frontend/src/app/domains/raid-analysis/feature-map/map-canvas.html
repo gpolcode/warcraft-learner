@@ -9,7 +9,7 @@
     <label tuiLabel class="w-[200px]">
       Reference
       <tui-textfield tuiChevron [stringify]="referenceName">
-        <input id="map-reference-select" tuiSelect [ngModel]="refValue()" (ngModelChange)="onRefChange($event)" />
+        <input tuiSelect [ngModel]="refValue()" (ngModelChange)="onRefChange($event)" />
         <tui-data-list *tuiDropdown>
           <button tuiOption type="button" value="boss">Boss</button>
           @for (enemy of refEnemies(); track enemy.gameId) {

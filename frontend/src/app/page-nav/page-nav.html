@@ -1,21 +1,16 @@
-<ng-template #logo>
-  <svg class="w-6 h-6 shrink-0" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-    <path class="fill-gold" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
-    <g class="fill-surface">
-      <rect x="9.5" y="18" width="3" height="4" rx="1"/>
-      <rect x="14.5" y="14" width="3" height="8" rx="1"/>
-      <rect x="19.5" y="10" width="3" height="12" rx="1"/>
-    </g>
-  </svg>
-</ng-template>
-
 <header tuiNavigationHeader>
-  @if (isMobile()) {
-    <a routerLink="/" class="flex items-center px-2" aria-label="warcraft-learner home">
-      <ng-container [ngTemplateOutlet]="logo" />
-    </a>
-  }
-  <h1 class="px-2 text-heading">{{ pageTitle() }}</h1>
+  <a routerLink="/" class="flex shrink-0 items-center gap-2 px-2 no-underline text-heading text-gold" aria-label="warcraft-learner home">
+    <svg class="w-6 h-6 shrink-0" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <path class="fill-gold" d="M16 4 L27 7 L27 15.5 C27 21.5 22.5 26.5 16 29 C9.5 26.5 5 21.5 5 15.5 L5 7 Z"/>
+      <g class="fill-surface">
+        <rect x="9.5" y="18" width="3" height="4" rx="1"/>
+        <rect x="14.5" y="14" width="3" height="8" rx="1"/>
+        <rect x="19.5" y="10" width="3" height="12" rx="1"/>
+      </g>
+    </svg>
+    <span>warcraft-learner</span>
+  </a>
+  <h1 class="min-w-0 truncate px-2 text-heading">{{ pageTitle() }}</h1>
   <hr />
   @if (isMobile()) {
     <a tuiIconButton iconStart="github" [href]="githubUrl" target="_blank" rel="noopener noreferrer">View on GitHub</a>
@@ -26,13 +21,6 @@
 <div class="flex">
   @if (!isMobile()) {
     <aside class="h-[calc(100dvh-3rem)]" [tuiNavigationAside]="expanded()">
-      <header>
-        <!-- A plain home link, not an aside item: an item on / would light up as the active page beside Analyze. -->
-        <a routerLink="/" tuiNavigationLogo class="h-8 px-1 text-heading text-gold" aria-label="warcraft-learner home">
-          <ng-container [ngTemplateOutlet]="logo" />
-          <span tuiFade>warcraft-learner</span>
-        </a>
-      </header>
       <a tuiAsideItem iconStart="lightbulb" routerLink="/pre">Pre-fight</a>
       <a tuiAsideItem iconStart="analytics" routerLink="/" [routerLinkActiveOptions]="{ exact: true }">Analyze</a>
       <footer>

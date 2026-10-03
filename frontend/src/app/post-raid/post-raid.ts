@@ -4,8 +4,8 @@ import {
 } from '@angular/core';
 import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
-import { EMPTY, combineLatest, from, merge, of } from 'rxjs';
-import { distinctUntilChanged, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, Observable, combineLatest, from, merge, of } from 'rxjs';
+import { distinctUntilChanged, exhaustMap, filter, map, switchMap, tap } from 'rxjs/operators';
 import { TUI_VALIDATION_ERRORS, TuiDataList, TuiError, TuiInput, TuiNotification, TuiTextfield } from '@taiga-ui/core';
 import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
@@ -82,11 +82,13 @@ export class PostRaid {
   protected readonly playerControl = new FormControl<number | null>(null);
 
   constructor() {
-    // Live sync owns the fight selection: disable the control while it drives it (setValue from the poll still works on a disabled control).
+    // Live sync owns the fight selection: disable the control while it drives it (setValue from the poll still works on a disabled control). Silently, or picks() would read the re-enable as a pick.
     effect(() => {
-      if (this.liveCapture.liveEnabled()) this.fightControl.disable();
-      else this.fightControl.enable();
+      if (this.liveCapture.liveEnabled()) this.fightControl.disable({ emitEvent: false });
+      else this.fightControl.enable({ emitEvent: false });
     });
+    this.picks(this.fightControl).pipe(takeUntilDestroyed()).subscribe(() => void this.onFightChange());
+    this.picks(this.playerControl).pipe(takeUntilDestroyed()).subscribe(() => void this.onPlayerChange());
   }
 
   protected onBeforeUnload(event: BeforeUnloadEvent): void {
@@ -387,9 +389,18 @@ export class PostRaid {
     if (playerName) this.selectionStore.savePostRaid({ playerName });
   }
 
-  // A write from code must not echo through the select's (ngModelChange), which the template reserves for real picks.
+  // valueChanges carries the page's own writes along with the user's picks, so a write raises this flag for its synchronous emission and picks() passes only the rest.
+  private writing = false;
+
   private setProgrammatically(control: FormControl<number | null>, value: number | null): void {
-    control.setValue(value, { emitViewToModelChange: false });
+    const outer = this.writing;
+    this.writing = true;
+    control.setValue(value);
+    this.writing = outer;
+  }
+
+  private picks<T>(control: FormControl<T>): Observable<T> {
+    return control.valueChanges.pipe(filter(() => !this.writing));
   }
 
   private reportCodeValidator(control: AbstractControl): ValidationErrors | null {

@@ -8,11 +8,9 @@ import chartSpline from '@taiga-ui/icons/src/chart-spline.svg';
 import check from '@taiga-ui/icons/src/check.svg';
 import chevronDown from '@taiga-ui/icons/src/chevron-down.svg';
 import chevronRight from '@taiga-ui/icons/src/chevron-right.svg';
-import chevronUp from '@taiga-ui/icons/src/chevron-up.svg';
 import circleAlert from '@taiga-ui/icons/src/circle-alert.svg';
 import circleCheck from '@taiga-ui/icons/src/circle-check.svg';
 import circleHelp from '@taiga-ui/icons/src/circle-help.svg';
-import circleX from '@taiga-ui/icons/src/circle-x.svg';
 import clock from '@taiga-ui/icons/src/clock.svg';
 import cloudOff from '@taiga-ui/icons/src/cloud-off.svg';
 import cloudSync from '@taiga-ui/icons/src/cloud-sync.svg';
@@ -24,7 +22,6 @@ import lightbulb from '@taiga-ui/icons/src/lightbulb.svg';
 import link from '@taiga-ui/icons/src/link.svg';
 import locateFixed from '@taiga-ui/icons/src/locate-fixed.svg';
 import medal from '@taiga-ui/icons/src/medal.svg';
-import minus from '@taiga-ui/icons/src/minus.svg';
 import panelLeftClose from '@taiga-ui/icons/src/panel-left-close.svg';
 import panelLeftOpen from '@taiga-ui/icons/src/panel-left-open.svg';
 import pause from '@taiga-ui/icons/src/pause.svg';
@@ -49,8 +46,6 @@ const APP_ICONS: Record<string, string> = {
   download,
   emoji_events: trophy,
   error: circleAlert,
-  expand_less: chevronUp,
-  expand_more: chevronDown,
   flag,
   github,
   help_outline: circleHelp,
@@ -75,12 +70,8 @@ const TAIGA_ICONS: Record<string, string> = {
   '@tui.check': check,
   '@tui.chevron-down': chevronDown,
   '@tui.chevron-right': chevronRight,
-  '@tui.circle-alert': circleAlert,
-  '@tui.circle-check': circleCheck,
-  '@tui.circle-x': circleX,
   '@tui.copy': copy,
   '@tui.info': info,
-  '@tui.minus': minus,
   '@tui.x': x,
 };
 
