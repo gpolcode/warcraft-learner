@@ -179,6 +179,9 @@ div[tuiNotification][data-size] [tuiTitle] { font: var(--text-heading--font-weig
 [tuiLabel] [tuiTitle] { font: 400 var(--text-name) / var(--text-name--line-height) var(--font-sans); }
 [tuiLabel] [tuiSubtitle] { font: var(--tui-typography-body-s); }
 
+/* The recording pulse is the critical red of a record light; element+class (0,1,1) beats Taiga's host rule that pins the pulse to the accent. */
+tui-pulse.text-critical { color: var(--color-critical); }
+
 /* tui-icon sizes: element+class (0,1,1) beats Taiga's unlayered 24px tui-icon rule, which layered Tailwind utilities cannot. */
 tui-icon.icon-16 { font-size: 16px; }
 tui-icon.icon-18 { font-size: 18px; }
@@ -188,6 +191,25 @@ tui-icon.icon-seg { font-size: 22px; }
 @media (min-width: 48rem) {
   tui-icon.icon-seg { font-size: 18px; }
 }
+
+/* Labels under a tuiSlider's segment ticks, Taiga's ticks-labels layout: the end labels sit flush with the track ends, every other label centres on its tick. */
+.slider-ticks { display: flex; margin: 0.25rem 0.375rem 0; }
+.slider-ticks > * { position: relative; flex: 2; text-align: center; }
+.slider-ticks > :first-child { inset-inline-start: -0.375rem; flex: 1; text-align: start; }
+.slider-ticks > :last-child { inset-inline-end: -0.375rem; flex: 1; text-align: end; }
+
+/* Condition tree connectors, after Taiga's custom tree example: each nested row hangs off a line dropped from its parent's icon centre, and the last row's line stops at its own elbow. The 17px indent puts that line at the 18px icon's centre; 11px is a row's icon centre. */
+tui-tree.condition-tree { --tui-tree-item-indent: 1.0625rem; }
+tui-tree.condition-tree tui-tree::before,
+tui-tree.condition-tree tui-tree::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: -0.5rem;
+  border-color: color-mix(in srgb, var(--color-muted) 30%, transparent);
+}
+tui-tree.condition-tree tui-tree::before { inset-block: 0; border-inline-start-width: 1px; }
+tui-tree.condition-tree tui-tree:last-child::before { inset-block-end: auto; block-size: 0.6875rem; }
+tui-tree.condition-tree tui-tree::after { inset-block-start: 0.6875rem; inline-size: 0.5rem; border-block-start-width: 1px; }
 
 /* Flyover panels: a 460px side drawer on desktop and a bottom sheet on phones. The direction attribute outranks the drawer's own per-direction rules. */
 tui-drawer.flyover[data-direction] { inline-size: 28.75rem; }

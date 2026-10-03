@@ -12,20 +12,22 @@
       <p class="text-body text-muted">No spec data available.</p>
     } @else {
       <div class="flex flex-wrap gap-3.5">
-        <tui-textfield tuiChevron class="flex-[1_1_200px]" [tuiTextfieldCleaner]="false" [content]="selectedClass() ? classContent : ''" [stringify]="classLabel">
-          <label tuiLabel for="class-select">Class</label>
-          <input id="class-select" tuiSelect [formControl]="classControl" (ngModelChange)="onClassChange()" />
-          <tui-data-list *tuiDropdown>
-            @for (c of classes(); track c.className) {
-              <button tuiOption type="button" [value]="c.className">
-                <span class="flex items-center gap-2">
-                  <wl-art-icon [src]="c.className | classIcon" [alt]="c.classLabel"></wl-art-icon>
-                  <span>{{ c.classLabel }}</span>
-                </span>
-              </button>
-            }
-          </tui-data-list>
-        </tui-textfield>
+        <label tuiLabel class="flex-[1_1_200px]">
+          Class
+          <tui-textfield tuiChevron [content]="selectedClass() ? classContent : ''" [stringify]="classLabel">
+            <input id="class-select" tuiSelect [formControl]="classControl" (ngModelChange)="onClassChange()" />
+            <tui-data-list *tuiDropdown>
+              @for (c of classes(); track c.className) {
+                <button tuiOption type="button" [value]="c.className">
+                  <span class="flex items-center gap-2">
+                    <wl-art-icon [src]="c.className | classIcon" [alt]="c.classLabel"></wl-art-icon>
+                    <span>{{ c.classLabel }}</span>
+                  </span>
+                </button>
+              }
+            </tui-data-list>
+          </tui-textfield>
+        </label>
         <ng-template #classContent let-cn>
           <span class="flex items-center gap-2">
             <wl-art-icon [src]="cn | classIcon" [alt]="cn | formatSpec"></wl-art-icon>
@@ -34,20 +36,22 @@
         </ng-template>
 
         @if (selectedClass()) {
-          <tui-textfield tuiChevron class="flex-[1_1_200px]" [tuiTextfieldCleaner]="false" [content]="selectedSpec() ? specContent : ''" [stringify]="specLabel">
-            <label tuiLabel for="spec-select">Spec</label>
-            <input id="spec-select" tuiSelect [formControl]="specControl" (ngModelChange)="onSpecChange()" />
-            <tui-data-list *tuiDropdown>
-              @for (m of specsForSelectedClass(); track m.spec) {
-                <button tuiOption type="button" [value]="m.spec">
-                  <span class="flex items-center gap-2">
-                    <wl-art-icon [src]="m.spec | specIcon" [alt]="m.specLabel"></wl-art-icon>
-                    <span>{{ m.specLabel }}</span>
-                  </span>
-                </button>
-              }
-            </tui-data-list>
-          </tui-textfield>
+          <label tuiLabel class="flex-[1_1_200px]">
+            Spec
+            <tui-textfield tuiChevron [content]="selectedSpec() ? specContent : ''" [stringify]="specLabel">
+              <input id="spec-select" tuiSelect [formControl]="specControl" (ngModelChange)="onSpecChange()" />
+              <tui-data-list *tuiDropdown>
+                @for (m of specsForSelectedClass(); track m.spec) {
+                  <button tuiOption type="button" [value]="m.spec">
+                    <span class="flex items-center gap-2">
+                      <wl-art-icon [src]="m.spec | specIcon" [alt]="m.specLabel"></wl-art-icon>
+                      <span>{{ m.specLabel }}</span>
+                    </span>
+                  </button>
+                }
+              </tui-data-list>
+            </tui-textfield>
+          </label>
           <ng-template #specContent let-sp>
             <span class="flex items-center gap-2">
               <wl-art-icon [src]="sp | specIcon" [alt]="sp | formatSpec"></wl-art-icon>
@@ -60,20 +64,22 @@
       @if (loadingEncounters()) {
         <wl-loading-spinner message="Loading encounters…"></wl-loading-spinner>
       } @else if (encounters().length > 0 || selectedSpec()) {
-        <tui-textfield tuiChevron [tuiTextfieldCleaner]="false" [content]="selectedEncounter() ? encounterContent : ''" [stringify]="encounterLabel">
-          <label tuiLabel for="encounter-select">Encounter</label>
-          <input id="encounter-select" tuiSelect [formControl]="encControl" (ngModelChange)="onEncChange()" />
-          <tui-data-list *tuiDropdown>
-            @for (e of encounters(); track e.id) {
-              <button tuiOption type="button" [value]="e.id">
-                <span class="flex items-center gap-2">
-                  <wl-art-icon [src]="e.id | bossIcon" [alt]="e.name"></wl-art-icon>
-                  <span class="truncate">{{ e.name }}</span>
-                </span>
-              </button>
-            }
-          </tui-data-list>
-        </tui-textfield>
+        <label tuiLabel>
+          Encounter
+          <tui-textfield tuiChevron [content]="selectedEncounter() ? encounterContent : ''" [stringify]="encounterLabel">
+            <input id="encounter-select" tuiSelect [formControl]="encControl" (ngModelChange)="onEncChange()" />
+            <tui-data-list *tuiDropdown>
+              @for (e of encounters(); track e.id) {
+                <button tuiOption type="button" [value]="e.id">
+                  <span class="flex items-center gap-2">
+                    <wl-art-icon [src]="e.id | bossIcon" [alt]="e.name"></wl-art-icon>
+                    <span class="truncate">{{ e.name }}</span>
+                  </span>
+                </button>
+              }
+            </tui-data-list>
+          </tui-textfield>
+        </label>
         <ng-template #encounterContent>
           @if (selectedEncounter(); as enc) {
             <span class="flex items-center gap-2">

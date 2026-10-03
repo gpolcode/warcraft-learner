@@ -3,10 +3,10 @@
 } @else if (state() === 'rows') {
   <section tuiCardLarge appearance="outline-grayscale" class="card-flush">
     <header tuiHeader="body-l" class="px-4 pt-3 pb-2">
-      <h2 tuiTitle>
-        {{ heading() }}
-        <span tuiSubtitle>{{ subtitle() }}</span>
-      </h2>
+      <hgroup tuiTitle>
+        <h2>{{ heading() }}</h2>
+        <p tuiSubtitle>{{ subtitle() }}</p>
+      </hgroup>
     </header>
 
     <div class="hidden md:grid grid-cols-(--cols-plan) gap-(--gap-card) px-4 pb-1">

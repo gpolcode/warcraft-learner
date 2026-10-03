@@ -1,8 +1,9 @@
-<!-- 60px = two 24px chip rows + the 8px gap; any higher leaves a sliced third row peeking out. -->
-<div #content [class]="expanded() ? '' : (mode() === 'chips' ? 'max-h-[60px] overflow-hidden' : 'line-clamp-2 md:line-clamp-none')"><ng-content /></div>
+<tui-elastic-container>
+  <div #content [class]="expanded() ? '' : 'line-clamp-2 md:line-clamp-none'"><ng-content /></div>
+</tui-elastic-container>
 
 @if (overflowing()) {
-  <div class="mt-1.5 text-caption" [class.md:hidden]="mode() !== 'chips'">
+  <div class="mt-1.5 text-caption md:hidden">
     <button
       tuiLink
       type="button"

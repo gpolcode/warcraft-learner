@@ -9,16 +9,17 @@
   (keydown.escape)="closed.emit()">
   <header>
     <div tuiHeader="body-l">
-      <h2 tuiTitle>
-        <span class="flex items-center gap-2">
-          <span [id]="headingId">{{ heading() }}</span>
+      <hgroup tuiTitle>
+        <div class="flex items-center gap-2">
+          <h2 [id]="headingId">{{ heading() }}</h2>
           @if (loadingText()) {
             <tui-loader size="xs" [textContent]="loadingText()" />
           }
-        </span>
-        <span tuiSubtitle class="text-muted" [id]="introId">{{ intro() }}</span>
-      </h2>
+        </div>
+        <p tuiSubtitle class="text-muted" [id]="introId">{{ intro() }}</p>
+      </hgroup>
       <div tuiAccessories>
+        <!-- A body-l header sizes its buttons xs; the explicit s keeps the app-wide size. -->
         <button tuiIconButton type="button" appearance="icon" size="s" iconStart="close" (click)="closed.emit()">{{ closeLabel() }}</button>
       </div>
     </div>

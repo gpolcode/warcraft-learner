@@ -1,23 +1,20 @@
 import {
-  afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, input, signal, viewChild,
+  afterNextRender, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, signal, viewChild,
 } from '@angular/core';
 import { TuiLink } from '@taiga-ui/core';
-
-type CollapsibleMode = 'prose' | 'chips';
+import { TuiElasticContainer } from '@taiga-ui/layout';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-collapsible',
   // Angular custom elements default to display:inline; block keeps the clamp + toggle stacked.
   host: { class: 'block' },
-  imports: [TuiLink],
+  imports: [TuiLink, TuiElasticContainer],
   templateUrl: './collapsible.html',
 })
 export class Collapsible {
   private readonly destroyRef = inject(DestroyRef);
   private readonly content = viewChild.required<ElementRef<HTMLElement>>('content');
-
-  readonly mode = input<CollapsibleMode>('prose');
 
   protected readonly expanded = signal(false);
   protected readonly overflowing = signal(false);

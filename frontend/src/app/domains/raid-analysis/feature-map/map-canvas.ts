@@ -60,6 +60,7 @@ export class MapCanvas {
   protected readonly postS = this.map.postS;
   protected readonly windowStart = computed(() => this.anchorTime() - this.preS());
   protected readonly windowEnd = computed(() => this.anchorTime() + this.postS());
+  protected readonly windowMid = computed(() => (this.windowStart() + this.windowEnd()) / 2);
 
   /** Scaling every stored row into a sample is the expensive step, so caching it here keeps playback cheap: each frame just interpolates the cached timelines. */
   private readonly parseTimelines = computed(() => this.map.parseTimelinesFor(this.positions(), this.selector()));

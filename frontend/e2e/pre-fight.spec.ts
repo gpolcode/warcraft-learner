@@ -49,8 +49,7 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
   for (let i = 0; i < abilityCount; i++) await expect(abilities.nth(i)).toContainText(/×\d+/);
 
   await panel.getByRole('button', { name: 'Copy note' }).click();
-  await shows(page, 'Copied to clipboard. Paste it into your Northern Sky note.');
-  await expect(panel).not.toContainText('Copied to clipboard');
+  await expect(panel.getByRole('button', { name: 'Copied', exact: true })).toBeVisible();
 
   await panel.getByRole('button', { name: 'Close export' }).click();
   await expect(panel).toHaveCount(0);

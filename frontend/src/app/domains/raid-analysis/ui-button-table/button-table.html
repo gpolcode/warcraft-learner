@@ -1,12 +1,12 @@
 <section tuiCardLarge appearance="outline-grayscale" class="card-flush">
 
   <header tuiHeader="body-l" class="px-4 pt-3 pb-2">
-    <h2 tuiTitle>
-      {{ heading() }}
+    <hgroup tuiTitle>
+      <h2>{{ heading() }}</h2>
       @if (subtitle()) {
-        <span tuiSubtitle>{{ subtitle() }}</span>
+        <p tuiSubtitle>{{ subtitle() }}</p>
       }
-    </h2>
+    </hgroup>
   </header>
 
   <wl-range-legend class="px-4 pb-2.5"></wl-range-legend>
@@ -26,7 +26,7 @@
           You {{ row.you | percent }}.
           Top raiders {{ row.top.lo | percent }} to {{ row.top.hi | percent }}, {{ row.top.avg | percent }} on average.
         </span>
-        <button tuiIconButton type="button" appearance="flat-grayscale" size="s"
+        <button tuiIconButton type="button" appearance="flat-grayscale"
           [tuiChevron]="open"
           [attr.aria-expanded]="open"
           (click)="toggle($index)">{{ open ? 'Hide instances' : 'Show instances' }}</button>

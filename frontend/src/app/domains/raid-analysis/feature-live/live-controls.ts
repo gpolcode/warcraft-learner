@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiLabel, TuiLoader, TuiTitle } from '@taiga-ui/core';
-import { TuiStatus, TuiSwitch } from '@taiga-ui/kit';
+import { TuiPulse, TuiSwitch } from '@taiga-ui/kit';
 import { LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-live-controls',
-  imports: [FormsModule, TuiLabel, TuiSwitch, TuiTitle, TuiLoader, TuiStatus],
+  imports: [FormsModule, TuiLabel, TuiSwitch, TuiTitle, TuiLoader, TuiPulse],
   templateUrl: './live-controls.html',
 })
 export class LiveControls {

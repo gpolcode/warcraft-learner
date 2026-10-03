@@ -6,16 +6,18 @@
   </p>
 } @else {
   <div class="mb-2 flex flex-wrap items-center justify-end gap-2">
-    <tui-textfield tuiChevron tuiTextfieldSize="s" class="w-[200px]" [tuiTextfieldCleaner]="false" [stringify]="referenceName">
-      <label tuiLabel for="map-reference-select">Reference</label>
-      <input id="map-reference-select" tuiSelect [ngModel]="refValue()" (ngModelChange)="onRefChange($event)" />
-      <tui-data-list *tuiDropdown>
-        <button tuiOption type="button" value="boss">Boss</button>
-        @for (enemy of refEnemies(); track enemy.gameId) {
-          @if (!enemy.isBoss) { <button tuiOption type="button" [value]="enemy.gameId">{{ enemy.name }}</button> }
-        }
-      </tui-data-list>
-    </tui-textfield>
+    <label tuiLabel class="w-[200px]">
+      Reference
+      <tui-textfield tuiChevron [stringify]="referenceName">
+        <input id="map-reference-select" tuiSelect [ngModel]="refValue()" (ngModelChange)="onRefChange($event)" />
+        <tui-data-list *tuiDropdown>
+          <button tuiOption type="button" value="boss">Boss</button>
+          @for (enemy of refEnemies(); track enemy.gameId) {
+            @if (!enemy.isBoss) { <button tuiOption type="button" [value]="enemy.gameId">{{ enemy.name }}</button> }
+          }
+        </tui-data-list>
+      </tui-textfield>
+    </label>
   </div>
 
   <div class="relative rounded-lg border border-line bg-surface-alt">
@@ -28,17 +30,17 @@
     </div>
   </div>
 
-  <p class="mt-1.5 text-caption text-muted">Every position is drawn relative to the reference, which sits at the centre facing up.</p>
+  <p class="mt-1.5 text-caption text-muted">Opened at {{ anchorTime() | formatDuration }}. Every position is drawn relative to the reference, which sits at the centre facing up.</p>
 
-  <div class="mt-2 flex items-center gap-2">
-    <button tuiIconButton type="button" appearance="flat-grayscale" size="s" [iconStart]="playing() ? 'pause' : 'play_arrow'" (click)="togglePlay()">{{ playing() ? 'Pause' : 'Play' }}</button>
-    <div class="min-w-0 flex-1">
+  <div class="mt-2 flex items-start gap-2">
+    <button tuiIconButton type="button" appearance="flat-grayscale" [iconStart]="playing() ? 'pause' : 'play_arrow'" (click)="togglePlay()">{{ playing() ? 'Pause' : 'Play' }}</button>
+    <div class="min-w-0 flex-1 pt-2.5">
       <input #scrubber tuiSlider type="range" aria-label="Replay position"
-        [min]="windowStart()" [max]="windowEnd()" step="0.25"
+        [min]="windowStart()" [max]="windowEnd()" step="0.25" [segments]="2"
         [value]="scrubT()" (input)="onScrub(scrubber.value)" />
-      <div class="mt-1 flex justify-between text-caption text-muted">
+      <div class="slider-ticks text-caption text-muted">
         <span>{{ windowStart() | formatDuration }}</span>
-        <span>Opened at {{ anchorTime() | formatDuration }}</span>
+        <span>{{ windowMid() | formatDuration }}</span>
         <span>{{ windowEnd() | formatDuration }}</span>
       </div>
     </div>

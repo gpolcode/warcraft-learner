@@ -8,7 +8,7 @@
       </span>
     </label>
     @if (capture.liveEnabled() && capture.statusText()) {
-      <span tuiStatus="var(--tui-status-info)" class="text-body text-muted">{{ capture.statusText() }}</span>
+      <span class="inline-flex items-center gap-2 text-body text-muted"><tui-pulse class="mx-1" [playing]="true" />{{ capture.statusText() }}</span>
     }
   </div>
 
@@ -23,7 +23,7 @@
     @if (capture.isStarting()) {
       <tui-loader size="xs" class="self-start text-muted" [inheritColor]="true" textContent="Pick a window..." />
     } @else if (capture.isCapturing()) {
-      <span tuiStatus="var(--tui-status-negative)" class="text-body text-muted">Recording "{{ capture.sourceLabel() }}" in the background</span>
+      <span class="inline-flex items-center gap-2 text-body text-muted"><tui-pulse class="mx-1 text-critical" [playing]="true" />Recording "{{ capture.sourceLabel() }}" in the background</span>
     } @else if (capture.captureError()) {
       <span class="text-body text-critical">{{ capture.captureError() }}</span>
     }

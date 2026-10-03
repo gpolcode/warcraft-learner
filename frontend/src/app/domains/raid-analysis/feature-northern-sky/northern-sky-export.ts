@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
-import { Clipboard } from '@angular/cdk/clipboard';
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiCheckbox, TuiLabel, TuiTitle } from '@taiga-ui/core';
-import { TuiToastService } from '@taiga-ui/kit';
+import { TUI_COPY_TEXTS, TuiButtonCopy } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { FlyoverPanel } from '../../shared/ui-flyover-panel/flyover-panel';
 import { GameIcon } from '../ui-game-icon/game-icon';
@@ -11,20 +10,18 @@ import { NorthernSkyBench } from '../data/northern-sky/northern-sky-data-source'
 import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
 
-const COPIED_MESSAGE = 'Copied to clipboard. Paste it into your Northern Sky note.';
-const COPY_FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
+const COPY_TEXTS = ['Copy note', 'Copied'] as const;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-northern-sky-export',
-  imports: [FormsModule, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiCheckbox, TuiLabel, FlyoverPanel, GameIcon, LoadState],
+  imports: [FormsModule, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiButtonCopy, TuiCheckbox, TuiLabel, FlyoverPanel, GameIcon, LoadState],
   templateUrl: './northern-sky-export.html',
+  providers: [{ provide: TUI_COPY_TEXTS, useValue: signal(COPY_TEXTS) }],
 })
 export class NorthernSkyExport {
   private readonly loadRes = inject(LoadResourceService);
   private readonly feature = inject(NorthernSkyFeatureService);
-  private readonly clipboard = inject(Clipboard);
-  private readonly toast = inject(TuiToastService);
 
   readonly spec = input.required<string>();
   readonly encounterId = input.required<number>();
@@ -52,6 +49,10 @@ export class NorthernSkyExport {
   protected readonly available = this.load.available;
   protected readonly allSelected = computed(() => this.feature.isAllSelected(this.abilities(), this.excluded()));
   protected readonly panelOpen = computed(() => this.feature.isPanelOpen(this.open(), this.available()));
+  protected readonly note = computed(() => {
+    const bench = this.bench();
+    return bench ? this.feature.buildNorthernSkyNote(bench, this.feature.selectedIds(this.abilities(), this.excluded())) : '';
+  });
 
   protected isSelected(spellId: number): boolean {
     return !this.excluded().has(spellId);
@@ -63,13 +64,6 @@ export class NorthernSkyExport {
 
   protected toggleAll(): void {
     this.persist(this.feature.toggleAllExclusion(this.abilities(), this.excluded()));
-  }
-
-  protected copyNote(): void {
-    const bench = this.bench();
-    if (!bench) return;
-    const note = this.feature.buildNorthernSkyNote(bench, this.feature.selectedIds(this.abilities(), this.excluded()));
-    this.toast.open(this.clipboard.copy(note) ? COPIED_MESSAGE : COPY_FAILED_MESSAGE).subscribe();
   }
 
   private persist(excluded: ReadonlySet<number>): void {

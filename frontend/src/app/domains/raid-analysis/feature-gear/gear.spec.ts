@@ -3,17 +3,14 @@ import { Result, Results } from '../../shared/util-http/result';
 import { mountDom, MountedDom } from '../../../../testing/component-harness';
 import { whenStable } from '../../../../testing/when-stable';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { EMPTY } from 'rxjs';
-import { TuiToastService } from '@taiga-ui/kit';
 import { Gear } from './gear';
 import { GearComparisonView, GearFeatureService } from '../data/gear/gear-feature-service';
 
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER_ID = 3379;
-const COPY_BUTTON = 'button[aria-label="Copy name"]';
+const COPY_BUTTON = 'tui-copy button[aria-label="Copy name"]';
 const ITEM_LINK = 'a[href*="wowhead.com/item="]';
-const COPIED_MESSAGE = 'Copied to clipboard. Paste it into the auction house search.';
-const FAILED_MESSAGE = 'Clipboard write failed. Retry the copy.';
+const COPIED_HINT = 'Copied. Paste it into the auction house search.';
 const ARMOR_KIT_ITEM_ID = 244641;
 const ARMOR_KIT = { name: "Forest Hunter's Armor Kit", itemId: ARMOR_KIT_ITEM_ID, icon: 'inv_kit' };
 const HELM_ENCHANT = { name: 'Enchant Helm - Empowered Rune of Avoidance', itemId: null, icon: '' };
@@ -46,12 +43,10 @@ function comparisonView(): GearComparisonView {
 interface Mounted {
   readonly dom: MountedDom;
   readonly copies: string[];
-  readonly messages: string[];
 }
 
 async function mount(view: GearComparisonView, copySucceeds = true): Promise<Mounted> {
   const copies: string[] = [];
-  const messages: string[] = [];
   const load = async (): Promise<Result<GearComparisonView>> => Results.ok(view);
   // The prototype supplies the empty view; only the two IO loads are faked.
   const feature = Object.assign(Object.create(GearFeatureService.prototype) as GearFeatureService, {
@@ -64,11 +59,10 @@ async function mount(view: GearComparisonView, copySucceeds = true): Promise<Mou
   const dom = mountDom(Gear, inputs, [
     { provide: GearFeatureService, useValue: feature },
     { provide: Clipboard, useValue: { copy: (text: string) => { copies.push(text); return copySucceeds; } } },
-    { provide: TuiToastService, useValue: { open: (message: string) => { messages.push(message); return EMPTY; } } },
-  ]);
+  ], { portals: true });
   await whenStable();
   dom.detectChanges();
-  return { dom, copies, messages };
+  return { dom, copies };
 }
 
 describe('Gear enchant copy', () => {
@@ -81,20 +75,24 @@ describe('Gear enchant copy', () => {
   });
 
   it('hands the clipboard the row\'s item name and confirms the copy', async () => {
-    const { dom, copies, messages } = await mount(benchView());
+    const { dom, copies } = await mount(benchView());
 
     dom.queryAll(COPY_BUTTON)[1]?.click();
+    await whenStable();
+    dom.detectChanges();
 
     expect(copies).toEqual([ARMOR_KIT.name]);
-    expect(messages).toEqual([COPIED_MESSAGE]);
+    expect(dom.portal.text()).toContain(COPIED_HINT);
   });
 
-  it('reports the failure, and no confirmation, when the clipboard write is refused', async () => {
-    const { dom, messages } = await mount(benchView(), false);
+  it('confirms nothing when the clipboard write is refused', async () => {
+    const { dom } = await mount(benchView(), false);
 
     dom.click(COPY_BUTTON);
+    await whenStable();
+    dom.detectChanges();
 
-    expect(messages).toEqual([FAILED_MESSAGE]);
+    expect(dom.portal.text()).not.toContain(COPIED_HINT);
   });
 
   it('shows the consensus item beside the fix on a flagged comparison row and offers it to copy', async () => {

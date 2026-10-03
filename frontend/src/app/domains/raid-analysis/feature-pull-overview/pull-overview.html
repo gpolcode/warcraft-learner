@@ -8,13 +8,13 @@
 
     <!-- Pull time + boss % live in the stat column, not here. -->
     <header tuiHeader="body-l" class="px-4 pt-3 pb-2">
-      <h2 tuiTitle>
-        Pull overview
-        <span tuiSubtitle>
+      <hgroup tuiTitle>
+        <h2>Pull overview</h2>
+        <p tuiSubtitle>
           @if (v.result === 'kill') { Pull {{ v.attempt }} - kill. }
           @else { Pull {{ v.attempt }} of this session. }
-        </span>
-      </h2>
+        </p>
+      </hgroup>
     </header>
 
     <!-- The stat column names the finding cards' own fix track, so the two line up. -->
@@ -35,10 +35,10 @@
             <span class="tabular-nums text-body text-accent">{{ d.timeS | formatDuration }}</span>
             <div class="flex gap-0.5 pr-2">
               @if (showMap()) {
-                <button tuiButton type="button" appearance="outline-grayscale" size="s" iconStart="my_location" (click)="onOpenMap(d.timeS)">Show map</button>
+                <button tuiButton type="button" appearance="outline-grayscale" iconStart="my_location" (click)="onOpenMap(d.timeS)">Show map</button>
               }
               @if (showClip()) {
-                <button tuiButton type="button" appearance="outline-grayscale" size="s" iconStart="videocam" (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">Watch clip</button>
+                <button tuiButton type="button" appearance="outline-grayscale" iconStart="videocam" (click)="onOpenClip(d.timeS, 'pull-overview-death-' + d.index)">Watch clip</button>
               }
             </div>
           </div>
@@ -65,10 +65,10 @@
           <span class="tabular-nums text-body text-accent">{{ v.outcomeTimeS | formatDuration }}</span>
           <div class="flex gap-0.5 pr-2">
             @if (showMap()) {
-              <button tuiButton type="button" appearance="outline-grayscale" size="s" iconStart="my_location" (click)="onOpenMap(v.outcomeTimeS)">Show map</button>
+              <button tuiButton type="button" appearance="outline-grayscale" iconStart="my_location" (click)="onOpenMap(v.outcomeTimeS)">Show map</button>
             }
             @if (showClip()) {
-              <button tuiButton type="button" appearance="outline-grayscale" size="s" iconStart="videocam" (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">Watch clip</button>
+              <button tuiButton type="button" appearance="outline-grayscale" iconStart="videocam" (click)="onOpenClip(v.outcomeTimeS, 'pull-overview-' + v.result)">Watch clip</button>
             }
           </div>
         </div>

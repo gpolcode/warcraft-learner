@@ -2,12 +2,12 @@
 
   <header class="px-4 pt-3 pb-2 md:grid md:grid-cols-(--cols-drill) md:gap-(--gap-card) md:items-baseline">
     <div tuiHeader="body-l" class="md:col-span-2">
-      <h2 tuiTitle>
-        {{ heading() }}
+      <hgroup tuiTitle>
+        <h2>{{ heading() }}</h2>
         @if (subtitle()) {
-          <span tuiSubtitle>{{ subtitle() }}</span>
+          <p tuiSubtitle>{{ subtitle() }}</p>
         }
-      </h2>
+      </hgroup>
     </div>
     <div class="tabular-nums hidden md:block text-label text-muted text-right">Measured</div>
     <div class="hidden md:block text-label text-muted pl-(--gap-card)">Fix</div>
@@ -38,10 +38,10 @@
               @if (row.timestampS != null) {
                 <span class="tabular-nums text-body text-accent">{{ row.timestampS | formatDuration }}</span>
                 @if (showMap()) {
-                  <button tuiButton type="button" appearance="outline-grayscale" size="xs" iconStart="my_location" (click)="openMap.emit(row)">Show map</button>
+                  <button tuiButton type="button" appearance="outline-grayscale" iconStart="my_location" (click)="openMap.emit(row)">Show map</button>
                 }
                 @if (showClip()) {
-                  <button tuiButton type="button" appearance="outline-grayscale" size="xs" iconStart="videocam" (click)="openClip.emit(row)">Watch clip</button>
+                  <button tuiButton type="button" appearance="outline-grayscale" iconStart="videocam" (click)="openClip.emit(row)">Watch clip</button>
                 }
               }
             } @else {
@@ -71,7 +71,7 @@
 
         <div class="row-start-1 col-start-3 md:row-auto md:col-start-5 flex items-center justify-center self-start md:self-center">
           @if (row.occurrences.length) {
-            <button tuiIconButton type="button" appearance="flat-grayscale" size="xs"
+            <button tuiIconButton type="button" appearance="flat-grayscale"
               [tuiChevron]="open"
               [attr.aria-expanded]="open"
               (click)="toggle($index)">{{ open ? 'Hide instances' : 'Show instances' }}</button>

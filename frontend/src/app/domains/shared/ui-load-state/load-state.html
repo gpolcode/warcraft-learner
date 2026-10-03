@@ -2,12 +2,12 @@
 <section tuiCardLarge appearance="outline-grayscale" class="card-flush">
   @if (heading()) {
     <header tuiHeader="body-l" class="px-4 pt-3 pb-2">
-      <h2 tuiTitle>
-        {{ heading() }}
+      <hgroup tuiTitle>
+        <h2>{{ heading() }}</h2>
         @if (subtitle()) {
-          <span tuiSubtitle>{{ subtitle() }}</span>
+          <p tuiSubtitle>{{ subtitle() }}</p>
         }
-      </h2>
+      </hgroup>
     </header>
   }
   <tui-block-status size="m" class="px-4 py-6" [class.border-t]="!!heading()" [class.border-dashed]="!!heading()" [class.border-line]="!!heading()">
