@@ -49,7 +49,7 @@
                 <span class="text-name">{{ row.what }}</span>
               }
               @if (row.chip) {
-                <span tuiBadge tuiStatus size="s" class="tabular-nums text-label" [appearance]="row.severity === 'critical' ? 'negative' : row.severity">{{ row.chip }}</span>
+                <span tuiBadge size="m" class="text-label" [appearance]="row.severity === 'critical' ? 'negative' : row.severity">{{ row.chip }}</span>
               }
             </div>
           </div>

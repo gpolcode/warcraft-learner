@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { TuiTitle } from '@taiga-ui/core';
-import { TuiBadge, TuiChip, TuiStatus } from '@taiga-ui/kit';
+import { TuiBadge, TuiChip } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { LoadState, RenderableLoadError } from '../../shared/ui-load-state/load-state';
@@ -26,7 +26,7 @@ type PlanTableState = 'unavailable' | 'rows' | 'empty';
   selector: 'wl-plan-table',
   // The empty state renders nothing; without a box of its own it adds no gap to the page column either.
   host: { class: 'contents' },
-  imports: [DecimalPipe, TuiCardLarge, TuiHeader, TuiTitle, TuiBadge, TuiStatus, TuiChip, GameIcon, LoadState, FormatDurationPipe],
+  imports: [DecimalPipe, TuiCardLarge, TuiHeader, TuiTitle, TuiBadge, TuiChip, GameIcon, LoadState, FormatDurationPipe],
   templateUrl: './plan-table.html',
 })
 export class PlanTable {
