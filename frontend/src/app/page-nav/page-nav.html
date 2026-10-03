@@ -10,7 +10,9 @@
     </svg>
     <span>warcraft-learner</span>
   </a>
-  <h1 class="min-w-0 truncate px-2 text-heading">{{ pageTitle() }}</h1>
+  @if (!isMobile()) {
+    <h1 class="min-w-0 truncate px-2 text-heading">{{ pageTitle() }}</h1>
+  }
   <hr />
   @if (isMobile()) {
     <a tuiIconButton iconStart="github" [href]="githubUrl" target="_blank" rel="noopener noreferrer">View on GitHub</a>
