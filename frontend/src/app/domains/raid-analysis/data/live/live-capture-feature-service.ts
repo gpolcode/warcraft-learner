@@ -71,7 +71,7 @@ export class LiveCaptureFeatureService {
   readonly captureProfile = signal<CaptureProfile>(DEFAULT_CAPTURE_PROFILE);
   readonly captureError = signal<string | null>(null);
 
-  /** Includes `isStarting` so a cancelled picker moves the bound value, which re-writes the switch's checked state - a plain `isCapturing` binding stays false and never resets the box the click ticked. */
+  /** Includes `isStarting` so a cancelled picker flips the bound value back, which is what unticks the switch the click ticked. */
   readonly recordToggleOn = computed(() => this.isCapturing() || this.isStarting());
 
   private stream: MediaStream | null = null;

@@ -1,7 +1,7 @@
 <ng-template #body><ng-content /></ng-template>
 
 @if (isMobile()) {
-  <!-- Phones get Taiga's bottom sheet, which owns its swipe and backdrop dismissal. -->
+  <!-- No close button: Taiga's sheet already dismisses on swipe, backdrop tap and Escape. -->
   <ng-template [tuiSheetDialog]="true" [tuiSheetDialogOptions]="{ label: heading() }" (tuiSheetDialogChange)="closed.emit()">
     <p class="mb-3 text-body text-muted" [id]="introId">{{ intro() }}</p>
     @if (loadingText()) {

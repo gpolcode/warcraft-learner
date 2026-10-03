@@ -392,7 +392,6 @@ export class PostRaid {
     control.setValue(value, { emitViewToModelChange: false });
   }
 
-  // Turns the field red, with the message under it, until the input resolves to a usable report code.
   private reportCodeValidator(control: AbstractControl): ValidationErrors | null {
     const value = ((control.value as string | null) ?? '').trim();
     if (!value) return null; // empty is not an error, so a blank field never shows red

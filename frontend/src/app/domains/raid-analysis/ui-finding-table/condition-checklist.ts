@@ -14,7 +14,7 @@ import type { ConditionCheck, FindingOccurrence } from '../data/analysis/analysi
 export class ConditionChecklist {
   readonly occurrence = input.required<FindingOccurrence>();
 
-  // The press verdict heads the tree as one all-of term, so its conditions nest under it like any group's operands.
+  // tui-tree takes a single root, so the press verdict becomes an all-of group over the cast's conditions.
   protected readonly tree = computed<ConditionCheck>(() => {
     const occ = this.occurrence();
     return {

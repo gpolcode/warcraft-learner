@@ -7,7 +7,6 @@ import { whenStable } from '../../../../testing/when-stable';
 import { ClipHandle, DownloadOutcome, LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
 import { ClipPlayer } from './clip-player';
 
-// The first of the two download buttons.
 const FULL_PULL_BUTTON = 'button[tuiButton]';
 const NO_FOOTAGE_MESSAGE = 'No footage for this pull.';
 const DOWNLOAD_FAILED_MESSAGE = 'Download failed. Retry it.';

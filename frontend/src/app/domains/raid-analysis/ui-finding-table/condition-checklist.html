@@ -13,7 +13,7 @@
         <tui-icon class="icon-18 shrink-0 text-warning" role="img" aria-label="Not in the log" icon="help_outline" />
       }
     }
-    <!-- On a phone the value drops under the text, so a long value never squeezes a nested condition into a word-wide column. -->
+    <!-- Beside the text on a phone, a long value squeezes a nested condition into a word-wide column. -->
     <span class="flex min-w-0 flex-1 flex-col md:flex-row md:justify-between md:gap-2">
       <span>
         <span [class.text-muted]="!!check.group && !root">{{ check.text }}</span>

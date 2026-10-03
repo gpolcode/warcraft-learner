@@ -74,7 +74,7 @@ html {
   --map-dot-outline: rgba(0, 0, 0, 0.55);
 }
 
-/* Taiga reads its palette and type scale from these variables, so pointing them at the app tokens gives every Taiga part the app's colors and type roles. Taiga re-applies its dark palette on each tuiTheme="dark" element (the body, the navigation), so the mapping is pinned there too. */
+/* Taiga re-applies its dark palette on every tuiTheme="dark" element (the body, the navigation), so the mapping sits there as well as on :root. */
 :root,
 [tuiTheme='dark'] {
   --tui-typography-family-text: var(--font-sans);
