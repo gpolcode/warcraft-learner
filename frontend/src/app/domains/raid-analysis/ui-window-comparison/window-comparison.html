@@ -14,9 +14,10 @@
 
     <!-- Chip size is decoupled from fight time, so windows never overlap however tightly they fire. -->
     <div>
+      <!-- The checked tile marks where the arrow keys are, so the row draws no focus ring of its own. -->
       <div
         #listbox
-        class="pt-2 pb-1"
+        class="pt-2 pb-1 outline-hidden"
         role="listbox"
         tabindex="0"
         [attr.aria-label]="heading()"
