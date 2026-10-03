@@ -1,6 +1,6 @@
 # warcraft-learner
 
-A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs combat data against per-spec plans derived from SimulationCraft and delivers coaching-style feedback benchmarked against top parses. The app is a **fully static Angular SPA** on GitHub Pages - no backend, all analysis client-side, WCL queried directly from the browser with an OAuth2 client-credentials token (no user login).
+A web-based diagnostic tool for Mythic WoW raiders: it evaluates Warcraft Logs combat data against per-spec plans derived from SimulationCraft and delivers coaching-style feedback benchmarked against top parses. The app is a **fully static Angular SPA** on GitHub Pages - no backend, all analysis client-side, WCL queried directly from the browser with an OAuth2 client-credentials token (no user login). The production build prerenders both routes to HTML (`outputMode: static`) and the browser hydrates them; the dev and ingest builds render client-side only.
 
 ## Always-on rules
 

@@ -103,8 +103,8 @@ jobs:
           rm -rf pages-root
           mkdir -p pages-root
           cp .github/pages-root/index.html pages-root/index.html
-          # Pages serves 404.html site-wide, booting the SPA for deep links under /main/.
-          cp site/index.html pages-root/404.html
+          # Pages serves 404.html site-wide; the client-rendered shell, not a prerendered page, boots any deep link under /main/ into its own route.
+          cp site/index.csr.html pages-root/404.html
 
       - name: Publish the shell to gh-pages
         uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0

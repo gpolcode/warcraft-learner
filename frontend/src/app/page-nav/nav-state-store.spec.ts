@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { NavStateStore } from './nav-state-store';
 
@@ -64,5 +65,14 @@ describe('NavStateStore', () => {
     expect(() => store.loadCollapsed()).not.toThrow();
     expect(store.loadCollapsed()).toBe(false);
     expect(warn).toHaveBeenCalled();
+  });
+
+  it('reads as not collapsed while prerendering, whatever the browser stored, and does not warn', () => {
+    localStorage.setItem(NAV_COLLAPSED_STORAGE_KEY, JSON.stringify(true));
+    TestBed.configureTestingModule({ providers: [{ provide: PLATFORM_ID, useValue: 'server' }] });
+    const warn = spyOnWarn();
+
+    expect(freshStore().loadCollapsed()).toBe(false);
+    expect(warn).not.toHaveBeenCalled();
   });
 });
