@@ -14,6 +14,7 @@ const HTTP_SERVICE_UNAVAILABLE = 503;
 const HTTP_NETWORK_OR_CORS = 0;
 const HTTP_NOT_FOUND = 404;
 const HTTP_FORBIDDEN = 403;
+const HTTP_TOO_MANY_REQUESTS = 429;
 
 function setup(): { http: HttpClient; httpMock: HttpTestingController } {
   TestBed.configureTestingModule({
@@ -81,5 +82,14 @@ describe('retryTransientInterceptor', () => {
     httpMock.expectOne(URL).flush(null, { status: HTTP_FORBIDDEN, statusText: 'Forbidden' });
 
     expect(await pending).toBe(HTTP_FORBIDDEN);
+  });
+
+  it('does not retry a 429 (a rate limit outlasts the backoff)', async () => {
+    const { http, httpMock } = setup();
+    const pending = firstValueFrom(http.get(URL)).catch((e: unknown) => (e as HttpErrorResponse).status);
+
+    httpMock.expectOne(URL).flush(null, { status: HTTP_TOO_MANY_REQUESTS, statusText: 'Too Many Requests' });
+
+    expect(await pending).toBe(HTTP_TOO_MANY_REQUESTS);
   });
 });
