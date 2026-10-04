@@ -47,6 +47,9 @@ async function failedFetch(
   await expect(pending).rejects.toBeInstanceOf(WclTransportError);
 }
 
+const unavailableFetch = (transport: HttpWclTransport, httpMock: HttpTestingController, code: string): Promise<void> =>
+  failedFetch(transport, httpMock, code, 'Unavailable', SERVICE_UNAVAILABLE_STATUS);
+
 describe('HttpWclTransport', () => {
   afterEach(() => {
     TestBed.inject(HttpTestingController).verify();
@@ -130,34 +133,32 @@ describe('HttpWclTransport', () => {
     await expect(pending).rejects.toMatchObject({ name: 'WclTransportError', status: WCL_UNUSABLE_STATUS });
   });
 
-  it('reports a permission-denied GraphQL error as both inaccessible and failed', async () => {
-    const { transport, httpMock } = setup();
-
-    const { outcomes } = await transport.withFetchOutcomes(() =>
-      failedFetch(transport, httpMock, REPORT_CODE, { errors: [{ message: PERMISSION_MESSAGE }] }));
-
-    expect(outcomes.failedCodes).toEqual(new Set([REPORT_CODE]));
-    expect(outcomes.inaccessibleCodes).toEqual(new Set([REPORT_CODE]));
-  });
-
-  it('reports a transient HTTP failure as failed but not inaccessible', async () => {
+  it('records a failed HTTP fetch under its report code, so the encounter stays open for a retry', async () => {
     const { transport, httpMock } = setup();
 
     const { outcomes } = await transport.withFetchOutcomes(() =>
       failedFetch(transport, httpMock, REPORT_CODE, 'Unavailable', SERVICE_UNAVAILABLE_STATUS));
 
     expect(outcomes.failedCodes).toEqual(new Set([REPORT_CODE]));
-    expect(outcomes.inaccessibleCodes).toEqual(new Set());
   });
 
-  it('reports a non-permission GraphQL error as failed but not inaccessible', async () => {
+  it('records no failure for a GraphQL error, which answers the same on every run', async () => {
     const { transport, httpMock } = setup();
 
-    const { outcomes } = await transport.withFetchOutcomes(() =>
-      failedFetch(transport, httpMock, REPORT_CODE, { errors: [{ message: OTHER_GRAPHQL_MESSAGE }] }));
+    const { outcomes } = await transport.withFetchOutcomes(async () => {
+      await failedFetch(transport, httpMock, REPORT_CODE, { errors: [{ message: PERMISSION_MESSAGE }] });
+      await failedFetch(transport, httpMock, OTHER_REPORT_CODE, { errors: [{ message: OTHER_GRAPHQL_MESSAGE }] });
+    });
 
-    expect(outcomes.failedCodes).toEqual(new Set([REPORT_CODE]));
-    expect(outcomes.inaccessibleCodes).toEqual(new Set());
+    expect(outcomes.failedCodes).toEqual(new Set());
+  });
+
+  it('records no failure for a 200 with no data', async () => {
+    const { transport, httpMock } = setup();
+
+    const { outcomes } = await transport.withFetchOutcomes(() => failedFetch(transport, httpMock, REPORT_CODE, {}));
+
+    expect(outcomes.failedCodes).toEqual(new Set());
   });
 
   it('reports no code for a 401 (the auth layer retries it)', async () => {
@@ -185,28 +186,23 @@ describe('HttpWclTransport', () => {
   it('starts a second scope empty', async () => {
     const { transport, httpMock } = setup();
 
-    await transport.withFetchOutcomes(() =>
-      failedFetch(transport, httpMock, REPORT_CODE, { errors: [{ message: PERMISSION_MESSAGE }] }));
-    const { outcomes } = await transport.withFetchOutcomes(() =>
-      failedFetch(transport, httpMock, OTHER_REPORT_CODE, { errors: [{ message: OTHER_GRAPHQL_MESSAGE }] }));
+    await transport.withFetchOutcomes(() => unavailableFetch(transport, httpMock, REPORT_CODE));
+    const { outcomes } = await transport.withFetchOutcomes(() => unavailableFetch(transport, httpMock, OTHER_REPORT_CODE));
 
     expect(outcomes.failedCodes).toEqual(new Set([OTHER_REPORT_CODE]));
-    expect(outcomes.inaccessibleCodes).toEqual(new Set());
   });
 
   it('closes a scope whose run throws, so its codes never reach the next scope', async () => {
     const { transport, httpMock } = setup();
 
     const thrown = transport.withFetchOutcomes(async () => {
-      await failedFetch(transport, httpMock, REPORT_CODE, { errors: [{ message: PERMISSION_MESSAGE }] });
+      await unavailableFetch(transport, httpMock, REPORT_CODE);
       throw new Error(RUN_FAILURE);
     });
     await expect(thrown).rejects.toThrow(RUN_FAILURE);
 
-    const { outcomes } = await transport.withFetchOutcomes(() =>
-      failedFetch(transport, httpMock, OTHER_REPORT_CODE, { errors: [{ message: OTHER_GRAPHQL_MESSAGE }] }));
+    const { outcomes } = await transport.withFetchOutcomes(() => unavailableFetch(transport, httpMock, OTHER_REPORT_CODE));
     expect(outcomes.failedCodes).toEqual(new Set([OTHER_REPORT_CODE]));
-    expect(outcomes.inaccessibleCodes).toEqual(new Set());
   });
 
   it('keeps a nested scope out of the enclosing one, and restores the enclosing one after it', async () => {
@@ -214,10 +210,9 @@ describe('HttpWclTransport', () => {
     let nestedFailed: ReadonlySet<string> = new Set();
 
     const { outcomes } = await transport.withFetchOutcomes(async () => {
-      const inner = await transport.withFetchOutcomes(() =>
-        failedFetch(transport, httpMock, REPORT_CODE, { errors: [{ message: OTHER_GRAPHQL_MESSAGE }] }));
+      const inner = await transport.withFetchOutcomes(() => unavailableFetch(transport, httpMock, REPORT_CODE));
       nestedFailed = inner.outcomes.failedCodes;
-      await failedFetch(transport, httpMock, OTHER_REPORT_CODE, { errors: [{ message: OTHER_GRAPHQL_MESSAGE }] });
+      await unavailableFetch(transport, httpMock, OTHER_REPORT_CODE);
     });
 
     expect(nestedFailed).toEqual(new Set([REPORT_CODE]));

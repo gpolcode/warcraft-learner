@@ -60,6 +60,9 @@ query CombatantInfo($code:String!,$fightIDs:[Int]!,$sourceID:Int){
   }}
 }`;
 
+// The response store recognizes the per-call name and icon lookups by this opening, so a builder without it stops them being stored.
+export const GAME_DATA_LOOKUP = 'query{gameData{';
+
 export const RATE_LIMIT_Q = gql`query RateLimit { rateLimitData { limitPerHour pointsSpentThisHour } }`;
 
 // `class.slug`/`spec.slug` are the exact `className`/`specName` the rankings query takes; the folder key is `spec.slug + class.slug`.

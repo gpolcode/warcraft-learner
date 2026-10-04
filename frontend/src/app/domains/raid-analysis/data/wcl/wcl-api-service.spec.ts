@@ -6,18 +6,24 @@ import { DataFileApiService } from '../data-files/data-file-api-service';
 import { Results } from '../../../shared/util-http/result';
 import { WclCombatantInfo, MYTHIC_DIFFICULTY } from './wcl.models';
 import { FetchOutcomes, WCL_TRANSPORT, WclTransport, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
+import { WclCaching } from './wcl-caching';
+import { HttpRequest } from '@angular/common/http';
+import { baseEnvironment } from '../../../../../environments/base-environment';
+import { EVISCERATE } from '../../../../../testing/spell-ids';
 
 const UNAUTHORIZED_STATUS = 401;
 
 class RecordingTransport implements WclTransport {
   readonly tokens: string[] = [];
+  readonly queries: string[] = [];
   readonly variables: object[] = [];
   /** Status to throw on the first call, then succeed (null = always succeed). */
   failFirstWith: number | null = null;
   /** Payload for the next query; null uses the default served-report shape. */
   response: unknown = null;
-  async query<TData>(_gqlString: string, variables: object, token: string): Promise<TData> {
+  async query<TData>(gqlString: string, variables: object, token: string): Promise<TData> {
     this.tokens.push(token);
+    this.queries.push(gqlString);
     this.variables.push(variables);
     if (this.failFirstWith != null && this.tokens.length === 1) {
       throw new WclTransportError('rejected', this.failFirstWith);
@@ -29,7 +35,7 @@ class RecordingTransport implements WclTransport {
   }
 
   async withFetchOutcomes<T>(run: () => Promise<T>): Promise<{ result: T; outcomes: FetchOutcomes }> {
-    return { result: await run(), outcomes: { inaccessibleCodes: new Set(), failedCodes: new Set() } };
+    return { result: await run(), outcomes: { failedCodes: new Set() } };
   }
 }
 
@@ -186,6 +192,21 @@ describe('WclApiService', () => {
       const { api, transport } = setup();
       transport.response = { gameData: null };
       expect(await api.getPlayableClasses()).toEqual([]);
+    });
+  });
+
+  describe('name and icon lookups', () => {
+    const ARMOR_KIT_ENCHANT = 8159;
+    const ARMOR_KIT_ITEM = 244641;
+    const asPost = (query: string): HttpRequest<unknown> => new HttpRequest('POST', baseEnvironment.wclApiUrl, { query, variables: {} });
+
+    it('builds each lookup as a read the response store keeps', async () => {
+      const { api, transport } = setup();
+      transport.response = { gameData: {} };
+      await api.getAbilities([EVISCERATE]);
+      await api.getGameNames([ARMOR_KIT_ITEM], [ARMOR_KIT_ENCHANT]);
+
+      expect(transport.queries.map(query => WclCaching.isStorable(asPost(query)))).toEqual([true, true]);
     });
   });
 

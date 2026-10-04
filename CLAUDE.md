@@ -26,7 +26,7 @@ flowchart LR
   specs --> runtimeFiles
 ```
 
-Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
+Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow (WCL responses: Actions cache); code deploys write `main/` and `pr-N/` beside it.
 
 Configuration lives under `frontend/src/environments/`: one `Environment` schema with the defaults (every external host and endpoint, the dev and ingest server origins, the raids ingestion benches), one override file per build configuration swapped by `fileReplacements`, and a gitignored client file for the WCL pair, copied from the committed example on a developer machine and written from the repository secrets in CI; GitHub holds secrets only, never configuration. Code reads it through `inject(ENVIRONMENT)`, never by importing the swapped file (eslint-enforced) and never as a literal in a service.
 
@@ -34,7 +34,7 @@ Configuration lives under `frontend/src/environments/`: one `Environment` schema
 
 | Command | Description |
 |---|---|
-| `npm start` | Angular dev server on http://localhost:4200 |
+| `npm start` | Angular dev server on http://localhost:4200, plus the ingest file server |
 | `npm run build` | Production build to `../static/angular/` |
 | `npm test` | `ng test` (Vitest, the one unit-test suite) |
 | `npm run e2e` | Playwright suite over both pages, run by the E2E workflow on every PR push; never locally, as each run spends one WCL analysis |

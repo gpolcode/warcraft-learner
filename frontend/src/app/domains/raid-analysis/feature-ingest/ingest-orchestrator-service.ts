@@ -16,7 +16,6 @@ import { CurrentRaidsService, BudgetExceededError } from '../data/ingest/current
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
 import { INGEST_POINTS_MARGIN } from '../data/ingest/ingest-points-margin';
 import { IngestOrderingService, type SpecOrderEntry } from '../data/ingest/ingest-ordering-service';
-import { IngestSignatureService } from '../data/ingest/ingest-signature-service';
 import { IngestStampService, type IngestStamp } from '../data/ingest/ingest-stamp-service';
 import { IngestStateService, type SpecIngestState } from '../data/ingest/ingest-state-service';
 import { SpecReportService, SELECTED_MARKER, type SpecReportRow } from '../data/ingest/spec-report-service';
@@ -65,7 +64,6 @@ export class IngestOrchestratorService {
   private readonly ingestState = inject(IngestStateService);
   private readonly logger = inject(LoggerService);
   private readonly ordering = inject(IngestOrderingService);
-  private readonly signature = inject(IngestSignatureService);
   private readonly specReport = inject(SpecReportService);
   private readonly stamp = inject(IngestStampService);
   private readonly topParseSelection = inject(TopParseSelectionService);
@@ -247,17 +245,17 @@ export class IngestOrchestratorService {
         }
 
         const existing = await this.dataFile.getBench(spec, encounter.id, LEAD_BENCH);
-        const { skip, signature: skipKey } = this.stamp.skipDecision(
+        const { skip, signature } = this.stamp.skipDecision(
           existing.ok ? existing.value : null, selection, version, TOP_N);
         if (skip) {
-          console.log(`  [${encounter.name}] unchanged (signature ${skipKey}), skipped`);
+          console.log(`  [${encounter.name}] unchanged (signature ${signature}), skipped`);
           continue;
         }
 
-        console.log(`  [${encounter.name}] computing benches (signature ${skipKey})...`);
+        console.log(`  [${encounter.name}] computing benches (signature ${signature})...`);
         let outcome: EncounterOutcome;
         try {
-          outcome = await this.ingestEncounter(spec, encounter, version, selection);
+          outcome = await this.ingestEncounter(spec, encounter, signature, selection);
         } finally {
           // Drop this encounter's cached reports/events before the next one to bound memory.
           this.wclCache.clearCache();
@@ -314,9 +312,9 @@ export class IngestOrchestratorService {
     await this.rebuildSpecIndex();
   }
 
-  /** Compute every bench first, THEN stamp + write: the signature is known only after every transform has fetched. */
+  /** Compute every bench first, THEN stamp + write: whether the burst file may carry the signature is known only after every transform has fetched. */
   private async ingestEncounter(
-    spec: string, encounter: IngestEncounter, version: string, selection: TopParseSelection,
+    spec: string, encounter: IngestEncounter, signature: string, selection: TopParseSelection,
   ): Promise<EncounterOutcome> {
     const encId = encounter.id;
     const limit = pLimit(BENCH_CONCURRENCY);
@@ -327,8 +325,6 @@ export class IngestOrchestratorService {
       Promise.all(siblings.map(async bench => ({ bench, result: await compute(bench) }))),
     ]));
 
-    const { signature, inaccessibleParses } = this.signature.signatureAfterFetch(
-      selection, outcomes.inaccessibleCodes, outcomes.failedCodes, version, TOP_N);
     const stamp: IngestStamp = { version: INGEST_VERSION, ingestedAtS: nowS() };
 
     // Skip on any failure so a bench is never overwritten with partial data.
@@ -340,7 +336,7 @@ export class IngestOrchestratorService {
     const writes: Promise<void>[] = [];
     if (burst.ok) {
       const all = [burst, ...rest.map(entry => entry.result)];
-      writes.push(burstBench.write(spec, encId, this.stamp.stampBurstFile(burst.value, signature, stamp, inaccessibleParses, all)));
+      writes.push(burstBench.write(spec, encId, this.stamp.stampBurstFile(burst.value, signature, stamp, all, outcomes.failedCodes)));
     } else { console.log(skipNote(burstBench.file, burst.error)); }
     for (const { bench, result } of rest) {
       if (result.ok) {

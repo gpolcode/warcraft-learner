@@ -25,7 +25,7 @@ cd frontend
 npm install
 cp src/environments/wcl-client.example.ts src/environments/wcl-client.ts  # then paste your WCL client id and secret
 npm run data:pull   # fetch the generated bench data from the `gh-pages` branch (see below)
-npm start           # Angular dev server on http://localhost:4200
+npm start           # Angular dev server on http://localhost:4200, plus the ingest file server
 npm run schema:pull # refresh the WCL GraphQL schema and regenerate the typed operations
 ```
 

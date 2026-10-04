@@ -36,7 +36,7 @@ export default defineConfig({
   }],
   webServer: {
     // Production reads the pulled bench files, so the post-raid analysis is the run's only WCL traffic.
-    command: 'npm start -- --configuration production',
+    command: 'npx ng serve --configuration production',
     url: APP_URL,
     reuseExistingServer: !process.env['CI'],
     timeout: SERVE_TIMEOUT_MS,

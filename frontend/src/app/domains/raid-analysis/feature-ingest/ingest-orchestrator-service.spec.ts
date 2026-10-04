@@ -51,7 +51,7 @@ const RERANKED = [TOP_PARSE, NEWCOMER];
 // Fewer rows than the orchestrator's top-N cap: past it, signatureOf stops matching the signature the run stamps.
 const signatureOf = (rows: RankedRow[], planKey = PLAN_KEY): string => signatures.encounterSkipKey(
   rows.map(row => ({ report_code: row.report.code, fight_id: row.report.fightID })),
-  new Set(), `${INGEST_VERSION}:${planKey}`, rows.length);
+  `${INGEST_VERSION}:${planKey}`, rows.length);
 
 const benchPath = (encId: number, bench = LEAD_BENCH): string => `${SPEC}/${bench}/${encId}.json`;
 const bossName = (encId: number): string => BOSSES.find(boss => boss.id === encId)?.name ?? '';
@@ -111,21 +111,22 @@ const stubTransform: StubTransform = {
 
 const benchReturning = (result: Result<object>): StubTransform => ({ getBench: async () => result });
 
-const cleanTransport: Pick<WclTransport, 'withFetchOutcomes'> = {
+const transportFailing = (...codes: string[]): Pick<WclTransport, 'withFetchOutcomes'> => ({
   withFetchOutcomes: async run =>
-    ({ result: await run(), outcomes: { inaccessibleCodes: new Set(), failedCodes: new Set() } }),
-};
+    ({ result: await run(), outcomes: { failedCodes: new Set(codes) } }),
+});
+const cleanTransport = transportFailing();
 
 function ingest(
   disk: FakeDisk, wcl: WclApiService, currentRaids: string, plans = planLoader(specPlan()),
-  benches = new Map<BenchTransform, StubTransform>(),
+  benches = new Map<BenchTransform, StubTransform>(), transport = cleanTransport,
 ): Promise<void> {
   TestBed.configureTestingModule({
     providers: [
       { provide: ENVIRONMENT, useValue: { ...baseEnvironment, currentRaids: currentRaids ? [currentRaids] : [] } },
       { provide: DATA_FILE_TRANSPORT, useValue: disk },
       { provide: WclApiService, useValue: wcl },
-      { provide: WCL_TRANSPORT, useValue: cleanTransport },
+      { provide: WCL_TRANSPORT, useValue: transport },
       { provide: NgHttpCachingService, useValue: { clearCache: () => undefined } },
       { provide: SpecPlanLoaderService, useValue: plans },
       ...TRANSFORMS.map(transform => ({ provide: transform, useValue: benches.get(transform) ?? stubTransform })),
@@ -207,6 +208,16 @@ describe('IngestOrchestratorService.run', () => {
     expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toMatchObject({
       sample_count: FRESH_SAMPLES, source_signature: signatureOf(RERANKED),
     });
+  });
+
+  it('leaves the lead file unsigned when a log fetch failed over HTTP, so the next run benches the encounter again', async () => {
+    const disk = fakeDisk({});
+    const wcl = fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED });
+
+    await ingest(disk, wcl, RAID, planLoader(specPlan()), new Map(), transportFailing(TOP_PARSE.report.code));
+
+    expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toMatchObject({ sample_count: FRESH_SAMPLES });
+    expect(disk.files.get(benchPath(CURRENT_BOSS.id))).not.toHaveProperty('source_signature');
   });
 
   it('lists an encounter with no Mythic parses yet in the index, at zero samples', async () => {

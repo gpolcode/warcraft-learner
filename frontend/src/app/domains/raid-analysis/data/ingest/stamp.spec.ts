@@ -12,15 +12,12 @@ const INGESTED_AT_S = 1776245400;
 const STAMP: IngestStamp = { version: INGEST_VERSION, ingestedAtS: INGESTED_AT_S };
 const VERSION = String(INGEST_VERSION);
 const TOP_N = 10;
-const PRIVATE_RANK = 1;
 const ranking = (rank: number): SignatureRanking => ({ report_code: `report${rank}`, fight_id: rank });
-const ROWS = [PRIVATE_RANK, 2, 3].map(ranking);
-// Spelled out rather than imported: baked files carry this key, so importing its producer would let a format change pass.
-const PRIVATE_PARSE = `report${PRIVATE_RANK}:${PRIVATE_RANK}`;
-const SIGNATURE = signatures.encounterSkipKey(ROWS, new Set(), VERSION, TOP_N);
-const WITHOUT_PRIVATE = signatures.encounterSkipKey(ROWS, new Set([PRIVATE_PARSE]), VERSION, TOP_N);
+const ROWS = [1, 2, 3].map(ranking);
+const SIGNATURE = signatures.encounterSkipKey(ROWS, VERSION, TOP_N);
 const DATA = { spec: 'SubtletyRogue', encounter_id: 3470 };
-const NO_INACCESSIBLE: string[] = [];
+const NO_FAILED_FETCHES: ReadonlySet<string> = new Set();
+const FAILED_FETCH: ReadonlySet<string> = new Set([ranking(1).report_code]);
 
 // Only .ok and .error.kind matter to the stamp, so the ok payload is a placeholder.
 const OK: Result<unknown> = Results.ok('bench');
@@ -36,13 +33,13 @@ describe('write then read', () => {
   });
 
   it('skips an encounter whose burst every bench completed', () => {
-    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, ALL_OK);
+    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, ALL_OK, NO_FAILED_FETCHES);
 
     expect(nextRun(file)).toEqual({ skip: true, signature: SIGNATURE });
   });
 
   it('still skips when a sibling bench is legitimately empty (missing is not a failure)', () => {
-    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, withSibling(Results.missing('No top parses')));
+    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, withSibling(Results.missing('No top parses')), NO_FAILED_FETCHES);
 
     expect(nextRun(file)).toEqual({ skip: true, signature: SIGNATURE });
   });
@@ -54,14 +51,20 @@ describe('write then read', () => {
   });
 
   it('ingests an encounter whose burst a transiently failed bench left unstamped', () => {
-    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, withSibling(Results.transient('WCL request failed')));
+    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, withSibling(Results.transient('WCL request failed')), NO_FAILED_FETCHES);
 
     expect(nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
   });
 
   it('ingests an encounter whose burst a permanently failed bench left unstamped', () => {
     const failed = withSibling(Results.permanent('bad shape', 'burst.bench'));
-    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, failed);
+    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, failed, NO_FAILED_FETCHES);
+
+    expect(nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
+  });
+
+  it('ingests an encounter whose burst a failed log fetch left unstamped, though every bench completed', () => {
+    const file = stamps.stampBurstFile(DATA, SIGNATURE, STAMP, ALL_OK, FAILED_FETCH);
 
     expect(nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
   });
@@ -73,32 +76,19 @@ describe('write then read', () => {
     expect(stamps.skipDecision(file, grown, VERSION, TOP_N).skip).toBe(false);
   });
 
-  it('skips a burst stamped without a parse it recorded as inaccessible', () => {
-    const file = stamps.stampBurstFile(DATA, WITHOUT_PRIVATE, STAMP, [PRIVATE_PARSE], ALL_OK);
-
-    expect(nextRun(file)).toEqual({ skip: true, signature: WITHOUT_PRIVATE });
-  });
-
-  it('ingests a file carrying that same signature without the inaccessible parse recorded', () => {
-    const file = stamps.stampSignature(DATA, WITHOUT_PRIVATE, STAMP);
-
-    expect(nextRun(file)).toEqual({ skip: false, signature: SIGNATURE });
-  });
-
   it('writes the field names the files already on disk carry', () => {
     expect(stamps.stampSignature(DATA, SIGNATURE, STAMP)).toEqual({
       ...DATA, source_signature: SIGNATURE, ingest_version: INGEST_VERSION, ingested_at_s: INGESTED_AT_S,
     });
-    expect(stamps.stampBurstFile(DATA, SIGNATURE, STAMP, [PRIVATE_PARSE], ALL_OK)).toEqual({
-      ...DATA, source_signature: SIGNATURE, ingest_version: INGEST_VERSION,
-      ingested_at_s: INGESTED_AT_S, inaccessible_parses: [PRIVATE_PARSE],
+    expect(stamps.stampBurstFile(DATA, SIGNATURE, STAMP, ALL_OK, NO_FAILED_FETCHES)).toEqual({
+      ...DATA, source_signature: SIGNATURE, ingest_version: INGEST_VERSION, ingested_at_s: INGESTED_AT_S,
     });
   });
 
   it('reads the ingest version and stamp time back off either writer, stamped or not', () => {
     const tailored = stamps.stampSignature(DATA, SIGNATURE, STAMP);
     const unstamped = stamps.stampBurstFile(
-      DATA, SIGNATURE, STAMP, [PRIVATE_PARSE], withSibling(Results.transient('WCL request failed')));
+      DATA, SIGNATURE, STAMP, withSibling(Results.transient('WCL request failed')), NO_FAILED_FETCHES);
 
     for (const file of [tailored, unstamped]) {
       expect(stamps.readFileStamp(file)).toEqual({ version: INGEST_VERSION, ingestedAtS: INGESTED_AT_S });
@@ -119,7 +109,7 @@ describe('write then read', () => {
 
   it('leaves the data the writers were handed untouched', () => {
     stamps.stampSignature(DATA, SIGNATURE, STAMP);
-    stamps.stampBurstFile(DATA, SIGNATURE, STAMP, [PRIVATE_PARSE], ALL_OK);
+    stamps.stampBurstFile(DATA, SIGNATURE, STAMP, ALL_OK, NO_FAILED_FETCHES);
 
     expect(DATA).toEqual({ spec: 'SubtletyRogue', encounter_id: 3470 });
   });
@@ -137,7 +127,7 @@ describe('version trust', () => {
 
   it('trusts a file this run stamped', () => {
     expect(stamps.isFutureVersion(stamps.stampSignature(DATA, SIGNATURE, STAMP))).toBe(false);
-    expect(stamps.isFutureVersion(stamps.stampBurstFile(DATA, SIGNATURE, STAMP, NO_INACCESSIBLE, ALL_OK))).toBe(false);
+    expect(stamps.isFutureVersion(stamps.stampBurstFile(DATA, SIGNATURE, STAMP, ALL_OK, NO_FAILED_FETCHES))).toBe(false);
   });
 
   it('trusts a file with no version stamp (a manifest)', () => {
