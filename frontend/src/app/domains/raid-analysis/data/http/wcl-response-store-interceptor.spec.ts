@@ -41,7 +41,6 @@ function setup(storeDir = '.wcl-cache', memoryCache = false): { http: HttpClient
 
 const UNTALLIED: StoreTally = { hits: 0, misses: 0 };
 
-/** Posts the read under a fresh tally, as the transport does inside a fetch-outcomes scope. */
 function talliedPost(http: HttpClient, read: object): { pending: Promise<unknown>; tally: StoreTally } {
   const tally: StoreTally = { ...UNTALLIED };
   const context = new HttpContext().set(WCL_STORE_TALLY, tally);

@@ -11,7 +11,6 @@ import { ENVIRONMENT } from '../../../../../environments/environment-token';
 const NOT_STORED_STATUS = 404;
 const UNREACHABLE_STATUS = 0;
 
-// A request sent outside a fetch-outcomes scope tallies into a throwaway default.
 export const WCL_STORE_TALLY = new HttpContextToken<StoreTally>(() => ({ hits: 0, misses: 0 }));
 
 // Registered behind the memory cache, which already folds a run's repeats and concurrent duplicates into one request here.

@@ -10,8 +10,7 @@ const SPENT_BEFORE = 1200;
 const QUOTA = 50;
 const HITS = 7;
 const MISSES = 8;
-/** HITS + MISSES */
-const READS = 15;
+const READS = HITS + MISSES;
 
 const spentSoFar = (pointsSpentThisHour: number) => ({ limitPerHour: LIMIT_PER_HOUR, pointsSpentThisHour });
 const tally = (hits: number, misses: number) => ({ hits, misses });
@@ -24,7 +23,7 @@ describe('formatOutcome', () => {
   });
 
   it('rounds fractional points to whole ones', () => {
-    /** Rounds back to QUOTA. */
+    /** Under half a point short, so it rounds back up to QUOTA. */
     const FRACTIONAL_SPEND = QUOTA - 0.4;
 
     expect(encounterCost.formatOutcome(NOTE, spentSoFar(SPENT_BEFORE), spentSoFar(SPENT_BEFORE + FRACTIONAL_SPEND), NO_READS))
@@ -32,7 +31,7 @@ describe('formatOutcome', () => {
   });
 
   it('reports only a lower bound once the spend reads lower than before, since the hourly window reset in between', () => {
-    /** One point under the earlier reading, all of it spent since the reset. */
+    /** The smallest drop below the earlier reading: the boundary partner of the equal-reading case. */
     const SPENT_SINCE_RESET = SPENT_BEFORE - 1;
 
     expect(encounterCost.formatOutcome(NOTE, spentSoFar(SPENT_BEFORE), spentSoFar(SPENT_SINCE_RESET), NO_READS))

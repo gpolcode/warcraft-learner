@@ -82,7 +82,6 @@ function fakeDisk(seed: Record<string, unknown>, undeletable = new Set<string>()
   };
 }
 
-/** Each budget read reports the next spend in line, then keeps reporting the last one. */
 function pointsSpent(...readings: number[]): WclApiService['getPointsBudget'] {
   const queue = [...readings];
   return async () => ({ limitPerHour: HOURLY_POINT_LIMIT, pointsSpentThisHour: (queue.length > 1 ? queue.shift() : queue[0]) ?? 0 });
@@ -234,8 +233,7 @@ describe('IngestOrchestratorService.run', () => {
     const ENCOUNTER_QUOTA = 40;
     const STORE_HITS = 7;
     const STORE_MISSES = 8;
-    /** STORE_HITS + STORE_MISSES */
-    const STORE_READS = 15;
+    const STORE_READS = STORE_HITS + STORE_MISSES;
     const wcl = fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }, pointsSpent(SPENT_BEFORE, SPENT_BEFORE + ENCOUNTER_QUOTA));
     const transport = transportReporting({ failedCodes: new Set(), store: { hits: STORE_HITS, misses: STORE_MISSES } });
 
