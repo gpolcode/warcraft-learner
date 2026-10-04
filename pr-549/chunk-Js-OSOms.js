@@ -1,0 +1,3 @@
+import{Li as p5,Mr as f5,Mt as Oa,Pa as xv,Pt as Ot,Ur as g,at as Jt,gn as TW,qi as qn,t as $,zn as Xr}from"./chunk-wuHaA8YY.js";var[v,h]=Oa({appearance:`neutral`,size:`s`}),z=(()=>{class t{static{this.ɵfac=function(e){return new(e||t)}}static{this.ɵdir=$({type:t,selectors:[[``,`tuiButtonX`,``]],hostAttrs:[`tuiIconButton`,``,`type`,`button`],hostVars:2,hostBindings:function(e,B){e&1&&qn(`pointerdown.prevent.zoneless`,function(){return 0}),e&2&&Xr(`--%NS%t-radius`,100,`%`)},features:[Ot([f5(()=>g(v)),{provide:xv,useFactory:()=>g(TW).close}]),Jt([{directive:p5,inputs:[`size`,`size`]}])]})}}return t})();export{z as n,h as t};
+//# debugId=f568fd0a-2d2d-5506-a152-c02a385bb75c
+//# sourceMappingURL=chunk-Js-OSOms.js.map
