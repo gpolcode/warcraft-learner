@@ -140,7 +140,12 @@ if (CACHE_ROOT) {
   });
 }
 
-app.listen(PORT, '127.0.0.1', () => {
+// Express hands a failed bind (the port already taken) to this callback, so without the check a second server reports listening and serves nothing.
+app.listen(PORT, '127.0.0.1', err => {
+  if (err) {
+    console.error(`[ingest-server] cannot listen on ${ingestServerUrl}: ${err.message}`);
+    process.exit(1);
+  }
   console.log(`[ingest-server] file store for ${DATA_ROOT} listening on ${ingestServerUrl}`);
   console.log(CACHE_ROOT ? `[ingest-server] WCL responses stored in ${CACHE_ROOT}` : '[ingest-server] WCL response store off');
 });

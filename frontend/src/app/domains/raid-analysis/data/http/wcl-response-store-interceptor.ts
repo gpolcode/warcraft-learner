@@ -50,7 +50,7 @@ export class WclResponseStoreInterceptor implements HttpInterceptor {
     return response;
   }
 
-  // Status 0 is a dev server started without the file server, so the store stays off for the session.
+  // Status 0 means no file server listens (a bare `ng serve`), so the store stays off for the session.
   private failed(operation: string, cause: unknown): void {
     if (cause instanceof HttpErrorResponse && cause.status === UNREACHABLE_STATUS) this.reachable = false;
     this.logger.logWarn(`WclResponseStoreInterceptor ${operation}`, cause);

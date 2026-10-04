@@ -34,7 +34,7 @@ Configuration lives under `frontend/src/environments/`: one `Environment` schema
 
 | Command | Description |
 |---|---|
-| `npm start` | Angular dev server on http://localhost:4200 |
+| `npm start` | Angular dev server on http://localhost:4200, plus the ingest file server |
 | `npm run build` | Production build to `../static/angular/` |
 | `npm test` | `ng test` (Vitest, the one unit-test suite) |
 | `npm run e2e` | Playwright suite over both pages, run by the E2E workflow on every PR push; never locally, as each run spends one WCL analysis |
