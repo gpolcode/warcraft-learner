@@ -32,8 +32,31 @@ jobs:
           # Keeps origin/gh-pages when the overlay's fetch fails; without it the publish wipes the gh-pages-only data.
           fetch-depth: 0
 
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Write the WCL client file
+        env:
+          WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
+          WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
+        run: |
+          set -euo pipefail
+          [ -n "$WCL_CLIENT_ID" ] && [ -n "$WCL_CLIENT_SECRET" ] || { echo "::error::Set the WCL_CLIENT_ID and WCL_CLIENT_SECRET repository secrets."; exit 1; }
+          printf "export const WCL_CLIENT_ID = '%s';\nexport const WCL_CLIENT_SECRET = '%s';\n" "$WCL_CLIENT_ID" "$WCL_CLIENT_SECRET" > src/environments/wcl-client.ts
+        working-directory: frontend
+
+      # Every later step carries this gate; one added without it would run on skipped hours too.
+      - name: Check the WCL budget
+        id: budget
+        working-directory: frontend
+        run: node scripts/wcl-budget.mjs ingest
+
       # Bench data lives only on gh-pages; overlay it before ingest so the signature-skip has current data to compare.
       - name: Overlay bench data from gh-pages
+        if: steps.budget.outputs.proceed == 'true'
         run: |
           set -euo pipefail
           git fetch origin gh-pages || true
@@ -47,32 +70,19 @@ jobs:
             echo "No existing data on gh-pages; starting from empty (first run)."
           fi
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
       - name: Install dependencies
+        if: steps.budget.outputs.proceed == 'true'
         working-directory: frontend
         run: npm ci
 
-      - name: Write the WCL client file
-        env:
-          WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
-          WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
-        run: |
-          set -euo pipefail
-          [ -n "$WCL_CLIENT_ID" ] && [ -n "$WCL_CLIENT_SECRET" ] || { echo "::error::Set the WCL_CLIENT_ID and WCL_CLIENT_SECRET repository secrets."; exit 1; }
-          printf "export const WCL_CLIENT_ID = '%s';\nexport const WCL_CLIENT_SECRET = '%s';\n" "$WCL_CLIENT_ID" "$WCL_CLIENT_SECRET" > src/environments/wcl-client.ts
-        working-directory: frontend
-
       - name: Run parse ingestion
+        if: steps.budget.outputs.proceed == 'true'
         working-directory: frontend
         run: npm run ingest
 
       # Pruning never removes whole spec dirs, so this trips only on an overlay catastrophe, not a quiet hour.
       - name: Guard against an empty publish tree
+        if: steps.budget.outputs.proceed == 'true'
         run: |
           set -euo pipefail
           dir=frontend/public/data/specs
@@ -86,6 +96,7 @@ jobs:
 
       # clean:true is scoped to target-folder, so it replaces data/specs/ only and never touches main/ or pr-* previews.
       - name: Publish data to gh-pages
+        if: steps.budget.outputs.proceed == 'true'
         uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
         with:
           token: ${{ steps.app-token.outputs.token }}

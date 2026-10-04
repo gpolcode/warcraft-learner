@@ -44,6 +44,7 @@ Configuration lives under `frontend/src/environments/`: one `Environment` schema
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |
 | `node scripts/ingest-server.js` | Ingest file server on :3000; interactive ingestion is this plus `ng serve --configuration ingest` in a second terminal |
 | `npm run ingest` | Headless ingestion (CI entry): starts both of the above, then drives the app in a headless browser |
+| `node scripts/wcl-budget.mjs <ingest\|e2e>` | Read the client file's WCL budget against what that run needs; the ingest and E2E workflows run it before their setup |
 
 ## Development workflow router
 

@@ -15,6 +15,7 @@ The browser authenticates with the **client-credentials** grant against `/api/v2
 - The **only** risk is a stolen pair draining the shared hourly rate-limit budget. Rotation is manual, at `warcraftlogs.com/api/clients/`: WCL exposes **no API to rotate a client secret**; after rotating, update the two Actions secrets.
 - There is **no login UI, callback route, or PKCE flow**: a client token has no current user, so users always supply a report code or character name.
 - The deployed site, the E2E run and the hourly CI ingest share the repository's pair and its budget; a developer's client file holds their own pair, so local runs and local ingestion spend their own budget. The pair never reaches the repository: code reads it through the injected environment and refuses a blank pair.
+- Both workflows read that budget before their setup through `frontend/scripts/wcl-budget.mjs`: the ingest skips an hour that cannot cover `INGEST_POINTS_MARGIN`, and E2E fails when one analysis (`E2E_POINTS_NEEDED`) does not fit.
 
 ## WCL API quirks
 

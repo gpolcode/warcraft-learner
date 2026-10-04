@@ -14,6 +14,7 @@ import type { TopParseSelection } from '../data/wcl/wcl.models';
 import { BenchRegistryService, LEAD_BENCH, type BenchDescriptor } from './bench-registry';
 import { CurrentRaidsService, BudgetExceededError } from '../data/ingest/current-raids-service';
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
+import { INGEST_POINTS_MARGIN } from '../data/ingest/ingest-points-margin';
 import { IngestOrderingService, type SpecOrderEntry } from '../data/ingest/ingest-ordering-service';
 import { IngestSignatureService } from '../data/ingest/ingest-signature-service';
 import { IngestStampService, type IngestStamp } from '../data/ingest/ingest-stamp-service';
@@ -24,7 +25,6 @@ import type { IngestEncounter } from '../data/ingest/ingest.models';
 import { ENVIRONMENT } from '../../../../environments/environment-token';
 
 const TOP_N = 10;
-const POINTS_MARGIN = 500;
 const BENCH_CONCURRENCY = 3;
 
 type EncounterOutcome = 'benched' | 'empty' | 'failed';
@@ -237,7 +237,7 @@ export class IngestOrchestratorService {
 
     try {
       for (const encounter of this.ordering.orderEncountersByMissingFirst(encounters, checkedIds)) {
-        await this.currentRaids.assertPointsBudget(this.wclApi, POINTS_MARGIN);
+        await this.currentRaids.assertPointsBudget(this.wclApi, INGEST_POINTS_MARGIN);
 
         const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
         if (!selection.length) {
