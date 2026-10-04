@@ -4,7 +4,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { baseEnvironment } from './base-environment';
 import { liveDataSourceProviders } from './live-data-sources';
 import { DATA_FILE_TRANSPORT } from '../app/domains/raid-analysis/data/data-files/data-file-transport';
-import { RETRY_MAX_ATTEMPTS, RETRY_TOO_MANY_REQUESTS } from '../app/domains/shared/util-http/retry-transient-interceptor';
+import { RETRY_MAX_ATTEMPTS } from '../app/domains/shared/util-http/retry-transient-interceptor';
 import { WclRateLimitWaitInterceptor } from '../app/domains/raid-analysis/data/http/wcl-rate-limit-wait-interceptor';
 import { IngestHttpDataFileTransport } from '../app/domains/raid-analysis/data/http/ingest-http-data-file-transport';
 import { IngestOrchestratorService } from '../app/domains/raid-analysis/feature-ingest/ingest-orchestrator-service';
@@ -18,7 +18,6 @@ export const environmentProviders: (Provider | EnvironmentProviders)[] = [
   ...liveDataSourceProviders,
   { provide: DATA_FILE_TRANSPORT, useExisting: IngestHttpDataFileTransport },
   { provide: RETRY_MAX_ATTEMPTS, useValue: INGEST_RETRY_MAX_ATTEMPTS },
-  { provide: RETRY_TOO_MANY_REQUESTS, useValue: false },
   // Registered after the response store, so a stored answer never waits.
   { provide: HTTP_INTERCEPTORS, useClass: WclRateLimitWaitInterceptor, multi: true },
   provideAppInitializer(() => {
