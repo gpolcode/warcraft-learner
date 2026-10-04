@@ -283,6 +283,7 @@ export default defineConfig([
         fetch: 'readonly',
         URL: 'readonly',
         URLSearchParams: 'readonly',
+        AbortSignal: 'readonly',
       },
     },
     rules: {
