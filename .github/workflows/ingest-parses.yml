@@ -29,14 +29,23 @@ jobs:
         with:
           ref: main
           token: ${{ steps.app-token.outputs.token }}
-          # Keeps origin/gh-pages when the overlay's fetch fails; without it the publish wipes the gh-pages-only data.
-          fetch-depth: 0
 
       # Bench data lives only on gh-pages; overlay it before ingest so the signature-skip has current data to compare.
       - name: Overlay bench data from gh-pages
         run: |
           set -euo pipefail
-          git fetch origin gh-pages || true
+          # Exit 2 means gh-pages does not exist yet; any other failure aborts, since an empty tree reaching the clean:true publish deletes every spec.
+          status=0
+          git ls-remote --exit-code --heads origin gh-pages >/dev/null || status=$?
+          case "$status" in
+            0)
+              git fetch --depth=1 origin +refs/heads/gh-pages:refs/remotes/origin/gh-pages
+              # The deploy action re-adds origin, which drops origin/gh-pages; this ref lets its own fetch find the tree already here.
+              git update-ref refs/ingest/gh-pages refs/remotes/origin/gh-pages
+              ;;
+            2) ;;
+            *) exit "$status" ;;
+          esac
           rm -rf frontend/public/data/specs
           # A failed extraction must abort: an empty tree reaching the clean:true publish deletes every spec.
           if git rev-parse --verify --quiet origin/gh-pages >/dev/null \
