@@ -9,7 +9,8 @@ const SERVER_PROBE_URL = `${ingestServerUrl}/api/dirs/specs`;
 const READY_TIMEOUT_MS = 5 * 60_000;
 const READY_POLL_MS = 500;
 const DONE_POLL_MS = 1_000;
-const DONE_TIMEOUT_MS = 15 * 60_000;
+// Room for the minute-long waits a run sits through each time WCL rate-limits it.
+const DONE_TIMEOUT_MS = 30 * 60_000;
 const KILL_GRACE_MS = 5_000;
 const RESOURCE_FAILURE = 'Failed to load resource';
 const NOT_FOUND = /\b404\b/;
