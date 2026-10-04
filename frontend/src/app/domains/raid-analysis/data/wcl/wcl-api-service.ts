@@ -10,7 +10,7 @@ import {
 import {
   REPORT_Q, REPORT_FIGHTS_Q, PLAYER_DETAILS_Q, EVENTS_Q,
   COMBATANT_INFO_Q, RANKINGS_Q, TABLE_Q, RESURRECTS_Q,
-  RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q,
+  RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q, GAME_DATA_LOOKUP,
 } from './wcl-queries';
 import type {
   ClassesQuery,
@@ -184,12 +184,12 @@ export class WclApiService {
       ...itemIds.map(id => `i${id}: item(id:${id}){id name icon}`),
       ...enchantIds.map(id => `e${id}: enchant(id:${id}){id name}`),
     ].join(' ');
-    return `query{gameData{${fields}}}`;
+    return `${GAME_DATA_LOOKUP}${fields}}}`;
   }
 
   // `gameData.ability(id)` returns `null` for a nonexistent id, so a bad (e.g. mistyped) id resolves to null rather than a wrong icon.
   private buildAbilityIconsQuery(ids: number[]): string {
     const fields = ids.map(id => `a${id}: ability(id:${id}){id name icon}`).join(' ');
-    return `query{gameData{${fields}}}`;
+    return `${GAME_DATA_LOOKUP}${fields}}}`;
   }
 }

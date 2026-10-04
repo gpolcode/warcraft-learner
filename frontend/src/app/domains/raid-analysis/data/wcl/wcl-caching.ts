@@ -5,7 +5,7 @@ import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 import {
   REPORT_Q, REPORT_FIGHTS_Q, RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q,
-  EVENTS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q,
+  EVENTS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q, GAME_DATA_LOOKUP,
 } from './wcl-queries';
 
 /** Below the live-sync poll interval, so each tick sees a fresh pull while a tick's overlapping reads still share one fetch. */
@@ -14,8 +14,8 @@ export const WCL_LIVE_CACHE_MS = 10_000;
 // Report reads are code-keyed, so they change as a live raid records pulls; everything else is fight-window-keyed (immutable) and keeps the long default.
 const VOLATILE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, REPORT_FIGHTS_Q]);
 const UNCACHED_QUERIES: ReadonlySet<string> = new Set([RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q]);
-// Fight-scoped only: a stored report read would freeze a report still recording, and a later boss of that night would never find its fight in it.
-const STORABLE_QUERIES: ReadonlySet<string> = new Set([EVENTS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q]);
+// Live-only reads stay out (rankings, budget, discovery, the live-sync fights list); a stored report read keeps the report as it stood, so a fight logged after it stays unseen until the entry goes.
+const STORABLE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, EVENTS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q]);
 
 export class WclCaching {
   private constructor() {}
@@ -29,7 +29,7 @@ export class WclCaching {
 
   static isStorable(req: HttpRequest<unknown>): boolean {
     const query = (req.body as { query?: unknown } | null)?.query;
-    return typeof query === 'string' && STORABLE_QUERIES.has(query);
+    return typeof query === 'string' && (STORABLE_QUERIES.has(query) || query.startsWith(GAME_DATA_LOOKUP));
   }
 
   // Keyed on the GraphQL body so the renewing Authorization header can't fragment the cache; the memory cache and the response store share it.

@@ -5,7 +5,7 @@ import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@a
 import { firstValueFrom } from 'rxjs';
 import { WclResponseStoreInterceptor } from './wcl-response-store-interceptor';
 import { provideWclCaching } from '../wcl/wcl-caching';
-import { EVENTS_Q, REPORT_Q } from '../wcl/wcl-queries';
+import { EVENTS_Q, REPORT_FIGHTS_Q } from '../wcl/wcl-queries';
 import { ENVIRONMENT } from '../../../../../environments/environment-token';
 import { baseEnvironment } from '../../../../../environments/base-environment';
 
@@ -15,7 +15,7 @@ const STORE_URL = 'http://localhost:3000/api/wcl-cache/';
 const SHA256_HEX = /^[0-9a-f]{64}$/;
 
 const CASTS_READ = { query: EVENTS_Q, variables: { code: 'AbCdEfGh12345678', fightIDs: [12], dataType: 'Casts' } };
-const REPORT_READ = { query: REPORT_Q, variables: { code: 'AbCdEfGh12345678' } };
+const FIGHTS_READ = { query: REPORT_FIGHTS_Q, variables: { code: 'AbCdEfGh12345678' } };
 const CASTS = { data: { reportData: { report: { events: { data: [{ type: 'cast' }], nextPageTimestamp: null } } } } };
 const PRIVATE_REPORT = { errors: [{ message: 'You do not have permission to view this report.' }] };
 const NOT_FOUND = { status: 404, statusText: 'Not Found' };
@@ -106,10 +106,10 @@ describe('WclResponseStoreInterceptor', () => {
     await expect(pending).rejects.toMatchObject({ status: UNAVAILABLE.status });
   });
 
-  it('sends a report read straight to WCL, since a report still recording gains fights', async () => {
+  it('sends the live-sync fights list straight to WCL, since a report still recording gains fights', async () => {
     const { http, httpMock } = setup();
 
-    const pending = firstValueFrom(http.post(WCL_API_URL, REPORT_READ));
+    const pending = firstValueFrom(http.post(WCL_API_URL, FIGHTS_READ));
     httpMock.expectOne(toWcl).flush(CASTS);
 
     expect(await pending).toEqual(CASTS);
