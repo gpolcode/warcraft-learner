@@ -5,9 +5,9 @@ import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 const RATE_LIMITED_STATUS = 429;
-// WCL caps requests per minute apart from the hourly points, and its CORS hides Retry-After, so the wait is the whole window.
+// WCL's CORS hides Retry-After, so the wait covers its whole per-minute window.
 const WINDOW_MS = 60_000;
-// The hourly points are the budget check's to stop on; a 429 that outlasts this is not the per-minute cap.
+// The hourly cap is the budget check's to stop on, never this interceptor's to wait out.
 const MAX_WAIT_MS = 120_000;
 
 @Injectable()

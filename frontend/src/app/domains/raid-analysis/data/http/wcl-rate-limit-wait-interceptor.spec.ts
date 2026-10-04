@@ -7,7 +7,6 @@ import { WclRateLimitWaitInterceptor } from './wcl-rate-limit-wait-interceptor';
 import { ENVIRONMENT } from '../../../../../environments/environment-token';
 import { baseEnvironment } from '../../../../../environments/base-environment';
 
-// The wait is a real RxJS timer, so the resend is driven by advancing fake timers.
 /** Spelled out rather than read from the environment, so moving the WCL host fails the assertions. */
 const WCL_API_URL = 'https://www.warcraftlogs.com/api/v2/client';
 const OTHER_HOST_URL = 'https://www.raidbots.com/static/data/live/talents.json';
@@ -15,7 +14,6 @@ const READ = { query: 'query RateLimit { rateLimitData { limitPerHour pointsSpen
 const ANSWER = { data: { rateLimitData: { limitPerHour: 3600, pointsSpentThisHour: 12 } } };
 const TOO_MANY_REQUESTS = { status: 429, statusText: 'Too Many Requests' };
 const UNAVAILABLE = { status: 503, statusText: 'Service Unavailable' };
-/** WCL's per-minute request window. */
 const WINDOW_MS = 60_000;
 const JUST_BEFORE_WINDOW_MS = WINDOW_MS - 1;
 

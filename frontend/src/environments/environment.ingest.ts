@@ -18,7 +18,6 @@ export const environmentProviders: (Provider | EnvironmentProviders)[] = [
   ...liveDataSourceProviders,
   { provide: DATA_FILE_TRANSPORT, useExisting: IngestHttpDataFileTransport },
   { provide: RETRY_MAX_ATTEMPTS, useValue: INGEST_RETRY_MAX_ATTEMPTS },
-  // Registered after the response store, so a stored answer never waits.
   { provide: HTTP_INTERCEPTORS, useClass: WclRateLimitWaitInterceptor, multi: true },
   provideAppInitializer(() => {
     // Not awaited: the app shell must render while ingestion runs; run() owns its failures.
