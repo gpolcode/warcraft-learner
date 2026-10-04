@@ -13,9 +13,7 @@ export const WCL_UNUSABLE_STATUS = 422;
 
 /** A query naming no report (rankings, rate limit) records nothing here. */
 export interface FetchOutcomes {
-  // A transient failure must never stick a usable log here as inaccessible.
-  inaccessibleCodes: ReadonlySet<string>;
-  // Includes every inaccessible code too: the two sets are not disjoint.
+  // HTTP failures only: a GraphQL error (a private log) answers the same on every run, so it never holds an encounter open for a retry.
   failedCodes: ReadonlySet<string>;
 }
 

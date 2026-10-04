@@ -1,7 +1,12 @@
 import { EnvironmentProviders } from '@angular/core';
 import { HttpRequest } from '@angular/common/http';
 import { provideNgHttpCaching, NgHttpCachingMemoryStorage, NgHttpCachingHeaders, NG_HTTP_CACHING_YEAR_IN_MS } from 'ng-http-caching';
-import { REPORT_Q, REPORT_FIGHTS_Q, RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q } from './wcl-queries';
+import { sha256 } from '@noble/hashes/sha2.js';
+import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
+import {
+  REPORT_Q, REPORT_FIGHTS_Q, RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q,
+  EVENTS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q,
+} from './wcl-queries';
 
 /** Below the live-sync poll interval, so each tick sees a fresh pull while a tick's overlapping reads still share one fetch. */
 export const WCL_LIVE_CACHE_MS = 10_000;
@@ -9,6 +14,8 @@ export const WCL_LIVE_CACHE_MS = 10_000;
 // Report reads are code-keyed, so they change as a live raid records pulls; everything else is fight-window-keyed (immutable) and keeps the long default.
 const VOLATILE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, REPORT_FIGHTS_Q]);
 const UNCACHED_QUERIES: ReadonlySet<string> = new Set([RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q]);
+// Fight-scoped only: a stored report read would freeze a report still recording, and a later boss of that night would never find its fight in it.
+const STORABLE_QUERIES: ReadonlySet<string> = new Set([EVENTS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q]);
 
 export class WclCaching {
   private constructor() {}
@@ -19,9 +26,18 @@ export class WclCaching {
     if (VOLATILE_QUERIES.has(query)) return { [NgHttpCachingHeaders.LIFETIME]: String(WCL_LIVE_CACHE_MS) };
     return {};
   }
+
+  static isStorable(req: HttpRequest<unknown>): boolean {
+    const query = (req.body as { query?: unknown } | null)?.query;
+    return typeof query === 'string' && STORABLE_QUERIES.has(query);
+  }
+
+  // Keyed on the GraphQL body so the renewing Authorization header can't fragment the cache; the memory cache and the response store share it.
+  static cacheKey(req: HttpRequest<unknown>): string {
+    return bytesToHex(sha256(utf8ToBytes(`${req.method}@${req.url}@${JSON.stringify(req.body)}`)));
+  }
 }
 
-// Keyed on the GraphQL body so the renewing Authorization header can't fragment the cache.
 export function provideWclCaching(wclApiUrl: string): EnvironmentProviders {
   return provideNgHttpCaching({
     store: new NgHttpCachingMemoryStorage(),
@@ -29,7 +45,6 @@ export function provideWclCaching(wclApiUrl: string): EnvironmentProviders {
     allowedMethod: ['POST'],
     // undefined falls through to the library's default checks; false hard-excludes every non-WCL request.
     isCacheable: (req: HttpRequest<unknown>) => (req.url === wclApiUrl ? undefined : false),
-    getKey: (req: HttpRequest<unknown>) =>
-      req.url === wclApiUrl ? `${req.method}@${req.url}@${JSON.stringify(req.body)}` : undefined,
+    getKey: (req: HttpRequest<unknown>) => (req.url === wclApiUrl ? WclCaching.cacheKey(req) : undefined),
   });
 }

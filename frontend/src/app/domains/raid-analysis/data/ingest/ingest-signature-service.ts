@@ -3,11 +3,6 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class IngestSignatureService {
 
-  /** `report_code:fight_id` key - the unit of the parse-set fingerprint and the inaccessible set. */
-  private parseKey(ranking: SignatureRanking): string {
-    return `${ranking.report_code}:${ranking.fight_id}`;
-  }
-
   /** Stable `report_code:fight_id` list, sorted, so ranking order never affects the hash. */
   private rankingFingerprint(rankings: SignatureRanking[]): string {
     return rankings
@@ -16,27 +11,9 @@ export class IngestSignatureService {
       .join('|');
   }
 
-  private encounterSignature(version: string, rankings: SignatureRanking[]): string {
-    return bytesToHex(sha256(utf8ToBytes(`${version}\n${this.rankingFingerprint(rankings)}`))).slice(0, 16);
-  }
-
-  /** The signature over the top-`topN` ACCESSIBLE parses - the one rule both the cheap pre-check and the post-fetch stamp key on, so they can never diverge. */
-  encounterSkipKey(
-    poolRows: SignatureRanking[], inaccessible: ReadonlySet<string>, version: string, topN: number,
-  ): string {
-    const usedRows = poolRows.filter(row => !inaccessible.has(this.parseKey(row))).slice(0, topN);
-    return this.encounterSignature(version, usedRows);
-  }
-
-  /** Persist only permission-denied `inaccessibleCodes`; sign the top-N minus every `failedCodes` fetch, so a backfilled bench is stamped as the set it used. */
-  signatureAfterFetch(
-    poolRows: SignatureRanking[], inaccessibleCodes: ReadonlySet<string>, failedCodes: ReadonlySet<string>,
-    version: string, topN: number,
-  ): { signature: string; inaccessibleParses: string[] } {
-    const inaccessibleParses = poolRows.filter(row => inaccessibleCodes.has(row.report_code)).map(row => this.parseKey(row));
-    const failedParses = poolRows.filter(row => failedCodes.has(row.report_code)).map(row => this.parseKey(row));
-    const signature = this.encounterSkipKey(poolRows, new Set(failedParses), version, topN);
-    return { signature, inaccessibleParses };
+  /** The top-`topN` ranked rows as listed, a private log's included, so the free pre-check needs no record of which logs failed; a backfill below rank `topN` is not signed. */
+  encounterSkipKey(poolRows: SignatureRanking[], version: string, topN: number): string {
+    return bytesToHex(sha256(utf8ToBytes(`${version}\n${this.rankingFingerprint(poolRows.slice(0, topN))}`))).slice(0, 16);
   }
 }
 

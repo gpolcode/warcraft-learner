@@ -9,15 +9,13 @@ export class IngestStampService {
     return { ...data, source_signature: signature, ingest_version: stamp.version, ingested_at_s: stamp.ingestedAtS };
   }
 
-  /** Burst stamp: writes `source_signature` only when no bench failed (a `missing` bench is legitimate empty data), so a transient/permanent failure leaves it unstamped and the next run redoes the encounter. */
+  /** Burst stamp: writes `source_signature` only when no bench failed (a `missing` bench is legitimate empty data) and no log fetch failed over HTTP, so either leaves it unstamped and the next run redoes the encounter. */
   stampBurstFile<T extends object>(
-    data: T, signature: string, stamp: IngestStamp, inaccessibleParses: string[],
-    benchResults: readonly Result<unknown>[],
+    data: T, signature: string, stamp: IngestStamp,
+    benchResults: readonly Result<unknown>[], failedCodes: ReadonlySet<string>,
   ): T & StampedFile {
-    const complete = benchResults.every(result => result.ok || result.error.kind === 'missing');
-    const versioned: T & StampedFile = {
-      ...data, ingest_version: stamp.version, ingested_at_s: stamp.ingestedAtS, inaccessible_parses: inaccessibleParses,
-    };
+    const complete = failedCodes.size === 0 && benchResults.every(result => result.ok || result.error.kind === 'missing');
+    const versioned: T & StampedFile = { ...data, ingest_version: stamp.version, ingested_at_s: stamp.ingestedAtS };
     return complete ? { ...versioned, source_signature: signature } : versioned;
   }
 
@@ -27,7 +25,6 @@ export class IngestStampService {
       signature: stamped?.source_signature ?? null,
       version: stamped?.ingest_version ?? null,
       ingestedAtS: stamped?.ingested_at_s ?? null,
-      inaccessibleParses: new Set(stamped?.inaccessible_parses ?? []),
     };
   }
 
@@ -39,9 +36,8 @@ export class IngestStampService {
   skipDecision(
     file: unknown, rows: SignatureRanking[], version: string, topN: number,
   ): { skip: boolean; signature: string } {
-    const stored = this.readStamp(file);
-    const signature = this.signatures.encounterSkipKey(rows, stored.inaccessibleParses, version, topN);
-    return { skip: stored.signature === signature, signature };
+    const signature = this.signatures.encounterSkipKey(rows, version, topN);
+    return { skip: this.readStamp(file).signature === signature, signature };
   }
 
   /** Files with no numeric `ingest_version` (manifests) are never future. */
@@ -63,8 +59,6 @@ interface StampedFile {
   ingest_version: number;
   // Reporting only: never read by the skip check or the work-ordering.
   ingested_at_s?: number;
-  // Burst-file-only: parses found permission-denied by the producing run, so the next cheap hash check can exclude them.
-  inaccessible_parses?: string[];
 }
 
 export interface IngestStamp {
@@ -76,7 +70,6 @@ interface StoredStamp {
   signature: string | null;
   version: number | null;
   ingestedAtS: number | null;
-  inaccessibleParses: Set<string>;
 }
 
 const VERSIONED_FILE_SCHEMA = z.looseObject({ ingest_version: z.number() });

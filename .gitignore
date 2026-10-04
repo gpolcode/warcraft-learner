@@ -23,6 +23,9 @@ frontend/public/data/specs/
 # Committing this snapshot of live WCL would park a churning third-party file in git history.
 frontend/schema/
 
+# Stored WCL responses run to gigabytes; CI keeps its copy in the Actions cache.
+frontend/.wcl-cache/
+
 # Scratch checkouts an agent works in; the branch it commits to carries the work.
 .claude/worktrees/
 

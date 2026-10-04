@@ -28,6 +28,8 @@ flowchart LR
 
 Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
 
+Fight-scoped WCL responses (`WclCaching.isStorable`) outlive a run in `frontend/.wcl-cache/` (`wclResponseCacheDir`): `WclResponseStoreInterceptor`, behind the memory cache, reads and writes them through the file server, and the ingest workflow carries the folder between runs in the Actions cache, so a re-bench downloads only its report reads and the parses no earlier run fetched. The live build leaves the setting empty, which turns the store off; report reads are never stored, since a report still recording gains fights.
+
 Configuration lives under `frontend/src/environments/`: one `Environment` schema with the defaults (every external host and endpoint, the dev and ingest server origins, the raids ingestion benches), one override file per build configuration swapped by `fileReplacements`, and a gitignored client file for the WCL pair, copied from the committed example on a developer machine and written from the repository secrets in CI; GitHub holds secrets only, never configuration. Code reads it through `inject(ENVIRONMENT)`, never by importing the swapped file (eslint-enforced) and never as a literal in a service.
 
 ## Commands (run from `frontend/`)
@@ -42,7 +44,7 @@ Configuration lives under `frontend/src/environments/`: one `Environment` schema
 | `npm run knip` | Dead-code check: unused files, exports, and dependencies (`knip.json`) |
 | `npm run schema:pull` | Re-introspect the WCL v2 schema and regenerate `wcl-operations.generated.ts` in one run; commit only the regenerated types |
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |
-| `node scripts/ingest-server.js` | Ingest file server on :3000; interactive ingestion is this plus `ng serve --configuration ingest` in a second terminal |
+| `node scripts/ingest-server.js` | Ingest file server on :3000 and the WCL response store; interactive ingestion is this plus `ng serve --configuration ingest` in a second terminal, and `npm start` beside it reuses the stored responses too |
 | `npm run ingest` | Headless ingestion (CI entry): starts both of the above, then drives the app in a headless browser |
 | `node scripts/wcl-budget.mjs <ingest\|e2e>` | Read the client file's WCL budget against what that run needs; the ingest and E2E workflows run it before their setup |
 

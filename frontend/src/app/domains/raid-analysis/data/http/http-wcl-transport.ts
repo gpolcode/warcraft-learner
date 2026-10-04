@@ -11,7 +11,6 @@ interface GraphQLResponse<TData> {
 }
 
 interface OpenScope {
-  inaccessibleCodes: Set<string>;
   failedCodes: Set<string>;
 }
 
@@ -24,7 +23,7 @@ export class HttpWclTransport implements WclTransport {
 
   async withFetchOutcomes<T>(run: () => Promise<T>): Promise<{ result: T; outcomes: FetchOutcomes }> {
     const enclosing = this.scope;
-    const outcomes: OpenScope = { inaccessibleCodes: new Set(), failedCodes: new Set() };
+    const outcomes: OpenScope = { failedCodes: new Set() };
     this.scope = outcomes;
     try {
       return { result: await run(), outcomes };
@@ -33,10 +32,9 @@ export class HttpWclTransport implements WclTransport {
     }
   }
 
-  private recordFailure(code: string | undefined, denied = false): void {
+  private recordFailure(code: string | undefined): void {
     if (!code || !this.scope) return;
     this.scope.failedCodes.add(code);
-    if (denied) this.scope.inaccessibleCodes.add(code);
   }
 
   async query<TData>(gqlString: string, variables: object, token: string): Promise<TData> {
@@ -57,20 +55,13 @@ export class HttpWclTransport implements WclTransport {
       }
       throw error;
     }
-    return this.usableData(body, code);
+    return this.usableData(body);
   }
 
-  private usableData<TData>(body: GraphQLResponse<TData>, code: string | undefined): TData {
-    // A 200 with a GraphQL `errors` array never improves on retry, so it classifies permanent, not transient.
-    if (body.errors?.length) {
-      const message = body.errors[0]?.message ?? 'WCL GraphQL error';
-      this.recordFailure(code, /permission/i.test(message));
-      throw new WclTransportError(message, WCL_UNUSABLE_STATUS);
-    }
-    if (body.data === undefined) {
-      this.recordFailure(code);
-      throw new WclTransportError('WCL response had no data', WCL_UNUSABLE_STATUS);
-    }
+  // A 200 that carries no usable data never improves on retry, so it classifies permanent and records no failure.
+  private usableData<TData>(body: GraphQLResponse<TData>): TData {
+    if (body.errors?.length) throw new WclTransportError(body.errors[0]?.message ?? 'WCL GraphQL error', WCL_UNUSABLE_STATUS);
+    if (body.data === undefined) throw new WclTransportError('WCL response had no data', WCL_UNUSABLE_STATUS);
     return body.data;
   }
 }

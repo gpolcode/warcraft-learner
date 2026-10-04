@@ -21,6 +21,8 @@ export interface Environment {
   /** The WCL zone names ingestion benches. */
   currentRaids: readonly string[];
   prioritySpecs: readonly string[];
+  /** Relative to `frontend/`; the ingest file server reads it from these defaults, so a build's override can only turn the store off. Empty: off. */
+  wclResponseCacheDir: string;
 }
 
 /** URL roots carry no trailing slash. No imports, so plain Node can load this module without Angular. */
@@ -45,4 +47,5 @@ export const baseEnvironment: Environment = {
   dataBaseHref: '',
   currentRaids: ['The Venomous Abyss'],
   prioritySpecs: ['AssassinationRogue'],
+  wclResponseCacheDir: '.wcl-cache',
 };

@@ -84,10 +84,33 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      # Entries are immutable, so each run saves under its own key and the next restores the newest; LRU eviction drops the older ones.
+      - name: Restore stored WCL responses
+        if: steps.budget.outputs.proceed == 'true'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: frontend/.wcl-cache
+          key: wcl-responses-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: wcl-responses-
+
       - name: Run parse ingestion
         if: steps.budget.outputs.proceed == 'true'
         working-directory: frontend
         run: npm run ingest
+
+      # The file server refreshes an entry's time on every read, so this drops what no run has read in 21 days.
+      - name: Prune stored WCL responses
+        if: ${{ !cancelled() && steps.budget.outputs.proceed == 'true' }}
+        run: |
+          if [ -d frontend/.wcl-cache ]; then find frontend/.wcl-cache -type f -mtime +21 -delete; fi
+
+      # Saved even when ingestion failed: every stored response is a complete WCL answer, whatever happened after it.
+      - name: Save stored WCL responses
+        if: ${{ !cancelled() && steps.budget.outputs.proceed == 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: frontend/.wcl-cache
+          key: wcl-responses-${{ github.run_id }}-${{ github.run_attempt }}
 
       # Pruning never removes whole spec dirs, so this trips only on an overlay catastrophe, not a quiet hour.
       - name: Guard against an empty publish tree
