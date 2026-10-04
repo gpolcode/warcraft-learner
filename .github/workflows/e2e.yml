@@ -36,8 +36,22 @@ jobs:
         run: npm run data:pull
         working-directory: frontend
 
+      - name: Read the Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+        working-directory: frontend
+
+      - name: Restore the Playwright browser
+        id: playwright-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      # Headless runs launch only the shell, and the runner image already carries its system libraries, so a cache hit skips apt too.
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps --only-shell chromium
         working-directory: frontend
 
       - name: Write the WCL client file
