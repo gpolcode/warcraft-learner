@@ -96,35 +96,27 @@ jobs:
           name: site
           path: site
 
-      - name: Stage the root redirect
-        if: env.TARGET_FOLDER == 'main'
+      # One tree, one push: every gh-pages push starts a Pages build, so the shell and the root redirect travel together.
+      - name: Stage the publish tree
         run: |
           set -euo pipefail
-          rm -rf pages-root
-          mkdir -p pages-root
-          cp .github/pages-root/index.html pages-root/index.html
-          # Pages serves 404.html site-wide, booting the SPA for deep links under /main/.
-          cp site/index.html pages-root/404.html
-
-      - name: Publish the shell to gh-pages
-        uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          branch: gh-pages
-          single-commit: true
-          folder: site
-          target-folder: ${{ env.TARGET_FOLDER }}
-          clean: false
+          rm -rf publish
+          mkdir -p "publish/$TARGET_FOLDER"
+          cp -a site/. "publish/$TARGET_FOLDER/"
+          if [ "$TARGET_FOLDER" = main ]; then
+            cp .github/pages-root/index.html publish/index.html
+            # Pages serves 404.html site-wide, booting the SPA for deep links under /main/.
+            cp site/index.html publish/404.html
+          fi
 
       # Deploys to the gh-pages root, where clean:true would delete data/specs/, main/, and every preview.
-      - name: Publish the root redirect to gh-pages
-        if: env.TARGET_FOLDER == 'main'
+      - name: Publish to gh-pages
         uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
         with:
           token: ${{ steps.app-token.outputs.token }}
           branch: gh-pages
           single-commit: true
-          folder: pages-root
+          folder: publish
           clean: false
 
   # needs serializes a dispatch run's two pushes; !cancelled() still runs this on schedule, where build and publish skip.
