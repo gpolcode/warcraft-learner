@@ -8,7 +8,7 @@ import { GEAR_DATA_SOURCE } from '../app/domains/raid-analysis/data/gear/gear-da
 import { MAP_DATA_SOURCE } from '../app/domains/raid-analysis/data/map/map-data-source';
 import { NORTHERN_SKY_DATA_SOURCE } from '../app/domains/raid-analysis/data/northern-sky/northern-sky-data-source';
 
-/** Site-root absolute, so every deployed build (`main/`, `pr-N/`) reads the one shared data copy whatever its own base href. A visitor's browser has no file server to keep WCL responses in. */
+/** Site-root absolute, so every deployed build (`main/`, `pr-N/`) reads the one shared data copy whatever its own base href. */
 export const environment: Environment = { ...baseEnvironment, dataBaseHref: '/data/specs/', wclResponseCacheDir: '' };
 
 /** Never import a `*TransformService` here or it joins the eager production bundle. */

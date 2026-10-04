@@ -60,7 +60,7 @@ query CombatantInfo($code:String!,$fightIDs:[Int]!,$sourceID:Int){
   }}
 }`;
 
-// Name and icon lookups are built per call from the ids asked for, so the response store recognizes them by this opening rather than by a fixed document.
+// The response store recognizes the per-call name and icon lookups by this opening, so a builder without it stops them being stored.
 export const GAME_DATA_LOOKUP = 'query{gameData{';
 
 export const RATE_LIMIT_Q = gql`query RateLimit { rateLimitData { limitPerHour pointsSpentThisHour } }`;

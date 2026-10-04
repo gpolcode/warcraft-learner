@@ -14,7 +14,7 @@ export const WCL_LIVE_CACHE_MS = 10_000;
 // Report reads are code-keyed, so they change as a live raid records pulls; everything else is fight-window-keyed (immutable) and keeps the long default.
 const VOLATILE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, REPORT_FIGHTS_Q]);
 const UNCACHED_QUERIES: ReadonlySet<string> = new Set([RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q]);
-// Live-only reads stay out (rankings, budget, discovery, the live-sync fights list); a stored report read keeps the report as it stood, so a fight logged after it stays unseen until the entry goes.
+// A stored report read keeps the report as it stood, so a fight logged after it stays unseen until the entry goes.
 const STORABLE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, EVENTS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q]);
 
 export class WclCaching {
@@ -32,7 +32,7 @@ export class WclCaching {
     return typeof query === 'string' && (STORABLE_QUERIES.has(query) || query.startsWith(GAME_DATA_LOOKUP));
   }
 
-  // Keyed on the GraphQL body so the renewing Authorization header can't fragment the cache; the memory cache and the response store share it.
+  // Keyed on the GraphQL body so the renewing Authorization header can't fragment the cache.
   static cacheKey(req: HttpRequest<unknown>): string {
     return bytesToHex(sha256(utf8ToBytes(`${req.method}@${req.url}@${JSON.stringify(req.body)}`)));
   }

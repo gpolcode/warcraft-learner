@@ -26,9 +26,7 @@ flowchart LR
   specs --> runtimeFiles
 ```
 
-Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow; code deploys write `main/` and `pr-N/` beside it.
-
-Every WCL read that need not stay live (`WclCaching.isStorable`: reports, fight-scoped reads, name and icon lookups) outlives a run in `frontend/.wcl-cache/` (`wclResponseCacheDir`): `WclResponseStoreInterceptor`, behind the memory cache, reads and writes them through the file server, and the ingest workflow carries the folder between runs in the Actions cache, so a re-bench downloads only the parses no earlier run fetched. The live build leaves the setting empty, which turns the store off. A stored report keeps the report as it stood, so a fight logged after it stays unseen until that entry goes: clear `frontend/.wcl-cache/` before working in dev on a report still recording.
+Bench data lives only on `gh-pages` under `data/specs/`, written by the ingest workflow (WCL responses: Actions cache); code deploys write `main/` and `pr-N/` beside it.
 
 Configuration lives under `frontend/src/environments/`: one `Environment` schema with the defaults (every external host and endpoint, the dev and ingest server origins, the raids ingestion benches), one override file per build configuration swapped by `fileReplacements`, and a gitignored client file for the WCL pair, copied from the committed example on a developer machine and written from the repository secrets in CI; GitHub holds secrets only, never configuration. Code reads it through `inject(ENVIRONMENT)`, never by importing the swapped file (eslint-enforced) and never as a literal in a service.
 
@@ -44,7 +42,7 @@ Configuration lives under `frontend/src/environments/`: one `Environment` schema
 | `npm run knip` | Dead-code check: unused files, exports, and dependencies (`knip.json`) |
 | `npm run schema:pull` | Re-introspect the WCL v2 schema and regenerate `wcl-operations.generated.ts` in one run; commit only the regenerated types |
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree |
-| `node scripts/ingest-server.js` | Ingest file server on :3000 and the WCL response store; interactive ingestion is this plus `ng serve --configuration ingest` in a second terminal, and `npm start` beside it reuses the stored responses too |
+| `node scripts/ingest-server.js` | Ingest file server on :3000; interactive ingestion is this plus `ng serve --configuration ingest` in a second terminal |
 | `npm run ingest` | Headless ingestion (CI entry): starts both of the above, then drives the app in a headless browser |
 | `node scripts/wcl-budget.mjs <ingest\|e2e>` | Read the client file's WCL budget against what that run needs; the ingest and E2E workflows run it before their setup |
 

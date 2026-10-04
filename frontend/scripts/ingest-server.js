@@ -42,7 +42,7 @@ function resolveContained(segments) {
   return full;
 }
 
-// The two-digit fan-out keeps any one folder to a few hundred entries; the prefix check is the containment guard code scanning recognizes.
+// Redundant with the key pattern, but the prefix check is the containment guard code scanning recognizes.
 function cacheEntryPath(key) {
   if (!CACHE_KEY.test(key)) return null;
   const full = path.resolve(CACHE_ROOT, key.slice(0, 2), `${key}.json.gz`);
@@ -120,7 +120,6 @@ if (CACHE_ROOT) {
       await fs.promises.utimes(full, now, now);
       res.set({ 'Content-Encoding': 'gzip', 'Cache-Control': 'no-store' }).type('application/json').send(stored);
     } catch (err) {
-      // An exact 404 is the contract: the interceptor reads it as "not stored yet" and fetches from WCL.
       if (err.code === 'ENOENT') return res.status(404).json({ error: 'not stored' });
       res.status(500).json({ error: String(err) });
     }

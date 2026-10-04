@@ -11,13 +11,13 @@ export class IngestSignatureService {
       .join('|');
   }
 
-  /** The top-`topN` ranked rows as listed, a private log's included, so the free pre-check needs no record of which logs failed; a backfill below rank `topN` is not signed. */
+  /** A private log in the top N stays in the signed set, so the free pre-check needs no record of which logs failed; the parse backfilling it is not signed. */
   encounterSkipKey(poolRows: SignatureRanking[], version: string, topN: number): string {
     return bytesToHex(sha256(utf8ToBytes(`${version}\n${this.rankingFingerprint(poolRows.slice(0, topN))}`))).slice(0, 16);
   }
 }
 
-// A tailored file is fresh when the ingest version AND the exact top-parse set that produced it are unchanged, folded into one short hash.
+// A tailored file is fresh when the ingest version AND its top-ranked parse set are unchanged, folded into one short hash.
 import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 

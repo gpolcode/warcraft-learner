@@ -13,7 +13,7 @@ export const WCL_UNUSABLE_STATUS = 422;
 
 /** A query naming no report (rankings, rate limit) records nothing here. */
 export interface FetchOutcomes {
-  // HTTP failures only: a GraphQL error (a private log) answers the same on every run, so it never holds an encounter open for a retry.
+  // HTTP failures only: a GraphQL error (a private log) answers the same on every run, so a retry cannot help.
   failedCodes: ReadonlySet<string>;
 }
 

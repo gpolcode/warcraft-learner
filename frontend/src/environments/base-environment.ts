@@ -21,7 +21,7 @@ export interface Environment {
   /** The WCL zone names ingestion benches. */
   currentRaids: readonly string[];
   prioritySpecs: readonly string[];
-  /** Relative to `frontend/`; the ingest file server reads it from these defaults, so a build's override can only turn the store off. Empty: off. */
+  /** Relative to `frontend/`; the file server reads only this default, so a build override can only empty it, which turns the store off. */
   wclResponseCacheDir: string;
 }
 

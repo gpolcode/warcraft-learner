@@ -9,7 +9,7 @@ export class IngestStampService {
     return { ...data, source_signature: signature, ingest_version: stamp.version, ingested_at_s: stamp.ingestedAtS };
   }
 
-  /** Burst stamp: writes `source_signature` only when no bench failed (a `missing` bench is legitimate empty data) and no log fetch failed over HTTP, so either leaves it unstamped and the next run redoes the encounter. */
+  /** An unstamped burst file makes the next run redo the encounter, so a failed bench or HTTP fetch leaves it unstamped; a `missing` bench is legitimate empty data. */
   stampBurstFile<T extends object>(
     data: T, signature: string, stamp: IngestStamp,
     benchResults: readonly Result<unknown>[], failedCodes: ReadonlySet<string>,
