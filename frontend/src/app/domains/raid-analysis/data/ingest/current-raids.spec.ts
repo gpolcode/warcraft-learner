@@ -117,9 +117,9 @@ describe('assertPointsBudget', () => {
   const SPENT_AT_MARGIN = LIMIT_PER_HOUR - MARGIN;
   const REMAINING_UNDER_MARGIN = MARGIN - 1;
 
-  it('allows the run to continue when the remaining points exactly meet the margin', async () => {
+  it('allows the run to continue when the remaining points exactly meet the margin, handing back the reading', async () => {
     const budget = { limitPerHour: LIMIT_PER_HOUR, pointsSpentThisHour: SPENT_AT_MARGIN };
-    await expect(currentRaids.assertPointsBudget(wclWithBudget(budget), MARGIN)).resolves.toBeUndefined();
+    await expect(currentRaids.assertPointsBudget(wclWithBudget(budget), MARGIN)).resolves.toEqual(budget);
   });
 
   it('stops the run one point under the margin, naming what is left', async () => {
@@ -130,6 +130,6 @@ describe('assertPointsBudget', () => {
   });
 
   it('lets the run proceed when WCL serves no rate-limit block, since an unknown budget is not an exhausted one', async () => {
-    await expect(currentRaids.assertPointsBudget(wclWithBudget(null), MARGIN)).resolves.toBeUndefined();
+    await expect(currentRaids.assertPointsBudget(wclWithBudget(null), MARGIN)).resolves.toBeNull();
   });
 });

@@ -2,9 +2,9 @@
 import { Injectable, inject } from '@angular/core';
 import pLimit from 'p-limit';
 import { NgHttpCachingService } from 'ng-http-caching';
-import { WclApiService } from '../data/wcl/wcl-api-service';
+import { WclApiService, type WclPointsBudget } from '../data/wcl/wcl-api-service';
 import { DataFileApiService } from '../data/data-files/data-file-api-service';
-import { WCL_TRANSPORT } from '../data/wcl/wcl-transport';
+import { WCL_TRANSPORT, type StoreTally } from '../data/wcl/wcl-transport';
 import { SpecMetaService } from '../data/data-files/spec-meta-service';
 import { LoggerService } from '../../shared/util-logging/logger-service';
 import { type LoadError } from '../../shared/util-http/result';
@@ -17,6 +17,7 @@ import { INGEST_VERSION } from '../data/ingest/ingest-version';
 import { INGEST_POINTS_MARGIN } from '../data/ingest/ingest-points-margin';
 import { IngestOrderingService, type SpecOrderEntry } from '../data/ingest/ingest-ordering-service';
 import { IngestStampService, type IngestStamp } from '../data/ingest/ingest-stamp-service';
+import { EncounterCostService } from '../data/ingest/encounter-cost-service';
 import { IngestStateService, type SpecIngestState } from '../data/ingest/ingest-state-service';
 import { SpecReportService, SELECTED_MARKER, type SpecReportRow } from '../data/ingest/spec-report-service';
 import { SpecPlanLoaderService } from '../data/simc/spec-plan-loader-service';
@@ -27,6 +28,11 @@ const TOP_N = 10;
 const BENCH_CONCURRENCY = 3;
 
 type EncounterOutcome = 'benched' | 'empty' | 'failed';
+
+interface EncounterRun {
+  outcome: EncounterOutcome;
+  store: Readonly<StoreTally>;
+}
 
 const ENCOUNTER_OUTCOME_NOTE: Record<EncounterOutcome, string> = {
   benched: 'done',
@@ -60,6 +66,7 @@ function encounterIndexEntries(current: IngestEncounter[], onDisk: EncounterEntr
 @Injectable({ providedIn: 'root' })
 export class IngestOrchestratorService {
   private readonly currentRaids = inject(CurrentRaidsService);
+  private readonly encounterCost = inject(EncounterCostService);
   private readonly environment = inject(ENVIRONMENT);
   private readonly ingestState = inject(IngestStateService);
   private readonly logger = inject(LoggerService);
@@ -235,7 +242,7 @@ export class IngestOrchestratorService {
 
     try {
       for (const encounter of this.ordering.orderEncountersByMissingFirst(encounters, checkedIds)) {
-        await this.currentRaids.assertPointsBudget(this.wclApi, INGEST_POINTS_MARGIN);
+        const budget = await this.currentRaids.assertPointsBudget(this.wclApi, INGEST_POINTS_MARGIN);
 
         const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
         if (!selection.length) {
@@ -248,20 +255,22 @@ export class IngestOrchestratorService {
         const { skip, signature } = this.stamp.skipDecision(
           existing.ok ? existing.value : null, selection, version, TOP_N);
         if (skip) {
-          console.log(`  [${encounter.name}] unchanged (signature ${signature}), skipped`);
+          console.log(`  [${encounter.name}] unchanged, skipped`);
           continue;
         }
 
-        console.log(`  [${encounter.name}] computing benches (signature ${signature})...`);
-        let outcome: EncounterOutcome;
+        console.log(`  [${encounter.name}] computing benches...`);
+        let run: EncounterRun;
         try {
-          outcome = await this.ingestEncounter(spec, encounter, signature, selection);
+          run = await this.ingestEncounter(spec, encounter, signature, selection);
         } finally {
           // Drop this encounter's cached reports/events before the next one to bound memory.
           this.wclCache.clearCache();
         }
-        if (outcome === 'empty') emptyThisPass.push(encounter.id);
-        console.log(`  [${encounter.name}] ${ENCOUNTER_OUTCOME_NOTE[outcome]}`);
+        if (run.outcome === 'empty') emptyThisPass.push(encounter.id);
+        const note = this.encounterCost.formatOutcome(
+          ENCOUNTER_OUTCOME_NOTE[run.outcome], budget, await this.pointsAfter(), run.store);
+        console.log(`  [${encounter.name}] ${note}`);
       }
     } catch (err) {
       if (err instanceof BudgetExceededError) {
@@ -282,8 +291,18 @@ export class IngestOrchestratorService {
     const plan = await this.specPlans.planFor(spec);
     if (!plan.ok) throw new Error(`no plan for ${spec}: ${plan.error.message}`);
     const { key, lines, cooldowns, defensives } = plan.value;
-    console.log(`  plan ${key}: ${lines.length} list lines, ${cooldowns.length} cooldowns, ${defensives.length} defensives`);
+    console.log(`  plan: ${lines.length} list lines, ${cooldowns.length} cooldowns, ${defensives.length} defensives`);
     return `${ingestVersion}:${key}`;
+  }
+
+  /** Feeds only the log line, so a failed read must not abort the spec. */
+  private async pointsAfter(): Promise<WclPointsBudget | null> {
+    try {
+      return await this.wclApi.getPointsBudget();
+    } catch (err) {
+      this.logger.logWarn('ingest: points read after the encounter failed, quota left out of the log', err);
+      return null;
+    }
   }
 
   private benchedIds(spec: string): Promise<number[]> {
@@ -315,7 +334,7 @@ export class IngestOrchestratorService {
   /** Compute every bench first, THEN stamp + write: whether the burst file may carry the signature is known only after every transform has fetched. */
   private async ingestEncounter(
     spec: string, encounter: IngestEncounter, signature: string, selection: TopParseSelection,
-  ): Promise<EncounterOutcome> {
+  ): Promise<EncounterRun> {
     const encId = encounter.id;
     const limit = pLimit(BENCH_CONCURRENCY);
     const [burstBench, ...siblings] = this.benches;
@@ -349,9 +368,10 @@ export class IngestOrchestratorService {
     }
 
     await Promise.all(writes);
-    if (burst.ok) return 'benched';
+    const { store } = outcomes;
+    if (burst.ok) return { outcome: 'benched', store };
     // Marking a transient or permanent failure empty would defeat the retry `stampBurstFile` leaves open.
-    return burst.error.kind === 'missing' ? 'empty' : 'failed';
+    return { outcome: burst.error.kind === 'missing' ? 'empty' : 'failed', store };
   }
 
   private async rebuildEncountersIndex(spec: string, current: IngestEncounter[]): Promise<void> {

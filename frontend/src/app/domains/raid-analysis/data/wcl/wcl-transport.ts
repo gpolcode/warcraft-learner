@@ -11,10 +11,17 @@ export class WclTransportError extends Error {
 // 422 because a client-error status is never in the retryable set, so `toLoadError` classifies it `permanent`.
 export const WCL_UNUSABLE_STATUS = 422;
 
-/** A query naming no report (rankings, rate limit) records nothing here. */
+// A read the memory cache answers never reaches the response store, so it is neither a hit nor a miss.
+export interface StoreTally {
+  hits: number;
+  // Counted when WCL answers, not when the store lookup misses, so a retried request counts once.
+  misses: number;
+}
+
 export interface FetchOutcomes {
   // HTTP failures only: a GraphQL error (a private log) answers the same on every run, so a retry cannot help.
   failedCodes: ReadonlySet<string>;
+  store: Readonly<StoreTally>;
 }
 
 // An interface (not the concrete {@link HttpWclTransport}) so specs can fake it through the token.

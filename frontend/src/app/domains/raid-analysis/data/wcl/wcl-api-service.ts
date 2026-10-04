@@ -26,7 +26,7 @@ import type {
 } from './wcl-operations.generated';
 import { SpecMetaService } from '../data-files/spec-meta-service';
 
-type WclPointsBudget = NonNullable<RateLimitQuery['rateLimitData']>;
+export type WclPointsBudget = NonNullable<RateLimitQuery['rateLimitData']>;
 
 // WCL declares every selected field nullable, so these reads narrow the generated envelope once instead of pushing null into every consumer.
 @Injectable({ providedIn: 'root' })

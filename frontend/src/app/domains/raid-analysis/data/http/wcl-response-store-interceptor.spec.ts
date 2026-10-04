@@ -1,11 +1,12 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpContext, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpTestingController, TestRequest, provideHttpClientTesting } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
-import { WclResponseStoreInterceptor } from './wcl-response-store-interceptor';
+import { WCL_STORE_TALLY, WclResponseStoreInterceptor } from './wcl-response-store-interceptor';
 import { provideWclCaching } from '../wcl/wcl-caching';
 import { EVENTS_Q, REPORT_FIGHTS_Q } from '../wcl/wcl-queries';
+import type { StoreTally } from '../wcl/wcl-transport';
 import { ENVIRONMENT } from '../../../../../environments/environment-token';
 import { baseEnvironment } from '../../../../../environments/base-environment';
 
@@ -36,6 +37,14 @@ function setup(storeDir = '.wcl-cache', memoryCache = false): { http: HttpClient
     ],
   });
   return { http: TestBed.inject(HttpClient), httpMock: TestBed.inject(HttpTestingController) };
+}
+
+const UNTALLIED: StoreTally = { hits: 0, misses: 0 };
+
+function talliedPost(http: HttpClient, read: object): { pending: Promise<unknown>; tally: StoreTally } {
+  const tally: StoreTally = { ...UNTALLIED };
+  const context = new HttpContext().set(WCL_STORE_TALLY, tally);
+  return { pending: firstValueFrom(http.post(WCL_API_URL, read, { context })), tally };
 }
 
 /** The store answers before WCL is asked, so each next request appears a few microtasks after the last one settles. */
@@ -145,5 +154,50 @@ describe('WclResponseStoreInterceptor', () => {
     await first;
 
     expect(await firstValueFrom(http.post(WCL_API_URL, CASTS_READ))).toEqual(CASTS);
+  });
+
+  describe('tallying who answered', () => {
+    it('counts a read the store answers as a hit', async () => {
+      const { http, httpMock } = setup();
+
+      const { pending, tally } = talliedPost(http, CASTS_READ);
+      (await nextRequest(httpMock, toStore)).flush(CASTS);
+      await pending;
+
+      expect(tally).toEqual({ hits: 1, misses: 0 });
+    });
+
+    it('counts a read WCL answers as a miss', async () => {
+      const { http, httpMock } = setup();
+
+      const { pending, tally } = talliedPost(http, CASTS_READ);
+      (await nextRequest(httpMock, toStore)).flush(null, NOT_FOUND);
+      (await nextRequest(httpMock, toWcl)).flush(CASTS);
+      (await nextRequest(httpMock, toStore)).flush(null);
+      await pending;
+
+      expect(tally).toEqual({ hits: 0, misses: 1 });
+    });
+
+    it('counts nothing for a WCL request that failed, so a retry of it counts once', async () => {
+      const { http, httpMock } = setup();
+
+      const { pending, tally } = talliedPost(http, CASTS_READ);
+      (await nextRequest(httpMock, toStore)).flush(null, NOT_FOUND);
+      (await nextRequest(httpMock, toWcl)).flush('Unavailable', UNAVAILABLE);
+      await expect(pending).rejects.toMatchObject({ status: UNAVAILABLE.status });
+
+      expect(tally).toEqual(UNTALLIED);
+    });
+
+    it('counts nothing for a read it sends straight to WCL', async () => {
+      const { http, httpMock } = setup();
+
+      const { pending, tally } = talliedPost(http, FIGHTS_READ);
+      httpMock.expectOne(toWcl).flush(CASTS);
+      await pending;
+
+      expect(tally).toEqual(UNTALLIED);
+    });
   });
 });

@@ -35,7 +35,7 @@ class RecordingTransport implements WclTransport {
   }
 
   async withFetchOutcomes<T>(run: () => Promise<T>): Promise<{ result: T; outcomes: FetchOutcomes }> {
-    return { result: await run(), outcomes: { failedCodes: new Set() } };
+    return { result: await run(), outcomes: { failedCodes: new Set(), store: { hits: 0, misses: 0 } } };
   }
 }
 

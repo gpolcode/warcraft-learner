@@ -1,14 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import {
-  HttpBackend, HttpClient, HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse,
+  HttpBackend, HttpClient, HttpContextToken, HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse,
 } from '@angular/common/http';
 import { Observable, concatMap, defer, firstValueFrom, from, of, switchMap } from 'rxjs';
 import { WclCaching } from '../wcl/wcl-caching';
+import type { StoreTally } from '../wcl/wcl-transport';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 const NOT_STORED_STATUS = 404;
 const UNREACHABLE_STATUS = 0;
+
+export const WCL_STORE_TALLY = new HttpContextToken<StoreTally>(() => ({ hits: 0, misses: 0 }));
 
 // Registered behind the memory cache, which already folds a run's repeats and concurrent duplicates into one request here.
 @Injectable()
@@ -22,11 +25,18 @@ export class WclResponseStoreInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (!this.reachable || req.url !== this.environment.wclApiUrl || !WclCaching.isStorable(req)) return next.handle(req);
     const entryUrl = `${this.environment.ingestServerUrl}/api/wcl-cache/${WclCaching.cacheKey(req)}`;
+    const tally = req.context.get(WCL_STORE_TALLY);
     // Deferred so a retry that resubscribes asks the store again rather than replaying the first answer.
     return defer(() => this.read(entryUrl, req.url)).pipe(
-      switchMap(stored => stored ? of(stored) : next.handle(req).pipe(
-        concatMap(event => (event instanceof HttpResponse && event.ok ? from(this.write(entryUrl, event)) : of(event))),
-      )),
+      switchMap(stored => {
+        if (stored) {
+          tally.hits++;
+          return of(stored);
+        }
+        return next.handle(req).pipe(
+          concatMap(event => (event instanceof HttpResponse && event.ok ? from(this.write(entryUrl, event, tally)) : of(event))),
+        );
+      }),
     );
   }
 
@@ -40,7 +50,8 @@ export class WclResponseStoreInterceptor implements HttpInterceptor {
   }
 
   // Awaited before the response moves on, so a run that ends right after its last fetch still finds that response stored.
-  private async write(entryUrl: string, response: HttpResponse<unknown>): Promise<HttpResponse<unknown>> {
+  private async write(entryUrl: string, response: HttpResponse<unknown>, tally: StoreTally): Promise<HttpResponse<unknown>> {
+    tally.misses++;
     if (!this.reachable) return response;
     try {
       await firstValueFrom(this.store.put(entryUrl, response.body));
