@@ -4,6 +4,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { NgHttpCachingHeaders } from 'ng-http-caching';
 import { HttpWclTransport } from './http-wcl-transport';
+import { WCL_STORE_TALLY } from './wcl-response-store-interceptor';
 import { provideWclCaching } from '../wcl/wcl-caching';
 import { RATE_LIMIT_Q } from '../wcl/wcl-queries';
 import { WCL_UNUSABLE_STATUS, WclTransportError } from '../wcl/wcl-transport';
@@ -181,6 +182,20 @@ describe('HttpWclTransport', () => {
 
     expect(result).toEqual(REPORT_DATA);
     expect(outcomes.failedCodes).toEqual(new Set());
+  });
+
+  it('hands each request the open scope\'s store tally, so the response store counts into its outcomes', async () => {
+    const { transport, httpMock } = setup();
+
+    const { outcomes } = await transport.withFetchOutcomes(() => {
+      const pending = transport.query(QUERY, { code: REPORT_CODE }, TOKEN);
+      const request = httpMock.expectOne(WCL_API_URL);
+      request.request.context.get(WCL_STORE_TALLY).hits++;
+      request.flush({ data: REPORT_DATA });
+      return pending;
+    });
+
+    expect(outcomes.store).toEqual({ hits: 1, misses: 0 });
   });
 
   it('starts a second scope empty', async () => {

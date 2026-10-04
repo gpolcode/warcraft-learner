@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import type { WclApiService } from '../wcl/wcl-api-service';
+import type { WclApiService, WclPointsBudget } from '../wcl/wcl-api-service';
 import type { WclClass, WclExpansion, WclZone } from '../wcl/wcl.models';
 import type { SpecMeta } from '../data-files/spec-meta.models';
 import type { IngestEncounter } from './ingest.models';
@@ -21,13 +21,14 @@ export class CurrentRaidsService {
     return this.mapClassesToSpecMeta(await wclApi.getPlayableClasses());
   }
 
-  async assertPointsBudget(wclApi: WclApiService, margin: number): Promise<void> {
+  async assertPointsBudget(wclApi: WclApiService, margin: number): Promise<WclPointsBudget | null> {
     const budget = await wclApi.getPointsBudget();
-    if (!budget) return;
+    if (!budget) return null;
     const remaining = budget.limitPerHour - budget.pointsSpentThisHour;
     if (remaining < margin) {
       throw new BudgetExceededError(`WCL budget low: ${remaining} of ${budget.limitPerHour} remaining (need ${margin})`);
     }
+    return budget;
   }
 
   /** WCL keeps a frozen copy of a raid under the same name, with different encounter ids. */

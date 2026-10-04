@@ -5,7 +5,7 @@ import { IngestOrchestratorService } from './ingest-orchestrator-service';
 import { LEAD_BENCH } from './bench-registry';
 import { DATA_FILE_TRANSPORT, type DataFileTransport } from '../data/data-files/data-file-transport';
 import { WclApiService } from '../data/wcl/wcl-api-service';
-import { WCL_TRANSPORT, type WclTransport } from '../data/wcl/wcl-transport';
+import { WCL_TRANSPORT, type FetchOutcomes, type WclTransport } from '../data/wcl/wcl-transport';
 import { type Result, Results } from '../../shared/util-http/result';
 import { BurstTransformService } from '../data/burst-windows/burst-transform-service';
 import { RotationTransformService } from '../data/rotation/rotation-transform-service';
@@ -82,10 +82,18 @@ function fakeDisk(seed: Record<string, unknown>, undeletable = new Set<string>()
   };
 }
 
-function fakeWcl(encounters: { id: number; name: string }[], rankings: Record<number, RankedRow[]>): WclApiService {
+/** Each budget read reports the next spend in line, then keeps reporting the last one. */
+function pointsSpent(...readings: number[]): WclApiService['getPointsBudget'] {
+  const queue = [...readings];
+  return async () => ({ limitPerHour: HOURLY_POINT_LIMIT, pointsSpentThisHour: (queue.length > 1 ? queue.shift() : queue[0]) ?? 0 });
+}
+
+function fakeWcl(
+  encounters: { id: number; name: string }[], rankings: Record<number, RankedRow[]>, getPointsBudget = pointsSpent(0),
+): WclApiService {
   const zone = { id: ZONE_ID, name: RAID, frozen: false, partitions: [{ id: PARTITION }], encounters };
   return {
-    getPointsBudget: async () => ({ limitPerHour: HOURLY_POINT_LIMIT, pointsSpentThisHour: 0 }),
+    getPointsBudget,
     getPlayableClasses: async () => [{ name: 'Rogue', slug: 'Rogue', specs: [{ name: 'Subtlety', slug: 'Subtlety' }] }],
     getZoneTree: async () => [{ zones: [zone] }],
     getRankings: async (_spec: string, encId: number) => ({ rankings: rankings[encId] ?? [] }),
@@ -111,10 +119,11 @@ const stubTransform: StubTransform = {
 
 const benchReturning = (result: Result<object>): StubTransform => ({ getBench: async () => result });
 
-const transportFailing = (...codes: string[]): Pick<WclTransport, 'withFetchOutcomes'> => ({
-  withFetchOutcomes: async run =>
-    ({ result: await run(), outcomes: { failedCodes: new Set(codes) } }),
+const transportReporting = (outcomes: FetchOutcomes): Pick<WclTransport, 'withFetchOutcomes'> => ({
+  withFetchOutcomes: async run => ({ result: await run(), outcomes }),
 });
+const transportFailing = (...codes: string[]) =>
+  transportReporting({ failedCodes: new Set(codes), store: { hits: 0, misses: 0 } });
 const cleanTransport = transportFailing();
 
 function ingest(
@@ -218,6 +227,22 @@ describe('IngestOrchestratorService.run', () => {
 
     expect(disk.files.get(benchPath(CURRENT_BOSS.id))).toMatchObject({ sample_count: FRESH_SAMPLES });
     expect(disk.files.get(benchPath(CURRENT_BOSS.id))).not.toHaveProperty('source_signature');
+  });
+
+  it('logs what a benched encounter spent and how many of its reads the response store served', async () => {
+    const SPENT_BEFORE = 1200;
+    const ENCOUNTER_QUOTA = 40;
+    const STORE_HITS = 7;
+    const STORE_MISSES = 8;
+    /** STORE_HITS + STORE_MISSES */
+    const STORE_READS = 15;
+    const wcl = fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }, pointsSpent(SPENT_BEFORE, SPENT_BEFORE + ENCOUNTER_QUOTA));
+    const transport = transportReporting({ failedCodes: new Set(), store: { hits: STORE_HITS, misses: STORE_MISSES } });
+
+    await ingest(fakeDisk({}), wcl, RAID, planLoader(specPlan()), new Map(), transport);
+
+    expect(console.log).toHaveBeenCalledWith(
+      `  [${CURRENT_BOSS.name}] done (${ENCOUNTER_QUOTA} quota, ${STORE_HITS}/${STORE_READS} cached)`);
   });
 
   it('lists an encounter with no Mythic parses yet in the index, at zero samples', async () => {

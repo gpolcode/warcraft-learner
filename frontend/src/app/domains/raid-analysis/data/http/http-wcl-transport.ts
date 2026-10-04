@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { FetchOutcomes, WclTransport, WclTransportError, WCL_UNUSABLE_STATUS } from '../wcl/wcl-transport';
+import { FetchOutcomes, StoreTally, WclTransport, WclTransportError, WCL_UNUSABLE_STATUS } from '../wcl/wcl-transport';
 import { ENVIRONMENT } from '../../../../../environments/environment-token';
 import { WclCaching } from '../wcl/wcl-caching';
+import { WCL_STORE_TALLY } from './wcl-response-store-interceptor';
 
 interface GraphQLResponse<TData> {
   data?: TData;
@@ -12,6 +13,7 @@ interface GraphQLResponse<TData> {
 
 interface OpenScope {
   failedCodes: Set<string>;
+  store: StoreTally;
 }
 
 // The bearer is attached per request because the token renews on expiry.
@@ -23,7 +25,7 @@ export class HttpWclTransport implements WclTransport {
 
   async withFetchOutcomes<T>(run: () => Promise<T>): Promise<{ result: T; outcomes: FetchOutcomes }> {
     const enclosing = this.scope;
-    const outcomes: OpenScope = { failedCodes: new Set() };
+    const outcomes: OpenScope = { failedCodes: new Set(), store: { hits: 0, misses: 0 } };
     this.scope = outcomes;
     try {
       return { result: await run(), outcomes };
@@ -40,12 +42,13 @@ export class HttpWclTransport implements WclTransport {
   async query<TData>(gqlString: string, variables: object, token: string): Promise<TData> {
     const headers: Record<string, string> = { Authorization: `Bearer ${token}`, ...WclCaching.headersFor(gqlString) };
     const code = (variables as { code?: string }).code;
+    const context = this.scope ? new HttpContext().set(WCL_STORE_TALLY, this.scope.store) : undefined;
     let body: GraphQLResponse<TData>;
     try {
       body = await firstValueFrom(this.http.post<GraphQLResponse<TData>>(
         this.apiUrl,
         { query: gqlString, variables },
-        { headers },
+        { headers, context },
       ));
     } catch (error) {
       if (error instanceof HttpErrorResponse) {
