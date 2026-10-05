@@ -20,10 +20,11 @@
     }
   </div>
 
-  <div class="flex items-baseline flex-wrap gap-x-1.5 gap-y-1 mt-1.5 md:mt-0 md:contents">
-    <span class="tabular-nums shrink-0 mr-2 md:mr-0 md:col-start-3 md:row-start-1 md:text-left text-body text-muted">
-      <span class="md:hidden text-label">Top raiders average </span>{{ row().topAvg | formatDamage }}
-    </span>
+  <div class="flex items-start flex-wrap gap-x-5.5 gap-y-1.5 mt-1.5 md:mt-0 md:contents">
+    <div class="md:contents">
+      <span class="md:hidden block text-label text-muted mb-1">Top raiders average</span>
+      <span class="block tabular-nums md:col-start-3 md:row-start-1 md:text-left text-body text-muted">{{ row().topAvg | formatDamage }}</span>
+    </div>
 
     @if (showCasts() && !hidePlayer()) {
       @if (isPassive()) {
@@ -33,10 +34,12 @@
           castsStatus() === 'success' ? 'positive' :
           castsStatus() === 'warning' ? 'warning' :
           castsStatus() === 'critical' ? 'negative' : 'neutral';
-        <span class="md:hidden text-label text-muted">Casts</span>
-        <span tuiBadge size="m" class="md:col-start-2 md:row-start-1 md:justify-self-end" [appearance]="casts">
-          <span class="tabular-nums">{{ row().playerCasts ?? 0 }} / {{ row().topCasts ?? '-' }}</span>
-        </span>
+        <div class="flex flex-col items-start md:contents">
+          <span class="md:hidden block text-label text-muted mb-1">Casts</span>
+          <span tuiBadge size="m" class="md:col-start-2 md:row-start-1 md:justify-self-end" [appearance]="casts">
+            <span class="tabular-nums">{{ row().playerCasts ?? 0 }} / {{ row().topCasts ?? '-' }}</span>
+          </span>
+        </div>
       }
     }
   </div>

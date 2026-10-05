@@ -13,9 +13,9 @@ export const RATIO = /\d+ \/ \d+/;
 
 /** number:'1.0-1' drops the fraction on a whole number, so a bare integer is a valid render, not a miss. */
 export async function showsTypicalUses(scope: Locator): Promise<void> {
-  const cell = scope.locator('span').filter({ hasText: 'Typical uses' }).first();
-  await expect(cell.getByText(/^\d+(\.\d+)?x$/).first()).toBeVisible();
-  await expect(cell.getByText(/^Used in \d+ of \d+ logs$/).first()).toBeVisible();
+  await shows(scope, 'Typical uses');
+  await expect(scope.getByText(/^\d+(\.\d+)?x$/).first()).toBeVisible();
+  await expect(scope.getByText(/^Used in \d+ of \d+ logs$/).first()).toBeVisible();
 }
 const SECONDS = /[+-]?\d+(\.\d+)?s/;
 

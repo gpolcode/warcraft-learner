@@ -54,15 +54,17 @@
             </div>
           </div>
 
-          <div class="col-start-2 md:col-auto flex items-baseline gap-2 md:block text-left md:text-right"
+          <div class="col-start-2 md:col-auto text-left md:text-right"
             [class.text-critical]="row.severity === 'critical'"
             [class.text-warning]="row.severity === 'warning'"
             [class.text-accent]="row.severity === 'info'">
-            <span class="md:hidden text-label text-muted">Measured</span>
-            <div class="tabular-nums text-value">{{ row.measured.value }}</div>
-            @if (row.measured.unit) {
-              <div class="tabular-nums text-caption text-muted md:mt-px">{{ row.measured.unit }}</div>
-            }
+            <span class="md:hidden block text-label text-muted mb-1">Measured</span>
+            <div class="flex items-baseline gap-2 md:block">
+              <div class="tabular-nums text-value">{{ row.measured.value }}</div>
+              @if (row.measured.unit) {
+                <div class="tabular-nums text-caption text-muted md:mt-px">{{ row.measured.unit }}</div>
+              }
+            </div>
           </div>
 
           <div class="col-start-2 md:col-auto text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-(--gap-card)">
@@ -104,13 +106,15 @@
     }
 
     @if (onPlan().length) {
-      <div class="flex items-center gap-2 flex-wrap border-t border-line py-2.5">
-        <span class="text-label text-muted mr-0.5">On plan</span>
-        @for (c of onPlan(); track c.name) {
-          <span tuiChip appearance="neutral" size="xs">
-            <wl-game-icon [id]="c.spellId" [icon]="c.icon" [name]="c.name"></wl-game-icon>
-          </span>
-        }
+      <div class="border-t border-line py-2.5">
+        <span class="block text-label text-muted mb-1.5">On plan</span>
+        <div class="flex items-center gap-2 flex-wrap">
+          @for (c of onPlan(); track c.name) {
+            <span tuiChip appearance="neutral" size="xs">
+              <wl-game-icon [id]="c.spellId" [icon]="c.icon" [name]="c.name"></wl-game-icon>
+            </span>
+          }
+        </div>
       </div>
     }
 
