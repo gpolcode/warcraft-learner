@@ -6,7 +6,7 @@ const CLOCK = /^(time|in_combat|fight_remains|expected_combat_length|(?:target\.
 /** A wipe never shows when the boss would have died, so its end bounds the clock only from below. */
 @Injectable({ providedIn: 'root' })
 export class ClockFacts implements FactReader {
-  readonly streams: FactStream[] = ['targetHealth'];
+  readonly streams: FactStream[] = ['damage'];
 
   matches(name: string): boolean {
     return CLOCK.test(name);

@@ -53,6 +53,14 @@ query Rankings($encounterID:Int!,$className:String!,$specName:String!,$partition
   }}
 }`;
 
+// `dataType: All`, as a `Debuffs` read given a `sourceID` returns zero rows on `Enemies` and the debuffs on the player on `Friendlies`.
+export const ENEMY_DEBUFFS_Q = gql`
+query EnemyDebuffs($code:String!,$fightIDs:[Int]!,$sourceID:Int,$filter:String,$startTime:Float,$endTime:Float){
+  reportData{report(code:$code){
+    events(fightIDs:$fightIDs,dataType:All,sourceID:$sourceID,filterExpression:$filter,startTime:$startTime,endTime:$endTime,limit:10000){data nextPageTimestamp}
+  }}
+}`;
+
 export const COMBATANT_INFO_Q = gql`
 query CombatantInfo($code:String!,$fightIDs:[Int]!,$sourceID:Int){
   reportData{report(code:$code){

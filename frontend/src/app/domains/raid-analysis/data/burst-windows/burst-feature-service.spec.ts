@@ -261,6 +261,20 @@ describe('BurstFeatureService', () => {
     expect(first(first(view.windows).detailRows).playerCasts).toBe(1);
   });
 
+  it('reads the casts and damage with resources, the form the rotation card reads, so one fetch serves both', async () => {
+    const reads: { dataType: string; includeResources: boolean }[] = [];
+    const recording = {
+      ...wclFake,
+      getAllEvents: async (code: string, fightId: number, dataType: string, _s: number, _e: number, _p: number, includeResources = false) => {
+        reads.push({ dataType, includeResources });
+        return wclFake.getAllEvents(code, fightId, dataType);
+      },
+    };
+    await withBench(Results.ok(benchFixture), recording).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10);
+    expect(reads).toContainEqual({ dataType: 'Casts', includeResources: true });
+    expect(reads).toContainEqual({ dataType: 'DamageDone', includeResources: true });
+  });
+
   it('anchors the player view on each window start and length', async () => {
     expect((await playerView()).anchors[0]).toEqual(BENCH_ANCHOR);
   });

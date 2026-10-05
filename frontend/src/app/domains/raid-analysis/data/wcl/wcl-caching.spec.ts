@@ -4,7 +4,7 @@ import { NgHttpCachingHeaders } from 'ng-http-caching';
 import { WclCaching, WCL_LIVE_CACHE_MS } from './wcl-caching';
 import {
   REPORT_Q, REPORT_FIGHTS_Q, EVENTS_Q, TABLE_Q, RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q,
-  RESURRECTS_Q, COMBATANT_INFO_Q, PLAYER_DETAILS_Q, RANKINGS_Q, GAME_DATA_LOOKUP,
+  ENEMY_DEBUFFS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, PLAYER_DETAILS_Q, RANKINGS_Q, GAME_DATA_LOOKUP,
 } from './wcl-queries';
 
 const WCL_API_URL = 'https://www.warcraftlogs.com/api/v2/client';
@@ -26,7 +26,7 @@ describe('wclCachingHeaders', () => {
 
   it('leaves fight-window reads on the long default lifetime', () => {
     // Events/tables are keyed on an immutable fight window, so they need no override.
-    for (const query of [EVENTS_Q, TABLE_Q]) {
+    for (const query of [EVENTS_Q, ENEMY_DEBUFFS_Q, TABLE_Q]) {
       expect(WclCaching.headersFor(query)).toEqual({});
     }
   });
@@ -36,7 +36,7 @@ describe('WclCaching.isStorable', () => {
   const read = (query: string): HttpRequest<unknown> => new HttpRequest('POST', WCL_API_URL, { query, variables: {} });
 
   it('stores the report read and the fight-scoped reads', () => {
-    for (const query of [REPORT_Q, EVENTS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q]) {
+    for (const query of [REPORT_Q, EVENTS_Q, ENEMY_DEBUFFS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q]) {
       expect(WclCaching.isStorable(read(query))).toBe(true);
     }
   });

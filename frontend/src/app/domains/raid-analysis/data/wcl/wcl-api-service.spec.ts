@@ -7,6 +7,7 @@ import { Results } from '../../../shared/util-http/result';
 import { WclCombatantInfo, MYTHIC_DIFFICULTY } from './wcl.models';
 import { FetchOutcomes, WCL_TRANSPORT, WclTransport, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
 import { WclCaching } from './wcl-caching';
+import { ENEMY_DEBUFFS_Q } from './wcl-queries';
 import { HttpRequest } from '@angular/common/http';
 import { baseEnvironment } from '../../../../../environments/base-environment';
 import { EVISCERATE } from '../../../../../testing/spell-ids';
@@ -122,6 +123,20 @@ describe('WclApiService', () => {
       };
       const events = await api.getAllEvents('code', 1, 'Casts', 0, 1000, 5);
       expect(events).toHaveLength(FIRST_PAGE * 2);
+    });
+  });
+
+  describe('getEnemyDebuffs', () => {
+    const FIGHT_ID = 5;
+    const PLAYER_ID = 10;
+    const START_MS = 1_000;
+    const END_MS = 9_000;
+
+    it('asks WCL for only the caster\'s own debuffs', async () => {
+      const { api, transport } = setup();
+      await api.getEnemyDebuffs('code', FIGHT_ID, START_MS, END_MS, PLAYER_ID);
+      expect(transport.queries).toEqual([ENEMY_DEBUFFS_Q]);
+      expect(transport.variables[0]).toMatchObject({ code: 'code', fightIDs: [FIGHT_ID], sourceID: PLAYER_ID, startTime: START_MS, endTime: END_MS });
     });
   });
 

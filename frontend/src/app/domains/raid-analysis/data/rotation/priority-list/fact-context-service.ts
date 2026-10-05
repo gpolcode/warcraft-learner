@@ -29,7 +29,7 @@ export interface FactInputs {
   abilities: WclAbility[];
   casts: TimedEvent[];
   buffs: TimedEvent[];
-  /** Only the player's own, out of the raid-wide stream. */
+  /** Only the player's own: every fact reads each row as the player's. */
   debuffs: TimedEvent[];
   damage: TimedEvent[];
   resources: TimedEvent[];

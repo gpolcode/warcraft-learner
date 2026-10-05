@@ -427,6 +427,20 @@ describe('BurstTransformService (live, in-browser)', () => {
     expect(bench.value.ability_icons[SHADOW_BLADES_DAMAGE]).toEqual({ icon: `icon_${SHADOW_BLADES_DAMAGE}`, name: `name_${SHADOW_BLADES_DAMAGE}` });
   });
 
+  it('reads the damage with resources, the form the rotation list reads, so the two benches share one fetch', async () => {
+    const reads: { dataType: string; includeResources: boolean }[] = [];
+    const recording = {
+      ...wclFake,
+      getAllEvents: async (code: string, fightId: number, dataType: string, _s: number, _e: number, _p: number, includeResources = false) => {
+        reads.push({ dataType, includeResources });
+        return wclFake.getAllEvents(code, fightId, dataType);
+      },
+    };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: recording, plans: plansFake }) });
+    await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
+    expect(reads).toContainEqual({ dataType: 'DamageDone', includeResources: true });
+  });
+
   it('bakes each plan button\'s press fold and counts a press WCL logs under two ids once in its window', async () => {
     const PRESS_S = 10;
     const LANDING_S = PRESS_S + 0.3;

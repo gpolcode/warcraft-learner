@@ -9,8 +9,8 @@ export const UNKNOWN: Range = [-Infinity, Infinity];
 
 export type Truth = 'true' | 'false' | 'unknown';
 
-/** `targetHealth` asks for the damage rows' heavier resource-bearing form. */
-export type FactStream = 'enemyAuras' | 'damage' | 'targetHealth' | 'resources';
+/** The `damage` rows carry each hit target's health, so a fact reading target health asks for `damage`. */
+export type FactStream = 'enemyAuras' | 'damage' | 'resources';
 
 /** Time-ordered, so a window is a slice rather than a scan. */
 export type DamageRow = readonly [atS: number, target: string];

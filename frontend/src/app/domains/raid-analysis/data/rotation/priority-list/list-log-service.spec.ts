@@ -21,6 +21,9 @@ const list = (terms: string[]) => priorityList({
   },
 });
 
+/** Not a WCL data type: it labels the enemy-debuff read, which has its own query, among the recorded calls. */
+const ENEMY_DEBUFFS = 'EnemyDebuffs';
+
 interface Call { dataType: string; sourceId?: number; includeResources: boolean; hostilityType?: string }
 
 function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclCombatantInfo = {}) {
@@ -31,6 +34,10 @@ function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclComba
       getAllEvents: async (_c: string, _f: number, dataType: string, _s: number, _e: number, sourceId?: number, includeResources = false, hostilityType?: string) => {
         calls.push({ dataType, sourceId, includeResources, hostilityType });
         return streams[dataType] ?? [];
+      },
+      getEnemyDebuffs: async (_c: string, _f: number, _s: number, _e: number, sourceId: number) => {
+        calls.push({ dataType: ENEMY_DEBUFFS, sourceId, includeResources: false });
+        return streams[ENEMY_DEBUFFS] ?? [];
       },
       getCombatantInfo: async () => [{ sourceID: PLAYER_ID, ...combatant }],
     },
@@ -56,17 +63,17 @@ describe('ListLogService', () => {
     expect(calls.map(call => call.dataType).sort()).toEqual(['Buffs', 'Casts']);
   });
 
-  it('fetches enemy auras with Enemies hostility and no source, the only shape WCL answers', async () => {
+  it('fetches only the player\'s own enemy auras when a fact reads them', async () => {
     const { calls, logs } = recording();
     await logs.read(list(['dot.rupture.ticking']), pull());
-    expect(calls).toContainEqual({ dataType: 'Debuffs', sourceId: undefined, includeResources: false, hostilityType: 'Enemies' });
+    expect(calls).toContainEqual({ dataType: ENEMY_DEBUFFS, sourceId: PLAYER_ID, includeResources: false });
   });
 
-  describe('raid-wide enemy auras', () => {
+  describe('enemy auras', () => {
     const BOSS = 1;
     const onBoss = (sourceID: number) => ({ ...applyDebuff(RUPTURE, 0, { target: BOSS }), sourceID });
     const verdict = async (debuffs: WclEvent[]) => {
-      const { logs } = recording({ Debuffs: debuffs, Casts: [cast(EVISCERATE, 5, { target: BOSS })], DamageDone: [damage(1, 1, 1, { target: BOSS })] });
+      const { logs } = recording({ [ENEMY_DEBUFFS]: debuffs, Casts: [cast(EVISCERATE, 5, { target: BOSS })], DamageDone: [damage(1, 1, 1, { target: BOSS })] });
       return (await logs.read(list(['dot.rupture.ticking']), pull())).casts.get('eviscerate')?.[0]?.verdict;
     };
 
@@ -79,9 +86,15 @@ describe('ListLogService', () => {
     });
   });
 
-  it('fetches the target\'s health on the damage rows only when a fact reads it', async () => {
+  it('fetches the damage rows with the target\'s health when a fact reads it', async () => {
     const { calls, logs } = recording();
     await logs.read(list(['target.health.pct<20']), pull());
+    expect(calls).toContainEqual({ dataType: 'DamageDone', sourceId: PLAYER_ID, includeResources: true, hostilityType: undefined });
+  });
+
+  it('fetches the damage rows with the target\'s health even when no fact reads it, as the burst card reads them that way', async () => {
+    const { calls, logs } = recording();
+    await logs.read(list(['active_enemies>=2']), pull());
     expect(calls).toContainEqual({ dataType: 'DamageDone', sourceId: PLAYER_ID, includeResources: true, hostilityType: undefined });
   });
 

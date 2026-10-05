@@ -5,7 +5,7 @@ import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 import {
   REPORT_Q, REPORT_FIGHTS_Q, RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q,
-  EVENTS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q, GAME_DATA_LOOKUP,
+  EVENTS_Q, ENEMY_DEBUFFS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q, GAME_DATA_LOOKUP,
 } from './wcl-queries';
 
 /** Below the live-sync poll interval, so each tick sees a fresh pull while a tick's overlapping reads still share one fetch. */
@@ -15,7 +15,7 @@ export const WCL_LIVE_CACHE_MS = 10_000;
 const VOLATILE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, REPORT_FIGHTS_Q]);
 const UNCACHED_QUERIES: ReadonlySet<string> = new Set([RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q]);
 // A stored report read keeps the report as it stood, so a fight logged after it stays unseen until the entry goes.
-const STORABLE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, EVENTS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q]);
+const STORABLE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, EVENTS_Q, ENEMY_DEBUFFS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q]);
 
 export class WclCaching {
   private constructor() {}

@@ -29,7 +29,7 @@ const FIELDS: Record<string, ((adds: Adds, atS: number) => Range) | undefined> =
 /** No pull of a dungeon route plays out on a raid boss; adds are the enemies the player hit that are not the boss, up from the first hit to the last. */
 @Injectable({ providedIn: 'root' })
 export class RaidEventFacts implements FactReader {
-  readonly streams: FactStream[] = ['targetHealth'];
+  readonly streams: FactStream[] = ['damage'];
 
   matches(name: string): boolean {
     return RAID_EVENT.test(name);

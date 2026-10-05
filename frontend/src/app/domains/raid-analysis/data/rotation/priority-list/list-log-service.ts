@@ -31,11 +31,9 @@ export class ListLogService {
     const [casts, buffs, enemyAuras, damage, resources, combatants] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, id, 'Casts', startTime, endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, id, 'Buffs', startTime, endTime, playerId),
-      // Unnarrowable, so it costs several raid-wide pages: `Enemies` plus a sourceID returns nothing.
-      streams.has('enemyAuras') ? this.wclApi.getAllEvents(reportCode, id, 'Debuffs', startTime, endTime, undefined, false, 'Enemies') : Promise.resolve([]),
-      streams.has('damage') || streams.has('targetHealth')
-        ? this.wclApi.getAllEvents(reportCode, id, 'DamageDone', startTime, endTime, playerId, streams.has('targetHealth'))
-        : Promise.resolve([]),
+      streams.has('enemyAuras') ? this.wclApi.getEnemyDebuffs(reportCode, id, startTime, endTime, playerId) : Promise.resolve([]),
+      // With resources even where no fact reads target health, so the burst card's read of the same rows shares this fetch.
+      streams.has('damage') ? this.wclApi.getAllEvents(reportCode, id, 'DamageDone', startTime, endTime, playerId, true) : Promise.resolve([]),
       streams.has('resources') ? this.wclApi.getAllEvents(reportCode, id, 'Resources', startTime, endTime, playerId) : Promise.resolve([]),
       this.wclApi.getCombatantInfo(reportCode, id, playerId),
     ]);
