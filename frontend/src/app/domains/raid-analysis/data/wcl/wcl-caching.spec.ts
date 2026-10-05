@@ -10,12 +10,11 @@ import {
 const WCL_API_URL = 'https://www.warcraftlogs.com/api/v2/client';
 
 describe('wclCachingHeaders', () => {
-  it('caps the live poll\'s fights probe at the live-cache lifetime', () => {
-    expect(WclCaching.headersFor(REPORT_FIGHTS_Q)).toEqual({ [NgHttpCachingHeaders.LIFETIME]: String(WCL_LIVE_CACHE_MS) });
-  });
-
-  it('keeps the full report read on the long default lifetime, so picking another pull reuses it', () => {
-    expect(WclCaching.headersFor(REPORT_Q)).toEqual({});
+  it('caps the code-keyed report reads at the live-cache lifetime', () => {
+    // These are keyed on the report code alone, so they change as a live raid records pulls.
+    for (const query of [REPORT_Q, REPORT_FIGHTS_Q]) {
+      expect(WclCaching.headersFor(query)).toEqual({ [NgHttpCachingHeaders.LIFETIME]: String(WCL_LIVE_CACHE_MS) });
+    }
   });
 
   it('disables the cache for discovery and budget reads', () => {

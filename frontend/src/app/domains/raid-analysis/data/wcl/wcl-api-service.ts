@@ -63,13 +63,6 @@ export class WclApiService {
     return report as WclReport;
   }
 
-  /** For the page's own loads: a card reading through this re-fetches the whole report on every pull pick. */
-  async reloadReport(code: string): Promise<WclReport> {
-    const vars: ReportQueryVariables = { code };
-    this.transport.forget(REPORT_Q, vars);
-    return this.getReport(code);
-  }
-
   async getReportFights(code: string): Promise<WclReport['fights']> {
     const vars: ReportQueryVariables = { code };
     const result = await this.query<ReportFightsQuery>(REPORT_FIGHTS_Q, vars);

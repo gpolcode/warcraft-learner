@@ -32,7 +32,7 @@ describe('loadReport', () => {
   }
 
   it('builds the fights and the players of the report WCL serves', async () => {
-    const service = serviceWith({ reloadReport: async () => served() });
+    const service = serviceWith({ getReport: async () => served() });
 
     const loaded = await service.loadReport(REPORT_CODE);
 
@@ -44,7 +44,7 @@ describe('loadReport', () => {
   });
 
   it('maps a refused report fetch to a permanent load error', async () => {
-    const service = serviceWith({ reloadReport: async () => { throw new Error('WCL is down'); } });
+    const service = serviceWith({ getReport: async () => { throw new Error('WCL is down'); } });
 
     const loaded = await service.loadReport(REPORT_CODE);
 

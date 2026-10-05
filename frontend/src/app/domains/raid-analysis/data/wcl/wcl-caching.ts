@@ -8,11 +8,11 @@ import {
   EVENTS_Q, ENEMY_DEBUFFS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q, GAME_DATA_LOOKUP,
 } from './wcl-queries';
 
-/** Below the live-sync poll interval, so each tick's probe sees the pulls logged since the last tick. */
+/** Below the live-sync poll interval, so each tick sees a fresh pull while a tick's overlapping reads still share one fetch. */
 export const WCL_LIVE_CACHE_MS = 10_000;
 
-// Only the live probe: the full report read is renewed by `WclApiService.reloadReport`, so a pull pick reuses it.
-const VOLATILE_QUERIES: ReadonlySet<string> = new Set([REPORT_FIGHTS_Q]);
+// Report reads are code-keyed, so they change as a live raid records pulls; everything else is fight-window-keyed (immutable) and keeps the long default.
+const VOLATILE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, REPORT_FIGHTS_Q]);
 const UNCACHED_QUERIES: ReadonlySet<string> = new Set([RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q]);
 // A stored report read keeps the report as it stood, so a fight logged after it stays unseen until the entry goes.
 const STORABLE_QUERIES: ReadonlySet<string> = new Set([REPORT_Q, EVENTS_Q, ENEMY_DEBUFFS_Q, RESURRECTS_Q, COMBATANT_INFO_Q, TABLE_Q, PLAYER_DETAILS_Q]);

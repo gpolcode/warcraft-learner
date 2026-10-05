@@ -28,7 +28,7 @@ export class ReportSelectionService {
 
   async loadReport(code: string): Promise<Result<LoadedReport>> {
     try {
-      const report = await this.wclApi.reloadReport(code);
+      const report = await this.wclApi.getReport(code);
       return Results.ok({
         fights: this.buildFights(report.fights),
         players: this.buildPlayers(report.masterData?.actors),

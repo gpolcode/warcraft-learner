@@ -37,7 +37,7 @@ describe('PostRaid sticky player name', () => {
 
   // The real store, after the harness fake so it wins: these tests assert on what the page persisted.
   const open = () => postRaidPage({
-    reloadReport: () => Promise.resolve(report()),
+    getReport: () => Promise.resolve(report()),
     getReportFights: () => Promise.resolve(report().fights),
     getPlayerDetails: () => Promise.resolve(groups),
   }, [SelectionStore]);
@@ -96,7 +96,7 @@ describe('PostRaid fight selection from URL', () => {
   }
 
   const open = () => postRaidPage({
-    reloadReport: () => Promise.resolve(report()),
+    getReport: () => Promise.resolve(report()),
     getReportFights: () => Promise.resolve(report().fights),
     getPlayerDetails: () => Promise.resolve(groups),
   });
@@ -132,17 +132,17 @@ describe('PostRaid fight selection from URL', () => {
 describe('PostRaid paste', () => {
   // Parks on the fetch: these tests assert what the paste handler reads, not what the load does with the report.
   function open() {
-    const reloadReport = vi.fn(() => new Promise<WclReport>(() => undefined));
-    return { reloadReport, page: postRaidPage({ reloadReport }) };
+    const getReport = vi.fn(() => new Promise<WclReport>(() => undefined));
+    return { getReport, page: postRaidPage({ getReport }) };
   }
 
   it('loads the pasted report in the same tick, with no deferral', () => {
-    const { reloadReport, page } = open();
+    const { getReport, page } = open();
 
     page.paste(REPORT_URL);
 
     // No wait: the load reads the field before its first await, which is the whole point here.
-    expect(reloadReport).toHaveBeenCalledWith(REPORT_CODE);
+    expect(getReport).toHaveBeenCalledWith(REPORT_CODE);
     expect(page.reportValue()).toBe(REPORT_URL);
   });
 
@@ -156,21 +156,21 @@ describe('PostRaid paste', () => {
   });
 
   it('replaces the selected range, so a select-all paste loads the new report', () => {
-    const { reloadReport, page } = open();
+    const { getReport, page } = open();
     const STALE_URL = 'https://www.warcraftlogs.com/reports/aaaaaaaaaaaaaaaa';
 
     page.paste(REPORT_URL, { value: STALE_URL, start: 0, end: STALE_URL.length });
 
     expect(page.reportValue()).toBe(REPORT_URL);
-    expect(reloadReport).toHaveBeenCalledWith(REPORT_CODE);
+    expect(getReport).toHaveBeenCalledWith(REPORT_CODE);
   });
 
   it('leaves a paste carrying no text to the browser', () => {
-    const { reloadReport, page } = open();
+    const { getReport, page } = open();
 
     page.paste('', { value: REPORT_URL });
 
-    expect(reloadReport).not.toHaveBeenCalled();
+    expect(getReport).not.toHaveBeenCalled();
   });
 });
 
@@ -201,7 +201,7 @@ describe('PostRaid keystone fight', () => {
     const getPlayerDetails = vi.fn(() => Promise.resolve(groups));
     const prepareMap = vi.fn(() => Promise.resolve());
     const page = postRaidPage(
-      { reloadReport: () => Promise.resolve(mixedReport()), getPlayerDetails },
+      { getReport: () => Promise.resolve(mixedReport()), getPlayerDetails },
       [{ provide: MapFeatureService, useValue: mapFeatureStub({ prepare: prepareMap }) }],
     );
     return { getPlayerDetails, prepareMap, page };

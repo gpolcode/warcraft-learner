@@ -40,7 +40,7 @@ describe('PostRaid live-sync poll', () => {
   }
 
   function mountPostRaid() {
-    const wcl = { reloadReport: vi.fn(), getReportFights: vi.fn(), getPlayerDetails: vi.fn() };
+    const wcl = { getReport: vi.fn(), getReportFights: vi.fn(), getPlayerDetails: vi.fn() };
     TestBed.configureTestingModule({
       // The real live-capture service, last so it wins over the harness fake: these tests drive its live switch.
       providers: [...postRaidProviders(wcl), LiveCaptureFeatureService],
@@ -66,7 +66,7 @@ describe('PostRaid live-sync poll', () => {
     const pendingReport = deferred<WclReport>();
     const requestedCode = deferred<string>();
     wcl.getReportFights.mockResolvedValue([pull1(), pull2()]);
-    wcl.reloadReport.mockImplementation((code: string) => { requestedCode.resolve(code); return pendingReport.promise; });
+    wcl.getReport.mockImplementation((code: string) => { requestedCode.resolve(code); return pendingReport.promise; });
     seedLoaded(comp, liveCapture);
 
     const pollPromise = comp._pollOnce();
@@ -91,7 +91,7 @@ describe('PostRaid live-sync poll', () => {
     const { comp, wcl, liveCapture } = mountPostRaid();
     const pendingProbe = deferred<WclFight[]>();
     wcl.getReportFights.mockReturnValue(pendingProbe.promise);
-    wcl.reloadReport.mockResolvedValue(report([pull1(), pull2()]));
+    wcl.getReport.mockResolvedValue(report([pull1(), pull2()]));
     seedLoaded(comp, liveCapture);
 
     const pollPromise = comp._pollOnce();
@@ -101,7 +101,7 @@ describe('PostRaid live-sync poll', () => {
     pendingProbe.resolve([pull1(), pull2()]);
     await pollPromise;
 
-    expect(wcl.reloadReport).not.toHaveBeenCalled();
+    expect(wcl.getReport).not.toHaveBeenCalled();
     expect(comp.fights().map(f => f.id)).toEqual([SELECTED_PULL_ID]);
     expect(comp.fightControl.value).toBe(SELECTED_PULL_ID);
     expect(comp.loadError()).toBeNull();
@@ -110,7 +110,7 @@ describe('PostRaid live-sync poll', () => {
   it('applies the newest pull when the poll is still current', async () => {
     const { comp, wcl, liveCapture } = mountPostRaid();
     wcl.getReportFights.mockResolvedValue([pull1(), pull2()]);
-    wcl.reloadReport.mockResolvedValue(report([pull1(), pull2()]));
+    wcl.getReport.mockResolvedValue(report([pull1(), pull2()]));
     wcl.getPlayerDetails.mockResolvedValue({ dps: [{ id: PLAYER_ID, type: 'Rogue', name: PLAYER_NAME, specs: [{ spec: 'Subtlety' }] }] });
     seedLoaded(comp, liveCapture);
 
