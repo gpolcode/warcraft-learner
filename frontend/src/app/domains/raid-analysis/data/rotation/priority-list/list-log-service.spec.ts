@@ -21,7 +21,7 @@ const list = (terms: string[]) => priorityList({
   },
 });
 
-/** Stands for the enemy-debuff read in the recorded calls, which goes through its own query rather than a data type. */
+/** Not a WCL data type: it labels the enemy-debuff read, which has its own query, among the recorded calls. */
 const ENEMY_DEBUFFS = 'EnemyDebuffs';
 
 interface Call { dataType: string; sourceId?: number; includeResources: boolean; hostilityType?: string }

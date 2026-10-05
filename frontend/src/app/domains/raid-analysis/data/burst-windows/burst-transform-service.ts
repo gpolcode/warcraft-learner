@@ -125,7 +125,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
     const [casts, buffs, damage] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
-      // With resources, as the rotation list reads the same rows, so the two benches share one fetch.
+      // With resources, the same read the rotation list makes, so one fetch serves both benches.
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageDone', fight.startTime, fight.endTime, player.id, true),
     ]);
 

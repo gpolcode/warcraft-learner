@@ -18,7 +18,6 @@ class RecordingTransport implements WclTransport {
   readonly tokens: string[] = [];
   readonly queries: string[] = [];
   readonly variables: object[] = [];
-  /** Each forgotten read, with how many queries had run before it. */
   readonly forgotten: { query: string; variables: object; queriesBefore: number }[] = [];
   /** Status to throw on the first call, then succeed (null = always succeed). */
   failFirstWith: number | null = null;
@@ -151,7 +150,7 @@ describe('WclApiService', () => {
     const START_MS = 1_000;
     const END_MS = 9_000;
 
-    it('asks WCL for the caster\'s own debuffs rather than every raider\'s', async () => {
+    it('asks WCL for only the caster\'s own debuffs', async () => {
       const { api, transport } = setup();
       await api.getEnemyDebuffs('code', FIGHT_ID, START_MS, END_MS, PLAYER_ID);
       expect(transport.queries).toEqual([ENEMY_DEBUFFS_Q]);

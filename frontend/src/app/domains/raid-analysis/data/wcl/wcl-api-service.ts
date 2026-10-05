@@ -28,7 +28,7 @@ import { SpecMetaService } from '../data-files/spec-meta-service';
 
 export type WclPointsBudget = NonNullable<RateLimitQuery['rateLimitData']>;
 
-// A `source.id` term here returns nothing, so the caster narrows through the query's `sourceID` instead.
+// `sourceID` on an `All` scan also matches events landing on the caster, which the disposition term drops; a `source.id` term returns nothing.
 const ENEMY_DEBUFF_FILTER = 'type in ("applydebuff","applydebuffstack","removedebuff","removedebuffstack","refreshdebuff") and target.disposition = "enemy"';
 
 // WCL declares every selected field nullable, so these reads narrow the generated envelope once instead of pushing null into every consumer.
@@ -63,7 +63,7 @@ export class WclApiService {
     return report as WclReport;
   }
 
-  /** A cached report read keeps the pulls it had, so a live log is reloaded to see the pulls logged since. */
+  /** For the page's own loads: a card reading through this re-fetches the whole report on every pull pick. */
   async reloadReport(code: string): Promise<WclReport> {
     const vars: ReportQueryVariables = { code };
     this.transport.forget(REPORT_Q, vars);

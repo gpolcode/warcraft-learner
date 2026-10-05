@@ -28,7 +28,7 @@ export interface FetchOutcomes {
 export interface WclTransport {
   /** Runs the GraphQL POST; caching is the query's own concern (`wclCachingHeaders`). Throws {@link WclTransportError} on failure. */
   query<TData>(gqlString: string, variables: object, token: string): Promise<TData>;
-  /** Drops only the in-memory answer to this exact read; the ingest's response store keeps its copy. */
+  /** The ingest's response store keeps its copy, so there a forgotten read is answered from disk, not WCL. */
   forget(gqlString: string, variables: object): void;
   /** One run at a time: two open at once share the single scope and take each other's codes. */
   withFetchOutcomes<T>(run: () => Promise<T>): Promise<{ result: T; outcomes: FetchOutcomes }>;
