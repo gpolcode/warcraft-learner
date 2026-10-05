@@ -9,7 +9,8 @@ export type GameIconKind = 'spell' | 'item';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-game-icon',
-  host: { class: 'inline-flex items-center' },
+  // Wraps so a copy button drops under a long name in a narrow column instead of squeezing it to a word per line.
+  host: { class: 'inline-flex flex-wrap items-center gap-x-2 gap-y-1' },
   imports: [NgOptimizedImage, TuiButtonCopy],
   templateUrl: './game-icon.html',
 })

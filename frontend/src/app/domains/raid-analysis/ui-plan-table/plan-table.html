@@ -10,15 +10,17 @@
         </hgroup>
       </header>
 
-      <div class="hidden md:grid grid-cols-(--cols-plan) gap-(--gap-card) pb-1">
-        <div class="col-start-2 text-label text-muted text-right">Plan</div>
+      <div class="hidden md:grid grid-cols-(--cols-plan) gap-x-(--gap-card) pb-1">
+        <div class="col-start-2 text-label text-muted">First use</div>
+        <div class="text-label text-muted">Typical uses</div>
+        <div class="text-label text-muted">Hold until</div>
       </div>
 
       @for (row of orderedRows(); track row.name) {
         @if ($index === unpickedFrom()) {
           <div class="border-t border-line py-2 text-caption text-muted">Not used in any sampled top log. Usually a different talent build.</div>
         }
-        <div class="grid grid-cols-1 md:grid-cols-(--cols-plan) gap-3 md:gap-(--gap-card) items-start md:items-center py-2.5 border-t border-line">
+        <div class="grid grid-cols-1 md:grid-cols-(--cols-plan) gap-y-3 gap-x-(--gap-card) items-start md:items-center py-2.5 border-t border-line">
           <div class="flex items-center gap-2.75 min-w-0 flex-wrap">
             <wl-game-icon [id]="row.spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
             @if (row.bloodlust) {
@@ -26,31 +28,33 @@
             }
           </div>
 
-          <div class="flex flex-col items-start md:items-end gap-1.5">
-            <span class="flex items-baseline gap-1.5">
-              <span class="text-label text-muted">First use</span>
+          <div class="flex flex-wrap gap-x-5.5 gap-y-2.5 md:contents">
+            <div>
+              <span class="md:hidden block text-label text-muted mb-1">First use</span>
               <span class="tabular-nums text-body text-accent">{{ row.firstCastS | formatDuration }}</span>
-            </span>
-            <span class="flex flex-wrap items-baseline gap-x-1.5 gap-y-1 md:justify-end">
-              <span class="text-label text-muted">Typical uses</span>
+            </div>
+            <div>
+              <span class="md:hidden block text-label text-muted mb-1">Typical uses</span>
               @if (!row.sampleCount) {
-                <span class="text-body text-muted">-</span>
+                <div class="text-body text-muted">-</div>
               } @else if (row.typicalUses != null) {
-                <span class="tabular-nums text-body">{{ row.typicalUses | number:'1.0-1' }}x</span>
+                <div class="tabular-nums text-body">{{ row.typicalUses | number:'1.0-1' }}x</div>
               } @else {
-                <span class="tabular-nums text-body">None</span>
+                <div class="tabular-nums text-body">None</div>
               }
               @if (row.sampleCount) {
-                <span class="tabular-nums text-caption text-muted">Used in {{ row.usedSampleCount }} of {{ row.sampleCount }} logs</span>
+                <div class="tabular-nums text-caption text-muted">Used in {{ row.usedSampleCount }} of {{ row.sampleCount }} logs</div>
               }
-            </span>
-            <div class="flex flex-wrap items-baseline gap-1.5 md:justify-end">
-              <span class="text-label text-muted">Hold until</span>
-              @for (hold of row.holds; track hold.castIndex) {
-                <span tuiChip appearance="neutral" size="xs" class="tabular-nums"><span class="text-accent">{{ hold.targetS | formatDuration }}</span></span>
-              } @empty {
-                <span class="text-body text-muted">None</span>
-              }
+            </div>
+            <div class="min-w-0">
+              <span class="md:hidden block text-label text-muted mb-1.5">Hold until</span>
+              <div class="flex flex-wrap items-center gap-1.5">
+                @for (hold of row.holds; track hold.castIndex) {
+                  <span tuiChip appearance="neutral" size="xs" class="tabular-nums"><span class="text-accent">{{ hold.targetS | formatDuration }}</span></span>
+                } @empty {
+                  <span class="text-body text-muted">None</span>
+                }
+              </div>
             </div>
           </div>
         </div>

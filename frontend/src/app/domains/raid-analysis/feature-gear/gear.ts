@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { TuiButton, TuiIcon, TuiLink, TuiTitle } from '@taiga-ui/core';
-import { TUI_COPY_TEXTS, TuiChip, TuiItemsWithMore } from '@taiga-ui/kit';
+import { TUI_COPY_TEXTS, TuiBadge, TuiChip, TuiItemsWithMore } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { GameIcon } from '../ui-game-icon/game-icon';
 import { LoadState } from '../../shared/ui-load-state/load-state';
@@ -13,7 +13,7 @@ const CHIP_LINES = 2;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiIcon, TuiLink, TuiChip, TuiItemsWithMore, GameIcon, LoadState],
+  imports: [TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiIcon, TuiLink, TuiBadge, TuiChip, TuiItemsWithMore, GameIcon, LoadState],
   templateUrl: './gear.html',
   providers: [{ provide: TUI_COPY_TEXTS, useValue: signal(COPY_TEXTS) }],
 })
