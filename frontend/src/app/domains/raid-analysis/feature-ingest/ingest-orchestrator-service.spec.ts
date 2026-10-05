@@ -15,6 +15,7 @@ import { MapTransformService } from '../data/map/map-transform-service';
 import { NorthernSkyTransformService } from '../data/northern-sky/northern-sky-transform-service';
 import { IngestSignatureService } from '../data/ingest/ingest-signature-service';
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
+import { INGEST_POINTS_MARGIN } from '../data/ingest/ingest-points-margin';
 import { SpecPlanLoaderService } from '../data/simc/spec-plan-loader-service';
 import type { SpecPlan } from '../data/simc/spec-plan-service';
 import { PLAN_KEY, planLoader, specPlan } from '../../../../testing/builders/spec-plan';
@@ -25,6 +26,9 @@ const signatures = TestBed.inject(IngestSignatureService);
 TestBed.resetTestingModule();
 
 const SPEC = 'SubtletyRogue';
+const SUBTLETY = { name: 'Subtlety', slug: 'Subtlety' };
+const PRIORITY_SPEC = 'AssassinationRogue';
+const ASSASSINATION = { name: 'Assassination', slug: 'Assassination' };
 const RAID = 'Manaforge Omega';
 const ZONE_ID = 44;
 const PARTITION = 2;
@@ -37,6 +41,9 @@ const BOSSES = [CURRENT_BOSS, NEW_BOSS, RETIRED_BOSS];
 const STORED_SAMPLES = 3;
 const FRESH_SAMPLES = 7;
 const HOURLY_POINT_LIMIT = 18_000;
+const NOTHING_SPENT = 0;
+/** Leaves exactly the ingest margin of the hour. */
+const SPENT_AT_MARGIN = HOURLY_POINT_LIMIT - INGEST_POINTS_MARGIN;
 
 const rankedRow = (player: string, code: string, fightID: number) =>
   ({ name: player, server: { name: 'Ravencrest' }, report: { code, fightID } });
@@ -82,18 +89,20 @@ function fakeDisk(seed: Record<string, unknown>, undeletable = new Set<string>()
   };
 }
 
+/** In the order the run reads them: before startup, after it, then after each encounter; the last one repeats. */
 function pointsSpent(...readings: number[]): WclApiService['getPointsBudget'] {
   const queue = [...readings];
   return async () => ({ limitPerHour: HOURLY_POINT_LIMIT, pointsSpentThisHour: (queue.length > 1 ? queue.shift() : queue[0]) ?? 0 });
 }
 
 function fakeWcl(
-  encounters: { id: number; name: string }[], rankings: Record<number, RankedRow[]>, getPointsBudget = pointsSpent(0),
+  encounters: { id: number; name: string }[], rankings: Record<number, RankedRow[]>,
+  getPointsBudget = pointsSpent(NOTHING_SPENT), specs = [SUBTLETY],
 ): WclApiService {
   const zone = { id: ZONE_ID, name: RAID, frozen: false, partitions: [{ id: PARTITION }], encounters };
   return {
     getPointsBudget,
-    getPlayableClasses: async () => [{ name: 'Rogue', slug: 'Rogue', specs: [{ name: 'Subtlety', slug: 'Subtlety' }] }],
+    getPlayableClasses: async () => [{ name: 'Rogue', slug: 'Rogue', specs }],
     getZoneTree: async () => [{ zones: [zone] }],
     getRankings: async (_spec: string, encId: number) => ({ rankings: rankings[encId] ?? [] }),
     query: () => { throw new Error('the run issued a raw WCL query; discovery goes through the narrow reads'); },
@@ -131,7 +140,10 @@ function ingest(
 ): Promise<void> {
   TestBed.configureTestingModule({
     providers: [
-      { provide: ENVIRONMENT, useValue: { ...baseEnvironment, currentRaids: currentRaids ? [currentRaids] : [] } },
+      {
+        provide: ENVIRONMENT,
+        useValue: { ...baseEnvironment, currentRaids: currentRaids ? [currentRaids] : [], prioritySpecs: [PRIORITY_SPEC] },
+      },
       { provide: DATA_FILE_TRANSPORT, useValue: disk },
       { provide: WclApiService, useValue: wcl },
       { provide: WCL_TRANSPORT, useValue: transport },
@@ -234,13 +246,83 @@ describe('IngestOrchestratorService.run', () => {
     const STORE_HITS = 7;
     const STORE_MISSES = 8;
     const STORE_READS = STORE_HITS + STORE_MISSES;
-    const wcl = fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }, pointsSpent(SPENT_BEFORE, SPENT_BEFORE + ENCOUNTER_QUOTA));
+    const wcl = fakeWcl(
+      [CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }, pointsSpent(NOTHING_SPENT, SPENT_BEFORE, SPENT_BEFORE + ENCOUNTER_QUOTA));
     const transport = transportReporting({ failedCodes: new Set(), store: { hits: STORE_HITS, misses: STORE_MISSES } });
 
     await ingest(fakeDisk({}), wcl, RAID, planLoader(specPlan()), new Map(), transport);
 
     expect(console.log).toHaveBeenCalledWith(
       `  [${CURRENT_BOSS.name}] done (${ENCOUNTER_QUOTA} quota, ${STORE_HITS}/${STORE_READS} cached)`);
+  });
+
+  it('logs what an encounter whose top parses are unchanged spent, with no store reads to report', async () => {
+    const SPENT_BEFORE = 1200;
+    const LOOKUP_QUOTA = 2;
+    const stored = {
+      encounter_id: CURRENT_BOSS.id, encounter_name: CURRENT_BOSS.name, sample_count: STORED_SAMPLES,
+      source_signature: signatureOf(RANKED), ingest_version: INGEST_VERSION,
+    };
+    const wcl = fakeWcl(
+      [CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }, pointsSpent(NOTHING_SPENT, SPENT_BEFORE, SPENT_BEFORE + LOOKUP_QUOTA));
+
+    await ingest(fakeDisk({ [benchPath(CURRENT_BOSS.id)]: stored }), wcl, RAID);
+
+    expect(console.log).toHaveBeenCalledWith(`  [${CURRENT_BOSS.name}] unchanged, skipped (${LOOKUP_QUOTA} quota)`);
+  });
+
+  it('logs what an encounter with no rankings spent', async () => {
+    const SPENT_BEFORE = 1200;
+    const LOOKUP_QUOTA = 2;
+    const wcl = fakeWcl([NEW_BOSS], {}, pointsSpent(NOTHING_SPENT, SPENT_BEFORE, SPENT_BEFORE + LOOKUP_QUOTA));
+
+    await ingest(fakeDisk({}), wcl, RAID);
+
+    expect(console.log).toHaveBeenCalledWith(`  [${NEW_BOSS.name}] no rankings, skipped (${LOOKUP_QUOTA} quota)`);
+  });
+
+  it('logs what startup spent', async () => {
+    const SPENT_BEFORE = 1200;
+    const STARTUP_QUOTA = 3;
+    const wcl = fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }, pointsSpent(SPENT_BEFORE, SPENT_BEFORE + STARTUP_QUOTA));
+
+    await ingest(fakeDisk({}), wcl, RAID);
+
+    expect(console.log).toHaveBeenCalledWith(`Startup done (${STARTUP_QUOTA} quota)`);
+  });
+
+  it('reads the budget before and after startup and once after each encounter, never again before one', async () => {
+    const ENCOUNTERS = [CURRENT_BOSS, NEW_BOSS];
+    const READS_AROUND_STARTUP = 2;
+    const getPointsBudget = vi.fn(pointsSpent(NOTHING_SPENT));
+
+    await ingest(fakeDisk({}), fakeWcl(ENCOUNTERS, { [CURRENT_BOSS.id]: RANKED, [NEW_BOSS.id]: RANKED }, getPointsBudget), RAID);
+
+    expect(getPointsBudget).toHaveBeenCalledTimes(READS_AROUND_STARTUP + ENCOUNTERS.length);
+  });
+
+  describe('checking the budget against the reading taken after the previous encounter', () => {
+    const benchTwoAfter = async (spentAfterFirst: number): Promise<FakeDisk> => {
+      const disk = fakeDisk({});
+      const wcl = fakeWcl(
+        [CURRENT_BOSS, NEW_BOSS], { [CURRENT_BOSS.id]: RANKED, [NEW_BOSS.id]: RANKED },
+        pointsSpent(NOTHING_SPENT, NOTHING_SPENT, spentAfterFirst));
+      await ingest(disk, wcl, RAID);
+      return disk;
+    };
+
+    it('benches the next encounter while that reading leaves exactly the margin', async () => {
+      const disk = await benchTwoAfter(SPENT_AT_MARGIN);
+
+      expect(disk.files.has(benchPath(NEW_BOSS.id))).toBe(true);
+    });
+
+    it('stops before the next encounter once that reading leaves a point under the margin', async () => {
+      const disk = await benchTwoAfter(SPENT_AT_MARGIN + 1);
+
+      expect(disk.files.has(benchPath(CURRENT_BOSS.id))).toBe(true);
+      expect(disk.files.has(benchPath(NEW_BOSS.id))).toBe(false);
+    });
   });
 
   it('lists an encounter with no Mythic parses yet in the index, at zero samples', async () => {
@@ -309,6 +391,29 @@ describe('IngestOrchestratorService.run', () => {
 
       expect(disk.files.get(ROTATION_PATH)).toEqual(EARLIER_ROTATION);
     });
+  });
+
+  it('logs what a failed spec spent past its last reading, though no spec follows it', async () => {
+    const ABORTED_QUOTA = 1;
+    const wcl = fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }, pointsSpent(NOTHING_SPENT, NOTHING_SPENT, ABORTED_QUOTA));
+
+    await ingest(fakeDisk({}), wcl, RAID, planLoader(Results.transient('WCL is unreachable right now.')));
+
+    expect(console.log).toHaveBeenCalledWith(`  [${SPEC}] aborted (${ABORTED_QUOTA} quota)`);
+  });
+
+  it('checks the spec after a failed one against a fresh reading, since the failed spec spent an unknown amount', async () => {
+    const disk = fakeDisk({});
+    const failingFirst = {
+      planFor: async (spec: string) => (spec === PRIORITY_SPEC ? Results.transient('WCL is unreachable right now.') : Results.ok(specPlan())),
+    } as unknown as SpecPlanLoaderService;
+    const wcl = fakeWcl(
+      [CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED },
+      pointsSpent(NOTHING_SPENT, NOTHING_SPENT, SPENT_AT_MARGIN + 1), [ASSASSINATION, SUBTLETY]);
+
+    await ingest(disk, wcl, RAID, failingFirst);
+
+    expect(disk.files.has(benchPath(CURRENT_BOSS.id))).toBe(false);
   });
 
   it('fails a spec whose plan cannot load without writing any of its benches', async () => {
