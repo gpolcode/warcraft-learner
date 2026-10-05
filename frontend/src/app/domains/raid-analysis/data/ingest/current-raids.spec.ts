@@ -6,8 +6,6 @@ import { TestBed } from '@angular/core/testing';
 
 const currentRaids = TestBed.inject(CurrentRaidsService);
 
-type PointsBudget = Awaited<ReturnType<WclApiService['getPointsBudget']>>;
-
 function zone(over: Partial<WclZone> & Pick<WclZone, 'id' | 'name'>): WclZone {
   return { frozen: false, ...over };
 }
@@ -45,9 +43,6 @@ const wclWithZoneTree = (tree: WclExpansion[] | null): WclApiService =>
 
 const wclWithClasses = (playable: WclClass[]): WclApiService =>
   ({ getPlayableClasses: async () => playable }) as unknown as WclApiService;
-
-const wclWithBudget = (budget: PointsBudget): WclApiService =>
-  ({ getPointsBudget: async () => budget }) as unknown as WclApiService;
 
 describe('discoverCurrentRaids', () => {
   it('returns the named raids\' encounters, in the order they were named', async () => {
@@ -117,19 +112,19 @@ describe('assertPointsBudget', () => {
   const SPENT_AT_MARGIN = LIMIT_PER_HOUR - MARGIN;
   const REMAINING_UNDER_MARGIN = MARGIN - 1;
 
-  it('allows the run to continue when the remaining points exactly meet the margin, handing back the reading', async () => {
+  it('allows the run to continue when the remaining points exactly meet the margin', () => {
     const budget = { limitPerHour: LIMIT_PER_HOUR, pointsSpentThisHour: SPENT_AT_MARGIN };
-    await expect(currentRaids.assertPointsBudget(wclWithBudget(budget), MARGIN)).resolves.toEqual(budget);
+    expect(() => { currentRaids.assertPointsBudget(budget, MARGIN); }).not.toThrow();
   });
 
-  it('stops the run one point under the margin, naming what is left', async () => {
+  it('stops the run one point under the margin, naming what is left', () => {
     const budget = { limitPerHour: LIMIT_PER_HOUR, pointsSpentThisHour: SPENT_AT_MARGIN + 1 };
-    await expect(currentRaids.assertPointsBudget(wclWithBudget(budget), MARGIN)).rejects.toThrow(BudgetExceededError);
-    await expect(currentRaids.assertPointsBudget(wclWithBudget(budget), MARGIN))
-      .rejects.toThrow(`WCL budget low: ${REMAINING_UNDER_MARGIN} of ${LIMIT_PER_HOUR} remaining (need ${MARGIN})`);
+    expect(() => { currentRaids.assertPointsBudget(budget, MARGIN); }).toThrow(BudgetExceededError);
+    expect(() => { currentRaids.assertPointsBudget(budget, MARGIN); })
+      .toThrow(`WCL budget low: ${REMAINING_UNDER_MARGIN} of ${LIMIT_PER_HOUR} remaining (need ${MARGIN})`);
   });
 
-  it('lets the run proceed when WCL serves no rate-limit block, since an unknown budget is not an exhausted one', async () => {
-    await expect(currentRaids.assertPointsBudget(wclWithBudget(null), MARGIN)).resolves.toBeNull();
+  it('lets the run proceed when WCL serves no rate-limit block, since an unknown budget is not an exhausted one', () => {
+    expect(() => { currentRaids.assertPointsBudget(null, MARGIN); }).not.toThrow();
   });
 });

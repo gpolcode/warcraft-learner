@@ -21,14 +21,12 @@ export class CurrentRaidsService {
     return this.mapClassesToSpecMeta(await wclApi.getPlayableClasses());
   }
 
-  async assertPointsBudget(wclApi: WclApiService, margin: number): Promise<WclPointsBudget | null> {
-    const budget = await wclApi.getPointsBudget();
-    if (!budget) return null;
+  assertPointsBudget(budget: WclPointsBudget | null, margin: number): void {
+    if (!budget) return;
     const remaining = budget.limitPerHour - budget.pointsSpentThisHour;
     if (remaining < margin) {
       throw new BudgetExceededError(`WCL budget low: ${remaining} of ${budget.limitPerHour} remaining (need ${margin})`);
     }
-    return budget;
   }
 
   /** WCL keeps a frozen copy of a raid under the same name, with different encounter ids. */

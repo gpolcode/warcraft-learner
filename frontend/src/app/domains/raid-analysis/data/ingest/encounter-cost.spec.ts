@@ -22,12 +22,14 @@ describe('formatOutcome', () => {
       .toBe(`done (${QUOTA} quota, ${HITS}/${READS} cached)`);
   });
 
-  it('rounds fractional points to whole ones', () => {
-    /** Under half a point short, so it rounds back up to QUOTA. */
-    const FRACTIONAL_SPEND = QUOTA - 0.4;
+  it('keeps the hundredths WCL reports, so the logged lines sum to the budget', () => {
+    /** Real readings whose plain difference carries float noise past the hundredths. */
+    const READ_BEFORE = 3100.94;
+    const READ_AFTER = 3140.72;
+    const SPENT_BETWEEN = '39.78';
 
-    expect(encounterCost.formatOutcome(NOTE, spentSoFar(SPENT_BEFORE), spentSoFar(SPENT_BEFORE + FRACTIONAL_SPEND), NO_READS))
-      .toBe(`done (${QUOTA} quota)`);
+    expect(encounterCost.formatOutcome(NOTE, spentSoFar(READ_BEFORE), spentSoFar(READ_AFTER), NO_READS))
+      .toBe(`done (${SPENT_BETWEEN} quota)`);
   });
 
   it('reports only a lower bound once the spend reads lower than before, since the hourly window reset in between', () => {

@@ -27,18 +27,34 @@ import { ENVIRONMENT } from '../../../../environments/environment-token';
 const TOP_N = 10;
 const BENCH_CONCURRENCY = 3;
 
-type EncounterOutcome = 'benched' | 'empty' | 'failed';
+type EncounterOutcome = 'unranked' | 'unchanged' | 'benched' | 'empty' | 'failed';
 
 interface EncounterRun {
   outcome: EncounterOutcome;
   store: Readonly<StoreTally>;
 }
 
+interface PointsMeter {
+  reading: WclPointsBudget | null;
+}
+
+interface Discovery {
+  knownSpecs: string[];
+  encounters: IngestEncounter[];
+  protectedIds: Set<number>;
+}
+
 const ENCOUNTER_OUTCOME_NOTE: Record<EncounterOutcome, string> = {
+  unranked: 'no rankings, skipped',
+  unchanged: 'unchanged, skipped',
   benched: 'done',
   empty: 'no parses to bench',
   failed: 'bench load failed, retried next run',
 };
+
+const EMPTY_OUTCOMES: ReadonlySet<EncounterOutcome> = new Set(['unranked', 'empty']);
+
+const NO_STORE_READS: Readonly<StoreTally> = { hits: 0, misses: 0 };
 
 /** Published on `globalThis.__INGEST_DONE__` - the headless harness's exit signal. */
 interface IngestRunSummary {
@@ -98,14 +114,10 @@ export class IngestOrchestratorService {
     const version = String(INGEST_VERSION);
     console.log(`Ingest version: ${version}`);
 
-    const knownSpecs = await this.resolveSpecMetas();
-
-    const raidNames = this.environment.currentRaids;
-    console.log(raidNames.length
-      ? `Current raids: ${raidNames.join(', ')}`
-      : 'No current raids configured - nothing to ingest, nothing pruned.');
-    const { encounters, protectedIds } = await this.currentRaids.discoverCurrentRaids(this.wclApi, raidNames);
-    console.log(`${encounters.length} encounters`);
+    const meter: PointsMeter = { reading: await this.wclApi.getPointsBudget() };
+    const { result: { knownSpecs, encounters, protectedIds }, outcomes } =
+      await this.wclTransport.withFetchOutcomes(() => this.discover());
+    await this.logSpend('', 'Startup done', outcomes.store, meter);
     await this.pruneRetiredRaids(protectedIds);
     await this.refreshIndices(encounters);
 
@@ -116,9 +128,20 @@ export class IngestOrchestratorService {
       return;
     }
 
-    const summary = await this.ingestEachSpec(specs, encounters, version);
+    const summary = await this.ingestEachSpec(specs, encounters, version, meter);
     this.printRunSummary(summary, specs.length);
     publishSummary(summary);
+  }
+
+  private async discover(): Promise<Discovery> {
+    const knownSpecs = await this.resolveSpecMetas();
+    const raidNames = this.environment.currentRaids;
+    console.log(raidNames.length
+      ? `Current raids: ${raidNames.join(', ')}`
+      : 'No current raids configured - nothing to ingest, nothing pruned.');
+    const { encounters, protectedIds } = await this.currentRaids.discoverCurrentRaids(this.wclApi, raidNames);
+    console.log(`${encounters.length} encounters`);
+    return { knownSpecs, encounters, protectedIds };
   }
 
   private async resolveSpecMetas(): Promise<string[]> {
@@ -149,23 +172,45 @@ export class IngestOrchestratorService {
   }
 
   private async ingestEachSpec(
-    specs: string[], encounters: IngestEncounter[], version: string,
+    specs: string[], encounters: IngestEncounter[], version: string, meter: PointsMeter,
   ): Promise<IngestRunSummary> {
     // Isolate each spec so one throw drops only that spec, not the whole run.
     const succeeded: string[] = [];
     const failed: { spec: string; message: string }[] = [];
     let budgetStopped = false;
+    let aborted: string | null = null;
     for (const spec of specs) {
       try {
-        const budgetExhausted = await this.ingestSpec(spec, encounters, version);
+        // A thrown spec spent past the meter's reading, so re-read before the next budget check.
+        if (aborted) await this.logSpend(`  [${aborted}] `, 'aborted', NO_STORE_READS, meter);
+        aborted = null;
+        const budgetExhausted = await this.ingestSpec(spec, encounters, version, meter);
         succeeded.push(spec);
         if (budgetExhausted) { budgetStopped = true; break; }
       } catch (err) {
         this.logger.logWarn(`ingest: spec ${spec} aborted, continuing with the remaining specs`, err);
         failed.push({ spec, message: err instanceof Error ? err.message : String(err) });
+        aborted ??= spec;
       }
     }
+    if (aborted) await this.logAbortedSpend(aborted, meter);
     return { succeeded, failed, budgetStopped };
+  }
+
+  /** After the last spec a failed read loses only this line, so it must not fail the run. */
+  private async logAbortedSpend(spec: string, meter: PointsMeter): Promise<void> {
+    try {
+      await this.logSpend(`  [${spec}] `, 'aborted', NO_STORE_READS, meter);
+    } catch (err) {
+      this.logger.logWarn(`ingest: points read after spec ${spec} aborted failed, its spend left out of the log`, err);
+    }
+  }
+
+  /** Each read costs a point, so this one also opens the next spend and is its budget check. */
+  private async logSpend(prefix: string, note: string, store: Readonly<StoreTally>, meter: PointsMeter): Promise<void> {
+    const after = await this.wclApi.getPointsBudget();
+    console.log(`${prefix}${this.encounterCost.formatOutcome(note, meter.reading, after, store)}`);
+    meter.reading = after;
   }
 
   private printRunSummary({ succeeded, failed, budgetStopped }: IngestRunSummary, specCount: number): void {
@@ -230,7 +275,7 @@ export class IngestOrchestratorService {
   }
 
   private async ingestSpec(
-    spec: string, encounters: IngestEncounter[], ingestVersion: string,
+    spec: string, encounters: IngestEncounter[], ingestVersion: string, meter: PointsMeter,
   ): Promise<boolean> {
     console.log(`\nIngesting ${spec} - ${encounters.length} encounters (top ${TOP_N})`);
     const version = await this.planVersion(spec, ingestVersion);
@@ -242,35 +287,10 @@ export class IngestOrchestratorService {
 
     try {
       for (const encounter of this.ordering.orderEncountersByMissingFirst(encounters, checkedIds)) {
-        const budget = await this.currentRaids.assertPointsBudget(this.wclApi, INGEST_POINTS_MARGIN);
-
-        const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
-        if (!selection.length) {
-          console.log(`  [${encounter.name}] no rankings, skipped`);
-          emptyThisPass.push(encounter.id);
-          continue;
-        }
-
-        const existing = await this.dataFile.getBench(spec, encounter.id, LEAD_BENCH);
-        const { skip, signature } = this.stamp.skipDecision(
-          existing.ok ? existing.value : null, selection, version, TOP_N);
-        if (skip) {
-          console.log(`  [${encounter.name}] unchanged, skipped`);
-          continue;
-        }
-
-        console.log(`  [${encounter.name}] computing benches...`);
-        let run: EncounterRun;
-        try {
-          run = await this.ingestEncounter(spec, encounter, signature, selection);
-        } finally {
-          // Drop this encounter's cached reports/events before the next one to bound memory.
-          this.wclCache.clearCache();
-        }
-        if (run.outcome === 'empty') emptyThisPass.push(encounter.id);
-        const note = this.encounterCost.formatOutcome(
-          ENCOUNTER_OUTCOME_NOTE[run.outcome], budget, await this.pointsAfter(), run.store);
-        console.log(`  [${encounter.name}] ${note}`);
+        this.currentRaids.assertPointsBudget(meter.reading, INGEST_POINTS_MARGIN);
+        const run = await this.runEncounter(spec, encounter, version);
+        if (EMPTY_OUTCOMES.has(run.outcome)) emptyThisPass.push(encounter.id);
+        await this.logSpend(`  [${encounter.name}] `, ENCOUNTER_OUTCOME_NOTE[run.outcome], run.store, meter);
       }
     } catch (err) {
       if (err instanceof BudgetExceededError) {
@@ -286,6 +306,24 @@ export class IngestOrchestratorService {
     return false;
   }
 
+  private async runEncounter(spec: string, encounter: IngestEncounter, version: string): Promise<EncounterRun> {
+    const selection = await this.topParseSelection.resolveTopParses(this.wclApi, spec, encounter.id, encounter.partitionIds);
+    if (!selection.length) return { outcome: 'unranked', store: NO_STORE_READS };
+
+    const existing = await this.dataFile.getBench(spec, encounter.id, LEAD_BENCH);
+    const { skip, signature } = this.stamp.skipDecision(
+      existing.ok ? existing.value : null, selection, version, TOP_N);
+    if (skip) return { outcome: 'unchanged', store: NO_STORE_READS };
+
+    console.log(`  [${encounter.name}] computing benches...`);
+    try {
+      return await this.ingestEncounter(spec, encounter, signature, selection);
+    } finally {
+      // Drop this encounter's cached reports/events before the next one to bound memory.
+      this.wclCache.clearCache();
+    }
+  }
+
   /** The plan key rides in the signature, so an encounter re-benches exactly when its spec's plan changes. */
   private async planVersion(spec: string, ingestVersion: string): Promise<string> {
     const plan = await this.specPlans.planFor(spec);
@@ -293,16 +331,6 @@ export class IngestOrchestratorService {
     const { key, lines, cooldowns, defensives } = plan.value;
     console.log(`  plan: ${lines.length} list lines, ${cooldowns.length} cooldowns, ${defensives.length} defensives`);
     return `${ingestVersion}:${key}`;
-  }
-
-  /** Feeds only the log line, so a failed read must not abort the spec. */
-  private async pointsAfter(): Promise<WclPointsBudget | null> {
-    try {
-      return await this.wclApi.getPointsBudget();
-    } catch (err) {
-      this.logger.logWarn('ingest: points read after the encounter failed, quota left out of the log', err);
-      return null;
-    }
   }
 
   private benchedIds(spec: string): Promise<number[]> {
