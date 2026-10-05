@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, input, linkedSignal, output } from '@angular/core';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { TUI_BREAKPOINT, TuiButton, TuiLoader, TuiPopup, TuiTitle } from '@taiga-ui/core';
 import { TuiSheetDialog } from '@taiga-ui/addon-mobile';
 import { TuiDrawer } from '@taiga-ui/kit';
@@ -16,6 +16,7 @@ let nextInstanceSeq = 0;
 })
 export class FlyoverPanel {
   private readonly breakpoint = inject(TUI_BREAKPOINT);
+  private readonly doc = inject(DOCUMENT);
 
   readonly heading = input.required<string>();
   readonly intro = input.required<string>();
@@ -26,5 +27,10 @@ export class FlyoverPanel {
   private readonly instanceId = `wl-flyover-panel-${nextInstanceSeq++}`;
   protected readonly headingId = `${this.instanceId}-heading`;
   protected readonly introId = `${this.instanceId}-intro`;
-  protected readonly isMobile = computed(() => this.breakpoint() === 'mobile');
+
+  // Fullscreen widens the window to the screen, and swapping layouts then would re-parent the fullscreen element, which ends fullscreen.
+  protected readonly isMobile = linkedSignal<boolean, boolean>({
+    source: () => this.breakpoint() === 'mobile',
+    computation: (mobile, previous) => (previous && this.doc.fullscreenElement ? previous.value : mobile),
+  });
 }
