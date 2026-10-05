@@ -99,6 +99,17 @@ export type RankingsQueryVariables = Exact<{
 
 export type RankingsQuery = { worldData: { encounter: { characterRankings: WclRankingsBlob | null } | null } | null };
 
+export type EnemyDebuffsQueryVariables = Exact<{
+  code: string;
+  fightIDs: Array<number | null | undefined> | number;
+  sourceID?: number | null | undefined;
+  filter?: string | null | undefined;
+  startTime?: number | null | undefined;
+  endTime?: number | null | undefined;
+}>;
+
+export type EnemyDebuffsQuery = { reportData: { report: { events: { data: WclEventData | null, nextPageTimestamp: number | null } | null } | null } | null };
+
 export type CombatantInfoQueryVariables = Exact<{
   code: string;
   fightIDs: Array<number | null | undefined> | number;

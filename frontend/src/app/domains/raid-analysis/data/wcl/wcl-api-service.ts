@@ -8,14 +8,14 @@ import {
   MYTHIC_DIFFICULTY,
 } from './wcl.models';
 import {
-  REPORT_Q, REPORT_FIGHTS_Q, PLAYER_DETAILS_Q, EVENTS_Q,
+  REPORT_Q, REPORT_FIGHTS_Q, PLAYER_DETAILS_Q, EVENTS_Q, ENEMY_DEBUFFS_Q,
   COMBATANT_INFO_Q, RANKINGS_Q, TABLE_Q, RESURRECTS_Q,
   RATE_LIMIT_Q, CLASSES_Q, ENCOUNTERS_Q, GAME_DATA_LOOKUP,
 } from './wcl-queries';
 import type {
   ClassesQuery,
   CombatantInfoQuery, CombatantInfoQueryVariables,
-  EncountersQuery,
+  EncountersQuery, EnemyDebuffsQuery, EnemyDebuffsQueryVariables,
   EventDataType, EventsQuery, EventsQueryVariables, HostilityType,
   PlayerDetailsQuery, PlayerDetailsQueryVariables,
   RankingsQuery, RankingsQueryVariables,
@@ -27,6 +27,9 @@ import type {
 import { SpecMetaService } from '../data-files/spec-meta-service';
 
 export type WclPointsBudget = NonNullable<RateLimitQuery['rateLimitData']>;
+
+// A `source.id` term here returns nothing, so the caster narrows through the query's `sourceID` instead.
+const ENEMY_DEBUFF_FILTER = 'type in ("applydebuff","applydebuffstack","removedebuff","removedebuffstack","refreshdebuff") and target.disposition = "enemy"';
 
 // WCL declares every selected field nullable, so these reads narrow the generated envelope once instead of pushing null into every consumer.
 @Injectable({ providedIn: 'root' })
@@ -60,6 +63,13 @@ export class WclApiService {
     return report as WclReport;
   }
 
+  /** A cached report read keeps the pulls it had, so a live log is reloaded to see the pulls logged since. */
+  async reloadReport(code: string): Promise<WclReport> {
+    const vars: ReportQueryVariables = { code };
+    this.transport.forget(REPORT_Q, vars);
+    return this.getReport(code);
+  }
+
   async getReportFights(code: string): Promise<WclReport['fights']> {
     const vars: ReportQueryVariables = { code };
     const result = await this.query<ReportFightsQuery>(REPORT_FIGHTS_Q, vars);
@@ -84,12 +94,12 @@ export class WclApiService {
   }
 
   private async fetchEventPages(
-    gqlString: string, code: string, vars: EventsQueryVariables | ResurrectsQueryVariables,
+    gqlString: string, code: string, vars: EventsQueryVariables | ResurrectsQueryVariables | EnemyDebuffsQueryVariables,
   ): Promise<WclEvent[]> {
     const events: WclEvent[] = [];
     let currentStart = vars.startTime;
     for (;;) {
-      const result = await this.query<EventsQuery | ResurrectsQuery>(gqlString, { ...vars, startTime: currentStart });
+      const result = await this.query<EventsQuery | ResurrectsQuery | EnemyDebuffsQuery>(gqlString, { ...vars, startTime: currentStart });
       const page = result.reportData?.report?.events;
       if (!page) throw this.reportUnavailable(code);
       // Element by element: WCL overshoots the requested limit (22k rows in one page on a 34-minute pull), and spreading that many arguments into push overflows the call stack.
@@ -110,6 +120,11 @@ export class WclApiService {
     if (includeResources) vars.includeResources = true;
     if (hostilityType) vars.hostilityType = hostilityType;
     return this.fetchEventPages(EVENTS_Q, code, vars);
+  }
+
+  async getEnemyDebuffs(code: string, fightId: number, startTime: number, endTime: number, sourceId: number): Promise<WclEvent[]> {
+    const vars: EnemyDebuffsQueryVariables = { code, fightIDs: [fightId], sourceID: sourceId, filter: ENEMY_DEBUFF_FILTER, startTime, endTime };
+    return this.fetchEventPages(ENEMY_DEBUFFS_Q, code, vars);
   }
 
   async getCombatantInfo(code: string, fightId: number, playerId: number): Promise<WclCombatantInfo[]> {

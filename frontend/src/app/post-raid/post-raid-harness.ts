@@ -41,7 +41,7 @@ export function loadReport(vm: unknown, input: string): Promise<void> {
 }
 
 export interface ParkedWclApi {
-  getReport(code: string): Promise<WclReport>;
+  reloadReport(code: string): Promise<WclReport>;
   getPlayerDetails(code: string, fightId: number): Promise<PlayerDetailGroups>;
   settleReport(code: string, report: WclReport): Promise<void>;
   settleDetails(fightId: number, groups: PlayerDetailGroups): void;
@@ -57,7 +57,7 @@ export function parkedWclApi(): ParkedWclApi {
   const reports = new Map<string, Deferred<WclReport>>();
   const details = new Map<number, Deferred<PlayerDetailGroups>>();
   return {
-    getReport(code) {
+    reloadReport(code) {
       const parked = deferred<WclReport>();
       reports.set(code, parked);
       return parked.promise;

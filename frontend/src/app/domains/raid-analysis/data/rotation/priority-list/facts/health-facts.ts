@@ -3,7 +3,7 @@ import { UNKNOWN, CastMoment, FactContext, FactReader, FactStream, Range } from 
 
 @Injectable({ providedIn: 'root' })
 export class HealthFacts implements FactReader {
-  readonly streams: FactStream[] = ['targetHealth'];
+  readonly streams: FactStream[] = ['damage'];
 
   matches(name: string): boolean {
     return name === 'target.health.pct' || name === 'health.pct';

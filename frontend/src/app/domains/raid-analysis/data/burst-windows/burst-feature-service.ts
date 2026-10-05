@@ -50,10 +50,11 @@ export class BurstFeatureService {
     const abilityNames = new Map<number, string>();
     for (const ability of abilities) abilityNames.set(ability.gameID, ability.name);
 
+    // With resources, the same reads the rotation card makes, so one fetch serves both.
     const [casts, buffs, damage] = await Promise.all([
-      this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
+      this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
-      this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId),
+      this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId, true),
     ]);
     const presses = this.wclProjections.presses(casts, bench.press_folds ?? [], { buffs, abilities });
     const playerWindows = this.findPlayerBurstWindows(

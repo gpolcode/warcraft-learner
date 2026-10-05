@@ -7,6 +7,7 @@ import { Results } from '../../../shared/util-http/result';
 import { WclCombatantInfo, MYTHIC_DIFFICULTY } from './wcl.models';
 import { FetchOutcomes, WCL_TRANSPORT, WclTransport, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
 import { WclCaching } from './wcl-caching';
+import { ENEMY_DEBUFFS_Q, REPORT_Q } from './wcl-queries';
 import { HttpRequest } from '@angular/common/http';
 import { baseEnvironment } from '../../../../../environments/base-environment';
 import { EVISCERATE } from '../../../../../testing/spell-ids';
@@ -17,6 +18,8 @@ class RecordingTransport implements WclTransport {
   readonly tokens: string[] = [];
   readonly queries: string[] = [];
   readonly variables: object[] = [];
+  /** Each forgotten read, with how many queries had run before it. */
+  readonly forgotten: { query: string; variables: object; queriesBefore: number }[] = [];
   /** Status to throw on the first call, then succeed (null = always succeed). */
   failFirstWith: number | null = null;
   /** Payload for the next query; null uses the default served-report shape. */
@@ -32,6 +35,10 @@ class RecordingTransport implements WclTransport {
     return {
       reportData: { report: { fights: [], masterData: {}, events: { data: [], nextPageTimestamp: undefined } } },
     } as unknown as TData;
+  }
+
+  forget(query: string, variables: object): void {
+    this.forgotten.push({ query, variables, queriesBefore: this.queries.length });
   }
 
   async withFetchOutcomes<T>(run: () => Promise<T>): Promise<{ result: T; outcomes: FetchOutcomes }> {
@@ -80,6 +87,19 @@ describe('WclApiService', () => {
     expect(transport.tokens).toEqual(['token-1', 'token-2']);
   });
 
+  it('reloads a report by forgetting its cached read before reading it again', async () => {
+    const { api, transport } = setup();
+    await api.reloadReport('code');
+    expect(transport.forgotten).toEqual([{ query: REPORT_Q, variables: { code: 'code' }, queriesBefore: 0 }]);
+    expect(transport.queries).toEqual([REPORT_Q]);
+  });
+
+  it('reads a report without forgetting a cached read', async () => {
+    const { api, transport } = setup();
+    await api.getReport('code');
+    expect(transport.forgotten).toEqual([]);
+  });
+
   it('propagates a non-401 transport error without retrying', async () => {
     const { api, transport } = setup();
     transport.failFirstWith = 500;
@@ -122,6 +142,20 @@ describe('WclApiService', () => {
       };
       const events = await api.getAllEvents('code', 1, 'Casts', 0, 1000, 5);
       expect(events).toHaveLength(FIRST_PAGE * 2);
+    });
+  });
+
+  describe('getEnemyDebuffs', () => {
+    const FIGHT_ID = 5;
+    const PLAYER_ID = 10;
+    const START_MS = 1_000;
+    const END_MS = 9_000;
+
+    it('asks WCL for the caster\'s own debuffs rather than every raider\'s', async () => {
+      const { api, transport } = setup();
+      await api.getEnemyDebuffs('code', FIGHT_ID, START_MS, END_MS, PLAYER_ID);
+      expect(transport.queries).toEqual([ENEMY_DEBUFFS_Q]);
+      expect(transport.variables[0]).toMatchObject({ code: 'code', fightIDs: [FIGHT_ID], sourceID: PLAYER_ID, startTime: START_MS, endTime: END_MS });
     });
   });
 

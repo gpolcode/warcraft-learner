@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpContext, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpErrorResponse, HttpRequest } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { NgHttpCachingService } from 'ng-http-caching';
 import { FetchOutcomes, StoreTally, WclTransport, WclTransportError, WCL_UNUSABLE_STATUS } from '../wcl/wcl-transport';
 import { ENVIRONMENT } from '../../../../../environments/environment-token';
 import { WclCaching } from '../wcl/wcl-caching';
@@ -20,8 +21,17 @@ interface OpenScope {
 @Injectable({ providedIn: 'root' })
 export class HttpWclTransport implements WclTransport {
   private readonly http = inject(HttpClient);
+  private readonly cache = inject(NgHttpCachingService);
   private readonly apiUrl = inject(ENVIRONMENT).wclApiUrl;
   private scope: OpenScope | null = null;
+
+  forget(gqlString: string, variables: object): void {
+    this.cache.clearCacheByKey(WclCaching.cacheKey(new HttpRequest('POST', this.apiUrl, this.body(gqlString, variables))));
+  }
+
+  private body(gqlString: string, variables: object): object {
+    return { query: gqlString, variables };
+  }
 
   async withFetchOutcomes<T>(run: () => Promise<T>): Promise<{ result: T; outcomes: FetchOutcomes }> {
     const enclosing = this.scope;
@@ -47,7 +57,7 @@ export class HttpWclTransport implements WclTransport {
     try {
       body = await firstValueFrom(this.http.post<GraphQLResponse<TData>>(
         this.apiUrl,
-        { query: gqlString, variables },
+        this.body(gqlString, variables),
         { headers, context },
       ));
     } catch (error) {

@@ -80,6 +80,32 @@ describe('HttpWclTransport', () => {
     expect(await transport.query(QUERY, { code: REPORT_CODE }, TOKEN)).toEqual(REPORT_DATA);
   });
 
+  it('fetches a forgotten read anew and serves the fresh answer from then on', async () => {
+    const { transport, httpMock } = setup();
+    const FRESH_DATA = { reportData: { report: { title: 'Weekly clear, one more pull' } } };
+
+    const first = transport.query(QUERY, { code: REPORT_CODE }, TOKEN);
+    httpMock.expectOne(WCL_API_URL).flush({ data: REPORT_DATA });
+    await first;
+
+    transport.forget(QUERY, { code: REPORT_CODE });
+    const fresh = transport.query(QUERY, { code: REPORT_CODE }, TOKEN);
+    httpMock.expectOne(WCL_API_URL).flush({ data: FRESH_DATA });
+    expect(await fresh).toEqual(FRESH_DATA);
+    expect(await transport.query(QUERY, { code: REPORT_CODE }, TOKEN)).toEqual(FRESH_DATA);
+  });
+
+  it('keeps every other read cached when one is forgotten', async () => {
+    const { transport, httpMock } = setup();
+
+    const first = transport.query(QUERY, { code: REPORT_CODE }, TOKEN);
+    httpMock.expectOne(WCL_API_URL).flush({ data: REPORT_DATA });
+    await first;
+
+    transport.forget(QUERY, { code: OTHER_REPORT_CODE });
+    expect(await transport.query(QUERY, { code: REPORT_CODE }, TOKEN)).toEqual(REPORT_DATA);
+  });
+
   it('dedupes two parallel default-cached queries into one in-flight request', async () => {
     const { transport, httpMock } = setup();
 

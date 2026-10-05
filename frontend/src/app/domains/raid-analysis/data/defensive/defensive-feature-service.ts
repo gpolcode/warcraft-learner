@@ -130,7 +130,8 @@ export class DefensiveFeatureService {
     const { fight, fightDurationS } = context;
 
     const [casts, buffs, dtEvents, deaths, combatants] = await Promise.all([
-      this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId),
+      // With resources, the same read the rotation card makes, so one fetch serves both.
+      this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
       this.wclApi.getAllEvents(reportCode, fightId, 'DamageTaken', fight.startTime, fight.endTime, playerId),
       // Raid-wide, the same read the pull overview makes, so the cache serves both.

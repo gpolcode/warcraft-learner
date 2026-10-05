@@ -59,6 +59,20 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     expect(result.value.findingRows.length).toBeGreaterThan(0);
   });
 
+  it('reads the casts with resources, the form the rotation card reads, so one fetch serves both', async () => {
+    const reads: { dataType: string; includeResources: boolean }[] = [];
+    const wcl = {
+      getReport: async () => wclReport({ playerName: 'P' }),
+      getCombatantInfo: async () => [],
+      getAllEvents: async (_c: string, _f: number, dataType: string, _s: number, _e: number, _p?: number, includeResources = false) => {
+        reads.push({ dataType, includeResources });
+        return [];
+      },
+    };
+    await serviceWith(Results.ok(fullBench()), wcl).loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
+    expect(reads).toContainEqual({ dataType: 'Casts', includeResources: true });
+  });
+
   it('counts a press of a defensive the log casts twice, with no aura to read, as one use', async () => {
     const PRESS_S = 30;
     const ECHO_S = 0.02;
