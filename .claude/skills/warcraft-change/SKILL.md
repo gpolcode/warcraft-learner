@@ -49,6 +49,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 ## UI
 
 - Templates style text through one type role plus, where the color differs from the body default, one color token from `frontend/src/styles.scss`; the `theme-utilities-only` lint message lists them. `text-accent` doubles as the informational severity; there is no info token.
+- Each text role has one position. A title names a row and sits on top. A label (`text-label`) names a field and sits directly above it, never beside or below; a label repeated on every row becomes a desktop column header. A qualifier (`text-caption`, "of top logs") follows its value. A state tag is a `tuiBadge` after the title.
 - `computed()` exposes semantic state only; the template maps that state to a class.
 - All formatting goes through Angular pipes (`shared/ui-format/` and the `raid-analysis/ui-*` pipes).
 

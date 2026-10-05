@@ -17,5 +17,5 @@
 }
 @if (copyable()) {
   <!-- Not tui-copy: its copy icon shows only to a hovering mouse, so on a phone nothing would mark the name as copyable. -->
-  <button class="ml-2" [tuiButtonCopy]="name()">Copy name</button>
+  <button [tuiButtonCopy]="name()">Copy name</button>
 }

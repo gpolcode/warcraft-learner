@@ -17,9 +17,9 @@
     @for (row of rows(); track $index) {
       @let open = openIndex() === $index;
       <div class="border-t border-line">
-        <div class="grid grid-cols-(--cols-drill-sm) md:grid-cols-(--cols-drill) gap-x-(--gap-card) gap-y-2 md:gap-y-0 py-2.5 items-start md:items-center">
+        <div class="grid grid-cols-(--cols-drill-sm) md:grid-cols-(--cols-drill) gap-x-(--gap-card) gap-y-2 md:gap-y-0 py-2.5 items-center">
 
-          <div class="flex items-center justify-center self-start md:self-center">
+          <div class="flex items-center justify-center">
             <tui-icon class="icon-18"
               [class.text-critical]="row.severity === 'critical'"
               [class.text-warning]="row.severity === 'warning'"
@@ -72,7 +72,7 @@
             {{ row.fix }}
           </div>
 
-          <div class="row-start-1 col-start-3 md:row-auto md:col-start-5 flex items-center justify-center self-start md:self-center">
+          <div class="row-start-1 col-start-3 md:row-auto md:col-start-5 flex items-center justify-center">
             @if (row.occurrences.length) {
               <button tuiIconButton type="button" appearance="flat-grayscale"
                 [tuiChevron]="open"

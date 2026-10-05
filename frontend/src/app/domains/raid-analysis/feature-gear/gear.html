@@ -176,18 +176,17 @@
       @if (view().comparison) {
         @if (enchantIssues().length) {
           @for (row of enchantIssues(); track row.slotName) {
-            <div class="grid grid-cols-(--cols-card-sm) md:grid-cols-(--cols-card) gap-x-(--gap-card) gap-y-2 md:gap-y-0 py-2.5 items-start md:items-center border-t border-line">
-              <div class="flex items-center justify-center self-start md:self-center">
+            <!-- The slot label takes its own grid row so the status icon centers on the enchant name, not on label and name together. -->
+            <div class="grid grid-cols-(--cols-card-sm) md:grid-cols-(--cols-card) gap-x-(--gap-card) gap-y-1 py-2.5 items-center border-t border-line">
+              <span class="col-start-2 text-label text-muted">{{ row.slotName }}</span>
+              <div class="row-start-2 col-start-1 flex items-center justify-center">
                 <tui-icon class="icon-18"
                   [class.text-warning]="row.status === 'warn'"
                   [class.text-accent]="row.status === 'info'"
                   [icon]="row.status === 'info' ? 'info' : 'warning_amber'" />
               </div>
-              <div class="min-w-0">
-                <span class="block text-label text-muted mb-1">{{ row.slotName }}</span>
-                <span class="block text-name truncate">{{ row.name }}</span>
-              </div>
-              <div class="col-start-2 md:col-start-4 text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-(--gap-card)">
+              <span class="row-start-2 col-start-2 min-w-0 text-name truncate">{{ row.name }}</span>
+              <div class="col-start-2 md:col-start-4 md:row-start-1 md:row-span-2 mt-1 md:mt-0 text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-(--gap-card)">
                 <span class="md:hidden block text-label text-muted mb-1">Fix</span>
                 @if (row.top; as top) {
                   <wl-game-icon kind="item" [id]="top.itemId" [name]="top.name" [icon]="top.icon" [copyable]="true"></wl-game-icon>
