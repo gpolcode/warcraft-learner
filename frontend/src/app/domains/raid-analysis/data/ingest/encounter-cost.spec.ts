@@ -23,7 +23,7 @@ describe('formatOutcome', () => {
   });
 
   it('keeps the hundredths WCL reports, so the logged lines sum to the budget', () => {
-    /** Readings as WCL served them in one ingest run, whose difference carries floating-point noise past the hundredths. */
+    /** Real readings whose plain difference carries float noise past the hundredths. */
     const READ_BEFORE = 3100.94;
     const READ_AFTER = 3140.72;
     const SPENT_BETWEEN = '39.78';

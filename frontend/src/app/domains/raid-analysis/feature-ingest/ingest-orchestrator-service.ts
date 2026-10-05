@@ -181,7 +181,7 @@ export class IngestOrchestratorService {
     let aborted: string | null = null;
     for (const spec of specs) {
       try {
-        // A spec that threw spent an unknown amount past the meter's last reading, so the next check reads afresh.
+        // A thrown spec spent past the meter's reading, so re-read before the next budget check.
         if (aborted) await this.logSpend(`  [${aborted}] `, 'aborted', NO_STORE_READS, meter);
         aborted = null;
         const budgetExhausted = await this.ingestSpec(spec, encounters, version, meter);
@@ -197,7 +197,7 @@ export class IngestOrchestratorService {
     return { succeeded, failed, budgetStopped };
   }
 
-  /** Nothing follows the last spec, so a failed read here costs only its log line. */
+  /** After the last spec a failed read loses only this line, so it must not fail the run. */
   private async logAbortedSpend(spec: string, meter: PointsMeter): Promise<void> {
     try {
       await this.logSpend(`  [${spec}] `, 'aborted', NO_STORE_READS, meter);
@@ -206,7 +206,7 @@ export class IngestOrchestratorService {
     }
   }
 
-  /** A reading costs a point, so the one that closes this spend also opens the next and is the budget check before it. */
+  /** Each read costs a point, so this one also opens the next spend and is its budget check. */
   private async logSpend(prefix: string, note: string, store: Readonly<StoreTally>, meter: PointsMeter): Promise<void> {
     const after = await this.wclApi.getPointsBudget();
     console.log(`${prefix}${this.encounterCost.formatOutcome(note, meter.reading, after, store)}`);

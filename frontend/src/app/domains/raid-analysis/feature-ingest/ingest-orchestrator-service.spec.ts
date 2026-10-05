@@ -42,7 +42,6 @@ const STORED_SAMPLES = 3;
 const FRESH_SAMPLES = 7;
 const HOURLY_POINT_LIMIT = 18_000;
 const NOTHING_SPENT = 0;
-/** Leaves exactly the ingest margin of the hour. */
 const SPENT_AT_MARGIN = HOURLY_POINT_LIMIT - INGEST_POINTS_MARGIN;
 
 const rankedRow = (player: string, code: string, fightID: number) =>
@@ -89,7 +88,7 @@ function fakeDisk(seed: Record<string, unknown>, undeletable = new Set<string>()
   };
 }
 
-/** In the order the run reads them: before startup, after it, then after each encounter; the last one repeats. */
+/** Run order: before startup, after it, after each encounter; the last repeats. */
 function pointsSpent(...readings: number[]): WclApiService['getPointsBudget'] {
   const queue = [...readings];
   return async () => ({ limitPerHour: HOURLY_POINT_LIMIT, pointsSpentThisHour: (queue.length > 1 ? queue.shift() : queue[0]) ?? 0 });

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import type { WclPointsBudget } from '../wcl/wcl-api-service';
 import type { StoreTally } from '../wcl/wcl-transport';
 
-// WCL reports points to the hundredth; rounding each line to whole points would let the lines drift from the budget they sum to.
+// WCL reports hundredths; whole points would let the lines drift from the budget they sum to.
 const POINT_DECIMALS = 2;
 
 @Injectable({ providedIn: 'root' })
@@ -23,7 +23,7 @@ export class EncounterCostService {
     return `${this.points(spent)} quota`;
   }
 
-  // Through Number, so a whole spend prints without trailing zeros.
+  // Number drops toFixed's trailing zeros.
   private points(value: number): number {
     return Number(value.toFixed(POINT_DECIMALS));
   }
