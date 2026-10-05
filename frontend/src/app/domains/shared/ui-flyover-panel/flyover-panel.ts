@@ -28,7 +28,7 @@ export class FlyoverPanel {
   protected readonly headingId = `${this.instanceId}-heading`;
   protected readonly introId = `${this.instanceId}-intro`;
 
-  // Fullscreen widens the window to the screen, and swapping sheet for drawer then would pull the video out of fullscreen.
+  // Fullscreen widens the window to the screen, and swapping layouts then would re-parent the fullscreen element, which ends fullscreen.
   protected readonly isMobile = linkedSignal<boolean, boolean>({
     source: () => this.breakpoint() === 'mobile',
     computation: (mobile, previous) => (previous && this.doc.fullscreenElement ? previous.value : mobile),
