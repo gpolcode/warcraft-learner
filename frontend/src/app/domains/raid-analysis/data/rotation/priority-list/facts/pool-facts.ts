@@ -31,13 +31,10 @@ const FIELDS: Record<string, FieldRow<PoolState> | undefined> = {
     words: { frame: 'amount', unit: pool => pool, at: (noun, op, n) => (n === 'full' && !Words.below(op) ? `at full ${noun}` : `at ${Words.bound(op, n)} ${noun}`) },
   },
   deficit: { value: deficit, words: DEFICIT },
-  base_deficit: { value: deficit, words: DEFICIT },
   pct: { value: ({ amount: [lo, hi], max }) => [(lo / max) * 100, (hi / max) * 100], words: { frame: 'percent', unit: pool => `% ${pool}` } },
   max: { value: ({ max }) => [max, max], words: { frame: 'amount', label: 'cap', unit: pool => pool } },
   regen: { value: state => state.regen(), words: REGEN },
-  regen_combined: { value: state => state.regen(), words: REGEN },
   time_to_max: { value: timeToMax, words: TIME_TO_MAX },
-  base_time_to_max: { value: timeToMax, words: TIME_TO_MAX },
   cost: { words: { frame: 'amount', unit: '', at: (noun, op, n) => `when ${noun} costs ${Words.bound(op, n)}` } },
   energize_amount: { words: { frame: 'amount', unit: '', at: (noun, op, n) => `when ${noun} gives ${Words.bound(op, n)}` } },
 };

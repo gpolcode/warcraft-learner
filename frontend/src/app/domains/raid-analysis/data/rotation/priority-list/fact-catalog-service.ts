@@ -5,22 +5,30 @@ import { SUMMON_PREFIXES, FactKind, FactPath, FactReader, FactStream, FieldRow, 
 
 type Head = (rest: string[]) => Partial<FactPath>;
 
+/** SimC's other spellings of a field, read as the one the tables hold. */
+const SYNONYMS: Record<string, string | undefined> = {
+  remains_expected: 'remains', remains_guess: 'remains', usable_in: 'remains', usable: 'ready', cooldown_react: 'ready', recharge_time: 'duration', cooldown: 'duration',
+  react: 'stack', stacks: 'stack', max_stacks: 'max_stack', ticks_remain_fractional: 'ticks_remain', stack_value: 'value', persistent_multiplier: 'pmultiplier',
+  base_deficit: 'deficit', base_time_to_max: 'time_to_max', regen_combined: 'regen',
+  in_flight_to_target: 'in_flight', channeling: 'executing', 'gcd.max': 'gcd', spell_targets: 'active_enemies', enemies: 'active_enemies',
+};
+const COOLDOWN_PREFIX = 'cooldown.';
+const canon = (field: string): string => {
+  const [prefix, rest] = field.startsWith(COOLDOWN_PREFIX) ? [COOLDOWN_PREFIX, field.slice(COOLDOWN_PREFIX.length)] : ['', field];
+  return prefix + (SYNONYMS[rest] ?? rest);
+};
 /** The kind each field of `action.x.<field>` reads; SimC's `action.x.remains` and `action.x.duration` are the cooldown's. */
 const ACTION_FIELDS: Record<string, FactKind | undefined> = {
-  remains: 'cooldown', remains_expected: 'cooldown', remains_guess: 'cooldown', ready: 'cooldown', up: 'cooldown', usable: 'cooldown', usable_in: 'cooldown',
-  charges: 'cooldown', charges_fractional: 'cooldown', full_recharge_time: 'cooldown', duration: 'cooldown', cooldown: 'cooldown', max_charges: 'cooldown',
-  recharge_time: 'cooldown', cooldown_react: 'cooldown',
-  last_used: 'press', in_flight: 'press', in_flight_count: 'press', in_flight_remains: 'press', in_flight_to_target: 'press', placed: 'press',
-  executing: 'press', execute_remains: 'press', channeling: 'press', cast_time: 'press', execute_time: 'press', gcd: 'press',
-  cost: 'pool', energize_amount: 'pool',
-  pmultiplier: 'aura', persistent_multiplier: 'aura', active_dots: 'aura',
+  remains: 'cooldown', ready: 'cooldown', up: 'cooldown', charges: 'cooldown', charges_fractional: 'cooldown', full_recharge_time: 'cooldown', duration: 'cooldown', max_charges: 'cooldown',
+  last_used: 'press', in_flight: 'press', in_flight_count: 'press', in_flight_remains: 'press', placed: 'press', executing: 'press', execute_remains: 'press',
+  cast_time: 'press', execute_time: 'press', gcd: 'press',
+  cost: 'pool', energize_amount: 'pool', pmultiplier: 'aura', active_dots: 'aura',
 };
 /** A bare field is the line's own button's: `refreshable` on a Rupture line is Rupture's dot, `charges` its cooldown. */
 const OWN_FIELDS: Record<string, FactKind | undefined> = {
-  ...ACTION_FIELDS, remains: 'aura', duration: 'aura', ticking: 'aura', refreshable: 'aura', ticks_remain: 'aura', tick_time: 'aura', ticks: 'aura',
-  'gcd.max': 'press', 'gcd.remains': 'press', combo_strike: 'press',
+  ...ACTION_FIELDS, remains: 'aura', duration: 'aura', ticking: 'aura', refreshable: 'aura', ticks_remain: 'aura', tick_time: 'aura', ticks: 'aura', 'gcd.remains': 'press', combo_strike: 'press',
 };
-const FIGHT_NAMES = new Set(['time', 'in_combat', 'fight_remains', 'expected_combat_length', 'time_to_die', 'time_to_bloodlust', 'active_enemies', 'enemies', 'desired_targets', 'is_boss', 'in_boss_encounter']);
+const FIGHT_NAMES = new Set(['time', 'in_combat', 'fight_remains', 'expected_combat_length', 'time_to_die', 'time_to_bloodlust', 'active_enemies', 'desired_targets', 'is_boss', 'in_boss_encounter']);
 const TIME_TO_PCT = /^time_to_pct_(\d+)$/;
 const TRINKET_ARG_FIELDS = new Set(['is', 'has_buff', 'has_stat']);
 /** SimC reads `proc.<stat>.<field>`, `buff.<stat>.<field>` and `stat.<stat>.<field>` alike. */
@@ -42,7 +50,7 @@ const trinket = (slot: string): Head => rest => ({ kind: 'gear', subject: slot, 
 const HEADS: Record<string, Head | undefined> = {
   buff: aura(false), debuff: aura(true), dot: aura(true), active_dot: spread, active_dots: spread,
   cooldown: ([token = '', ...field]) => ({ kind: 'cooldown', subject: token, spell: true, field: field.join('.') }),
-  action: ([token = '', ...rest]) => ({ kind: ACTION_FIELDS[rest.join('.')] ?? null, subject: token, spell: true, field: rest.join('.') }),
+  action: ([token = '', ...rest]) => ({ kind: ACTION_FIELDS[canon(rest.join('.'))] ?? null, subject: token, spell: true, field: rest.join('.') }),
   pet: ([token = '', field = '']) => ({ kind: 'press', subject: token, spell: true, field: `pet.${field}` }),
   prev: press('prev'), prev_off_gcd: press('prev_off_gcd'),
   prev_gcd: ([n = '', token = '']) => ({ kind: 'press', subject: token, spell: true, field: 'prev_gcd', n: Number(n) }),
@@ -72,19 +80,20 @@ export class FactCatalogService {
     const [head = '', ...rest] = bare.split('.');
     const base: FactPath = { kind: null, subject: '', spell: false, field: bare, arg: '', target, n: 0 };
     const lead = HEADS[head];
-    if (lead) return { ...base, ...lead(rest) };
-    if (POOL_TYPES[head] !== undefined) return { ...base, kind: 'pool', subject: head, field: rest.join('.') || 'amount' };
-    return { ...base, ...this.bare(bare, action) };
+    const pool = POOL_TYPES[head] !== undefined ? { kind: 'pool' as const, subject: head, field: rest.join('.') || 'amount' } : this.bare(bare, action);
+    const path = { ...base, ...(lead ? lead(rest) : pool) };
+    return { ...path, field: canon(path.field) };
   }
 
   /** A name with no leading kind: a pool, the line's own button's field, or the fight itself. */
   private bare(name: string, action: string): Partial<FactPath> {
-    if (name === 'cp_max_spend') return { kind: 'pool', subject: 'combo_points', field: 'max' };
-    const own = OWN_FIELDS[name];
+    const field = canon(name);
+    if (field === 'cp_max_spend') return { kind: 'pool', subject: 'combo_points', field: 'max' };
+    const own = OWN_FIELDS[field];
     if (own) return { kind: own, subject: action, spell: true, ...(own === 'aura' ? { target: true } : {}) };
-    const pct = TIME_TO_PCT.exec(name);
+    const pct = TIME_TO_PCT.exec(field);
     if (pct) return { kind: 'fight', field: 'time_to_pct', n: Number(pct[1]) };
-    return FIGHT_NAMES.has(name) ? { kind: 'fight' } : {};
+    return FIGHT_NAMES.has(field) ? { kind: 'fight' } : {};
   }
 
   reader(kind: FactKind | null): FactReader | null {

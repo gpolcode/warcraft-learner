@@ -108,24 +108,17 @@ const EVENTS: Record<string, Record<string, FieldWords | undefined> | undefined>
     remains: { frame: 'left', unit: 's of adds left', at: (_, op, n) => `with ${Words.lessMore(op)} ${Words.secs(n)} of adds left` },
     count: { frame: 'count', unit: 'adds', at: (_, op, n) => `with ${Words.bound(op, n)} adds coming` },
     duration: { frame: 'seconds', unit: 's of adds', at: (_, op, n) => `with adds lasting ${Words.lessMore(op)} ${Words.secs(n)}` },
+    has_boss: { frame: 'flag', states: ['With a boss', 'Without a boss'], flag: (_, holds) => `when the adds ${holds ? 'include' : 'leave out'} a boss` },
   },
   pull: { exists: { frame: 'flag', states: ['Dungeon', 'Raid'], flag: (_, holds) => (holds ? 'in a dungeon' : 'outside a dungeon') } },
   movement: {
+    exists: { frame: 'flag', states: ['Movement', 'No movement'], flag: (_, holds) => `in a fight ${holds ? 'with' : 'without'} forced movement` },
     in: { frame: 'away', unit: 's until you move', at: (_, op, n) => (Words.below(op) ? `when you must move within ${Words.secs(n)}` : `with ${Words.lessMore(op)} ${Words.secs(n)} before you must move`) },
     up: { frame: 'flag', states: ['Moving', 'Standing still'], flag: (_, holds) => (holds ? 'while moving' : 'while standing still') },
   },
 };
-const EVENT_FRAMES: Record<string, ((noun: string) => FieldWords) | undefined> = {
-  exists: noun => ({ frame: 'flag', states: [noun, `No ${noun}`], flag: (_, holds) => `in a fight ${holds ? 'with' : 'without'} ${noun}` }),
-  up: noun => ({ frame: 'flag', states: ['Happening', 'Not happening'], flag: (_, holds) => `while ${noun} ${holds ? 'is' : 'is not'} happening` }),
-  in: noun => ({ frame: 'away', unit: `s until ${noun}`, at: (_, op, n) => (Words.below(op) ? `when ${noun} comes within ${Words.secs(n)}` : `when ${noun} is ${Words.lessMore(op)} ${Words.secs(n)} away`) }),
-  remains: noun => ({ frame: 'left', unit: `s of ${noun} left`, at: (_, op, n) => `with ${Words.lessMore(op)} ${Words.secs(n)} of ${noun} left` }),
-  count: noun => ({ frame: 'count', unit: noun }),
-  duration: () => ({ frame: 'seconds', label: 'duration' }),
-  has_boss: noun => ({ frame: 'flag', states: ['With a boss', 'Without a boss'], flag: (_, holds) => `when ${noun} ${holds ? 'include' : 'leave out'} a boss` }),
-};
-const eventWords = (field: string) => (path: FactPath): FieldWords =>
-  EVENTS[path.subject]?.[field] ?? EVENT_FRAMES[field]?.(Words.spaced(path.subject)) ?? { frame: 'amount', label: Words.spaced(field) };
+/** An event or field the lists do not use phrases by its own words. */
+const eventWords = (field: string) => (path: FactPath): FieldWords => EVENTS[path.subject]?.[field] ?? { frame: 'amount', label: Words.spaced(field) };
 const styleWords = (path: FactPath): FieldWords => {
   if (RAID_STYLES.has(path.subject)) return { frame: 'flag', states: ['Raid boss', 'Not a raid boss'], flag: (_, holds) => `${holds ? 'against' : 'away from'} a raid boss` };
   if (DUNGEON_STYLES.has(path.subject)) return { frame: 'flag', states: ['Dungeon', 'Raid'], flag: (_, holds) => `${holds ? 'in' : 'outside'} a dungeon` };
@@ -154,8 +147,6 @@ const FIELDS: Record<string, FieldRow<FightState> | undefined> = {
   },
   time_to_bloodlust: { value: bloodlust, words: { frame: 'away', unit: 's to Bloodlust', at: (_, op, n) => `when Bloodlust is ${Words.lessMore(op)} ${Words.secs(n)} away` } },
   active_enemies: { value: enemies, words: ENEMIES },
-  spell_targets: { value: enemies, words: ENEMIES },
-  enemies: { value: enemies, words: ENEMIES },
   desired_targets: { words: { frame: 'count', unit: 'enemies', at: (_, op, n) => `in a fight set up for ${Words.bound(op, n)} enemies` } },
   'health.pct': {
     value: healthPct,

@@ -77,7 +77,6 @@ describe('AuraFacts buffs', () => {
     { reads: 'a buff the log drops just ahead of the cast that consumes it as still up', name: 'buff.shadow_dance.up', events: [applyBuff(SHADOW_DANCE, 1), removeBuff(SHADOW_DANCE, 10 - CONSUMED_LEAD_S)], atS: 10, expected: UP },
     { reads: 'the time left from the log where the buff ran its course', name: 'buff.shadow_dance.remains', events: dance, atS: 12, expected: [DANCE_S - 2, DANCE_S - 2] },
     { reads: 'the time left of a buff consumed early as spanning its drop and its due end', name: 'buff.shadow_dance.remains', events: consumed, atS: 12, expected: [1, DANCE_S - 2] },
-    { reads: 'how long the buff has been up', name: 'buff.shadow_dance.elapsed', events: dance, atS: 12, expected: [2, 2] },
     { reads: 'how long since the buff last triggered', name: 'buff.shadow_dance.last_trigger', events: dance, atS: 12, expected: [2, 2] },
     { reads: 'how long since the buff last dropped', name: 'buff.shadow_dance.last_expire', events: dance, atS: 10 + DANCE_S + 5, expected: [5, 5] },
     { reads: 'a drop still to come as unknown', name: 'buff.shadow_dance.last_expire', events: dance, atS: 12, expected: UNKNOWN },

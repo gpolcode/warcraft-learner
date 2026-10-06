@@ -91,12 +91,10 @@ const FIELDS: Record<string, FieldRow<PressState> | undefined> = {
   },
   last_used: { value: lastUsed, words: { frame: 'seconds', unit: 's since pressed', at: (noun, op, n) => `with ${Words.lessMore(op)} ${Words.secs(n)} since you last pressed ${noun}` } },
   in_flight: { value: inFlight, words: IN_THE_AIR },
-  in_flight_to_target: { value: inFlight, words: IN_THE_AIR },
   in_flight_count: { value: inFlightCount, words: { frame: 'count', unit: 'in the air', at: (noun, op, n) => `with ${Words.bound(op, n)} ${noun} in the air` } },
   in_flight_remains: { value: inFlightRemains, words: { frame: 'away', unit: 's to land', at: (noun, op, n) => `with ${Words.lessMore(op)} ${Words.secs(n)} until ${noun} lands` } },
   placed: { value: inFlight, words: { frame: 'flag', states: ['Placed', 'Not placed'], flag: (noun, holds) => `while ${noun} is ${Words.not(holds)}about to go off` } },
   executing: { value: (state, path) => flag(executing(state, path) !== null), words: CASTING },
-  channeling: { value: (state, path) => flag(executing(state, path) !== null), words: CASTING },
   execute_remains: {
     value: (state, path) => at(executing(state, path) ?? 0),
     words: { frame: 'seconds', unit: 's of cast left', at: (noun, op, n) => `with ${Words.lessMore(op)} ${Words.secs(n)} left on the ${noun} cast` },
@@ -104,13 +102,12 @@ const FIELDS: Record<string, FieldRow<PressState> | undefined> = {
   cast_time: { words: CAST_TIME },
   execute_time: { words: CAST_TIME },
   gcd: { words: GCD },
-  'gcd.max': { words: GCD },
   'gcd.remains': { words: { frame: 'left', unit: 's of GCD left', at: (_, op, n) => `with ${Words.lessMore(op)} ${Words.secs(n)} of global cooldown left` } },
   'pet.active': { value: (state, path) => flag((pet(state, path) ?? NaN) > 0), words: { frame: 'flag', states: ['Out', 'Not out'], flag: (noun, holds) => `while ${noun} is ${Words.not(holds)}out` } },
   'pet.remains': { value: (state, path) => { const left = pet(state, path); return left === null ? UNKNOWN : at(left); }, words: { frame: 'left' } },
 };
 /** Fields that read the log's landings. */
-const LANDING_FIELDS = new Set(['in_flight', 'in_flight_to_target', 'in_flight_count', 'in_flight_remains', 'placed']);
+const LANDING_FIELDS = new Set(['in_flight', 'in_flight_count', 'in_flight_remains', 'placed']);
 
 /** What the player pressed around the moment: the casts before it, the shots still in the air, the cast under way, and how long the next one takes. */
 @Injectable({ providedIn: 'root' })
@@ -124,7 +121,7 @@ export class PressFacts implements FactReader {
 
   read(path: FactPath, moment: CastMoment, ctx: FactContext): Range {
     if (path.field === 'cast_time' || path.field === 'execute_time') return this.castTime(path, moment, ctx);
-    if (path.field === 'gcd' || path.field === 'gcd.max') return this.gcd(moment.atS, ctx);
+    if (path.field === 'gcd') return this.gcd(moment.atS, ctx);
     if (path.field === 'gcd.remains') return this.gcdRemains(moment, ctx);
     const row = FIELDS[path.field];
     if (!row?.value) return UNKNOWN;

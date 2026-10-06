@@ -25,32 +25,20 @@ export interface Recharge {
 }
 
 const ready = ({ slow, fast }: CooldownState): Range => (slow.remains === 0 ? [1, 1] : fast.remains > 0 ? [0, 0] : [0, 1]);
-const remains = ({ slow, fast }: CooldownState): Range => [fast.remains, slow.remains];
-const charges = ({ slow, fast }: CooldownState): Range => [Math.floor(slow.charges), Math.floor(fast.charges)];
-const duration = ({ fastest, recharge }: CooldownState): Range => [fastest, recharge];
 const READY: FieldWords = { frame: 'flag', states: ['Ready', 'On cooldown'], flag: (noun, holds) => (holds ? `when ${noun} is ready` : `while ${noun} is on cooldown`) };
-const AWAY: FieldWords = { frame: 'away', label: 'cooldown' };
 const CHARGES: FieldWords = { frame: 'count', unit: 'charges' };
-const LENGTH: FieldWords = { frame: 'seconds', label: 'cooldown' };
 
 export const COOLDOWN_FIELDS: Record<string, FieldRow<CooldownState> | undefined> = {
-  remains: { value: remains, words: AWAY },
-  remains_expected: { value: remains, words: AWAY },
-  remains_guess: { value: remains, words: AWAY },
-  usable_in: { value: remains, words: AWAY },
+  remains: { value: ({ slow, fast }) => [fast.remains, slow.remains], words: { frame: 'away', label: 'cooldown' } },
   ready: { value: ready, words: READY },
   up: { value: ready, words: READY },
-  usable: { value: ready, words: READY },
-  cooldown_react: { value: ready, words: READY },
-  charges: { value: charges, words: CHARGES },
+  charges: { value: ({ slow, fast }) => [Math.floor(slow.charges), Math.floor(fast.charges)], words: CHARGES },
   charges_fractional: { value: ({ slow, fast }) => [slow.charges, fast.charges], words: CHARGES },
   full_recharge_time: {
     value: ({ slow, fast }) => [fast.full, slow.full],
     words: { frame: 'away', unit: 's to full', at: (noun, op, n) => `with full ${noun} charges ${Words.lessMore(op)} ${Words.secs(n)} away` },
   },
-  duration: { value: duration, words: LENGTH },
-  cooldown: { value: duration, words: LENGTH },
-  recharge_time: { value: duration, words: LENGTH },
+  duration: { value: ({ fastest, recharge }) => [fastest, recharge], words: { frame: 'seconds', label: 'cooldown' } },
   max_charges: { value: ({ maxCharges }) => [maxCharges, maxCharges], words: { frame: 'amount', label: 'charge cap', unit: 'charges' } },
 };
 
@@ -69,15 +57,12 @@ export class CooldownFacts implements FactReader {
   }
 
   /** The field over a button's own casts, so an item's use reads the same way as a spell's. */
-  readCasts(field: string, casts: readonly number[], recharge: Recharge, atS: number): Range {
+  readCasts(field: string, casts: readonly number[], { charges, cooldown }: Recharge, atS: number): Range {
     const row = COOLDOWN_FIELDS[field];
     if (!row?.value) return UNKNOWN;
-    const fastest = this.fastest(casts, recharge.charges, recharge.cooldown);
-    return row.value(this.state(casts, recharge, fastest, atS), { kind: 'cooldown', subject: '', spell: true, field, arg: '', target: false, n: 0 });
-  }
-
-  private state(casts: readonly number[], { charges, cooldown }: Recharge, fastest: number, atS: number): CooldownState {
-    return { slow: this.rebuild(casts, charges, cooldown, atS), fast: this.rebuild(casts, charges, fastest, atS), fastest, recharge: cooldown, maxCharges: charges };
+    const fastest = this.fastest(casts, charges, cooldown);
+    const state = { slow: this.rebuild(casts, charges, cooldown, atS), fast: this.rebuild(casts, charges, fastest, atS), fastest, recharge: cooldown, maxCharges: charges };
+    return row.value(state, { kind: 'cooldown', subject: '', spell: true, field, arg: '', target: false, n: 0 });
   }
 
   /** Casts `charges` apart can be no closer than one recharge, however haste and reductions bent it. */
