@@ -1,11 +1,21 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Type, inject } from '@angular/core';
 import type jsep from 'jsep';
-import type { AplNode } from '../../simc/simc-apl-service';
-import { FACT_READERS } from './fact-readers';
-import { UNKNOWN, CastMoment, FactContext, FactReader, Range, Truth } from './priority-list.models';
+import { getOrInsert } from '../../analysis/analysis-math';
+import { AplNode, SimcAplService } from '../../simc/simc-apl-service';
+import { FactPaths } from './fact-path';
+import { AuraFacts } from './facts/aura-facts';
+import { BuildFacts } from './facts/build-facts';
+import { CooldownFacts } from './facts/cooldown-facts';
+import { FightFacts } from './facts/fight-facts';
+import { GearFacts } from './facts/gear-facts';
+import { PoolFacts } from './facts/pool-facts';
+import { PressFacts } from './facts/press-facts';
+import { UNKNOWN, CastMoment, FactContext, FactKind, FactPath, FactReader, FactStream, Range, Truth } from './priority-list.models';
+
 const TRUE: Range = [1, 1];
 const FALSE: Range = [0, 0];
 const EITHER: Range = [0, 1];
+const READERS: Type<FactReader>[] = [AuraFacts, CooldownFacts, PoolFacts, PressFacts, FightFacts, BuildFacts, GearFacts];
 
 const point = ([lo, hi]: Range): boolean => lo === hi;
 const equal = (a: Range, b: Range): boolean => point(a) && point(b) && a[0] === b[0];
@@ -41,7 +51,9 @@ const ARITHMETIC: Record<string, ((a: Range, b: Range) => Range) | undefined> = 
 
 @Injectable({ providedIn: 'root' })
 export class ConditionEvalService {
-  private readonly readers = inject(FACT_READERS);
+  private readonly apl = inject(SimcAplService);
+  private readonly readers = new Map<FactKind, FactReader>(READERS.map(reader => inject(reader)).map(reader => [reader.kind, reader]));
+  private readonly derived = new Map<string, AplNode | null>();
 
   truthOf(node: AplNode, moment: CastMoment, action: string, ctx: FactContext): Truth {
     return this.truth(this.value(node, moment, action, ctx));
@@ -63,48 +75,67 @@ export class ConditionEvalService {
     return truths.includes('unknown') ? 'unknown' : 'false';
   }
 
-  readerFor(name: string): FactReader | null {
-    return this.readers.find(reader => reader.matches(name)) ?? null;
+  streams(name: string): readonly FactStream[] {
+    const path = FactPaths.path(name, '');
+    return this.readers.get(path.kind)?.streams(path) ?? [];
   }
 
-  value(node: AplNode, moment: CastMoment, action: string, ctx: FactContext): Range {
+  /** False for a name the app only phrases: no row, or a row no reader or derivation ever settles. */
+  reads(name: string, bound?: FactPath): boolean {
+    const path = FactPaths.path(name, '', bound);
+    const is = FactPaths.row(path)?.[2];
+    if (is === undefined) return !!FactPaths.row(path) && !!this.readers.get(path.kind)?.answers(path);
+    if (typeof is === 'number') return true;
+    const node = getOrInsert(this.derived, is, () => this.apl.parse(is));
+    return !!node && this.apl.identifiers(node).every(id => this.reads(id, path));
+  }
+
+  read(name: string, moment: CastMoment, action: string, ctx: FactContext, bound?: FactPath): Range {
+    const path = FactPaths.path(name, action, bound);
+    const is = FactPaths.row(path)?.[2];
+    if (typeof is === 'number') return [is, is];
+    if (is === undefined) return this.clean(this.readers.get(path.kind)?.read(path, moment, ctx) ?? UNKNOWN);
+    const node = getOrInsert(this.derived, is, () => this.apl.parse(is));
+    return node ? this.value(node, moment, action, ctx, path) : UNKNOWN;
+  }
+
+  value(node: AplNode, moment: CastMoment, action: string, ctx: FactContext, bound?: FactPath): Range {
     switch (node.type) {
       case 'Literal': return this.point(Number((node as jsep.Literal).value));
-      case 'Identifier': return this.identifier((node as jsep.Identifier).name, moment, action, ctx);
-      case 'UnaryExpression': return this.unary(node as jsep.UnaryExpression, moment, action, ctx);
-      case 'BinaryExpression': return this.binary(node as jsep.BinaryExpression, moment, action, ctx);
-      case 'CallExpression': return this.call(node as jsep.CallExpression, moment, action, ctx);
+      case 'Identifier': return this.read((node as jsep.Identifier).name, moment, action, ctx, bound);
+      case 'UnaryExpression': return this.unary(node as jsep.UnaryExpression, moment, action, ctx, bound);
+      case 'BinaryExpression': return this.binary(node as jsep.BinaryExpression, moment, action, ctx, bound);
+      case 'CallExpression': return this.call(node as jsep.CallExpression, moment, action, ctx, bound);
       default: return UNKNOWN;
     }
   }
 
-  private identifier(name: string, moment: CastMoment, action: string, ctx: FactContext): Range {
-    const range = this.readerFor(name)?.read(name, moment, action, ctx) ?? UNKNOWN;
-    return range.some(Number.isNaN) ? UNKNOWN : range;
+  private unary({ operator, argument }: jsep.UnaryExpression, moment: CastMoment, action: string, ctx: FactContext, bound?: FactPath): Range {
+    const [lo, hi] = this.value(argument, moment, action, ctx, bound);
+    if (operator === '!') return this.fromTruth(this.not(this.truth([lo, hi])));
+    if (operator === '@') return lo >= 0 ? [lo, hi] : hi <= 0 ? [-hi, -lo] : [0, Math.max(-lo, hi)];
+    return [-hi, -lo];
   }
 
-  private unary({ operator, argument }: jsep.UnaryExpression, moment: CastMoment, action: string, ctx: FactContext): Range {
-    const [lo, hi] = this.value(argument, moment, action, ctx);
-    return operator === '!' ? this.fromTruth(this.not(this.truth([lo, hi]))) : [-hi, -lo];
-  }
-
-  private call({ callee, arguments: [argument] }: jsep.CallExpression, moment: CastMoment, action: string, ctx: FactContext): Range {
+  private call({ callee, arguments: [argument] }: jsep.CallExpression, moment: CastMoment, action: string, ctx: FactContext, bound?: FactPath): Range {
     const fn = callee.type === 'Identifier' ? FUNCTIONS[(callee as jsep.Identifier).name] : undefined;
     if (!fn || !argument) return UNKNOWN;
-    const [lo, hi] = this.value(argument, moment, action, ctx);
+    const [lo, hi] = this.value(argument, moment, action, ctx, bound);
     return [fn(lo), fn(hi)];
   }
 
-  private binary({ operator, left, right }: jsep.BinaryExpression, moment: CastMoment, action: string, ctx: FactContext): Range {
-    const a = this.value(left, moment, action, ctx);
-    if (operator === '&' || operator === '|') return this.logical(operator, this.truth(a), () => this.truth(this.value(right, moment, action, ctx)));
-    const b = this.value(right, moment, action, ctx);
+  private binary({ operator, left, right }: jsep.BinaryExpression, moment: CastMoment, action: string, ctx: FactContext, bound?: FactPath): Range {
+    const a = this.value(left, moment, action, ctx, bound);
+    if (operator === '&' || operator === '|' || operator === '^') return this.logical(operator, this.truth(a), () => this.truth(this.value(right, moment, action, ctx, bound)));
+    const b = this.value(right, moment, action, ctx, bound);
     return this.compare(operator, a, b) ?? this.arithmetic(operator, a, b);
   }
 
   private logical(operator: string, left: Truth, right: () => Truth): Range {
     if (operator === '&') return this.fromTruth(left === 'false' ? 'false' : this.and(left, right()));
-    return this.fromTruth(left === 'true' ? 'true' : this.or(left, right()));
+    if (operator === '|') return this.fromTruth(left === 'true' ? 'true' : this.or(left, right()));
+    const other = right();
+    return this.fromTruth(left === 'unknown' || other === 'unknown' ? 'unknown' : left === other ? 'false' : 'true');
   }
 
   private compare(operator: string, a: Range, b: Range): Range | null {

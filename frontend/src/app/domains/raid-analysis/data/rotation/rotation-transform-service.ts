@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { PlanCooldown } from '../plan/plan.models';
+import { PlanCooldown, PlanItem, PriorityList } from '../plan/plan.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { group, quantile } from 'd3-array';
 import {
@@ -17,6 +17,7 @@ import { SpecPlan } from '../simc/spec-plan-service';
 import { ListBenchService, MIN_MEASURED_PARSES } from './priority-list/list-bench-service';
 import { LogReading } from './priority-list/list-check-service';
 import { ListLogService } from './priority-list/list-log-service';
+import { ItemDataService } from '../simc/item-data-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { RotationBench } from './rotation-data-source';
@@ -58,6 +59,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly wclApi = inject(WclApiService);
   private readonly specPlanLoader = inject(SpecPlanLoaderService);
   private readonly listLogs = inject(ListLogService);
+  private readonly itemData = inject(ItemDataService);
   private readonly listBench = inject(ListBenchService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<RotationBench>> {
@@ -83,12 +85,19 @@ export class RotationTransformService implements DataSource<RotationBench> {
           top_efficiency_stddev: topEfficiencyStddev,
           per_cd_benchmarks: this.aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
-          list: { lines: plan.lines, variables: plan.variables, spells: plan.spells, talents: plan.talents },
+          list: this.listWithItems(plan, parses.map(parse => parse.reading)),
           buttons: this.listBench.bench(plan, parses.map(parse => parse.reading)),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
         };
       },
     });
+  }
+
+  /** A trinket's use spell joins `spells` under its item's token, so the bench reads it like any button. */
+  private listWithItems(plan: SpecPlan, readings: LogReading[]): PriorityList {
+    const items = readings.reduce<Record<string, PlanItem>>((all, reading) => ({ ...all, ...reading.items?.items }), {});
+    const spells = readings.reduce((all, reading) => ({ ...all, ...reading.items?.spells }), plan.spells);
+    return { lines: plan.lines, variables: plan.variables, spells, talents: plan.talents, ...(Object.keys(items).length ? { items } : {}) };
   }
 
   private async parseRotation({ ranking, report, fight, player }: BenchParse, plan: SpecPlan): Promise<ParseRotation> {
@@ -97,7 +106,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
     const [casts, buffs, reading] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
-      this.listLogs.read(plan, { reportCode: ranking.report_code, fight, playerId: player.id, abilities, folds }),
+      this.listLogs.read(plan, { reportCode: ranking.report_code, fight, playerId: player.id, abilities, folds, items: trinkets => this.itemData.items(trinkets) }),
     ]);
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
     const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime);

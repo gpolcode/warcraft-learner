@@ -3,15 +3,23 @@ import { TestBed } from '@angular/core/testing';
 import { applyDebuff, cast, damage } from '../../../../../../testing/builders/events';
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
 import { wclReport } from '../../../../../../testing/builders/wcl-fixtures';
-import { RUPTURE, SHADOW_DANCE, EVISCERATE } from '../../../../../../testing/spell-ids';
-import type { PlanLine } from '../../plan/plan.models';
+import { RUPTURE, SHADOW_DANCE, EVISCERATE, SPYMASTERS_WEB, SPYMASTERS_WEB_USE } from '../../../../../../testing/spell-ids';
+import type { ItemTable, PlanLine } from '../../plan/plan.models';
 import type { WclCombatantInfo, WclEvent } from '../../wcl/wcl.models';
 import { WclApiService } from '../../wcl/wcl-api-service';
+import { TRINKET_SLOTS } from '../../gear/gear-extract-service';
 import { ListLogService, ListPull } from './list-log-service';
 import { priorityList } from './priority-list-harness';
 
 const PLAYER_ID = 10;
 const OTHER_RAIDER = 99;
+/** The gear array is positional, so a trinket sits at its slot's index. */
+const [TRINKET_SLOT] = TRINKET_SLOTS;
+const WEARING: WclCombatantInfo = { gear: Array.from({ length: TRINKET_SLOT + 1 }, (_, slot) => (slot === TRINKET_SLOT ? { id: SPYMASTERS_WEB } : {})) };
+const WEB_TABLE: ItemTable = {
+  items: { spymasters_web: { id: SPYMASTERS_WEB, name: "Spymaster's Web", use: `item_${SPYMASTERS_WEB}`, use_buff: true, use_damage: null } },
+  spells: { [`item_${SPYMASTERS_WEB}`]: planSpell("Spymaster's Web", [SPYMASTERS_WEB_USE], { cooldown: 20, gcd: 0 }) },
+};
 const list = (terms: string[]) => priorityList({
   lines: [{ action: 'eviscerate', terms } satisfies PlanLine],
   spells: {
@@ -24,9 +32,12 @@ const list = (terms: string[]) => priorityList({
 /** Not a WCL data type: it labels the enemy-debuff read, which has its own query, among the recorded calls. */
 const ENEMY_DEBUFFS = 'EnemyDebuffs';
 
+/** Not a WCL data type either: it labels the item name lookup among the recorded calls. */
+const GAME_NAMES = 'GameNames';
+
 interface Call { dataType: string; sourceId?: number; includeResources: boolean; hostilityType?: string }
 
-function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclCombatantInfo = {}) {
+function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclCombatantInfo = {}, names = true) {
   const calls: Call[] = [];
   TestBed.configureTestingModule({ providers: [{
     provide: WclApiService,
@@ -40,10 +51,20 @@ function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclComba
         return streams[ENEMY_DEBUFFS] ?? [];
       },
       getCombatantInfo: async () => [{ sourceID: PLAYER_ID, ...combatant }],
+      getGameNames: async (ids: number[]) => {
+        calls.push({ dataType: GAME_NAMES, includeResources: false });
+        if (!names) throw new Error('WCL is down');
+        return Object.fromEntries(ids.map(id => [`i${id}`, { id, name: 'Spymaster&#39;s Web' }]));
+      },
     },
   }] });
   return { calls, logs: TestBed.inject(ListLogService) };
 }
+/** Ingest's item lookup, recording the ids it is asked for. */
+const lookup = (table: ItemTable, asked: number[]): ListPull['items'] => async trinkets => {
+  asked.push(...trinkets.map(piece => piece.id));
+  return table;
+};
 const pull = (): ListPull => {
   const [fight] = wclReport({ endTimeMs: 120_000 }).fights;
   if (!fight) throw new Error('no pull in the fixture report');
@@ -112,6 +133,42 @@ describe('ListLogService', () => {
     const folds = [{ name: 'Eviscerate', spell_id: EVISCERATE, window_s: FOLD_WINDOW_S }];
     const reading = await logs.read(list([]), { ...pull(), folds });
     expect(reading.casts.get('eviscerate')).toHaveLength(1);
+  });
+
+  it('asks WCL for the item names it left blank when a fact reads gear, and reads the trinket by that name with its entities decoded', async () => {
+    const { calls, logs } = recording({ Casts: [cast(EVISCERATE, 5)] }, WEARING);
+    const reading = await logs.read(list(['trinket.1.is.spymasters_web']), pull());
+    expect(calls.map(call => call.dataType)).toContain(GAME_NAMES);
+    expect(reading.casts.get('eviscerate')?.[0]?.verdict).toBe('on');
+  });
+
+  it('reads on with the names left blank when the lookup for them fails, so the trinket reads as unknown', async () => {
+    const { logs } = recording({ Casts: [cast(EVISCERATE, 5)] }, WEARING, false);
+    const reading = await logs.read(list(['trinket.1.is.spymasters_web']), pull());
+    expect(reading.casts.get('eviscerate')?.[0]?.verdict).toBe('unjudged');
+  });
+
+  it('leaves the blank item names alone when no fact reads gear', async () => {
+    const { calls, logs } = recording({}, WEARING);
+    await logs.read(list(['buff.shadow_dance.up']), pull());
+    expect(calls.map(call => call.dataType)).not.toContain(GAME_NAMES);
+  });
+
+  it('asks the item lookup for the trinkets worn that the list does not describe, judges the log with the answer, and hands it on', async () => {
+    const asked: number[] = [];
+    const { logs } = recording({ Casts: [cast(EVISCERATE, 5)] }, WEARING);
+    const reading = await logs.read(list(['trinket.1.has_use_buff']), { ...pull(), items: lookup(WEB_TABLE, asked) });
+    expect(asked).toEqual([SPYMASTERS_WEB]);
+    expect(reading.casts.get('eviscerate')?.[0]?.verdict).toBe('on');
+    expect(reading.items).toEqual(WEB_TABLE);
+  });
+
+  it('asks for no item when no fact reads gear, or when the list describes the trinket already', async () => {
+    const asked: number[] = [];
+    const { logs } = recording({}, WEARING);
+    await logs.read(list(['buff.shadow_dance.up']), { ...pull(), items: lookup(WEB_TABLE, asked) });
+    await logs.read({ ...list(['trinket.1.has_use_buff']), items: WEB_TABLE.items }, { ...pull(), items: lookup(WEB_TABLE, asked) });
+    expect(asked).toEqual([]);
   });
 
   it('reads an aura up at the pull from the combatant info, since the stream never applies it', async () => {

@@ -58,3 +58,15 @@ export const ANTI_MAGIC_SHELL = 48707;
 
 // WCL quirk: one use of Devastation's Deep Breath logs a second cast under the same id seconds later, after the first one's short aura closes.
 export const DEEP_BREATH = 433874;
+
+// Trinkets: the item, then the spells its rows in SimC's item effects cast; a row's comment names the spell, which Signet of the Priory's use does not share.
+export const SPYMASTERS_WEB = 220202;
+export const SPYMASTERS_WEB_USE = 444959;
+export const SPYMASTERS_WEB_EQUIP = 444958;
+export const SIGNET_OF_THE_PRIORY = 219308;
+export const BOLSTERING_LIGHT = 443531;
+export const SIGNET_EQUIP = 450877;
+export const ALGETHAR_PUZZLE_BOX = 193701;
+export const ALGETHAR_PUZZLE = 383781;
+export const ARAKARA_SACBROOD = 219314;
+export const ARAKARA_SACBROOD_EQUIP = 443541;

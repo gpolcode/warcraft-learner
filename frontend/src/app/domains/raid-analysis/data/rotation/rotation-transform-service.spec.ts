@@ -1,7 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { RotationTransformService, CdSummary } from './rotation-transform-service';
-import { SHADOW_BLADES, BLOODLUST } from '../../../../../testing/spell-ids';
+import { SHADOW_BLADES, BLOODLUST, SPYMASTERS_WEB, SPYMASTERS_WEB_USE } from '../../../../../testing/spell-ids';
 import { cast, applyBuff } from '../../../../../testing/builders/events';
 import { planLoader, planSpell, specPlan } from '../../../../../testing/builders/spec-plan';
 import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
@@ -11,6 +11,9 @@ import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import type { ItemTable } from '../plan/plan.models';
+import { ItemDataService } from '../simc/item-data-service';
+import { TRINKET_SLOTS } from '../gear/gear-extract-service';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -233,6 +236,22 @@ describe('RotationTransformService (live, in-browser)', () => {
     assert(result.ok);
     expect(result.value.per_cd_benchmarks['Shadow Blades']?.median_uses).toBe(1);
     expect(result.value.major_cooldowns[0]).toMatchObject({ duration: SHADOW_BLADES_S, charges: 1 });
+  });
+
+  it('bakes what the item data says of the trinkets the top logs wore into the list, use spells included', async () => {
+    const [TRINKET_SLOT] = TRINKET_SLOTS;
+    const table: ItemTable = {
+      items: { spymasters_web: { id: SPYMASTERS_WEB, name: "Spymaster's Web", use: `item_${SPYMASTERS_WEB}`, use_buff: true, use_damage: null } },
+      spells: { [`item_${SPYMASTERS_WEB}`]: planSpell("Spymaster's Web", [SPYMASTERS_WEB_USE], { cooldown: 20, gcd: 0 }) },
+    };
+    const gear = Array.from({ length: TRINKET_SLOT + 1 }, (_, slot) => (slot === TRINKET_SLOT ? { id: SPYMASTERS_WEB, name: "Spymaster's Web" } : {}));
+    const wearing = { ...wclFake, getCombatantInfo: async () => [{ sourceID: 1, gear }] };
+    const plan = specPlan({ cooldowns: COOLDOWNS, ...LIST, lines: [{ action: 'shadow_blades', terms: ['trinket.1.has_use_buff'] }] });
+    TestBed.configureTestingModule({ providers: [...provideApiFakes({ wcl: wearing, plans: planLoader(plan) }), { provide: ItemDataService, useValue: { items: async () => table } }] });
+    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
+    assert(result.ok);
+    expect(result.value.list.items).toEqual(table.items);
+    expect(result.value.list.spells).toEqual({ ...LIST.spells, ...table.spells });
   });
 
   it('propagates a missing error when the spec\'s plan has neither cooldowns nor a list', async () => {

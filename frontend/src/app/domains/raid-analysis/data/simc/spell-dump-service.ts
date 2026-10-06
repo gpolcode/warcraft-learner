@@ -19,6 +19,10 @@ export interface SpellRecord {
   maxStacks: number;
   /** Each effect's base value, `#1` first. */
   effects: number[];
+  /** Buffs a stat, rating or attack power on use: what SimC's `has_use_buff` reads. */
+  statBuff: boolean;
+  /** Deals damage of its own; a use that only triggers another spell reads as none. */
+  damage: boolean;
   /** Blizzard's own `Major Cooldowns` label. */
   major: boolean;
   /** Blizzard's `Big Defensive` or `External Defensive` attribute. */
@@ -46,6 +50,9 @@ const ENERGIZE = /^#\d+ \(id=\d+\) +: Energize Power \(30\)\n +Base Value: (\d+(
 const SELF_GUARD = /^#\d+ \(id=\d+\) +: Apply Aura \(6\) \| Modify (AoE Damage Taken|Damage Taken|Dodge|Parry)% \(\d+\)\n +Base Value: (-?\d+(?:\.\d+)?) \|[^\n]*Target: Self \(1\)/gm;
 /** Well under Feint's 40% and Divine Protection's 20%, well over the 10% a Colossus Demolish grants in passing. */
 const SELF_GUARD_PCT = 20;
+/** Aura types 29, 99, 124, 137 and 189: stat, attack power, ranged attack power, total stat share and rating. */
+const STAT_BUFF = /: Apply Aura \(6\) \| [^|\n]*\((?:29|99|124|137|189)\)/m;
+const DAMAGE = /: (?:School Damage \(2\)|Apply Aura \(6\) \| Periodic Damage)/m;
 
 @Injectable({ providedIn: 'root' })
 export class SpellDumpService {
@@ -53,9 +60,10 @@ export class SpellDumpService {
     return name.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, '');
   }
 
-  /** SimC commits the dump with Windows line endings, which a `.` stops short of. */
-  readDump(text: string): SpellRecord[] {
-    return text.replace(/\r\n?/g, '\n').split(/^(?=Name {2,}: )/m).flatMap(block => this.record(block) ?? []);
+  /** SimC commits the dump with Windows line endings, which a `.` stops short of; `only` keeps the read of a 15 MB dump to the ids asked for. */
+  readDump(text: string, only?: ReadonlySet<number>): SpellRecord[] {
+    const blocks = text.replace(/\r\n?/g, '\n').split(/^(?=Name {2,}: )/m);
+    return blocks.flatMap(block => (only && !only.has(Number(/\(id=(\d+)\)/.exec(block)?.[1])) ? [] : this.record(block) ?? []));
   }
 
   private record(block: string): SpellRecord | null {
@@ -73,6 +81,8 @@ export class SpellDumpService {
       energize: this.energize(block),
       maxStacks: Number(/^Stacks +: (?:\d+ initial, )?(\d+) maximum/m.exec(block)?.[1] ?? 0),
       effects: this.effects(block),
+      statBuff: STAT_BUFF.test(block),
+      damage: DAMAGE.test(block),
       major: block.includes(': 690: Major Cooldowns'),
       defensive: /(Big|External) Defensive \(\d+\)/.test(block),
       guards: this.guards(block),

@@ -10,7 +10,7 @@ export const UNKNOWN: Range = [-Infinity, Infinity];
 export type Truth = 'true' | 'false' | 'unknown';
 
 /** The `damage` rows carry each hit target's health, so a fact reading target health asks for `damage`. */
-export type FactStream = 'enemyAuras' | 'damage' | 'resources';
+export type FactStream = 'enemyAuras' | 'damage' | 'resources' | 'gear';
 
 /** Time-ordered, so a window is a slice rather than a scan. */
 export type DamageRow = readonly [atS: number, target: string];
@@ -24,6 +24,14 @@ export type ResourceRow = readonly [atS: number, before: number, left: number, m
 export type ResourceChange = readonly [atS: number, amount: number];
 
 export type AddSpan = readonly [startS: number, endS: number];
+
+/** `slot` is the index in WCL's gear array, which is positional. */
+export interface GearPiece {
+  slot: number;
+  id: number;
+  name: string;
+  itemLevel: number;
+}
 
 export interface CastMoment {
   atS: number;
@@ -42,6 +50,7 @@ export interface FactContext {
   begincasts: readonly TimedEvent[];
   /** Picked talent entries and their ranks; null for a log with no talent tree. */
   talents: ReadonlyMap<number, number> | null;
+  gear: readonly GearPiece[];
   /** Every id the list's name holds, or the report names it with where the spell data lacks it, since a cast under any is the same button. */
   castIds: (token: string) => ReadonlySet<number>;
   castTimes: (token: string) => readonly number[];
@@ -65,9 +74,32 @@ export interface FactContext {
   hasteFactors: () => readonly (readonly [atS: number, factor: number])[];
 }
 
+/** The button that summons a pet is named for the pet itself or with one of these. */
+export const SUMMON_PREFIXES = ['', 'summon_', 'invoke_'];
+
+/** `unread` is every name outside the catalog: no reader, stream or situation rule claims it. */
+export type FactKind = 'aura' | 'cooldown' | 'pool' | 'press' | 'fight' | 'build' | 'gear' | 'unread';
+
+export interface FactPath {
+  kind: FactKind;
+  /** The spell, pool, talent or variable the field is read of; the line's own button for a bare field. */
+  subject: string;
+  field: string;
+  target: boolean;
+  /** The number in the name: 2 for `prev_gcd.2.x`, the slot for `trinket.1.x`, 0 for a gear name with no slot, else 1. */
+  n: number;
+}
+
+/** `left` is time left on something up, `away` time until something is back; a flag shows its two states, the rest a number with a unit. */
+export type Frame = 'flag' | 'left' | 'away' | 'count' | 'percent' | 'seconds' | 'amount';
+
+/** `words` are a flag's `on|off` states, a state starting with `=` bringing its own verb, else a label with `{x}` for the subject, `{n}` for its number and `{s}` for its item; `is` derives the field as SimC text or a constant; a row with neither `is` nor a reader is deliberate: its sentence reads, its value says the app does not read it. */
+export type FieldRow = readonly [frame: Frame, words: string, is?: string | number];
+
 export interface FactReader {
-  readonly streams: readonly FactStream[];
-  matches(name: string): boolean;
-  /** `action` is the line's button, which a bare name like `refreshable` or `cast_time` reads. */
-  read(name: string, moment: CastMoment, action: string, ctx: FactContext): Range;
+  readonly kind: FactKind;
+  streams(path: FactPath): readonly FactStream[];
+  /** Whether `read` can ever settle the field, which tells a value the log lacks from one the app does not read. */
+  answers(path: FactPath): boolean;
+  read(path: FactPath, moment: CastMoment, ctx: FactContext): Range;
 }

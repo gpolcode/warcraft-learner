@@ -22,51 +22,53 @@ const truth = (condition: string): Truth => {
 };
 
 describe('ConditionEvalService', () => {
-  it('reads a stated fact against the list\'s number', () => {
-    expect(truth(`time>=${CAST_AT_S}`)).toBe('true');
-    expect(truth(`time>${CAST_AT_S}`)).toBe('false');
-  });
-
-  it('reads a fact no log records as unknown, never as false', () => {
-    expect(truth(SIM_ONLY)).toBe('unknown');
-    expect(truth(`!(${SIM_ONLY})`)).toBe('unknown');
-  });
-
-  it('settles an or on its known branch and an and on its known false term', () => {
-    expect(truth(`time>=${CAST_AT_S}|${SIM_ONLY}`)).toBe('true');
-    expect(truth(`time>${CAST_AT_S}&${SIM_ONLY}`)).toBe('false');
-  });
-
-  it('leaves an or unknown when its known branch fails, and an and when its known term holds', () => {
-    expect(truth(`time>${CAST_AT_S}|${SIM_ONLY}`)).toBe('unknown');
-    expect(truth(`time>=${CAST_AT_S}&${SIM_ONLY}`)).toBe('unknown');
-  });
-
-  it('carries an unknown through arithmetic, but multiplies it by zero to zero', () => {
-    expect(truth(`time+raid_event.movement.in>${CAST_AT_S}`)).toBe('unknown');
-    expect(truth('0*raid_event.movement.in=0')).toBe('true');
-  });
-
-  it('reads SimC\'s own operators: % divides, %% is the remainder, <? takes the larger, >? the smaller', () => {
-    expect(truth('time%2=15')).toBe('true');
-    expect(truth('time%%7=2')).toBe('true');
-    expect(truth('(time<?40)=40')).toBe('true');
-    expect(truth('(time>?40)=30')).toBe('true');
-  });
-
-  it('reads SimC\'s floor and ceil functions over the value, an unknown one staying unknown', () => {
-    expect(truth('floor(time%4)=7')).toBe('true');
-    expect(truth('ceil(time%4)=8')).toBe('true');
-    expect(truth('floor(raid_event.movement.in)>0')).toBe('unknown');
-  });
-
-  it('settles nothing on a division by a value that may be zero', () => {
-    expect(truth('time%raid_event.movement.in>0')).toBe('unknown');
+  it.each<[reads: string, condition: string, truth: Truth]>([
+    ['a stated fact against the list\'s number', `time>=${CAST_AT_S}`, 'true'],
+    ['a stated fact that misses the number', `time>${CAST_AT_S}`, 'false'],
+    ['a fact no log records as unknown, never as false', SIM_ONLY, 'unknown'],
+    ['its negation as unknown too', `!(${SIM_ONLY})`, 'unknown'],
+    ['an or settled on its known branch', `time>=${CAST_AT_S}|${SIM_ONLY}`, 'true'],
+    ['an and settled on its known false term', `time>${CAST_AT_S}&${SIM_ONLY}`, 'false'],
+    ['an or left unknown when its known branch fails', `time>${CAST_AT_S}|${SIM_ONLY}`, 'unknown'],
+    ['an and left unknown when its known term holds', `time>=${CAST_AT_S}&${SIM_ONLY}`, 'unknown'],
+    ['an xor of two known terms', `(time>=${CAST_AT_S})^(time>${CAST_AT_S})`, 'true'],
+    ['an xor of two true terms as false', `time^(time>=${CAST_AT_S})`, 'false'],
+    ['an unknown carried through arithmetic', `time+raid_event.movement.in>${CAST_AT_S}`, 'unknown'],
+    ['an unknown times zero as zero', '0*raid_event.movement.in=0', 'true'],
+    ['% as division', 'time%2=15', 'true'],
+    ['%% as the remainder', 'time%%7=2', 'true'],
+    ['<? as the larger', '(time<?40)=40', 'true'],
+    ['>? as the smaller', '(time>?40)=30', 'true'],
+    ['@ as the absolute value', `@(0-time)=${CAST_AT_S}`, 'true'],
+    ['floor over the value', 'floor(time%4)=7', 'true'],
+    ['ceil over the value', 'ceil(time%4)=8', 'true'],
+    ['floor of an unknown as unknown', 'floor(raid_event.movement.in)>0', 'unknown'],
+    ['a division by a value that may be zero as settling nothing', 'time%raid_event.movement.in>0', 'unknown'],
+  ])('reads %s', (_, condition, expected) => {
+    expect(truth(condition)).toBe(expected);
   });
 
   it('reads any non-zero value as true, a negative one included', () => {
     expect(evaluator.truth([-2, -1])).toBe('true');
     expect(evaluator.truth([0, 0])).toBe('false');
     expect(evaluator.truth([0, 1])).toBe('unknown');
+  });
+
+  it('asks the log for the streams a name\'s kind reads', () => {
+    expect(evaluator.streams('dot.rupture.remains')).toEqual(['enemyAuras', 'damage']);
+    expect(evaluator.streams('buff.shadow_dance.up')).toEqual([]);
+    expect(evaluator.streams('energy.deficit')).toEqual(['resources']);
+    expect(evaluator.streams('action.rupture.in_flight')).toEqual(['damage']);
+    expect(evaluator.streams('prev_gcd.1.rupture')).toEqual([]);
+    expect(evaluator.streams('stealthed.rogue')).toEqual([]);
+  });
+
+  it('tells a name a reader or derivation settles from one the app only phrases', () => {
+    expect(evaluator.reads('buff.shadow_dance.up')).toBe(true);
+    expect(evaluator.reads('dot.rupture.refreshable')).toBe(true);
+    expect(evaluator.reads('in_combat')).toBe(true);
+    expect(evaluator.reads('dot.rupture.ticks_remain')).toBe(false);
+    expect(evaluator.reads('raid_event.movement.in')).toBe(false);
+    expect(evaluator.reads('stealthed.rogue')).toBe(false);
   });
 });
