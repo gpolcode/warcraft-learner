@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UNKNOWN, CastMoment, FactContext, FactReader, FactStream, Range } from '../priority-list.models';
-
-const COOLDOWN = /^(?:cooldown|action)\.(\w+)\.(remains|remains_expected|ready|up|usable|charges|charges_fractional|full_recharge_time|duration|cooldown|max_charges)$/;
-const OWN = /^(charges|charges_fractional|full_recharge_time|cooldown_react|max_charges)$/;
+import { UNKNOWN, CastMoment, FactContext, FactPath, FactReader, FactStream, Range } from '../priority-list.models';
 
 interface Charges {
   charges: number;
@@ -11,13 +8,9 @@ interface Charges {
   full: number;
 }
 
-const ready = (slow: Charges, fast: Charges): Range => (slow.remains === 0 ? [1, 1] : fast.remains > 0 ? [0, 0] : [0, 1]);
-
 /** `slow` is the rebuild at the spell data's recharge, `fast` at the fastest the log shows. */
 const FIELDS: Record<string, ((slow: Charges, fast: Charges) => Range) | undefined> = {
   remains: (slow, fast) => [fast.remains, slow.remains],
-  remains_expected: (slow, fast) => [fast.remains, slow.remains],
-  ready, up: ready, usable: ready, cooldown_react: ready,
   charges: (slow, fast) => [Math.floor(slow.charges), Math.floor(fast.charges)],
   charges_fractional: (slow, fast) => [slow.charges, fast.charges],
   full_recharge_time: (slow, fast) => [fast.full, slow.full],
@@ -25,21 +18,20 @@ const FIELDS: Record<string, ((slow: Charges, fast: Charges) => Range) | undefin
 
 @Injectable({ providedIn: 'root' })
 export class CooldownFacts implements FactReader {
-  readonly streams: FactStream[] = [];
+  readonly kind = 'cooldown';
 
-  matches(name: string): boolean {
-    return COOLDOWN.test(name) || OWN.test(name);
+  streams(): FactStream[] {
+    return [];
   }
 
-  read(name: string, { atS }: CastMoment, action: string, ctx: FactContext): Range {
-    const [, named = action, field = name] = COOLDOWN.exec(name) ?? [];
-    const spell = ctx.list.spells[named];
+  read(path: FactPath, { atS }: CastMoment, ctx: FactContext): Range {
+    const spell = ctx.list.spells[path.subject];
     if (!spell) return UNKNOWN;
-    const casts = ctx.castTimes(named);
+    const casts = ctx.castTimes(path.subject);
     const fastest = this.fastest(casts, spell.charges, spell.cooldown);
-    if (field === 'max_charges') return [spell.charges, spell.charges];
-    if (field === 'duration' || field === 'cooldown') return [fastest, spell.cooldown];
-    return FIELDS[field]?.(this.rebuild(casts, spell.charges, spell.cooldown, atS), this.rebuild(casts, spell.charges, fastest, atS)) ?? UNKNOWN;
+    if (path.field === 'max_charges') return [spell.charges, spell.charges];
+    if (path.field === 'duration') return [fastest, spell.cooldown];
+    return FIELDS[path.field]?.(this.rebuild(casts, spell.charges, spell.cooldown, atS), this.rebuild(casts, spell.charges, fastest, atS)) ?? UNKNOWN;
   }
 
   /** Casts `charges` apart can be no closer than one recharge, however haste and reductions bent it. */

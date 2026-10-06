@@ -63,13 +63,13 @@ describe('ListFindingService rows', () => {
     expect(row?.you).toBe(TWO_THIRDS);
     expect(row?.occurrences.map(occ => [occ.atS, occ.ok])).toEqual([[20, true], [30, false], [40, true]]);
     expect(row?.occurrences[1]).toMatchObject({ result: 'Skipped when due', detail: 'they all held, but you pressed Backstab instead.' });
-    expect(row?.occurrences[1]?.checks).toEqual([{ text: 'At 5+ combo points', truth: 'true', value: '5 combo points', role: 'decisive' }]);
+    expect(row?.occurrences[1]?.checks).toEqual([{ text: 'With 5+ combo points', truth: 'true', value: '5 combo points', role: 'decisive' }]);
   });
 
   it('marks each cast right, wrong or not judged, its line read term by term', () => {
     const row = rowOf(reading([...quarterOff, cast('unjudged', 50)]));
     expect(row?.occurrences.map(occ => [occ.ok, occ.unjudged ?? false])).toEqual([[false, false], [true, false], [true, false], [true, false], [false, true]]);
-    expect(row?.occurrences[0]?.checks).toEqual([{ text: 'At 5+ combo points', truth: 'false', value: '3 combo points', role: 'decisive' }]);
+    expect(row?.occurrences[0]?.checks).toEqual([{ text: 'With 5+ combo points', truth: 'false', value: '3 combo points', role: 'decisive' }]);
   });
 
   it('leaves the casts the log could not settle out of your share', () => {
@@ -196,7 +196,7 @@ describe('ListFindingService condition paths', () => {
 
   it('keeps the list\'s order in an either-or its first option settled', () => {
     const [either] = occurrenceOf(pressed('on', moment(['true', 'true'], ['false', 'true'])))?.checks ?? [];
-    expect(either?.group?.checks[0]?.group?.checks.map(check => check.text)).toEqual(['While Darkest Night is down', 'At under 5 combo points']);
+    expect(either?.group?.checks[0]?.group?.checks.map(check => check.text)).toEqual(['While Darkest Night is down', 'With under 5 combo points']);
   });
 
   it('marks the condition the log cannot read on a cast it could not judge, and fades the option that failed', () => {
@@ -222,7 +222,7 @@ describe('ListFindingService condition groups', () => {
       group: {
         any: true,
         checks: [
-          { text: 'At 5+ combo points', truth: 'false', value: '3 combo points', role: 'decisive' },
+          { text: 'With 5+ combo points', truth: 'false', value: '3 combo points', role: 'decisive' },
           { text: 'While Shadow Dance is up', truth: 'false', value: 'Down', role: 'decisive' },
         ],
       },
@@ -245,7 +245,7 @@ describe('ListFindingService checklist values', () => {
   });
 
   it('shows a negated comparison with its subject\'s count, not as a flag', () => {
-    expect(checks()?.[1]).toEqual({ text: 'At 2 or fewer Shadow Dance stacks', truth: 'false', value: '3 stacks', role: 'decisive' });
+    expect(checks()?.[1]).toEqual({ text: 'With at most 2 Shadow Dance stacks', truth: 'false', value: '3 stacks', role: 'decisive' });
   });
 });
 
@@ -260,11 +260,11 @@ describe('ListFindingService build terms', () => {
   const checksOf = (list: PriorityList, check: CastCheck) => rowOf(reading([check]), withButtons([button()], { list }))?.occurrences[0]?.checks;
 
   it('leaves what the player\'s build alone settles out of every checklist, at any depth', () => {
-    expect(checksOf(built, offCast)?.map(check => check.text)).toEqual(['At 5+ combo points']);
+    expect(checksOf(built, offCast)?.map(check => check.text)).toEqual(['With 5+ combo points']);
   });
 
   it('reads an all-of the build leaves holding one condition as that condition', () => {
-    expect(checksOf(built, offCast)).toEqual([{ text: 'At 5+ combo points', truth: 'false', value: '3 combo points', role: 'decisive' }]);
+    expect(checksOf(built, offCast)).toEqual([{ text: 'With 5+ combo points', truth: 'false', value: '3 combo points', role: 'decisive' }]);
   });
 
   it('keeps an all-of the build leaves holding two conditions as a group', () => {
@@ -275,6 +275,6 @@ describe('ListFindingService build terms', () => {
     };
     const [group] = checksOf(twoLeft, missed) ?? [];
     expect(group?.text).toBe('All of');
-    expect(group?.group?.checks.map(check => check.text)).toEqual(['At 5+ combo points', 'While Shadow Dance is up']);
+    expect(group?.group?.checks.map(check => check.text)).toEqual(['With 5+ combo points', 'While Shadow Dance is up']);
   });
 });

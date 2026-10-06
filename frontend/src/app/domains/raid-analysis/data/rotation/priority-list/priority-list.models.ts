@@ -65,9 +65,29 @@ export interface FactContext {
   hasteFactors: () => readonly (readonly [atS: number, factor: number])[];
 }
 
+/** A `pet.x` is out while the button that summons it lasts, named for the pet itself or with one of these. */
+export const SUMMON_PREFIXES = ['', 'summon_', 'invoke_'];
+
+export type FactKind = 'aura' | 'cooldown' | 'pool' | 'press' | 'fight' | 'build';
+
+/** A name taken apart: `target.dot.rip.remains` is the aura kind, subject `rip`, field `remains`, on the target; `prev_gcd.2.x` carries 2 in `n`. */
+export interface FactPath {
+  kind: FactKind;
+  /** The spell, pool, talent or variable the field is read of; the line's own button for a bare field. */
+  subject: string;
+  field: string;
+  target: boolean;
+  n: number;
+}
+
+/** How a field reads in words and shows as a value: a flag by its two states, the rest by a unit and a label. */
+export type Frame = 'flag' | 'left' | 'away' | 'count' | 'percent' | 'seconds' | 'amount';
+
+/** `is` derives the field from its kind's primitives as SimC text, or states a constant; a row without it is a primitive the kind's reader answers, or, where the reader does not, a declared field whose words read while its value stays unknown. */
+export type FieldRow = readonly [frame: Frame, words: string, is?: string | number];
+
 export interface FactReader {
-  readonly streams: readonly FactStream[];
-  matches(name: string): boolean;
-  /** `action` is the line's button, which a bare name like `refreshable` or `cast_time` reads. */
-  read(name: string, moment: CastMoment, action: string, ctx: FactContext): Range;
+  readonly kind: FactKind;
+  streams(path: FactPath): readonly FactStream[];
+  read(path: FactPath, moment: CastMoment, ctx: FactContext): Range;
 }

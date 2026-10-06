@@ -1,6 +1,6 @@
 ---
 name: warcraft-change
-description: warcraft-learner change contract - what a code change must deliver, end to end. Covers the four change kinds (finding, fact family, feature, page), the conventions no lint rule or type checks (architecture roles, failure handling, UI, testing, e2e), and the verification steps. Load this before writing, changing, or reviewing any code under frontend/src.
+description: warcraft-learner change contract - what a code change must deliver, end to end. Covers the four change kinds (finding, SimC condition, feature, page), the conventions no lint rule or type checks (architecture roles, failure handling, UI, testing, e2e), and the verification steps. Load this before writing, changing, or reviewing any code under frontend/src.
 ---
 
 # warcraft-learner change
@@ -15,9 +15,17 @@ Layer access, the two HTTP chokepoints, method shape, styling syntax, and file n
 
 Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences` populated on the finding (all `wl-finding-occurrences` needs to render the drill-down), message + remedy copy, boundary-paired specs. No bench change means no `INGEST_VERSION` bump.
 
-### New fact family
+### New SimC condition
 
-Deliver: the reader in `data/rotation/priority-list/facts/` implementing `FactReader` - the SimC names it matches, what the log says of each as a range (a point where the log states it, a span where it only bounds it), and the streams it needs - registered in `FACT_READERS` (`data/rotation/priority-list/fact-readers.ts`), its phrases and value units in `list-text-service.ts`, boundary-paired specs. A name no reader matches reads as unknown, so a reader never flags a cast its range does not settle. Bump `INGEST_VERSION`.
+Every name a list tests goes through one grammar (`data/rotation/priority-list/fact-path.ts`: `[target.] head . subject . field`) into one of six kinds, each with a reader in `data/rotation/priority-list/facts/` and a block of rows in `fact-table.ts`. A row is `[frame, words, is?]`: the frame shapes the sentence and the value (`flag`, `left`, `away`, `count`, `percent`, `seconds`, `amount`), the words are a flag's `on|off` states or the sentence's label with `{x}` for the subject, and `is` derives the field as SimC text over the kind's other fields (`refreshable: '!up|remains<duration*0.3'`) or states a constant. Deliver, by what the name needs:
+
+- **A field arithmetic over fields that exist** - one row with its SimC text. No reader code, no spec beyond a row in `fact-table.spec.ts`.
+- **A field the log can answer and no text derives** - the row without `is`, and the primitive in the kind's reader, with boundary-paired rows in that reader's spec.
+- **A field the log cannot answer** - the row without `is` and no reader code: its sentence reads and its value says the log lacks it.
+- **A name of a new kind** - a reader implementing `FactReader`, registered in `condition-eval-service.ts`, a head in the grammar and a block of rows.
+- **A name SimC computes in class code** - a row in `EXPRESSIONS` (`data/simc/spec-plan-service.ts`), as SimC text over names the log answers.
+
+A row the readers do not answer reads as unknown, so a reader never flags a cast its range does not settle. Bump `INGEST_VERSION` only when a reader's values change.
 
 ### New feature
 
