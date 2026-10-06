@@ -3,56 +3,54 @@ import { TestBed } from '@angular/core/testing';
 import { cast } from '../../../../../../../testing/builders/events';
 import { FactCatalogService } from '../fact-catalog-service';
 import { castAt, factContext, priorityList } from '../priority-list-harness';
-import { UNKNOWN } from '../priority-list.models';
+import { Range, UNKNOWN } from '../priority-list.models';
 import { BuildFacts } from './build-facts';
 
 const DEATHSTALKERS_MARK_ENTRY = 117101;
 const POTENT_POWDER_ENTRY = 117102;
 const TWO_RANKS = 2;
-const ANCIENT_ARTS_TIERS = [137064, 137063, 137062];
+const [FIRST_TIER, SECOND_TIER, THIRD_TIER] = [137064, 137063, 137062];
 const THIRD_POINT = 3;
 const CAST_S = 10;
 const list = priorityList({
   talents: {
     'talent.deathstalkers_mark': { name: "Deathstalker's Mark", entries: [DEATHSTALKERS_MARK_ENTRY] },
     'talent.potent_powder': { name: 'Potent Powder', entries: [POTENT_POWDER_ENTRY] },
-    'talent.ancient_arts_3': { name: 'Ancient Arts', entries: ANCIENT_ARTS_TIERS, points: THIRD_POINT },
+    'talent.ancient_arts_3': { name: 'Ancient Arts', entries: [FIRST_TIER, SECOND_TIER, THIRD_TIER], points: THIRD_POINT },
   },
 });
 const build = TestBed.inject(BuildFacts);
 const catalog = TestBed.inject(FactCatalogService);
 
-const read = (name: string, picked: [number, number][] | null, variables?: [string, [number, number]][]) => {
+interface Read {
+  reads: string;
+  name: string;
+  expected: Range;
+  /** Null for a log without a talent tree. */
+  picked: [number, number][] | null;
+  variables?: [string, Range][];
+}
+
+const read = ({ name, picked, variables }: Read): Range => {
   const ctx = factContext(list, { casts: [cast(1, CAST_S)], ...(picked ? { talents: picked } : {}) });
   const moment = { ...castAt(ctx, CAST_S), ...(variables ? { variables: new Map(variables) } : {}) };
   return build.read(catalog.path(name, 'x'), moment, ctx);
 };
 
 describe('BuildFacts', () => {
-  it('reads a picked talent as enabled and an unpicked one as not', () => {
-    expect(read('talent.deathstalkers_mark', [[DEATHSTALKERS_MARK_ENTRY, 1]])).toEqual([1, 1]);
-    expect(read('talent.deathstalkers_mark', [[POTENT_POWDER_ENTRY, 1]])).toEqual([0, 0]);
-  });
-
-  it('reads a talent\'s rank, and a ranked talent as enabled', () => {
-    expect(read('talent.potent_powder.rank', [[POTENT_POWDER_ENTRY, TWO_RANKS]])).toEqual([TWO_RANKS, TWO_RANKS]);
-    expect(read('talent.potent_powder.enabled', [[POTENT_POWDER_ENTRY, TWO_RANKS]])).toEqual([1, 1]);
-  });
-
-  it('counts a tiered node\'s ranks over its tiers against the point its numbered name asks for', () => {
-    const [first = 0, second = 0] = ANCIENT_ARTS_TIERS;
-    expect(read('talent.ancient_arts_3', [[first, 1], [second, TWO_RANKS]])).toEqual([1, 1]);
-    expect(read('talent.ancient_arts_3', [[first, 1], [second, 1]])).toEqual([0, 0]);
-    expect(read('talent.ancient_arts_3.rank', [[first, 1], [second, TWO_RANKS]])).toEqual([THIRD_POINT, THIRD_POINT]);
-  });
-
-  it('reads a talent as unknown for a log without a talent tree, or one the tree does not name', () => {
-    expect(read('talent.deathstalkers_mark', null)).toEqual(UNKNOWN);
-    expect(read('talent.shadowcraft', [[DEATHSTALKERS_MARK_ENTRY, 1]])).toEqual(UNKNOWN);
-  });
-
-  it('reads a variable as the replay left it at the cast, and one the replay never set as unknown', () => {
-    expect(read('variable.pool', [], [['pool', [1, 1]]])).toEqual([1, 1]);
-    expect(read('variable.pool', [])).toEqual(UNKNOWN);
+  it.each<Read>([
+    { reads: 'a picked talent as enabled', name: 'talent.deathstalkers_mark', picked: [[DEATHSTALKERS_MARK_ENTRY, 1]], expected: [1, 1] },
+    { reads: 'an unpicked talent as not enabled', name: 'talent.deathstalkers_mark', picked: [[POTENT_POWDER_ENTRY, 1]], expected: [0, 0] },
+    { reads: 'a talent\'s rank', name: 'talent.potent_powder.rank', picked: [[POTENT_POWDER_ENTRY, TWO_RANKS]], expected: [TWO_RANKS, TWO_RANKS] },
+    { reads: 'a ranked talent as enabled', name: 'talent.potent_powder.enabled', picked: [[POTENT_POWDER_ENTRY, TWO_RANKS]], expected: [1, 1] },
+    { reads: 'a tiered node\'s ranks over its tiers as reaching the point its numbered name asks for', name: 'talent.ancient_arts_3', picked: [[FIRST_TIER, 1], [SECOND_TIER, TWO_RANKS]], expected: [1, 1] },
+    { reads: 'one rank short of that point as not reaching it', name: 'talent.ancient_arts_3', picked: [[FIRST_TIER, 1], [SECOND_TIER, 1]], expected: [0, 0] },
+    { reads: 'the tiered node\'s rank over its tiers', name: 'talent.ancient_arts_3.rank', picked: [[FIRST_TIER, 1], [SECOND_TIER, TWO_RANKS]], expected: [THIRD_POINT, THIRD_POINT] },
+    { reads: 'a talent as unknown for a log without a talent tree', name: 'talent.deathstalkers_mark', picked: null, expected: UNKNOWN },
+    { reads: 'a talent the tree does not name as unknown', name: 'talent.shadowcraft', picked: [[DEATHSTALKERS_MARK_ENTRY, 1]], expected: UNKNOWN },
+    { reads: 'a variable as the replay left it at the cast', name: 'variable.pool', picked: [], variables: [['pool', [1, 1]]], expected: [1, 1] },
+    { reads: 'a variable the replay never set as unknown', name: 'variable.pool', picked: [], expected: UNKNOWN },
+  ])('reads $reads', row => {
+    expect(read(row)).toEqual(row.expected);
   });
 });

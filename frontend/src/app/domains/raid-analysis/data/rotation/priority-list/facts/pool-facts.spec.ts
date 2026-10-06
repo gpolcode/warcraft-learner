@@ -5,7 +5,7 @@ import { planSpell } from '../../../../../../../testing/builders/spec-plan';
 import type { WclEvent } from '../../../wcl/wcl.models';
 import { FactCatalogService } from '../fact-catalog-service';
 import { castAt, factContext, priorityList } from '../priority-list-harness';
-import { UNKNOWN } from '../priority-list.models';
+import { Range, UNKNOWN } from '../priority-list.models';
 import { PoolFacts } from './pool-facts';
 
 const RAGE = 1;
@@ -28,60 +28,48 @@ const spells = priorityList({
   },
 });
 
-const read = (name: string, events: { casts: WclEvent[]; changes?: WclEvent[] }, atS: number) => {
-  const ctx = factContext(priorityList(), { casts: events.casts, resources: events.changes ?? [] });
-  return pools.read(catalog.path(name, 'x'), castAt(ctx, atS), ctx);
-};
-const stated = (name: string, action: string) => {
-  const ctx = factContext(spells, { casts: [cast(PROBE, 4)] });
-  return pools.read(catalog.path(name, action), castAt(ctx, 4), ctx);
+interface Read {
+  reads: string;
+  name: string;
+  casts: WclEvent[];
+  atS: number;
+  expected: Range;
+  changes?: WclEvent[];
+  action?: string;
+}
+
+const read = ({ name, casts, changes = [], atS, action = 'x' }: Read): Range => {
+  const ctx = factContext(spells, { casts, resources: changes });
+  return pools.read(catalog.path(name, action), castAt(ctx, atS), ctx);
 };
 const spend = (atS: number, cp: number, cost: number) => cast(1, atS, { resources: [{ type: COMBO_POINTS, amount: cp, max: MAX_CP, cost }] });
 const energy = (atS: number, amount: number) => cast(1, atS, { resources: [{ type: ENERGY, amount, max: 100 }] });
 
 describe('PoolFacts', () => {
-  it('reads the pool a cast reports before its cost, in the game\'s units, and what it lacks of the cap', () => {
-    const rage = cast(1, 5, { resources: [{ type: RAGE, amount: 800, max: 1300 }] });
-    expect(read('rage', { casts: [rage] }, 5)).toEqual([800 / RAGE_TENTHS, 800 / RAGE_TENTHS]);
-    expect(read('rage.deficit', { casts: [rage] }, 5)).toEqual([50, 50]);
-    expect(read('rage.pct', { casts: [rage] }, 5)).toEqual([800 / 13, 800 / 13]);
-  });
+  const rage = [cast(1, 5, { resources: [{ type: RAGE, amount: 800, max: 1300 }] })];
+  const between = [spend(1, 5, 5), cast(PROBE, 4), spend(9, 2, 2)];
+  const gains = [resourceChange(COMBO_POINTS, 2, 1, { max: MAX_CP }), resourceChange(COMBO_POINTS, 3, 1, { max: MAX_CP })];
+  const capped = [spend(1, MAX_CP, 0), cast(PROBE, 4), spend(9, MAX_CP, MAX_CP)];
+  const regen = [energy(0, 50), energy(10, 70)];
+  const probe = [cast(PROBE, 4)];
 
-  it('rebuilds a pool the cast does not report from what the last cast left and the gains since', () => {
-    const casts = [spend(1, 5, 5), cast(PROBE, 4), spend(9, 2, 2)];
-    const changes = [resourceChange(COMBO_POINTS, 2, 1, { max: MAX_CP }), resourceChange(COMBO_POINTS, 3, 1, { max: MAX_CP })];
-    expect(read('combo_points', { casts, changes }, 4)).toEqual([2, 2]);
-  });
-
-  it('counts a gain only up to the cap', () => {
-    const casts = [spend(1, MAX_CP, 0), cast(PROBE, 4), spend(9, MAX_CP, MAX_CP)];
-    const changes = [resourceChange(COMBO_POINTS, 2, 2, { max: MAX_CP, waste: 2 })];
-    expect(read('combo_points', { casts, changes }, 4)).toEqual([MAX_CP, MAX_CP]);
-  });
-
-  it('reads cp_max_spend as the combo point cap', () => {
-    expect(read('cp_max_spend', { casts: [spend(1, 5, 5)] }, 1)).toEqual([MAX_CP, MAX_CP]);
-  });
-
-  it('reads the regen since the last cast that reported the pool, and the time to full at that rate', () => {
-    const casts = [energy(0, 50), energy(10, 70)];
-    expect(read('energy.regen', { casts }, 10)).toEqual([2, 2]);
-    expect(read('energy.time_to_max', { casts }, 10)).toEqual([15, 15]);
-    expect(read('energy.regen', { casts }, 0)).toEqual(UNKNOWN);
-  });
-
-  it('reads a button\'s listed cost, the line\'s own or a named one\'s, and unknown for a button without spell data', () => {
-    expect(stated('cost', 'soul_cleave')).toEqual([SOUL_CLEAVE_FURY, SOUL_CLEAVE_FURY]);
-    expect(stated('action.soul_cleave.cost', 'x')).toEqual([SOUL_CLEAVE_FURY, SOUL_CLEAVE_FURY]);
-    expect(stated('cost', 'x')).toEqual(UNKNOWN);
-  });
-
-  it('reads what the line\'s button gives back from its spell data', () => {
-    expect(stated('energize_amount', 'new_moon')).toEqual([NEW_MOON_ASTRAL, NEW_MOON_ASTRAL]);
-    expect(stated('energize_amount', 'soul_cleave')).toEqual(UNKNOWN);
-  });
-
-  it('reads a pool no cast reports as unknown', () => {
-    expect(read('energy', { casts: [cast(PROBE, 4)] }, 4)).toEqual(UNKNOWN);
+  it.each<Read>([
+    { reads: 'the pool a cast reports before its cost, in the game\'s units', name: 'rage', casts: rage, atS: 5, expected: [800 / RAGE_TENTHS, 800 / RAGE_TENTHS] },
+    { reads: 'what the pool lacks of its cap', name: 'rage.deficit', casts: rage, atS: 5, expected: [50, 50] },
+    { reads: 'the pool as a share of its cap', name: 'rage.pct', casts: rage, atS: 5, expected: [800 / 13, 800 / 13] },
+    { reads: 'a pool the cast does not report from what the last cast left and the gains since', name: 'combo_points', casts: between, changes: gains, atS: 4, expected: [2, 2] },
+    { reads: 'a gain only up to the cap', name: 'combo_points', casts: capped, changes: [resourceChange(COMBO_POINTS, 2, 2, { max: MAX_CP, waste: 2 })], atS: 4, expected: [MAX_CP, MAX_CP] },
+    { reads: 'cp_max_spend as the combo point cap', name: 'cp_max_spend', casts: [spend(1, 5, 5)], atS: 1, expected: [MAX_CP, MAX_CP] },
+    { reads: 'the regen since the last cast that reported the pool', name: 'energy.regen', casts: regen, atS: 10, expected: [2, 2] },
+    { reads: 'the time to full at that rate', name: 'energy.time_to_max', casts: regen, atS: 10, expected: [15, 15] },
+    { reads: 'regen as unknown on the first cast to report the pool', name: 'energy.regen', casts: regen, atS: 0, expected: UNKNOWN },
+    { reads: 'the line\'s own button\'s listed cost', name: 'cost', casts: probe, atS: 4, expected: [SOUL_CLEAVE_FURY, SOUL_CLEAVE_FURY], action: 'soul_cleave' },
+    { reads: 'a named button\'s listed cost', name: 'action.soul_cleave.cost', casts: probe, atS: 4, expected: [SOUL_CLEAVE_FURY, SOUL_CLEAVE_FURY] },
+    { reads: 'the cost of a button without spell data as unknown', name: 'cost', casts: probe, atS: 4, expected: UNKNOWN },
+    { reads: 'what the line\'s button gives back from its spell data', name: 'energize_amount', casts: probe, atS: 4, expected: [NEW_MOON_ASTRAL, NEW_MOON_ASTRAL], action: 'new_moon' },
+    { reads: 'nothing given back as unknown', name: 'energize_amount', casts: probe, atS: 4, expected: UNKNOWN, action: 'soul_cleave' },
+    { reads: 'a pool no cast reports as unknown', name: 'energy', casts: probe, atS: 4, expected: UNKNOWN },
+  ])('reads $reads', row => {
+    expect(read(row)).toEqual(row.expected);
   });
 });

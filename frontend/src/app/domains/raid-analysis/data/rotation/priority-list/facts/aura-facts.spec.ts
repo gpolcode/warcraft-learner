@@ -6,7 +6,7 @@ import { DARKEST_NIGHT, DEATHMARK, MAELSTROM_WEAPON, RUPTURE, SHADOW_DANCE } fro
 import type { WclEvent } from '../../../wcl/wcl.models';
 import { FactCatalogService } from '../fact-catalog-service';
 import { castAt, factContext, priorityList } from '../priority-list-harness';
-import { UNKNOWN } from '../priority-list.models';
+import { Range, UNKNOWN } from '../priority-list.models';
 import { AuraFacts } from './aura-facts';
 
 const DANCE_S = 8;
@@ -22,9 +22,12 @@ const MACRO_GAP_S = 0.018;
 const BOSS = 1;
 const ADD = 2;
 const BOSS_KEY = `${BOSS}:0`;
+const ADD_KEY = `${ADD}:0`;
 const DARKEST_NIGHT_ENTRY = 117739;
 const DEATHMARK_ENTRY = 112662;
 const OTHER_ENTRY = 117101;
+const UP: Range = [1, 1];
+const DOWN: Range = [0, 0];
 const list = priorityList({
   spells: {
     shadow_dance: planSpell('Shadow Dance', [SHADOW_DANCE], { duration: DANCE_S }),
@@ -42,134 +45,87 @@ const list = priorityList({
 const auras = TestBed.inject(AuraFacts);
 const catalog = TestBed.inject(FactCatalogService);
 
-const readBuff = (name: string, buffs: WclEvent[], atS: number, talents?: [number, number][]) => {
-  const ctx = factContext(list, { casts: [cast(1, atS)], buffs, ...(talents ? { talents } : {}) });
-  return auras.read(catalog.path(name, 'x'), castAt(ctx, atS), ctx);
-};
-const readDot = (name: string, debuffs: WclEvent[], atS: number, target: string | null = BOSS_KEY, talents?: [number, number][]) => {
-  const ctx = factContext(list, { casts: [cast(1, atS)], debuffs, ...(talents ? { talents } : {}) });
-  return auras.read(catalog.path(name, 'rupture'), castAt(ctx, atS, target), ctx);
+interface Read {
+  reads: string;
+  name: string;
+  events: WclEvent[];
+  atS: number;
+  expected: Range;
+  /** The cast's target, for a dot; null for a cast at no known enemy. */
+  target?: string | null;
+  talents?: [number, number][];
+}
+
+const read = ({ name, events, atS, target, talents }: Read, on: 'buffs' | 'debuffs', action: string): Range => {
+  const ctx = factContext(list, { casts: [cast(1, atS)], [on]: events, ...(talents ? { talents } : {}) });
+  return auras.read(catalog.path(name, action), castAt(ctx, atS, on === 'debuffs' && target === undefined ? BOSS_KEY : target ?? null), ctx);
 };
 
 describe('AuraFacts buffs', () => {
   const dance = [applyBuff(SHADOW_DANCE, 10), removeBuff(SHADOW_DANCE, 10 + DANCE_S)];
+  const consumed = [applyBuff(SHADOW_DANCE, 10), removeBuff(SHADOW_DANCE, 13)];
+  const stacked = [applyBuff(MAELSTROM_WEAPON, 1), applyBuffStack(MAELSTROM_WEAPON, 2, MAX_STACKS)];
+  const untaken: [number, number][] = [[OTHER_ENTRY, 1]];
 
-  it('reads a buff up going into the cast, the removal second included', () => {
-    expect(readBuff('buff.shadow_dance.up', dance, 10 + DANCE_S)).toEqual([1, 1]);
-    expect(readBuff('buff.shadow_dance.down', dance, 10 + DANCE_S)).toEqual([0, 0]);
-  });
-
-  it('reads a buff whose first event is its removal as up from the pull until that removal', () => {
-    const upAtPull = [removeBuff(SHADOW_DANCE, DANCE_S)];
-    expect(readBuff('buff.shadow_dance.up', upAtPull, DANCE_S - 1)).toEqual([1, 1]);
-    expect(readBuff('buff.shadow_dance.up', upAtPull, DANCE_S + 1)).toEqual([0, 0]);
-  });
-
-  it('reads a buff the cast itself applies as not yet up, even one the log stamps just ahead of the cast', () => {
-    expect(readBuff('buff.shadow_dance.up', dance, 10)).toEqual([0, 0]);
-    expect(readBuff('buff.shadow_dance.up', [applyBuff(SHADOW_DANCE, 10 - OWN_EFFECT_LEAD_S)], 10)).toEqual([0, 0]);
-  });
-
-  it('reads a buff the log drops just ahead of the cast that consumes it as still up', () => {
-    expect(readBuff('buff.shadow_dance.up', [applyBuff(SHADOW_DANCE, 1), removeBuff(SHADOW_DANCE, 10 - CONSUMED_LEAD_S)], 10)).toEqual([1, 1]);
+  it.each<Read>([
+    { reads: 'a buff up going into the cast, the removal second included', name: 'buff.shadow_dance.up', events: dance, atS: 10 + DANCE_S, expected: UP },
+    { reads: 'the same buff as not down', name: 'buff.shadow_dance.down', events: dance, atS: 10 + DANCE_S, expected: DOWN },
+    { reads: 'a buff whose first event is its removal as up from the pull', name: 'buff.shadow_dance.up', events: [removeBuff(SHADOW_DANCE, DANCE_S)], atS: DANCE_S - 1, expected: UP },
+    { reads: 'that buff as down after the removal', name: 'buff.shadow_dance.up', events: [removeBuff(SHADOW_DANCE, DANCE_S)], atS: DANCE_S + 1, expected: DOWN },
+    { reads: 'a buff the cast itself applies as not yet up', name: 'buff.shadow_dance.up', events: dance, atS: 10, expected: DOWN },
+    { reads: 'a buff the log stamps just ahead of the cast that applies it as not yet up', name: 'buff.shadow_dance.up', events: [applyBuff(SHADOW_DANCE, 10 - OWN_EFFECT_LEAD_S)], atS: 10, expected: DOWN },
+    { reads: 'a buff the log drops just ahead of the cast that consumes it as still up', name: 'buff.shadow_dance.up', events: [applyBuff(SHADOW_DANCE, 1), removeBuff(SHADOW_DANCE, 10 - CONSUMED_LEAD_S)], atS: 10, expected: UP },
+    { reads: 'the time left from the log where the buff ran its course', name: 'buff.shadow_dance.remains', events: dance, atS: 12, expected: [DANCE_S - 2, DANCE_S - 2] },
+    { reads: 'the time left of a buff consumed early as spanning its drop and its due end', name: 'buff.shadow_dance.remains', events: consumed, atS: 12, expected: [1, DANCE_S - 2] },
+    { reads: 'how long the buff has been up', name: 'buff.shadow_dance.elapsed', events: dance, atS: 12, expected: [2, 2] },
+    { reads: 'how long since the buff last triggered', name: 'buff.shadow_dance.last_trigger', events: dance, atS: 12, expected: [2, 2] },
+    { reads: 'how long since the buff last dropped', name: 'buff.shadow_dance.last_expire', events: dance, atS: 10 + DANCE_S + 5, expected: [5, 5] },
+    { reads: 'a drop still to come as unknown', name: 'buff.shadow_dance.last_expire', events: dance, atS: 12, expected: UNKNOWN },
+    { reads: 'a buff\'s stacks', name: 'buff.maelstrom_weapon.stack', events: stacked, atS: 3, expected: [MAX_STACKS, MAX_STACKS] },
+    { reads: 'stacks at the cap as at max', name: 'buff.maelstrom_weapon.at_max_stacks', events: stacked, atS: 3, expected: UP },
+    { reads: 'stacks under the cap as not at max', name: 'buff.maelstrom_weapon.at_max_stacks', events: stacked.slice(0, 1), atS: 3, expected: DOWN },
+    { reads: 'the spell data\'s duration, logged aura or not', name: 'buff.shadow_dance.duration', events: [], atS: 1, expected: [DANCE_S, DANCE_S] },
+    { reads: 'the spell data\'s stack cap, logged aura or not', name: 'buff.maelstrom_weapon.max_stack', events: [], atS: 1, expected: [MAX_STACKS, MAX_STACKS] },
+    { reads: 'a buff the log never shows as unknown, since SimC tracks some no game aura backs', name: 'buff.roll_the_bones.up', events: dance, atS: 12, expected: UNKNOWN },
+    { reads: 'a buff the log never shows as down when only a talent the player did not take grants it', name: 'buff.darkest_night.up', events: [], atS: 12, expected: DOWN, talents: untaken },
+    { reads: 'that buff\'s down as holding', name: 'buff.darkest_night.down', events: [], atS: 12, expected: UP, talents: untaken },
+    { reads: 'that buff as unknown when the player took the talent', name: 'buff.darkest_night.up', events: [], atS: 12, expected: UNKNOWN, talents: [[DARKEST_NIGHT_ENTRY, 1]] },
+    { reads: 'that buff as unknown when the log carries no talents', name: 'buff.darkest_night.up', events: [], atS: 12, expected: UNKNOWN },
+    { reads: 'a buff the spell data does not name as unknown', name: 'buff.hidden_opportunity.up', events: dance, atS: 12, expected: UNKNOWN },
+    { reads: 'a field no log answers as unknown', name: 'buff.shadow_dance.value', events: dance, atS: 12, expected: UNKNOWN },
+  ])('reads $reads', row => {
+    expect(read(row, 'buffs', 'x')).toEqual(row.expected);
   });
 
   it('reads a buff an earlier press applied just ahead of the cast as up, since that press came first', () => {
     const ctx = factContext(list, { casts: [cast(2, 10 - MACRO_GAP_S), cast(1, 10)], buffs: [applyBuff(SHADOW_DANCE, 10 - MACRO_GAP_S)] });
-    expect(auras.read(catalog.path('buff.shadow_dance.up', 'x'), castAt(ctx, 10), ctx)).toEqual([1, 1]);
-  });
-
-  it('reads the time left from the log where the buff ran its course, and as a span where it was consumed early', () => {
-    expect(readBuff('buff.shadow_dance.remains', dance, 12)).toEqual([DANCE_S - 2, DANCE_S - 2]);
-    expect(readBuff('buff.shadow_dance.remains', [applyBuff(SHADOW_DANCE, 10), removeBuff(SHADOW_DANCE, 13)], 12)).toEqual([1, DANCE_S - 2]);
-  });
-
-  it('reads how long the buff has been up and how long since it last triggered or dropped', () => {
-    expect(readBuff('buff.shadow_dance.elapsed', dance, 12)).toEqual([2, 2]);
-    expect(readBuff('buff.shadow_dance.last_trigger', dance, 12)).toEqual([2, 2]);
-    expect(readBuff('buff.shadow_dance.last_expire', dance, 10 + DANCE_S + 5)).toEqual([5, 5]);
-    expect(readBuff('buff.shadow_dance.last_expire', dance, 12)).toEqual(UNKNOWN);
-  });
-
-  it('reads a buff\'s stacks, and whether they sit at the cap', () => {
-    const stacked = [applyBuff(MAELSTROM_WEAPON, 1), applyBuffStack(MAELSTROM_WEAPON, 2, MAX_STACKS)];
-    expect(readBuff('buff.maelstrom_weapon.stack', stacked, 3)).toEqual([MAX_STACKS, MAX_STACKS]);
-    expect(readBuff('buff.maelstrom_weapon.at_max_stacks', stacked, 3)).toEqual([1, 1]);
-    expect(readBuff('buff.maelstrom_weapon.at_max_stacks', stacked.slice(0, 1), 3)).toEqual([0, 0]);
-  });
-
-  it('reads the spell data\'s duration and stack cap, logged aura or not', () => {
-    expect(readBuff('buff.shadow_dance.duration', [], 1)).toEqual([DANCE_S, DANCE_S]);
-    expect(readBuff('buff.maelstrom_weapon.max_stack', [], 1)).toEqual([MAX_STACKS, MAX_STACKS]);
-  });
-
-  it('reads a buff the log never shows as unknown, since SimC tracks some no game aura backs', () => {
-    expect(readBuff('buff.roll_the_bones.up', dance, 12)).toEqual(UNKNOWN);
-  });
-
-  it('reads a buff the log never shows as down when only a talent the player did not take grants it', () => {
-    expect(readBuff('buff.darkest_night.up', [], 12, [[OTHER_ENTRY, 1]])).toEqual([0, 0]);
-    expect(readBuff('buff.darkest_night.down', [], 12, [[OTHER_ENTRY, 1]])).toEqual([1, 1]);
-  });
-
-  it('reads that buff as unknown when the player took the talent, or the log carries no talents', () => {
-    expect(readBuff('buff.darkest_night.up', [], 12, [[DARKEST_NIGHT_ENTRY, 1]])).toEqual(UNKNOWN);
-    expect(readBuff('buff.darkest_night.up', [], 12)).toEqual(UNKNOWN);
-  });
-
-  it('reads a buff the spell data does not name as unknown, and a field no log answers as unknown', () => {
-    expect(readBuff('buff.hidden_opportunity.up', dance, 12)).toEqual(UNKNOWN);
-    expect(readBuff('buff.shadow_dance.value', dance, 12)).toEqual(UNKNOWN);
+    expect(auras.read(catalog.path('buff.shadow_dance.up', 'x'), castAt(ctx, 10), ctx)).toEqual(UP);
   });
 });
 
 describe('AuraFacts dots', () => {
   const onBoss = [applyDebuff(RUPTURE, 0, { target: BOSS }), removeDebuff(RUPTURE, RUPTURE_S, { target: BOSS })];
+  const refreshed = [applyDebuff(RUPTURE, 0, { target: BOSS }), refreshDebuff(RUPTURE, 10, { target: BOSS }), removeDebuff(RUPTURE, 10 + RUPTURE_S, { target: BOSS })];
+  const spread = [...onBoss, applyDebuff(RUPTURE, 1, { target: ADD })];
+  const untaken: [number, number][] = [[OTHER_ENTRY, 1]];
 
-  it('reads a dot ticking on the cast\'s target, and not on another enemy', () => {
-    expect(readDot('dot.rupture.ticking', onBoss, 5)).toEqual([1, 1]);
-    expect(readDot('dot.rupture.ticking', onBoss, 5, `${ADD}:0`)).toEqual([0, 0]);
-  });
-
-  it('reads a dot as refreshable inside its last 30%, and not at the window\'s edge', () => {
-    expect(readDot('refreshable', onBoss, RUPTURE_S - PANDEMIC_S + 0.1)).toEqual([1, 1]);
-    expect(readDot('refreshable', onBoss, RUPTURE_S - PANDEMIC_S)).toEqual([0, 0]);
-  });
-
-  it('reads a missing dot as refreshable', () => {
-    expect(readDot('dot.rupture.refreshable', onBoss, RUPTURE_S + 1)).toEqual([1, 1]);
-  });
-
-  it('reads the time left through a refresh to the final drop', () => {
-    const refreshed = [applyDebuff(RUPTURE, 0, { target: BOSS }), refreshDebuff(RUPTURE, 10, { target: BOSS }), removeDebuff(RUPTURE, 10 + RUPTURE_S, { target: BOSS })];
-    expect(readDot('dot.rupture.remains', refreshed, 15)).toEqual([RUPTURE_S - 5, RUPTURE_S - 5]);
-  });
-
-  it('counts the enemies the dot is on, under either spelling SimC reads', () => {
-    const spread = [...onBoss, applyDebuff(RUPTURE, 1, { target: ADD })];
-    expect(readDot('active_dot.rupture', spread, 5, null)).toEqual([2, 2]);
-    expect(readDot('active_dots.rupture', spread, 5, null)).toEqual([2, 2]);
-  });
-
-  it('reads a per-target fact as unknown when the cast aims at no known enemy', () => {
-    expect(readDot('dot.rupture.ticking', onBoss, 5, null)).toEqual(UNKNOWN);
-  });
-
-  it('reads a dot the log never shows as unknown', () => {
-    expect(readDot('dot.rupture.ticking', [], 5)).toEqual(UNKNOWN);
-  });
-
-  it('reads a dot the log never shows as off when only a talent the player did not take grants it', () => {
-    expect(readDot('dot.deathmark.ticking', [], 5, BOSS_KEY, [[OTHER_ENTRY, 1]])).toEqual([0, 0]);
-    expect(readDot('dot.deathmark.refreshable', [], 5, BOSS_KEY, [[OTHER_ENTRY, 1]])).toEqual([1, 1]);
-  });
-
-  it('reads that dot as unknown when the player took the talent', () => {
-    expect(readDot('dot.deathmark.ticking', [], 5, BOSS_KEY, [[DEATHMARK_ENTRY, 1]])).toEqual(UNKNOWN);
-  });
-
-  it('reads the ticks and snapshot a log never carries as unknown', () => {
-    expect(readDot('dot.rupture.ticks_remain', onBoss, 5)).toEqual(UNKNOWN);
-    expect(readDot('dot.rupture.pmultiplier', onBoss, 5)).toEqual(UNKNOWN);
+  it.each<Read>([
+    { reads: 'a dot ticking on the cast\'s target', name: 'dot.rupture.ticking', events: onBoss, atS: 5, expected: UP },
+    { reads: 'a dot as not ticking on another enemy', name: 'dot.rupture.ticking', events: onBoss, atS: 5, expected: DOWN, target: ADD_KEY },
+    { reads: 'a dot as refreshable inside its last 30%, under the line\'s own button\'s bare name', name: 'refreshable', events: onBoss, atS: RUPTURE_S - PANDEMIC_S + 0.1, expected: UP },
+    { reads: 'a dot as not refreshable at the window\'s edge', name: 'refreshable', events: onBoss, atS: RUPTURE_S - PANDEMIC_S, expected: DOWN },
+    { reads: 'a missing dot as refreshable', name: 'dot.rupture.refreshable', events: onBoss, atS: RUPTURE_S + 1, expected: UP },
+    { reads: 'the time left through a refresh to the final drop', name: 'dot.rupture.remains', events: refreshed, atS: 15, expected: [RUPTURE_S - 5, RUPTURE_S - 5] },
+    { reads: 'the enemies the dot is on', name: 'active_dot.rupture', events: spread, atS: 5, expected: [2, 2], target: null },
+    { reads: 'the enemies the dot is on under SimC\'s other spelling', name: 'active_dots.rupture', events: spread, atS: 5, expected: [2, 2], target: null },
+    { reads: 'a per-target fact as unknown when the cast aims at no known enemy', name: 'dot.rupture.ticking', events: onBoss, atS: 5, expected: UNKNOWN, target: null },
+    { reads: 'a dot the log never shows as unknown', name: 'dot.rupture.ticking', events: [], atS: 5, expected: UNKNOWN },
+    { reads: 'a dot the log never shows as off when only a talent the player did not take grants it', name: 'dot.deathmark.ticking', events: [], atS: 5, expected: DOWN, talents: untaken },
+    { reads: 'that dot as refreshable', name: 'dot.deathmark.refreshable', events: [], atS: 5, expected: UP, talents: untaken },
+    { reads: 'that dot as unknown when the player took the talent', name: 'dot.deathmark.ticking', events: [], atS: 5, expected: UNKNOWN, talents: [[DEATHMARK_ENTRY, 1]] },
+    { reads: 'the ticks a log never carries as unknown', name: 'dot.rupture.ticks_remain', events: onBoss, atS: 5, expected: UNKNOWN },
+    { reads: 'the snapshot a log never carries as unknown', name: 'dot.rupture.pmultiplier', events: onBoss, atS: 5, expected: UNKNOWN },
+  ])('reads $reads', row => {
+    expect(read(row, 'debuffs', 'rupture')).toEqual(row.expected);
   });
 });
