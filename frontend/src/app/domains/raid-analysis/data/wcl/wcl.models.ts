@@ -91,6 +91,7 @@ export type TopParseSelection = ParseRanking[];
 export interface WclGearItem {
   id?: number | string;
   name?: string;
+  itemLevel?: number;
   icon?: string;
   permanentEnchant?: number | string;
   permanentEnchantName?: string;

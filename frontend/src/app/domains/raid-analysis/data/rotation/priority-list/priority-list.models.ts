@@ -10,7 +10,7 @@ export const UNKNOWN: Range = [-Infinity, Infinity];
 export type Truth = 'true' | 'false' | 'unknown';
 
 /** The `damage` rows carry each hit target's health, so a fact reading target health asks for `damage`. */
-export type FactStream = 'enemyAuras' | 'damage' | 'resources';
+export type FactStream = 'enemyAuras' | 'damage' | 'resources' | 'gear';
 
 /** Time-ordered, so a window is a slice rather than a scan. */
 export type DamageRow = readonly [atS: number, target: string];
@@ -24,6 +24,14 @@ export type ResourceRow = readonly [atS: number, before: number, left: number, m
 export type ResourceChange = readonly [atS: number, amount: number];
 
 export type AddSpan = readonly [startS: number, endS: number];
+
+/** One item the combatant info shows worn, its slot the gear array's index. */
+export interface GearPiece {
+  slot: number;
+  id: number;
+  name: string;
+  itemLevel: number;
+}
 
 export interface CastMoment {
   atS: number;
@@ -42,6 +50,7 @@ export interface FactContext {
   begincasts: readonly TimedEvent[];
   /** Picked talent entries and their ranks; null for a log with no talent tree. */
   talents: ReadonlyMap<number, number> | null;
+  gear: readonly GearPiece[];
   /** Every id the list's name holds, or the report names it with where the spell data lacks it, since a cast under any is the same button. */
   castIds: (token: string) => ReadonlySet<number>;
   castTimes: (token: string) => readonly number[];
@@ -68,7 +77,7 @@ export interface FactContext {
 /** A `pet.x` is out while the button that summons it lasts, named for the pet itself or with one of these. */
 export const SUMMON_PREFIXES = ['', 'summon_', 'invoke_'];
 
-export type FactKind = 'aura' | 'cooldown' | 'pool' | 'press' | 'fight' | 'build';
+export type FactKind = 'aura' | 'cooldown' | 'pool' | 'press' | 'fight' | 'build' | 'gear';
 
 /** A name taken apart: `target.dot.rip.remains` is the aura kind, subject `rip`, field `remains`, on the target; `prev_gcd.2.x` carries 2 in `n`. */
 export interface FactPath {

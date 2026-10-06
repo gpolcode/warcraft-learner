@@ -14,6 +14,11 @@ const aura = (target: boolean): Head => ([subject = '', ...field]) => ({ kind: '
 const spread: Head = ([subject = '']) => ({ kind: 'aura', subject, field: 'active_dots', target: true });
 const press = (field: string): Head => ([subject = '']) => ({ kind: 'press', subject, field });
 const build = (head: string): Head => ([token = '', field = 'enabled']) => ({ kind: 'build', subject: `${head}.${token}`, field, n: Number(token) || 1 });
+/** Fields about an item or a stat of the trinket (`is.x`, `has_buff.haste`, `proc.any_dps.duration`) take it as the subject; `n` is the slot, 0 for none. */
+const ARGS = new Set(['is', 'has_buff', 'has_stat', 'proc', 'buff']);
+const gear = (n: number, subject: string, [field = '', ...rest]: string[]): ReturnType<Head> =>
+  (ARGS.has(field) ? { kind: 'gear', n, subject: rest[0] ?? '', field: rest.length > 1 ? `${field}.${rest[rest.length - 1]}` : field } : { kind: 'gear', n, subject, field: [field, ...rest].join('.') });
+const item = (field: string): Head => ([subject = '']) => ({ kind: 'gear', subject, field, n: 0 });
 const HEADS: Record<string, Head | undefined> = {
   buff: aura(false), debuff: aura(true), dot: aura(true), active_dot: spread, active_dots: spread,
   cooldown: ([subject = '', ...field]) => ({ kind: 'cooldown', subject, field: field.join('.') }),
@@ -26,6 +31,9 @@ const HEADS: Record<string, Head | undefined> = {
   prev: press('prev'), prev_off_gcd: press('prev_off_gcd'),
   prev_gcd: ([n = '1', subject = '']) => ({ kind: 'press', subject, field: 'prev_gcd', n: Number(n) }),
   pet: ([subject = '', field = '']) => ({ kind: 'press', subject, field: `pet.${field}` }),
+  trinket: ([slot = '', ...rest]) => (Number(slot) ? gear(Number(slot), '', rest) : gear(0, slot, rest)),
+  this_trinket: rest => gear(0, 'this_trinket', rest), other_trinket: rest => gear(0, 'other_trinket', rest),
+  equipped: item('equipped'), set_bonus: item('set_bonus'), potion: item('potion'), consumable: item('consumable'), main_hand: item('main_hand'), off_hand: item('off_hand'),
 };
 
 /** The grammar every SimC name shares: `[target.] head . subject . field`, a bare field being the line's own button's. */
@@ -68,7 +76,7 @@ export class FactPaths {
   /** The spell tokens a name reads, a pet's being every button that may summon it. */
   static spellTokens(name: string): string[] {
     const { kind, subject, field } = FactPaths.path(name, '');
-    if (!subject || kind === 'build' || kind === 'fight' || POOL_TYPES[subject] !== undefined) return [];
+    if (!subject || kind === 'build' || kind === 'fight' || kind === 'gear' || POOL_TYPES[subject] !== undefined) return [];
     return field.startsWith('pet.') ? SUMMON_PREFIXES.map(prefix => prefix + subject) : [subject];
   }
 }

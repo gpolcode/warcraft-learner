@@ -22,6 +22,7 @@ const list = priorityList({
     rupture: planSpell('Rupture', [RUPTURE]),
   },
   talents: { 'talent.deathstalkers_mark': { name: "Deathstalker's Mark", entries: [1] }, 'hero_tree.trickster': { name: 'Trickster', entries: [2] } },
+  items: { spymasters_web: { id: 220202, name: "Spymaster's Web", use: 'item_220202', use_buff: true, use_damage: false } },
 });
 const text = TestBed.inject(ListTextService);
 const apl = TestBed.inject(SimcAplService);
@@ -45,18 +46,16 @@ const ON_OR_OFF: Range = [0, 1];
 const ONE_TO_THREE_STACKS: Range = [1, 3];
 const THREE: Range = [3, 3];
 const FOUR_S_LEFT: Range = [4, 4];
-/** Gear names read once the log's gear is read; until then they are the one gap besides SimC's own class code. */
-const GEAR = /^(trinket|this_trinket|other_trinket|equipped|set_bonus|potion|consumable|main_hand|off_hand)\./;
-/** The names the current lists use that no row answers: SimC's own class code and sim settings, each phrased by its words. */
+/** The names the current lists use that no row answers: SimC's own class code, each phrased by its words, the ingest substituting what it can. */
 const UNREAD_NAMES = [
   'action.shadow_dance.damage', 'action.shadow_dance.demonsurge_available', 'action.shadow_dance.enabled', 'action.shadow_dance.souls_consumed',
-  'consecration.up', 'death_knight.first_ams_cast', 'demonic_art', 'dot_refreshable_count.immolate', 'dot_refreshable_count.wither', 'druid.no_cds',
-  'druid.time_spend_healing', 'eclipse.lunar', 'eclipse.solar', 'evoker.allied_cds_up', 'evoker.shifting_buffs', 'firestarter.active', 'holy_bulwark',
-  'hot_streak_spells_in_flight', 'howl_summon.ready', 'lightning_rod', 'max_prio_damage', 'movement.distance', 'next_armament', 'priest.force_devour_matter',
-  'priority_rotation', 'rtb_buffs', 'scorch_execute.active', 'soul_fragments', 'soul_fragments.inactive', 'soul_fragments.total', 'spell_haste',
-  'stat.crit_rating', 'stat.haste_rating', 'stat.versatility_rating', 'stealthed.rogue', 'target.distance', 'target.has_absorb', 'target.role.attack',
-  'target.role.dps', 'target.role.heal', 'target.role.spell', 'target.role.tank', 'target.spec.arcane', 'target.spec.augmentation', 'target.spec.marksmanship',
-  'target.spec.subtlety', 'target_cd_remains', 'ti_chain_lightning', 'ti_lightning_bolt', 'void_metamorphosis_base_drain_ps',
+  'consecration.up', 'demonic_art', 'dot_refreshable_count.immolate', 'dot_refreshable_count.wither', 'eclipse.lunar', 'eclipse.solar',
+  'evoker.allied_cds_up', 'evoker.shifting_buffs', 'firestarter.active', 'holy_bulwark', 'hot_streak_spells_in_flight', 'howl_summon.ready', 'lightning_rod',
+  'max_prio_damage', 'movement.distance', 'next_armament', 'rtb_buffs', 'scorch_execute.active', 'soul_fragments', 'soul_fragments.inactive',
+  'soul_fragments.total', 'spell_haste', 'stat.crit_rating', 'stat.haste_rating', 'stat.versatility_rating', 'stealthed.rogue', 'target.distance',
+  'target.has_absorb', 'target.role.attack', 'target.role.dps', 'target.role.heal', 'target.role.spell', 'target.role.tank', 'target.spec.arcane',
+  'target.spec.augmentation', 'target.spec.marksmanship', 'target.spec.subtlety', 'target_cd_remains', 'ti_chain_lightning', 'ti_lightning_bolt',
+  'void_metamorphosis_base_drain_ps',
 ];
 
 describe('ListTextService phrases', () => {
@@ -122,7 +121,19 @@ describe('ListTextService phrases', () => {
     ['movement.distance>20', 'with movement distance over 20'],
     ['movement.distance>20', 'with movement distance at most 20', false],
     ['void_metamorphosis_base_drain_ps', 'while void metamorphosis base drain ps holds'],
-    ['trinket.1.has_use_buff', 'while trinket 1 has use buff holds'],
+    ['trinket.1.has_use_buff', 'while your first trinket has an on-use buff'],
+    ['!trinket.2.has_cooldown', 'while your second trinket has no cooldown'],
+    ['trinket.1.cooldown.remains<=gcd.max', 'when your first trinket is at most one GCD away'],
+    ['trinket.2.is.spymasters_web', "while your second trinket is Spymaster's Web"],
+    ['!equipped.spymasters_web', "while Spymaster's Web is not equipped"],
+    ['trinket.1.ilvl>=600', "with your first trinket's item level at least 600"],
+    ['this_trinket.has_use_buff', 'while this trinket has an on-use buff'],
+    ['set_bonus.mid2_4pc', 'while the mid2 4pc set bonus is active'],
+    ['potion.liquid_luster', 'while liquid luster is the potion you brought'],
+    ['main_hand.dagger', 'while your main hand is a dagger'],
+    ['trinket.1.proc.any_dps.duration>10', "with over 10 s of your first trinket's proc"],
+    ['!priority_rotation', 'while priority rotation is off'],
+    ['death_knight.first_ams_cast<10', 'with under 10 s until the first Anti-Magic Shell'],
   ])('reads %s as "%s"', (term, words, holds = true, action = 'black_powder') => {
     expect(phrase(term, holds, action)).toBe(words);
   });
@@ -134,9 +145,8 @@ describe('ListTextService phrases', () => {
     }
   });
 
-  it('leaves exactly the gear names and SimC\'s class code outside the catalog', () => {
-    const unread = APL_NAMES.filter(name => !FactPaths.row(FactPaths.path(name, 'black_powder')));
-    expect(unread.filter(name => !GEAR.test(name))).toEqual(UNREAD_NAMES);
+  it('leaves exactly SimC\'s class code outside the catalog', () => {
+    expect(APL_NAMES.filter(name => !FactPaths.row(FactPaths.path(name, 'black_powder')))).toEqual(UNREAD_NAMES);
   });
 });
 
@@ -183,6 +193,11 @@ describe('ListTextService values', () => {
     ['cast_time', [1.5, 1.5], '1.5 s'],
     ['cooldown.shadow_dance.remains', [2, 6], '2 to 6 s away'],
     ['void_metamorphosis_base_drain_ps', ON, 'Holds', true],
+    ['equipped.spymasters_web', ON, 'Equipped', true],
+    ['trinket.1.has_use_buff', ON, 'Has an on-use buff', true],
+    ['trinket.1.ilvl', [639, 639], '639'],
+    ['trinket.1.cooldown.remains', [4.2, 4.2], '4.2 s away'],
+    ['trinket.1.proc.any_dps.duration', UNKNOWN, 'Not in the log'],
     ['cooldown.shadow_dance.remains', UNKNOWN, 'Not in the log'],
     ['raid_event.movement.in', UNKNOWN, 'Not in the log'],
     ['stat.haste_rating', UNKNOWN, 'Not read by warcraft-learner'],

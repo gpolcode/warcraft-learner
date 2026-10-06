@@ -101,19 +101,33 @@ export class ListTextService {
     return lo === hi && lo === 1 ? this.singular(unit) : unit;
   }
 
-  private words(path: FactPath): Words {
+  /** `{s}` is the item or stat a gear field is about, which the list names where a top log wore the item. */
+  private words(path: FactPath, list: PriorityList | null = null): Words {
     const row = path.field === 'prev_gcd' && path.n === 1 ? FactPaths.row({ ...path, field: 'prev' }) : FactPaths.row(path);
     const [frame, label] = row ?? ['amount', path.subject ? spaced(path.field) : ''];
-    return { path, frame, label: label.replace(/\{n\}/g, String(path.n)) };
+    return { path, frame, label: label.replace(/\{n\}/g, String(path.n)).replace(/\{s\}/g, this.itemName(list, path.subject)) };
   }
 
-  /** The spell, pool, talent or variable a name reads; a name outside the catalog is its own noun. */
+  private itemName(list: PriorityList | null, token: string): string {
+    return list?.items?.[token]?.name ?? spaced(token);
+  }
+
+  /** The spell, pool, talent, variable or item a name reads; a name outside the catalog is its own noun. */
   private noun(list: PriorityList | null, path: FactPath): string {
     const { kind, subject } = path;
     if (kind === 'fight') return FactPaths.row(path) ? '' : spaced(path.field);
     if (kind === 'build') return this.talentName(list, path);
+    if (kind === 'gear') return this.gearNoun(list, path);
     if (kind === 'pool' && POOL_TYPES[subject] !== undefined) return POOL_WORDS[subject] ?? spaced(subject);
     return list ? this.name(list, subject) : spaced(subject);
+  }
+
+  /** A trinket slot by its number, `this_trinket` and `other_trinket` as SimC leaves them, any other gear name by its item. */
+  private gearNoun(list: PriorityList | null, { subject, field, n }: FactPath): string {
+    if (n) return `your ${n === 1 ? 'first' : 'second'} trinket`;
+    if (subject === 'this_trinket' || subject === 'other_trinket') return subject === 'this_trinket' ? 'this trinket' : 'the other trinket';
+    if (field === 'set_bonus') return `the ${spaced(subject)} set bonus`;
+    return field === 'main_hand' || field === 'off_hand' ? `your ${spaced(field)}` : this.itemName(list, subject);
   }
 
   private talentName(list: PriorityList | null, { subject, field, n }: FactPath): string {
@@ -131,7 +145,7 @@ export class ListTextService {
   }
 
   private tested(list: PriorityList, path: FactPath, holds: boolean): string {
-    const [on, off] = this.states(this.words(path));
+    const [on, off] = this.states(this.words(path, list));
     const state = holds ? on : off;
     const x = this.noun(list, path);
     if (!x) return `while ${state.replace(/^=/, '')}`;

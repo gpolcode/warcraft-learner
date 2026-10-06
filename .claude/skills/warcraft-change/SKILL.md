@@ -23,7 +23,8 @@ Every name a list tests goes through one grammar (`data/rotation/priority-list/f
 - **A field the log can answer and no text derives** - the row without `is`, and the primitive in the kind's reader, with boundary-paired rows in that reader's spec.
 - **A field the log cannot answer** - the row without `is` and no reader code: its sentence reads and its value says the log lacks it.
 - **A name of a new kind** - a reader implementing `FactReader`, registered in `condition-eval-service.ts`, a head in the grammar and a block of rows.
-- **A name SimC computes in class code** - a row in `EXPRESSIONS` (`data/simc/spec-plan-service.ts`), as SimC text over names the log answers.
+- **A name SimC computes in class code** - a row in `EXPRESSIONS` (`data/simc/spec-plan-service.ts`), as SimC text over names the log answers; a sim setting at its default is a constant row of the `fight` block.
+- **What an item does** - `ItemDataService` (`data/simc/`) reads SimC's item effects and non-class spell dump at ingest, bound through `ITEM_DATA_SOURCE` in the ingest configuration only; the bench carries the result as `list.items`, so production fetches nothing beyond the log.
 
 A row the readers do not answer reads as unknown, so a reader never flags a cast its range does not settle. Bump `INGEST_VERSION` only when a reader's values change.
 

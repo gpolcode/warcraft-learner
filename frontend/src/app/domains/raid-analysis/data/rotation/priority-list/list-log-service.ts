@@ -1,11 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../wcl/wcl-api-service';
-import type { WclAbility, WclEvent, WclFight } from '../../wcl/wcl.models';
+import type { WclAbility, WclEvent, WclFight, WclGearItem } from '../../wcl/wcl.models';
 import type { PriorityList } from '../../plan/plan.models';
 import { PressFold, WclProjectionsService } from '../../analysis/wcl-projections-service';
-import { GearExtractService } from '../../gear/gear-extract-service';
+import { GearExtractService, TRINKET_SLOTS } from '../../gear/gear-extract-service';
+import { ITEM_DATA_SOURCE, ItemTable, NO_ITEMS } from '../../simc/item-data-source';
 import { FactContextService } from './fact-context-service';
 import { ListCheckService, LogReading } from './list-check-service';
+import type { FactStream, GearPiece } from './priority-list.models';
 
 export interface ListPull {
   reportCode: string;
@@ -23,10 +25,11 @@ export class ListLogService {
   private readonly gearExtract = inject(GearExtractService);
   private readonly contexts = inject(FactContextService);
   private readonly checks = inject(ListCheckService);
+  private readonly itemData = inject(ITEM_DATA_SOURCE);
 
-  async read(list: PriorityList, { reportCode, fight, playerId, abilities, folds }: ListPull): Promise<LogReading> {
-    if (!list.lines.length) return { casts: new Map(), order: [], ids: new Map() };
-    const streams = this.checks.streams(list);
+  async read(plan: PriorityList, { reportCode, fight, playerId, abilities, folds }: ListPull): Promise<LogReading> {
+    if (!plan.lines.length) return { casts: new Map(), order: [], ids: new Map() };
+    const streams = this.checks.streams(plan);
     const { startTime, endTime, id } = fight;
     const [casts, buffs, enemyAuras, damage, resources, combatants] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, id, 'Casts', startTime, endTime, playerId, true),
@@ -38,7 +41,10 @@ export class ListLogService {
       this.wclApi.getCombatantInfo(reportCode, id, playerId),
     ]);
     const combatant = this.gearExtract.selectCombatantInfo(combatants, playerId);
-    return this.checks.read(this.contexts.build({
+    const gear = await this.gear(combatant?.gear ?? [], streams);
+    const items = streams.has('gear') ? await this.items(plan, gear) : NO_ITEMS;
+    const list = { ...plan, items: { ...plan.items, ...items.items }, spells: { ...plan.spells, ...items.spells } };
+    const reading = this.checks.read(this.contexts.build({
       list, abilities,
       casts: this.projections.withRelativeS(this.projections.presses(casts, folds, { buffs, abilities }), startTime),
       buffs: this.projections.withRelativeS([...this.upAtPull(combatant?.auras ?? [], startTime), ...buffs], startTime),
@@ -46,9 +52,26 @@ export class ListLogService {
       damage: this.projections.withRelativeS(damage, startTime),
       resources: this.projections.withRelativeS(resources, startTime),
       talents: this.gearExtract.pickedTalents(combatant),
+      gear,
       fightDurationS: this.projections.relativeS(endTime, startTime),
       kill: fight.kill,
     }));
+    return { ...reading, items };
+  }
+
+  /** The gear array is positional, its index the slot; a name WCL left blank is asked for only when a fact reads gear. */
+  private async gear(worn: WclGearItem[], streams: ReadonlySet<FactStream>): Promise<GearPiece[]> {
+    const pieces = worn.flatMap((item, slot): GearPiece[] => (Number(item.id) ? [{ slot, id: Number(item.id), name: item.name ?? '', itemLevel: item.itemLevel ?? 0 }] : []));
+    if (!streams.has('gear') || pieces.every(piece => piece.name)) return pieces;
+    const names = await this.wclApi.getGameNames(pieces.filter(piece => !piece.name).map(piece => piece.id), []);
+    return pieces.map(piece => ({ ...piece, name: piece.name || this.gearExtract.decodeHtmlEntities(names[`i${piece.id}`]?.name ?? '') }));
+  }
+
+  /** What the trinkets worn do, for the ones the list does not describe yet; production's item source answers nothing, so the bench's own entries stand. */
+  private items(plan: PriorityList, gear: GearPiece[]): Promise<ItemTable> {
+    const known = new Set(Object.values(plan.items ?? {}).map(item => item.id));
+    const ids = gear.filter(piece => (TRINKET_SLOTS as readonly number[]).includes(piece.slot) && !known.has(piece.id)).map(piece => piece.id);
+    return ids.length ? this.itemData.items(ids) : Promise.resolve(NO_ITEMS);
   }
 
   /** The stream never applies an aura that was already up at the pull, so the combatant info's list stands in for those applies. */

@@ -4,6 +4,7 @@ import { least, mode } from 'd3-array';
 import { getOrInsert } from '../../analysis/analysis-math';
 import { WclProjectionsService } from '../../analysis/wcl-projections-service';
 import type { PlanLine, PriorityList } from '../../plan/plan.models';
+import type { ItemTable } from '../../simc/item-data-source';
 import { AplNode, SimcAplService } from '../../simc/simc-apl-service';
 import { ConditionEvalService } from './condition-eval-service';
 import { VariableReplayService } from './variable-replay-service';
@@ -74,6 +75,8 @@ export interface LogReading {
   /** The id this log cast each button under most. */
   ids: Map<string, number>;
   order: OrderCheck[];
+  /** What the item data said of the trinkets this log wore that the list did not yet describe. */
+  items?: ItemTable;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { cast } from '../../../../../../testing/builders/events';
 import { ConditionEvalService } from './condition-eval-service';
@@ -6,6 +7,7 @@ import { AuraFacts } from './facts/aura-facts';
 import { BuildFacts } from './facts/build-facts';
 import { CooldownFacts } from './facts/cooldown-facts';
 import { FightFacts } from './facts/fight-facts';
+import { GearFacts } from './facts/gear-facts';
 import { PoolFacts } from './facts/pool-facts';
 import { PressFacts } from './facts/press-facts';
 import { castAt, factContext, priorityList } from './priority-list-harness';
@@ -16,10 +18,8 @@ const NEVER: Range = [Infinity, Infinity];
 /** The primitives each row's SimC text is evaluated over, by `kind.field`. */
 const given = new Map<string, Range>();
 const fake = (kind: FactKind): FactReader => ({ kind, streams: () => [], read: path => given.get(`${kind}.${path.field}`) ?? UNKNOWN });
-TestBed.configureTestingModule({
-  providers: [[AuraFacts, 'aura'], [CooldownFacts, 'cooldown'], [PoolFacts, 'pool'], [PressFacts, 'press'], [FightFacts, 'fight'], [BuildFacts, 'build']]
-    .map(([token, kind]) => ({ provide: token, useValue: fake(kind as FactKind) })),
-});
+const FAKES: [Type<FactReader>, FactKind][] = [[AuraFacts, 'aura'], [CooldownFacts, 'cooldown'], [PoolFacts, 'pool'], [PressFacts, 'press'], [FightFacts, 'fight'], [BuildFacts, 'build'], [GearFacts, 'gear']];
+TestBed.configureTestingModule({ providers: FAKES.map(([token, kind]) => ({ provide: token, useValue: fake(kind) })) });
 const evaluator = TestBed.inject(ConditionEvalService);
 const ctx = factContext(priorityList(), { casts: [cast(1, CAST_S)] });
 
@@ -81,6 +81,11 @@ describe('The field table', () => {
     { name: 'fight_style.patchwerk', primitives: {}, expected: [1, 1] },
     { name: 'fight_style.dungeonslice', primitives: {}, expected: [0, 0] },
     { name: 'raid_event.movement.in', primitives: {}, expected: UNKNOWN },
+    { name: 'trinket.1.cooldown.ready', primitives: { 'gear.cooldown.remains': 0 }, expected: [1, 1] },
+    { name: 'trinket.1.cooldown.up', primitives: { 'gear.cooldown.remains': 5 }, expected: [0, 0] },
+    { name: 'consumable.x', primitives: { 'gear.potion': 1 }, expected: [1, 1] },
+    { name: 'priority_rotation', primitives: {}, expected: [0, 0] },
+    { name: 'death_knight.first_ams_cast', primitives: {}, expected: [20, 20] },
     { name: 'stat.haste_rating', primitives: {}, expected: UNKNOWN },
   ])('derives $name from $primitives', row => {
     expect(read(row)).toEqual(row.expected);

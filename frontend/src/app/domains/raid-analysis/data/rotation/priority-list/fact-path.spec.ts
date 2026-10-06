@@ -36,7 +36,18 @@ describe('FactPaths', () => {
     ['target.health.pct', { kind: 'fight', subject: '', field: 'target.health.pct' }],
     ['health.pct', { kind: 'fight', subject: '', field: 'health.pct' }],
     ['fight_style.patchwerk', { kind: 'fight', subject: '', field: 'fight_style.patchwerk' }],
-    ['trinket.1.has_use_buff', { kind: 'fight', subject: '', field: 'trinket.1.has_use_buff' }],
+    ['trinket.1.has_use_buff', { kind: 'gear', subject: '', field: 'has_use_buff', n: 1 }],
+    ['trinket.2.cooldown.remains', { kind: 'gear', subject: '', field: 'cooldown.remains', n: 2 }],
+    ['trinket.1.is.spymasters_web', { kind: 'gear', subject: 'spymasters_web', field: 'is', n: 1 }],
+    ['trinket.1.has_buff.haste', { kind: 'gear', subject: 'haste', field: 'has_buff', n: 1 }],
+    ['trinket.1.proc.any_dps.duration', { kind: 'gear', subject: 'any_dps', field: 'proc.duration', n: 1 }],
+    ['trinket.spymasters_web.cooldown.ready', { kind: 'gear', subject: 'spymasters_web', field: 'cooldown.ready', n: 0 }],
+    ['this_trinket.has_use_buff', { kind: 'gear', subject: 'this_trinket', field: 'has_use_buff', n: 0 }],
+    ['equipped.spymasters_web', { kind: 'gear', subject: 'spymasters_web', field: 'equipped', n: 0 }],
+    ['set_bonus.mid2_4pc', { kind: 'gear', subject: 'mid2_4pc', field: 'set_bonus' }],
+    ['main_hand.2h', { kind: 'gear', subject: '2h', field: 'main_hand' }],
+    ['druid.no_cds', { kind: 'fight', subject: '', field: 'druid.no_cds' }],
+    ['stat.haste_rating', { kind: 'fight', subject: '', field: 'stat.haste_rating' }],
   ])('takes %s apart as %o', (name, expected) => {
     expect(path(name)).toMatchObject(expected);
   });
@@ -55,6 +66,7 @@ describe('FactPaths', () => {
     ['talent.shadow_dance', []],
     ['refreshable', []],
     ['active_enemies', []],
+    ['trinket.1.is.spymasters_web', []],
   ])('reads the spell tokens %s names as %o', (name, tokens) => {
     expect(FactPaths.spellTokens(name)).toEqual(tokens);
   });

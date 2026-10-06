@@ -13,6 +13,8 @@ import { MAP_DATA_SOURCE } from '../app/domains/raid-analysis/data/map/map-data-
 import { MapTransformService } from '../app/domains/raid-analysis/data/map/map-transform-service';
 import { NORTHERN_SKY_DATA_SOURCE } from '../app/domains/raid-analysis/data/northern-sky/northern-sky-data-source';
 import { NorthernSkyTransformService } from '../app/domains/raid-analysis/data/northern-sky/northern-sky-transform-service';
+import { ITEM_DATA_SOURCE } from '../app/domains/raid-analysis/data/simc/item-data-source';
+import { ItemDataService } from '../app/domains/raid-analysis/data/simc/item-data-service';
 
 export const liveDataSourceProviders: Provider[] = [
   provideLiveDataSource(BURST_DATA_SOURCE, BurstTransformService),
@@ -21,4 +23,5 @@ export const liveDataSourceProviders: Provider[] = [
   provideLiveDataSource(GEAR_DATA_SOURCE, GearTransformService),
   provideLiveDataSource(MAP_DATA_SOURCE, MapTransformService),
   provideLiveDataSource(NORTHERN_SKY_DATA_SOURCE, NorthernSkyTransformService),
+  { provide: ITEM_DATA_SOURCE, useClass: ItemDataService },
 ];

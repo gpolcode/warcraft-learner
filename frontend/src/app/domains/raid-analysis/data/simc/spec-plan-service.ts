@@ -35,6 +35,9 @@ const EXPRESSIONS: Record<string, (effect: EffectOf, own: Own) => string | null>
   demonic_art: () => anyUp(['demonic_art_overlord', 'demonic_art_mother_of_chaos', 'demonic_art_pit_lord']),
   // Scorch and Fire Blast hit as they cast, so only the three that travel are ever in flight.
   hot_streak_spells_in_flight: () => ['fireball', 'pyroblast', 'phoenix_flames'].map(token => `action.${token}.in_flight_count`).join('+'),
+  // SimC counts the Lightning Rod debuffs up across enemies.
+  lightning_rod: () => 'active_dot.lightning_rod',
+  'howl_summon.ready': (_, own) => anyUp(['howl_of_the_pack_leader_wyvern', 'howl_of_the_pack_leader_boar', 'howl_of_the_pack_leader_bear'].filter(own)),
 };
 
 export interface SpecPlan extends PriorityList {

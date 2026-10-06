@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
-import { PlanCooldown } from '../plan/plan.models';
+import { PlanCooldown, PlanItem, PriorityList } from '../plan/plan.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { group, quantile } from 'd3-array';
 import {
@@ -83,12 +83,19 @@ export class RotationTransformService implements DataSource<RotationBench> {
           top_efficiency_stddev: topEfficiencyStddev,
           per_cd_benchmarks: this.aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
-          list: { lines: plan.lines, variables: plan.variables, spells: plan.spells, talents: plan.talents },
+          list: this.listWithItems(plan, parses.map(parse => parse.reading)),
           buttons: this.listBench.bench(plan, parses.map(parse => parse.reading)),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
         };
       },
     });
+  }
+
+  /** The item data read for the trinkets the top logs wore rides along in the bench, each use spell under its item's token. */
+  private listWithItems(plan: SpecPlan, readings: LogReading[]): PriorityList {
+    const items = readings.reduce<Record<string, PlanItem>>((all, reading) => ({ ...all, ...reading.items?.items }), {});
+    const spells = readings.reduce((all, reading) => ({ ...all, ...reading.items?.spells }), plan.spells);
+    return { lines: plan.lines, variables: plan.variables, spells, talents: plan.talents, ...(Object.keys(items).length ? { items } : {}) };
   }
 
   private async parseRotation({ ranking, report, fight, player }: BenchParse, plan: SpecPlan): Promise<ParseRotation> {

@@ -7,6 +7,7 @@ import { AuraFacts } from './facts/aura-facts';
 import { BuildFacts } from './facts/build-facts';
 import { CooldownFacts } from './facts/cooldown-facts';
 import { FightFacts } from './facts/fight-facts';
+import { GearFacts } from './facts/gear-facts';
 import { PoolFacts } from './facts/pool-facts';
 import { PressFacts } from './facts/press-facts';
 import { UNKNOWN, CastMoment, FactContext, FactKind, FactPath, FactReader, FactStream, Range, Truth } from './priority-list.models';
@@ -14,7 +15,7 @@ import { UNKNOWN, CastMoment, FactContext, FactKind, FactPath, FactReader, FactS
 const TRUE: Range = [1, 1];
 const FALSE: Range = [0, 0];
 const EITHER: Range = [0, 1];
-const READERS: Type<FactReader>[] = [AuraFacts, CooldownFacts, PoolFacts, PressFacts, FightFacts, BuildFacts];
+const READERS: Type<FactReader>[] = [AuraFacts, CooldownFacts, PoolFacts, PressFacts, FightFacts, BuildFacts, GearFacts];
 
 const point = ([lo, hi]: Range): boolean => lo === hi;
 const equal = (a: Range, b: Range): boolean => point(a) && point(b) && a[0] === b[0];

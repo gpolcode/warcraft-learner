@@ -61,6 +61,15 @@ export interface PlanSpell {
   energize: { type: number; amount: number } | null;
 }
 
+/** What a worn item does on use, as SimC's item data describes it; `use` is the token its use spell sits under in `spells`. */
+export interface PlanItem {
+  id: number;
+  name: string;
+  use: string | null;
+  use_buff: boolean;
+  use_damage: boolean;
+}
+
 /** Picking any one of `entries` holds the talent. */
 export interface PlanTalent {
   name: string;
@@ -74,4 +83,6 @@ export interface PriorityList {
   variables: PlanVariable[];
   spells: Record<string, PlanSpell>;
   talents: Record<string, PlanTalent>;
+  /** By the item's SimC token, for the trinkets the top logs wore. */
+  items?: Record<string, PlanItem>;
 }

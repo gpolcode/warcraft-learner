@@ -7,7 +7,7 @@ import { SpellDumpService } from '../../simc/spell-dump-service';
 import { WclProjectionsService, TimedEvent } from '../../analysis/wcl-projections-service';
 import { AuraWindowsService } from '../../analysis/aura-windows-service';
 import { BLOODLUST_IDS } from '../rotation-bloodlust-service';
-import type { AddSpan, DamageRow, FactContext, HealthRow, ResourceChange, ResourceRow } from './priority-list.models';
+import type { AddSpan, DamageRow, FactContext, GearPiece, HealthRow, ResourceChange, ResourceRow } from './priority-list.models';
 
 /** WCL flattens one actor's pools onto the event; 1 means they belong to the caster, 2 to whoever was hit. */
 const RESOURCE_ACTOR_SOURCE = 1;
@@ -34,6 +34,7 @@ export interface FactInputs {
   damage: TimedEvent[];
   resources: TimedEvent[];
   talents: ReadonlyMap<number, number> | null;
+  gear: GearPiece[];
   fightDurationS: number;
   kill: boolean;
 }
@@ -65,6 +66,7 @@ export class FactContextService {
       list, fightDurationS: input.fightDurationS, kill: input.kill, casts,
       begincasts: input.casts.filter(event => event.type === 'begincast'),
       talents: input.talents,
+      gear: input.gear,
       castIds: idsOf,
       castTimes: this.perKey((token: string) => casts.filter(event => idsOf(token).has(event.abilityGameID)).map(event => event.atS)),
       landings: this.perKey((token: string) => damage.filter(event => !event.tick && idsOf(token).has(event.abilityGameID)).map(event => event.atS).sort((a, b) => a - b)),
