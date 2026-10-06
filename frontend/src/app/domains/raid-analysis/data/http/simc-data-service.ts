@@ -40,6 +40,11 @@ export class SimcDataService {
     return this.getText(`${this.rawUrl}/SpellDataDump/${className.toLowerCase()}.txt`, 'simc.spell-dump');
   }
 
+  /** SimC's table of what each item does on use and on equip, which names the spell an item's use casts. */
+  getItemEffects(): Promise<Result<string>> {
+    return this.getText(`${this.rawUrl}/engine/dbc/generated/item_effect.inc`, 'simc.item-effects');
+  }
+
   sourcePaths(className: string): string[] {
     return [...(CLASS_SOURCES[className.toLowerCase()] ?? []), SHARED_SOURCE];
   }

@@ -3,7 +3,8 @@ import { WclApiService } from '../../wcl/wcl-api-service';
 import type { WclAbility, WclEvent, WclFight, WclGearItem } from '../../wcl/wcl.models';
 import type { PriorityList } from '../../plan/plan.models';
 import { PressFold, WclProjectionsService } from '../../analysis/wcl-projections-service';
-import { GearExtractService } from '../../gear/gear-extract-service';
+import { GearExtractService, TRINKET_SLOTS } from '../../gear/gear-extract-service';
+import { ITEM_DATA_SOURCE, ItemTable, NO_ITEMS } from '../../simc/item-data-source';
 import { FactContextService } from './fact-context-service';
 import { ListCheckService, LogReading } from './list-check-service';
 import type { FactStream, GearPiece } from './priority-list.models';
@@ -17,16 +18,22 @@ export interface ListPull {
   folds: readonly PressFold[];
 }
 
+/** A log's reading, with what the item data said of the trinkets it wore that the list did not yet know, for the bench to carry. */
+export interface ListReading extends LogReading {
+  items: ItemTable;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ListLogService {
   private readonly wclApi = inject(WclApiService);
   private readonly projections = inject(WclProjectionsService);
   private readonly gearExtract = inject(GearExtractService);
+  private readonly itemData = inject(ITEM_DATA_SOURCE);
   private readonly contexts = inject(FactContextService);
   private readonly checks = inject(ListCheckService);
 
-  async read(list: PriorityList, { reportCode, fight, playerId, abilities, folds }: ListPull): Promise<LogReading> {
-    if (!list.lines.length) return { casts: new Map(), order: [], ids: new Map() };
+  async read(list: PriorityList, { reportCode, fight, playerId, abilities, folds }: ListPull): Promise<ListReading> {
+    if (!list.lines.length) return { casts: new Map(), order: [], ids: new Map(), items: NO_ITEMS };
     const streams = this.checks.streams(list);
     const { startTime, endTime, id } = fight;
     const [casts, buffs, enemyAuras, damage, resources, combatants] = await Promise.all([
@@ -39,18 +46,32 @@ export class ListLogService {
       this.wclApi.getCombatantInfo(reportCode, id, playerId),
     ]);
     const combatant = this.gearExtract.selectCombatantInfo(combatants, playerId);
-    return this.checks.read(this.contexts.build({
-      list, abilities,
+    const gear = await this.gear(combatant?.gear ?? [], streams);
+    const items = streams.has('gear') ? await this.items(list, gear) : NO_ITEMS;
+    const reading = this.checks.read(this.contexts.build({
+      list: this.withItems(list, items), abilities,
       casts: this.projections.withRelativeS(this.projections.presses(casts, folds, { buffs, abilities }), startTime),
       buffs: this.projections.withRelativeS([...this.upAtPull(combatant?.auras ?? [], startTime), ...buffs], startTime),
       debuffs: this.projections.withRelativeS(enemyAuras.filter(event => event.sourceID === playerId), startTime),
       damage: this.projections.withRelativeS(damage, startTime),
       resources: this.projections.withRelativeS(resources, startTime),
       talents: this.gearExtract.pickedTalents(combatant),
-      gear: await this.gear(combatant?.gear ?? [], streams),
+      gear,
       fightDurationS: this.projections.relativeS(endTime, startTime),
       kill: fight.kill,
     }));
+    return { ...reading, items };
+  }
+
+  /** The trinkets this log wore that the list does not yet describe, so ingest asks the item data once per item. */
+  private items(list: PriorityList, gear: readonly GearPiece[]): Promise<ItemTable> {
+    const unknown = gear.filter(piece => (TRINKET_SLOTS as readonly number[]).includes(piece.slot) && !list.items?.[piece.id]).map(piece => piece.id);
+    return unknown.length ? this.itemData.items(unknown) : Promise.resolve(NO_ITEMS);
+  }
+
+  private withItems(list: PriorityList, { items, spells }: ItemTable): PriorityList {
+    if (!Object.keys(items).length) return list;
+    return { ...list, items: { ...list.items, ...items }, spells: { ...list.spells, ...spells } };
   }
 
   /** The stream never applies an aura that was already up at the pull, so the combatant info's list stands in for those applies. */

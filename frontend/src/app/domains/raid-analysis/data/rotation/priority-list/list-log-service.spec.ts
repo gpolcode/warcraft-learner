@@ -7,6 +7,7 @@ import { RUPTURE, SHADOW_DANCE, EVISCERATE } from '../../../../../../testing/spe
 import type { PlanLine } from '../../plan/plan.models';
 import type { WclCombatantInfo, WclEvent } from '../../wcl/wcl.models';
 import { WclApiService } from '../../wcl/wcl-api-service';
+import { ITEM_DATA_SOURCE, ItemTable } from '../../simc/item-data-source';
 import { ListLogService, ListPull } from './list-log-service';
 import { priorityList } from './priority-list-harness';
 
@@ -29,9 +30,18 @@ const TRINKET_SLOT = 12;
 
 interface Call { dataType: string; sourceId?: number; includeResources: boolean; hostilityType?: string }
 
-function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclCombatantInfo = {}) {
+const WEB_USE = 444959;
+const WEB_TABLE: ItemTable = {
+  items: { [SPYMASTERS_WEB]: { name: "Spymaster's Web", use: 'item_220202', use_buff: true, use_damage: false } },
+  spells: { item_220202: planSpell("Spymaster's Web", [WEB_USE], { cooldown: 20, gcd: 0 }) },
+};
+
+function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclCombatantInfo = {}, asked: number[][] = []) {
   const calls: Call[] = [];
   TestBed.configureTestingModule({ providers: [{
+    provide: ITEM_DATA_SOURCE,
+    useValue: { items: async (ids: number[]) => { asked.push(ids); return ids.includes(SPYMASTERS_WEB) ? WEB_TABLE : { items: {}, spells: {} }; } },
+  }, {
     provide: WclApiService,
     useValue: {
       getAllEvents: async (_c: string, _f: number, dataType: string, _s: number, _e: number, sourceId?: number, includeResources = false, hostilityType?: string) => {
@@ -127,6 +137,25 @@ describe('ListLogService', () => {
     const reading = await logs.read(list(['trinket.1.is.spymasters_web']), pull());
     expect(calls.map(call => call.dataType)).toContain(GAME_NAMES);
     expect(reading.casts.get('eviscerate')?.[0]?.verdict).toBe('on');
+  });
+
+  it('asks the item data what the worn trinkets do, judges by it, and hands it on for the bench', async () => {
+    const gear = Array.from({ length: TRINKET_SLOT + 1 }, (_, slot) => (slot === TRINKET_SLOT ? { id: SPYMASTERS_WEB, name: "Spymaster's Web" } : {}));
+    const asked: number[][] = [];
+    const { logs } = recording({ Casts: [cast(WEB_USE, 2), cast(EVISCERATE, 5)] }, { gear }, asked);
+    const reading = await logs.read(list(['trinket.1.cooldown.remains>10']), pull());
+    expect(asked).toEqual([[SPYMASTERS_WEB]]);
+    expect(reading.casts.get('eviscerate')?.[0]?.verdict).toBe('on');
+    expect(reading.items).toEqual(WEB_TABLE);
+  });
+
+  it('asks nothing of the item data for a trinket the list already describes', async () => {
+    const gear = Array.from({ length: TRINKET_SLOT + 1 }, (_, slot) => (slot === TRINKET_SLOT ? { id: SPYMASTERS_WEB, name: "Spymaster's Web" } : {}));
+    const asked: number[][] = [];
+    const { logs } = recording({ Casts: [cast(EVISCERATE, 5)] }, { gear }, asked);
+    const reading = await logs.read({ ...list(['trinket.1.has_use_buff']), ...WEB_TABLE, spells: { ...list([]).spells, ...WEB_TABLE.spells } }, pull());
+    expect(asked).toEqual([]);
+    expect(reading.items).toEqual({ items: {}, spells: {} });
   });
 
   it('skips the gear-name lookup when no fact reads gear', async () => {

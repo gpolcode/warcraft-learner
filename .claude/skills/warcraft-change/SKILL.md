@@ -25,6 +25,7 @@ Deliver, by what is new:
 - **A new name shape** - a head in the catalog's grammar table, mapped to a kind and a field; a bare field reads the line's own button.
 - **A new kind** - a reader implementing `FactReader` with its own state, registered in `fact-readers.ts`, and its stream needs.
 - **A name SimC computes in class code** - a row in `EXPRESSIONS` (`data/simc/spec-plan-service.ts`), as SimC text over names the log answers.
+- **What an item does** - `ItemDataService` (`data/simc/`) reads SimC's item effects and non-class spell dump at ingest, bound through `ITEM_DATA_SOURCE` in the ingest configuration only; the bench carries the result as `list.items`, so production fetches nothing beyond the log.
 
 Specs: a reader's spec reads through `catalog.path(name, action)` with boundary pairs; `fact-catalog-service.spec.ts` carries one row per name shape; `list-text-service.spec.ts` phrases every shape of the current lists (`src/testing/apl-names.ts`) and pins which stay outside the catalog. A name no row answers reads as unknown, so a reader never flags a cast its range does not settle. Bump `INGEST_VERSION`.
 

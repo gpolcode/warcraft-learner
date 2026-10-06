@@ -28,6 +28,10 @@ export interface SpellRecord {
   talented: boolean;
   /** The specs a talent belongs to; null for a class-wide spell or class-tree talent. */
   specs: string[] | null;
+  /** Applies a stat, rating or attack power aura to the caster, as an on-use trinket's buff does. */
+  statBuff: boolean;
+  /** Deals or triggers damage, as an on-use trinket's strike does. */
+  damage: boolean;
 }
 
 export interface SpellCost {
@@ -46,6 +50,8 @@ const ENERGIZE = /^#\d+ \(id=\d+\) +: Energize Power \(30\)\n +Base Value: (\d+(
 const SELF_GUARD = /^#\d+ \(id=\d+\) +: Apply Aura \(6\) \| Modify (AoE Damage Taken|Damage Taken|Dodge|Parry)% \(\d+\)\n +Base Value: (-?\d+(?:\.\d+)?) \|[^\n]*Target: Self \(1\)/gm;
 /** Well under Feint's 40% and Divine Protection's 20%, well over the 10% a Colossus Demolish grants in passing. */
 const SELF_GUARD_PCT = 20;
+const STAT_BUFF = /^#\d+ \(id=\d+\) +: Apply Aura \(6\) \| (?:Attribute|Mod Rating|Mod Total Stat|Mod Stat|Mod Attack Power|Haste)[^\n]*\n[^\n]*Target: Self \(1\)/m;
+const DAMAGE = /^#\d+ \(id=\d+\) +: (?:School Damage|Health Leech|Trigger Missile|Trigger Spell|Apply Aura \(6\) \| Periodic Damage)\b/m;
 
 @Injectable({ providedIn: 'root' })
 export class SpellDumpService {
@@ -53,9 +59,10 @@ export class SpellDumpService {
     return name.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, '');
   }
 
-  /** SimC commits the dump with Windows line endings, which a `.` stops short of. */
-  readDump(text: string): SpellRecord[] {
-    return text.replace(/\r\n?/g, '\n').split(/^(?=Name {2,}: )/m).flatMap(block => this.record(block) ?? []);
+  /** SimC commits the dump with Windows line endings, which a `.` stops short of; `only` reads just those ids out of a dump too large to read whole. */
+  readDump(text: string, only?: ReadonlySet<number>): SpellRecord[] {
+    const blocks = text.replace(/\r\n?/g, '\n').split(/^(?=Name {2,}: )/m);
+    return blocks.flatMap(block => (only && !only.has(Number(/^Name +: .*?\(id=(\d+)\)/.exec(block)?.[1])) ? [] : this.record(block) ?? []));
   }
 
   private record(block: string): SpellRecord | null {
@@ -76,6 +83,8 @@ export class SpellDumpService {
       major: block.includes(': 690: Major Cooldowns'),
       defensive: /(Big|External) Defensive \(\d+\)/.test(block),
       guards: this.guards(block),
+      statBuff: STAT_BUFF.test(block),
+      damage: DAMAGE.test(block),
       ...this.talent(block),
     };
   }

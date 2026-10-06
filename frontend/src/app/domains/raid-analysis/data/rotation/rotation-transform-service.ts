@@ -15,8 +15,8 @@ import { DataSource } from '../data-source/data-source';
 import { Result } from '../../../shared/util-http/result';
 import { SpecPlan } from '../simc/spec-plan-service';
 import { ListBenchService, MIN_MEASURED_PARSES } from './priority-list/list-bench-service';
-import { LogReading } from './priority-list/list-check-service';
-import { ListLogService } from './priority-list/list-log-service';
+import { ListLogService, ListReading } from './priority-list/list-log-service';
+import { PriorityList } from '../plan/plan.models';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { RotationBench } from './rotation-data-source';
@@ -44,7 +44,7 @@ interface ParseRotation {
   summaries: CdSummary[];
   gapListS: number[];
   durationS: number;
-  reading: LogReading;
+  reading: ListReading;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -83,12 +83,19 @@ export class RotationTransformService implements DataSource<RotationBench> {
           top_efficiency_stddev: topEfficiencyStddev,
           per_cd_benchmarks: this.aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
-          list: { lines: plan.lines, variables: plan.variables, spells: plan.spells, talents: plan.talents },
+          list: this.listWithItems(plan, parses.map(parse => parse.reading)),
           buttons: this.listBench.bench(plan, parses.map(parse => parse.reading)),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
         };
       },
     });
+  }
+
+  /** The list with every trinket the top logs wore, so the runtime reads a player's trinket with nothing fetched but the log. */
+  private listWithItems(plan: SpecPlan, readings: ListReading[]): PriorityList {
+    const items = Object.assign({}, ...readings.map(reading => reading.items.items)) as PriorityList['items'];
+    const spells = Object.assign({}, plan.spells, ...readings.map(reading => reading.items.spells)) as PriorityList['spells'];
+    return { lines: plan.lines, variables: plan.variables, spells, talents: plan.talents, ...(items && Object.keys(items).length ? { items } : {}) };
   }
 
   private async parseRotation({ ranking, report, fight, player }: BenchParse, plan: SpecPlan): Promise<ParseRotation> {

@@ -1,14 +1,19 @@
 import { Injectable, inject } from '@angular/core';
+import type { PlanItem, PlanSpell } from '../../../plan/plan.models';
 import { TRINKET_SLOTS } from '../../../gear/gear-extract-service';
 import { SpellDumpService } from '../../../simc/spell-dump-service';
 import { UNKNOWN, CastMoment, FactContext, FactKind, FactPath, FactReader, FactStream, FieldRow, FieldWords, GearPiece, Range } from '../priority-list.models';
 import { Words } from '../list-words';
-import { COOLDOWN_FIELDS } from './cooldown-facts';
+import { COOLDOWN_FIELDS, CooldownFacts } from './cooldown-facts';
 
 interface GearState {
   gear: readonly GearPiece[];
   /** The trinket the name is about; null for one the slot does not name. */
   piece: GearPiece | null;
+  /** What the list knows of that trinket; null for one no top log wore. */
+  item: PlanItem | null;
+  /** The spell its use casts. */
+  use: PlanSpell | undefined;
   token: (name: string) => string;
   ctx: FactContext;
 }
@@ -23,6 +28,7 @@ const PROC_WORDS: Record<string, FieldWords | undefined> = {
   default_value: { frame: 'amount', label: 'proc value' },
   cooldown_remains: { frame: 'away', unit: 's to proc', at: (noun, op, n) => `when the ${noun} proc is ${Words.lessMore(op)} ${Words.secs(n)} away` },
 };
+const COOLDOWN_PREFIX = 'cooldown.';
 
 const FIELDS: Record<string, FieldRow<GearState> | undefined> = {
   equipped: {
@@ -38,22 +44,32 @@ const FIELDS: Record<string, FieldRow<GearState> | undefined> = {
     value: ({ ctx }, path) => (ctx.castTimes(path.subject).length ? [1, 1] : UNKNOWN),
     words: { frame: 'flag', states: ['Used', 'Not used'], flag: (noun, holds) => `${withOrWithout(holds)} a ${noun} potion` },
   },
-  has_use_buff: { words: { frame: 'flag', states: ['On-use buff', 'No on-use buff'], flag: (noun, holds) => `${withOrWithout(holds)} an on-use buff on ${noun}` } },
-  has_use_damage: { words: { frame: 'flag', states: ['On-use damage', 'No on-use damage'], flag: (noun, holds) => `${withOrWithout(holds)} on-use damage on ${noun}` } },
-  has_cooldown: { words: { frame: 'flag', states: ['Has a cooldown', 'No cooldown'], flag: (noun, holds) => `${holds ? 'when' : 'unless'} ${noun} has a cooldown` } },
+  has_use_buff: {
+    value: ({ item }) => (item ? flag(item.use_buff) : UNKNOWN),
+    words: { frame: 'flag', states: ['On-use buff', 'No on-use buff'], flag: (noun, holds) => `${withOrWithout(holds)} an on-use buff on ${noun}` },
+  },
+  has_use_damage: {
+    value: ({ item }) => (item ? flag(item.use_damage) : UNKNOWN),
+    words: { frame: 'flag', states: ['On-use damage', 'No on-use damage'], flag: (noun, holds) => `${withOrWithout(holds)} on-use damage on ${noun}` },
+  },
+  has_cooldown: {
+    value: ({ item, use }) => (item ? flag(!!use?.cooldown) : UNKNOWN),
+    words: { frame: 'flag', states: ['Has a cooldown', 'No cooldown'], flag: (noun, holds) => `${holds ? 'when' : 'unless'} ${noun} has a cooldown` },
+  },
+  cast_time: { value: ({ use }) => (use ? [use.cast_time, use.cast_time] : UNKNOWN), words: { frame: 'seconds', label: 'use cast time', unit: 's' } },
   has_buff: { words: { frame: 'flag', states: ['Yes', 'No'], flag: (noun, holds, path) => `${withOrWithout(holds)} a ${Words.spaced(path.arg)} buff on ${noun}` } },
   has_stat: { words: { frame: 'flag', states: ['Yes', 'No'], flag: (noun, holds, path) => `${withOrWithout(holds)} ${Words.spaced(path.arg)} on ${noun}` } },
-  cast_time: { words: { frame: 'seconds', label: 'use cast time', unit: 's' } },
   set_bonus: { words: { frame: 'flag', states: EQUIPPED, flag: (noun, holds) => `${withOrWithout(holds)} the ${noun} set bonus` } },
   weapon: { words: { frame: 'flag', states: ['Yes', 'No'], flag: (noun, holds, path) => `${withOrWithout(holds)} a ${Words.spaced(path.arg)} ${noun}` } },
-  ...Object.fromEntries(Object.entries(COOLDOWN_FIELDS).flatMap(([field, row]) => (row ? [[`cooldown.${field}`, { words: row.words }]] : []))),
+  ...Object.fromEntries(Object.entries(COOLDOWN_FIELDS).flatMap(([field, row]) => (row ? [[`${COOLDOWN_PREFIX}${field}`, { words: row.words }]] : []))),
   ...Object.fromEntries(Object.entries(PROC_WORDS).flatMap(([field, words]) => (words ? [[`proc.${field}`, { words }]] : []))),
 };
 
-/** What the player wore and brought, from the combatant info and the names the report fills in for it. */
+/** What the player wore and brought, from the combatant info and the names the report fills in for it, and what the list knows each item's use does. */
 @Injectable({ providedIn: 'root' })
 export class GearFacts implements FactReader {
   private readonly dumps = inject(SpellDumpService);
+  private readonly cooldowns = inject(CooldownFacts);
   readonly kinds: FactKind[] = ['gear'];
   readonly fields = FIELDS;
 
@@ -61,11 +77,24 @@ export class GearFacts implements FactReader {
     return ['gear'];
   }
 
-  read(path: FactPath, _moment: CastMoment, ctx: FactContext): Range {
-    const row = FIELDS[path.field];
-    if (!row?.value || (!ctx.gear.length && path.field !== 'potion')) return UNKNOWN;
+  read(path: FactPath, { atS }: CastMoment, ctx: FactContext): Range {
+    if (path.field === 'potion') return FIELDS['potion']?.value?.(this.state(path, ctx), path) ?? UNKNOWN;
+    if (!ctx.gear.length) return UNKNOWN;
+    const state = this.state(path, ctx);
+    if (path.field.startsWith(COOLDOWN_PREFIX)) return this.useCooldown(path.field.slice(COOLDOWN_PREFIX.length), state, atS);
+    return FIELDS[path.field]?.value?.(state, path) ?? UNKNOWN;
+  }
+
+  /** A trinket's cooldown rebuilt from the casts of its use spell, as any button's. */
+  private useCooldown(field: string, { item, use, ctx }: GearState, atS: number): Range {
+    return item?.use && use ? this.cooldowns.readCasts(field, ctx.castTimes(item.use), use, atS) : UNKNOWN;
+  }
+
+  private state(path: FactPath, ctx: FactContext): GearState {
     const token = (name: string): string => this.dumps.tokenize(name);
-    return row.value({ gear: ctx.gear, piece: this.piece(path, ctx.gear, token), token, ctx }, path);
+    const piece = this.piece(path, ctx.gear, token);
+    const item = piece ? ctx.list.items?.[piece.id] ?? null : null;
+    return { gear: ctx.gear, piece, item, use: item?.use ? ctx.list.spells[item.use] : undefined, token, ctx };
   }
 
   /** `trinket.1` and `trinket.2` are the two slots, `trinket.<name>` whichever holds the item; `this_trinket` depends on the line SimC is on, so it names none. */

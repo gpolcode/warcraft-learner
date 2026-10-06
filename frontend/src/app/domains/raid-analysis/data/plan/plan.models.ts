@@ -69,9 +69,21 @@ export interface PlanTalent {
   points?: number;
 }
 
+/** An item a top log wore, by its id; what its use does, from SimC's item effects and its non-class spell dump. */
+export interface PlanItem {
+  name: string;
+  /** The token under which `spells` holds the spell its use casts; null for an item with no use. */
+  use: string | null;
+  /** The use applies a stat buff to the player. */
+  use_buff: boolean;
+  use_damage: boolean;
+}
+
 export interface PriorityList {
   lines: PlanLine[];
   variables: PlanVariable[];
   spells: Record<string, PlanSpell>;
   talents: Record<string, PlanTalent>;
+  /** Absent on a bench an older ingest wrote. */
+  items?: Record<number, PlanItem>;
 }

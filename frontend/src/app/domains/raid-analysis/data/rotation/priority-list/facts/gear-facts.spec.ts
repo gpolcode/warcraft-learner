@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { cast } from '../../../../../../../testing/builders/events';
+import { planSpell } from '../../../../../../../testing/builders/spec-plan';
+import type { PriorityList } from '../../../plan/plan.models';
+import type { WclEvent } from '../../../wcl/wcl.models';
 import { FactCatalogService } from '../fact-catalog-service';
 import { castAt, factContext, priorityList } from '../priority-list-harness';
 import { GearPiece, UNKNOWN } from '../priority-list.models';
@@ -8,10 +11,20 @@ import { GearFacts } from './gear-facts';
 
 const CAST_S = 10;
 const SPYMASTERS_WEB = 220202;
+const WEB_USE = 444959;
+const WEB_CD_S = 20;
 const PUZZLE_BOX = 193701;
 const RING = 200000;
 const LIQUID_LUSTER = 431932;
 const WEB_ILVL = 639;
+/** What ingest baked of the trinkets the top logs wore. */
+const KNOWN_ITEMS = priorityList({
+  spells: { item_220202: planSpell("Spymaster's Web", [WEB_USE], { cooldown: WEB_CD_S, gcd: 0, cast_time: 0 }) },
+  items: {
+    [SPYMASTERS_WEB]: { name: "Spymaster's Web", use: 'item_220202', use_buff: true, use_damage: false },
+    [PUZZLE_BOX]: { name: "Algeth'ar Puzzle Box", use: null, use_buff: false, use_damage: false },
+  },
+});
 /** The combatant info's slots: rings at 10 and 11, trinkets at 12 and 13. */
 const WORN: GearPiece[] = [
   { slot: 10, id: RING, name: 'Seal of Diurna\'s Chosen', itemLevel: 626 },
@@ -21,10 +34,11 @@ const WORN: GearPiece[] = [
 const gear = TestBed.inject(GearFacts);
 const catalog = TestBed.inject(FactCatalogService);
 
-const read = (name: string, worn: GearPiece[] = WORN, casts = [cast(1, CAST_S)]) => {
-  const ctx = factContext(priorityList(), { casts, gear: worn });
+const read = (name: string, worn: GearPiece[] = WORN, casts: WclEvent[] = [cast(1, CAST_S)], list: PriorityList = priorityList()) => {
+  const ctx = factContext(list, { casts, gear: worn });
   return gear.read(catalog.path(name, 'x'), castAt(ctx, CAST_S), ctx);
 };
+const known = (name: string, casts: WclEvent[] = [cast(1, CAST_S)]) => read(name, WORN, casts, KNOWN_ITEMS);
 
 describe('GearFacts', () => {
   it('reads an item as equipped by its name tokenized the way SimC does, apostrophes dropped', () => {
@@ -60,9 +74,26 @@ describe('GearFacts', () => {
     expect(read('trinket.1.ilvl', [])).toEqual(UNKNOWN);
   });
 
-  it('reads what an item does on use as unknown, which no log states', () => {
+  it('reads what an item does on use from what the list knows of it, and unknown for an item no top log wore', () => {
+    expect(known('trinket.1.has_use_buff')).toEqual([1, 1]);
+    expect(known('trinket.1.has_cooldown')).toEqual([1, 1]);
+    expect(known('trinket.1.has_use_damage')).toEqual([0, 0]);
+    expect(known('trinket.2.has_use_buff')).toEqual([0, 0]);
+    expect(known('trinket.2.has_cooldown')).toEqual([0, 0]);
     expect(read('trinket.1.has_use_buff')).toEqual(UNKNOWN);
-    expect(read('trinket.1.cooldown.remains')).toEqual(UNKNOWN);
-    expect(read('set_bonus.mid2_4pc')).toEqual(UNKNOWN);
+  });
+
+  it('reads a trinket\'s cooldown off its use spell\'s casts, as any button\'s', () => {
+    const used = [cast(WEB_USE, CAST_S - 5), cast(1, CAST_S)];
+    expect(known('trinket.1.cooldown.remains', used)).toEqual([WEB_CD_S - 5, WEB_CD_S - 5]);
+    expect(known('trinket.1.cooldown.ready', used)).toEqual([0, 0]);
+    expect(known('trinket.1.cooldown.duration', used)).toEqual([WEB_CD_S, WEB_CD_S]);
+    expect(known('trinket.1.cast_time', used)).toEqual([0, 0]);
+    expect(known('trinket.2.cooldown.remains', used)).toEqual(UNKNOWN);
+  });
+
+  it('reads a set bonus and a proc as unknown, which the item data does not describe', () => {
+    expect(known('set_bonus.mid2_4pc')).toEqual(UNKNOWN);
+    expect(known('trinket.1.proc.any_dps.duration')).toEqual(UNKNOWN);
   });
 });

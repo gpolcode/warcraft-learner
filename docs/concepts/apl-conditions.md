@@ -17,7 +17,7 @@ The parser and the evaluator are generic: jsep parses every SimC operator and fu
 | pool | every resource, `cost`, `energize_amount` | amount as a range, max, regen |
 | fight | `time`, `fight_remains`, `time_to_die`, `time_to_pct_N`, `active_enemies`, `health.pct`, `raid_event.`, `fight_style.`, `is_boss` | the clock, who was hit when, add waves, the target's health |
 | press | `prev*`, `last_used`, `in_flight*`, `placed`, `executing`, `gcd`, `cast_time`, `pet.` | the casts around the moment |
-| gear | `equipped.`, `trinket.N.is`, `ilvl`, `potion.` | the combatant info, with the item names the report fills in |
+| gear | `equipped.`, `trinket.N.is`, `ilvl`, `potion.`, `trinket.N.cooldown.`, `has_use_buff`, `has_cooldown` | the combatant info, with the item names the report fills in, and what the bench knows each trinket's use does |
 | build | `talent.`, `hero_tree.`, `apex.N`, `variable.` | picked entries, replayed variables |
 
 **3. Field rows as data.** Per reader, one row per field: `field -> { value(state), words }`. The aura table is written once and serves buffs, debuffs and dots alike; the cooldown table serves cooldowns, actions and trinkets. A field SimC has but no log answers (`pmultiplier`, `tick_time`, `buff.X.value`, a trinket's use effect) is a declared row with words and no value: it phrases, and the value column says `Not in the log`.
@@ -53,6 +53,6 @@ So the cost model: a new field is one row, a new item or talent name is no code,
 
 `list-text-service.spec.ts` pins, over every name shape of the current lists (`src/testing/apl-names.ts`), the names no row answers: SimC's class code (`action.X.souls_consumed`, `howl_summon.ready`, `next_armament`), its sim settings (`druid.no_cds`, `priority_rotation`), the player's stats (`stat.haste_rating`, `spell_haste`) and the target's role, spec and distance. Each phrases by its words and reads as unknown.
 
-A trinket's use effect (`trinket.N.cooldown.remains`, `has_use_buff`, `has_cooldown`, `cast_time`, `proc.*`) and a set bonus are declared rows: the log shows the item, not what it does. Reading them takes SimC's item effect table and its non-class spell dump at ingest, baked into the bench for the trinkets the top logs wear.
+What a trinket does on use comes from SimC's item effect table and its non-class spell dump, read at ingest (`ItemDataService`) for the trinkets the top logs wear and baked into the bench's list with each use spell under an `item_<id>` token; the production build resolves none itself. A player's trinket no top log wore reads as unknown. A trinket's equip proc (`proc.*`), which stat its use buffs (`has_buff.<stat>`), a set bonus and a weapon type are declared rows: the data read so far does not describe them.
 
 Out of scope by design: `interrupt_if`, `early_chain_if` and `cancel_if` gate stopping a channel, not pressing; `cycle_targets`, `target_if=min|max`, `sync`, `moving` and `use_off_gcd` pick a target or a time slot, which the list reader already handles.

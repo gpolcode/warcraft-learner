@@ -11,6 +11,7 @@ import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { ITEM_DATA_SOURCE, ItemTable } from '../simc/item-data-source';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -233,6 +234,24 @@ describe('RotationTransformService (live, in-browser)', () => {
     assert(result.ok);
     expect(result.value.per_cd_benchmarks['Shadow Blades']?.median_uses).toBe(1);
     expect(result.value.major_cooldowns[0]).toMatchObject({ duration: SHADOW_BLADES_S, charges: 1 });
+  });
+
+  it('bakes what the item data says of the trinkets the top logs wore into the list, use spells included', async () => {
+    const SPYMASTERS_WEB = 220202;
+    const TRINKET_SLOT = 12;
+    const WEB_USE = 444959;
+    const table: ItemTable = {
+      items: { [SPYMASTERS_WEB]: { name: "Spymaster's Web", use: 'item_220202', use_buff: true, use_damage: false } },
+      spells: { item_220202: planSpell("Spymaster's Web", [WEB_USE], { cooldown: 20, gcd: 0 }) },
+    };
+    const gear = Array.from({ length: TRINKET_SLOT + 1 }, (_, slot) => (slot === TRINKET_SLOT ? { id: SPYMASTERS_WEB, name: "Spymaster's Web" } : {}));
+    const wearing = { ...wclFake, getCombatantInfo: async () => [{ sourceID: 1, gear }] };
+    const plan = specPlan({ cooldowns: COOLDOWNS, ...LIST, lines: [{ action: 'shadow_blades', terms: ['trinket.1.has_use_buff'] }] });
+    TestBed.configureTestingModule({ providers: [...provideApiFakes({ wcl: wearing, plans: planLoader(plan) }), { provide: ITEM_DATA_SOURCE, useValue: { items: async () => table } }] });
+    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
+    assert(result.ok);
+    expect(result.value.list.items).toEqual(table.items);
+    expect(result.value.list.spells).toEqual({ ...LIST.spells, ...table.spells });
   });
 
   it('propagates a missing error when the spec\'s plan has neither cooldowns nor a list', async () => {

@@ -193,6 +193,23 @@ describe('SpellDumpService.readDump', () => {
     expect(named('Eviscerate')?.energize).toBeNull();
   });
 
+  it('reads whether a record buffs the caster\'s stats or deals damage, as an item\'s use does', () => {
+    const uses = dumps.readDump(record(
+      "Name             : Spymaster's Web (id=444959) ",
+      '#1 (id=1141654)  : Apply Aura (6) | Attribute (29)',
+      '                   Base Value: 0 | Scaled Value: 0 | Stat: Int | Target: Self (1)',
+      '',
+      'Name             : Mad Queen\'s Mandate (id=443124) ',
+      '#1 (id=1138410)  : School Damage (2)',
+      '                   Base Value: 0 | Scaled Value: 1 | Target: Enemy (6)',
+    ));
+    expect(uses.map(use => [use.statBuff, use.damage])).toEqual([[true, false], [false, true]]);
+  });
+
+  it('reads only the ids asked for out of a dump too large to read whole', () => {
+    expect(dumps.readDump(DUMP, new Set([1719, 5277])).map(found => found.id)).toEqual([1719, 5277]);
+  });
+
   it('reads each effect\'s base value under its own number', () => {
     expect(named('Scorch')?.effects).toEqual([0, 30]);
   });
