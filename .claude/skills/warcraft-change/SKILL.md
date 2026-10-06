@@ -19,14 +19,6 @@ Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences
 
 Follow the aura reader (`data/rotation/priority-list/facts/aura-facts.ts`), its block in `fact-table.ts` and its spec as the reference. Deliver: the name's row in its kind's block, derived as SimC text over the kind's other fields wherever arithmetic can say it, else a primitive in the kind's reader; a row in `fact-table.spec.ts` for a derivation, boundary-paired rows in the reader's spec for a primitive; its sentence pinned in `list-text-service.spec.ts`.
 
-Watch for:
-
-- A name the log cannot answer still gets its row, with no `is` and no reader code: the sentence reads and the value says the log lacks it. A name with no row at all reads "Not read by warcraft-learner".
-- A reader states only what the log settles: a range the log does not narrow flags no cast, so a wide value is safe where a guessed point is a false finding.
-- A name SimC computes in class code is no reader's: substitute it at ingest (`EXPRESSIONS` in `data/simc/spec-plan-service.ts`) as SimC text over names the log answers; a sim setting is a constant row of the `fight` block at SimC's default.
-- Item data is read at ingest only, through `ITEM_DATA_SOURCE`, and rides in the bench as `list.items`; production fetches nothing beyond the log, so a new item field is baked, never fetched.
-- Bump `INGEST_VERSION` when a row's or a reader's values change, not for words.
-
 ### New feature
 
 Follow the Burst feature (`domains/raid-analysis/feature-burst-windows/` + `data/burst-windows/`) as the reference. Deliver: the `*TransformService` + `*DataSource` token pair and the `*FeatureService` in `data/<feature>/`, feature-local math beside them, the smart component in `feature-<feature>/`, the bench registered in `feature-ingest/bench-registry.ts` and the component in the page shell, specs at both altitudes. Bump `INGEST_VERSION`.
