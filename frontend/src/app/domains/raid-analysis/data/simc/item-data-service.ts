@@ -16,7 +16,6 @@ interface ItemEffects {
   use: number | null;
 }
 
-/** SimC's item data, read at ingest: which spell an item's use casts, and what that spell does. */
 @Injectable({ providedIn: 'root' })
 export class ItemDataService implements ItemDataSource {
   private readonly simc = inject(SimcDataService);

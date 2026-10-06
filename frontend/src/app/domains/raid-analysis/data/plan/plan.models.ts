@@ -61,7 +61,7 @@ export interface PlanSpell {
   energize: { type: number; amount: number } | null;
 }
 
-/** What a worn item does on use, as SimC's item data describes it; `use` is the token its use spell sits under in `spells`. */
+/** `use` keys the item's use spell in `spells`, not a spell id. */
 export interface PlanItem {
   id: number;
   name: string;

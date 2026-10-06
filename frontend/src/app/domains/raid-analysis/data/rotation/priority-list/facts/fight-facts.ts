@@ -27,7 +27,6 @@ const ADDS: Record<string, ((adds: Adds, atS: number) => Range) | undefined> = {
   duration: adds => point(max(adds.wave, ([startS, endS]) => endS - startS) ?? 0),
 };
 
-/** The encounter around the cast: its clock, the enemies up, their health and the adds, which are the enemies the player hit that are not the boss. */
 @Injectable({ providedIn: 'root' })
 export class FightFacts implements FactReader {
   readonly kind = 'fight';

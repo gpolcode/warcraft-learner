@@ -13,7 +13,6 @@ type Op = '<' | '<=' | '>' | '>=' | '=' | '!=';
 /** A number as a sentence reads it, with what bends it said after the bound: `full` and `one less while Darkest Night is down`. */
 interface Amount { n: string; aside: string }
 
-/** A name's row in words: `label` is a flag's `on|off` states, else the sentence's label with `{x}` for the noun. */
 interface Words { path: FactPath; frame: Frame; label: string }
 
 const FLIP: Record<Op, Op> = { '<': '>=', '<=': '>', '>': '<=', '>=': '<', '=': '!=', '!=': '=' };
@@ -41,7 +40,6 @@ const enemies = (op: Op, n: string): string => {
 
 type Sentence = (x: string, label: string, op: Op, n: string) => string;
 const counted: Sentence = (x, label, op, n) => `with ${bound(op, n)} ${x} ${label}`;
-/** Each frame's sentence for a bound on a name, `x` its noun. */
 const FRAMES: Record<Frame, Sentence> = {
   flag: counted, count: counted,
   left: (x, label, op, n) => `with ${lessMore(op)} ${secs(n)} of ${x || label} left`,
@@ -101,7 +99,7 @@ export class ListTextService {
     return lo === hi && lo === 1 ? this.singular(unit) : unit;
   }
 
-  /** `{s}` is the item or stat a gear field is about, which the list names where a top log wore the item. */
+  /** `{n}` is the name's number, `{s}` the item or stat a gear field asks about, named where the list carries the item. */
   private words(path: FactPath, list: PriorityList | null = null): Words {
     const row = path.field === 'prev_gcd' && path.n === 1 ? FactPaths.row({ ...path, field: 'prev' }) : FactPaths.row(path);
     const [frame, label] = row ?? ['amount', path.subject ? spaced(path.field) : ''];
@@ -112,7 +110,7 @@ export class ListTextService {
     return list?.items?.[token]?.name ?? spaced(token);
   }
 
-  /** The spell, pool, talent, variable or item a name reads; a name outside the catalog is its own noun. */
+  /** A name outside the catalog is its own noun, so its sentence still reads. */
   private noun(list: PriorityList | null, path: FactPath): string {
     const { kind, subject } = path;
     if (kind === 'fight') return FactPaths.row(path) ? '' : spaced(path.field);
@@ -122,7 +120,6 @@ export class ListTextService {
     return list ? this.name(list, subject) : spaced(subject);
   }
 
-  /** A trinket slot by its number, `this_trinket` and `other_trinket` as SimC leaves them, any other gear name by its item. */
   private gearNoun(list: PriorityList | null, { subject, field, n }: FactPath): string {
     if (n) return `your ${n === 1 ? 'first' : 'second'} trinket`;
     if (subject === 'this_trinket' || subject === 'other_trinket') return subject === 'this_trinket' ? 'this trinket' : 'the other trinket';

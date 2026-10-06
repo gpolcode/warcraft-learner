@@ -25,7 +25,7 @@ export type ResourceChange = readonly [atS: number, amount: number];
 
 export type AddSpan = readonly [startS: number, endS: number];
 
-/** One item the combatant info shows worn, its slot the gear array's index. */
+/** `slot` is the index in WCL's gear array, which is positional. */
 export interface GearPiece {
   slot: number;
   id: number;
@@ -74,25 +74,25 @@ export interface FactContext {
   hasteFactors: () => readonly (readonly [atS: number, factor: number])[];
 }
 
-/** A `pet.x` is out while the button that summons it lasts, named for the pet itself or with one of these. */
+/** The button that summons a pet is named for the pet itself or with one of these. */
 export const SUMMON_PREFIXES = ['', 'summon_', 'invoke_'];
 
 export type FactKind = 'aura' | 'cooldown' | 'pool' | 'press' | 'fight' | 'build' | 'gear';
 
-/** A name taken apart: `target.dot.rip.remains` is the aura kind, subject `rip`, field `remains`, on the target; `prev_gcd.2.x` carries 2 in `n`. */
 export interface FactPath {
   kind: FactKind;
   /** The spell, pool, talent or variable the field is read of; the line's own button for a bare field. */
   subject: string;
   field: string;
   target: boolean;
+  /** The number in the name: 2 for `prev_gcd.2.x`, the slot for `trinket.1.x`, 0 for a gear name with no slot, else 1. */
   n: number;
 }
 
-/** How a field reads in words and shows as a value: a flag by its two states, the rest by a unit and a label. */
+/** `left` is time left on something up, `away` time until something is back; a flag shows its two states, the rest a number with a unit. */
 export type Frame = 'flag' | 'left' | 'away' | 'count' | 'percent' | 'seconds' | 'amount';
 
-/** `is` derives the field from its kind's primitives as SimC text, or states a constant; a row without it is a primitive the kind's reader answers, or, where the reader does not, a declared field whose words read while its value stays unknown. */
+/** `words` are a flag's `on|off` states, else a label with `{x}` for the subject; `is` derives the field as SimC text or a constant; a row with neither `is` nor a reader is deliberate: its sentence reads, its value stays unknown. */
 export type FieldRow = readonly [frame: Frame, words: string, is?: string | number];
 
 export interface FactReader {

@@ -91,7 +91,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
     });
   }
 
-  /** The item data read for the trinkets the top logs wore rides along in the bench, each use spell under its item's token. */
+  /** A trinket's use spell joins `spells` under its item's token, so the bench reads it like any button. */
   private listWithItems(plan: SpecPlan, readings: LogReading[]): PriorityList {
     const items = readings.reduce<Record<string, PlanItem>>((all, reading) => ({ ...all, ...reading.items?.items }), {});
     const spells = readings.reduce((all, reading) => ({ ...all, ...reading.items?.spells }), plan.spells);

@@ -13,7 +13,6 @@ const STATED: Record<string, ((spell: PlanSpell | undefined) => number | undefin
 
 /** Up going INTO a cast: an aura the cast itself applies is not up for it, one the cast consumes is. */
 interface AuraAt {
-  /** The last application or refresh before the cast. */
   appliedS: number;
   /** When the aura finally dropped; null when it outlived the log. */
   endS: number | null;
@@ -31,7 +30,6 @@ interface Reading {
 
 const flag = (holds: boolean): Range => (holds ? [1, 1] : [0, 0]);
 
-/** Buffs on the player and dots or debuffs on the cast's target; a bare `remains` or `refreshable` is the line's own button's dot. */
 @Injectable({ providedIn: 'root' })
 export class AuraFacts implements FactReader {
   private readonly auraWindows = inject(AuraWindowsService);
@@ -59,7 +57,7 @@ export class AuraFacts implements FactReader {
     return this.untaken(path.subject, ctx) ? ABSENT[path.field] ?? UNKNOWN : UNKNOWN;
   }
 
-  /** The spell data's own number, 0 where it states none. */
+  /** The spell data writes 0 where it states no duration or cap, so 0 reads as unknown, not as none. */
   private stated(value: number | undefined): Range {
     return value ? [value, value] : UNKNOWN;
   }
@@ -73,7 +71,6 @@ export class AuraFacts implements FactReader {
     return this.fields[path.field]?.(reading, ctx) ?? UNKNOWN;
   }
 
-  /** The aura's spans and stacks on the player, or on the cast's target, which a cast at no known enemy lacks. */
   private on(path: FactPath, { target }: CastMoment, ctx: FactContext, id: number): Pick<Reading, 'spans' | 'stacks'> | null {
     if (!path.target) return { spans: ctx.selfSpans(id), stacks: () => ctx.selfStacks(id) };
     return target === null ? null : { spans: ctx.targetSpans(id).get(target) ?? [], stacks: () => ctx.targetStacks(id, target) };
@@ -93,7 +90,7 @@ export class AuraFacts implements FactReader {
     return Math.max(atS - CAST_EFFECTS_LEAD_S, (ctx.casts[earlier]?.atS ?? -Infinity) + LOG_TICK_S);
   }
 
-  /** `spans` are one aura's spans on one actor, time-ordered, a refresh ending one span and starting the next. */
+  /** A refresh ends one span and starts the next, so the aura ends where the last span of the chain does. */
   private auraAt(spans: readonly AuraSpan[], atS: number): AuraAt | null {
     const index = spans.findIndex(span => span.startS < atS && (span.endS == null || atS <= span.endS));
     const current = spans[index];

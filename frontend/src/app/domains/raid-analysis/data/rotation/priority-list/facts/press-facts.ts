@@ -16,7 +16,6 @@ type Field = (path: FactPath, moment: CastMoment, ctx: FactContext) => Range;
 const flag = (holds: boolean): Range => (holds ? [1, 1] : [0, 0]);
 const point = (value: number): Range => [value, value];
 
-/** What the player pressed around the moment: the casts before it, a shot still in the air, a cast still going, the global cooldown, a pet still out. */
 @Injectable({ providedIn: 'root' })
 export class PressFacts implements FactReader {
   readonly kind = 'press';
@@ -50,7 +49,7 @@ export class PressFacts implements FactReader {
     return this.fields[path.field]?.(path, moment, ctx) ?? UNKNOWN;
   }
 
-  /** The listed casts before the moment, latest first; a cast the list never names is a utility press, not part of the rotation SimC counts. */
+  /** A cast the list never names is a utility press, which SimC's `prev` does not count. */
   private before(moment: CastMoment, ctx: FactContext): TimedEvent[] {
     return ctx.casts.slice(0, moment.index).filter(event => ctx.gcd(event.abilityGameID) !== null).reverse();
   }
@@ -59,7 +58,6 @@ export class PressFacts implements FactReader {
     return !!event && ids.has(event.abilityGameID);
   }
 
-  /** The off-GCD casts since the last one on it. */
   private offGcd(before: TimedEvent[], ids: ReadonlySet<number>, ctx: FactContext): Range {
     const lastGcd = before.findIndex(event => ctx.gcd(event.abilityGameID));
     return flag((lastGcd === -1 ? before : before.slice(0, lastGcd)).some(event => ids.has(event.abilityGameID)));
@@ -88,7 +86,6 @@ export class PressFacts implements FactReader {
     return lands === undefined ? UNKNOWN : point(lands - atS);
   }
 
-  /** When the cast of the button begun before the moment and still going lands; null when none is. */
   private finishing(token: string, atS: number, ctx: FactContext): number | null {
     const ids = ctx.castIds(token);
     const begun = ctx.begincasts.filter(event => ids.has(event.abilityGameID) && event.atS < atS).pop();
@@ -125,7 +122,7 @@ export class PressFacts implements FactReader {
     return [Math.max(0, last.atS + gLo - moment.atS), Math.max(0, last.atS + gHi - moment.atS)];
   }
 
-  /** A pet is out from its summon for the summon's duration. */
+  /** The log never shows a pet leaving, so the summon's duration bounds its stay. */
   private pet(pet: string, atS: number, ctx: FactContext): Range {
     const summon = SUMMON_PREFIXES.map(prefix => prefix + pet).find(token => ctx.list.spells[token]?.duration);
     if (!summon) return UNKNOWN;

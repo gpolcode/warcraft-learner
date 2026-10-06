@@ -5,7 +5,6 @@ const ENEMIES: FieldRow = ['count', 'enemies', 'active_enemies'];
 const TO_LIVE: FieldRow = ['seconds', 'until the target dies', 'time_to_die'];
 const DUNGEON: FieldRow = ['flag', 'in a dungeon|in a raid', 0];
 
-/** Every field by kind: its frame, its words (a flag's `on|off` states, else the sentence's label with `{x}` for the subject) and the SimC text deriving it. */
 export const TABLE: Record<FactKind, Record<string, FieldRow | undefined>> = {
   aura: {
     up: ['flag', 'up|down'],

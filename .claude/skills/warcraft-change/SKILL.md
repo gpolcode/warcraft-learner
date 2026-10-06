@@ -17,16 +17,15 @@ Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences
 
 ### New SimC condition
 
-Every name a list tests goes through one grammar (`data/rotation/priority-list/fact-path.ts`: `[target.] head . subject . field`) into one of six kinds, each with a reader in `data/rotation/priority-list/facts/` and a block of rows in `fact-table.ts`. A row is `[frame, words, is?]`: the frame shapes the sentence and the value (`flag`, `left`, `away`, `count`, `percent`, `seconds`, `amount`), the words are a flag's `on|off` states or the sentence's label with `{x}` for the subject, and `is` derives the field as SimC text over the kind's other fields (`refreshable: '!up|remains<duration*0.3'`) or states a constant. Deliver, by what the name needs:
+Follow the aura reader (`data/rotation/priority-list/facts/aura-facts.ts`), its block in `fact-table.ts` and its spec as the reference. Deliver: the name's row in its kind's block, derived as SimC text over the kind's other fields wherever arithmetic can say it, else a primitive in the kind's reader; a row in `fact-table.spec.ts` for a derivation, boundary-paired rows in the reader's spec for a primitive; its sentence pinned in `list-text-service.spec.ts`.
 
-- **A field arithmetic over fields that exist** - one row with its SimC text. No reader code, no spec beyond a row in `fact-table.spec.ts`.
-- **A field the log can answer and no text derives** - the row without `is`, and the primitive in the kind's reader, with boundary-paired rows in that reader's spec.
-- **A field the log cannot answer** - the row without `is` and no reader code: its sentence reads and its value says the log lacks it.
-- **A name of a new kind** - a reader implementing `FactReader`, registered in `condition-eval-service.ts`, a head in the grammar and a block of rows.
-- **A name SimC computes in class code** - a row in `EXPRESSIONS` (`data/simc/spec-plan-service.ts`), as SimC text over names the log answers; a sim setting at its default is a constant row of the `fight` block.
-- **What an item does** - `ItemDataService` (`data/simc/`) reads SimC's item effects and non-class spell dump at ingest, bound through `ITEM_DATA_SOURCE` in the ingest configuration only; the bench carries the result as `list.items`, so production fetches nothing beyond the log.
+Watch for:
 
-A row the readers do not answer reads as unknown, so a reader never flags a cast its range does not settle. Bump `INGEST_VERSION` only when a reader's values change.
+- A name the log cannot answer still gets its row, with no `is` and no reader code: the sentence reads and the value says the log lacks it. A name with no row at all reads "Not read by warcraft-learner".
+- A reader states only what the log settles: a range the log does not narrow flags no cast, so a wide value is safe where a guessed point is a false finding.
+- A name SimC computes in class code is no reader's: substitute it at ingest (`EXPRESSIONS` in `data/simc/spec-plan-service.ts`) as SimC text over names the log answers; a sim setting is a constant row of the `fight` block at SimC's default.
+- Item data is read at ingest only, through `ITEM_DATA_SOURCE`, and rides in the bench as `list.items`; production fetches nothing beyond the log, so a new item field is baked, never fetched.
+- Bump `INGEST_VERSION` when a row's or a reader's values change, not for words.
 
 ### New feature
 
@@ -65,7 +64,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 ## Testing
 
 - **Altitude rule:** test behavior exhaustively at the lowest altitude that owns it. A composite gets exactly one composition test; never re-test shared helpers from feature specs. Feature components are covered by their service spec, not by mounting them.
-- **Titles, setup, and assertions read as sentences:** `describe` names the unit, `it` finishes the sentence - no arrows, colon prefixes, or labels. The body keeps that voice: setup is a few named fixture calls that spell out the scenario (`hardcast(0)`, `read('refreshable', onBoss, RUPTURE_S - PANDEMIC_S)`), and each `expect` states one claim from the title, so a reviewer reads the test top to bottom without decoding it. The debuff facts spec (`data/rotation/priority-list/facts/debuff-facts.spec.ts`) is the reference for setup; the e2e specs (`frontend/e2e/*.spec.ts`) with their `support.ts` verbs (`shows`, `showsFindingRows`, `showsOnPlan`) for assertions.
+- **Titles, setup, and assertions read as sentences:** `describe` names the unit, `it` finishes the sentence - no arrows, colon prefixes, or labels. The body keeps that voice: setup is a few named fixtures that spell out the scenario (`events: onBoss`, `atS: RUPTURE_S - PANDEMIC_S`), and each `expect` states one claim from the title, so a reviewer reads the test top to bottom without decoding it. The aura facts spec (`data/rotation/priority-list/facts/aura-facts.spec.ts`) is the reference for setup; the e2e specs (`frontend/e2e/*.spec.ts`) with their `support.ts` verbs (`shows`, `showsFindingRows`, `showsOnPlan`) for assertions.
 - **Boundary pairs:** every "triggers" case has a "does not trigger at the boundary" partner, and comparisons are strict: a value exactly at `mean + 2*stddev` is not an outlier.
 - **Named constants, never magic numbers or raw ids.** Spell/item ids come from `src/testing/spell-ids.ts`; every computed value gets a named `const` with a one-line derivation.
 - **Never load a WCL JSON blob** - build minimal event streams from the factories in `src/testing/builders/events.ts`.

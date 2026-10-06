@@ -75,7 +75,7 @@ export interface LogReading {
   /** The id this log cast each button under most. */
   ids: Map<string, number>;
   order: OrderCheck[];
-  /** What the item data said of the trinkets this log wore that the list did not yet describe. */
+  /** The item data of the trinkets this log wore that the list has no entry for, so ingest can bake them. */
   items?: ItemTable;
 }
 

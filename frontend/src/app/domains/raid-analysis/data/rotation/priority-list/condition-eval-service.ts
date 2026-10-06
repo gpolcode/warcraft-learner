@@ -75,13 +75,11 @@ export class ConditionEvalService {
     return truths.includes('unknown') ? 'unknown' : 'false';
   }
 
-  /** The streams of the log a name's reader needs. */
   streams(name: string): readonly FactStream[] {
     const path = FactPaths.path(name, '');
     return this.readers.get(path.kind)?.streams(path) ?? [];
   }
 
-  /** One name's value at a cast, `action` being the line's button, which a bare name reads; a derived field evaluates its SimC text with its own subject bound. */
   read(name: string, moment: CastMoment, action: string, ctx: FactContext, bound?: FactPath): Range {
     const path = FactPaths.path(name, action, bound);
     const is = FactPaths.row(path)?.[2];

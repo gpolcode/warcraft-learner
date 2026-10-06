@@ -67,7 +67,7 @@ export class ListLogService {
     return pieces.map(piece => ({ ...piece, name: piece.name || this.gearExtract.decodeHtmlEntities(names[`i${piece.id}`]?.name ?? '') }));
   }
 
-  /** What the trinkets worn do, for the ones the list does not describe yet; production's item source answers nothing, so the bench's own entries stand. */
+  /** Asked only for the trinkets the list has no entry for; production's source answers nothing, so the bench's entries stand. */
   private items(plan: PriorityList, gear: GearPiece[]): Promise<ItemTable> {
     const known = new Set(Object.values(plan.items ?? {}).map(item => item.id));
     const ids = gear.filter(piece => (TRINKET_SLOTS as readonly number[]).includes(piece.slot) && !known.has(piece.id)).map(piece => piece.id);

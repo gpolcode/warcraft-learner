@@ -46,7 +46,7 @@ const ON_OR_OFF: Range = [0, 1];
 const ONE_TO_THREE_STACKS: Range = [1, 3];
 const THREE: Range = [3, 3];
 const FOUR_S_LEFT: Range = [4, 4];
-/** The names the current lists use that no row answers: SimC's own class code, each phrased by its words, the ingest substituting what it can. */
+/** Names the current lists use that no row answers, all SimC class code; each still reads in words. */
 const UNREAD_NAMES = [
   'action.shadow_dance.damage', 'action.shadow_dance.demonsurge_available', 'action.shadow_dance.enabled', 'action.shadow_dance.souls_consumed',
   'consecration.up', 'demonic_art', 'dot_refreshable_count.immolate', 'dot_refreshable_count.wither', 'eclipse.lunar', 'eclipse.solar',

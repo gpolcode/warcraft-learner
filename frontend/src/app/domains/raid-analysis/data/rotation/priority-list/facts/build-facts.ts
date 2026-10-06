@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { sum } from 'd3-array';
 import { UNKNOWN, CastMoment, FactContext, FactPath, FactReader, FactStream, Range } from '../priority-list.models';
 
-/** Talents, hero trees and apex tiers from the log's talent tree; variables as the replay left them at the cast. */
 @Injectable({ providedIn: 'root' })
 export class BuildFacts implements FactReader {
   readonly kind = 'build';

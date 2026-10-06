@@ -15,7 +15,6 @@ import { UNKNOWN, FactKind, FactReader, Range } from './priority-list.models';
 
 const CAST_S = 10;
 const NEVER: Range = [Infinity, Infinity];
-/** The primitives each row's SimC text is evaluated over, by `kind.field`. */
 const given = new Map<string, Range>();
 const fake = (kind: FactKind): FactReader => ({ kind, streams: () => [], read: path => given.get(`${kind}.${path.field}`) ?? UNKNOWN });
 const FAKES: [Type<FactReader>, FactKind][] = [[AuraFacts, 'aura'], [CooldownFacts, 'cooldown'], [PoolFacts, 'pool'], [PressFacts, 'press'], [FightFacts, 'fight'], [BuildFacts, 'build'], [GearFacts, 'gear']];

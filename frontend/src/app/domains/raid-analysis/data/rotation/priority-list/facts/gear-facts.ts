@@ -7,7 +7,7 @@ import { CooldownFacts } from './cooldown-facts';
 
 const COOLDOWN = 'cooldown.';
 const flag = (holds: boolean): Range => (holds ? [1, 1] : [0, 0]);
-/** What the list knows of an item's use, from SimC's item data baked at ingest for the trinkets the top logs wore. */
+/** Baked at ingest for the trinkets the top logs wore, so any other item reads as unknown. */
 const KNOWN: Record<string, ((item: PlanItem, use: PlanSpell | undefined) => Range) | undefined> = {
   has_use_buff: item => flag(item.use_buff),
   has_use_damage: item => flag(item.use_damage),
@@ -15,7 +15,6 @@ const KNOWN: Record<string, ((item: PlanItem, use: PlanSpell | undefined) => Ran
   cast_time: (_, use) => (use ? [use.cast_time, use.cast_time] : UNKNOWN),
 };
 
-/** What the player wore and brought, from the combatant info with the names the report fills in, and what the list knows each trinket's use does. */
 @Injectable({ providedIn: 'root' })
 export class GearFacts implements FactReader {
   private readonly dumps = inject(SpellDumpService);
@@ -46,7 +45,7 @@ export class GearFacts implements FactReader {
     return item.use ? this.cooldowns.read({ ...path, kind: 'cooldown', subject: item.use, field: path.field.slice(COOLDOWN.length) }, moment, ctx) : UNKNOWN;
   }
 
-  /** An item's name tokenized the way SimC writes it, or the list's own entry for the token. */
+  /** A piece whose name the report left blank still matches by id through the list's own entry. */
   private named(piece: GearPiece, token: string, ctx: FactContext): boolean {
     return this.dumps.tokenize(piece.name) === token || ctx.list.items?.[token]?.id === piece.id;
   }

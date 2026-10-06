@@ -4,9 +4,9 @@ import { SUMMON_PREFIXES, FactKind, FactPath, FieldRow } from './priority-list.m
 
 type Head = (rest: string[]) => Pick<FactPath, 'kind' | 'subject' | 'field'> & Partial<FactPath>;
 
-/** A name on the target reads the same aura or button as one without the prefix; the target's own facts keep it as part of their field. */
+/** Stripped only ahead of a head that reads the same aura or button either way; `target.health.pct` is a fight field of its own. */
 const TARGET = /^target\.(?=(?:buff|debuff|dot|active_dots?|cooldown|action)\.)/;
-/** Which kind answers a bare field or an `action.x` field: `remains` is the button's own dot, `charges` its cooldown, `cast_time` its press, `cost` its pool. */
+/** Order settles a field two kinds share: a bare `remains` is the button's own dot, `action.x.remains` its cooldown. */
 const OWN_KINDS: FactKind[] = ['aura', 'cooldown', 'press', 'pool'];
 const ACTION_KINDS: FactKind[] = ['cooldown', 'press', 'pool', 'aura'];
 
@@ -14,7 +14,7 @@ const aura = (target: boolean): Head => ([subject = '', ...field]) => ({ kind: '
 const spread: Head = ([subject = '']) => ({ kind: 'aura', subject, field: 'active_dots', target: true });
 const press = (field: string): Head => ([subject = '']) => ({ kind: 'press', subject, field });
 const build = (head: string): Head => ([token = '', field = 'enabled']) => ({ kind: 'build', subject: `${head}.${token}`, field, n: Number(token) || 1 });
-/** Fields about an item or a stat of the trinket (`is.x`, `has_buff.haste`, `proc.any_dps.duration`) take it as the subject; `n` is the slot, 0 for none. */
+/** The segment after these names the item or stat asked about, not more field: `trinket.1.is.X`, `trinket.1.has_buff.haste`. */
 const ARGS = new Set(['is', 'has_buff', 'has_stat', 'proc', 'buff']);
 const gear = (n: number, subject: string, [field = '', ...rest]: string[]): ReturnType<Head> =>
   (ARGS.has(field) ? { kind: 'gear', n, subject: rest[0] ?? '', field: rest.length > 1 ? `${field}.${rest[rest.length - 1]}` : field } : { kind: 'gear', n, subject, field: [field, ...rest].join('.') });
@@ -36,7 +36,6 @@ const HEADS: Record<string, Head | undefined> = {
   equipped: item('equipped'), set_bonus: item('set_bonus'), potion: item('potion'), consumable: item('consumable'), main_hand: item('main_hand'), off_hand: item('off_hand'),
 };
 
-/** The grammar every SimC name shares: `[target.] head . subject . field`, a bare field being the line's own button's. */
 export class FactPaths {
   private constructor() {}
 
@@ -52,7 +51,7 @@ export class FactPaths {
     return { ...base, ...FactPaths.bare(name, head, action) };
   }
 
-  /** A name without a head is the fight's own, the line's button's own field, or, outside the catalog, read as the fight's and answered by nobody. */
+  /** A name outside the catalog falls to the fight kind, where no reader answers it, so it reads as unknown. */
   private static bare(name: string, head: string, action: string): Pick<FactPath, 'kind' | 'subject' | 'field'> & Partial<FactPath> {
     if (TABLE.fight[name] ?? TABLE.fight[head]) return { kind: 'fight', subject: '', field: TABLE.fight[name] ? name : head };
     const own = OWN_KINDS.find(kind => TABLE[kind][name]);
@@ -73,7 +72,6 @@ export class FactPaths {
     return path.kind === 'fight' && !path.field.startsWith('health');
   }
 
-  /** The spell tokens a name reads, a pet's being every button that may summon it. */
   static spellTokens(name: string): string[] {
     const { kind, subject, field } = FactPaths.path(name, '');
     if (!subject || kind === 'build' || kind === 'fight' || kind === 'gear' || POOL_TYPES[subject] !== undefined) return [];

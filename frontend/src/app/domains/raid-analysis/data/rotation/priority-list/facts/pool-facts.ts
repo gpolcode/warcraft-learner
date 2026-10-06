@@ -23,7 +23,6 @@ export class PoolFacts implements FactReader {
     return path.field === 'regen' ? this.regen(moment, type, ctx) : UNKNOWN;
   }
 
-  /** The spell data's own number, which talents and buffs may bend. */
   private listed(path: FactPath, ctx: FactContext): Range {
     const spell = ctx.list.spells[path.subject];
     const amount = path.field === 'cost' ? spell?.costs[0]?.amount : spell?.energize?.amount;
@@ -46,7 +45,7 @@ export class PoolFacts implements FactReader {
     return { amount: [Math.max(0, Math.min(lo, hi)), Math.min(max, Math.max(lo, hi))], max };
   }
 
-  /** The rise from what the last cast left to what this one found, procs included; readable only on a cast that reports the pool. */
+  /** Measured from what the last cast left to what this one found, so procs count and only a cast that reports the pool reads it. */
   private regen(moment: CastMoment, type: number, ctx: FactContext): Range {
     const own = this.contexts.pool(moment.event, type);
     const previous = ctx.resourcePool(type).filter(row => row[4] < moment.index).pop();
