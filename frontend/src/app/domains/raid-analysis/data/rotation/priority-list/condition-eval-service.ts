@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import type jsep from 'jsep';
 import type { AplNode } from '../../simc/simc-apl-service';
-import { FACT_READERS } from './fact-readers';
-import { UNKNOWN, CastMoment, FactContext, FactReader, Range, Truth } from './priority-list.models';
+import { FactCatalogService } from './fact-catalog-service';
+import { UNKNOWN, CastMoment, FactContext, Range, Truth } from './priority-list.models';
 const TRUE: Range = [1, 1];
 const FALSE: Range = [0, 0];
 const EITHER: Range = [0, 1];
@@ -13,7 +13,7 @@ const apart = ([a0, a1]: Range, [b0, b1]: Range): boolean => a1 < b0 || b1 < a0;
 const hull = (values: number[]): Range => [Math.min(...values), Math.max(...values)];
 const products = ([a0, a1]: Range, [b0, b1]: Range): number[] => [a0 * b0, a0 * b1, a1 * b0, a1 * b1];
 
-/** `[certainly holds, certainly fails]` over every value each side may take. */
+/** `[certainly holds, certainly fails]` over every value each side may take; `~` is SimC's floating-point equality. */
 const COMPARE: Record<string, ((a: Range, b: Range) => readonly [boolean, boolean]) | undefined> = {
   '<': ([a0, a1], [b0, b1]) => [a1 < b0, a0 >= b1],
   '<=': ([a0, a1], [b0, b1]) => [a1 <= b0, a0 > b1],
@@ -21,7 +21,9 @@ const COMPARE: Record<string, ((a: Range, b: Range) => readonly [boolean, boolea
   '>=': ([a0, a1], [b0, b1]) => [a0 >= b1, a1 < b0],
   '=': (a, b) => [equal(a, b), apart(a, b)],
   '==': (a, b) => [equal(a, b), apart(a, b)],
+  '~': (a, b) => [equal(a, b), apart(a, b)],
   '!=': (a, b) => [apart(a, b), equal(a, b)],
+  '!~': (a, b) => [apart(a, b), equal(a, b)],
 };
 
 /** SimC's expression functions; each is monotonic, so it maps a range end to end. */
@@ -41,7 +43,7 @@ const ARITHMETIC: Record<string, ((a: Range, b: Range) => Range) | undefined> = 
 
 @Injectable({ providedIn: 'root' })
 export class ConditionEvalService {
-  private readonly readers = inject(FACT_READERS);
+  private readonly catalog = inject(FactCatalogService);
 
   truthOf(node: AplNode, moment: CastMoment, action: string, ctx: FactContext): Truth {
     return this.truth(this.value(node, moment, action, ctx));
@@ -63,8 +65,9 @@ export class ConditionEvalService {
     return truths.includes('unknown') ? 'unknown' : 'false';
   }
 
-  readerFor(name: string): FactReader | null {
-    return this.readers.find(reader => reader.matches(name)) ?? null;
+  xor(a: Truth, b: Truth): Truth {
+    if (a === 'unknown' || b === 'unknown') return 'unknown';
+    return a === b ? 'false' : 'true';
   }
 
   value(node: AplNode, moment: CastMoment, action: string, ctx: FactContext): Range {
@@ -79,13 +82,16 @@ export class ConditionEvalService {
   }
 
   private identifier(name: string, moment: CastMoment, action: string, ctx: FactContext): Range {
-    const range = this.readerFor(name)?.read(name, moment, action, ctx) ?? UNKNOWN;
+    const path = this.catalog.path(name, action);
+    const range = this.catalog.reader(path.kind)?.read(path, moment, ctx) ?? UNKNOWN;
     return range.some(Number.isNaN) ? UNKNOWN : range;
   }
 
   private unary({ operator, argument }: jsep.UnaryExpression, moment: CastMoment, action: string, ctx: FactContext): Range {
     const [lo, hi] = this.value(argument, moment, action, ctx);
-    return operator === '!' ? this.fromTruth(this.not(this.truth([lo, hi]))) : [-hi, -lo];
+    if (operator === '!') return this.fromTruth(this.not(this.truth([lo, hi])));
+    if (operator === '@') return lo >= 0 ? [lo, hi] : hi <= 0 ? [-hi, -lo] : [0, Math.max(-lo, hi)];
+    return [-hi, -lo];
   }
 
   private call({ callee, arguments: [argument] }: jsep.CallExpression, moment: CastMoment, action: string, ctx: FactContext): Range {
@@ -99,6 +105,7 @@ export class ConditionEvalService {
     const a = this.value(left, moment, action, ctx);
     if (operator === '&' || operator === '|') return this.logical(operator, this.truth(a), () => this.truth(this.value(right, moment, action, ctx)));
     const b = this.value(right, moment, action, ctx);
+    if (operator === '^') return this.fromTruth(this.xor(this.truth(a), this.truth(b)));
     return this.compare(operator, a, b) ?? this.arithmetic(operator, a, b);
   }
 

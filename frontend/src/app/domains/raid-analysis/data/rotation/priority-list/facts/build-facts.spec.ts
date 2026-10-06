@@ -1,15 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { cast } from '../../../../../../../testing/builders/events';
+import { FactCatalogService } from '../fact-catalog-service';
 import { castAt, factContext, priorityList } from '../priority-list-harness';
 import { UNKNOWN } from '../priority-list.models';
-import { TalentFacts } from './talent-facts';
+import { BuildFacts } from './build-facts';
 
 const DEATHSTALKERS_MARK_ENTRY = 117101;
 const POTENT_POWDER_ENTRY = 117102;
 const TWO_RANKS = 2;
 const ANCIENT_ARTS_TIERS = [137064, 137063, 137062];
 const THIRD_POINT = 3;
+const CAST_S = 10;
 const list = priorityList({
   talents: {
     'talent.deathstalkers_mark': { name: "Deathstalker's Mark", entries: [DEATHSTALKERS_MARK_ENTRY] },
@@ -17,14 +19,16 @@ const list = priorityList({
     'talent.ancient_arts_3': { name: 'Ancient Arts', entries: ANCIENT_ARTS_TIERS, points: THIRD_POINT },
   },
 });
-const talents = TestBed.inject(TalentFacts);
+const build = TestBed.inject(BuildFacts);
+const catalog = TestBed.inject(FactCatalogService);
 
-const read = (name: string, picked: [number, number][] | null) => {
-  const ctx = factContext(list, { casts: [cast(1, 1)], ...(picked ? { talents: picked } : {}) });
-  return talents.read(name, castAt(ctx, 1), 'x', ctx);
+const read = (name: string, picked: [number, number][] | null, variables?: [string, [number, number]][]) => {
+  const ctx = factContext(list, { casts: [cast(1, CAST_S)], ...(picked ? { talents: picked } : {}) });
+  const moment = { ...castAt(ctx, CAST_S), ...(variables ? { variables: new Map(variables) } : {}) };
+  return build.read(catalog.path(name, 'x'), moment, ctx);
 };
 
-describe('TalentFacts', () => {
+describe('BuildFacts', () => {
   it('reads a picked talent as enabled and an unpicked one as not', () => {
     expect(read('talent.deathstalkers_mark', [[DEATHSTALKERS_MARK_ENTRY, 1]])).toEqual([1, 1]);
     expect(read('talent.deathstalkers_mark', [[POTENT_POWDER_ENTRY, 1]])).toEqual([0, 0]);
@@ -45,5 +49,10 @@ describe('TalentFacts', () => {
   it('reads a talent as unknown for a log without a talent tree, or one the tree does not name', () => {
     expect(read('talent.deathstalkers_mark', null)).toEqual(UNKNOWN);
     expect(read('talent.shadowcraft', [[DEATHSTALKERS_MARK_ENTRY, 1]])).toEqual(UNKNOWN);
+  });
+
+  it('reads a variable as the replay left it at the cast, and one the replay never set as unknown', () => {
+    expect(read('variable.pool', [], [['pool', [1, 1]]])).toEqual([1, 1]);
+    expect(read('variable.pool', [])).toEqual(UNKNOWN);
   });
 });

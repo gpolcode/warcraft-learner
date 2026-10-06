@@ -23,16 +23,17 @@ interface AplWalk {
   precombat: boolean;
 }
 
-// SimulationCraft's own order (engine/sim/expressions.cpp): `%` divides, `%%` is the remainder, `<?` and `>?` are max and min.
+// SimulationCraft's own order (engine/sim/expressions.cpp): `^` is xor, `~` and `!~` compare as floats, `%` divides, `%%` is the remainder, `<?` and `>?` are max and min.
 const BINARY_PRECEDENCE: Record<string, number> = {
-  '|': 1, '&': 2,
-  '=': 3, '==': 3, '!=': 3, '<': 3, '<=': 3, '>': 3, '>=': 3,
-  '<?': 4, '>?': 4, '+': 5, '-': 5, '*': 6, '%': 6, '%%': 6,
+  '|': 1, '^': 2, '&': 3,
+  '=': 4, '==': 4, '!=': 4, '~': 4, '!~': 4, '<': 4, '<=': 4, '>': 4, '>=': 4,
+  '<?': 5, '>?': 5, '+': 6, '-': 6, '*': 7, '%': 7, '%%': 7,
 };
 for (const op of Object.keys(jsep.binary_ops)) jsep.removeBinaryOp(op);
 for (const op of Object.keys(jsep.unary_ops)) jsep.removeUnaryOp(op);
 for (const [op, precedence] of Object.entries(BINARY_PRECEDENCE)) jsep.addBinaryOp(op, precedence);
-for (const op of ['!', '-']) jsep.addUnaryOp(op);
+// `@` is SimC's absolute value.
+for (const op of ['!', '-', '@']) jsep.addUnaryOp(op);
 jsep.addIdentifierChar('.');
 
 const LINE = /^actions(?:\.(\w+))?\+?=\/?(.*)$/;

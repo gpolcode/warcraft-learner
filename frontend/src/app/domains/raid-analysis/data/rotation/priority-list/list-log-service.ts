@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../../wcl/wcl-api-service';
-import type { WclAbility, WclEvent, WclFight } from '../../wcl/wcl.models';
+import type { WclAbility, WclEvent, WclFight, WclGearItem } from '../../wcl/wcl.models';
 import type { PriorityList } from '../../plan/plan.models';
 import { PressFold, WclProjectionsService } from '../../analysis/wcl-projections-service';
 import { GearExtractService } from '../../gear/gear-extract-service';
 import { FactContextService } from './fact-context-service';
 import { ListCheckService, LogReading } from './list-check-service';
+import type { FactStream, GearPiece } from './priority-list.models';
 
 export interface ListPull {
   reportCode: string;
@@ -46,6 +47,7 @@ export class ListLogService {
       damage: this.projections.withRelativeS(damage, startTime),
       resources: this.projections.withRelativeS(resources, startTime),
       talents: this.gearExtract.pickedTalents(combatant),
+      gear: await this.gear(combatant?.gear ?? [], streams),
       fightDurationS: this.projections.relativeS(endTime, startTime),
       kill: fight.kill,
     }));
@@ -54,5 +56,15 @@ export class ListLogService {
   /** The stream never applies an aura that was already up at the pull, so the combatant info's list stands in for those applies. */
   private upAtPull(auras: { ability?: number }[], startTime: number): WclEvent[] {
     return auras.flatMap(aura => (aura.ability ? [{ type: 'applybuff', timestamp: startTime - 1, abilityGameID: aura.ability }] : []));
+  }
+
+  /** WCL leaves most gear names blank, so a list that reads gear looks them up, once per pull. */
+  private async gear(items: WclGearItem[], streams: ReadonlySet<FactStream>): Promise<GearPiece[]> {
+    const pieces = items.flatMap((item, slot) => (Number(item.id) ? [{ slot, id: Number(item.id), name: item.name ?? '', itemLevel: Number(item.itemLevel ?? 0) }] : []));
+    const blank = pieces.filter(piece => !piece.name);
+    if (!streams.has('gear') || !blank.length) return pieces;
+    const names = await this.wclApi.getGameNames(blank.map(piece => piece.id), []);
+    this.gearExtract.fillGameNames(blank, 'i', names);
+    return pieces;
   }
 }

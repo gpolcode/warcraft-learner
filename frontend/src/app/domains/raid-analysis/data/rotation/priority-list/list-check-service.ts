@@ -6,15 +6,13 @@ import { WclProjectionsService } from '../../analysis/wcl-projections-service';
 import type { PlanLine, PriorityList } from '../../plan/plan.models';
 import { AplNode, SimcAplService } from '../../simc/simc-apl-service';
 import { ConditionEvalService } from './condition-eval-service';
+import { FactCatalogService } from './fact-catalog-service';
 import { VariableReplayService } from './variable-replay-service';
 import { FactContextService } from './fact-context-service';
 import { CooldownFacts } from './facts/cooldown-facts';
 import type { CastMoment, FactContext, FactStream, Range, Truth } from './priority-list.models';
 
-const COMPARISONS = new Set(['=', '==', '!=', '<', '<=', '>', '>=']);
-const TALENT = /^(talent|hero_tree|apex)\./;
-/** `health.pct` is the player's own health, so only the target's reads the situation. */
-const SITUATION = /^(active_enemies|spell_targets(\.\w+)?|target\.health\.pct|time|fight_remains|expected_combat_length|(target\.)?time_to_die(\.remains)?|raid_event\..+|fight_style\..+)$/;
+const COMPARISONS = new Set(['=', '==', '!=', '~', '!~', '<', '<=', '>', '>=']);
 /** Past any line's count of failing ordinary terms, so one failing situation term outweighs them all. */
 const SITUATION_MISS_WEIGHT = 100;
 /** Past any line's situation misses, so a line of another build ranks behind every line of the player's own. */
@@ -83,6 +81,7 @@ export interface LogReading {
 export class ListCheckService {
   private readonly apl = inject(SimcAplService);
   private readonly evaluator = inject(ConditionEvalService);
+  private readonly catalog = inject(FactCatalogService);
   private readonly contexts = inject(FactContextService);
   private readonly cooldowns = inject(CooldownFacts);
   private readonly projections = inject(WclProjectionsService);
@@ -94,7 +93,7 @@ export class ListCheckService {
       const node = text === undefined ? null : this.apl.parse(text);
       return node ? this.apl.identifiers(node) : [];
     });
-    return new Set(names.flatMap(name => this.evaluator.readerFor(name)?.streams ?? []));
+    return new Set(names.flatMap(name => this.catalog.streams(name)));
   }
 
   buttons(list: PriorityList): Map<string, ReadLine[]> {
@@ -128,8 +127,8 @@ export class ListCheckService {
     const parsed = terms?.every((term): term is AplNode => term !== null) ? terms : null;
     return {
       index, action: line.action, terms: parsed, lineCdS: line.line_cd ?? 0,
-      talentTerms: (parsed ?? []).map(term => this.apl.identifiers(term).every(name => TALENT.test(name))),
-      situationTerms: (parsed ?? []).map(term => this.apl.identifiers(term).some(name => SITUATION.test(name))),
+      talentTerms: (parsed ?? []).map(term => this.apl.identifiers(term).every(name => this.catalog.isBuild(name))),
+      situationTerms: (parsed ?? []).map(term => this.apl.identifiers(term).some(name => this.catalog.isSituation(name))),
     };
   }
 
@@ -175,7 +174,7 @@ export class ListCheckService {
       return junction.any ? this.evaluator.or(...parts) : this.evaluator.and(...parts);
     }
     const names = this.apl.identifiers(term);
-    return names.length && names.every(name => TALENT.test(name)) ? this.evaluator.truthOf(term, moment, action, ctx) : 'unknown';
+    return names.length && names.every(name => this.catalog.isBuild(name)) ? this.evaluator.truthOf(term, moment, action, ctx) : 'unknown';
   }
 
   /** A skip when due counts against the button like a cast off its lines. */
@@ -245,7 +244,7 @@ export class ListCheckService {
 
   /** A cost the pool may not cover reads as unknown, since talents cut costs. */
   private ready(line: ReadLine, moment: CastMoment, ctx: FactContext): Truth {
-    const cooldown = this.evaluator.truth(this.cooldowns.read('cooldown_react', moment, line.action, ctx));
+    const cooldown = this.evaluator.truth(this.cooldowns.read(this.catalog.path('cooldown_react', line.action), moment, ctx));
     const costs = (ctx.list.spells[line.action]?.costs ?? []).map(({ type, amount }) => {
       const own = this.contexts.pool(moment.event, type);
       const left = own ? own.before : ctx.resourcePool(type).filter(row => row[4] < moment.index).pop()?.[2];

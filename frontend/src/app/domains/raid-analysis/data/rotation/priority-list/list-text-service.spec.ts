@@ -1,8 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
+import { APL_NAMES } from '../../../../../../testing/apl-names';
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
 import { SHADOW_DANCE, SECRET_TECHNIQUE, RUPTURE } from '../../../../../../testing/spell-ids';
 import { SimcAplService } from '../../simc/simc-apl-service';
+import { FactCatalogService } from './fact-catalog-service';
 import { ListTextService } from './list-text-service';
 import { priorityList } from './priority-list-harness';
 import { UNKNOWN, Range } from './priority-list.models';
@@ -23,6 +25,7 @@ const list = priorityList({
 });
 const text = TestBed.inject(ListTextService);
 const apl = TestBed.inject(SimcAplService);
+const catalog = TestBed.inject(FactCatalogService);
 
 const phrase = (term: string, holds = true, action = 'black_powder'): string => {
   const node = apl.parse(term);
@@ -45,6 +48,17 @@ const ON_OR_OFF: Range = [0, 1];
 const ONE_TO_THREE_STACKS: Range = [1, 3];
 const THREE: Range = [3, 3];
 const FOUR_S_LEFT: Range = [4, 4];
+/** The names the current lists use that no reader answers: SimC's own class code and sim settings, each phrased by its words. */
+const UNREAD_NAMES = [
+  'action.shadow_dance.damage', 'action.shadow_dance.demonsurge_available', 'action.shadow_dance.enabled', 'action.shadow_dance.souls_consumed',
+  'consecration.up', 'death_knight.first_ams_cast', 'demonic_art', 'dot_refreshable_count.immolate', 'dot_refreshable_count.wither', 'druid.no_cds',
+  'druid.time_spend_healing', 'eclipse.lunar', 'eclipse.solar', 'evoker.allied_cds_up', 'evoker.shifting_buffs', 'firestarter.active', 'holy_bulwark',
+  'hot_streak_spells_in_flight', 'howl_summon.ready', 'lightning_rod', 'max_prio_damage', 'movement.distance', 'next_armament', 'priest.force_devour_matter',
+  'priority_rotation', 'raid_event.movement.distance', 'rtb_buffs', 'scorch_execute.active', 'soul_fragments', 'soul_fragments.inactive', 'soul_fragments.total',
+  'spell_haste', 'stat.crit_rating', 'stat.haste_rating', 'stat.versatility_rating', 'stealthed.rogue', 'target.distance', 'target.has_absorb',
+  'target.role.attack', 'target.role.dps', 'target.role.heal', 'target.role.spell', 'target.role.tank', 'target.spec.arcane', 'target.spec.augmentation',
+  'target.spec.marksmanship', 'target.spec.subtlety', 'target_cd_remains', 'ti_chain_lightning', 'ti_lightning_bolt', 'void_metamorphosis_base_drain_ps',
+];
 
 describe('ListTextService phrases', () => {
   it('reads a buff flag and its negation', () => {
@@ -97,7 +111,7 @@ describe('ListTextService phrases', () => {
     expect(phrase('!raid_event.adds.exists')).toBe('in a fight without adds');
     expect(phrase('raid_event.adds.remains<5')).toBe('with under 5 s of adds left');
     expect(phrase('raid_event.movement.in<3')).toBe('when you must move within 3 s');
-    expect(phrase('target.debuff.casting.react')).toBe('while the target is casting');
+    expect(phrase('target.debuff.casting.react')).toBe('while casting is on the target');
   });
 
   it('reads a variable the list keeps by its own name', () => {
@@ -118,9 +132,44 @@ describe('ListTextService phrases', () => {
     expect(phrase('fight_style.dungeonslice', false)).toBe('outside a dungeon');
   });
 
-  it('reads a term no phrase covers as another condition, never as SimC wrote it', () => {
-    expect(phrase('movement.distance>20')).toBe('when another condition holds');
-    expect(phrase('movement.distance>20', false)).toBe('unless another condition holds');
+  it('reads the player\'s gear by slot and by name', () => {
+    expect(phrase('trinket.1.cooldown.remains<=gcd.max')).toBe('when your first trinket is at most one GCD away');
+    expect(phrase('trinket.2.is.spymasters_web')).toBe('with spymasters web as your second trinket');
+    expect(phrase('!equipped.spymasters_web')).toBe('without spymasters web equipped');
+    expect(phrase('trinket.1.has_use_buff')).toBe('with an on-use buff on your first trinket');
+    expect(phrase('set_bonus.mid2_4pc')).toBe('with the mid2 4pc set bonus');
+  });
+
+  it('reads a field the log never carries in words all the same', () => {
+    expect(phrase('dot.rupture.ticks_remain<=2')).toBe('at 2 or fewer Rupture ticks left');
+    expect(phrase('buff.shadow_dance.last_trigger>3')).toBe('with over 3 s since Shadow Dance last triggered');
+    expect(phrase('talent.deathstalkers_mark.rank>=2')).toBe("at 2+ Deathstalker's Mark ranks");
+    expect(phrase('buff.shadow_dance.duration>8')).toBe("with Shadow Dance's duration over 8 s");
+  });
+
+  it('reads a name outside the catalog by its own words, never as SimC wrote it', () => {
+    expect(phrase('action.rupture.souls_consumed>=3')).toBe("with Rupture's souls consumed at least 3");
+    expect(phrase('movement.distance>20')).toBe('with movement distance over 20');
+    expect(phrase('movement.distance>20', false)).toBe('with movement distance at most 20');
+    expect(phrase('void_metamorphosis_base_drain_ps')).toBe('when void metamorphosis base drain ps holds');
+    expect(phrase('!apex.2')).toBe('without apex tier 2');
+  });
+
+  it('reads a measure tested alone as being above zero', () => {
+    expect(phrase('cooldown.shadow_dance.remains')).toBe("while Shadow Dance's cooldown is above zero");
+    expect(phrase('!buff.shadow_dance.remains')).toBe("while Shadow Dance's time left is zero");
+  });
+
+  it('reads every name shape the current lists use in words, with no SimC syntax left in them', () => {
+    const syntax = /[_.]/;
+    for (const name of APL_NAMES) {
+      for (const sentence of [phrase(name), phrase(name, false), phrase(`${name}>=1`)]) expect(sentence, `${name} reads as "${sentence}"`).not.toMatch(syntax);
+    }
+  });
+
+  it('leaves exactly SimC\'s class code and sim settings outside the catalog', () => {
+    const unread = APL_NAMES.filter(name => !catalog.words(catalog.path(name, 'black_powder')));
+    expect(unread).toEqual(UNREAD_NAMES);
   });
 });
 
@@ -178,9 +227,15 @@ describe('ListTextService values', () => {
     expect(tested('raid_event.adds.exists', OFF)).toBe('No adds');
   });
 
-  it('reads a name no flag phrase covers as holding or not, and one with a unit as its count', () => {
-    expect(tested('cooldown.shadow_dance.usable', ON)).toBe('Holds');
+  it('reads a flag by its own states, and a measure tested alone by its count', () => {
+    expect(tested('cooldown.shadow_dance.usable', ON)).toBe('Ready');
+    expect(tested('equipped.spymasters_web', ON)).toBe('Equipped');
     expect(tested('buff.shadow_dance.remains', FOUR_S_LEFT)).toBe('4 s left');
+  });
+
+  it('reads a name outside the catalog tested alone as holding or not', () => {
+    expect(tested('void_metamorphosis_base_drain_ps', ON)).toBe('Holds');
+    expect(tested('void_metamorphosis_base_drain_ps', OFF)).toBe('Does not hold');
   });
 
   it('reads a stack count tested alone as up once every count in its span holds, and as could be either while it may be none', () => {
@@ -193,9 +248,10 @@ describe('ListTextService values', () => {
     expect(tested('cooldown.shadow_dance.ready', ON_OR_OFF)).toBe('Could be either');
   });
 
-  it('reads a bounded value as its span, one the log cannot settle as such, and one no fact reads as unsupported', () => {
+  it('reads a bounded value as its span, one the log cannot settle as such, and one no fact reads as unread', () => {
     expect(value('cooldown.shadow_dance.remains', [2, 6])).toBe('2 to 6 s away');
     expect(value('cooldown.shadow_dance.remains', UNKNOWN)).toBe('Not in the log');
-    expect(value('raid_event.movement.in', UNKNOWN)).toBe('Not supported by warcraft-learner');
+    expect(value('raid_event.movement.in', UNKNOWN)).toBe('Not in the log');
+    expect(value('stat.haste_rating', UNKNOWN)).toBe('Not read by warcraft-learner');
   });
 });

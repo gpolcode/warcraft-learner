@@ -64,6 +64,15 @@ describe('ConditionEvalService', () => {
     expect(truth('time%raid_event.movement.in>0')).toBe('unknown');
   });
 
+  it('reads SimC\'s xor, absolute value and float equality', () => {
+    expect(truth(`time>0^time>${CAST_AT_S}`)).toBe('true');
+    expect(truth(`time>0^time>=${CAST_AT_S}`)).toBe('false');
+    expect(truth(`time>0^${SIM_ONLY}`)).toBe('unknown');
+    expect(truth(`@(0-time)=${CAST_AT_S}`)).toBe('true');
+    expect(truth(`time~${CAST_AT_S}`)).toBe('true');
+    expect(truth(`time!~${CAST_AT_S}`)).toBe('false');
+  });
+
   it('reads any non-zero value as true, a negative one included', () => {
     expect(evaluator.truth([-2, -1])).toBe('true');
     expect(evaluator.truth([0, 0])).toBe('false');

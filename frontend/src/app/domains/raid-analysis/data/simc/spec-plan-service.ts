@@ -8,14 +8,12 @@ import type { TalentName, TalentTree } from '../http/talent-data-service';
 import { AplRead, SimcAplService } from './simc-apl-service';
 import { SimcNameService } from './simc-name-service';
 import { SpellDumpService, SpellRecord } from './spell-dump-service';
+import { FactCatalogService } from '../rotation/priority-list/fact-catalog-service';
 
 /** A button pressed from the APL with a cooldown this long is a major cooldown even without Blizzard's label. */
 const MAJOR_COOLDOWN_S = 60;
 const KEY_LENGTH = 16;
 
-const SPELL_NAME = /^(?:target\.)?(?:buff|debuff|dot|cooldown|action|active_dots?|prev|prev_off_gcd|pet)\.(\w+)|^prev_gcd\.\d+\.(\w+)/;
-const TALENT_NAME = /^(talent|hero_tree|apex)\.\w+/;
-const AURA_NAME = /^(?:target\.)?(?:buff|debuff|dot)\.(\w+)/;
 const TIERED_TALENT = /^(\w+)_(\d+)$/;
 type EffectOf = (token: string, effect: number) => number | undefined;
 /** Whether the spec's own spell data holds the name. */
@@ -39,9 +37,6 @@ const EXPRESSIONS: Record<string, (effect: EffectOf, own: Own) => string | null>
   hot_streak_spells_in_flight: () => ['fireball', 'pyroblast', 'phoenix_flames'].map(token => `action.${token}.in_flight_count`).join('+'),
 };
 
-/** A `pet.x` is out while the button that summons it lasts, named for the pet itself or with one of these. */
-export const SUMMON_PREFIXES = ['', 'summon_', 'invoke_'];
-
 export interface SpecPlan extends PriorityList {
   cooldowns: PlanCooldown[];
   defensives: PlanDefensive[];
@@ -54,6 +49,7 @@ export class SpecPlanService {
   private readonly dumps = inject(SpellDumpService);
   private readonly apl = inject(SimcAplService);
   private readonly simcNames = inject(SimcNameService);
+  private readonly catalog = inject(FactCatalogService);
 
   /** A null list is a spec SimulationCraft writes no APL for: it gets cooldowns and defensives from the labels alone. */
   build(sources: { apl: string | null; dump: string; specLabel: string; talents: TalentTree | null; code: string }): SpecPlan {
@@ -128,7 +124,7 @@ export class SpecPlanService {
     });
     const tokens = new Set([
       ...(lines ?? []).map(line => line.action),
-      ...names.flatMap(name => this.spellTokens(name)),
+      ...names.flatMap(name => this.catalog.spellTokens(name)),
       ...[...cooldowns, ...defensives].map(button => this.dumps.tokenize(button.name)),
     ]);
     const spells = Object.fromEntries([...tokens].flatMap(token => {
@@ -152,13 +148,6 @@ export class SpecPlanService {
     return records.length ? this.planSpell(records) : null;
   }
 
-  private spellTokens(name: string): string[] {
-    const [, token, prior] = SPELL_NAME.exec(name) ?? [];
-    if (prior) return [prior];
-    if (!token) return [];
-    return name.startsWith('pet.') ? SUMMON_PREFIXES.map(prefix => prefix + token) : [token];
-  }
-
   /** One spell over every record its name holds: a button's cooldown sits on one record and its buff's duration on another. */
   private planSpell(named: SpellRecord[]): PlanSpell {
     const most = (field: 'cooldown' | 'charges' | 'duration' | 'gcd' | 'castTime' | 'maxStacks'): number => max(named, record => record[field]) ?? 0;
@@ -175,8 +164,9 @@ export class SpecPlanService {
   /** The talent entries each `talent.x`, `hero_tree.x` and `apex.N` of the list names, and each aura it names after a talent, by the tree's own names tokenized the way SimC does. */
   private talents(names: string[], tree: TalentTree | null): Record<string, PlanTalent> {
     const found = new Map<string, { entries: TalentName[]; points?: number }>();
-    for (const token of names.flatMap(name => AURA_NAME.exec(name)?.[1] ?? [])) found.set(`talent.${token}`, { entries: this.named(tree, 'talents', token) });
-    for (const key of names.flatMap(name => TALENT_NAME.exec(name)?.[0] ?? [])) found.set(key, this.talentEntries(key, tree));
+    const paths = names.map(name => this.catalog.path(name, ''));
+    for (const { subject } of paths.filter(path => path.kind === 'aura')) found.set(`talent.${subject}`, { entries: this.named(tree, 'talents', subject) });
+    for (const { subject } of paths.filter(path => path.kind === 'build')) found.set(subject, this.talentEntries(subject, tree));
     return Object.fromEntries([...found].flatMap(([key, { entries, points }]) =>
       entries[0] ? [[key, { name: entries[0].name, entries: entries.map(entry => entry.id), ...(points ? { points } : {}) }]] : []));
   }

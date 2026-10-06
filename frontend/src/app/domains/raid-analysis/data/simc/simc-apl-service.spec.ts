@@ -167,6 +167,12 @@ describe('SimcAplService.print', () => {
     expect(printed('!(a&b)')).toBe('!(a&b)');
   });
 
+  it('prints xor, absolute value and float equality as SimC writes them', () => {
+    const term = 'buff.a.up^buff.b.up|@(time-5)~3';
+    const node = apl.parse(term);
+    expect(node && apl.print(node)).toBe(term);
+  });
+
   it('prints a SimC function call as written', () => {
     expect(printed('floor(fight_remains%cooldown.x.duration-0.05)')).toBe('floor(fight_remains%cooldown.x.duration-0.05)');
   });

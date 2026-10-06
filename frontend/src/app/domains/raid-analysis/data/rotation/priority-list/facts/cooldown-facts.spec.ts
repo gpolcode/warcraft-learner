@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { cast } from '../../../../../../../testing/builders/events';
 import { planSpell } from '../../../../../../../testing/builders/spec-plan';
 import { SHADOW_BLADES, SHADOW_DANCE } from '../../../../../../../testing/spell-ids';
+import { FactCatalogService } from '../fact-catalog-service';
 import { castAt, factContext, priorityList } from '../priority-list-harness';
 import { UNKNOWN } from '../priority-list.models';
 import { CooldownFacts } from './cooldown-facts';
@@ -18,11 +19,12 @@ const list = priorityList({
   },
 });
 const cooldowns = TestBed.inject(CooldownFacts);
+const catalog = TestBed.inject(FactCatalogService);
 
 /** A probe cast at `atS` after the button's own casts, so the read sees every cast before it. */
 const read = (name: string, spellId: number, casts: number[], atS: number) => {
   const ctx = factContext(list, { casts: [...casts.map(castS => cast(spellId, castS)), cast(PROBE, atS)] });
-  return cooldowns.read(name, castAt(ctx, atS), 'x', ctx);
+  return cooldowns.read(catalog.path(name, 'x'), castAt(ctx, atS), ctx);
 };
 
 describe('CooldownFacts', () => {
@@ -38,6 +40,7 @@ describe('CooldownFacts', () => {
   it('bounds the time left from below by the fastest recast the log shows, which reductions made possible', () => {
     const FASTEST_S = 60;
     expect(read('cooldown.shadow_blades.remains', SHADOW_BLADES, [0, FASTEST_S, 200], FASTEST_S + 20)).toEqual([FASTEST_S - 20, BLADES_CD_S - 20]);
+    expect(read('cooldown.shadow_blades.duration', SHADOW_BLADES, [0, FASTEST_S, 200], FASTEST_S + 20)).toEqual([FASTEST_S, BLADES_CD_S]);
   });
 
   it('reads a ready that only the faster recharge allows as unknown', () => {
@@ -49,13 +52,16 @@ describe('CooldownFacts', () => {
     expect(read('cooldown.shadow_dance.charges', SHADOW_DANCE, [0, 1], 30)).toEqual([0, 0]);
     expect(read('cooldown.shadow_dance.charges_fractional', SHADOW_DANCE, [0, 1], 30)).toEqual([0.5, 0.5]);
     expect(read('cooldown.shadow_dance.charges', SHADOW_DANCE, [0], 30)).toEqual([1, 1]);
+    expect(read('cooldown.shadow_dance.max_charges', SHADOW_DANCE, [0], 30)).toEqual([DANCE_CHARGES, DANCE_CHARGES]);
   });
 
   it('reads the time to full charges across every missing charge', () => {
     expect(read('cooldown.shadow_dance.full_recharge_time', SHADOW_DANCE, [0, 1], 30)).toEqual([DANCE_RECHARGE_S * DANCE_CHARGES - 30, DANCE_RECHARGE_S * DANCE_CHARGES - 30]);
   });
 
-  it('reads a button the spell data does not name as unknown', () => {
+  it('reads the line\'s own button under a bare field, and a button the spell data does not name as unknown', () => {
+    const ctx = factContext(list, { casts: [cast(SHADOW_DANCE, 0), cast(PROBE, 30)] });
+    expect(cooldowns.read(catalog.path('charges', 'shadow_dance'), castAt(ctx, 30), ctx)).toEqual([1, 1]);
     expect(read('cooldown.adrenaline_rush.ready', SHADOW_BLADES, [], 30)).toEqual(UNKNOWN);
   });
 });

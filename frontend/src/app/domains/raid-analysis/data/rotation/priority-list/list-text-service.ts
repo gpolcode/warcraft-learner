@@ -4,16 +4,9 @@ import { round } from '../../analysis/analysis-math';
 import type { PriorityList } from '../../plan/plan.models';
 import { AplNode, SimcAplService } from '../../simc/simc-apl-service';
 import { ConditionEvalService } from './condition-eval-service';
-import type { Range, Truth } from './priority-list.models';
-
-type Op = '<' | '<=' | '>' | '>=' | '=' | '!=';
-
-/** A flag in words, `x` the spell it reads, `n` a count it carries (`prev_gcd.2`); `state` names the flag's own state, never the phrase's, which may negate it. */
-interface FlagWords {
-  match: RegExp;
-  words: (x: string, holds: boolean, n: number) => string;
-  state: (holds: boolean, n: number) => string;
-}
+import { FactCatalogService } from './fact-catalog-service';
+import { Words } from './list-words';
+import type { FactPath, FieldWords, Frame, Op, Range, Truth } from './priority-list.models';
 
 /** A number as a sentence reads it, with what bends it said after the bound: `full` and `one less while Darkest Night is down`. */
 interface Amount {
@@ -21,97 +14,38 @@ interface Amount {
   aside: string;
 }
 
-/** A measured subject in words: `at` states a bound on it, `unit` names its value on a cast. */
-interface SubjectWords {
-  match: RegExp;
-  at: (x: string, op: Op, n: string) => string;
-  unit: string;
-}
-
 const FLIP: Record<Op, Op> = { '<': '>=', '<=': '>', '>': '<=', '>=': '<', '=': '!=', '!=': '=' };
 const MIRROR: Record<Op, Op> = { '<': '>', '<=': '>=', '>': '<', '>=': '<=', '=': '=', '!=': '!=' };
-const TALENT = /^(talent|hero_tree|apex)\.(\w+)(?:\.enabled)?$/;
-const POOL = /^(mana|rage|focus|energy|combo_points|rune|runic_power|soul_shard|astral_power|holy_power|maelstrom|chi|insanity|fury|essence)(?:\.(deficit|pct))?$/;
+/** SimC's spellings of equality: `==` and the floating-point `~`. */
+const EQUALS: Record<string, Op | undefined> = { '==': '=', '~': '=', '!~': '!=' };
 const POOL_WORDS: Record<string, string | undefined> = { soul_shard: 'soul shards', rune: 'runes' };
 const AMOUNTS: Record<string, string | undefined> = { cp_max_spend: 'full', 'gcd.max': 'one GCD', gcd: 'one GCD' };
-const FLAG_VALUE = /(^|\.)(up|down|ticking|active|enabled|refreshable|ready|executing|exists|in_flight|placed)$/;
-const PREV_GCD = /^prev_gcd\.(\d+)\./;
-const SINGULAR = /^(stacks|charges|combo points|soul shards|runes)$/;
+const SLOTS: Record<string, string | undefined> = { '1': 'your first trinket', '2': 'your second trinket', this: 'this trinket', other: 'your other trinket' };
+const SINGULAR = /^(stacks|charges|combo points|soul shards|runes|ranks|ticks)$/;
 const UNSETTLED = 'Could be either';
+const HOLDS: readonly [string, string] = ['Holds', 'Does not hold'];
+/** The unit a frame's values carry unless the field names its own. */
+const FRAME_UNITS: Record<Frame, string> = { flag: '', left: 's left', away: 's away', count: '', percent: '%', seconds: 's', amount: '' };
 
-const not = (holds: boolean): string => (holds ? '' : 'not ');
-const states = (on: string, off: string) => (holds: boolean): string => (holds ? on : off);
-const HOLDS = states('Holds', 'Does not hold');
-const PICKED = states('Picked', 'Not picked');
-const below = (op: Op): boolean => op.startsWith('<');
-const lessMore = (op: Op): string => ({ '<': 'under', '<=': 'at most', '>': 'over', '>=': 'at least', '=': 'exactly', '!=': 'other than' })[op];
-const secs = (n: string): string => (/^\d+(\.\d+)?$/.test(n) ? `${n} s` : n);
-const bound = (op: Op, n: string): string => {
-  if (!/^\d/.test(n)) return `${below(op) ? 'under ' : ''}${n}`;
-  return { '>=': `${n}+`, '>': `over ${n}`, '<=': `${n} or fewer`, '<': `under ${n}`, '=': `exactly ${n}`, '!=': `other than ${n}` }[op];
+/** The sentence each frame makes of a bound, for a field with no sentence of its own. */
+const FRAMES: Record<Frame, (noun: string, op: Op, n: string, label: string, unit: string) => string> = {
+  flag: (noun, op, n) => `with ${noun} ${Words.lessMore(op)} ${n}`,
+  left: (noun, op, n) => `with ${Words.lessMore(op)} ${Words.secs(n)} of ${noun} left`,
+  away: (noun, op, n) => (n === '0' && Words.below(op) ? `when ${noun} is ready` : `when ${noun} is ${Words.lessMore(op)} ${Words.secs(n)} away`),
+  count: (noun, op, n, _, unit) => `at ${Words.bound(op, n)} ${noun} ${unit}`,
+  percent: (noun, op, n) => `at ${Words.bound(op, `${n}%`)} ${noun}`,
+  seconds: (noun, op, n, label) => `with ${[Words.possessive(noun), label].filter(Boolean).join(' ')} ${Words.lessMore(op)} ${Words.secs(n)}`,
+  amount: (noun, op, n, label) => `with ${[noun && Words.possessive(noun), label].filter(Boolean).join(' ')} ${Words.lessMore(op)} ${n}`,
 };
-const enemies = (op: Op, n: string): string => {
-  const count = Number(n);
-  if ((op === '=' || op === '<=') && count === 1) return 'on a single enemy';
-  if (op === '<' && count === 2) return 'on a single enemy';
-  return op === '>' && Number.isInteger(count) ? `on ${count + 1}+ enemies` : `on ${bound(op, n)} enemies`;
-};
-
-/** What a term no phrase covers reads as, so the player never meets SimC's own syntax. */
-const OTHER = 'another condition';
-
-const FLAGS: FlagWords[] = [
-  { match: /^target\.debuff\.casting\.(up|react)$/, words: (_, holds) => `while the target is ${not(holds)}casting`, state: states('Casting', 'Not casting') },
-  { match: /^raid_event\.adds\.exists$/, words: (_, holds) => `in a fight ${holds ? 'with' : 'without'} adds`, state: states('Adds', 'No adds') },
-  { match: /^raid_event\.adds\.up$/, words: (_, holds) => (holds ? 'while adds are up' : 'while no adds are up'), state: states('Adds up', 'No adds up') },
-  { match: /^raid_event\.pull\.exists$/, words: (_, holds) => (holds ? 'in a dungeon' : 'outside a dungeon'), state: states('Dungeon', 'Raid') },
-  { match: /^fight_style\.\w*patchwerk$/, words: (_, holds) => `${holds ? 'against' : 'away from'} a raid boss`, state: states('Raid boss', 'Not a raid boss') },
-  { match: /^fight_style\.\w+$/, words: (_, holds) => `${holds ? 'in' : 'outside'} a dungeon`, state: states('Dungeon', 'Raid') },
-  { match: /^(action\.\w+\.)?in_flight$/, words: (x, holds) => `while ${x} is ${not(holds)}in the air`, state: states('In the air', 'Not in the air') },
-  { match: /^(action\.\w+\.)?placed$/, words: (x, holds) => `while ${x} is ${not(holds)}about to go off`, state: states('Placed', 'Not placed') },
-  { match: /^variable\.\w+$/, words: (x, holds) => `${holds ? 'when' : 'unless'} ${x} holds`, state: HOLDS },
-  { match: /^buff\.\w+\.(up|react|stack)$/, words: (x, holds) => `while ${x} is ${holds ? 'up' : 'down'}`, state: states('Up', 'Down') },
-  { match: /^buff\.\w+\.down$/, words: (x, holds) => `while ${x} is ${holds ? 'down' : 'up'}`, state: states('Down', 'Up') },
-  { match: /^((?:target\.)?(dot|debuff)\.\w+\.(up|ticking)|ticking)$/, words: (x, holds) => `while ${x} is ${not(holds)}on the target`, state: states('On the target', 'Not on the target') },
-  { match: /^(?:target\.)?(dot|debuff)\.\w+\.down$/, words: (x, holds) => `while ${x} is ${not(!holds)}on the target`, state: states('Not on the target', 'On the target') },
-  { match: /^((?:target\.)?(dot|debuff)\.\w+\.)?refreshable$/, words: (x, holds) => (holds ? `once ${x} is in its last 30%` : `while ${x} has over 30% left`), state: states('Under 30% left', 'Over 30% left') },
-  { match: /^(cooldown\.\w+\.(ready|up)|cooldown_react)$/, words: (x, holds) => (holds ? `when ${x} is ready` : `while ${x} is on cooldown`), state: states('Ready', 'On cooldown') },
-  { match: /^pet\.\w+\.active$/, words: (x, holds) => `while ${x} is ${not(holds)}out`, state: states('Out', 'Not out') },
-  { match: /^action\.\w+\.executing$/, words: (x, holds) => `while ${not(holds)}casting ${x}`, state: states('Casting', 'Not casting') },
-  { match: /^(prev|prev_off_gcd|prev_gcd\.1)\.\w+$/, words: (x, holds) => `${not(holds)}right after ${x}`, state: states('Last press', 'Not last press') },
-  { match: /^prev_gcd\.\d+\.\w+$/, words: (x, holds, n) => `${not(holds)}with ${x} ${n} presses back`, state: (holds, n) => `${holds ? '' : 'Not '}${n} presses back` },
-  { match: /^combo_strike$/, words: (_, holds) => (holds ? 'when it does not repeat your last press' : 'when it repeats your last press'), state: states('Not a repeat', 'Repeats last press') },
-];
-
-const SUBJECTS: SubjectWords[] = [
-  { match: /^(active_enemies|spell_targets(\.\w+)?)$/, at: (_, op, n) => enemies(op, n), unit: 'enemies' },
-  { match: /^raid_event\.adds\.in$/, at: (_, op, n) => (below(op) ? `when adds come within ${secs(n)}` : `when adds are ${lessMore(op)} ${secs(n)} away`), unit: 's until adds' },
-  { match: /^raid_event\.adds\.remains$/, at: (_, op, n) => `with ${lessMore(op)} ${secs(n)} of adds left`, unit: 's of adds left' },
-  { match: /^raid_event\.adds\.count$/, at: (_, op, n) => `with ${bound(op, n)} adds coming`, unit: 'adds' },
-  { match: /^raid_event\.movement\.in$/, at: (_, op, n) => (below(op) ? `when you must move within ${secs(n)}` : `with ${lessMore(op)} ${secs(n)} before you must move`), unit: 's until you move' },
-  { match: /^variable\.\w+$/, at: (x, op, n) => `with ${x} ${lessMore(op)} ${n}`, unit: '' },
-  { match: /^(?:target\.)?(buff|debuff|dot)\.\w+\.(stack|react)$/, at: (x, op, n) => `at ${bound(op, n)} ${x} stacks`, unit: 'stacks' },
-  { match: /^((?:target\.)?(buff|debuff|dot)\.\w+\.)?remains$/, at: (x, op, n) => `with ${lessMore(op)} ${secs(n)} of ${x} left`, unit: 's left' },
-  { match: /^cooldown\.\w+\.(remains|full_recharge_time)$/, at: (x, op, n) => (n === '0' && below(op) ? `when ${x} is ready` : `when ${x} is ${lessMore(op)} ${secs(n)} away`), unit: 's away' },
-  { match: /^(cooldown\.\w+\.)?(charges|charges_fractional)$/, at: (x, op, n) => `at ${bound(op, n)} ${x} charges`, unit: 'charges' },
-  { match: /^(action\.\w+\.)?in_flight_count$/, at: (x, op, n) => `with ${bound(op, n)} ${x} in the air`, unit: 'in the air' },
-  { match: /^(action\.\w+\.)?in_flight_remains$/, at: (x, op, n) => `with ${lessMore(op)} ${secs(n)} until ${x} lands`, unit: 's to land' },
-  { match: /^(action\.\w+\.)?cost$/, at: (x, op, n) => `when ${x} costs ${bound(op, n)}`, unit: '' },
-  { match: /^active_dots?\.\w+$/, at: (x, op, n) => `while ${x} is on ${bound(op, n)} enemies`, unit: 'enemies' },
-  { match: /^target\.health\.pct$/, at: (_, op, n) => `${below(op) ? 'below' : 'above'} ${n}% target health`, unit: '% health' },
-  { match: /^health\.pct$/, at: (_, op, n) => `${below(op) ? 'below' : 'above'} ${n}% health`, unit: '% health' },
-  { match: /^fight_remains$/, at: (_, op, n) => (below(op) ? `in the last ${secs(n)} of the fight` : `with ${lessMore(op)} ${secs(n)} of the fight left`), unit: 's left' },
-  { match: /^(target\.)?time_to_die$/, at: (_, op, n) => `when the target has ${lessMore(op)} ${secs(n)} to live`, unit: 's to live' },
-  { match: /^time$/, at: (_, op, n) => (below(op) ? `in the first ${secs(n)} of the fight` : `after the first ${secs(n)} of the fight`), unit: 's in' },
-];
 
 @Injectable({ providedIn: 'root' })
 export class ListTextService {
   private readonly apl = inject(SimcAplService);
+  private readonly catalog = inject(FactCatalogService);
   private readonly evaluator = inject(ConditionEvalService);
 
   name(list: PriorityList, token: string): string {
-    return list.spells[token]?.name ?? token.replace(/_/g, ' ');
+    return list.spells[token]?.name ?? Words.spaced(token);
   }
 
   capitalized(text: string): string {
@@ -121,27 +55,31 @@ export class ListTextService {
   /** The term in words; `holds` false phrases its negation, which a title uses to name what went wrong. */
   phrase(list: PriorityList, node: AplNode, holds: boolean, action: string): string {
     if (node.type === 'UnaryExpression' && (node as jsep.UnaryExpression).operator === '!') return this.phrase(list, (node as jsep.UnaryExpression).argument, !holds, action);
-    if (node.type === 'Identifier') return this.flag(list, (node as jsep.Identifier).name, holds, action) ?? this.raw(holds);
+    if (node.type === 'Identifier') return this.flag(list, (node as jsep.Identifier).name, holds, action);
     return node.type === 'BinaryExpression' ? this.binary(list, node as jsep.BinaryExpression, holds, action) : this.raw(holds);
   }
 
   /** `flag` marks a term that tests the value for truth alone, which a count with no unit answers only as a state. */
   value(node: AplNode, range: Range, flag = false): string {
     const [lo, hi] = range;
-    if (lo === -Infinity && hi === Infinity) return this.supported(node) ? 'Not in the log' : 'Not supported by warcraft-learner';
-    const name = node.type === 'Identifier' ? (node as jsep.Identifier).name : '';
-    const unit = this.unit(name, lo === 1 && hi === 1);
-    if (this.readsAsState(name, flag, unit)) return this.state(name, this.evaluator.truth(range));
+    if (lo === -Infinity && hi === Infinity) return this.unread(node);
+    const path = node.type === 'Identifier' ? this.catalog.path((node as jsep.Identifier).name, '') : undefined;
+    const words = path && this.catalog.words(path);
+    const unit = this.unit(path, words, lo === 1 && hi === 1);
+    if (path && this.readsAsState(words, flag, unit)) return this.state(words, this.evaluator.truth(range));
     const text = this.span(lo, hi);
     return unit ? `${text} ${unit}` : text;
   }
 
-  private supported(node: AplNode): boolean {
-    return this.apl.identifiers(node).every(name => this.evaluator.readerFor(name) !== null);
+  /** A field the catalog knows but the log did not settle, against a name outside the catalog. */
+  private unread(node: AplNode): string {
+    const known = this.apl.identifiers(node).every(name => this.catalog.words(this.catalog.path(name, '')));
+    return known ? 'Not in the log' : 'Not read by warcraft-learner';
   }
 
-  private readsAsState(name: string, flag: boolean, unit: string): boolean {
-    return TALENT.test(name) || FLAG_VALUE.test(name) || (flag && (!unit || FLAGS.some(words => words.match.test(name))));
+  /** A flag always reads as a state; a measure tested alone does when it has states or no unit to count in. */
+  private readsAsState(words: FieldWords | undefined, flag: boolean, unit: string): boolean {
+    return words?.frame === 'flag' || (flag && (!!words?.states || !unit));
   }
 
   private span(lo: number, hi: number): string {
@@ -149,17 +87,15 @@ export class ListTextService {
     return hi === Infinity ? `${this.number(lo)}+` : `${this.number(lo)} to ${this.number(hi)}`;
   }
 
-  /** A name no flag phrase covers reads as `another condition`, which holds or does not. */
-  private state(name: string, truth: Truth): string {
+  /** A field with no states of its own holds or does not. */
+  private state(words: FieldWords | undefined, truth: Truth): string {
     if (truth === 'unknown') return UNSETTLED;
-    const holds = truth === 'true';
-    if (TALENT.test(name)) return PICKED(holds);
-    return FLAGS.find(words => words.match.test(name))?.state(holds, this.presses(name)) ?? HOLDS(holds);
+    return (words?.states ?? HOLDS)[truth === 'true' ? 0 : 1];
   }
 
-  private unit(name: string, one: boolean): string {
-    const pool = POOL.exec(name);
-    const units = pool ? this.poolUnit(pool[1] ?? '', pool[2]) : SUBJECTS.find(subject => subject.match.test(name))?.unit ?? '';
+  private unit(path: FactPath | undefined, words: FieldWords | undefined, one: boolean): string {
+    const raw = words?.unit;
+    const units = typeof raw === 'function' ? raw(this.poolWords(path?.subject ?? '')) : raw ?? (words ? FRAME_UNITS[words.frame] : '');
     if (!one) return units;
     return units === 'enemies' ? 'enemy' : SINGULAR.test(units) ? units.slice(0, -1) : units;
   }
@@ -167,7 +103,7 @@ export class ListTextService {
   private binary(list: PriorityList, node: jsep.BinaryExpression, holds: boolean, action: string): string {
     const { operator, left, right } = node;
     if (operator === '|' || operator === '&') return this.compound(list, node, operator, holds, action);
-    const op = (operator === '==' ? '=' : operator) as Op;
+    const op = (EQUALS[operator] ?? operator) as Op;
     if (!(op in FLIP)) return this.raw(holds);
     const facing = left.type === 'Literal' ? { subject: right, op: MIRROR[op], amount: left } : { subject: left, op, amount: right };
     const words = this.comparison(list, facing.subject, holds ? facing.op : FLIP[facing.op], facing.amount, action);
@@ -180,40 +116,59 @@ export class ListTextService {
     return holds ? this.join(parts) : `unless ${this.join(parts)}`;
   }
 
-  private flag(list: PriorityList, name: string, holds: boolean, action: string): string | null {
-    const talent = TALENT.exec(name);
-    if (talent) return `${holds ? 'with' : 'without'} ${this.talentName(list, name)}`;
-    const words = FLAGS.find(flag => flag.match.test(name));
-    return words ? words.words(this.name(list, this.token(name, action)), holds, this.presses(name)) : null;
+  private flag(list: PriorityList, name: string, holds: boolean, action: string): string {
+    const path = this.catalog.path(name, action);
+    const words = this.catalog.words(path);
+    const noun = this.noun(list, path);
+    if (!words) return `${holds ? 'when' : 'unless'} ${this.described(noun, path)} holds`;
+    return words.flag?.(noun, holds, path) ?? this.stated(words, noun, holds, path);
   }
 
-  private presses(name: string): number {
-    return Number(PREV_GCD.exec(name)?.[1] ?? 1);
+  /** A flag by its state; a measure tested alone is above zero or not. */
+  private stated(words: FieldWords, noun: string, holds: boolean, path: FactPath): string {
+    const state = words.states?.[holds ? 0 : 1].toLowerCase();
+    if (!state) return `while ${this.described(noun, path, words.label)} is ${holds ? 'above zero' : 'zero'}`;
+    return noun ? `while ${noun} is ${state}` : `while ${state}`;
   }
 
   private comparison(list: PriorityList, subject: AplNode, op: Op, amount: AplNode, action: string): string | null {
-    const name = subject.type === 'Identifier' ? (subject as jsep.Identifier).name : '';
+    if (subject.type !== 'Identifier') return null;
     const count = this.amount(list, amount, action);
-    const words = count && this.bounded(list, name, op, count.n, action);
-    return words && (count.aside ? `${words} (${count.aside})` : words);
+    if (!count) return null;
+    const path = this.catalog.path((subject as jsep.Identifier).name, action);
+    const words = this.catalog.words(path);
+    const noun = this.noun(list, path);
+    const text = words
+      ? words.at?.(noun, op, count.n, path) ?? FRAMES[words.frame](noun, op, count.n, words.label ?? '', this.unit(path, words, false))
+      : `with ${this.described(noun, path)} ${Words.lessMore(op)} ${count.n}`;
+    return count.aside ? `${text} (${count.aside})` : text;
   }
 
-  private bounded(list: PriorityList, name: string, op: Op, n: string, action: string): string | null {
-    const pool = POOL.exec(name);
-    if (pool) return this.poolBound(this.poolUnit(pool[1] ?? '', undefined), pool[2], op, n);
-    const words = SUBJECTS.find(entry => entry.match.test(name));
-    return words ? words.at(this.name(list, this.token(name, action)), op, n) : null;
+  /** A field in its own words, outside the catalog or tested alone: `Reap's souls consumed`, `movement distance`. */
+  private described(noun: string, path: FactPath, label?: string): string {
+    if (!noun) return label ?? Words.spaced(path.field.replace(/\./g, ' '));
+    return `${Words.possessive(noun)} ${label ?? Words.spaced(path.field.split('.').pop() ?? path.field)}`;
   }
 
-  private poolUnit(pool: string, field: string | undefined): string {
-    const words = POOL_WORDS[pool] ?? pool.replace(/_/g, ' ');
-    return field === 'deficit' ? `${words} missing` : field === 'pct' ? `% ${words}` : words;
+  /** What the name is about, as the player knows it. */
+  private noun(list: PriorityList, path: FactPath): string {
+    if (path.spell) return this.name(list, path.subject);
+    switch (path.kind) {
+      case 'pool': return this.poolWords(path.subject);
+      case 'build': return this.talentName(list, path.subject);
+      case 'gear': return SLOTS[path.subject] ?? Words.spaced(path.subject);
+      default: return Words.spaced(path.subject);
+    }
   }
 
-  private poolBound(pool: string, field: string | undefined, op: Op, n: string): string {
-    if (field === 'deficit') return n === '0' && (op === '<=' || op === '=') ? `at full ${pool}` : `with ${bound(op, n)} ${pool} missing`;
-    if (field === 'pct') return `at ${bound(op, `${n}%`)} ${pool}`;
-    return n === 'full' && !below(op) ? `at full ${pool}` : `at ${bound(op, n)} ${pool}`;
+  private poolWords(pool: string): string {
+    return POOL_WORDS[pool] ?? Words.spaced(pool);
+  }
+
+  private talentName(list: PriorityList, key: string): string {
+    const [kind = '', token = ''] = key.split('.');
+    const named = list.talents[key]?.name ?? (kind === 'apex' ? `apex tier ${token}` : Words.spaced(token));
+    return kind === 'hero_tree' ? `the ${named} hero tree` : named;
   }
 
   private amount(list: PriorityList, node: AplNode, action: string): Amount | null {
@@ -235,20 +190,9 @@ export class ListTextService {
     return node.type === 'Identifier' || (node.type === 'UnaryExpression' && (node as jsep.UnaryExpression).operator === '!');
   }
 
-  private token(name: string, action: string): string {
-    const parts = name.replace(/^target\./, '').split('.');
-    if (parts[0] === 'prev_gcd') return parts[2] ?? action;
-    return parts.length > 1 ? parts[1] ?? action : action;
-  }
-
-  private talentName(list: PriorityList, name: string): string {
-    const [, kind = '', token = ''] = TALENT.exec(name) ?? [];
-    const named = list.talents[`${kind}.${token}`]?.name ?? token.replace(/_/g, ' ');
-    return kind === 'hero_tree' ? `the ${named} hero tree` : named;
-  }
-
+  /** A term built of nothing a name reads, such as a bare number. */
   private raw(holds: boolean): string {
-    return `${holds ? 'when' : 'unless'} ${OTHER} holds`;
+    return `${holds ? 'when' : 'unless'} this holds`;
   }
 
   private join(parts: string[], last = 'and'): string {

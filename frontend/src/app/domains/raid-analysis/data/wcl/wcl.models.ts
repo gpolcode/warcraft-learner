@@ -92,6 +92,7 @@ export interface WclGearItem {
   id?: number | string;
   name?: string;
   icon?: string;
+  itemLevel?: number | string;
   permanentEnchant?: number | string;
   permanentEnchantName?: string;
 }

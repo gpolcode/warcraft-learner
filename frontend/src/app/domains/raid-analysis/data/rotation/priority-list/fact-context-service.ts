@@ -7,7 +7,7 @@ import { SpellDumpService } from '../../simc/spell-dump-service';
 import { WclProjectionsService, TimedEvent } from '../../analysis/wcl-projections-service';
 import { AuraWindowsService } from '../../analysis/aura-windows-service';
 import { BLOODLUST_IDS } from '../rotation-bloodlust-service';
-import type { AddSpan, DamageRow, FactContext, HealthRow, ResourceChange, ResourceRow } from './priority-list.models';
+import type { AddSpan, DamageRow, FactContext, GearPiece, HealthRow, ResourceChange, ResourceRow } from './priority-list.models';
 
 /** WCL flattens one actor's pools onto the event; 1 means they belong to the caster, 2 to whoever was hit. */
 const RESOURCE_ACTOR_SOURCE = 1;
@@ -34,6 +34,7 @@ export interface FactInputs {
   damage: TimedEvent[];
   resources: TimedEvent[];
   talents: ReadonlyMap<number, number> | null;
+  gear: GearPiece[];
   fightDurationS: number;
   kill: boolean;
 }
@@ -64,7 +65,7 @@ export class FactContextService {
     return {
       list, fightDurationS: input.fightDurationS, kill: input.kill, casts,
       begincasts: input.casts.filter(event => event.type === 'begincast'),
-      talents: input.talents,
+      talents: input.talents, gear: input.gear,
       castIds: idsOf,
       castTimes: this.perKey((token: string) => casts.filter(event => idsOf(token).has(event.abilityGameID)).map(event => event.atS)),
       landings: this.perKey((token: string) => damage.filter(event => !event.tick && idsOf(token).has(event.abilityGameID)).map(event => event.atS).sort((a, b) => a - b)),
@@ -154,10 +155,10 @@ export class FactContextService {
     }
     const boss = Math.max(0, ...toughest.values());
     if (!boss) return null;
-    const spans = new Map<string, [number, number]>();
+    const spans = new Map<string, [number, number, string]>();
     for (const [atS, target] of rows) {
       if ((toughest.get(target) ?? 0) >= boss * BOSS_HEALTH_SHARE) continue;
-      const span = getOrInsert(spans, target, (): [number, number] => [atS, atS]);
+      const span = getOrInsert(spans, target, (): [number, number, string] => [atS, atS, target]);
       span[1] = atS;
     }
     return [...spans.values()];

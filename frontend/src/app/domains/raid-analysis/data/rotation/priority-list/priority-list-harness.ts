@@ -3,7 +3,7 @@ import type { PriorityList } from '../../plan/plan.models';
 import type { WclAbility, WclEvent } from '../../wcl/wcl.models';
 import { WclProjectionsService } from '../../analysis/wcl-projections-service';
 import { FactContextService } from './fact-context-service';
-import type { CastMoment, FactContext } from './priority-list.models';
+import type { CastMoment, FactContext, GearPiece } from './priority-list.models';
 
 const FIGHT_S = 300;
 
@@ -19,6 +19,7 @@ export interface LogEvents {
   damage?: WclEvent[];
   resources?: WclEvent[];
   talents?: [number, number][];
+  gear?: GearPiece[];
   fightDurationS?: number;
   kill?: boolean;
 }
@@ -30,6 +31,7 @@ export function factContext(list: PriorityList, log: LogEvents = {}): FactContex
     list, abilities: log.abilities ?? [],
     casts: timed(log.casts), buffs: timed(log.buffs), debuffs: timed(log.debuffs), damage: timed(log.damage), resources: timed(log.resources),
     talents: log.talents ? new Map(log.talents) : null,
+    gear: log.gear ?? [],
     fightDurationS: log.fightDurationS ?? FIGHT_S,
     kill: log.kill ?? true,
   });

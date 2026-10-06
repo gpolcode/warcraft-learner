@@ -1,6 +1,6 @@
 ---
 name: warcraft-change
-description: warcraft-learner change contract - what a code change must deliver, end to end. Covers the four change kinds (finding, fact family, feature, page), the conventions no lint rule or type checks (architecture roles, failure handling, UI, testing, e2e), and the verification steps. Load this before writing, changing, or reviewing any code under frontend/src.
+description: warcraft-learner change contract - what a code change must deliver, end to end. Covers the four change kinds (finding, SimC condition, feature, page), the conventions no lint rule or type checks (architecture roles, failure handling, UI, testing, e2e), and the verification steps. Load this before writing, changing, or reviewing any code under frontend/src.
 ---
 
 # warcraft-learner change
@@ -15,9 +15,18 @@ Layer access, the two HTTP chokepoints, method shape, styling syntax, and file n
 
 Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences` populated on the finding (all `wl-finding-occurrences` needs to render the drill-down), message + remedy copy, boundary-paired specs. No bench change means no `INGEST_VERSION` bump.
 
-### New fact family
+### New SimC condition
 
-Deliver: the reader in `data/rotation/priority-list/facts/` implementing `FactReader` - the SimC names it matches, what the log says of each as a range (a point where the log states it, a span where it only bounds it), and the streams it needs - registered in `FACT_READERS` (`data/rotation/priority-list/fact-readers.ts`), its phrases and value units in `list-text-service.ts`, boundary-paired specs. A name no reader matches reads as unknown, so a reader never flags a cast its range does not settle. Bump `INGEST_VERSION`.
+`FactCatalogService` (`data/rotation/priority-list/fact-catalog-service.ts`) reads every SimC name as `[target.] kind . subject . field` and hands it to the reader of its kind (`FACT_READERS`, one per kind: aura, cooldown, pool, fight, press, gear, build with variables). Each reader is a table of field rows, `field -> { value(state), words }`, over one state it builds from the log; the words ride on the row, so `list-text-service.ts` phrases a term from the same row it reads from and has no name table of its own.
+
+Deliver, by what is new:
+
+- **A new field on an existing kind** - one row in that reader's table: its value over the state as a range (a point where the log states it, a span where it only bounds it) and its words (a frame, states for a flag, a unit for a measure, a sentence of its own only where the frame reads badly). A field no log answers is a declared row with words and no value: it phrases and shows `Not in the log`.
+- **A new name shape** - a head in the catalog's grammar table, mapped to a kind and a field; a bare field reads the line's own button.
+- **A new kind** - a reader implementing `FactReader` with its own state, registered in `fact-readers.ts`, and its stream needs.
+- **A name SimC computes in class code** - a row in `EXPRESSIONS` (`data/simc/spec-plan-service.ts`), as SimC text over names the log answers.
+
+Specs: a reader's spec reads through `catalog.path(name, action)` with boundary pairs; `fact-catalog-service.spec.ts` carries one row per name shape; `list-text-service.spec.ts` phrases every shape of the current lists (`src/testing/apl-names.ts`) and pins which stay outside the catalog. A name no row answers reads as unknown, so a reader never flags a cast its range does not settle. Bump `INGEST_VERSION`.
 
 ### New feature
 

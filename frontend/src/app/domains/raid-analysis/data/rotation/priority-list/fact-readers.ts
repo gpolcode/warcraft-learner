@@ -1,24 +1,16 @@
-import { InjectionToken, inject } from '@angular/core';
+import { InjectionToken, Type, inject } from '@angular/core';
 import type { FactReader } from './priority-list.models';
-import { TalentFacts } from './facts/talent-facts';
-import { EnemyFacts } from './facts/enemy-facts';
-import { BuffFacts } from './facts/buff-facts';
+import { AuraFacts } from './facts/aura-facts';
 import { CooldownFacts } from './facts/cooldown-facts';
-import { ClockFacts } from './facts/clock-facts';
-import { ResourceFacts } from './facts/resource-facts';
-import { TimingFacts } from './facts/timing-facts';
-import { DebuffFacts } from './facts/debuff-facts';
-import { PriorCastFacts } from './facts/prior-cast-facts';
-import { HealthFacts } from './facts/health-facts';
-import { RecentCastFacts } from './facts/recent-cast-facts';
-import { FightStyleFacts } from './facts/fight-style-facts';
-import { VariableFacts } from './facts/variable-facts';
-import { RaidEventFacts } from './facts/raid-event-facts';
+import { PoolFacts } from './facts/pool-facts';
+import { FightFacts } from './facts/fight-facts';
+import { PressFacts } from './facts/press-facts';
+import { GearFacts } from './facts/gear-facts';
+import { BuildFacts } from './facts/build-facts';
 
-/** A name none of them matches reads as unknown. */
+const READERS: Type<FactReader>[] = [AuraFacts, CooldownFacts, PoolFacts, FightFacts, PressFacts, GearFacts, BuildFacts];
+
+/** One reader per kind of state a SimC name reads; a kind none claims reads as unknown. */
 export const FACT_READERS = new InjectionToken<readonly FactReader[]>('FACT_READERS', {
-  factory: () => [
-    TalentFacts, EnemyFacts, BuffFacts, CooldownFacts, ClockFacts, ResourceFacts, TimingFacts, DebuffFacts, PriorCastFacts,
-    HealthFacts, RecentCastFacts, FightStyleFacts, VariableFacts, RaidEventFacts,
-  ].map(reader => inject(reader)),
+  factory: () => READERS.map(reader => inject(reader)),
 });

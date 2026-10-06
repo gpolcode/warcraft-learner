@@ -21,8 +21,11 @@ const list = (terms: string[]) => priorityList({
   },
 });
 
-/** Not a WCL data type: it labels the enemy-debuff read, which has its own query, among the recorded calls. */
+/** Not WCL data types: they label the enemy-debuff read and the gear-name lookup, which have their own queries, among the recorded calls. */
 const ENEMY_DEBUFFS = 'EnemyDebuffs';
+const GAME_NAMES = 'GameNames';
+const SPYMASTERS_WEB = 220202;
+const TRINKET_SLOT = 12;
 
 interface Call { dataType: string; sourceId?: number; includeResources: boolean; hostilityType?: string }
 
@@ -40,6 +43,10 @@ function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclComba
         return streams[ENEMY_DEBUFFS] ?? [];
       },
       getCombatantInfo: async () => [{ sourceID: PLAYER_ID, ...combatant }],
+      getGameNames: async (itemIds: number[]) => {
+        calls.push({ dataType: GAME_NAMES, includeResources: false });
+        return Object.fromEntries(itemIds.map(id => [`i${id}`, { id, name: id === SPYMASTERS_WEB ? "Spymaster's Web" : '' }]));
+      },
     },
   }] });
   return { calls, logs: TestBed.inject(ListLogService) };
@@ -112,6 +119,20 @@ describe('ListLogService', () => {
     const folds = [{ name: 'Eviscerate', spell_id: EVISCERATE, window_s: FOLD_WINDOW_S }];
     const reading = await logs.read(list([]), { ...pull(), folds });
     expect(reading.casts.get('eviscerate')).toHaveLength(1);
+  });
+
+  it('looks up the gear names WCL left blank when a fact reads gear, and judges by them', async () => {
+    const gear = Array.from({ length: TRINKET_SLOT + 1 }, (_, slot) => (slot === TRINKET_SLOT ? { id: SPYMASTERS_WEB, itemLevel: 639 } : {}));
+    const { calls, logs } = recording({ Casts: [cast(EVISCERATE, 5)] }, { gear });
+    const reading = await logs.read(list(['trinket.1.is.spymasters_web']), pull());
+    expect(calls.map(call => call.dataType)).toContain(GAME_NAMES);
+    expect(reading.casts.get('eviscerate')?.[0]?.verdict).toBe('on');
+  });
+
+  it('skips the gear-name lookup when no fact reads gear', async () => {
+    const { calls, logs } = recording({ Casts: [cast(EVISCERATE, 5)] }, { gear: [{ id: SPYMASTERS_WEB }] });
+    await logs.read(list(['buff.shadow_dance.up']), pull());
+    expect(calls.map(call => call.dataType)).not.toContain(GAME_NAMES);
   });
 
   it('reads an aura up at the pull from the combatant info, since the stream never applies it', async () => {
