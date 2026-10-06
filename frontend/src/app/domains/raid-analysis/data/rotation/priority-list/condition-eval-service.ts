@@ -80,6 +80,16 @@ export class ConditionEvalService {
     return this.readers.get(path.kind)?.streams(path) ?? [];
   }
 
+  /** False for a name the app only phrases: no row, or a row no reader or derivation ever settles. */
+  reads(name: string, bound?: FactPath): boolean {
+    const path = FactPaths.path(name, '', bound);
+    const is = FactPaths.row(path)?.[2];
+    if (is === undefined) return !!FactPaths.row(path) && !!this.readers.get(path.kind)?.answers(path);
+    if (typeof is === 'number') return true;
+    const node = getOrInsert(this.derived, is, () => this.apl.parse(is));
+    return !!node && this.apl.identifiers(node).every(id => this.reads(id, path));
+  }
+
   read(name: string, moment: CastMoment, action: string, ctx: FactContext, bound?: FactPath): Range {
     const path = FactPaths.path(name, action, bound);
     const is = FactPaths.row(path)?.[2];

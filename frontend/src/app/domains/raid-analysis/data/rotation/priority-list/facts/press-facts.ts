@@ -45,6 +45,10 @@ export class PressFacts implements FactReader {
     return field.startsWith('in_flight') ? ['damage'] : [];
   }
 
+  answers({ field }: FactPath): boolean {
+    return field in this.fields;
+  }
+
   read(path: FactPath, moment: CastMoment, ctx: FactContext): Range {
     return this.fields[path.field]?.(path, moment, ctx) ?? UNKNOWN;
   }

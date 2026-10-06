@@ -3,24 +3,22 @@ import { TestBed } from '@angular/core/testing';
 import { applyDebuff, cast, damage } from '../../../../../../testing/builders/events';
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
 import { wclReport } from '../../../../../../testing/builders/wcl-fixtures';
-import { RUPTURE, SHADOW_DANCE, EVISCERATE } from '../../../../../../testing/spell-ids';
-import type { PlanLine } from '../../plan/plan.models';
+import { RUPTURE, SHADOW_DANCE, EVISCERATE, SPYMASTERS_WEB, SPYMASTERS_WEB_USE } from '../../../../../../testing/spell-ids';
+import type { ItemTable, PlanLine } from '../../plan/plan.models';
 import type { WclCombatantInfo, WclEvent } from '../../wcl/wcl.models';
 import { WclApiService } from '../../wcl/wcl-api-service';
-import { ITEM_DATA_SOURCE, ItemTable, NO_ITEMS } from '../../simc/item-data-source';
+import { TRINKET_SLOTS } from '../../gear/gear-extract-service';
 import { ListLogService, ListPull } from './list-log-service';
 import { priorityList } from './priority-list-harness';
 
 const PLAYER_ID = 10;
 const OTHER_RAIDER = 99;
-const SPYMASTERS_WEB = 220202;
-const WEB_USE = 444959;
-/** The gear array is positional, the first trinket at index 12. */
-const TRINKET_SLOT = 12;
+/** The gear array is positional, so a trinket sits at its slot's index. */
+const [TRINKET_SLOT] = TRINKET_SLOTS;
 const WEARING: WclCombatantInfo = { gear: Array.from({ length: TRINKET_SLOT + 1 }, (_, slot) => (slot === TRINKET_SLOT ? { id: SPYMASTERS_WEB } : {})) };
 const WEB_TABLE: ItemTable = {
-  items: { spymasters_web: { id: SPYMASTERS_WEB, name: "Spymaster's Web", use: 'item_220202', use_buff: true, use_damage: false } },
-  spells: { item_220202: planSpell("Spymaster's Web", [WEB_USE], { cooldown: 20, gcd: 0 }) },
+  items: { spymasters_web: { id: SPYMASTERS_WEB, name: "Spymaster's Web", use: `item_${SPYMASTERS_WEB}`, use_buff: true, use_damage: null } },
+  spells: { [`item_${SPYMASTERS_WEB}`]: planSpell("Spymaster's Web", [SPYMASTERS_WEB_USE], { cooldown: 20, gcd: 0 }) },
 };
 const list = (terms: string[]) => priorityList({
   lines: [{ action: 'eviscerate', terms } satisfies PlanLine],
@@ -39,9 +37,8 @@ const GAME_NAMES = 'GameNames';
 
 interface Call { dataType: string; sourceId?: number; includeResources: boolean; hostilityType?: string }
 
-function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclCombatantInfo = {}, items: ItemTable = NO_ITEMS) {
+function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclCombatantInfo = {}, names = true) {
   const calls: Call[] = [];
-  const asked: number[] = [];
   TestBed.configureTestingModule({ providers: [{
     provide: WclApiService,
     useValue: {
@@ -56,12 +53,18 @@ function recording(streams: Record<string, WclEvent[]> = {}, combatant: WclComba
       getCombatantInfo: async () => [{ sourceID: PLAYER_ID, ...combatant }],
       getGameNames: async (ids: number[]) => {
         calls.push({ dataType: GAME_NAMES, includeResources: false });
+        if (!names) throw new Error('WCL is down');
         return Object.fromEntries(ids.map(id => [`i${id}`, { id, name: 'Spymaster&#39;s Web' }]));
       },
     },
-  }, { provide: ITEM_DATA_SOURCE, useValue: { items: async (ids: number[]) => { asked.push(...ids); return items; } } }] });
-  return { calls, asked, logs: TestBed.inject(ListLogService) };
+  }] });
+  return { calls, logs: TestBed.inject(ListLogService) };
 }
+/** Ingest's item lookup, recording the ids it is asked for. */
+const lookup = (table: ItemTable, asked: number[]): ListPull['items'] => async trinkets => {
+  asked.push(...trinkets.map(piece => piece.id));
+  return table;
+};
 const pull = (): ListPull => {
   const [fight] = wclReport({ endTimeMs: 120_000 }).fights;
   if (!fight) throw new Error('no pull in the fixture report');
@@ -139,24 +142,32 @@ describe('ListLogService', () => {
     expect(reading.casts.get('eviscerate')?.[0]?.verdict).toBe('on');
   });
 
+  it('reads on with the names left blank when the lookup for them fails, so the trinket reads as unknown', async () => {
+    const { logs } = recording({ Casts: [cast(EVISCERATE, 5)] }, WEARING, false);
+    const reading = await logs.read(list(['trinket.1.is.spymasters_web']), pull());
+    expect(reading.casts.get('eviscerate')?.[0]?.verdict).toBe('unjudged');
+  });
+
   it('leaves the blank item names alone when no fact reads gear', async () => {
     const { calls, logs } = recording({}, WEARING);
     await logs.read(list(['buff.shadow_dance.up']), pull());
     expect(calls.map(call => call.dataType)).not.toContain(GAME_NAMES);
   });
 
-  it('asks the item source for the trinkets worn that the list does not describe, judges the log with the answer, and hands it on', async () => {
-    const { asked, logs } = recording({ Casts: [cast(EVISCERATE, 5)] }, WEARING, WEB_TABLE);
-    const reading = await logs.read(list(['trinket.1.has_use_buff']), pull());
+  it('asks the item lookup for the trinkets worn that the list does not describe, judges the log with the answer, and hands it on', async () => {
+    const asked: number[] = [];
+    const { logs } = recording({ Casts: [cast(EVISCERATE, 5)] }, WEARING);
+    const reading = await logs.read(list(['trinket.1.has_use_buff']), { ...pull(), items: lookup(WEB_TABLE, asked) });
     expect(asked).toEqual([SPYMASTERS_WEB]);
     expect(reading.casts.get('eviscerate')?.[0]?.verdict).toBe('on');
     expect(reading.items).toEqual(WEB_TABLE);
   });
 
   it('asks for no item when no fact reads gear, or when the list describes the trinket already', async () => {
-    const { asked, logs } = recording({}, WEARING, WEB_TABLE);
-    await logs.read(list(['buff.shadow_dance.up']), pull());
-    await logs.read({ ...list(['trinket.1.has_use_buff']), items: WEB_TABLE.items }, pull());
+    const asked: number[] = [];
+    const { logs } = recording({}, WEARING);
+    await logs.read(list(['buff.shadow_dance.up']), { ...pull(), items: lookup(WEB_TABLE, asked) });
+    await logs.read({ ...list(['trinket.1.has_use_buff']), items: WEB_TABLE.items }, { ...pull(), items: lookup(WEB_TABLE, asked) });
     expect(asked).toEqual([]);
   });
 

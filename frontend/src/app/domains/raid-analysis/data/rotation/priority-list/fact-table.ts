@@ -9,7 +9,7 @@ export const TABLE: Record<FactKind, Record<string, FieldRow | undefined>> = {
   aura: {
     up: ['flag', 'up|down'],
     down: ['flag', 'down|up', '!up'],
-    ticking: ['flag', 'on the target|not on the target', 'up'],
+    ticking: ['flag', 'up|down', 'up'],
     stack: ['count', 'stacks'],
     react: ['count', 'stacks', 'stack'],
     max_stack: ['count', 'max stacks'],
@@ -66,7 +66,7 @@ export const TABLE: Record<FactKind, Record<string, FieldRow | undefined>> = {
     in_flight_remains: ['seconds', 'until {x} lands'],
     placed: ['flag', 'placed|not placed', 'in_flight'],
     executing: ['flag', 'being cast|not being cast'],
-    channeling: ['flag', 'being cast|not being cast', 'executing'],
+    channeling: ['flag', 'being cast|not being cast'],
     execute_remains: ['seconds', 'left on the {x} cast'],
     cast_time: ['seconds', 'to cast {x}'],
     execute_time: ['seconds', 'until {x} goes off', 'cast_time<?gcd'],
@@ -120,7 +120,7 @@ export const TABLE: Record<FactKind, Record<string, FieldRow | undefined>> = {
     priority_rotation: ['flag', '=priority rotation is on|=priority rotation is off', 0],
     'druid.no_cds': ['flag', '=cooldowns are held|=cooldowns are not held', 0],
     'druid.time_spend_healing': ['amount', 'time spent healing', 0],
-    'death_knight.first_ams_cast': ['seconds', 'until the first Anti-Magic Shell', 20],
+    'death_knight.first_ams_cast': ['seconds', 'until the first Anti-Magic Shell'],
     'priest.force_devour_matter': ['flag', '=Devour Matter is forced|=Devour Matter is not forced', 0],
   },
   build: {
@@ -156,4 +156,5 @@ export const TABLE: Record<FactKind, Record<string, FieldRow | undefined>> = {
     main_hand: ['flag', '=is a {s}|=is not a {s}'],
     off_hand: ['flag', '=is a {s}|=is not a {s}'],
   },
+  unread: {},
 };

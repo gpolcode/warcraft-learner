@@ -6,6 +6,7 @@ import { SHADOW_DANCE, SECRET_TECHNIQUE, RUPTURE } from '../../../../../../testi
 import { SimcAplService } from '../../simc/simc-apl-service';
 import { FactPaths } from './fact-path';
 import { ListTextService } from './list-text-service';
+import { ConditionEvalService } from './condition-eval-service';
 import { priorityList } from './priority-list-harness';
 import { UNKNOWN, Range } from './priority-list.models';
 
@@ -46,7 +47,7 @@ const ON_OR_OFF: Range = [0, 1];
 const ONE_TO_THREE_STACKS: Range = [1, 3];
 const THREE: Range = [3, 3];
 const FOUR_S_LEFT: Range = [4, 4];
-/** Names the current lists use that no row answers, all SimC class code; each still reads in words. */
+/** Names the current lists use with no row, all SimC class code; each phrases as another condition. */
 const UNREAD_NAMES = [
   'action.shadow_dance.damage', 'action.shadow_dance.demonsurge_available', 'action.shadow_dance.enabled', 'action.shadow_dance.souls_consumed',
   'consecration.up', 'demonic_art', 'dot_refreshable_count.immolate', 'dot_refreshable_count.wither', 'eclipse.lunar', 'eclipse.solar',
@@ -56,6 +57,16 @@ const UNREAD_NAMES = [
   'target.has_absorb', 'target.role.attack', 'target.role.dps', 'target.role.heal', 'target.role.spell', 'target.role.tank', 'target.spec.arcane',
   'target.spec.augmentation', 'target.spec.marksmanship', 'target.spec.subtlety', 'target_cd_remains', 'ti_chain_lightning', 'ti_lightning_bolt',
   'void_metamorphosis_base_drain_ps',
+];
+/** Names in the catalog no reader or derivation settles: their sentence reads, their value says so. */
+const PHRASED_ONLY = [
+  'action.shadow_dance.channeling', 'action.shadow_dance.pmultiplier', 'buff.shadow_dance.value', 'death_knight.first_ams_cast', 'debuff.shadow_dance.value',
+  'dot.shadow_dance.pmultiplier', 'health.max', 'is_boss', 'main_hand.2h', 'main_hand.dagger', 'off_hand.dagger', 'persistent_multiplier', 'pmultiplier',
+  'raid_event.movement.distance', 'raid_event.movement.exists', 'raid_event.movement.in', 'set_bonus.shadow_dance', 'target.health', 'target.is_boss',
+  'this_trinket.has_buff.haste', 'this_trinket.proc.any_dps.duration', 'tick_time', 'ticks', 'ticks_remain', 'time_to_bloodlust', 'trinket.1.buff.any_dps.duration',
+  'trinket.1.has_buff.agility', 'trinket.1.has_buff.attack_power', 'trinket.1.has_buff.crit', 'trinket.1.has_buff.haste', 'trinket.1.has_buff.intellect',
+  'trinket.1.has_buff.mastery', 'trinket.1.has_buff.strength', 'trinket.1.has_buff.versatility', 'trinket.1.has_stat.any_dps', 'trinket.1.proc.any_dps.default_value',
+  'trinket.1.proc.any_dps.duration', 'trinket.1.proc.any_dps.remains', 'trinket.1.proc.any_dps.up',
 ];
 
 describe('ListTextService phrases', () => {
@@ -67,7 +78,7 @@ describe('ListTextService phrases', () => {
     ['combo_points>=6', 'with 6+ combo points'],
     ['combo_points>=6', 'with under 6 combo points', false],
     ['combo_points>=cp_max_spend', 'with full combo points'],
-    ['combo_points>=cp_max_spend-!buff.darkest_night.up', 'with full combo points (one less while Shadow Dance is up)'.replace('Shadow Dance is up', 'Darkest Night is down')],
+    ['combo_points>=cp_max_spend-!buff.darkest_night.up', 'with full combo points (one less while Darkest Night is down)'],
     ['energy.deficit>=40', 'with 40+ energy missing'],
     ['energy.pct<50', 'with under 50% energy'],
     ['active_enemies>=3', 'on 3+ enemies'],
@@ -89,6 +100,10 @@ describe('ListTextService phrases', () => {
     ['refreshable', 'while Rupture is in its last 30%', true, 'rupture'],
     ['!refreshable', 'while Rupture is not yet in its last 30%', true, 'rupture'],
     ['dot.rupture.ticking', 'while Rupture is on the target'],
+    ['!dot.rupture.ticking', 'while Rupture is not on the target'],
+    ['dot.rupture.down', 'while Rupture is not on the target'],
+    ['target.debuff.casting.react', 'while the target is casting'],
+    ['!target.debuff.casting.react', 'while the target is not casting'],
     ['dot.rupture.ticks_remain<=2', 'with at most 2 Rupture ticks left'],
     ['buff.shadow_dance.remains<gcd.max*2', 'with under 2 GCDs of Shadow Dance left'],
     ['buff.shadow_dance.duration>8', "with over 8 s of Shadow Dance's duration"],
@@ -117,10 +132,10 @@ describe('ListTextService phrases', () => {
     ['gcd.remains>0.5', 'with over 0.5 s left on the GCD'],
     ['fight_style.patchwerk', 'while against a raid boss'],
     ['fight_style.dungeonslice', 'while in a raid', false],
-    ['action.rupture.souls_consumed>=3', "with Rupture's souls consumed at least 3"],
-    ['movement.distance>20', 'with movement distance over 20'],
-    ['movement.distance>20', 'with movement distance at most 20', false],
-    ['void_metamorphosis_base_drain_ps', 'while void metamorphosis base drain ps holds'],
+    ['action.rupture.souls_consumed>=3', 'when another condition holds'],
+    ['movement.distance>20', 'when another condition holds'],
+    ['movement.distance>20', 'unless another condition holds', false],
+    ['void_metamorphosis_base_drain_ps', 'when another condition holds'],
     ['trinket.1.has_use_buff', 'while your first trinket has an on-use buff'],
     ['!trinket.2.has_cooldown', 'while your second trinket has no cooldown'],
     ['trinket.1.cooldown.remains<=gcd.max', 'when your first trinket is at most one GCD away'],
@@ -128,7 +143,7 @@ describe('ListTextService phrases', () => {
     ['!equipped.spymasters_web', "while Spymaster's Web is not equipped"],
     ['trinket.1.ilvl>=600', "with your first trinket's item level at least 600"],
     ['this_trinket.has_use_buff', 'while this trinket has an on-use buff'],
-    ['set_bonus.mid2_4pc', 'while the mid2 4pc set bonus is active'],
+    ['set_bonus.midnight_season_2_4pc', 'while your 4-piece set bonus is active'],
     ['potion.liquid_luster', 'while liquid luster is the potion you brought'],
     ['main_hand.dagger', 'while your main hand is a dagger'],
     ['trinket.1.proc.any_dps.duration>10', "with over 10 s of your first trinket's proc"],
@@ -147,6 +162,11 @@ describe('ListTextService phrases', () => {
 
   it('leaves exactly SimC\'s class code outside the catalog', () => {
     expect(APL_NAMES.filter(name => !FactPaths.row(FactPaths.path(name, 'black_powder')))).toEqual(UNREAD_NAMES);
+  });
+
+  it('reads every name in the catalog but these, which it only phrases', () => {
+    const evaluator = TestBed.inject(ConditionEvalService);
+    expect(APL_NAMES.filter(name => FactPaths.row(FactPaths.path(name, 'black_powder')) && !evaluator.reads(name))).toEqual(PHRASED_ONLY);
   });
 });
 
@@ -167,7 +187,8 @@ describe('ListTextService values', () => {
     ['cooldown.shadow_dance.usable', ON, 'Ready', true],
     ['dot.rupture.ticking', ON, 'On the target', true],
     ['dot.rupture.ticking', OFF, 'Not on the target', true],
-    ['dot.rupture.down', ON, 'Down', true],
+    ['dot.rupture.down', ON, 'Not on the target', true],
+    ['target.debuff.casting.react', ON, 'Casting', true],
     ['dot.rupture.refreshable', ON, 'In its last 30%', true],
     ['dot.rupture.refreshable', OFF, 'Not yet in its last 30%', true],
     ['talent.deathstalkers_mark', ON, 'Picked', true],
@@ -192,14 +213,18 @@ describe('ListTextService values', () => {
     ['target.health.pct', [18, 18], '18%'],
     ['cast_time', [1.5, 1.5], '1.5 s'],
     ['cooldown.shadow_dance.remains', [2, 6], '2 to 6 s away'],
-    ['void_metamorphosis_base_drain_ps', ON, 'Holds', true],
+    ['void_metamorphosis_base_drain_ps', UNKNOWN, 'Not read by warcraft-learner'],
     ['equipped.spymasters_web', ON, 'Equipped', true],
     ['trinket.1.has_use_buff', ON, 'Has an on-use buff', true],
     ['trinket.1.ilvl', [639, 639], '639'],
     ['trinket.1.cooldown.remains', [4.2, 4.2], '4.2 s away'],
-    ['trinket.1.proc.any_dps.duration', UNKNOWN, 'Not in the log'],
+    ['trinket.1.proc.any_dps.duration', UNKNOWN, 'Not read by warcraft-learner'],
     ['cooldown.shadow_dance.remains', UNKNOWN, 'Not in the log'],
-    ['raid_event.movement.in', UNKNOWN, 'Not in the log'],
+    ['buff.shadow_dance.remains', UNKNOWN, 'Not in the log'],
+    ['dot.rupture.ticks_remain', UNKNOWN, 'Not read by warcraft-learner'],
+    ['raid_event.movement.in', UNKNOWN, 'Not read by warcraft-learner'],
+    ['raid_event.pull.in', [Infinity, Infinity], 'Never'],
+    ['action.shadow_dance.last_used', [Infinity, Infinity], 'Never'],
     ['stat.haste_rating', UNKNOWN, 'Not read by warcraft-learner'],
   ])('shows %s at %j as "%s"', (term, range, shown, tested = false) => {
     expect(value(term, range, tested)).toBe(shown);

@@ -3,6 +3,8 @@ import { POOL_TYPES } from '../../../simc/spell-dump-service';
 import { UNKNOWN, CastMoment, FactContext, FactPath, FactReader, FactStream, Range } from '../priority-list.models';
 import { FactContextService } from '../fact-context-service';
 
+const FIELDS = new Set(['amount', 'max', 'regen', 'cost', 'energize_amount']);
+
 @Injectable({ providedIn: 'root' })
 export class PoolFacts implements FactReader {
   private readonly contexts = inject(FactContextService);
@@ -10,6 +12,10 @@ export class PoolFacts implements FactReader {
 
   streams(): FactStream[] {
     return ['resources'];
+  }
+
+  answers({ field }: FactPath): boolean {
+    return FIELDS.has(field);
   }
 
   /** `cost` and `energize_amount` read a button's spell data; every other field reads the pool the subject names. */

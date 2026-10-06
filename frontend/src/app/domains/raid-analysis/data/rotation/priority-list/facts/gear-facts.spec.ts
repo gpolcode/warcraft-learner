@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { cast } from '../../../../../../../testing/builders/events';
 import { planSpell } from '../../../../../../../testing/builders/spec-plan';
+import { ALGETHAR_PUZZLE_BOX, SPYMASTERS_WEB, SPYMASTERS_WEB_USE } from '../../../../../../../testing/spell-ids';
 import type { PriorityList } from '../../../plan/plan.models';
 import type { WclAbility, WclEvent } from '../../../wcl/wcl.models';
 import { ConditionEvalService } from '../condition-eval-service';
@@ -9,10 +10,7 @@ import { castAt, factContext, priorityList } from '../priority-list-harness';
 import { GearPiece, Range, UNKNOWN } from '../priority-list.models';
 
 const CAST_S = 10;
-const SPYMASTERS_WEB = 220202;
-const WEB_USE = 444959;
 const WEB_CD_S = 20;
-const PUZZLE_BOX = 193701;
 const RING = 200000;
 const LIQUID_LUSTER = 431932;
 const WEB_ILVL = 639;
@@ -20,17 +18,18 @@ const WEB_ILVL = 639;
 const WORN: GearPiece[] = [
   { slot: 10, id: RING, name: "Seal of Diurna's Chosen", itemLevel: 626 },
   { slot: 12, id: SPYMASTERS_WEB, name: "Spymaster's Web", itemLevel: WEB_ILVL },
-  { slot: 13, id: PUZZLE_BOX, name: "Algeth'ar Puzzle Box", itemLevel: 626 },
+  { slot: 13, id: ALGETHAR_PUZZLE_BOX, name: "Algeth'ar Puzzle Box", itemLevel: 626 },
 ];
 /** What ingest baked of the trinkets the top logs wore. */
 const KNOWN_ITEMS = priorityList({
-  spells: { item_220202: planSpell("Spymaster's Web", [WEB_USE], { cooldown: WEB_CD_S, gcd: 0, cast_time: 0 }) },
+  spells: { [`item_${SPYMASTERS_WEB}`]: planSpell("Spymaster's Web", [SPYMASTERS_WEB_USE], { cooldown: WEB_CD_S, gcd: 0, cast_time: 0 }) },
   items: {
-    spymasters_web: { id: SPYMASTERS_WEB, name: "Spymaster's Web", use: 'item_220202', use_buff: true, use_damage: false },
-    algethar_puzzle_box: { id: PUZZLE_BOX, name: "Algeth'ar Puzzle Box", use: null, use_buff: false, use_damage: false },
+    spymasters_web: { id: SPYMASTERS_WEB, name: "Spymaster's Web", use: `item_${SPYMASTERS_WEB}`, use_buff: true, use_damage: null },
+    algethar_puzzle_box: { id: ALGETHAR_PUZZLE_BOX, name: "Algeth'ar Puzzle Box", use: null, use_buff: false, use_damage: false },
   },
 });
-const USED_WEB = [cast(WEB_USE, CAST_S - 5), cast(1, CAST_S)];
+const USED_WEB = [cast(SPYMASTERS_WEB_USE, CAST_S - 5), cast(1, CAST_S)];
+const NAMELESS_WEB = { ...WORN[1], name: '' } as GearPiece;
 const POTION: WclAbility[] = [{ gameID: LIQUID_LUSTER, name: 'Liquid Luster', icon: '' }];
 const evaluator = TestBed.inject(ConditionEvalService);
 
@@ -54,7 +53,9 @@ describe('GearFacts', () => {
     { reads: 'an item as equipped by its name tokenized the way SimC does, apostrophes dropped', name: 'equipped.spymasters_web', expected: [1, 1] },
     { reads: 'a ring as equipped the same', name: 'equipped.seal_of_diurnas_chosen', expected: [1, 1] },
     { reads: 'an item not worn as not equipped', name: 'equipped.treacherous_transmitter', expected: [0, 0] },
-    { reads: 'an item whose name the log left blank by the id the list knows it under', name: 'equipped.spymasters_web', worn: [{ ...WORN[1], name: '' } as GearPiece], list: KNOWN_ITEMS, expected: [1, 1] },
+    { reads: 'an item whose name the log left blank by the id the list knows it under', name: 'equipped.spymasters_web', worn: [NAMELESS_WEB], list: KNOWN_ITEMS, expected: [1, 1] },
+    { reads: 'equipped as unknown while a worn piece has no name and the list no entry for it, since that piece may be the item', name: 'equipped.treacherous_transmitter', worn: [NAMELESS_WEB], expected: UNKNOWN },
+    { reads: 'which item a nameless slot holds as unknown', name: 'trinket.1.is.spymasters_web', worn: [NAMELESS_WEB], expected: UNKNOWN },
     { reads: 'which item the first trinket slot holds', name: 'trinket.1.is.spymasters_web', expected: [1, 1] },
     { reads: 'that item as not in the second slot', name: 'trinket.2.is.spymasters_web', expected: [0, 0] },
     { reads: 'the second slot\'s own item', name: 'trinket.2.is.algethar_puzzle_box', expected: [1, 1] },
@@ -68,7 +69,7 @@ describe('GearFacts', () => {
     { reads: 'an item as unknown for a log without combatant gear', name: 'equipped.spymasters_web', worn: [], expected: UNKNOWN },
     { reads: 'an on-use buff from what the list knows of the item', name: 'trinket.1.has_use_buff', list: KNOWN_ITEMS, expected: [1, 1] },
     { reads: 'a cooldown from the use spell the list knows', name: 'trinket.1.has_cooldown', list: KNOWN_ITEMS, expected: [1, 1] },
-    { reads: 'no on-use damage where the use buffs', name: 'trinket.1.has_use_damage', list: KNOWN_ITEMS, expected: [0, 0] },
+    { reads: 'on-use damage as unknown where the dump shows none, since a use may deal it through a spell it triggers', name: 'trinket.1.has_use_damage', list: KNOWN_ITEMS, expected: UNKNOWN },
     { reads: 'no on-use buff on an item with no use', name: 'trinket.2.has_use_buff', list: KNOWN_ITEMS, expected: [0, 0] },
     { reads: 'no cooldown on an item with no use', name: 'trinket.2.has_cooldown', list: KNOWN_ITEMS, expected: [0, 0] },
     { reads: 'what an item does on use as unknown when no top log wore it', name: 'trinket.1.has_use_buff', expected: UNKNOWN },

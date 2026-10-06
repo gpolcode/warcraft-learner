@@ -16,7 +16,10 @@ describe('FactPaths', () => {
     ['charges', { kind: 'cooldown', subject: 'x', field: 'charges' }],
     ['action.rupture.cost', { kind: 'pool', subject: 'rupture', field: 'cost' }],
     ['action.rupture.in_flight', { kind: 'press', subject: 'rupture', field: 'in_flight' }],
-    ['action.rupture.souls_consumed', { kind: 'cooldown', subject: 'rupture', field: 'souls_consumed' }],
+    ['action.rupture.remains', { kind: 'aura', subject: 'rupture', field: 'remains', target: true }],
+    ['action.berserking.duration', { kind: 'aura', subject: 'berserking', field: 'duration', target: true }],
+    ['action.rupture.charges', { kind: 'cooldown', subject: 'rupture', field: 'charges' }],
+    ['action.rupture.souls_consumed', { kind: 'unread', subject: 'rupture', field: 'souls_consumed' }],
     ['cast_time', { kind: 'press', subject: 'x', field: 'cast_time' }],
     ['gcd.max', { kind: 'press', subject: 'x', field: 'gcd.max' }],
     ['combo_strike', { kind: 'press', subject: 'x', field: 'combo_strike' }],
@@ -47,7 +50,7 @@ describe('FactPaths', () => {
     ['set_bonus.mid2_4pc', { kind: 'gear', subject: 'mid2_4pc', field: 'set_bonus' }],
     ['main_hand.2h', { kind: 'gear', subject: '2h', field: 'main_hand' }],
     ['druid.no_cds', { kind: 'fight', subject: '', field: 'druid.no_cds' }],
-    ['stat.haste_rating', { kind: 'fight', subject: '', field: 'stat.haste_rating' }],
+    ['stat.haste_rating', { kind: 'unread', subject: '', field: 'stat.haste_rating' }],
   ])('takes %s apart as %o', (name, expected) => {
     expect(path(name)).toMatchObject(expected);
   });
@@ -82,6 +85,7 @@ describe('FactPaths', () => {
     ['health.pct', false, false],
     ['raid_event.adds.in', false, true],
     ['time', false, true],
+    ['stealthed.rogue', false, false],
   ])('tells whether %s speaks of the build (%s) or the situation (%s)', (name, build, situation) => {
     expect(FactPaths.build(path(name))).toBe(build);
     expect(FactPaths.situation(path(name))).toBe(situation);

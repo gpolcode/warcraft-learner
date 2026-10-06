@@ -19,6 +19,7 @@ const FLIP: Record<Op, Op> = { '<': '>=', '<=': '>', '>': '<=', '>=': '<', '=': 
 const MIRROR: Record<Op, Op> = { '<': '>', '<=': '>=', '>': '<', '>=': '<=', '=': '=', '!=': '!=' };
 const POOL_WORDS: Record<string, string | undefined> = { soul_shard: 'soul shards', rune: 'runes' };
 const AMOUNTS: Record<string, string | undefined> = { cp_max_spend: 'full', 'gcd.max': 'one GCD', gcd: 'one GCD' };
+const TRINKETS: Record<string, string | undefined> = { this_trinket: 'this trinket', other_trinket: 'the other trinket' };
 const UNITS: Record<Frame, string> = { flag: '', left: ' s left', away: ' s away', count: '', percent: '%', seconds: ' s', amount: '' };
 
 const spaced = (name: string): string => name.replace(/[._]+/g, ' ').trim();
@@ -57,7 +58,7 @@ const SPECIAL: Record<string, ((op: Op, n: string) => string) | undefined> = {
   time_to_die: (op, n) => `when the target has ${lessMore(op)} ${secs(n)} to live`,
 };
 const holds = (): string => '=holds|=does not hold';
-/** The two states a name tested alone shows where its row is no flag; a `=` state brings its own verb. */
+/** The two states a name tested alone shows where its row is no flag. */
 const TESTED: Record<Frame, (label: string) => string> = {
   flag: label => label,
   left: () => '=has time left|=has no time left',
@@ -82,14 +83,18 @@ export class ListTextService {
   /** The term in words; `holds` false phrases its negation, which a title uses to name what went wrong. */
   phrase(list: PriorityList, node: AplNode, holds: boolean, action: string): string {
     if (node.type === 'UnaryExpression' && (node as jsep.UnaryExpression).operator === '!') return this.phrase(list, (node as jsep.UnaryExpression).argument, !holds, action);
-    if (node.type === 'Identifier') return this.tested(list, FactPaths.path((node as jsep.Identifier).name, action), holds);
+    if (node.type === 'Identifier') {
+      const path = FactPaths.path((node as jsep.Identifier).name, action);
+      return FactPaths.row(path) ? this.tested(list, path, holds) : this.raw(holds);
+    }
     return node.type === 'BinaryExpression' ? this.binary(list, node as jsep.BinaryExpression, holds, action) : this.raw(holds);
   }
 
   /** `flag` marks a term that tests the value for truth alone, which shows as a state rather than a number. */
   value(node: AplNode, range: Range, flag = false): string {
     const [lo, hi] = range;
-    if (lo === -Infinity && hi === Infinity) return this.apl.identifiers(node).every(name => FactPaths.row(FactPaths.path(name, ''))) ? 'Not in the log' : 'Not read by warcraft-learner';
+    if (lo === -Infinity && hi === Infinity) return this.apl.identifiers(node).every(name => this.evaluator.reads(name)) ? 'Not in the log' : 'Not read by warcraft-learner';
+    if (lo === Infinity && hi === Infinity) return 'Never';
     const words = this.words(FactPaths.path(node.type === 'Identifier' ? (node as jsep.Identifier).name : '', ''));
     return flag ? this.state(words, this.evaluator.truth(range)) : this.span(lo, hi) + this.unit(words, range);
   }
@@ -99,10 +104,9 @@ export class ListTextService {
     return lo === hi && lo === 1 ? this.singular(unit) : unit;
   }
 
-  /** `{n}` is the name's number, `{s}` the item or stat a gear field asks about, named where the list carries the item. */
   private words(path: FactPath, list: PriorityList | null = null): Words {
     const row = path.field === 'prev_gcd' && path.n === 1 ? FactPaths.row({ ...path, field: 'prev' }) : FactPaths.row(path);
-    const [frame, label] = row ?? ['amount', path.subject ? spaced(path.field) : ''];
+    const [frame, label] = row ?? ['amount', ''];
     return { path, frame, label: label.replace(/\{n\}/g, String(path.n)).replace(/\{s\}/g, this.itemName(list, path.subject)) };
   }
 
@@ -110,21 +114,32 @@ export class ListTextService {
     return list?.items?.[token]?.name ?? spaced(token);
   }
 
-  /** A name outside the catalog is its own noun, so its sentence still reads. */
   private noun(list: PriorityList | null, path: FactPath): string {
     const { kind, subject } = path;
-    if (kind === 'fight') return FactPaths.row(path) ? '' : spaced(path.field);
+    if (kind === 'fight' || kind === 'unread') return '';
     if (kind === 'build') return this.talentName(list, path);
     if (kind === 'gear') return this.gearNoun(list, path);
     if (kind === 'pool' && POOL_TYPES[subject] !== undefined) return POOL_WORDS[subject] ?? spaced(subject);
+    return this.spellNoun(list, path);
+  }
+
+  /** SimC's `debuff.casting` is no aura but the target's own cast. */
+  private spellNoun(list: PriorityList | null, { kind, subject }: FactPath): string {
+    if (kind === 'aura' && subject === 'casting') return 'the target';
     return list ? this.name(list, subject) : spaced(subject);
   }
 
   private gearNoun(list: PriorityList | null, { subject, field, n }: FactPath): string {
     if (n) return `your ${n === 1 ? 'first' : 'second'} trinket`;
-    if (subject === 'this_trinket' || subject === 'other_trinket') return subject === 'this_trinket' ? 'this trinket' : 'the other trinket';
-    if (field === 'set_bonus') return `the ${spaced(subject)} set bonus`;
-    return field === 'main_hand' || field === 'off_hand' ? `your ${spaced(field)}` : this.itemName(list, subject);
+    if (field === 'set_bonus') return this.setBonus(subject);
+    if (field === 'main_hand' || field === 'off_hand') return `your ${spaced(field)}`;
+    return TRINKETS[subject] ?? this.itemName(list, subject);
+  }
+
+  /** SimC names a set bonus by its tier and piece count (`midnight_season_2_4pc`); only the count is a word the player knows. */
+  private setBonus(token: string): string {
+    const pieces = /(\d+)pc$/.exec(token)?.[1];
+    return pieces ? `your ${pieces}-piece set bonus` : 'your set bonus';
   }
 
   private talentName(list: PriorityList | null, { subject, field, n }: FactPath): string {
@@ -135,10 +150,16 @@ export class ListTextService {
     return subject.startsWith('hero_tree.') ? `the ${name} hero tree` : name;
   }
 
-  private states(words: Words): [string, string] {
-    const pair = words.frame !== 'flag' && words.path.kind === 'aura' ? 'up|down' : TESTED[words.frame](words.label);
-    const [on = '', off = ''] = pair.split('|');
+  private states({ path, frame, label }: Words): [string, string] {
+    const pair = frame !== 'flag' && path.kind === 'aura' ? 'up|down' : TESTED[frame](label);
+    const [on = '', off = ''] = (path.kind === 'aura' ? this.auraStates(path, pair) : pair).split('|');
     return [on, off];
+  }
+
+  /** A dot or debuff is on or off the target rather than up or down; SimC's `debuff.casting` is the target's own cast. */
+  private auraStates({ subject, target }: FactPath, pair: string): string {
+    if (subject === 'casting') return 'casting|not casting';
+    return target ? pair.replace(/\bup\b/, 'on the target').replace(/\bdown\b/, 'not on the target') : pair;
   }
 
   private tested(list: PriorityList, path: FactPath, holds: boolean): string {
@@ -183,6 +204,7 @@ export class ListTextService {
     const count = subject.type === 'Identifier' ? this.amount(list, amount, action) : null;
     if (!count) return null;
     const path = FactPaths.path((subject as jsep.Identifier).name, action);
+    if (!FactPaths.row(path)) return null;
     const words = this.words(path);
     const is = FactPaths.row(path)?.[2];
     const special = SPECIAL[path.field] ?? (typeof is === 'string' ? SPECIAL[is] : undefined);

@@ -24,6 +24,10 @@ export class CooldownFacts implements FactReader {
     return [];
   }
 
+  answers({ field }: FactPath): boolean {
+    return field in FIELDS || field === 'max_charges' || field === 'duration';
+  }
+
   read(path: FactPath, { atS }: CastMoment, ctx: FactContext): Range {
     const spell = ctx.list.spells[path.subject];
     if (!spell) return UNKNOWN;

@@ -47,6 +47,10 @@ export class FightFacts implements FactReader {
     return ['damage'];
   }
 
+  answers({ field }: FactPath): boolean {
+    return field in this.fields || field.slice(ADDS_PREFIX.length) in ADDS;
+  }
+
   read(path: FactPath, moment: CastMoment, ctx: FactContext): Range {
     if (!path.field.startsWith(ADDS_PREFIX)) return this.fields[path.field]?.(moment, ctx) ?? UNKNOWN;
     const spans = ctx.addSpans();

@@ -10,6 +10,10 @@ export class BuildFacts implements FactReader {
     return [];
   }
 
+  answers({ field }: FactPath): boolean {
+    return field === 'enabled' || field === 'rank' || field === 'variable';
+  }
+
   read(path: FactPath, moment: CastMoment, ctx: FactContext): Range {
     if (path.field === 'variable') return moment.variables?.get(path.subject) ?? UNKNOWN;
     const talent = ctx.list.talents[path.subject];

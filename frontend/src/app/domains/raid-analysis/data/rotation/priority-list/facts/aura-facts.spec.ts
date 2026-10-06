@@ -111,6 +111,7 @@ describe('AuraFacts dots', () => {
     { reads: 'the time left through a refresh to the final drop', name: 'dot.rupture.remains', events: refreshed, atS: 15, expected: [RUPTURE_S - 5, RUPTURE_S - 5] },
     { reads: 'the enemies the dot is on', name: 'active_dot.rupture', events: spread, atS: 5, target: null, expected: [2, 2] },
     { reads: 'the same count under SimC\'s other spelling', name: 'active_dots.rupture', events: spread, atS: 5, target: null, expected: [2, 2] },
+    { reads: 'no enemy with the dot once it dropped', name: 'active_dot.rupture', events: onBoss, atS: RUPTURE_S + 1, target: null, expected: [0, 0] },
     { reads: 'a per-target fact as unknown when the cast aims at no known enemy', name: 'dot.rupture.ticking', events: onBoss, atS: 5, target: null, expected: UNKNOWN },
     { reads: 'a dot the log never shows as unknown', name: 'dot.rupture.ticking', events: [], atS: 5, target: BOSS_KEY, expected: UNKNOWN },
     { reads: 'a dot the log never shows as off when only a talent the player did not take grants it', name: 'dot.deathmark.ticking', events: [], atS: 5, talents: [[OTHER_ENTRY, 1]], expected: [0, 0] },

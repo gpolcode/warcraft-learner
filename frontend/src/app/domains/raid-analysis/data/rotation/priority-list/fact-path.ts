@@ -6,9 +6,8 @@ type Head = (rest: string[]) => Pick<FactPath, 'kind' | 'subject' | 'field'> & P
 
 /** Stripped only ahead of a head that reads the same aura or button either way; `target.health.pct` is a fight field of its own. */
 const TARGET = /^target\.(?=(?:buff|debuff|dot|active_dots?|cooldown|action)\.)/;
-/** Order settles a field two kinds share: a bare `remains` is the button's own dot, `action.x.remains` its cooldown. */
+/** SimC resolves a button's own field dot-first, so `remains` and `duration` are its dot, `charges` its cooldown, `cast_time` its press, `cost` its pool. */
 const OWN_KINDS: FactKind[] = ['aura', 'cooldown', 'press', 'pool'];
-const ACTION_KINDS: FactKind[] = ['cooldown', 'press', 'pool', 'aura'];
 
 const aura = (target: boolean): Head => ([subject = '', ...field]) => ({ kind: 'aura', subject, field: field.join('.') || 'up', target });
 const spread: Head = ([subject = '']) => ({ kind: 'aura', subject, field: 'active_dots', target: true });
@@ -24,7 +23,8 @@ const HEADS: Record<string, Head | undefined> = {
   cooldown: ([subject = '', ...field]) => ({ kind: 'cooldown', subject, field: field.join('.') }),
   action: ([subject = '', ...rest]) => {
     const field = rest.join('.');
-    return { kind: ACTION_KINDS.find(kind => TABLE[kind][field]) ?? 'cooldown', subject, field };
+    const kind = OWN_KINDS.find(own => TABLE[own][field]) ?? 'unread';
+    return { kind, subject, field, target: kind === 'aura' };
   },
   talent: build('talent'), hero_tree: build('hero_tree'), apex: build('apex'),
   variable: ([subject = '']) => ({ kind: 'build', subject, field: 'variable' }),
@@ -51,11 +51,10 @@ export class FactPaths {
     return { ...base, ...FactPaths.bare(name, head, action) };
   }
 
-  /** A name outside the catalog falls to the fight kind, where no reader answers it, so it reads as unknown. */
   private static bare(name: string, head: string, action: string): Pick<FactPath, 'kind' | 'subject' | 'field'> & Partial<FactPath> {
     if (TABLE.fight[name] ?? TABLE.fight[head]) return { kind: 'fight', subject: '', field: TABLE.fight[name] ? name : head };
     const own = OWN_KINDS.find(kind => TABLE[kind][name]);
-    return own ? { kind: own, subject: action, field: name, target: own === 'aura' } : { kind: 'fight', subject: '', field: name };
+    return own ? { kind: own, subject: action, field: name, target: own === 'aura' } : { kind: 'unread', subject: '', field: name };
   }
 
   static row(path: FactPath): FieldRow | undefined {

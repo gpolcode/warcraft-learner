@@ -61,13 +61,19 @@ export interface PlanSpell {
   energize: { type: number; amount: number } | null;
 }
 
-/** `use` keys the item's use spell in `spells`, not a spell id. */
+/** `use` keys the item's use spell in `spells`, not a spell id; a flag is null where the dump shows nothing, since SimC also counts what a use triggers through another spell. */
 export interface PlanItem {
   id: number;
   name: string;
   use: string | null;
-  use_buff: boolean;
-  use_damage: boolean;
+  use_buff: boolean | null;
+  use_damage: boolean | null;
+}
+
+/** `items` keys by SimC's item token, `spells` each use spell by `item_<id>`. */
+export interface ItemTable {
+  items: Record<string, PlanItem>;
+  spells: Record<string, PlanSpell>;
 }
 
 /** Picking any one of `entries` holds the talent. */

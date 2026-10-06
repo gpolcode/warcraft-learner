@@ -17,7 +17,7 @@ Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences
 
 ### New SimC condition
 
-Follow the aura reader (`data/rotation/priority-list/facts/aura-facts.ts`), its block in `fact-table.ts` and its spec as the reference. Deliver: the name's row in its kind's block, derived as SimC text over the kind's other fields wherever arithmetic can say it, else a primitive in the kind's reader; a row in `fact-table.spec.ts` for a derivation, boundary-paired rows in the reader's spec for a primitive; its sentence pinned in `list-text-service.spec.ts`.
+Follow the aura reader (`data/rotation/priority-list/facts/aura-facts.ts`), its block in `fact-table.ts` and its spec as the reference. Deliver: the name's row in its kind's block, derived as SimC text over the kind's other fields wherever arithmetic can say it, else a primitive in the kind's reader; a row in `fact-table.spec.ts` for a derivation, boundary-paired rows in the reader's spec for a primitive; its sentence pinned in `list-text-service.spec.ts`. Bump `INGEST_VERSION`.
 
 ### New feature
 

@@ -77,7 +77,8 @@ export interface FactContext {
 /** The button that summons a pet is named for the pet itself or with one of these. */
 export const SUMMON_PREFIXES = ['', 'summon_', 'invoke_'];
 
-export type FactKind = 'aura' | 'cooldown' | 'pool' | 'press' | 'fight' | 'build' | 'gear';
+/** `unread` is every name outside the catalog: no reader, stream or situation rule claims it. */
+export type FactKind = 'aura' | 'cooldown' | 'pool' | 'press' | 'fight' | 'build' | 'gear' | 'unread';
 
 export interface FactPath {
   kind: FactKind;
@@ -92,11 +93,13 @@ export interface FactPath {
 /** `left` is time left on something up, `away` time until something is back; a flag shows its two states, the rest a number with a unit. */
 export type Frame = 'flag' | 'left' | 'away' | 'count' | 'percent' | 'seconds' | 'amount';
 
-/** `words` are a flag's `on|off` states, else a label with `{x}` for the subject; `is` derives the field as SimC text or a constant; a row with neither `is` nor a reader is deliberate: its sentence reads, its value stays unknown. */
+/** `words` are a flag's `on|off` states, a state starting with `=` bringing its own verb, else a label with `{x}` for the subject, `{n}` for its number and `{s}` for its item; `is` derives the field as SimC text or a constant; a row with neither `is` nor a reader is deliberate: its sentence reads, its value says the app does not read it. */
 export type FieldRow = readonly [frame: Frame, words: string, is?: string | number];
 
 export interface FactReader {
   readonly kind: FactKind;
   streams(path: FactPath): readonly FactStream[];
+  /** Whether `read` can ever settle the field, which tells a value the log lacks from one the app does not read. */
+  answers(path: FactPath): boolean;
   read(path: FactPath, moment: CastMoment, ctx: FactContext): Range;
 }

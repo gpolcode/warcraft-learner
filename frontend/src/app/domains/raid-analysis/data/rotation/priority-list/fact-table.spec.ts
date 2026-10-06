@@ -2,7 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { cast } from '../../../../../../testing/builders/events';
+import { SimcAplService } from '../../simc/simc-apl-service';
 import { ConditionEvalService } from './condition-eval-service';
+import { FactPaths } from './fact-path';
+import { TABLE } from './fact-table';
 import { AuraFacts } from './facts/aura-facts';
 import { BuildFacts } from './facts/build-facts';
 import { CooldownFacts } from './facts/cooldown-facts';
@@ -11,12 +14,12 @@ import { GearFacts } from './facts/gear-facts';
 import { PoolFacts } from './facts/pool-facts';
 import { PressFacts } from './facts/press-facts';
 import { castAt, factContext, priorityList } from './priority-list-harness';
-import { UNKNOWN, FactKind, FactReader, Range } from './priority-list.models';
+import { UNKNOWN, FactKind, FactPath, FactReader, Range } from './priority-list.models';
 
 const CAST_S = 10;
 const NEVER: Range = [Infinity, Infinity];
 const given = new Map<string, Range>();
-const fake = (kind: FactKind): FactReader => ({ kind, streams: () => [], read: path => given.get(`${kind}.${path.field}`) ?? UNKNOWN });
+const fake = (kind: FactKind): FactReader => ({ kind, streams: () => [], answers: () => true, read: path => given.get(`${kind}.${path.field}`) ?? UNKNOWN });
 const FAKES: [Type<FactReader>, FactKind][] = [[AuraFacts, 'aura'], [CooldownFacts, 'cooldown'], [PoolFacts, 'pool'], [PressFacts, 'press'], [FightFacts, 'fight'], [BuildFacts, 'build'], [GearFacts, 'gear']];
 TestBed.configureTestingModule({ providers: FAKES.map(([token, kind]) => ({ provide: token, useValue: fake(kind) })) });
 const evaluator = TestBed.inject(ConditionEvalService);
@@ -84,9 +87,20 @@ describe('The field table', () => {
     { name: 'trinket.1.cooldown.up', primitives: { 'gear.cooldown.remains': 5 }, expected: [0, 0] },
     { name: 'consumable.x', primitives: { 'gear.potion': 1 }, expected: [1, 1] },
     { name: 'priority_rotation', primitives: {}, expected: [0, 0] },
-    { name: 'death_knight.first_ams_cast', primitives: {}, expected: [20, 20] },
+    { name: 'death_knight.first_ams_cast', primitives: {}, expected: UNKNOWN },
     { name: 'stat.haste_rating', primitives: {}, expected: UNKNOWN },
   ])('derives $name from $primitives', row => {
     expect(read(row)).toEqual(row.expected);
+  });
+
+  it('derives every row over names the table holds, so a typo cannot read as unknown forever', () => {
+    const apl = TestBed.inject(SimcAplService);
+    const unresolved = Object.entries(TABLE).flatMap(([kind, rows]) => Object.entries(rows).flatMap(([field, row]) => {
+      const is = row?.[2];
+      const node = typeof is === 'string' ? apl.parse(is) : null;
+      const bound: FactPath = { kind: kind as FactKind, subject: 'x', field, target: kind === 'aura', n: 1 };
+      return node ? apl.identifiers(node).filter(name => !FactPaths.row(FactPaths.path(name, 'x', bound))).map(name => `${kind}.${field}: ${name}`) : [];
+    }));
+    expect(unresolved).toEqual([]);
   });
 });

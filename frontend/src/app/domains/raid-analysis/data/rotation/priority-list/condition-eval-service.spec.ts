@@ -60,5 +60,15 @@ describe('ConditionEvalService', () => {
     expect(evaluator.streams('energy.deficit')).toEqual(['resources']);
     expect(evaluator.streams('action.rupture.in_flight')).toEqual(['damage']);
     expect(evaluator.streams('prev_gcd.1.rupture')).toEqual([]);
+    expect(evaluator.streams('stealthed.rogue')).toEqual([]);
+  });
+
+  it('tells a name a reader or derivation settles from one the app only phrases', () => {
+    expect(evaluator.reads('buff.shadow_dance.up')).toBe(true);
+    expect(evaluator.reads('dot.rupture.refreshable')).toBe(true);
+    expect(evaluator.reads('in_combat')).toBe(true);
+    expect(evaluator.reads('dot.rupture.ticks_remain')).toBe(false);
+    expect(evaluator.reads('raid_event.movement.in')).toBe(false);
+    expect(evaluator.reads('stealthed.rogue')).toBe(false);
   });
 });

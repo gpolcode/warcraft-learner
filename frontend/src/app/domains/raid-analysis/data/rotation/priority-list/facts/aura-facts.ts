@@ -29,6 +29,7 @@ interface Reading {
 }
 
 const flag = (holds: boolean): Range => (holds ? [1, 1] : [0, 0]);
+const point = (value: number): Range => [value, value];
 
 @Injectable({ providedIn: 'root' })
 export class AuraFacts implements FactReader {
@@ -48,6 +49,10 @@ export class AuraFacts implements FactReader {
     return target ? ['enemyAuras', 'damage'] : [];
   }
 
+  answers({ field }: FactPath): boolean {
+    return field in this.fields || field in STATED || field === 'active_dots';
+  }
+
   read(path: FactPath, moment: CastMoment, ctx: FactContext): Range {
     const spell = ctx.list.spells[path.subject];
     const stated = STATED[path.field];
@@ -64,7 +69,7 @@ export class AuraFacts implements FactReader {
 
   private logged(path: FactPath, moment: CastMoment, ctx: FactContext, id: number, spell: PlanSpell | undefined): Range {
     const readS = this.readS(moment, ctx);
-    if (path.field === 'active_dots') return this.stated([...ctx.targetSpans(id).values()].filter(spans => this.auraAt(spans, readS)).length);
+    if (path.field === 'active_dots') return point([...ctx.targetSpans(id).values()].filter(spans => this.auraAt(spans, readS)).length);
     const on = this.on(path, moment, ctx, id);
     if (!on) return UNKNOWN;
     const reading: Reading = { ...on, aura: this.auraAt(on.spans, readS), readS, moment, duration: spell?.duration ?? 0, maxStacks: spell?.max_stacks ?? 0 };
