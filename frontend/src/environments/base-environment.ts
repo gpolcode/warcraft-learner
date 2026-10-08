@@ -23,6 +23,8 @@ export interface Environment {
   prioritySpecs: readonly string[];
   /** Relative to `frontend/`; the file server reads only this default, so a build override can only empty it, which turns the store off. */
   wclResponseCacheDir: string;
+  /** The e2e suite picks this report's first pull and first raider blind, so it holds exactly one boss pull, a Mythic kill, whose first-listed raider plays a spec with a benched priority list. */
+  e2eReportCode: string;
 }
 
 /** URL roots carry no trailing slash. No imports, so plain Node can load this module without Angular. */
@@ -48,4 +50,5 @@ export const baseEnvironment: Environment = {
   currentRaids: ['The Venomous Abyss'],
   prioritySpecs: ['AssassinationRogue'],
   wclResponseCacheDir: '.wcl-cache',
+  e2eReportCode: 'd9DFngCafqmLyQvN',
 };

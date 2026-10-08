@@ -56,7 +56,7 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 ## Testing
 
 - **Altitude rule:** test behavior exhaustively at the lowest altitude that owns it. A composite gets exactly one composition test; never re-test shared helpers from feature specs. Feature components are covered by their service spec, not by mounting them.
-- **Titles, setup, and assertions read as sentences:** `describe` names the unit, `it` finishes the sentence - no arrows, colon prefixes, or labels. The body keeps that voice: setup is a few named fixtures that spell out the scenario (`events: onBoss`, `atS: RUPTURE_S - PANDEMIC_S`), and each `expect` states one claim from the title, so a reviewer reads the test top to bottom without decoding it. The aura facts spec (`data/rotation/priority-list/facts/aura-facts.spec.ts`) is the reference for setup; the e2e specs (`frontend/e2e/*.spec.ts`) with their `support.ts` verbs (`shows`, `showsFindingRows`, `showsOnPlan`) for assertions.
+- **Titles, setup, and assertions read as sentences:** `describe` names the unit, `it` finishes the sentence - no arrows, colon prefixes, or labels. The body keeps that voice: setup is a few named fixtures that spell out the scenario (`events: onBoss`, `atS: RUPTURE_S - PANDEMIC_S`), and each `expect` states one claim from the title, so a reviewer reads the test top to bottom without decoding it. The aura facts spec (`data/rotation/priority-list/facts/aura-facts.spec.ts`) is the reference for setup; the e2e specs (`frontend/e2e/*.spec.ts`) with their `support.ts` verbs (`shows`, `showsFindingTable`, `showsFirstWindow`) for assertions.
 - **Boundary pairs:** every "triggers" case has a "does not trigger at the boundary" partner, and comparisons are strict: a value exactly at `mean + 2*stddev` is not an outlier.
 - **Named constants, never magic numbers or raw ids.** Spell/item ids come from `src/testing/spell-ids.ts`; every computed value gets a named `const` with a one-line derivation.
 - **Never load a WCL JSON blob** - build minimal event streams from the factories in `src/testing/builders/events.ts`.
@@ -66,8 +66,9 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 ## E2E (page changes)
 
 - One WCL analysis per run: the suite is serial over one shared `page`, so a new card test reuses it rather than analyzing again.
+- Selection is blind: the post-raid suite enters `e2eReportCode` from the environment schema and picks the report's first pull and first raider, the pre-fight suite the first class, spec and encounter (`picksFirst`, `showsFirstOption`). A test never names a fight, player, spec, encounter or build.
 - Static copy exact, computed values by shape or existence - never pin a number, name, or timestamp that comes from the log or bench.
-- One happy-path test per use-case card, located by its `wl-*` tag.
+- One happy-path test per use-case card, located by its `wl-*` tag, pinning the card's first row field by field through the `support.ts` verbs (`showsFirstWindow`, `showsFindingTable`, `showsFirstPlanRow`, `showsGearConsensus`, `valueOf`): a window's clock range, damage, delta, range bar and first ability; a finding's severity, name, chip, measure and fix; the first rotation button's bar and its judged cast with a condition's text, state and value. Content the log or bench may leave out (a death, a downtime table, a second build) is checked when drawn, with the exact empty state otherwise.
 
 ## Verification
 
