@@ -1,7 +1,7 @@
 import { expect, test, Page } from '@playwright/test';
-import { shows, showsFirstOption, showsFirstPlanRow, showsFirstWindow, showsGearConsensus, picksFirst, gearSection, CLOCK } from './support';
+import { shows, showsFirstOption, showsFirstPlanRow, showsFirstWindow, showsGearConsensus, picksFirst, gearSection, ANY_TEXT, CLOCK, OPENED_AT } from './support';
 
-// Bench-only page (no WCL budget spent): one shared page, the first class, spec and encounter picked once, every card asserts against them.
+// One shared page: the picks are made once.
 test.describe.configure({ mode: 'serial' });
 
 let page: Page;
@@ -22,7 +22,7 @@ test('picking the first class, spec and encounter loads that spec\'s plan', asyn
   await shows(page, 'Pick a spec and a boss to see the plan top raiders run there.');
   for (const label of ['Class', 'Spec', 'Encounter']) await showsFirstOption(page, label);
   const cooldownPlan = page.locator('wl-rotation-cd-plan');
-  await expect(cooldownPlan.locator('wl-game-icon').first()).toHaveText(/\S/);
+  await expect(cooldownPlan.locator('wl-game-icon').first()).toHaveText(ANY_TEXT);
   await shows(cooldownPlan, CLOCK);
 });
 
@@ -41,7 +41,7 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
   expect(await abilities.count()).toBeGreaterThan(0);
   const ability = abilities.first();
   await expect(ability.getByRole('checkbox')).toBeChecked();
-  await expect(ability.locator('wl-game-icon')).toHaveText(/\S/);
+  await expect(ability.locator('wl-game-icon')).toHaveText(ANY_TEXT);
   await expect(ability.getByText(/×\d+/)).toBeVisible();
 
   await panel.getByRole('button', { name: 'Copy note' }).click();
@@ -65,8 +65,8 @@ test('gear shows the top-parse talent, trinket, and enchant consensus', async ()
   if (await slots.count()) {
     await shows(enchants, 'What most top raiders use. Copy a name to find it in the auction house.');
     const slot = slots.first();
-    await expect(slot.locator('span.text-label')).toHaveText(/\S/);
-    await expect(slot.locator('wl-game-icon')).toHaveText(/\S/);
+    await expect(slot.locator('span.text-label')).toHaveText(ANY_TEXT);
+    await expect(slot.locator('wl-game-icon')).toHaveText(ANY_TEXT);
     await expect(slot.getByRole('button', { name: 'Copy name' })).toBeVisible();
   } else {
     await shows(enchants, 'No enchant data.');
@@ -100,7 +100,7 @@ test('the positioning map opens anchored on the selected burst window', async ()
   await openMap.click();
   const panel = page.getByRole('dialog', { name: 'Positioning' });
   await expect(panel.locator('wl-map-canvas canvas')).toBeVisible();
-  await shows(panel, /Opened at -?\d+:\d{2}/);
+  await shows(panel, OPENED_AT);
   await shows(panel, '● Top logs');
   await panel.getByRole('button', { name: 'Close map' }).click();
   await expect(panel).toHaveCount(0);

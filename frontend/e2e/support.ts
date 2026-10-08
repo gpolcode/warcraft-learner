@@ -6,19 +6,23 @@ export async function shows(scope: Page | Locator, text: string | RegExp): Promi
   await expect(match.first()).toBeVisible();
 }
 
-// Figure shapes, not values: both the player's log and the bench move with the data, never the format.
+// Shapes, not values: both the player's log and the bench move with the data, never the format.
+export const ANY_TEXT = /\S/;
 export const CLOCK = /-?\d+:\d{2}/;
 export const PERCENT = /[+-]?\d+(\.\d+)?%/;
+export const OPENED_AT = new RegExp(`Opened at ${CLOCK.source}`);
+const TIMES = /\b\d+(\.\d+)?x\b/;
+/** formatDamage leaves a figure under a thousand bare, so an amount reads as a plain number as often as a K or M figure. */
+const FIGURE = '\\d+(\\.\\d+)?[KMB]?';
 
-/** A text query and a text assertion both run a shape over the raw text, the template's padding included, so a cell's whole content is matched around that padding. */
+/** Playwright runs a regex over the raw text, the template's padding included, so a whole-cell shape allows that padding. */
 function cell(shape: string): RegExp {
   return new RegExp(`^\\s*(?:${shape})\\s*$`);
 }
 
-const CLOCK_RANGE = cell('-?\\d+:\\d{2} - -?\\d+:\\d{2}');
-/** formatDamage leaves a figure under a thousand bare, so a cell holding one amount reads as a plain number as often as a K or M figure. */
-export const AMOUNT = cell('\\d+(\\.\\d+)?[KMB]?');
-const GAP = cell('[+-]\\d+(\\.\\d+)?[KMB]?|Not used');
+const CLOCK_RANGE = cell(`${CLOCK.source} - ${CLOCK.source}`);
+export const AMOUNT = cell(FIGURE);
+const GAP = cell(`[+-]${FIGURE}|Not used`);
 const CASTS = cell('\\d+ / (\\d+|-)|Passive');
 
 /** Mirrors CAT_LABEL in src/app/domains/raid-analysis/data/analysis/analysis.models.ts. */
@@ -41,7 +45,6 @@ async function textOf(option: Locator): Promise<string> {
   return (await option.innerText()).replace(/\s+/g, ' ').trim();
 }
 
-/** Picks a select's first option and checks it landed, so a suite never names a fight, player, class, spec or encounter. */
 export async function picksFirst(page: Page, label: string): Promise<void> {
   const select = page.getByRole('combobox', { name: label });
   const dropdown = await opens(page, select);
@@ -52,7 +55,6 @@ export async function picksFirst(page: Page, label: string): Promise<void> {
   await expect(select).toHaveValue(picked);
 }
 
-/** A select the page filled on its own holds its first option. */
 export async function showsFirstOption(page: Page, label: string): Promise<void> {
   const select = page.getByRole('combobox', { name: label });
   const dropdown = await opens(page, select);
@@ -78,7 +80,7 @@ function findingRows(table: Locator): Locator {
   return table.locator(':scope > section > div > div.border-t').filter({ has: table.page().getByText('Fix', { exact: true }) });
 }
 
-/** Which findings a pull produces moves with every re-ingest of the bench, so a table is pinned by its first row's fields when it drew any, by its on-plan chips, or by its empty state. */
+/** Which findings a pull produces moves with every re-ingest of the bench, so the table is pinned by whatever it drew. */
 export async function showsFindingTable(table: Locator, chip: RegExp): Promise<void> {
   await shows(table, 'Measured');
   await shows(table, 'Fix');
@@ -89,26 +91,26 @@ export async function showsFindingTable(table: Locator, chip: RegExp): Promise<v
   if (flagged) await showsFindingRow(rows.first(), chip);
   if (planned) {
     await shows(table, 'On plan');
-    await expect(onPlan.first().locator('wl-game-icon')).toHaveText(/\S/);
+    await expect(onPlan.first().locator('wl-game-icon')).toHaveText(ANY_TEXT);
   }
   if (!flagged && !planned) await shows(table, 'Nothing flagged.');
 }
 
 async function showsFindingRow(row: Locator, chip: RegExp): Promise<void> {
   await expect(row.locator('tui-icon').first()).toBeVisible();
-  await expect(row.locator('span.text-name').first()).toHaveText(/\S/);
+  await expect(row.locator('span.text-name').first()).toHaveText(ANY_TEXT);
   // A finding on the whole pull, like downtime, has no moment of its own.
   const moment = row.locator('span.text-accent');
   if (await moment.count()) await expect(moment).toHaveText(CLOCK);
   await expect(row.locator('[tuiBadge]')).toHaveText(chip);
-  await expect(row.locator('div.text-value')).toHaveText(/\S/);
+  await expect(row.locator('div.text-value')).toHaveText(ANY_TEXT);
   await expect(row.getByText('Fix', { exact: true }).locator('..')).toHaveText(/Fix\s*\S/);
 }
 
 interface WindowFields {
   metric: string;
   chips: string;
-  /** The You vs top bar's label; a bench-only window has no player to bar, so it carries neither the bar nor the gap column. */
+  /** A bench-only window has no player to bar, so it carries neither the bar nor the gap column. */
   range?: string;
   casts?: boolean;
 }
@@ -130,11 +132,11 @@ export async function showsFirstWindow(card: Locator, fields: WindowFields): Pro
   }
   // A window in which top logs press no cooldown names none.
   if (await card.getByText(fields.chips, { exact: true }).count()) {
-    await expect(valueOf(card, fields.chips).locator('[tuiChip]').first()).toHaveText(/\S/);
+    await expect(valueOf(card, fields.chips).locator('[tuiChip]').first()).toHaveText(ANY_TEXT);
   }
   await shows(card, 'Ability');
   const ability = card.locator('wl-compact-ability-row').first();
-  await expect(ability.locator('wl-game-icon')).toHaveText(/\S/);
+  await expect(ability.locator('wl-game-icon')).toHaveText(ANY_TEXT);
   await expect(ability.locator('span.text-body')).toHaveText(AMOUNT);
   if (fields.range) {
     await shows(card, 'Gap');
@@ -152,9 +154,9 @@ export async function showsFirstPlanRow(card: Locator): Promise<void> {
   await shows(card, 'Typical uses');
   await shows(card, 'Hold until');
   const row = card.locator('div.grid.border-t').first();
-  await expect(row.locator('wl-game-icon')).toHaveText(/\S/);
+  await expect(row.locator('wl-game-icon')).toHaveText(ANY_TEXT);
   await expect(row.locator('span.text-accent').first()).toHaveText(CLOCK);
-  await expect(row.getByText(/\b\d+(\.\d+)?x\b/)).toBeVisible();
+  await expect(row.getByText(TIMES)).toBeVisible();
   await expect(row.getByText(/Used in \d+ of \d+ logs/)).toBeVisible();
   const holds = row.locator('[tuiChip]');
   if (await holds.count()) await expect(holds.first()).toHaveText(CLOCK);
@@ -172,7 +174,6 @@ export async function showsGearConsensus(gear: Locator): Promise<void> {
   await expect(build.locator('span.text-name')).toHaveText('Most common build');
   await expect(build.locator('div.text-value')).toHaveText(PERCENT);
   await shows(build, 'of top logs');
-  // The code links the example parse: its report, its pull and the player's actor id.
   await expect(build.getByRole('link', { name: 'Get talent code' })).toHaveAttribute('href', /\?fight=\d+&type=summary&source=\d+$/);
   // How many builds the bench carries moves with every refresh; a thin sample can leave only the most common one.
   const diff = talents.getByText('The talents this build changes from the most common build.');
@@ -180,7 +181,7 @@ export async function showsGearConsensus(gear: Locator): Promise<void> {
     await expect(diff.first()).toBeVisible();
     const change = talents.getByText('Added', { exact: true }).or(talents.getByText('Dropped', { exact: true })).or(talents.getByText('Points', { exact: true }));
     await expect(change.first()).toBeVisible();
-    await expect(talents.locator('[tuiChip] wl-game-icon').first()).toHaveText(/\S/);
+    await expect(talents.locator('[tuiChip] wl-game-icon').first()).toHaveText(ANY_TEXT);
   }
   const trinkets = gearSection(gear, 'Trinkets');
   const pair = trinkets.locator('div.grid').first();

@@ -2,7 +2,7 @@ import { expect, test, Locator, Page } from '@playwright/test';
 import { baseEnvironment } from '../src/environments/base-environment';
 import {
   shows, showsFindingTable, showsFirstOption, showsFirstWindow, showsGearConsensus, picksFirst, holdsPullResolve, gearSection, valueOf,
-  AMOUNT, CD_CHIP, CLOCK, PERCENT,
+  AMOUNT, ANY_TEXT, CD_CHIP, CLOCK, OPENED_AT, PERCENT,
 } from './support';
 
 const { e2eReportCode: REPORT_CODE, wclApiUrl: WCL_API_URL } = baseEnvironment;
@@ -14,6 +14,10 @@ const LIVE_TIMEOUT_MS = 15_000;
 const SLACK_MS = 30_000;
 /** Mirrors MAX_OCCURRENCES in src/app/domains/raid-analysis/data/rotation/priority-list/list-finding-service.ts. */
 const MAX_INSTANCES = 24;
+const FIGHT_LABEL = new RegExp(` - (Kill|Wipe #\\d+) - ${CLOCK.source}$`);
+const JUDGED_CAST = new RegExp(`is only right when these conditions hold\\. At ${CLOCK.source} ${ANY_TEXT.source}`);
+const STATE_AT = new RegExp(`State at ${CLOCK.source}`);
+const VERDICT = /Right time|Wrong time|Not judged|Skipped when due/;
 const CONDITION_STATE = /^(Met|Not met|Not in the log)$/;
 
 // One shared page: the report is analyzed once, so a run costs one WCL analysis.
@@ -41,11 +45,11 @@ test.afterAll(async () => {
 test('entering the report picks its first pull and lands on its first raider', async () => {
   await shows(page, 'Paste a Warcraft Logs report to see how your Mythic pulls compare with the top logs for your spec.');
   await showsFirstOption(page, 'Fight');
-  await expect(page.getByRole('combobox', { name: 'Fight' })).toHaveValue(/ - (Kill|Wipe #\d+) - -?\d+:\d{2}$/);
+  await expect(page.getByRole('combobox', { name: 'Fight' })).toHaveValue(FIGHT_LABEL);
   await showsFirstOption(page, 'Player');
   // The spec icon sits in the field's shown value, beside the input rather than inside it.
   const player = page.getByRole('combobox', { name: 'Player' });
-  await expect(page.locator('tui-textfield', { has: player }).locator('img').first()).toHaveAttribute('alt', /\S/);
+  await expect(page.locator('tui-textfield', { has: player }).locator('img').first()).toHaveAttribute('alt', ANY_TEXT);
 });
 
 test('following the latest pull hands the fight selection to the live poll', async () => {
@@ -115,7 +119,7 @@ test('rotation rules bar the first button against the top logs and open its mome
   await shows(rotationRules, 'Top raiders average');
 
   const button = rotationRules.locator('div[tuiCardLarge]').first();
-  await expect(button.locator('wl-game-icon')).toHaveText(/\S/);
+  await expect(button.locator('wl-game-icon')).toHaveText(ANY_TEXT);
   await expect(button.locator('wl-range-bar')).toBeVisible();
   await expect(button.locator('span.sr-only')).toHaveText(/You \d+%\.\s+Top raiders \d+% to \d+%, \d+% on average\./);
 
@@ -128,20 +132,20 @@ test('rotation rules bar the first button against the top logs and open its mome
   expect(count).toBeLessThanOrEqual(MAX_INSTANCES);
   await expect(moments.first()).toHaveText(CLOCK);
   await expect(strip.locator('[aria-selected="true"]')).toHaveText(CLOCK);
-  await expect(strip.getByText(/is only right when these conditions hold\. At -?\d+:\d{2} \S/)).toBeVisible();
+  await expect(strip.getByText(JUDGED_CAST)).toBeVisible();
 
   const checklist = strip.locator('wl-condition-checklist');
   await shows(checklist, 'Condition');
-  await shows(checklist, /State at -?\d+:\d{2}/);
-  await expect(checklist.getByText(/Right time|Wrong time|Not judged|Skipped when due/)).toBeVisible();
+  await shows(checklist, STATE_AT);
+  await expect(checklist.getByText(VERDICT)).toBeVisible();
   await shows(checklist, 'All of');
   const rows = checklist.getByRole('img', { name: CONDITION_STATE }).locator('..');
   // The verdict heads the tree, so the cast's own conditions start at the second row.
   expect(await rows.count()).toBeGreaterThan(1);
-  const condition = rows.filter({ has: page.locator('span.tabular-nums', { hasText: /\S/ }) }).first();
-  await expect(condition.locator('span.flex-col > span').first()).toHaveText(/\S/);
+  const condition = rows.filter({ has: page.locator('span.tabular-nums', { hasText: ANY_TEXT }) }).first();
+  await expect(condition.locator('span.flex-col > span').first()).toHaveText(ANY_TEXT);
   await expect(condition.getByRole('img', { name: CONDITION_STATE })).toBeVisible();
-  await expect(condition.locator('span.tabular-nums')).toHaveText(/\S/);
+  await expect(condition.locator('span.tabular-nums')).toHaveText(ANY_TEXT);
 
   await button.getByRole('button', { name: 'Hide instances' }).click();
   await expect(strip).not.toBeVisible();
@@ -179,7 +183,7 @@ test('defensives flag the mistimed cooldowns and benchmark the damage taken in t
     await shows(windows, 'Defensive windows');
     await shows(windows, 'Damage taken in each defensive window vs top logs.');
     await showsFirstWindow(windows, { metric: 'Damage taken', chips: 'Defensives top raiders use here', range: 'Damage taken vs top range' });
-    await expect(valueOf(windows, 'What you did')).toHaveText(/\S/);
+    await expect(valueOf(windows, 'What you did')).toHaveText(ANY_TEXT);
   }
 });
 
@@ -194,10 +198,10 @@ test('gear sets the build, the trinkets and the enchants against the top logs', 
   await shows(gear, 'Gear vs top logs.');
   const talents = gearSection(gear, 'Talents');
   await shows(talents, 'Your build against the builds top raiders use.');
-  await expect(verdictOf(talents, 'Your build')).toHaveText(/\S/);
+  await expect(verdictOf(talents, 'Your build')).toHaveText(ANY_TEXT);
   const trinkets = gearSection(gear, 'Trinkets');
   await shows(trinkets, 'Your pair against the pairs top raiders use.');
-  await expect(verdictOf(trinkets, 'Your pair')).toHaveText(/\S/);
+  await expect(verdictOf(trinkets, 'Your pair')).toHaveText(ANY_TEXT);
   await showsGearConsensus(gear);
 
   const enchants = gearSection(gear, 'Enchants');
@@ -206,10 +210,10 @@ test('gear sets the build, the trinkets and the enchants against the top logs', 
   if (await issues.count()) {
     await shows(enchants, 'Only the slots where your enchant is missing or differs.');
     const issue = issues.first();
-    await expect(issue.locator('span.text-label').first()).toHaveText(/\S/);
+    await expect(issue.locator('span.text-label').first()).toHaveText(ANY_TEXT);
     await expect(issue.locator('tui-icon').first()).toBeVisible();
-    await expect(issue.locator('span.text-name').first()).toHaveText(/\S/);
-    await expect(issue.locator('wl-game-icon')).toHaveText(/\S/);
+    await expect(issue.locator('span.text-name').first()).toHaveText(ANY_TEXT);
+    await expect(issue.locator('wl-game-icon')).toHaveText(ANY_TEXT);
     await expect(issue.getByRole('button', { name: 'Copy name' })).toBeVisible();
     await expect(issue.getByText(/Most top raiders use it\./)).toBeVisible();
     if (await enchants.getByText(/\d+ enchants/).count()) await shows(enchants, 'On plan');
@@ -226,7 +230,7 @@ test('the positioning map opens anchored on the pull overview\'s first moment', 
   await openMap.click();
   const panel = page.getByRole('dialog', { name: 'Positioning' });
   await expect(panel.locator('wl-map-canvas canvas')).toBeVisible();
-  await shows(panel, /Opened at -?\d+:\d{2}/);
+  await shows(panel, OPENED_AT);
   await shows(panel, '● Top logs');
   // The gold marker renders only once the player's own trail has loaded.
   await expect(panel.getByText('◆ You')).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
