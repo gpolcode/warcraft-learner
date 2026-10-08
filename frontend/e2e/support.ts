@@ -9,11 +9,17 @@ export async function shows(scope: Page | Locator, text: string | RegExp): Promi
 // Figure shapes, not values: both the player's log and the bench move with the data, never the format.
 export const CLOCK = /-?\d+:\d{2}/;
 export const PERCENT = /[+-]?\d+(\.\d+)?%/;
-const CLOCK_RANGE = /^-?\d+:\d{2} - -?\d+:\d{2}$/;
+
+/** A text query and a text assertion both run a shape over the raw text, the template's padding included, so a cell's whole content is matched around that padding. */
+function cell(shape: string): RegExp {
+  return new RegExp(`^\\s*(?:${shape})\\s*$`);
+}
+
+const CLOCK_RANGE = cell('-?\\d+:\\d{2} - -?\\d+:\\d{2}');
 /** formatDamage leaves a figure under a thousand bare, so a cell holding one amount reads as a plain number as often as a K or M figure. */
-export const AMOUNT = /^\d+(\.\d+)?[KMB]?$/;
-const GAP = /^[+-]\d+(\.\d+)?[KMB]?$|^Not used$/;
-const CASTS = /^\d+ \/ (\d+|-)$|^Passive$/;
+export const AMOUNT = cell('\\d+(\\.\\d+)?[KMB]?');
+const GAP = cell('[+-]\\d+(\\.\\d+)?[KMB]?|Not used');
+const CASTS = cell('\\d+ / (\\d+|-)|Passive');
 
 /** Mirrors CAT_LABEL in src/app/domains/raid-analysis/data/analysis/analysis.models.ts. */
 export const CD_CHIP = /\b(lost cast|late|Bloodlust|downtime|hold until)\b/;
@@ -23,9 +29,12 @@ export function valueOf(scope: Locator, label: string): Locator {
   return scope.getByText(label, { exact: true }).locator('xpath=following-sibling::*[1]');
 }
 
-/** Taiga opens a select's options in its portal, so they are read from its list rather than from the page, whose cards carry option strips of their own. */
-function options(page: Page): Locator {
-  return page.locator('tui-data-list').getByRole('option');
+/** Taiga opens a select's options in its portal, where the list a pick just closed lingers through its exit animation, so the options are read from the dropdown the select itself names. */
+async function opens(page: Page, select: Locator): Promise<Locator> {
+  await select.click();
+  const dropdown = page.locator(`#${await select.getAttribute('aria-controls')}`);
+  await expect(dropdown).toBeVisible();
+  return dropdown;
 }
 
 async function textOf(option: Locator): Promise<string> {
@@ -35,20 +44,21 @@ async function textOf(option: Locator): Promise<string> {
 /** Picks a select's first option and checks it landed, so a suite never names a fight, player, class, spec or encounter. */
 export async function picksFirst(page: Page, label: string): Promise<void> {
   const select = page.getByRole('combobox', { name: label });
-  await select.click();
-  const first = options(page).first();
+  const dropdown = await opens(page, select);
+  const first = dropdown.getByRole('option').first();
   const picked = await textOf(first);
   await first.click();
+  await expect(dropdown).toBeHidden();
   await expect(select).toHaveValue(picked);
 }
 
 /** A select the page filled on its own holds its first option. */
 export async function showsFirstOption(page: Page, label: string): Promise<void> {
   const select = page.getByRole('combobox', { name: label });
-  await select.click();
-  const first = await textOf(options(page).first());
+  const dropdown = await opens(page, select);
+  const first = await textOf(dropdown.getByRole('option').first());
   await page.keyboard.press('Escape');
-  await expect(page.locator('tui-data-list')).toBeHidden();
+  await expect(dropdown).toBeHidden();
   await expect(select).toHaveValue(first);
 }
 
@@ -144,8 +154,8 @@ export async function showsFirstPlanRow(card: Locator): Promise<void> {
   const row = card.locator('div.grid.border-t').first();
   await expect(row.locator('wl-game-icon')).toHaveText(/\S/);
   await expect(row.locator('span.text-accent').first()).toHaveText(CLOCK);
-  await expect(row.getByText(/^\d+(\.\d+)?x$/)).toBeVisible();
-  await expect(row.getByText(/^Used in \d+ of \d+ logs$/)).toBeVisible();
+  await expect(row.getByText(/\b\d+(\.\d+)?x\b/)).toBeVisible();
+  await expect(row.getByText(/Used in \d+ of \d+ logs/)).toBeVisible();
   const holds = row.locator('[tuiChip]');
   if (await holds.count()) await expect(holds.first()).toHaveText(CLOCK);
   else await expect(row.getByText('None', { exact: true })).toBeVisible();
@@ -168,7 +178,8 @@ export async function showsGearConsensus(gear: Locator): Promise<void> {
   const diff = talents.getByText('The talents this build changes from the most common build.');
   if (await diff.count()) {
     await expect(diff.first()).toBeVisible();
-    await shows(talents, /^(Added|Dropped|Points)$/);
+    const change = talents.getByText('Added', { exact: true }).or(talents.getByText('Dropped', { exact: true })).or(talents.getByText('Points', { exact: true }));
+    await expect(change.first()).toBeVisible();
     await expect(talents.locator('[tuiChip] wl-game-icon').first()).toHaveText(/\S/);
   }
   const trinkets = gearSection(gear, 'Trinkets');

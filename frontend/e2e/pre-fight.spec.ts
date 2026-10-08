@@ -36,13 +36,13 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
   const panel = page.getByRole('dialog', { name: 'Northern Sky export' });
   await shows(panel, 'Pick the abilities you want timings for, copy the note, and paste it into your Northern Sky addon.');
   await expect(panel.getByRole('button', { name: 'Deselect all' })).toBeVisible();
-  await shows(panel, /^(Cooldowns|Defensives)$/);
+  await expect(panel.getByText('Cooldowns', { exact: true }).or(panel.getByText('Defensives', { exact: true })).first()).toBeVisible();
   const abilities = panel.locator('label', { has: page.getByRole('checkbox') });
   expect(await abilities.count()).toBeGreaterThan(0);
   const ability = abilities.first();
   await expect(ability.getByRole('checkbox')).toBeChecked();
   await expect(ability.locator('wl-game-icon')).toHaveText(/\S/);
-  await expect(ability.getByText(/^×\d+$/)).toBeVisible();
+  await expect(ability.getByText(/×\d+/)).toBeVisible();
 
   await panel.getByRole('button', { name: 'Copy note' }).click();
   await expect(panel.getByRole('button', { name: 'Copied', exact: true })).toBeVisible();
