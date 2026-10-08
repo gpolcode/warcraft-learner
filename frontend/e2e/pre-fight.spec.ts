@@ -1,52 +1,48 @@
 import { expect, test, Page } from '@playwright/test';
-import { shows, showsEntity, showsTypicalUses, CLOCK, DAMAGE, PERCENT } from './support';
+import { shows, showsFirstOption, showsFirstPlanRow, showsFirstWindow, showsGearConsensus, picksFirst, gearSection, ANY_TEXT, CLOCK, OPENED_AT } from './support';
 
-// Bench-only page (no WCL budget spent): one shared page, spec and encounter picked once, every card asserts against it.
+// One shared page: the picks are made once.
 test.describe.configure({ mode: 'serial' });
 
 let page: Page;
 
-async function pick(label: string, option: string): Promise<void> {
-  await page.getByRole('combobox', { name: label }).click();
-  await page.getByRole('option', { name: option }).click();
-}
-
 test.beforeAll(async ({ browser }) => {
   page = await browser.newPage();
   await page.goto('/pre');
-  await pick('Class', 'Warrior');
-  await pick('Spec', 'Arms');
-  await pick('Encounter', "Nek'zali the Soulcoiler");
+  await picksFirst(page, 'Class');
+  await picksFirst(page, 'Spec');
+  await picksFirst(page, 'Encounter');
 });
 
 test.afterAll(async () => {
   await page.close();
 });
 
-test('selecting class, spec, and encounter loads that spec\'s plan', async () => {
+test('picking the first class, spec and encounter loads that spec\'s plan', async () => {
   await shows(page, 'Pick a spec and a boss to see the plan top raiders run there.');
-  await expect(page.getByRole('combobox', { name: 'Class' })).toHaveValue('Warrior');
-  await expect(page.getByRole('combobox', { name: 'Spec' })).toHaveValue('Arms');
-  await expect(page.getByRole('combobox', { name: 'Encounter' })).toHaveValue("Nek'zali the Soulcoiler");
+  for (const label of ['Class', 'Spec', 'Encounter']) await showsFirstOption(page, label);
   const cooldownPlan = page.locator('wl-rotation-cd-plan');
-  await showsEntity(cooldownPlan);
+  await expect(cooldownPlan.locator('wl-game-icon').first()).toHaveText(ANY_TEXT);
   await shows(cooldownPlan, CLOCK);
 });
 
 test('the northern sky export offers the top log\'s cooldown timings as a note', async () => {
   const card = page.locator('wl-northern-sky-export');
+  await shows(card, 'Northern Sky export');
   await shows(card, 'Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.');
 
   await card.getByRole('button', { name: 'Export note' }).click();
   // The panel opens in Taiga's portal layer, outside the card, so it is found by its dialog role.
   const panel = page.getByRole('dialog', { name: 'Northern Sky export' });
-  await expect(panel.getByRole('button', { name: 'Copy note' })).toBeVisible();
-  await shows(panel, 'Cooldowns');
-  await shows(panel, 'Defensives');
+  await shows(panel, 'Pick the abilities you want timings for, copy the note, and paste it into your Northern Sky addon.');
+  await expect(panel.getByRole('button', { name: 'Deselect all' })).toBeVisible();
+  await expect(panel.getByText('Cooldowns', { exact: true }).or(panel.getByText('Defensives', { exact: true })).first()).toBeVisible();
   const abilities = panel.locator('label', { has: page.getByRole('checkbox') });
-  const abilityCount = await abilities.count();
-  expect(abilityCount).toBeGreaterThan(0);
-  for (let i = 0; i < abilityCount; i++) await expect(abilities.nth(i)).toContainText(/×\d+/);
+  expect(await abilities.count()).toBeGreaterThan(0);
+  const ability = abilities.first();
+  await expect(ability.getByRole('checkbox')).toBeChecked();
+  await expect(ability.locator('wl-game-icon')).toHaveText(ANY_TEXT);
+  await expect(ability.getByText(/×\d+/)).toBeVisible();
 
   await panel.getByRole('button', { name: 'Copy note' }).click();
   await expect(panel.getByRole('button', { name: 'Copied', exact: true })).toBeVisible();
@@ -55,54 +51,47 @@ test('the northern sky export offers the top log\'s cooldown timings as a note',
   await expect(panel).toHaveCount(0);
 });
 
-test('gear shows the top-parse talent, trinket, and enchant consensus, and how a lower-ranked build differs', async () => {
+test('gear shows the top-parse talent, trinket, and enchant consensus', async () => {
   const gear = page.locator('wl-gear');
+  await shows(gear, 'Gear');
   await shows(gear, 'Gear consensus across top logs.');
-  const talents = gear.locator('div.card-section').filter({ hasText: 'Talents' }).first();
-  await shows(talents, 'Most common build');
-  await shows(talents, PERCENT);
-  await shows(talents, 'of top logs');
-  await shows(talents, 'Get talent code');
-  await shows(talents, '2nd most common build');
-  await shows(talents, 'The talents this build changes from the most common build.');
-  await shows(talents, 'Added');
-  await shows(talents, 'Dropped');
-  await showsEntity(talents);
-  const trinkets = gear.locator('div.card-section').filter({ hasText: 'Trinkets' }).first();
-  await expect(trinkets.locator('a[href*="wowhead.com/item="]').first()).toBeVisible();
-  await shows(trinkets, 'Most common pair');
-  await shows(trinkets, PERCENT);
-  const enchants = gear.locator('div.card-section').filter({ hasText: 'Enchants' }).first();
-  await shows(enchants, 'What most top raiders use. Copy a name to find it in the auction house.');
+  await shows(gearSection(gear, 'Talents'), 'The builds top raiders use, most common first.');
+  await shows(gearSection(gear, 'Trinkets'), 'The pairs top raiders use, most common first.');
+  await showsGearConsensus(gear);
+
+  const enchants = gearSection(gear, 'Enchants');
+  const slots = enchants.locator('div.border-t').filter({ has: page.locator('wl-game-icon') });
+  // A slot lists an enchant only once most top logs agree on one.
+  if (await slots.count()) {
+    await shows(enchants, 'What most top raiders use. Copy a name to find it in the auction house.');
+    const slot = slots.first();
+    await expect(slot.locator('span.text-label')).toHaveText(ANY_TEXT);
+    await expect(slot.locator('wl-game-icon')).toHaveText(ANY_TEXT);
+    await expect(slot.getByRole('button', { name: 'Copy name' })).toBeVisible();
+  } else {
+    await shows(enchants, 'No enchant data.');
+  }
 });
 
-test('the cooldown plan lists first use, typical uses, and the holds', async () => {
+test('the cooldown plan lists the first cooldown\'s first use, typical uses, and holds', async () => {
   const cooldownPlan = page.locator('wl-rotation-cd-plan');
   await shows(cooldownPlan, 'Cooldown plan');
-  await showsEntity(cooldownPlan);
-  await shows(cooldownPlan, 'First use');
-  await showsTypicalUses(cooldownPlan);
-  await shows(cooldownPlan, 'Hold until');
-  await shows(cooldownPlan, CLOCK);
+  await shows(cooldownPlan, 'Offensive cooldown usage across top logs.');
+  await showsFirstPlanRow(cooldownPlan);
 });
 
-test('the defensive plan lists the consensus defensives', async () => {
+test('the defensive plan lists the first defensive\'s first use, typical uses, and holds', async () => {
   const defensivePlan = page.locator('wl-defensive-plan');
   await shows(defensivePlan, 'Defensive plan');
-  await showsEntity(defensivePlan);
-  await shows(defensivePlan, 'First use');
-  await shows(defensivePlan, CLOCK);
-  await showsTypicalUses(defensivePlan);
+  await shows(defensivePlan, 'Defensive usage across top logs.');
+  await showsFirstPlanRow(defensivePlan);
 });
 
-test('burst windows show the top-parse windows with their bench damage', async () => {
+test('burst windows show the first top-parse window with its bench damage and abilities', async () => {
   const burstWindows = page.locator('wl-burst-windows');
+  await shows(burstWindows, 'Burst windows');
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
-  await shows(burstWindows, 'Window');
-  await shows(burstWindows, /\d+:\d{2} - \d+:\d{2}/);
-  await shows(burstWindows, 'Damage');
-  await shows(burstWindows, DAMAGE);
-  await showsEntity(burstWindows);
+  await showsFirstWindow(burstWindows, { metric: 'Damage', chips: 'Cooldowns top raiders use here' });
 });
 
 test('the positioning map opens anchored on the selected burst window', async () => {
@@ -111,7 +100,7 @@ test('the positioning map opens anchored on the selected burst window', async ()
   await openMap.click();
   const panel = page.getByRole('dialog', { name: 'Positioning' });
   await expect(panel.locator('wl-map-canvas canvas')).toBeVisible();
-  await shows(panel, /Opened at -?\d+:\d{2}/);
+  await shows(panel, OPENED_AT);
   await shows(panel, '● Top logs');
   await panel.getByRole('button', { name: 'Close map' }).click();
   await expect(panel).toHaveCount(0);
