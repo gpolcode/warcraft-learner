@@ -108,9 +108,7 @@
           }
         }
       } @else {
-        <div class="flex items-center gap-2 border-t border-line py-3 text-body text-muted">
-          No talent data.
-        </div>
+        <wl-empty-state class="border-t border-line">No talent data.</wl-empty-state>
       }
     </div>
 
@@ -156,9 +154,7 @@
           </div>
         }
       } @else {
-        <div class="flex items-center gap-2 border-t border-line py-3 text-body text-muted">
-          No trinket data.
-        </div>
+        <wl-empty-state class="border-t border-line">No trinket data.</wl-empty-state>
       }
     </div>
 
@@ -206,9 +202,7 @@
             <span tuiChip appearance="neutral" size="xs">All enchants</span>
           </div>
         } @else {
-          <div class="flex items-center gap-2 border-t border-line py-3 text-body text-muted">
-            No enchant data.
-          </div>
+          <wl-empty-state class="border-t border-line">No enchant data.</wl-empty-state>
         }
       } @else {
           @for (row of view().benchEnchantRows; track row.slotName) {
@@ -218,9 +212,7 @@
             </div>
           }
         @empty {
-          <div class="flex items-center gap-2 border-t border-line py-3 text-body text-muted">
-            No enchant data.
-          </div>
+          <wl-empty-state class="border-t border-line">No enchant data.</wl-empty-state>
         }
       }
     </div>

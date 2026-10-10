@@ -44,10 +44,7 @@
               </div>
             </div>
           } @empty {
-            <div class="flex items-center gap-2.5 py-2.5 border-t border-line">
-              <tui-icon class="icon-18 text-success" icon="check_circle" />
-              <span class="text-body">No deaths - {{ v.result === 'kill' ? 'clean pull' : 'you survived' }}</span>
-            </div>
+            <wl-empty-state icon="check_circle" tone="success" class="border-t border-line">No deaths - {{ v.result === 'kill' ? 'clean pull' : 'you survived' }}</wl-empty-state>
           }
 
           <div class="grid grid-cols-(--cols-death) gap-2.75 items-center py-2.5 border-t border-line">

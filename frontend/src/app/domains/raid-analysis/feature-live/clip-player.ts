@@ -3,6 +3,7 @@ import { TuiButton } from '@taiga-ui/core';
 import { TuiToastService } from '@taiga-ui/kit';
 import { LoadingSpinner } from '../../shared/ui-load-state/loading-spinner';
 import { DownloadOutcome, LiveCaptureFeatureService } from '../data/live/live-capture-feature-service';
+import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 
 const NO_FOOTAGE_MESSAGE = 'No footage for this pull.';
 const DOWNLOAD_FAILED_MESSAGE = 'Download failed. Retry it.';
@@ -10,7 +11,7 @@ const DOWNLOAD_FAILED_MESSAGE = 'Download failed. Retry it.';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-clip-player',
-  imports: [TuiButton, LoadingSpinner],
+  imports: [EmptyState, TuiButton, LoadingSpinner],
   templateUrl: './clip-player.html',
 })
 export class ClipPlayer {

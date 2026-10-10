@@ -1,9 +1,7 @@
 @if (loadError(); as e) {
   <wl-load-state [error]="e" />
 } @else if (!positions()) {
-  <p class="text-body text-muted">
-    No position data for this encounter.
-  </p>
+  <wl-empty-state icon="my_location">No position data for this encounter.</wl-empty-state>
 } @else {
   <div class="mb-2 flex flex-wrap items-center justify-end gap-2">
     <label tuiLabel class="w-[200px]">

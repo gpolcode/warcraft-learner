@@ -7,6 +7,7 @@ import { GameIcon } from '../ui-game-icon/game-icon';
 import { FindingOccurrences } from './finding-occurrences';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
+import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 
 export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
 
@@ -16,7 +17,7 @@ export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-servi
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChevron, TuiExpand, TuiItem, TuiBadge, TuiChip,
+    EmptyState, TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChevron, TuiExpand, TuiItem, TuiBadge, TuiChip,
     GameIcon, FindingOccurrences, FormatDurationPipe,
   ],
   templateUrl: './finding-table.html',

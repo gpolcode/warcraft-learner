@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { TuiIcon, TuiNotification, TuiTitle } from '@taiga-ui/core';
+import { TuiCell, TuiNotification, TuiTitle } from '@taiga-ui/core';
+import { TuiAvatar, TuiConnected } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
 
 export type BenchEmptyVariant = 'post' | 'pre';
@@ -7,7 +8,7 @@ export type BenchEmptyVariant = 'post' | 'pre';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-bench-empty-banner',
-  imports: [TuiNotification, TuiTitle, TuiIcon, TuiCardLarge],
+  imports: [TuiNotification, TuiTitle, TuiCell, TuiAvatar, TuiConnected, TuiCardLarge],
   host: { class: 'block' },
   templateUrl: './bench-empty-banner.html',
 })
