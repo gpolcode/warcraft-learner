@@ -50,7 +50,6 @@ Deliver: the shell (injecting only its selection service, `SelectionStore`, and 
 
 - Templates style text through one type role plus, where the color differs from the body default, one color token from `frontend/src/styles.scss`; the `theme-utilities-only` lint message lists them. `text-accent` doubles as the informational severity; there is no info token.
 - Each text role has one position. A title names a row and sits on top. A label (`text-label`) names a field and sits directly above it; a label repeated on every row becomes a desktop column header. A qualifier (`text-caption`, "of top logs") follows its value. A state tag is a `tuiBadge` after the title.
-- Every card ends in one right rail (a measured track, then a fix track) sized only by `--col-measured` and `--col-fix` in `styles.scss`. A card names its columns through a `--cols-*` list there, and the fix column's left edge is `card-fix` (rule plus inset) or `card-inset` (inset only); the `card-grid-tokens` lint rule rejects inline track lists, responsive `border-l` / `pl-*`, and unknown `--cols-*` names.
 - `computed()` exposes semantic state only; the template maps that state to a class.
 - All formatting goes through Angular pipes (`shared/ui-format/` and the `raid-analysis/ui-*` pipes).
 

@@ -18,13 +18,13 @@
   --font-sans: 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: initial;
 
-  /* Card grids: every card ends in the same right rail (a measured track, then a fix track) because the rail tracks are anchored to the card's right edge and sized only by --col-measured and --col-fix. A card places its columns on this rail through the --cols-* lists below and never states a track width of its own (eslint: card-grid-tokens). */
+  /* Card grids: a header, its rows and its drill-down are separate elements, so each one names the same track list here rather than repeating widths that have to be kept equal by hand. */
   --gap-card: 0.875rem;
   --col-icon: 1.25rem;
   --col-measured: 6rem;
-  --col-fix: 12.5rem;
+  --col-fix: 14rem;
   --col-toggle: 1.75rem;
-  --col-fix-lead: 7rem;
+  --col-fix-lead: 8.5rem;
   --col-fix-trail: calc(var(--col-fix) - var(--col-fix-lead) - var(--gap-card));
   --col-first-use: 4.5rem;
   --cols-card: var(--col-icon) minmax(0, 1fr) var(--col-measured) var(--col-fix);
@@ -70,7 +70,7 @@
   letter-spacing: 0.08em;
 }
 
-/* The one left edge of the fix track: a column starts with this inset, and a cell that also draws the column rule takes card-fix. */
+/* A template that spells its own padding or rule on the fix column starts it at a different x than every other card. */
 @utility card-inset {
   padding-left: var(--gap-card);
 }
