@@ -9,6 +9,7 @@ import bannedCharacters from './eslint-rules/banned-characters.js';
 import pathConventions from './eslint-rules/path-conventions.js';
 import noFunctionAliasMembers from './eslint-rules/no-function-alias-members.js';
 import themeUtilitiesOnly from './eslint-rules/theme-utilities-only.js';
+import cardGridTokens from './eslint-rules/card-grid-tokens.js';
 
 const local = {
   rules: {
@@ -17,6 +18,7 @@ const local = {
     'path-conventions': pathConventions,
     'no-function-alias-members': noFunctionAliasMembers,
     'theme-utilities-only': themeUtilitiesOnly,
+    'card-grid-tokens': cardGridTokens,
   },
 };
 
@@ -196,7 +198,7 @@ export default defineConfig([
     // Inline templates and class strings; specs are prose and stay out.
     files: ['src/app/**/*.ts'],
     ignores: ['src/**/*.spec.ts'],
-    rules: { 'local/theme-utilities-only': 'error' },
+    rules: { 'local/theme-utilities-only': 'error', 'local/card-grid-tokens': 'error' },
   },
   {
     files: ['src/**/*.ts'],
@@ -316,6 +318,7 @@ export default defineConfig([
       'local/banned-characters': 'error',
       'local/path-conventions': 'error',
       'local/theme-utilities-only': 'error',
+      'local/card-grid-tokens': 'error',
     },
   },
 ]);
