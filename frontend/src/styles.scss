@@ -149,3 +149,6 @@ body {
 
 /* Taiga sizes an icon by its font-size and pins 24px outside any layer, so the app's 18px row icons need this element+class rule (0,1,1) to win. */
 tui-icon.icon-18 { font-size: 18px; }
+
+/* Tailwind's preflight makes pseudo-elements border-box, which squeezes Taiga's 1px connector line to zero width under its inherited padding. */
+[tuiConnected] > [tuiCell]::before { box-sizing: content-box; }

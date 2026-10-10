@@ -9,7 +9,7 @@
     @if (loading()) {
       <wl-loading-spinner message="Loading specs…"></wl-loading-spinner>
     } @else if (specs().length === 0 || classes().length === 0) {
-      <p class="text-body text-muted">No spec data available.</p>
+      <wl-empty-state>No spec data available.</wl-empty-state>
     } @else {
       <div class="flex flex-wrap gap-3.5">
         <label tuiLabel class="flex-[1_1_200px]">

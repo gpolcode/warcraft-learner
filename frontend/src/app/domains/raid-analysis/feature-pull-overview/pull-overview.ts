@@ -10,12 +10,13 @@ import { FormatDamagePipe } from '../../shared/ui-format/format-damage-pipe';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { PullOverviewFeatureService } from '../data/pull-overview/pull-overview-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
+import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 
 // Needs no bench, so it is always available (no availableChange, unlike the other post-raid cards).
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pull-overview',
-  imports: [DecimalPipe, TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, FormatDurationPipe, FormatDamagePipe, LoadState],
+  imports: [EmptyState, DecimalPipe, TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, FormatDurationPipe, FormatDamagePipe, LoadState],
   templateUrl: './pull-overview.html',
   host: { class: 'block' },
 })

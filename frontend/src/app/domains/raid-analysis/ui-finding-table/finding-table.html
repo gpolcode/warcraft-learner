@@ -102,7 +102,7 @@
     }
 
     @if (!rows().length && !onPlan().length) {
-      <div class="border-t border-line py-3 text-body text-muted">Nothing flagged.</div>
+      <wl-empty-state icon="check_circle" tone="success" class="border-t border-line">Nothing flagged.</wl-empty-state>
     }
 
     @if (onPlan().length) {

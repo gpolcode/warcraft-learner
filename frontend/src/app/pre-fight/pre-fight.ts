@@ -26,6 +26,7 @@ import { MapPanel } from '../domains/raid-analysis/feature-map/map-panel';
 import { MapFeatureService, MapAnchor } from '../domains/raid-analysis/data/map/map-feature-service';
 import { NorthernSkyExport } from '../domains/raid-analysis/feature-northern-sky/northern-sky-export';
 import { LoggerService } from '../domains/shared/util-logging/logger-service';
+import { EmptyState } from '../domains/shared/ui-empty-state/empty-state';
 
 export type PreFightCardId = 'northernSky' | 'gear' | 'cdPlan' | 'defensivePlan' | 'burst';
 
@@ -41,7 +42,7 @@ export const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pre-fight',
   imports: [
-    ReactiveFormsModule, TuiCardLarge, TuiTextfield, TuiSelect, TuiChevron, TuiDataList,
+    EmptyState, ReactiveFormsModule, TuiCardLarge, TuiTextfield, TuiSelect, TuiChevron, TuiDataList,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon,
     FormatSpecPipe, ClassIconPipe, SpecIconPipe, BossIconPipe,
     RotationCdPlan, DefensivePlan, BurstWindows,

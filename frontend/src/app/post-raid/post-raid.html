@@ -82,7 +82,7 @@
     </section>
 
     @if (notice()) {
-      <div tuiNotification appearance="neutral" size="m" class="mb-4">{{ notice() }}</div>
+      <wl-empty-state icon="info" class="mb-4">{{ notice() }}</wl-empty-state>
     }
 
     @if (loadError(); as err) {

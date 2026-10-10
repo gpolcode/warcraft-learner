@@ -6,7 +6,7 @@ import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-i
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { EMPTY, Observable, combineLatest, from, merge, of } from 'rxjs';
 import { distinctUntilChanged, exhaustMap, filter, map, switchMap, tap } from 'rxjs/operators';
-import { TUI_VALIDATION_ERRORS, TuiDataList, TuiError, TuiInput, TuiNotification, TuiTextfield } from '@taiga-ui/core';
+import { TUI_VALIDATION_ERRORS, TuiDataList, TuiError, TuiInput, TuiTextfield } from '@taiga-ui/core';
 import { TuiChevron, TuiSelect } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import { POLL_INTERVAL_S } from '../domains/raid-analysis/data/wcl/live-report-sync-service';
@@ -37,6 +37,7 @@ import { CardDeck, CardEntry } from '../domains/shared/util-card-deck/card-deck'
 import { SelectionStore } from '../domains/raid-analysis/data/selection/selection-store';
 import { Result, Results } from '../domains/shared/util-http/result';
 import { LoadState, RenderableLoadError } from '../domains/shared/ui-load-state/load-state';
+import { EmptyState } from '../domains/shared/ui-empty-state/empty-state';
 
 type PostRaidCardId = 'pullOverview' | 'rotation' | 'burst' | 'defensive' | 'gear';
 
@@ -57,7 +58,7 @@ const INVALID_REPORT_CODE_MESSAGE = 'Paste a Warcraft Logs report URL or a 16-ch
   selector: 'wl-post-raid',
   imports: [
     ReactiveFormsModule, TuiCardLarge, TuiTextfield, TuiInput, TuiError, TuiSelect, TuiChevron,
-    TuiDataList, TuiNotification,
+    TuiDataList, EmptyState,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
     Defensive, Gear, MapPanel, LiveControls, ClipPanel,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,

@@ -29,6 +29,19 @@ describe('BenchEmptyBanner', () => {
     expect(text).toContain('Automatic');
   });
 
+  it('joins the three steps as connected cells in order', () => {
+    TestBed.configureTestingModule({ imports: [BenchEmptyBanner], providers: [provideZonelessChangeDetection()] });
+    const fixture = TestBed.createComponent(BenchEmptyBanner);
+    fixture.detectChanges();
+    const cells = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('[tuiConnected] > [tuiCell]'));
+    const titles = cells.map(cell => (cell.querySelector('[tuiTitle]')?.textContent ?? '').replace(/\s+/g, ' ').trim());
+    expect(titles).toEqual([
+      'Mythic kills logged Players upload to WCL.',
+      'Ingest samples them We pull new top rankings.',
+      'Comparisons unlock The sections below fill in.',
+    ]);
+  });
+
   it('uses the post-raid copy by default (Comparisons unlock)', () => {
     const text = render({ encounter: 'Boss' });
     expect(text).toContain('Rotation rules and the cooldown, burst, defensive and gear comparisons all need top-parse logs');

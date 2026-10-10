@@ -11,6 +11,7 @@ import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe'
 import { LoadState, RenderableLoadError } from '../../shared/ui-load-state/load-state';
 import { MapFeatureService, MapReadout } from '../data/map/map-feature-service';
 import { RelPos } from '../data/map/map-draw-service';
+import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 
 const STEP_S = 0.5;
 /** Clamped per frame so a backgrounded-then-resumed tab does not jump the scrubber by the whole elapsed gap. */
@@ -20,7 +21,7 @@ const MAX_FRAME_DT_S = 0.1;
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-map-canvas',
   imports: [
-    FormsModule, TuiTextfield, TuiLabel, TuiSelect, TuiChevron, TuiDataList, TuiButton, TuiSlider, TuiCardLarge,
+    EmptyState, FormsModule, TuiTextfield, TuiLabel, TuiSelect, TuiChevron, TuiDataList, TuiButton, TuiSlider, TuiCardLarge,
     FormatDurationPipe, LoadState,
   ],
   templateUrl: './map-canvas.html',

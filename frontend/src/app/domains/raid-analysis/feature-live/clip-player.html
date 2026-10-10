@@ -1,5 +1,5 @@
 @if (clip.playbackFailed()) {
-  <div class="text-body text-muted">This clip could not be played.</div>
+  <wl-empty-state icon="error">This clip could not be played.</wl-empty-state>
 } @else if (clip.preparing()) {
   <wl-loading-spinner />
 } @else if (clip.handle()) {
@@ -17,5 +17,5 @@
     <button tuiButton type="button" appearance="outline-grayscale" iconStart="download" (click)="clip.download()">Download clip</button>
   </div>
 } @else {
-  <div class="text-body text-muted">No footage for this window.</div>
+  <wl-empty-state icon="videocam">No footage for this window.</wl-empty-state>
 }

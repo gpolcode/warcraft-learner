@@ -1,0 +1,4 @@
+<tui-block-status size="m" class="py-4">
+  <tui-icon tuiSlot="top" class="icon-18" [class.text-muted]="tone() === 'muted'" [class.text-success]="tone() === 'success'" [icon]="icon()" />
+  <span class="block"><ng-content /></span>
+</tui-block-status>
