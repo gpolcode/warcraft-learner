@@ -23,7 +23,7 @@
   <div class="flex items-start flex-wrap gap-x-5.5 gap-y-1.5 mt-1.5 md:mt-0 md:contents">
     <div class="md:contents">
       <span class="md:hidden block text-label text-muted mb-1">Top raiders average</span>
-      <span class="block tabular-nums md:col-start-3 md:row-start-1 md:text-left text-body text-muted">{{ row().topAvg | formatDamage }}</span>
+      <span class="block tabular-nums md:col-start-3 md:row-start-1 md:text-left md:card-inset text-body text-muted">{{ row().topAvg | formatDamage }}</span>
     </div>
 
     @if (showCasts() && !hidePlayer()) {

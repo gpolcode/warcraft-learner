@@ -12,7 +12,7 @@
         </hgroup>
       </div>
       <div class="hidden md:block text-label text-muted text-right">Measured</div>
-      <div class="hidden md:block text-label text-muted pl-(--gap-card)">Fix</div>
+      <div class="hidden md:block text-label text-muted card-inset">Fix</div>
     </header>
 
     <div class="card-section [&>:first-child+*]:border-t-0">
@@ -38,7 +38,7 @@
           </div>
         }
         @for (build of view().talentBuilds; track build.label) {
-          <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] md:grid-cols-(--cols-card) gap-x-(--gap-card) gap-y-1 md:gap-y-0 items-center py-2.5 border-t border-line">
+          <div class="grid grid-cols-(--cols-pct-action-sm) md:grid-cols-(--cols-card) gap-x-(--gap-card) gap-y-1 md:gap-y-0 items-center py-2.5 border-t border-line">
             <div class="min-w-0 flex items-center gap-1.75 flex-wrap md:col-span-2">
               <span class="text-name">{{ build.label }}</span>
               @if (build.isPlayer) {
@@ -49,7 +49,7 @@
               <div class="tabular-nums text-value">{{ build.pct }}%</div>
               <div class="tabular-nums text-caption mt-px">of top logs</div>
             </div>
-            <div class="text-right md:text-left md:border-l md:border-line md:pl-1.75">
+            <div class="text-right md:text-left md:card-fix">
               <a tuiButton appearance="outline-grayscale" iconStart="arrow_forward" [href]="build.link" target="_blank" rel="noopener">Get talent code</a>
             </div>
           </div>
@@ -135,7 +135,7 @@
           </div>
         }
         @for (set of view().trinketSets; track set.label) {
-          <div class="grid grid-cols-[minmax(0,1fr)_auto] md:grid-cols-(--cols-card) gap-x-(--gap-card) gap-y-1 md:gap-y-0 items-center py-2.5 border-t border-line">
+          <div class="grid grid-cols-(--cols-pct-sm) md:grid-cols-(--cols-card) gap-x-(--gap-card) gap-y-1 md:gap-y-0 items-center py-2.5 border-t border-line">
             <div class="min-w-0 flex items-center gap-1.75 flex-wrap md:col-span-2">
               <span class="text-name">{{ set.label }}</span>
               @if (set.isPlayer) {
@@ -181,7 +181,7 @@
                   [icon]="row.status === 'info' ? 'info' : 'warning_amber'" />
               </div>
               <span class="row-start-2 col-start-2 min-w-0 text-name truncate">{{ row.name }}</span>
-              <div class="col-start-2 md:col-start-4 md:row-start-1 md:row-span-2 mt-1 md:mt-0 text-body text-muted border-t md:border-t-0 md:border-l border-line pt-2 md:pt-0 pl-0 md:pl-(--gap-card)">
+              <div class="col-start-2 md:col-start-4 md:row-start-1 md:row-span-2 mt-1 md:mt-0 text-body text-muted border-t md:border-t-0 md:card-fix border-line pt-2 md:pt-0">
                 <span class="md:hidden block text-label text-muted mb-1">Fix</span>
                 @if (row.top; as top) {
                   <wl-game-icon kind="item" [id]="top.itemId" [name]="top.name" [icon]="top.icon" [copyable]="true"></wl-game-icon>

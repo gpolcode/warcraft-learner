@@ -13,7 +13,7 @@
       <div class="hidden md:grid grid-cols-(--cols-plan) gap-x-(--gap-card) pb-1">
         <div class="col-start-2 text-label text-muted">First use</div>
         <div class="text-label text-muted">Typical uses</div>
-        <div class="text-label text-muted">Hold until</div>
+        <div class="text-label text-muted card-inset">Hold until</div>
       </div>
 
       @for (row of orderedRows(); track row.name) {
@@ -46,7 +46,7 @@
                 <div class="tabular-nums text-caption text-muted">Used in {{ row.usedSampleCount }} of {{ row.sampleCount }} logs</div>
               }
             </div>
-            <div class="min-w-0">
+            <div class="min-w-0 md:card-inset">
               <span class="md:hidden block text-label text-muted mb-1.5">Hold until</span>
               <div class="flex flex-wrap items-center gap-1.5">
                 @for (hold of row.holds; track hold.castIndex) {

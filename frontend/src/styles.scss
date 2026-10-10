@@ -22,14 +22,18 @@
   --gap-card: 0.875rem;
   --col-icon: 1.25rem;
   --col-measured: 6rem;
-  --col-fix: 12.5rem;
+  --col-fix: 16rem;
   --col-toggle: 1.75rem;
+  --col-fix-lead: 10.5rem;
+  --col-fix-trail: calc(var(--col-fix) - var(--col-fix-lead) - var(--gap-card));
+  --col-first-use: 4.5rem;
   --cols-card: var(--col-icon) minmax(0, 1fr) var(--col-measured) var(--col-fix);
   --cols-card-sm: var(--col-icon) minmax(0, 1fr);
-  --cols-drill: var(--cols-card) var(--col-toggle);
-  --cols-drill-sm: var(--cols-card-sm) var(--col-toggle);
-  --cols-ability: minmax(0, 1fr) var(--col-measured) 9.75rem 5.625rem;
-  --cols-plan: minmax(0, 1fr) 4.5rem 8.5rem minmax(0, 1.6fr);
+  --cols-card-sm-toggle: var(--cols-card-sm) var(--col-toggle);
+  --cols-pct-sm: minmax(0, 1fr) auto;
+  --cols-pct-action-sm: minmax(0, 1fr) auto auto;
+  --cols-ability: minmax(0, 1fr) var(--col-measured) var(--col-fix-lead) var(--col-fix-trail);
+  --cols-plan: minmax(0, 1fr) var(--col-first-use) var(--col-measured) var(--col-fix);
   --cols-stat: minmax(0, 1fr) var(--col-fix);
   --cols-death: var(--col-icon) minmax(0, 1fr) auto auto;
 
@@ -64,6 +68,16 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+/* A template that spells its own padding or rule on the fix column starts it at a different x than every other card. */
+@utility card-inset {
+  padding-left: var(--gap-card);
+}
+
+@utility card-fix {
+  border-left: 1px solid var(--color-line);
+  padding-left: var(--gap-card);
 }
 
 html {
