@@ -107,6 +107,11 @@ jobs:
             cp .github/pages-root/index.html publish/index.html
             # Pages serves 404.html site-wide, booting the SPA for deep links under /main/.
             cp site/index.html publish/404.html
+            # 404.html answers with status 404, so Google drops each routed page unless it has its own file: Pages serves /main/pre from main/pre.html with 200.
+            for route in pre; do
+              sed "s#https://warcraft-learner.com/main/\"#https://warcraft-learner.com/main/$route\"#g" site/index.html > "publish/main/$route.html"
+              grep -q "rel=\"canonical\" href=\"https://warcraft-learner.com/main/$route\"" "publish/main/$route.html" || { echo "::error::No canonical rewritten for $route"; exit 1; }
+            done
           fi
 
       # Deploys to the gh-pages root, where clean:true would delete data/specs/, main/, and every preview.
