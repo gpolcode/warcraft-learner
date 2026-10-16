@@ -60,7 +60,7 @@ describe('benchToStats', () => {
 describe('buildCharacterGear', () => {
   it('is a permanent error when the log has no combatant info', () => {
     expect(svc['buildCharacterGear'](null, {}))
-      .toEqual(Results.permanent('No combatant info in this log.', 'gear.combatant-info'));
+      .toEqual(Results.unusableLog('This log has no combatant info.', 'gear.combatant-info'));
   });
 
   it('builds the gear fingerprint when the event carries gear', () => {
@@ -185,7 +185,7 @@ describe('GearFeatureService', () => {
 
   it('loadComparisonView surfaces a permanent error when the player has no combatant info', async () => {
     const result = await configure(Results.ok(benchWith()), null).loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
-    expect(result).toEqual(Results.permanent('No combatant info in this log.', 'gear.combatant-info'));
+    expect(result).toEqual(Results.unusableLog('This log has no combatant info.', 'gear.combatant-info'));
   });
 
   it('loadComparisonView propagates a missing bench before fetching player gear', async () => {

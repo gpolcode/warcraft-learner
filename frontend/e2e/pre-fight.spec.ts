@@ -29,7 +29,7 @@ test('picking the first class, spec and encounter loads that spec\'s plan', asyn
 test('the northern sky export offers the top log\'s cooldown timings as a note', async () => {
   const card = page.locator('wl-northern-sky-export');
   await shows(card, 'Northern Sky export');
-  await shows(card, 'Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.');
+  await shows(card, 'Cooldown timings from one top Mythic log for your spec, as a note for the Northern Sky raid addon.');
 
   await card.getByRole('button', { name: 'Export note' }).click();
   // The panel opens in Taiga's portal layer, outside the card, so it is found by its dialog role.
@@ -102,6 +102,7 @@ test('the positioning map opens anchored on the selected burst window', async ()
   await expect(panel.locator('wl-map-canvas canvas')).toBeVisible();
   await shows(panel, OPENED_AT);
   await shows(panel, '● Top logs');
+  await shows(panel, '◯ Average of top-log positions');
   await panel.getByRole('button', { name: 'Close map' }).click();
   await expect(panel).toHaveCount(0);
 });

@@ -4,6 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Results } from '../../../shared/util-http/result';
 import { NorthernSkyPhaseDataService } from './northern-sky-phase-data-service';
+import { NORTHERN_SKY_TOC } from '../../../../../testing/northern-sky-toc';
 
 // Pure parsing only: the prototype instance skips the HttpClient wiring the parsing never touches.
 const phaseData = Object.create(NorthernSkyPhaseDataService.prototype) as NorthernSkyPhaseDataService;
@@ -34,12 +35,20 @@ const SINGLE_PHASE_TIMELINE = timeline(SINGLE_PHASE_ID, '[1] = {start = 0}, [2] 
 const REARMING_ALERT = `local encID = ${PHASED_ID}\nfunction M() self:StartReminders(self.Phase) end`;
 const STATIC_ALERT = `local encID = ${SINGLE_PHASE_ID}\nfunction M() self:FireCallback("x") end`;
 
-const TOC = `NorthernSkyRaidTools.lua
-BossTimelines\\BossTimelines.xml
+// Lines as the addon's TOC carries them, load-condition suffixes included.
+const TOC = String.raw`# Main Files
+NorthernSkyRaidTools.lua
+BossTimelines\BossTimelines.lua
+BossTimelines\BossTimelines.xml [AllowLoadGameType standard]
+
+# Encounter Alerts
 EncounterAlerts/Alerts.lua
-EncounterAlerts/MidnightS2/EntombedSentinels.lua
-EncounterAlerts/MidnightS2/NymrissaWavecaller.lua
-EncounterAlerts\\Locales\\enUS.lua`;
+EncounterAlerts/MidnightS2/NymrissaWavecaller.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/EntombedSentinels.lua [AllowLoadGameType standard]
+
+# Encounter Alerts Localization
+EncounterAlerts\Locales\Core.lua
+EncounterAlerts\Locales\enUS.lua [AllowLoadGameType standard]`;
 const MANIFEST = `<Ui>
   <Script file="BossTimelines.lua"/>
   <Script file="MidnightS2/EntombedSentinels.lua"/>
@@ -70,6 +79,27 @@ async function flushAddon(httpMock: HttpTestingController, phasedAlert = REARMIN
   httpMock.expectOne(`${ADDON_ROOT}/BossTimelines/MidnightS2/EntombedSentinels.lua`).flush(PHASED_TIMELINE);
   httpMock.expectOne(`${ADDON_ROOT}/BossTimelines/MidnightS2/NymrissaWavecaller.lua`).flush(SINGLE_PHASE_TIMELINE);
 }
+
+// Two seasons of ten bosses each, as the addon's TOC lists them.
+const TOC_BOSS_COUNT = 20;
+
+describe('alertPaths', () => {
+  it('reads every boss module from the addon\'s own TOC, load conditions and all', () => {
+    const paths = phaseData['alertPaths'](NORTHERN_SKY_TOC);
+    expect(paths).toHaveLength(TOC_BOSS_COUNT);
+    expect(paths).toContain('EncounterAlerts/MidnightS2/EntombedSentinels.lua');
+  });
+
+  it('skips the shared alert file and the locale files', () => {
+    const paths = phaseData['alertPaths'](NORTHERN_SKY_TOC);
+    expect(paths).not.toContain('EncounterAlerts/Alerts.lua');
+    expect(paths.filter(path => path.includes('Locales'))).toEqual([]);
+  });
+
+  it('reads a path whose line carries no load condition', () => {
+    expect(phaseData['alertPaths']('EncounterAlerts/MidnightS2/Kithix.lua\r\n')).toEqual(['EncounterAlerts/MidnightS2/Kithix.lua']);
+  });
+});
 
 describe('rearmingEncounterIds', () => {
   it('keeps an encounter whose module re-arms reminders and drops one that never does', () => {

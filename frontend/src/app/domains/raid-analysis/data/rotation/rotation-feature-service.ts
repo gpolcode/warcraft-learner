@@ -324,6 +324,7 @@ export class RotationFeatureService {
       chip: CAT_LABEL[finding.category],
       measured: finding.measured ?? { value: '-' },
       timestampS: finding.timestamp_s ?? null,
+      message: finding.message,
       fix: finding.details?.remedy,
       occurrences: finding.occurrences,
     }));
@@ -345,6 +346,7 @@ export class RotationFeatureService {
           timestampS: finding.timestamp_s ?? null,
           chip: CAT_LABEL[finding.category],
           measured: finding.measured ?? { value: '-' },
+          message: finding.message,
           fix: finding.details?.remedy,
           occurrences: finding.occurrences,
         });

@@ -91,7 +91,7 @@ export class GearFeatureService {
     names: GameNames,
   ): Result<CharacterGear> {
     if (!event?.gear?.length) {
-      return Results.permanent('No combatant info in this log.', 'gear.combatant-info');
+      return Results.unusableLog('This log has no combatant info.', 'gear.combatant-info');
     }
     const { trinkets, enchants } = this.gearExtract.extractGear(event.gear);
     const talent_key = this.talentKeys.talentKeyFromTree(event.talentTree);

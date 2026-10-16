@@ -1,0 +1,99 @@
+// Verbatim from the addon repository: the load-condition suffixes and mixed path separators are what the parser must survive.
+export const NORTHERN_SKY_TOC = String.raw`## Interface: 120105, 16001
+## AllowLoadGameType: standard, camelot
+## Title: |cFF00FFFFNorthern Sky Raid Tools|r
+## Version: @project-version@
+## IconTexture: Interface\AddOns\NorthernSkyRaidTools\Media\NSLogo.blp
+## Author: Reloe, Rav
+## DefaultState: Enable
+## SavedVariables: NSRT, NSRTTimelineData
+## OptionalDeps: Grid2, ElvUI, Cell, DandersFrames, VuhDo, UnhaltedUnitFrames, MRT, Blizzard_CompactRaidFrames
+## Category: Dungeons & Raids
+## Category-deDE: Dungeons & Schlachtzüge
+## Category-esES: Mazmorras y bandas
+## Category-esMX: Calabozos y bandas
+## Category-frFR: Donjons et raids
+## Category-itIT: Spedizioni e incursioni
+## Category-koKR: 던전 및 공격대
+## Category-ptBR: Masmorras e Raides
+## Category-ruRU: Подземелья и рейды
+## Category-zhCN: 地下城和团队副本
+## Category-zhTW: 地城與團隊
+## X-Curse-Project-ID: 954018
+## X-Wago-ID: rN4VDdKD
+
+# Libraries
+Libs\libs.xml
+
+# Locales
+Locales\enUS.lua
+Locales\deDE.lua
+Locales\koKR.lua
+Locales\ruRU.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
+
+# Main Files
+NorthernSkyRaidTools.lua
+Functions.lua
+RuntimeDisplays.lua
+BossData.lua
+Reminders.lua
+BossTimelines\BossTimelines.lua
+BossTimelines\BossTimelines.xml [AllowLoadGameType standard]
+Media.lua
+Comms.lua
+NickNames.lua
+EventHandler.lua
+VersionCheck.lua
+SetupManager.lua [AllowLoadGameType standard]
+CooldownCheck.lua
+ReadyCheck.lua
+ReadyCheckConsumables.lua
+AuraSounds.lua
+AuraTracking.lua
+AuraGlows.lua
+PaceComparison.lua
+QoL.lua [AllowLoadGameType standard]
+QoLDisplay.lua [AllowLoadGameType standard]
+PlayerStatsDisplay.lua
+BreakTimer.lua
+Profiles.lua
+InterruptDisplay.lua
+
+# Encounter Alerts
+EncounterAlerts/Alerts.lua
+EncounterAlerts/MidnightS1/ImperatorAverzian.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS1/Vorasius.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS1/FallenKingSalhadaar.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS1/VaelgorEzzorak.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS1/LightblindedVanguard.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS1/CrownOfThecosmos.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS1/Chimaerus.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS1/Beloren.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS1/MidnightFalls.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS1/Rotmire.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/NymrissaWavecaller.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/NekzaliTheSoulcoiler.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/EntombedSentinels.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/VashnikTheMalignant.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/TheLostExplorers.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/Sszorak.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/TheTwinFangs.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/TheCoiledAltar.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/Ulatek.lua [AllowLoadGameType standard]
+EncounterAlerts/MidnightS2/Kithix.lua [AllowLoadGameType standard]
+
+# Encounter Alerts Localization
+EncounterAlerts\Locales\Core.lua
+EncounterAlerts\Locales\enUS.lua [AllowLoadGameType standard]
+EncounterAlerts\Locales\zhCN.lua [AllowLoadGameType standard]
+EncounterAlerts\Locales\ruRU.lua [AllowLoadGameType standard]
+EncounterAlerts\Locales\deDE.lua [AllowLoadGameType standard]
+EncounterAlerts\Locales\koKR.lua [AllowLoadGameType standard]
+EncounterAlerts\Locales\zhTW.lua [AllowLoadGameType standard]
+
+# The options UI is provided by the separate load-on-demand
+# NorthernSkyRaidTools_UI addon.
+SlashCommands.lua
+`;

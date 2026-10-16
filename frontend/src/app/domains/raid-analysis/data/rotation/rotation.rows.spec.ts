@@ -35,8 +35,8 @@ describe('bucketRotationFindings', () => {
 
 describe('rotation finding partition and row builders', () => {
   const abilities = { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' }, [VANISH]: { icon: 'vanish', name: 'Vanish' } };
-  const downtimeFinding: AnalysisFinding = { severity: 'warning', category: 'cast_efficiency', label: 'Low cast efficiency', message: '', measured: { value: '80.0%' }, details: { remedy: 'fix' }, occurrences: [] };
-  const issueFinding: AnalysisFinding = { severity: 'warning', category: 'cooldown_delay', cd_name: 'Shadow Blades', message: '', measured: { value: '+3s' }, timestamp_s: 4, occurrences: [] };
+  const downtimeFinding: AnalysisFinding = { severity: 'warning', category: 'cast_efficiency', label: 'Low cast efficiency', message: 'You were casting 80.0% of the fight.', measured: { value: '80.0%' }, details: { remedy: 'fix' }, occurrences: [] };
+  const issueFinding: AnalysisFinding = { severity: 'warning', category: 'cooldown_delay', cd_name: 'Shadow Blades', message: 'Shadow Blades was first used at 0:04.', measured: { value: '+3s' }, timestamp_s: 4, occurrences: [] };
   const holdFinding: AnalysisFinding = { severity: 'info', category: 'hold_suggestion', message: '', measured: { value: '1:00' }, details: { cd_name: 'Shadow Blades', remedy: 'hold' }, occurrences: [] };
   const successFinding: AnalysisFinding = { severity: 'success', category: 'cooldown_usage', cd_name: 'Vanish', message: '', occurrences: [] };
 
@@ -50,10 +50,10 @@ describe('rotation finding partition and row builders', () => {
     expect([...partition.successNames]).toEqual(['Vanish']);
   });
 
-  it('builds a downtime row carrying the finding label, remedy and category chip', () => {
+  it('builds a downtime row carrying the finding label, sentence, remedy and category chip', () => {
     const rows = svc['buildDowntimeRows']([downtimeFinding]);
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ what: 'Low cast efficiency', fix: 'fix', chip: 'downtime' });
+    expect(rows[0]).toMatchObject({ what: 'Low cast efficiency', message: downtimeFinding.message, fix: 'fix', chip: 'downtime' });
   });
 
   it('keeps the info tier on a downtime row', () => {
@@ -64,6 +64,11 @@ describe('rotation finding partition and row builders', () => {
     const rows = svc['buildOffensiveRows']({ 'Shadow Blades': { issues: [issueFinding], holds: [] } }, { 'Shadow Blades': SHADOW_BLADES }, abilities);
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'late', severity: 'warning' });
+  });
+
+  it('carries the finding sentence on an offensive row', () => {
+    const rows = svc['buildOffensiveRows']({ 'Shadow Blades': { issues: [issueFinding], holds: [] } }, { 'Shadow Blades': SHADOW_BLADES }, abilities);
+    expect(rows[0]?.message).toBe(issueFinding.message);
   });
 
   it('keeps a critical issue finding critical in the offensive row', () => {

@@ -1,9 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, assert, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClipRoll, ClipWindow, Segment, LiveCaptureFeatureService } from './live-capture-feature-service';
 import { ClipAnchor } from '../capture/capture.models';
 import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 
 TestBed.configureTestingModule({ providers: [
   { provide: WCL_TRANSPORT, useValue: {} },
@@ -47,6 +48,29 @@ describe('buildClipWindow', () => {
 
   it('carries the window key through unchanged', () => {
     expect(svc['buildClipWindow'](REPORT_START_MS, FIGHT_START_MS, anchor({ key: 'def3' }), ROLL).key).toBe('def3');
+  });
+});
+
+describe('clipWindowFor', () => {
+  // The default pull starts at the report's own start.
+  const absStart = REPORT_START_MS + WINDOW_TIME_S * 1000;
+
+  function clipWindow(over: Partial<ClipAnchor> = {}): ClipWindow {
+    const [fight] = wclReport({ startTimeMs: REPORT_START_MS }).fights;
+    assert.exists(fight);
+    return svc['clipWindowFor'](anchor(over), { reportStartTime: REPORT_START_MS, fight });
+  }
+
+  it('rolls a window clip on both sides of its span, so a clock drift still shows the window', () => {
+    const window = clipWindow();
+    expect(window.fromMs).toBe(absStart - ROLL.preMs);
+    expect(window.toMs).toBe(absStart + WINDOW_LENGTH_S * 1000 + ROLL.postMs);
+  });
+
+  it('rolls a point clip by the same amount on both sides of its moment', () => {
+    const window = clipWindow({ windowLengthS: 0 });
+    expect(window.fromMs).toBe(absStart - ROLL.preMs);
+    expect(window.toMs).toBe(absStart + ROLL.postMs);
   });
 });
 

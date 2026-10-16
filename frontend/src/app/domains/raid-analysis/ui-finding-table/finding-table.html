@@ -67,9 +67,12 @@
             </div>
           </div>
 
-          <div class="col-start-2 md:col-start-4 md:row-start-1 text-body text-muted border-t md:border-t-0 md:card-fix border-line pt-2 md:pt-0 md:pr-(--col-toggle)">
+          <div class="col-start-2 md:col-start-4 md:row-start-1 text-body border-t md:border-t-0 md:card-fix border-line pt-2 md:pt-0 md:pr-(--col-toggle)">
             <span class="md:hidden block text-label text-muted mb-1">Fix</span>
-            {{ row.fix }}
+            <span class="block">{{ row.message }}</span>
+            @if (row.fix) {
+              <span class="block text-muted">{{ row.fix }}</span>
+            }
           </div>
 
           <div class="row-start-1 col-start-3 md:col-start-4 md:justify-self-end flex items-center justify-center">

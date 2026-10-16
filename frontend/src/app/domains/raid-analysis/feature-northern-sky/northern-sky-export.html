@@ -1,11 +1,16 @@
 @if (error() || !available()) {
-  <wl-load-state heading="Northern Sky export" subtitle="Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon." [error]="error()"></wl-load-state>
+  <wl-load-state heading="Northern Sky export" subtitle="Cooldown timings from one top Mythic log for your spec, as a note for the Northern Sky raid addon." [error]="error()"></wl-load-state>
 } @else {
   <section tuiCardLarge appearance="outline-grayscale">
     <header tuiHeader="body-l">
       <hgroup tuiTitle>
-        <h2>Northern Sky export</h2>
-        <p tuiSubtitle>Cooldown timings from the top Mythic logs for your spec, as a note for the Northern Sky raid addon.</p>
+        <h2 class="flex items-center gap-2 flex-wrap">
+          <span>Northern Sky export</span>
+          @if (!phased()) {
+            <span tuiBadge appearance="neutral" size="m" class="text-label">No phase table</span>
+          }
+        </h2>
+        <p tuiSubtitle>Cooldown timings from one top Mythic log for your spec, as a note for the Northern Sky raid addon.</p>
       </hgroup>
       <div tuiAccessories>
         <!-- A body-l header sizes its buttons xs; the explicit s keeps the app-wide size. -->
@@ -22,6 +27,9 @@
     closeLabel="Close export"
     (closed)="open.set(false)">
     <div class="flex flex-col gap-3">
+      @if (!phased()) {
+        <p class="text-body text-muted">No phase table for this boss, so every line counts from the pull.</p>
+      }
       <div class="flex items-center justify-between gap-2">
         <button tuiButton type="button" appearance="flat" (click)="toggleAll()">{{ allSelected() ? 'Deselect all' : 'Select all' }}</button>
         <button [tuiButtonCopy]="note()">Copy note</button>
