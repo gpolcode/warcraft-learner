@@ -130,6 +130,10 @@ describe('rowsFromEntries', () => {
     expect(rows[0].measured).toEqual({ value: '0 / 2', unit: 'cast(s)' });
   });
 
+  it('carries the finding sentence, so the row says what happened before the remedy', () => {
+    expect(rowBuilder.rowsFromEntries([issueEntry])[0]?.message).toBe('lost');
+  });
+
   it('leaves the chip off a category that has no label, so no row shows an empty tag', () => {
     const entry: FindingEntry = {
       name: 'Shadow Blades', spellId: null, icon: '', hasIssue: true,

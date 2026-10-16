@@ -43,6 +43,11 @@ export class NorthernSkyFeatureService {
     return current;
   }
 
+  // An empty table also covers a boss the addon keeps on one clock, so the tag states what the note carries rather than calling it wrong.
+  hasPhaseTable(bench: NorthernSkyBench): boolean {
+    return bench.phases.length > 0;
+  }
+
   abilitiesByKind(abilities: NorthernSkyAbility[]): { cooldowns: NorthernSkyAbility[]; defensives: NorthernSkyAbility[] } {
     return {
       cooldowns: abilities.filter(ability => ability.kind === 'cooldown'),

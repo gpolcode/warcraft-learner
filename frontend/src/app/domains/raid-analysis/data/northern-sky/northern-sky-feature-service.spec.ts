@@ -119,6 +119,16 @@ describe('buildNorthernSkyNote phase mapping', () => {
   });
 });
 
+describe('hasPhaseTable', () => {
+  it('is true for a bench that carries the boss\'s phase starts', () => {
+    expect(svc.hasPhaseTable(bench({ phases: [...PHASES] }))).toBe(true);
+  });
+
+  it('is false for a bench whose phase table is empty', () => {
+    expect(svc.hasPhaseTable(bench({ phases: [] }))).toBe(false);
+  });
+});
+
 describe('abilitiesByKind', () => {
   it('splits abilities into cooldowns and defensives, preserving order', () => {
     const cd1 = ability(SHADOW_BLADES, 'cooldown', [10]);

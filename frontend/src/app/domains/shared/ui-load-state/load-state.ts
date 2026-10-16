@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TuiIcon, TuiTitle } from '@taiga-ui/core';
 import { TuiBlockStatus, TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { LoadError } from '../util-http/result';
@@ -18,4 +18,12 @@ export class LoadState {
   readonly subtitle = input<string>('');
   readonly caption = input<string>('Built from the top logs for your spec.');
   readonly error = input<RenderableLoadError | null>(null);
+
+  protected readonly state = computed<LoadStateKind>(() => {
+    const error = this.error();
+    if (!error) return 'waiting';
+    return error.kind === 'permanent' ? error.source : 'transient';
+  });
 }
+
+type LoadStateKind = 'waiting' | 'transient' | 'app' | 'log';

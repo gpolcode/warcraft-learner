@@ -19,6 +19,7 @@ export class FindingRowsService {
           timestampS: f.timestamp_s ?? null,
           chip: CAT_LABEL[f.category],
           measured: f.measured ?? { value: '-' },
+          message: f.message,
           fix: f.details?.remedy,
           occurrences: f.occurrences,
         });
@@ -91,6 +92,7 @@ export interface FindingRow {
   chip?: string;
   what?: string;
   measured: FindingMeasure;
+  message: string;
   fix?: string;
   occurrences: FindingOccurrence[];
 }

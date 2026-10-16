@@ -232,6 +232,7 @@ test('the positioning map opens anchored on the pull overview\'s first moment', 
   await expect(panel.locator('wl-map-canvas canvas')).toBeVisible();
   await shows(panel, OPENED_AT);
   await shows(panel, '● Top logs');
+  await shows(panel, '◯ Average of top-log positions');
   // The gold marker renders only once the player's own trail has loaded.
   await expect(panel.getByText('◆ You')).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
   await panel.getByRole('button', { name: 'Close map' }).click();

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { WclAuthService } from '../http/wcl-auth-service';
-import { WCL_TRANSPORT, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
+import { WCL_TRANSPORT, WclReportUnavailableError, WclTransportError } from './wcl-transport';
 import {
   WclReport, WclEvent,
   PlayerDetailGroups, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
@@ -58,8 +58,7 @@ export class WclApiService {
     const vars: ReportQueryVariables = { code };
     const result = await this.query<ReportQuery>(REPORT_Q, vars);
     const report = result.reportData?.report;
-    // WCL returns report: null for a code it won't serve (missing, private, expired) with no GraphQL error.
-    if (!report) throw this.reportUnavailable(code);
+    if (!report) throw new WclReportUnavailableError(code);
     return report as WclReport;
   }
 
@@ -67,7 +66,7 @@ export class WclApiService {
     const vars: ReportQueryVariables = { code };
     const result = await this.query<ReportFightsQuery>(REPORT_FIGHTS_Q, vars);
     const report = result.reportData?.report;
-    if (!report) throw this.reportUnavailable(code);
+    if (!report) throw new WclReportUnavailableError(code);
     return (report.fights ?? []) as WclReport['fights'];
   }
 
@@ -75,15 +74,8 @@ export class WclApiService {
     const vars: PlayerDetailsQueryVariables = { code, fightIDs: [fightId] };
     const result = await this.query<PlayerDetailsQuery>(PLAYER_DETAILS_Q, vars);
     const playerDetails = result.reportData?.report?.playerDetails?.data?.playerDetails;
-    if (!playerDetails) throw this.reportUnavailable(code);
+    if (!playerDetails) throw new WclReportUnavailableError(code);
     return playerDetails;
-  }
-
-  /** A report WCL won't serve (missing, private, expired): permanent, since a retry can't help. */
-  private reportUnavailable(code: string): WclTransportError {
-    return new WclTransportError(
-      `WCL report ${code} is unavailable (not found, private, or expired).`, WCL_UNUSABLE_STATUS,
-    );
   }
 
   private async fetchEventPages(
@@ -94,7 +86,7 @@ export class WclApiService {
     for (;;) {
       const result = await this.query<EventsQuery | ResurrectsQuery | EnemyDebuffsQuery>(gqlString, { ...vars, startTime: currentStart });
       const page = result.reportData?.report?.events;
-      if (!page) throw this.reportUnavailable(code);
+      if (!page) throw new WclReportUnavailableError(code);
       // Element by element: WCL overshoots the requested limit (22k rows in one page on a 34-minute pull), and spreading that many arguments into push overflows the call stack.
       for (const event of page.data ?? []) events.push(event);
       if (!page.nextPageTimestamp) break;
@@ -124,7 +116,7 @@ export class WclApiService {
     const vars: CombatantInfoQueryVariables = { code, fightIDs: [fightId], sourceID: playerId };
     const result = await this.query<CombatantInfoQuery>(COMBATANT_INFO_Q, vars);
     const report = result.reportData?.report;
-    if (!report) throw this.reportUnavailable(code);
+    if (!report) throw new WclReportUnavailableError(code);
     return report.events?.data ?? [];
   }
 

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiCheckbox, TuiLabel, TuiTitle } from '@taiga-ui/core';
-import { TUI_COPY_TEXTS, TuiButtonCopy } from '@taiga-ui/kit';
+import { TUI_COPY_TEXTS, TuiBadge, TuiButtonCopy } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { FlyoverPanel } from '../../shared/ui-flyover-panel/flyover-panel';
 import { GameIcon } from '../ui-game-icon/game-icon';
@@ -15,7 +15,7 @@ const COPY_TEXTS = ['Copy note', 'Copied'] as const;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-northern-sky-export',
-  imports: [FormsModule, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiButtonCopy, TuiCheckbox, TuiLabel, FlyoverPanel, GameIcon, LoadState],
+  imports: [FormsModule, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiButtonCopy, TuiCheckbox, TuiLabel, TuiBadge, FlyoverPanel, GameIcon, LoadState],
   templateUrl: './northern-sky-export.html',
   providers: [{ provide: TUI_COPY_TEXTS, useValue: signal(COPY_TEXTS) }],
 })
@@ -47,6 +47,10 @@ export class NorthernSkyExport {
   protected readonly cooldowns = computed(() => this.grouped().cooldowns);
   protected readonly defensives = computed(() => this.grouped().defensives);
   protected readonly available = this.load.available;
+  protected readonly phased = computed(() => {
+    const bench = this.bench();
+    return !!bench && this.feature.hasPhaseTable(bench);
+  });
   protected readonly allSelected = computed(() => this.feature.isAllSelected(this.abilities(), this.excluded()));
   protected readonly panelOpen = computed(() => this.feature.isPanelOpen(this.open(), this.available()));
   protected readonly note = computed(() => {

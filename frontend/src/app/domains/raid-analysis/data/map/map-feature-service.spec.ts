@@ -428,7 +428,7 @@ describe('MapFeatureService deferred overlay', () => {
     expect(api.calls.some(call => call.dataType === 'DamageDone')).toBe(false);
   });
 
-  it('surfaces a permanent error when the loaded overlay has no player position samples', async () => {
+  it('surfaces a permanent error the log causes when the loaded overlay has no player position samples', async () => {
     const NO_POSITIONS_ID = 'map.no-player-positions'; // repro id the no-samples permanent carries
     const { service } = setup(); // RecordingWclApi returns [] events, so the player has no samples
     await service.prepare('code', sampleFight, PLAYER_ACTOR_ID, 'SubtletyRogue', []);
@@ -441,6 +441,7 @@ describe('MapFeatureService deferred overlay', () => {
     const error = service.error();
     expect(error?.kind).toBe('permanent');
     if (error?.kind === 'permanent') expect(error.id).toBe(NO_POSITIONS_ID);
+    if (error?.kind === 'permanent') expect(error.source).toBe('log');
   });
 
   it('drops a stale bench load so a rapid selection switch keeps the latest positions', async () => {
