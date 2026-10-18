@@ -40,6 +40,7 @@ function scan(over: {
     model: pullModel({ fightDurationS, lust: bloodlust.lustSpan(buffEvents, fightDurationS), ...over.model }),
     castEvents: wclProjections.withRelativeS(over.castEvents ?? [], 0),
     buffEvents,
+    abilities: [],
     cooldowns: over.cooldowns ?? over.bench.major_cooldowns,
     talents: null,
   };
@@ -155,8 +156,10 @@ describe('analyzeRotationFindings pre-pull use', () => {
 describe('analyzeRotationFindings Bloodlust', () => {
   const MID_LUST_S = 120;
   const FIGHT_S = 300;
-  /** Five top logs whose raid lusted at 2:00 and who pressed Shadow Blades 5s into it. */
-  const lustBench = bench({ per_parse: Array.from({ length: 5 }, () => ({ ...topLog({ 'Shadow Blades': [MID_LUST_S + 5] }), lust_s: MID_LUST_S })) });
+  /** Five top logs whose raid lusted at 2:00 and who had Shadow Blades up from 5s into it. */
+  const lustBench = bench({ per_parse: Array.from({ length: 5 }, () => ({
+    ...topLog({ 'Shadow Blades': [MID_LUST_S + 5] }), lust_s: MID_LUST_S, cd_up_s: { 'Shadow Blades': [[MID_LUST_S + 5, MID_LUST_S + 25]] },
+  })) });
   const lustAt = (lustS: number): WclEvent[] => [applyBuff(BLOODLUST, lustS)];
 
   it('judges the player against their own raid\'s lust, from the same buff stream ingest reads', () => {
@@ -164,6 +167,24 @@ describe('analyzeRotationFindings Bloodlust', () => {
       castEvents: [cast(SHADOW_BLADES, 5)], buffEvents: lustAt(MID_LUST_S), bench: lustBench, fightDurationS: FIGHT_S,
     })).findings;
     expect(findings.find(f => f.family === 'rotation.bloodlust')).toMatchObject({ severity: 'amber', timestamp_s: MID_LUST_S });
+  });
+
+  it('flags no Bloodlust row for a cooldown whose own aura was up during the raid\'s lust', () => {
+    const findings = svc['analyzeRotationFindings'](scan({
+      castEvents: [cast(SHADOW_BLADES, MID_LUST_S - 10)], bench: lustBench, fightDurationS: FIGHT_S,
+      buffEvents: [applyBuff(SHADOW_BLADES, MID_LUST_S - 10), ...lustAt(MID_LUST_S), removeBuff(SHADOW_BLADES, MID_LUST_S + 10)],
+    })).findings;
+    expect(findings.some(f => f.category === 'cooldown_alignment')).toBe(false);
+  });
+
+  it('folds the Bloodlust row when the player died during the lust', () => {
+    const DIED_S = MID_LUST_S + 10;
+    const findings = svc['analyzeRotationFindings'](scan({
+      castEvents: [cast(SHADOW_BLADES, 5)], buffEvents: lustAt(MID_LUST_S), bench: lustBench, fightDurationS: FIGHT_S,
+      model: { deadSpans: [[DIED_S, FIGHT_S]], aliveSpans: [[0, DIED_S]] },
+    }));
+    expect(findings.findings.some(f => f.family === 'rotation.bloodlust')).toBe(false);
+    expect(findings.folded.dead).toBeGreaterThan(0);
   });
 
   it('flags no Bloodlust row for a cooldown pressed for the raid\'s lust', () => {

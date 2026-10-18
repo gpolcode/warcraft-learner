@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { BloodlustJudgeService } from './bloodlust-judge-service';
+import { BloodlustJudgeService, LUST_DURATION_S } from './bloodlust-judge-service';
 import type { RotationParseMeasures } from './rotation-data-source';
+import type { AuraSpan } from '../defensive/defensive-data-source';
 
 const judge = TestBed.inject(BloodlustJudgeService);
 
@@ -9,157 +10,176 @@ const NAME = 'Shadow Blades';
 const TOP_N = 5;
 const LUST_S = 120;
 const PULL_LUST_S = 1;
-/** The lust window runs 30s before to 55s after a lust. */
-const BEFORE_S = 30;
-const AFTER_S = 55;
-/** Every top log pressed it 5s into its lust, so the offsets carry no spread. */
-const TOP_OFFSET_S = 5;
-/** No spread leaves the 5s timing floor on each side. */
-const FLOOR_S = 5;
-const LATE_EDGE_S = TOP_OFFSET_S + FLOOR_S;
-const EARLY_EDGE_S = TOP_OFFSET_S - FLOOR_S;
-const BAND_TOP_S = LUST_S + FLOOR_S;
+/** A lust later than 30s is mid-fight. */
+const MID_FIGHT_S = 30;
+const FIGHT_END_S = 300;
+/** The cooldown's stated duration, read when a press opens no aura of its own. */
+const DURATION_S = 20;
+/** Every top log lusting at 2:00 leaves the 5s timing floor on each side of the band. */
+const BAND_TOP_S = LUST_S + 5;
+/** Up from 5s into the lust; the other effect starts 20s after the 40s lust ends. */
+const DURING: AuraSpan = [LUST_S + 5, LUST_S + 25];
+const AFTER: AuraSpan = [LUST_S + LUST_DURATION_S + 20, LUST_S + LUST_DURATION_S + 40];
+const NOT_UP: AuraSpan[] = [];
+const NO_KILLS: (number | null)[] = [];
 
-const topLog = (lustS: number | null, castsS: number[]): RotationParseMeasures =>
-  ({ idle_s: null, lust_s: lustS, phase_starts: [], cd_casts_s: { [NAME]: castsS }, buttons: {} });
-/** `pressed` of `n` top logs lusting at 2:00 pressed it 5s in; the rest pressed it a minute after the window. */
-const topLogs = (pressed: number, n = TOP_N): RotationParseMeasures[] =>
-  Array.from({ length: n }, (_unused, index) => topLog(LUST_S, [index < pressed ? LUST_S + TOP_OFFSET_S : LUST_S + AFTER_S + 60]));
-const NOT_PRESSED: number[] = [];
+const topLog = (lustS: number | null, upS?: AuraSpan[]): RotationParseMeasures =>
+  ({ idle_s: null, lust_s: lustS, phase_starts: [], cd_casts_s: {}, ...(upS ? { cd_up_s: { [NAME]: upS } } : {}), buttons: {} });
+/** `up` of `n` top logs lusting at 2:00 had it up during their lust; the rest pressed it after. */
+const topLogs = (up: number, n = TOP_N): RotationParseMeasures[] =>
+  Array.from({ length: n }, (_unused, index) => topLog(LUST_S, [index < up ? DURING : AFTER]));
+const top = (perParse: RotationParseMeasures[]): { perParse: RotationParseMeasures[]; killsS: (number | null)[] } => ({ perParse, killsS: NO_KILLS });
+const lustAt = (lustS: number): ReturnType<BloodlustJudgeService['lustSpan']> => judge.lustSpan(lustS, null);
 
-describe('BloodlustJudgeService measure', () => {
-  it('reads the use closest to the lust inside the window', () => {
-    expect(judge.measureOffset([LUST_S - 20, LUST_S + 3, LUST_S + 40], LUST_S)).toBe(3);
+describe('BloodlustJudgeService effect spans', () => {
+  it('reads a press that opens its own aura as that aura', () => {
+    const AURA_ENDS_S = 150;
+    expect(judge.effectSpans([[LUST_S, AURA_ENDS_S]], [LUST_S], DURATION_S, FIGHT_END_S)).toEqual([[LUST_S, AURA_ENDS_S]]);
   });
 
-  it('counts a use exactly at either edge of the window', () => {
-    expect(judge.measureOffset([LUST_S - BEFORE_S], LUST_S)).toBe(-BEFORE_S);
-    expect(judge.measureOffset([LUST_S + AFTER_S], LUST_S)).toBe(AFTER_S);
+  it('reads a press that opens no aura as its stated duration from the press, cut at the end of the pull', () => {
+    const LATE_S = FIGHT_END_S - 5;
+    expect(judge.effectSpans([], [LUST_S, LATE_S], DURATION_S, FIGHT_END_S)).toEqual([[LUST_S, LUST_S + DURATION_S], [LATE_S, FIGHT_END_S]]);
   });
 
-  it('reads no use just past either edge, or without a lust', () => {
-    expect(judge.measureOffset([LUST_S - BEFORE_S - 0.1, LUST_S + AFTER_S + 0.1], LUST_S)).toBeNull();
-    expect(judge.measureOffset([LUST_S], null)).toBeNull();
+  it('joins two effects that overlap into one span', () => {
+    const SECOND_S = LUST_S + 10;
+    expect(judge.effectSpans([], [LUST_S, SECOND_S], DURATION_S, FIGHT_END_S)).toEqual([[LUST_S, SECOND_S + DURATION_S]]);
+  });
+});
+
+describe('BloodlustJudgeService overlap', () => {
+  it('measures the seconds an effect is up inside the lust', () => {
+    expect(judge.measureOverlap([[LUST_S - 10, LUST_S + 15]], lustAt(LUST_S))).toEqual({ upS: 15, up: true });
   });
 
-  it('calls a lust mid-fight only once its window starts after the pull', () => {
-    expect(judge.isMidFight(BEFORE_S + 0.1)).toBe(true);
-    expect(judge.isMidFight(BEFORE_S)).toBe(false);
+  it('counts an effect that ends exactly at the lust\'s start as up, and not one that ends just before it', () => {
+    expect(judge.measureOverlap([[LUST_S - 20, LUST_S]], lustAt(LUST_S)).up).toBe(true);
+    expect(judge.measureOverlap([[LUST_S - 20, LUST_S - 0.1]], lustAt(LUST_S)).up).toBe(false);
+  });
+
+  it('counts a press with no length inside the lust as up for 0s', () => {
+    expect(judge.measureOverlap([[LUST_S + 3, LUST_S + 3]], lustAt(LUST_S))).toEqual({ upS: 0, up: true });
+  });
+
+  it('reads the raid\'s lust for 40s, or to the kill when the kill comes first', () => {
+    const KILL_S = LUST_S + 10;
+    expect(judge.lustSpan(LUST_S, null)).toEqual({ fromS: LUST_S, toS: LUST_S + LUST_DURATION_S });
+    expect(judge.lustSpan(LUST_S, KILL_S)).toEqual({ fromS: LUST_S, toS: KILL_S });
+  });
+
+  it('cuts the player\'s lust only at a kill, leaving a wipe inside it to the fold', () => {
+    const END_S = LUST_S + 10;
+    expect(judge.lustOf(LUST_S, { judgedEndS: END_S, judgedEndCause: 'kill' })?.toS).toBe(END_S);
+    expect(judge.lustOf(LUST_S, { judgedEndS: END_S, judgedEndCause: 'wipe_called' })?.toS).toBe(LUST_S + LUST_DURATION_S);
+    expect(judge.lustOf(null, { judgedEndS: END_S, judgedEndCause: 'kill' })).toBeNull();
+  });
+
+  it('calls a lust mid-fight only past 30s', () => {
+    expect(judge.isMidFight(MID_FIGHT_S + 0.1)).toBe(true);
+    expect(judge.isMidFight(MID_FIGHT_S)).toBe(false);
     expect(judge.isMidFight(null)).toBe(false);
   });
 });
 
 describe('BloodlustJudgeService reference', () => {
-  it('learns only from top logs that lusted mid-fight, in source order', () => {
-    const reference = judge.reference([topLog(PULL_LUST_S, [0]), topLog(LUST_S, [LUST_S + 2]), topLog(null, [0]), topLog(LUST_S + 10, [])], NAME);
-    expect(reference).toEqual({ lustsS: [LUST_S, LUST_S + 10], offsetsS: [2] });
+  it('learns only from top logs that lusted mid-fight and carry their auras, in source order', () => {
+    const reference = judge.reference([topLog(PULL_LUST_S, [DURING]), topLog(LUST_S, [DURING]), topLog(null, [DURING]), topLog(LUST_S + 10), topLog(LUST_S, [AFTER])], NO_KILLS, NAME);
+    expect(reference).toEqual({ lustsS: [LUST_S, LUST_S], overlaps: [{ upS: 20, up: true }, { upS: 0, up: false }] });
   });
 
-  it('wants Bloodlust once half of ten mid-fight lusters pressed it for their lust', () => {
-    expect(judge.wantsLust(judge.reference(topLogs(5, 10), NAME))).toBe(true);
+  it('reads each top log\'s lust to its own kill', () => {
+    const KILL_S = LUST_S + 10;
+    expect(judge.reference([topLog(LUST_S, [DURING])], [KILL_S], NAME).overlaps).toEqual([{ upS: 5, up: true }]);
+  });
+
+  it('wants Bloodlust once half of ten mid-fight lusters had it up during their lust', () => {
+    expect(judge.wantsLust(judge.reference(topLogs(5, 10), NO_KILLS, NAME))).toBe(true);
   });
 
   it('does not want it at one top log short of half', () => {
-    expect(judge.wantsLust(judge.reference(topLogs(4, 10), NAME))).toBe(false);
+    expect(judge.wantsLust(judge.reference(topLogs(4, 10), NO_KILLS, NAME))).toBe(false);
   });
 
   it('wants nothing from fewer than five mid-fight lusters, however many agree', () => {
-    expect(judge.wantsLust(judge.reference(topLogs(TOP_N - 1, TOP_N - 1), NAME))).toBe(false);
+    expect(judge.wantsLust(judge.reference(topLogs(TOP_N - 1, TOP_N - 1), NO_KILLS, NAME))).toBe(false);
   });
 
   it('wants nothing from top logs that all lusted on the pull', () => {
-    const pullLusters = Array.from({ length: 10 }, () => topLog(PULL_LUST_S, [0]));
-    expect(judge.wantsLust(judge.reference(pullLusters, NAME))).toBe(false);
+    const pullLusters = Array.from({ length: 10 }, () => topLog(PULL_LUST_S, [[0, DURATION_S]]));
+    expect(judge.wantsLust(judge.reference(pullLusters, NO_KILLS, NAME))).toBe(false);
+  });
+
+  it('wants nothing from a bench that carries no aura spans', () => {
+    const unbaked = Array.from({ length: 10 }, () => topLog(LUST_S));
+    expect(judge.wantsLust(judge.reference(unbaked, NO_KILLS, NAME))).toBe(false);
   });
 });
 
-describe('BloodlustJudgeService alignment', () => {
-  it('flags a cooldown not pressed for the raid\'s lust as amber when every top log pressed it, stating the count', () => {
-    const [finding] = judge.findings(NAME, NOT_PRESSED, LUST_S, topLogs(TOP_N));
+describe('BloodlustJudgeService overlap check', () => {
+  it('flags a cooldown not up during the raid\'s lust as amber when every top log had it up, stating the count', () => {
+    const [finding] = judge.findings(NAME, NOT_UP, lustAt(LUST_S), top(topLogs(TOP_N)));
     expect(finding).toMatchObject({
       family: 'rotation.bloodlust', severity: 'amber', category: 'cooldown_alignment', cd_name: NAME, timestamp_s: LUST_S,
-      span: { fromS: LUST_S - BEFORE_S, toS: LUST_S + AFTER_S },
-      measured: { value: 'not pressed', unit: '5 of 5 top logs pressed it' },
-      message: 'You did not press Shadow Blades from 30s before to 55s after your raid\'s Bloodlust at 02:00. 5 of 5 top raiders who lusted mid-fight pressed it for theirs.',
+      span: { fromS: LUST_S, toS: LUST_S + LUST_DURATION_S },
+      measured: { value: '0s of 40s', unit: 'in Bloodlust, 5 of 5 top logs had it up' },
+      message: 'Shadow Blades was up for 0s of your raid\'s 40s Bloodlust at 02:00. 5 of 5 top raiders who lusted mid-fight had it up for theirs.',
     });
   });
 
   it('never orders the raid decision: the row carries no remedy', () => {
-    expect(judge.findings(NAME, NOT_PRESSED, LUST_S, topLogs(TOP_N))[0]?.details).toBeUndefined();
+    expect(judge.findings(NAME, NOT_UP, lustAt(LUST_S), top(topLogs(TOP_N)))[0]?.details).toBeUndefined();
   });
 
   it('stays amber at 8 of 10, the paired share', () => {
-    expect(judge.findings(NAME, NOT_PRESSED, LUST_S, topLogs(8, 10))[0]?.severity).toBe('amber');
+    expect(judge.findings(NAME, NOT_UP, lustAt(LUST_S), top(topLogs(8, 10)))[0]?.severity).toBe('amber');
   });
 
   it('is a blue count at 7 of 10, under the paired share', () => {
-    expect(judge.findings(NAME, NOT_PRESSED, LUST_S, topLogs(7, 10))[0]).toMatchObject({ severity: 'blue', family: 'rotation.bloodlust' });
+    expect(judge.findings(NAME, NOT_UP, lustAt(LUST_S), top(topLogs(7, 10)))[0]).toMatchObject({ severity: 'blue', family: 'rotation.bloodlust' });
   });
 
   it('never turns red, however many top logs agree', () => {
-    expect(judge.findings(NAME, NOT_PRESSED, LUST_S, topLogs(100, 100))[0]?.severity).toBe('amber');
+    expect(judge.findings(NAME, NOT_UP, lustAt(LUST_S), top(topLogs(100, 100)))[0]?.severity).toBe('amber');
   });
 
-  it('flags nothing when the cooldown was pressed inside the window on time', () => {
-    expect(judge.findings(NAME, [LUST_S + TOP_OFFSET_S], LUST_S, topLogs(TOP_N))).toEqual([]);
+  it('flags nothing when the cooldown was up during the lust, however briefly', () => {
+    expect(judge.findings(NAME, [[LUST_S + LUST_DURATION_S - 1, LUST_S + LUST_DURATION_S + 19]], lustAt(LUST_S), top(topLogs(TOP_N)))).toEqual([]);
   });
 
   it('flags nothing without a lust on the player or a cooldown the top logs want', () => {
-    expect(judge.findings(NAME, NOT_PRESSED, null, topLogs(TOP_N))).toEqual([]);
-    expect(judge.findings(NAME, NOT_PRESSED, LUST_S, topLogs(2))).toEqual([]);
+    expect(judge.findings(NAME, NOT_UP, null, top(topLogs(TOP_N)))).toEqual([]);
+    expect(judge.findings(NAME, NOT_UP, lustAt(LUST_S), top(topLogs(2)))).toEqual([]);
+  });
+
+  it('prints the lust\'s length to a kill that cut it', () => {
+    const KILL_S = LUST_S + 25;
+    expect(judge.findings(NAME, NOT_UP, judge.lustSpan(LUST_S, KILL_S), top(topLogs(TOP_N)))[0]?.measured?.value).toBe('0s of 25s');
   });
 });
 
 describe('BloodlustJudgeService lust band', () => {
   it('judges a raid lust exactly at the band edge', () => {
-    expect(judge.findings(NAME, NOT_PRESSED, BAND_TOP_S, topLogs(TOP_N))[0]?.severity).toBe('amber');
+    expect(judge.findings(NAME, NOT_UP, lustAt(BAND_TOP_S), top(topLogs(TOP_N)))[0]?.severity).toBe('amber');
   });
 
   it('makes a raid lust just past the band a neutral context row, never a flag, its lust printed apart from the edge', () => {
-    expect(judge.findings(NAME, NOT_PRESSED, BAND_TOP_S + 0.1, topLogs(TOP_N))[0]).toMatchObject({
+    expect(judge.findings(NAME, NOT_UP, lustAt(BAND_TOP_S + 0.1), top(topLogs(TOP_N)))[0]).toMatchObject({
       family: 'rotation.bloodlust', severity: 'neutral', measured: { value: '125.1s', unit: 'top logs 115.0s to 125.0s' },
     });
   });
 
   it('names the top logs\' lust band on a context row', () => {
     const LATE_LUST_S = 200;
-    expect(judge.findings(NAME, NOT_PRESSED, LATE_LUST_S, topLogs(TOP_N))[0]?.message).toBe(
+    expect(judge.findings(NAME, NOT_UP, lustAt(LATE_LUST_S), top(topLogs(TOP_N)))[0]?.message).toBe(
       'Your raid\'s Bloodlust came at 03:20. The 5 top raiders who lusted mid-fight had theirs from 01:55 to 02:05, so Shadow Blades is not judged against yours.');
   });
 
-  it('makes a pull lust context, since its window holds the opener', () => {
-    expect(judge.findings(NAME, NOT_PRESSED, PULL_LUST_S, topLogs(TOP_N))[0]?.severity).toBe('neutral');
+  it('makes a pull lust context, since the opener overlaps it', () => {
+    expect(judge.findings(NAME, NOT_UP, lustAt(PULL_LUST_S), top(topLogs(TOP_N)))[0]?.severity).toBe('neutral');
   });
 
-  it('shows no context row for a cooldown pressed for a lust outside the band', () => {
-    expect(judge.findings(NAME, [PULL_LUST_S], PULL_LUST_S, topLogs(TOP_N))).toEqual([]);
-  });
-});
-
-describe('BloodlustJudgeService timing', () => {
-  it('flags a use past the late edge as amber, naming the top logs\' average offset', () => {
-    const castS = LUST_S + LATE_EDGE_S + 0.1;
-    const [finding] = judge.findings(NAME, [castS], LUST_S, topLogs(TOP_N));
-    expect(finding).toMatchObject({
-      family: 'rotation.bloodlust_timing', severity: 'amber', timestamp_s: castS, span: { fromS: LUST_S, toS: castS },
-      measured: { value: '+10s', unit: 'top +5s, 5 top logs' },
-      message: 'You pressed Shadow Blades 10s after your raid\'s Bloodlust at 02:00. 5 top raiders who lusted mid-fight pressed it 5s after theirs on average.',
-    });
-  });
-
-  it('does not flag a use exactly at the late edge', () => {
-    expect(judge.findings(NAME, [LUST_S + LATE_EDGE_S], LUST_S, topLogs(TOP_N))).toEqual([]);
-  });
-
-  it('flags a use past the early edge as amber', () => {
-    expect(judge.findings(NAME, [LUST_S + EARLY_EDGE_S - 0.1], LUST_S, topLogs(TOP_N))[0]).toMatchObject({ family: 'rotation.bloodlust_timing', severity: 'amber' });
-  });
-
-  it('does not flag a use exactly at the early edge', () => {
-    expect(judge.findings(NAME, [LUST_S + EARLY_EDGE_S], LUST_S, topLogs(TOP_N))).toEqual([]);
-  });
-
-  it('judges no timing for a raid lust outside the band', () => {
-    expect(judge.findings(NAME, [BAND_TOP_S + 0.1 + LATE_EDGE_S + 1], BAND_TOP_S + 0.1, topLogs(TOP_N))).toEqual([]);
+  it('shows no context row for a cooldown up during a lust outside the band', () => {
+    expect(judge.findings(NAME, [[PULL_LUST_S, PULL_LUST_S + DURATION_S]], lustAt(PULL_LUST_S), top(topLogs(TOP_N)))).toEqual([]);
   });
 });

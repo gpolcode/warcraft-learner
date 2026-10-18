@@ -13,6 +13,7 @@ import {
   WINDOW_AT_S, WINDOW_DAMAGE,
 } from './calibration-harness';
 import { VERDICT_CHOICES } from '../verdict-choices';
+import { LUST_DURATION_S } from '../../rotation/bloodlust-judge-service';
 
 const folds = TestBed.inject(LeaveOneOutService);
 const heldOutRows = TestBed.inject(HeldOutRowService);
@@ -84,15 +85,19 @@ describe('InjectedMistakeService', () => {
     expect(idle?.slice(4)).toEqual([[120, 123], [150, 153 + PAUSE_S], [187.5, 190.5], [217.5, 220.5], [247.5, 250.5], [277.5, 280.5]]);
   });
 
-  it('moves every use inside the lust window past its end', () => {
+  it('moves every effect up during the lust, and the press that opened it, to start past the lust\'s end', () => {
+    /** The effect from the 95s press overlaps the lust from 100s; it moves to 30s after the lust's 40s end. */
+    const MOVED_S = LUST_S + LUST_DURATION_S + CHOICES.delayS;
     const [variant] = mistakes.variants('move-cooldown-out-of-lust', rotationCase(rotationLog({ lust_s: LUST_S })));
-    const { beforeS, afterS } = VERDICT_CHOICES.lustWindow;
+    const up = variant?.card === 'rotation' ? variant.log.measures.cd_up_s?.[SB] : undefined;
 
-    expect(castsOf(variant).some(castS => LUST_S - beforeS <= castS && castS <= LUST_S + afterS)).toBe(false);
+    expect(up).toEqual([[5, 25], [MOVED_S, MOVED_S + 20], [185, 205], [275, 295]]);
+    expect(castsOf(variant)).toEqual([5, MOVED_S, 185, 275]);
   });
 
-  it('has nothing to move without a lust', () => {
+  it('has nothing to move without a lust, or on a log without its effects baked', () => {
     expect(mistakes.variants('move-cooldown-out-of-lust', rotationCase())).toEqual([]);
+    expect(mistakes.variants('move-cooldown-out-of-lust', rotationCase(rotationLog({ lust_s: LUST_S, cd_up_s: undefined })))).toEqual([]);
   });
 
   it('strips a defensive of its uses and its auras', () => {
@@ -247,6 +252,21 @@ describe('PerturbationService', () => {
     const idle = rezzed?.card === 'rotation' ? rezzed.log.measures.idle_s ?? [] : [];
 
     expect(idle.some(([fromS, toS]) => fromS <= diedS && toS >= backS)).toBe(true);
+  });
+
+  it('drops a cooldown\'s effects at a death, as its aura drops', () => {
+    const died = perturbations.perturb('death', rotationCase());
+    const [[diedS] = [0]] = died?.card === 'rotation' ? died.log.model.deadSpans : [];
+    const up = died?.card === 'rotation' ? died.log.measures.cd_up_s?.[SB] ?? [] : [];
+
+    expect(up.every(([, toS]) => toS <= diedS)).toBe(true);
+  });
+
+  it('jitters every effect span by at most two seconds', () => {
+    const jittered = perturbations.perturb('jitter', rotationCase());
+    const up = jittered?.card === 'rotation' ? jittered.log.measures.cd_up_s?.[SB] ?? [] : [];
+
+    expect(up.every(([fromS], index) => Math.abs(fromS - (ON_CADENCE[index] ?? 0)) <= CHOICES.jitterS)).toBe(true);
   });
 
   it('brings a rezzed player back thirty seconds after the death', () => {

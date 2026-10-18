@@ -9,9 +9,8 @@ import { CooldownUseJudgeService, NEVER_USED_FAMILY } from '../../rotation/coold
 import { CadenceJudgeService, COOLDOWN_HOLD_FAMILY } from '../../rotation/cadence-judge-service';
 import { READY_TIME_FAMILY, ReadyTimeJudgeService } from '../../rotation/ready-time-judge-service';
 import { DOWNTIME_FAMILY, DowntimeJudgeService } from '../../rotation/downtime-judge-service';
-import { BLOODLUST_ALIGNMENT_FAMILY, BLOODLUST_TIMING_FAMILY, BloodlustJudgeService } from '../../rotation/bloodlust-judge-service';
+import { BLOODLUST_FAMILY, BloodlustJudgeService } from '../../rotation/bloodlust-judge-service';
 import { RotationBench, RotationParseMeasures } from '../../rotation/rotation-data-source';
-import { VERDICT_CHOICES } from '../verdict-choices';
 import { HeldOutRow } from './calibration.models';
 import { HeldOutRowService } from './held-out-row-service';
 
@@ -60,7 +59,7 @@ export class RotationHeldOutService {
     if ((!castTimesS.length && !taken) || !cdBench) return [];
     return [
       ...this.castCadence.usedByMajority(cdBench) ? this.majorityRows(fold, log, { cooldown, castTimesS, cdBench, taken }) : [],
-      ...this.lustRows(fold, log, cooldown.name, castTimesS),
+      ...this.lustRows(fold, log, cooldown.name),
       ...this.holdRows(model, castTimesS, cdBench),
     ];
   }
@@ -86,20 +85,15 @@ export class RotationHeldOutService {
     return this.rows.row(READY_TIME_FAMILY, this.readyTime.judge(measured, reference, ready));
   }
 
-  /** Inside the band every lust is an alignment test, and a pressed one also a timing test; outside it nothing is judged. */
-  lustRows(fold: RotationBench, log: RotationHeldOut, name: string, castTimesS: readonly number[]): HeldOutRow[] {
-    const lustS = log.measures.lust_s;
-    const reference = this.lust.reference(fold.per_parse, name);
-    if (lustS === null || !this.lust.wantsLust(reference)) return [];
-    const band = this.lust.judgeBand(lustS, reference);
+  /** Inside the band every lust is a test; outside it nothing is judged, and a log without its auras baked has none. */
+  lustRows(fold: RotationBench, log: RotationHeldOut, name: string): HeldOutRow[] {
+    const spans = log.measures.cd_up_s?.[name];
+    const lust = this.lust.lustOf(log.measures.lust_s, log.model);
+    const reference = this.lust.reference(fold.per_parse, fold.sources.map(source => source.duration_s), name);
+    if (!spans || lust === null || !this.lust.wantsLust(reference)) return [];
+    const band = this.lust.judgeBand(lust.fromS, reference);
     if (!band.inside) return [];
-    const offsetS = this.lust.measureOffset(castTimesS, lustS);
-    const window = { fromS: lustS - VERDICT_CHOICES.lustWindow.beforeS, toS: lustS + VERDICT_CHOICES.lustWindow.afterS };
-    const alignment = this.rows.row(BLOODLUST_ALIGNMENT_FAMILY, this.lust.judgeAlignment(offsetS, reference, band), log.model, window);
-    if (offsetS === null) return alignment;
-    const castS = lustS + offsetS;
-    const span = { fromS: Math.min(lustS, castS), toS: Math.max(lustS, castS) };
-    return [...alignment, ...this.rows.row(BLOODLUST_TIMING_FAMILY, this.lust.judgeTiming(offsetS, reference), log.model, span)];
+    return this.rows.row(BLOODLUST_FAMILY, this.lust.judge(this.lust.measureOverlap(spans, lust), reference, band), log.model, lust);
   }
 
   /** A hold target is a test on every log that used the cooldown; only an early use flags it. */

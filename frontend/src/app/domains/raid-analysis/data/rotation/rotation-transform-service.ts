@@ -1,13 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
-import { TopParseSelection } from '../wcl/wcl.models';
+import { TopParseSelection, WclAbility } from '../wcl/wcl.models';
+import { AuraSpan } from '../defensive/defensive-data-source';
 import { PlanCooldown, PlanItem, PriorityList } from '../plan/plan.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { group } from 'd3-array';
-import {
-  round, avgOr, stddevOr,
-} from '../analysis/analysis-math';
+import { round } from '../analysis/analysis-math';
 import { HoldWindow } from '../analysis/hold-targets-service';
 import { WclProjectionsService, TimedEvent, PhaseStart } from '../analysis/wcl-projections-service';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
@@ -31,12 +30,11 @@ export interface CdSummary {
   name: string;
   total_uses: number;
   first_cast_s: number | null;
-  bl_aligned: boolean;
-  bl_offset_s: number | null;
   cast_times_s: number[];
   hold_windows: HoldWindow[];
   cast_pattern: 'hold' | 'on_cooldown';
   fight_duration_s: number;
+  up_s: AuraSpan[];
 }
 
 interface ParseRotation {
@@ -107,11 +105,10 @@ export class RotationTransformService implements DataSource<RotationBench> {
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
     const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime);
     const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
-    const blTimeS = this.bloodlust.detectBloodlust(buffsTimed);
     return {
-      lustS: blTimeS,
+      lustS: this.bloodlust.detectBloodlust(buffsTimed),
       phaseStarts: this.wclProjections.phaseStarts(fight),
-      summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, blTimeS, this.auraWindows.upAtPull(buffsTimed)),
+      summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, { buffs: buffsTimed, abilities }),
       idleS: this.downtime.idleStretches(castsTimed, { ...plan.spells, ...reading.items?.spells }),
       reading,
     };
@@ -123,38 +120,30 @@ export class RotationTransformService implements DataSource<RotationBench> {
       lust_s: parse.lustS == null ? null : round(parse.lustS, 2),
       phase_starts: parse.phaseStarts.map(phase => ({ id: phase.id, start_s: round(phase.startS, 2) })),
       cd_casts_s: Object.fromEntries(parse.summaries.map(summary => [summary.name, summary.cast_times_s])),
+      cd_up_s: Object.fromEntries(parse.summaries.map(summary => [summary.name, summary.up_s])),
       buttons,
     };
   }
 
   protected summarizeCooldownCasts(
-    castEvents: TimedEvent[], cooldowns: PlanCooldown[],
-    fightDurS: number, blTimeS: number | null, upAtPull: ReadonlySet<number>,
+    castEvents: TimedEvent[], cooldowns: PlanCooldown[], fightDurS: number, auras: { buffs: TimedEvent[]; abilities: readonly WclAbility[] },
   ): CdSummary[] {
+    const upAtPull = this.auraWindows.upAtPull(auras.buffs);
+    const windows = this.auraWindows.buildAuraWindows(auras.buffs);
     return cooldowns.map(cooldown => {
       const castTimesS = this.cooldownUses.castTimesS(castEvents, cooldown.spell_id, upAtPull, fightDurS);
-      const blOffsetS = this.lust.measureOffset(castTimesS, blTimeS);
+      const spans = this.auraWindows.spansNamed(windows, cooldown, auras.abilities);
       return {
         name: cooldown.name,
         total_uses: castTimesS.length,
-        bl_aligned: blOffsetS !== null,
-        bl_offset_s: blOffsetS === null ? null : round(blOffsetS),
+        up_s: this.lust.effectSpans(spans, castTimesS, cooldown.duration ?? 0, fightDurS),
         ...this.castCadence.entry(castTimesS, fightDurS, cooldown.cooldown),
       };
     });
   }
 
   protected buildCdBenchmark(entries: CdSummary[], effectiveCd: number): PerCdBenchmark {
-    const users = entries.filter(entry => entry.total_uses > 0);
-    const blOffsets = entries.map(entry => entry.bl_offset_s).filter((value): value is number => value != null);
-    const blCount = entries.filter(entry => entry.bl_aligned).length;
-
-    return {
-      ...this.castCadence.buildCadenceBenchmark(users, effectiveCd, entries.length),
-      avg_bl_offset_s: avgOr(blOffsets, null),
-      stddev_bl_offset_s: stddevOr(blOffsets, null),
-      bl_pct: entries.length ? Math.round((blCount / entries.length) * 100) : 0,
-    };
+    return this.castCadence.buildCadenceBenchmark(entries.filter(entry => entry.total_uses > 0), effectiveCd, entries.length);
   }
 
   protected aggregateCdBenchmarks(

@@ -26,7 +26,7 @@ const TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
 /** Ten top logs whose raid lusted at 2:00 and who pressed Shadow Blades 5s into it. */
 const MID_LUST_S = 120;
 const LUST_TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
-  ({ idle_s: null, lust_s: MID_LUST_S, phase_starts: [], cd_casts_s: { 'Shadow Blades': [MID_LUST_S + 5] }, buttons: {} }));
+  ({ idle_s: null, lust_s: MID_LUST_S, phase_starts: [], cd_casts_s: { 'Shadow Blades': [MID_LUST_S + 5] }, cd_up_s: { 'Shadow Blades': [[MID_LUST_S + 5, MID_LUST_S + 25]] }, buttons: {} }));
 /** The plan's Shadow Blades: a 90s cooldown. */
 const SHADOW_BLADES = { name: 'Shadow Blades', cooldown: 90 };
 const HELD_TO_130 = { '2': { target_s: 130, delay_s: 30, band_s: 5, effective_cd_s: 90, count: 8, total_samples: 10 } };
@@ -79,8 +79,10 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
     const casting = judges.measure([[10, PULL_S]], [[0, PULL_S]]);
     return [casting ? judges.finding(casting, judges.reference(TOP_LOGS, TOP_LOGS.map(() => PULL_S)), PULL_S) ?? {} : {}];
   },
-  'rotation.bloodlust': async () => TestBed.inject(BloodlustJudgeService).findings('Shadow Blades', [], MID_LUST_S, LUST_TOP_LOGS),
-  'rotation.bloodlust_timing': async () => TestBed.inject(BloodlustJudgeService).findings('Shadow Blades', [MID_LUST_S + 40], MID_LUST_S, LUST_TOP_LOGS),
+  'rotation.bloodlust': async () => {
+    const judge = TestBed.inject(BloodlustJudgeService);
+    return judge.findings('Shadow Blades', [], judge.lustSpan(MID_LUST_S, null), { perParse: LUST_TOP_LOGS, killsS: [] });
+  },
   'burst.window': async () => [TestBed.inject(BurstJudgeService).verdict(
     BURST, { damage: 0, amplification: 0, startS: 10, lengthS: 20 }, Array.from({ length: 5 }, () => 2),
   )],

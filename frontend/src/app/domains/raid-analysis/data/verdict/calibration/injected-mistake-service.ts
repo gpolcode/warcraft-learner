@@ -9,6 +9,8 @@ import { HeldOutRowService } from './held-out-row-service';
 import { DefensiveJudgeService } from '../../defensive/defensive-judge-service';
 import { PullModelService } from '../../analysis/pull-model-service';
 import { DeadSpan } from '../../analysis/death-timeline-service';
+import { BloodlustJudgeService } from '../../rotation/bloodlust-judge-service';
+import { AuraSpan } from '../../defensive/defensive-data-source';
 
 type RotationCase = Extract<HeldOutCase, { card: 'rotation' }>;
 type DefensiveCase = Extract<HeldOutCase, { card: 'defensive' }>;
@@ -18,6 +20,8 @@ type BurstCase = Extract<HeldOutCase, { card: 'burst' }>;
 const CHOICES = VERDICT_CHOICES.calibration;
 /** An entry id no talent tree uses, so the swapped build matches no top log's. */
 const SWAPPED_ENTRY = 'x';
+/** A press opens its aura within a second either way, as the effect spans pair them. */
+const OPENED_WITHIN_S = 1;
 
 /** Puts one known mistake into a held-out top log's measures; the harness checks that the family claiming it flags the result. */
 @Injectable({ providedIn: 'root' })
@@ -27,6 +31,7 @@ export class InjectedMistakeService {
   private readonly defensives = inject(DefensiveJudgeService);
   private readonly pullModel = inject(PullModelService);
   private readonly rows = inject(HeldOutRowService);
+  private readonly lust = inject(BloodlustJudgeService);
 
   /** Each way the mistake fits this log; none when the log has nothing it applies to, or the bench bakes nothing it changes. */
   variants(mistake: InjectedMistake, heldOut: HeldOutCase): HeldOutCase[] {
@@ -61,16 +66,25 @@ export class InjectedMistakeService {
     return casts.map((castS, at) => at === index ? castS + CHOICES.delayS : castS).sort((a, b) => a - b);
   }
 
-  /** Every use inside the lust window moves past its end, as if pressed on cooldown instead. */
+  /** The first cooldown up during the lust has each effect that overlaps it, and the press that opened it, moved to start after the lust, as if pressed on cooldown instead. */
   private outOfLust(heldOut: RotationCase): RotationCase[] {
-    const lustS = heldOut.log.measures.lust_s;
-    if (lustS === null) return [];
-    const { beforeS, afterS } = VERDICT_CHOICES.lustWindow;
-    const inWindow = (castS: number): boolean => lustS - beforeS <= castS && castS <= lustS + afterS;
-    return Object.entries(heldOut.log.measures.cd_casts_s)
-      .filter(([, casts]) => casts.some(inWindow))
-      .slice(0, 1)
-      .map(([name, casts]) => this.withCasts(heldOut, name, casts.map(castS => inWindow(castS) ? lustS + afterS + CHOICES.delayS : castS).sort((a, b) => a - b)));
+    const { measures, model } = heldOut.log;
+    const lust = this.lust.lustOf(measures.lust_s, model);
+    if (!lust || !measures.cd_up_s) return [];
+    const during = (span: AuraSpan): boolean => this.lust.measureOverlap([span], lust).up;
+    const entry = Object.entries(measures.cd_up_s).find(([, spans]) => spans.some(during));
+    if (!entry) return [];
+    const [name, spans] = entry;
+    const moved = spans.filter(during);
+    const shiftOf = (fromS: number): number => lust.toS + CHOICES.delayS - fromS;
+    const up = spans.map(([fromS, toS]): AuraSpan => during([fromS, toS]) ? [fromS + shiftOf(fromS), toS + shiftOf(fromS)] : [fromS, toS]);
+    const casts = (measures.cd_casts_s[name] ?? []).map(castS => {
+      const opened = moved.find(([fromS, toS]) => fromS - OPENED_WITHIN_S <= castS && castS <= toS);
+      return opened ? castS + shiftOf(opened[0]) : castS;
+    });
+    const changed = this.withCasts(heldOut, name, casts.sort((a, b) => a - b));
+    const cd_up_s = { ...measures.cd_up_s, [name]: up.sort((a, b) => a[0] - b[0]) };
+    return [{ ...changed, log: { ...changed.log, measures: { ...changed.log.measures, cd_up_s } } }];
   }
 
   /** Five global cooldowns of idle time on the stretch idle at mid-pull or the first after it, the rest of the pull playing that much later and its tail cut at the kill. */
