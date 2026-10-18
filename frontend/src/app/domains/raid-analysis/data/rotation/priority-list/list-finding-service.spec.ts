@@ -51,7 +51,7 @@ const WHOLE_PULL = pullModel();
 const rowOf = (judged: LogReading, benched = withButtons()) => findings.rows(benched, judged, WHOLE_PULL)[0];
 /** Top logs that each got `right` of `moments` Eviscerate moments right. */
 const topLogs = (count: number, counts: ButtonCounts): RotationParseMeasures[] => Array.from({ length: count }, () => ({
-  efficiency_pct: null, lust_s: null, phase_starts: [], cd_casts_s: {}, buttons: { eviscerate: counts },
+  idle_s: null, lust_s: null, phase_starts: [], cd_casts_s: {}, buttons: { eviscerate: counts },
 }));
 /** 10 top logs missing 1 in 20, a 5% reference miss rate. */
 const MISS_ONE_IN_TWENTY = topLogs(10, { right: 19, moments: 20 });

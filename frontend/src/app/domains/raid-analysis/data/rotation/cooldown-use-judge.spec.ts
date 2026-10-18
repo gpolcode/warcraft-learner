@@ -24,7 +24,7 @@ const ALL_USED = firstUses(TOP_N);
 /** The bench opens at 5s and gaps 90s at 1 use a minute: a 300s pull fits 1 + floor(295 / 90) = 4 uses, under the 5 its rate gives. */
 const EXPECTED_ON_A_FULL_PULL = 4;
 const topLog = (cdCastsS: Record<string, number[]>): RotationParseMeasures =>
-  ({ efficiency_pct: null, lust_s: null, phase_starts: [], cd_casts_s: cdCastsS, buttons: {} });
+  ({ idle_s: null, lust_s: null, phase_starts: [], cd_casts_s: cdCastsS, buttons: {} });
 
 describe('CooldownUseJudgeService.castTimesS', () => {
   const events = projections.withRelativeS([cast(SHADOW_BLADES, 30), cast(SECRET_TECHNIQUE, 40), cast(SHADOW_BLADES, 10), cast(SHADOW_BLADES, 61)], 0);

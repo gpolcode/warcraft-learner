@@ -4,7 +4,7 @@ import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { TopParseSelection } from '../wcl/wcl.models';
 import { PlanCooldown, PlanItem, PriorityList } from '../plan/plan.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
-import { group, quantile } from 'd3-array';
+import { group } from 'd3-array';
 import {
   round, avgOr, stddevOr,
 } from '../analysis/analysis-math';
@@ -20,15 +20,12 @@ import { ListLogService } from './priority-list/list-log-service';
 import { ItemDataService } from '../simc/item-data-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
-import { RotationBench, RotationParseMeasures } from './rotation-data-source';
+import { IdleStretch, RotationBench, RotationParseMeasures } from './rotation-data-source';
 import type { ButtonCounts } from './priority-list/list-check-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { CooldownUseJudgeService } from './cooldown-use-judge-service';
 import { DowntimeJudgeService } from './downtime-judge-service';
 import { BloodlustJudgeService } from './bloodlust-judge-service';
-
-const DOWNTIME_PERCENTILE = 0.9;
-const DEFAULT_DOWNTIME_THRESHOLD_S = 1.5;
 
 export interface CdSummary {
   name: string;
@@ -44,9 +41,7 @@ export interface CdSummary {
 
 interface ParseRotation {
   summaries: CdSummary[];
-  gapListS: number[];
-  castTimesS: number[];
-  durationS: number;
+  idleS: IdleStretch[] | null;
   reading: LogReading;
   lustS: number | null;
   phaseStarts: PhaseStart[];
@@ -81,18 +76,14 @@ export class RotationTransformService implements DataSource<RotationBench> {
       iconSpellIds: bench => [...Object.values(bench.cd_spell_ids), ...bench.buttons.map(button => button.spell_id)],
       parse: (parse, plan) => this.parseRotation(parse, plan),
       bench: ({ parses }, plan) => {
-        const { downtimeThresholdS, topAvgEfficiency, topEfficiencyStddev, efficiencies } = this.computeEfficiencyThresholds(parses);
         const buttonCounts = this.listBench.counts(plan, parses.map(parse => parse.reading));
         return {
-          downtime_threshold_s: downtimeThresholdS,
-          top_avg_efficiency: topAvgEfficiency,
-          top_efficiency_stddev: topEfficiencyStddev,
           per_cd_benchmarks: this.aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
           list: this.listWithItems(plan, parses.map(parse => parse.reading)),
           buttons: this.listBench.bench(plan, parses.map(parse => parse.reading)),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
-          per_parse: parses.map((parse, index) => this.parseMeasures(parse, efficiencies[index] ?? null, buttonCounts[index] ?? {})),
+          per_parse: parses.map((parse, index) => this.parseMeasures(parse, buttonCounts[index] ?? {})),
         };
       },
     });
@@ -121,16 +112,14 @@ export class RotationTransformService implements DataSource<RotationBench> {
       lustS: blTimeS,
       phaseStarts: this.wclProjections.phaseStarts(fight),
       summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, blTimeS, this.auraWindows.upAtPull(buffsTimed)),
-      gapListS: this.castGapListS(castsTimed),
-      castTimesS: castsTimed.filter(event => event.type === 'cast').map(event => event.atS).sort((a, b) => a - b),
-      durationS: fightDurS,
+      idleS: this.downtime.idleStretches(castsTimed, { ...plan.spells, ...reading.items?.spells }),
       reading,
     };
   }
 
-  protected parseMeasures(parse: ParseRotation, efficiencyPct: number | null, buttons: Record<string, ButtonCounts>): RotationParseMeasures {
+  protected parseMeasures(parse: ParseRotation, buttons: Record<string, ButtonCounts>): RotationParseMeasures {
     return {
-      efficiency_pct: efficiencyPct,
+      idle_s: parse.idleS,
       lust_s: parse.lustS == null ? null : round(parse.lustS, 2),
       phase_starts: parse.phaseStarts.map(phase => ({ id: phase.id, start_s: round(phase.startS, 2) })),
       cd_casts_s: Object.fromEntries(parse.summaries.map(summary => [summary.name, summary.cast_times_s])),
@@ -155,17 +144,6 @@ export class RotationTransformService implements DataSource<RotationBench> {
     });
   }
 
-  protected castGapListS(castEvents: TimedEvent[]): number[] {
-    const completed = castEvents.filter(event => event.type === 'cast').sort((a, b) => a.atS - b.atS);
-    const gaps: number[] = [];
-    let prev: TimedEvent | undefined;
-    for (const event of completed) {
-      if (prev) gaps.push(round(event.atS - prev.atS, 3));
-      prev = event;
-    }
-    return gaps.sort((a, b) => a - b);
-  }
-
   protected buildCdBenchmark(entries: CdSummary[], effectiveCd: number): PerCdBenchmark {
     const users = entries.filter(entry => entry.total_uses > 0);
     const blOffsets = entries.map(entry => entry.bl_offset_s).filter((value): value is number => value != null);
@@ -176,28 +154,6 @@ export class RotationTransformService implements DataSource<RotationBench> {
       avg_bl_offset_s: avgOr(blOffsets, null),
       stddev_bl_offset_s: stddevOr(blOffsets, null),
       bl_pct: entries.length ? Math.round((blCount / entries.length) * 100) : 0,
-    };
-  }
-
-  /** A top log is judged alive for its whole pull, through the same downtime measure the runtime applies to the player's alive spans. */
-  protected computeEfficiencyThresholds(
-    parses: { gapListS: number[]; castTimesS: number[]; durationS: number }[],
-  ): { downtimeThresholdS: number; topAvgEfficiency: number; topEfficiencyStddev: number; efficiencies: (number | null)[] } {
-    const allGaps = parses.flatMap(parse => parse.gapListS).sort((a, b) => a - b);
-    let downtimeThresholdS = DEFAULT_DOWNTIME_THRESHOLD_S;
-    if (allGaps.length) {
-      downtimeThresholdS = quantile(allGaps, DOWNTIME_PERCENTILE) ?? DEFAULT_DOWNTIME_THRESHOLD_S;
-    }
-    const efficiencies = parses.map(({ castTimesS, durationS }) => {
-      const casting = this.downtime.measure(castTimesS, downtimeThresholdS, [[0, durationS]]);
-      return casting ? round(casting.pct) : null;
-    });
-    const measured = efficiencies.filter(value => value !== null);
-    return {
-      downtimeThresholdS: round(downtimeThresholdS, 3),
-      topAvgEfficiency: avgOr(measured, 0),
-      topEfficiencyStddev: stddevOr(measured, 0),
-      efficiencies,
     };
   }
 

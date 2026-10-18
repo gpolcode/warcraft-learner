@@ -27,8 +27,10 @@ const SECOND_DELAYED = [5, 125, 185, 275];
 /** The defensive's 10s and 130s uses, each thirty seconds later in turn. */
 const DEFENSIVE_FIRST_DELAYED = [40, 130];
 const DEFENSIVE_SECOND_DELAYED = [10, 160];
-/** Five global cooldowns of 1.5s each, as a share of the 300s pull. */
-const IDLE_PCT = 100 * 5 * 1.5 / FIGHT_S;
+/** Five global cooldowns of 1.5s each. */
+const PAUSE_S = 5 * 1.5;
+/** Stretches every thirty seconds, three seconds each. */
+const SPREAD_IDLE: [number, number][] = Array.from({ length: 10 }, (_unused, index) => [index * 30, index * 30 + 3]);
 
 type RotationCase = Extract<HeldOutCase, { card: 'rotation' }>;
 type DefensiveCase = Extract<HeldOutCase, { card: 'defensive' }>;
@@ -65,10 +67,17 @@ describe('InjectedMistakeService', () => {
     expect(variants.map(castsOf)).toEqual([FIRST_DELAYED, SECOND_DELAYED]);
   });
 
-  it('takes five global cooldowns of casting off the pull\'s share', () => {
+  it('lengthens the stretch idle at mid-pull by five global cooldowns', () => {
     const [variant] = mistakes.variants('idle-5-gcds', rotationCase());
 
-    expect(variant?.card === 'rotation' && variant.log.measures.efficiency_pct).toBeCloseTo(80 - IDLE_PCT);
+    expect(variant?.card === 'rotation' && variant.log.measures.idle_s).toEqual([[100, 160 + PAUSE_S]]);
+  });
+
+  it('plays the rest of the pull five global cooldowns later, cutting the tail at the kill', () => {
+    const [variant] = mistakes.variants('idle-5-gcds', rotationCase(rotationLog({ idle_s: SPREAD_IDLE })));
+    const idle = variant?.card === 'rotation' ? variant.log.measures.idle_s : null;
+
+    expect(idle?.slice(4)).toEqual([[120, 123], [150, 153 + PAUSE_S], [187.5, 190.5], [217.5, 220.5], [247.5, 250.5], [277.5, 280.5]]);
   });
 
   it('moves every use inside the lust window past its end', () => {
@@ -192,6 +201,23 @@ describe('PerturbationService', () => {
     const [[diedS] = [0]] = died?.card === 'rotation' ? died.log.model.deadSpans : [];
 
     expect(castsOf(died).every(castS => castS < diedS)).toBe(true);
+  });
+
+  it('keeps no idle stretch past the cut of a truncated pull', () => {
+    const cut = perturbations.perturb('truncate', rotationCase(rotationLog({ idle_s: SPREAD_IDLE })));
+    const endS = cut?.card === 'rotation' ? cut.log.model.judgedEndS : 0;
+    const idle = cut?.card === 'rotation' ? cut.log.measures.idle_s ?? [] : [];
+
+    expect(idle.length).toBeGreaterThan(0);
+    expect(idle.every(([, toS]) => toS <= endS)).toBe(true);
+  });
+
+  it('joins the idle stretches around a rezzed death into one', () => {
+    const rezzed = perturbations.perturb('death-rez', rotationCase(rotationLog({ idle_s: SPREAD_IDLE })));
+    const [[diedS, backS] = [0, 0]] = rezzed?.card === 'rotation' ? rezzed.log.model.deadSpans : [];
+    const idle = rezzed?.card === 'rotation' ? rezzed.log.measures.idle_s ?? [] : [];
+
+    expect(idle.some(([fromS, toS]) => fromS <= diedS && toS >= backS)).toBe(true);
   });
 
   it('brings a rezzed player back thirty seconds after the death', () => {

@@ -62,7 +62,7 @@ export interface RotationPlayerView {
   buttonsEmpty: string;
   /** The Offensives card's empty state, with how many cooldowns were checked against how many top logs. */
   offensivesEmpty: string;
-  /** The Downtime card's empty state, with how many top logs the casting time was checked against. */
+  /** The Downtime card's empty state, with how many top logs the idle time was checked against. */
   downtimeEmpty: string;
   bench: BenchStrip | null;
   notGraded: RotationNotGraded;
@@ -197,11 +197,11 @@ export class RotationFeatureService {
     return `Nothing flagged. ${checked} ${checked === 1 ? 'cooldown' : 'cooldowns'} checked against ${n} top logs.`;
   }
 
-  /** `judged` is the count of top logs the casting time was compared with, or null when the pull had under two casts to measure. */
+  /** `judged` is the count of top logs the idle time was compared with, or null when the pull had under two casts to measure. */
   private downtimeEmpty(judged: number | null, bench: RotationBench): string {
-    if (judged === null) return 'Nothing flagged. No casting time was judged in this pull.';
-    if (!judged) return `Nothing flagged. None of the ${bench.sample_count} top logs carries a casting time to compare with.`;
-    return `Nothing flagged. Your casting time was checked against ${judged} top logs.`;
+    if (judged === null) return 'Nothing flagged. No idle time was judged in this pull.';
+    if (!judged) return `Nothing flagged. None of the ${bench.sample_count} top logs carries its idle time to compare with.`;
+    return `Nothing flagged. Your idle time was checked against ${judged} top logs.`;
   }
 
   private async playerView(bench: RotationBench, pull: PullRef, context: PullContext, caps?: FamilyCaps): Promise<Omit<RotationPlayerView, 'bench' | 'notGraded'>> {
@@ -238,12 +238,12 @@ export class RotationFeatureService {
     return Results.ok({ rows: this.buildCdPlan(bench.value.major_cooldowns, bench.value.per_cd_benchmarks, bench.value.ability_icons, stored.per_parse ?? []) });
   }
 
-  /** `castTimesS` are every cast inside the judged span; the empty state names how many top logs judged it. */
+  /** `events` are the casts and begincasts inside the judged span; the empty state names how many top logs judged it. */
   protected checkCastEfficiency(
-    castTimesS: number[], model: PullModel, bench: RotationBench, caps?: FamilyCaps,
+    events: TimedEvent[], model: PullModel, bench: RotationBench, caps?: FamilyCaps,
   ): { finding: AnalysisFinding | null; empty: string } {
-    const casting = this.downtime.measure(castTimesS, bench.downtime_threshold_s, model.aliveSpans);
-    const reference = this.downtime.reference(bench.per_parse);
+    const casting = this.downtime.measure(this.downtime.idleStretches(events, bench.list.spells), model.aliveSpans);
+    const reference = this.downtime.reference(bench.per_parse, this.topLogs(bench).killsS);
     if (!casting) return { finding: null, empty: this.downtimeEmpty(null, bench) };
     return { finding: this.downtime.finding(casting, reference, model.fightDurationS, caps), empty: this.downtimeEmpty(reference.length, bench) };
   }
@@ -298,11 +298,6 @@ export class RotationFeatureService {
 
   protected analyzeRotationFindings(input: RotationScanInput): RotationScan {
     const { model, castEvents, buffEvents, cooldowns, bench, talents, caps } = input;
-    const judged = (event: TimedEvent): boolean => event.atS >= 0 && event.atS <= model.judgedEndS;
-    const casts = castEvents
-      .filter(event => event.type === 'cast' && judged(event))
-      .sort((a, b) => a.atS - b.atS);
-
     const findings: AnalysisFinding[] = [];
     let folded = this.pullModel.noFolds();
     let checked = 0;
@@ -321,7 +316,7 @@ export class RotationFeatureService {
       if (castTimesS.length) findings.push(...result.scan.holds);
     }
 
-    const efficiency = this.checkCastEfficiency(casts.map(cast => cast.atS), model, bench, caps);
+    const efficiency = this.checkCastEfficiency(castEvents.filter(event => event.atS <= model.judgedEndS), model, bench, caps);
     if (efficiency.finding) findings.push(efficiency.finding);
 
     sortBySeverity(findings);

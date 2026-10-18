@@ -61,10 +61,11 @@ describe('RotationHeldOutService', () => {
     expect(judgeRotation(rotationLog(), UNDER_N)).toEqual([]);
   });
 
-  it('leaves the whole-pull casting share unjudged once the pull is cut short', () => {
+  it('judges the idle time of a pull cut short over its alive time', () => {
+    // 30s idle of the 150s before the cut is the top logs' fifth.
     const cut = heldOutRows.withDeaths(FIGHT_S, FIGHT_S / 2, []);
 
-    expect(levelsOf(judgeRotation(rotationLog(), TOP_N, cut), 'rotation.downtime')).toEqual([]);
+    expect(levelsOf(judgeRotation(rotationLog({ idle_s: [[20, 50]] }), TOP_N, cut), 'rotation.downtime')).toEqual(['neutral']);
   });
 
   it('leaves out the ready time a death crosses', () => {

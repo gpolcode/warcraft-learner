@@ -1,10 +1,11 @@
 import { assert, describe, it, expect } from 'vitest';
 import { PlanCooldown } from '../plan/plan.models';
-import { SHADOW_BLADES, BLOODLUST } from '../../../../../testing/spell-ids';
+import { SHADOW_BLADES, BLOODLUST, EVISCERATE } from '../../../../../testing/spell-ids';
+import { planSpell } from '../../../../../testing/builders/spec-plan';
 import { cast, applyBuff, removeBuff } from '../../../../../testing/builders/events';
 import { WclEvent } from '../wcl/wcl.models';
-import { WclProjectionsService } from '../analysis/wcl-projections-service';
-import { RotationBench, RotationParseMeasures } from './rotation-data-source';
+import { TimedEvent, WclProjectionsService } from '../analysis/wcl-projections-service';
+import { IdleStretch, RotationBench, RotationParseMeasures } from './rotation-data-source';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { RotationScanInput, RotationFeatureService } from './rotation-feature-service';
 import { bench, cdBench } from './rotation-harness';
@@ -44,18 +45,23 @@ function scan(over: {
   };
 }
 
-/** One top log's measures, with only its cooldown uses and casting share set. */
-function topLog(cdCastsS: Record<string, number[]>, efficiencyPct: number | null = null): RotationParseMeasures {
-  return { efficiency_pct: efficiencyPct, lust_s: null, phase_starts: [], cd_casts_s: cdCastsS, buttons: {} };
+/** One top log's measures, with only its cooldown uses and idle stretches set. */
+function topLog(cdCastsS: Record<string, number[]>, idle: IdleStretch[] | null = null): RotationParseMeasures {
+  return { idle_s: idle, lust_s: null, phase_starts: [], cd_casts_s: cdCastsS, buttons: {} };
 }
 
-/** Five top logs that open Shadow Blades at 5s, press it again at 95s and cast 90% of the pull; with no spread, the casting edge is 5s of idle under 90%. */
-const TOP_LOGS = Array.from({ length: 5 }, () => topLog({ 'Shadow Blades': [5, 95] }, 90));
+/** Five top logs that open Shadow Blades at 5s, press it again at 95s and idle 30s of their 5:00 kill; with no spread, the idle edge is 10% plus 5s of the player's alive time. */
+const TOP_LOGS = Array.from({ length: 5 }, () => topLog({ 'Shadow Blades': [5, 95] }, [[100, 130]]));
 const measured = bench({ per_parse: TOP_LOGS });
 /** The same top logs as the cooldown checks read them, each killing at 5:00. */
 const TOP = { perParse: TOP_LOGS, killsS: TOP_LOGS.map(() => 300) };
 /** On a 5:00 pull the top logs leave Shadow Blades ready 5s before the opener and 115s after its 90s cooldown runs out at 3:05; a single 5s press leaves it ready 205s, past both the spread and one cooldown. */
 const ONE_PRESS = [5];
+
+/** Casts at `timesS`; an id the bench's list does not name reads the base global cooldown. */
+function presses(timesS: number[], spellId = SHADOW_BLADES): TimedEvent[] {
+  return wclProjections.withRelativeS(timesS.map(atS => cast(spellId, atS)), 0);
+}
 
 /** A killed pull of `fightS`, with a Bloodlust from `lustS` when given. */
 function killed(fightS: number, lustS: number | null = null): PullModel {
@@ -97,7 +103,7 @@ describe('analyzeRotationFindings', () => {
   });
 
   it('gives the cast-efficiency finding a label and a remedy so the row is not blank', () => {
-    // A 24s idle gap on the 120s scan fight is 80% casting, under the 85.8% edge (90% less 5s of 120s).
+    // Past the 6s cast's 1.5s global cooldown, 22.5s of the 120s scan fight are idle, over the 14.2% edge (10% plus 5s of 120s).
     const FIRST_CAST_S = 6;
     const LATE_CAST_S = 30;
     const casts = [cast(SHADOW_BLADES, FIRST_CAST_S), cast(SHADOW_BLADES, LATE_CAST_S)];
@@ -108,21 +114,21 @@ describe('analyzeRotationFindings', () => {
     expect(efficiency.details?.remedy).toBeTruthy();
   });
 
-  it('names the top logs the casting time was checked against when nothing is flagged', () => {
+  it('names the top logs the idle time was checked against when nothing is flagged', () => {
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 1)];
     expect(svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: measured, fightDurationS: 1 })).downtimeEmpty)
-      .toBe('Nothing flagged. Your casting time was checked against 5 top logs.');
+      .toBe('Nothing flagged. Your idle time was checked against 5 top logs.');
   });
 
-  it('says no casting time was judged on a pull with one cast', () => {
+  it('says no idle time was judged on a pull with one cast', () => {
     expect(svc['analyzeRotationFindings'](scan({ castEvents: [cast(SHADOW_BLADES, 6)], bench: measured })).downtimeEmpty)
-      .toBe('Nothing flagged. No casting time was judged in this pull.');
+      .toBe('Nothing flagged. No idle time was judged in this pull.');
   });
 
-  it('says no top log carries a casting time on a bench without per-log measures', () => {
+  it('says no top log carries its idle time on a bench without per-log measures', () => {
     const casts = [cast(SHADOW_BLADES, 6), cast(SHADOW_BLADES, 30)];
     expect(svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: bench() })).downtimeEmpty)
-      .toBe('Nothing flagged. None of the 5 top logs carries a casting time to compare with.');
+      .toBe('Nothing flagged. None of the 5 top logs carries its idle time to compare with.');
   });
 });
 
@@ -202,26 +208,27 @@ describe('analyzeRotationFindings hold suggestions on the pull clock', () => {
 
 describe('checkCastEfficiency', () => {
   const FIGHT_S = 100;
-  // Five top logs casting 90% with no spread: the 5s floor over 100s alive puts the edge at 85%.
+  // Five top logs idle 10% with no spread: the 5s floor over 100s alive puts the edge at 15%.
   const EDGE_IDLE_S = 15;
-  /** A press every second, then one idle stretch of `idleS` to the pull's end. */
-  const idleAtEnd = (idleS: number): number[] => [...Array.from({ length: FIGHT_S - idleS + 1 }, (_unused, i) => i), FIGHT_S];
+  const listed = bench({ per_parse: TOP_LOGS, list: { lines: [], variables: [], spells: { eviscerate: planSpell('Eviscerate', [EVISCERATE], { gcd: 1 }) }, talents: {} } });
+  /** A press each second, each covering its one-second global cooldown, then one idle stretch of `idleS` to the pull's last press. */
+  const idleAtEnd = (idleS: number): TimedEvent[] => presses([...Array.from({ length: FIGHT_S - idleS }, (_unused, i) => i), FIGHT_S], EVISCERATE);
 
-  it('flags casting one second of idle past the edge as amber', () => {
-    expect(svc['checkCastEfficiency'](idleAtEnd(EDGE_IDLE_S + 1), killed(FIGHT_S), measured).finding)
+  it('flags idle time one second past the edge as amber', () => {
+    expect(svc['checkCastEfficiency'](idleAtEnd(EDGE_IDLE_S + 1), killed(FIGHT_S), listed).finding)
       .toMatchObject({ family: 'rotation.downtime', severity: 'amber' });
   });
 
-  it('does not flag casting exactly at the edge', () => {
-    expect(svc['checkCastEfficiency'](idleAtEnd(EDGE_IDLE_S), killed(FIGHT_S), measured).finding).toBeNull();
+  it('does not flag idle time exactly at the edge', () => {
+    expect(svc['checkCastEfficiency'](idleAtEnd(EDGE_IDLE_S), killed(FIGHT_S), listed).finding).toBeNull();
   });
 
-  it('never escalates past amber, however far below', () => {
-    expect(svc['checkCastEfficiency']([0, FIGHT_S], killed(FIGHT_S), measured).finding?.severity).toBe('amber');
+  it('never escalates past amber, however far above', () => {
+    expect(svc['checkCastEfficiency'](presses([0, FIGHT_S]), killed(FIGHT_S), listed).finding?.severity).toBe('amber');
   });
 
   it('returns no finding with fewer than two casts', () => {
-    expect(svc['checkCastEfficiency']([0], killed(FIGHT_S), measured).finding).toBeNull();
+    expect(svc['checkCastEfficiency'](presses([0]), killed(FIGHT_S), listed).finding).toBeNull();
   });
 });
 
@@ -281,7 +288,7 @@ describe('analyzeOneCooldown', () => {
 
 describe('rotation checks over the player timeline', () => {
   const FIGHT_S = 120;
-  // A press every second while alive, so no gap clears the 1.5s downtime floor.
+  // A press every second while alive, each inside the last one's 1.5s global cooldown.
   const everySecond = (fromS: number, toS: number): number[] => Array.from({ length: toS - fromS + 1 }, (_unused, i) => fromS + i);
   const DIED_S = 10;
   const BACK_S = 95;
@@ -289,17 +296,17 @@ describe('rotation checks over the player timeline', () => {
 
   it('reads no idle time into the stretch the player was dead', () => {
     const deadForIt = pullModel({ fightDurationS: FIGHT_S, deadSpans: [[DIED_S, BACK_S]] });
-    expect(svc['checkCastEfficiency'](PRESSES, deadForIt, measured).finding).toBeNull();
+    expect(svc['checkCastEfficiency'](presses(PRESSES), deadForIt, measured).finding).toBeNull();
   });
 
   it('reads the same stretch as idle when the player was alive for it', () => {
-    expect(svc['checkCastEfficiency'](PRESSES, killed(FIGHT_S), measured).finding?.message).toContain('of the fight');
+    expect(svc['checkCastEfficiency'](presses(PRESSES), killed(FIGHT_S), measured).finding?.message).toContain('of the fight');
   });
 
   it('names the alive time as the base when a death shortened it', () => {
-    // Alive 0..10 and 95..120; one 20s idle gap from 100 to 120 of the 35s alive.
+    // Alive 0..10 and 95..120; 3.5s and 18.5s idle past the 95s and 100s presses' global cooldowns, of the 35s alive.
     const deadForIt = pullModel({ fightDurationS: FIGHT_S, deadSpans: [[DIED_S, BACK_S]] });
-    const { finding } = svc['checkCastEfficiency']([...everySecond(0, DIED_S), BACK_S, 100, FIGHT_S], deadForIt, measured);
+    const { finding } = svc['checkCastEfficiency'](presses([...everySecond(0, DIED_S), BACK_S, 100, FIGHT_S]), deadForIt, measured);
     expect(finding?.message).toContain('of your alive time');
   });
 

@@ -67,7 +67,7 @@ describe('RotationFeatureService', () => {
       buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null,
       buttonsBenched: false, buttonsEmpty: 'Your log shows no judged moment for any of the 0 buttons the list judges.',
       offensivesEmpty: 'Nothing flagged. No cooldown on the plan was checked in this pull.',
-      downtimeEmpty: 'Nothing flagged. No casting time was judged in this pull.',
+      downtimeEmpty: 'Nothing flagged. No idle time was judged in this pull.',
       bench: TestBed.inject(BenchStripService).strip(bench()), notGraded: { buttons: [], downtime: [], offensives: [] },
     }));
 
@@ -149,8 +149,8 @@ describe('RotationFeatureService', () => {
     });
     const result = await withSource(Results.ok(twoExpected), wcl).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     assert(result.ok);
-    // Two casts would leave a stretch of casting time to judge; one press leaves none.
-    expect(result.value.downtimeEmpty).toBe('Nothing flagged. No casting time was judged in this pull.');
+    // Two casts would leave idle time to judge; one press leaves none.
+    expect(result.value.downtimeEmpty).toBe('Nothing flagged. No idle time was judged in this pull.');
   });
 
   it('returns bench-only plan rows for the pre-fight view', async () => {

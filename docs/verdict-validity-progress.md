@@ -693,3 +693,65 @@ Branch `claude/verdict-validity-p6b-ready-time`, PR against `claude/verdict-vali
 - `ReadyTimeJudgeService` is the one ready-time measure; 5.8's "never-pressed buttons judged by ready time" can call it with a list button's cooldown and charges.
 - A page that judged `rotation.late_opener`, `rotation.cooldown_gap`, `rotation.lost_cast`, `defensive.first_use` or `defensive.gap` now reads `rotation.ready_time`, `rotation.never_used` or `defensive.ready_time`; the registry hash changed, so every family renders as a comparison until the next ingest recalibrates.
 - The full ingest measures the same construct on every bench at version 45 or 44 with no re-bench; expect the pooled tests to pass the minimums and detection to stay where the spread puts it.
+
+## Package 6c: Downtime as idle time beyond the GCD or cast time (done)
+
+Branch `claude/verdict-validity-p6c-downtime`, PR against `claude/verdict-validity-p6b-ready-time`.
+
+### Done
+
+- **Construct** (`data/rotation/downtime-judge-service.ts`, `DowntimeJudgeService`):
+  - `idleStretches(events, spells)`: the stretches between two casts that no cast time or global cooldown covers. A cast is busy from its begincast (or its cast when instant) to the later of its cast and the start plus its global cooldown; the global cooldown is the plan spell's `gcd` (0 off the GCD, the list's most common GCD for an id the list does not name), hasted by the nearest hardcast's cast time over its base (clamped to 0.5 to 1, floored at the game's 0.75 s, never hasted at a flat 1 s). A press on the GCD ends any pending begincast, so an interrupted cast never pairs with a later instant press; fake casts are left out. Time before the first busy block and after the last never counts. Edges are rounded to 0.1 s. Null under two casts.
+  - `measure(stretches, spans)`: idle seconds inside the alive spans, alive seconds and the idle percentage.
+  - `reference(perParse, killsS)`: each top log's percentage over its own kill (`sources[].duration_s`).
+  - `judge`: `interval` above, floor the 5 s timing floor as a percentage of the player's alive time; the family's amber tier caps a red edge, so it is never red.
+  - `finding`: a row only when the rule flags, on the calibrated tone; the target ("Aim for X% or less") and the fix ("Fill Ns of idle time with casts.") print only when graded, and N is the idle time past the top logs' average share over the player's alive time.
+- **Baked measure.** `RotationParseMeasures.idle_s` (optional, null under two casts) replaces `efficiency_pct`; `RotationBench` loses `downtime_threshold_s`, `top_avg_efficiency` and `top_efficiency_stddev` (no reader left). `RotationTransformService` bakes `idleStretches` over the log's presses with the plan's spells plus its trinket spells. `INGEST_VERSION` 46. A rotation bench grows by about 25 KB (Assassination Rogue 3445: 36 KB).
+- **Runtime.** `RotationFeatureService.checkCastEfficiency` takes the cast and begincast events up to the judged end and the bench list's spells. The card subtitle reads "Time you spent idle past each cast's global cooldown and cast time, compared with the top logs."; the empty states say "idle time". `castDowntimeS` and `castEfficiencyPct` are gone from `analysis-math.ts`.
+- **Family** `rotation.downtime` version 2, label "Idle time", `pendingRebuild: null`, alignment "the player's alive spans before the judged end, each top log over its own kill", new limits (channels, haste with no hardcast, top-log deaths).
+- **Harness.** `RotationHeldOutService` judges the held-out log's stretches over its model's alive spans (a cut or perturbed pull is now a test). `PerturbationService` joins the stretches around a dead span into one and drops a stretch that ends past the last alive moment, as the page sees a death or a cut. `InjectedMistakeService` makes `idle-5-gcds` by lengthening the stretch idle at mid-pull (or the first after it) by 7.5 s and playing the rest of the pull that much later, the tail cut at the kill.
+
+### Calibration test data and its cost
+
+- One re-run of the one-off data workflow on this branch (run 39172226196, removed in the PR's last commit), seeded from `calibration-testdata` and re-benching Assassination Rogue, Balance Druid and Protection Paladin on 3470, 3445 and 3455 at version 46. It spent 351 points (3,562 before, 3,211 after, against E2E's 50). `calibration-testdata` was force-updated; gh-pages and main were not touched. Holy Paladin keeps its version 44 benches, which carry no `idle_s`, so the healer has no downtime test on the subset; the full ingest measures it on every spec.
+
+### The measured report (rules' tone, before the caps)
+
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate`:
+
+| Family | Tests | Red rate | Amber rate | Amber bound | Detection | Verdict |
+|---|---|---|---|---|---|---|
+| rotation.downtime | 90 | 0% | 2.2% | 6.8% | 7 of 90 (8%) | comparison: detection under 70% (and under the minimum tests on the subset) |
+
+- Against the construct replaced: 120 tests at 6.7% amber and 3 of 120 detection (3%).
+- Top logs' idle level: Assassination Rogue 21% to 23% of the kill (energy pooling on a flat 1 s GCD), Balance Druid 9% to 14%, Protection Paladin 2% to 3%, against the median 23.7% of the old definition.
+- Page load: DPS 0.35 amber and 0.02 red per held-out pull, tank 0.33, healer 0.57 (without a downtime test the subset reads 0.35, 0.27 and 0.57); armed red stays 0.00.
+- Invariants: truncation, both deaths, the lust shifts, jitter and damage scale hold for `rotation.downtime`. Only `defensive.window`'s truncation failure remains.
+
+### Why detection stays low, and what would raise it
+
+- **The spread.** Per bench the top logs' idle share spreads 1.0 to 3.7 points (sd); the amber edge for one new log sits about 2 sd plus the 5 s floor above their mean, a median 5 to 8 points, while five idle GCDs add 1.9 to 2.5 points on these kills. A prototype of the same rule finds the median held-out log needs 24 s of added idle (16 GCDs) to reach 70% detection; without the floor 19 s, and the floor-free rule detects 20 of 90 at 6 of 90 flags, still under the floor.
+- **What sets the spread:** energy and other resource waits (most of the rogue's idle, which top logs take in different amounts), movement and boss downtime the log does not show, and haste read from hardcasts only (the paladin has almost none).
+- **What would raise it:** leaving out waits where the next button's resource was short (the casts carry `classResources`), the boss's untargetable phases taken out of both sides, or the contrast cohort (7a) for a lift gate; a larger idle mistake shaped like the claim (a 20 s stall) would be detected, but five GCDs is inside how much top raiders differ from each other.
+
+### Decisions and deviations
+
+- **Baked stretches, not a share.** Each top log is read over its own kill, so a share would do for the reference; the stretches let the harness judge truncated and death-perturbed logs through the same `measure`, and the injected mistake change the pull rather than a number.
+- **Each top log over its own kill**, not the player's spans: the task's "each top log over its own alive time". Top-log deaths are not baked, so a top log is alive for its whole kill (a limit).
+- **Haste from hardcasts.** A log with none reads the base GCD on both sides; no new chosen number (the clamps and the 0.75 s floor are game rules, beside the code).
+- **The fix quotes the excess over the top average** (5.7's "Idle 41 s more than the top average"), not over the edge.
+- Not a deviation: the harness keeps the family a comparison.
+
+### Drift against 6882b59
+
+- None beyond earlier packages: RC1's `rotation-feature-service.ts:205-207` (efficiency) was already off the path (4b).
+
+### Seams stubbed
+
+- None.
+
+### For the next package
+
+- `per_parse[].idle_s` is on disk for the three re-benched specs and arrives with the full ingest at version 46; a bench before 46 has none, so the card reads "None of the N top logs carries its idle time to compare with." and the harness counts no downtime test.
+- The registry hash changed (downtime version 2), so every family renders as a comparison until the next ingest recalibrates.
+- `DowntimeJudgeService.idleStretches` is the one idle measure; a resource-wait exclusion would go there, read the same way in ingest and at runtime.

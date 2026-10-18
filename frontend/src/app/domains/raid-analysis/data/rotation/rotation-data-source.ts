@@ -19,10 +19,13 @@ export interface ButtonBench {
   right: ShareRange;
 }
 
+/** `[startS, endS)` in which the player was neither casting nor on the global cooldown. */
+export type IdleStretch = [number, number];
+
 /** One accepted top log's measures, at the index its ranking holds in `sources`. */
 export interface RotationParseMeasures {
-  /** Null for a log with fewer than two casts. */
-  efficiency_pct: number | null;
+  /** `DowntimeJudgeService.idleStretches` over the whole pull; null for a log with fewer than two casts. */
+  idle_s?: IdleStretch[] | null;
   /** The log's first Bloodlust, pull-relative and negative when cast before the pull; null without one. */
   lust_s: number | null;
   /** Pull-relative, as WCL's phase transitions read; empty for a boss with none. */
@@ -33,9 +36,6 @@ export interface RotationParseMeasures {
 }
 
 export interface RotationBench extends BenchHeader {
-  downtime_threshold_s: number;
-  top_avg_efficiency: number;
-  top_efficiency_stddev: number;
   per_cd_benchmarks: Record<string, PerCdBenchmark>;
   major_cooldowns: PlanCooldown[];
   /** The spec's SimulationCraft list, so the runtime reads the player's log with nothing fetched but the log. */

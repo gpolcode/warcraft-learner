@@ -113,14 +113,10 @@ export class RotationHeldOutService {
     });
   }
 
-  /** The baked share covers the whole pull, so a pull cut short or a death leaves no casting time to judge. */
   private downtimeRows(fold: RotationBench, log: RotationHeldOut): HeldOutRow[] {
-    const pct = log.measures.efficiency_pct;
-    const { model } = log;
-    const whole = model.aliveSpans.length === 1 && model.judgedEndS >= model.fightDurationS;
-    if (pct === null || !whole) return [];
-    const aliveS = model.fightDurationS;
-    const casting = { pct, aliveS, idleS: (100 - pct) / 100 * aliveS };
-    return this.rows.row(DOWNTIME_FAMILY, this.downtime.judge(casting, this.downtime.reference(fold.per_parse)));
+    const casting = this.downtime.measure(log.measures.idle_s ?? null, log.model.aliveSpans);
+    if (!casting) return [];
+    const reference = this.downtime.reference(fold.per_parse, fold.sources.map(source => source.duration_s));
+    return this.rows.row(DOWNTIME_FAMILY, this.downtime.judge(casting, reference));
   }
 }

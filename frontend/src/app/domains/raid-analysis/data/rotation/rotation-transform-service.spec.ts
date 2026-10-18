@@ -75,12 +75,6 @@ describe('summarizeCooldownCasts', () => {
   });
 });
 
-describe('castGapListS', () => {
-  it('returns sorted inter-cast gaps in seconds', () => {
-    expect(svc['castGapListS'](timed([cast(1, 0), cast(1, 3), cast(1, 1)], 0))).toEqual([1, 2]);
-  });
-});
-
 describe('buildCdBenchmark', () => {
   const entry = (firstCast: number, uses: number, dur: number, blOffset: number | null, blAligned: boolean, times: number[]): CdSummary => ({
     name: 'Shadow Blades', total_uses: uses, first_cast_s: firstCast, bl_aligned: blAligned, bl_offset_s: blOffset,
@@ -133,33 +127,6 @@ describe('buildCdBenchmark', () => {
     expect(bench.avg_gap_s).toBeNull();
     expect(bench.avg_bl_offset_s).toBeNull();
     expect(bench.bl_pct).toBe(0);
-  });
-});
-
-describe('computeEfficiencyThresholds', () => {
-  it('derives a p90 downtime floor and per-parse efficiency mean', () => {
-    const result = svc['computeEfficiencyThresholds']([{ gapListS: [0.5, 0.6, 0.7, 5], castTimesS: [0, 0.5, 1.1, 1.8, 6.8], durationS: 100 }]);
-    // d3 p90 quantile of [0.5,0.6,0.7,5]: 0.7 + 0.7*(5-0.7) = 3.71s.
-    expect(result.downtimeThresholdS).toBe(3.71);
-    // only the 5s gap clears the floor -> 5s downtime over 100s -> (1 - 5/100)*100 = 95%.
-    expect(result.topAvgEfficiency).toBe(95);
-  });
-
-  it('falls back to the default floor with no gaps', () => {
-    const result = svc['computeEfficiencyThresholds']([{ gapListS: [], castTimesS: [], durationS: 100 }]);
-    expect(result.downtimeThresholdS).toBe(1.5);
-    expect(result.topAvgEfficiency).toBe(0);
-  });
-
-  it('keeps each log\'s efficiency at its index, null for a log with no gap, which the mean leaves out', () => {
-    const MEASURED_PCT = 95;
-    const measured = { gapListS: [0.5, 0.6, 0.7, 5], castTimesS: [0, 0.5, 1.1, 1.8, 6.8], durationS: 100 };
-    const oneCast = { gapListS: [], castTimesS: [3], durationS: 100 };
-
-    const result = svc['computeEfficiencyThresholds']([oneCast, measured]);
-
-    expect(result.efficiencies).toEqual([null, MEASURED_PCT]);
-    expect(result.topAvgEfficiency).toBe(MEASURED_PCT);
   });
 });
 
@@ -263,21 +230,23 @@ describe('RotationTransformService (live, in-browser)', () => {
     expect(result.value.list.spells).toEqual({ ...LIST.spells, ...table.spells });
   });
 
-  it('bakes each top log\'s lust, phase starts, cooldown uses, button counts and efficiency, in source order', async () => {
+  it('bakes each top log\'s idle stretches, lust, phase starts, cooldown uses and button counts, in source order', async () => {
     const LUST_S = 6;
     const PHASE_TWO = 2;
     const PHASE_TWO_S = 60;
     const COOLDOWN_S = 5;
+    /** Past Shadow Blades' 1.5s global cooldown until the untracked cast at 8s. */
+    const IDLE: [number, number] = [6.5, 8];
     const phased = { ...wclFake, getReport: reportsByCode({ ...reportShape, phaseTransitions: [{ id: PHASE_TWO, startTime: PHASE_TWO_S * 1000 }] }) };
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: phased, plans: planLoader(specPlan({ cooldowns: COOLDOWNS, ...LIST })) }) });
 
     const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
 
     assert(result.ok);
-    const { per_parse: perParse, sources, top_avg_efficiency: topAvg } = result.value;
+    const { per_parse: perParse, sources } = result.value;
     expect(perParse).toHaveLength(sources.length);
     expect(perParse[0]).toEqual({
-      efficiency_pct: topAvg,
+      idle_s: [IDLE],
       lust_s: LUST_S,
       phase_starts: [{ id: PHASE_TWO, start_s: PHASE_TWO_S }],
       cd_casts_s: { 'Shadow Blades': [COOLDOWN_S] },

@@ -60,10 +60,6 @@ export function buttonTaken(
   return button.talent_entries.some(entry => (talents.get(entry) ?? 0) > 0);
 }
 
-export function castEfficiencyPct(totalDowntimeS: number, fightDurS: number): number {
-  return Math.max(0, (1 - totalDowntimeS / fightDurS) * 100);
-}
-
 /** `[startS, endS)` of pull time in which the player was alive and the encounter still live. */
 export type AliveSpan = readonly [number, number];
 
@@ -73,16 +69,6 @@ export function spansS(spans: readonly AliveSpan[]): number {
 
 export function overlapS(spans: readonly AliveSpan[], fromS: number, toS: number): number {
   return spans.reduce((sum, [startS, endS]) => sum + Math.max(0, Math.min(endS, toS) - Math.max(startS, fromS)), 0);
-}
-
-/** Only the alive part of a gap counts toward it, so a death between two casts never reads as idle time; time after the last cast never counts. */
-export function castDowntimeS(castTimesS: readonly number[], thresholdS: number, spans: readonly AliveSpan[]): number {
-  const firstS = spans[0]?.[0] ?? 0;
-  const lastS = spans.at(-1)?.[1] ?? 0;
-  const judged = castTimesS.filter(timeS => timeS >= firstS && timeS <= lastS);
-  return pairs(judged, (prevS, nextS) => overlapS(spans, prevS, nextS))
-    .filter(gapS => gapS > thresholdS)
-    .reduce((sum, gapS) => sum + gapS, 0);
 }
 
 export function closestToZero(values: number[]): number {
