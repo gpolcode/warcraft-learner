@@ -117,7 +117,7 @@ describe('buildDefensiveWindows', () => {
 
   it('pairs each window with player damage taken at the same index and reads coverage from the player\'s uses', () => {
     const player: PlayerBurstWindow[] = [{ window_damage: 1150, ability_breakdown: [{ spell_id: BOSS_HIT_SPELL_ID, damage: 700 }] }];
-    const playerDef: PlayerDefensive[] = [{ name: 'Cloak of Shadows', uses: 1, windows: [{ start_s: 30, end_s: 35 }] }];
+    const playerDef: PlayerDefensive[] = [{ name: 'Cloak of Shadows', cooldown: 120, uses: 1, windows: [{ start_s: 30, end_s: 35 }] }];
     const { windows, anchors, clipAnchors } = build({ playerWindows: player, playerDefensives: playerDef });
     const defensiveWindow = first(windows);
     expect(defensiveWindow.overview.playerPct).toBe(1150);

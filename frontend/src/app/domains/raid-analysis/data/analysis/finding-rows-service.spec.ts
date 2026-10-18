@@ -164,7 +164,7 @@ describe('rowsFromEntries', () => {
       findings: [
         { severity: tone('red'), category: 'lost_cooldown', message: '', measured: { value: '', unit: '' }, occurrences: [] },
         { severity: tone('blue'), category: 'cooldown_hold', message: '', measured: { value: '', unit: '' }, occurrences: [] },
-        { severity: tone('muted'), category: 'cooldown_delay', message: '', measured: { value: '', unit: '' }, occurrences: [] },
+        { severity: tone('muted'), category: 'lost_cooldown', message: '', measured: { value: '', unit: '' }, occurrences: [] },
       ],
     };
     expect(rowBuilder.rowsFromEntries([mixedEntry]).map(row => row.severity)).toEqual(['red', 'blue', 'muted']);

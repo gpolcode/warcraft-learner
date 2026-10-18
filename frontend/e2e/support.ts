@@ -60,7 +60,7 @@ export async function showsNotGraded(card: Locator): Promise<void> {
 }
 
 /** Mirrors CAT_LABEL in src/app/domains/raid-analysis/data/analysis/analysis.models.ts. */
-export const CD_CHIP = /\b(lost cast|never used|late|Bloodlust|downtime|hold until)\b/;
+export const CD_CHIP = /\b(lost cast|never used|Bloodlust|downtime|hold until)\b/;
 
 /** A label sits directly above its value, so a field reads as the label's next sibling. */
 export function valueOf(scope: Locator, label: string): Locator {

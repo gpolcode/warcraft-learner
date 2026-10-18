@@ -162,7 +162,7 @@ describe('PullModelService causeOf', () => {
 
 describe('PullModelService foldFindings', () => {
   const finding = (span?: { fromS: number; toS: number }): AnalysisFinding =>
-    ({ severity: tone('amber'), category: 'cooldown_delay', message: 'probe', occurrences: [], ...(span && { span }) });
+    ({ severity: tone('amber'), category: 'lost_cooldown', message: 'probe', occurrences: [], ...(span && { span }) });
   const deadMidway = pullModel({ deadSpans: [[100, 120]] });
 
   it('folds a finding whose span the death explains, and counts it under the death', () => {

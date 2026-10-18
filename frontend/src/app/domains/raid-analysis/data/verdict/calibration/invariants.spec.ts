@@ -7,15 +7,15 @@ import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE } from '../../../../../../testing/s
 import { VERDICT_CHOICES } from '../verdict-choices';
 import { BurstJudgeService } from '../../burst-windows/burst-judge-service';
 import { CooldownUseJudgeService } from '../../rotation/cooldown-use-judge-service';
-import { CadenceJudgeService } from '../../rotation/cadence-judge-service';
+import { ReadyCooldown, ReadyTimeJudgeService } from '../../rotation/ready-time-judge-service';
+import { AliveSpan } from '../../analysis/analysis-math';
 import { BloodlustJudgeService } from '../../rotation/bloodlust-judge-service';
-import { cdBench } from '../../rotation/rotation-harness';
 import { rotationLog, SB } from './calibration-harness';
 import { WclEvent } from '../../wcl/wcl.models';
 
 const projections = TestBed.inject(WclProjectionsService);
 const uses = TestBed.inject(CooldownUseJudgeService);
-const cadence = TestBed.inject(CadenceJudgeService);
+const ready = TestBed.inject(ReadyTimeJudgeService);
 const lust = TestBed.inject(BloodlustJudgeService);
 const burst = TestBed.inject(BurstJudgeService);
 
@@ -26,18 +26,23 @@ const TOP_N = 6;
 const ON_CADENCE = [5, 95, 185, 275];
 const timed = (events: WclEvent[]) => projections.withRelativeS(events, 0);
 const casts = timed(ON_CADENCE.map(atS => cast(SHADOW_BLADES, atS)));
-const reference = Array.from({ length: TOP_N }, () => ON_CADENCE.length);
+/** Shadow Blades' stored cooldown, which the cadence presses on. */
+const COOLDOWN: ReadyCooldown = { rechargeS: 90, charges: 1 };
+const topLogs = Array.from({ length: TOP_N }, () => rotationLog().cd_casts_s);
+const kills = topLogs.map(() => FIGHT_S);
 const NOTHING_UP: ReadonlySet<number> = new Set();
 
 describe('A wipe cut into a top pull', () => {
   const wipeS = FIGHT_S * CHOICES.perturbedShare.from;
+  const cut: readonly AliveSpan[] = [[0, wipeS]];
 
-  it('drops the uses after the wipe and expects fewer, so a top cadence stays unflagged', () => {
+  it('drops the uses after the wipe and reads the top logs over the same span, so a top cadence stays unflagged', () => {
     const judgedS = uses.castTimesS(casts, SHADOW_BLADES, NOTHING_UP, wipeS);
-    const measured = uses.measure(judgedS, [[0, wipeS]], cdBench({ uses_per_min: { avg: 0.8, stddev: 0.05 } }));
+    const measured = ready.measure(judgedS, cut, COOLDOWN, {});
+    const reference = ready.reference(topLogs, kills, SB, COOLDOWN, {}, cut);
 
     expect(judgedS.every(castS => castS <= wipeS)).toBe(true);
-    expect(uses.judge(measured, reference, true)).toBeNull();
+    expect(measured && ready.judge(measured, reference, COOLDOWN).level).toBe('neutral');
   });
 });
 
@@ -45,10 +50,10 @@ describe('A death inserted into a top pull', () => {
   const diedS = ON_CADENCE[1] ?? 0;
   const backS = diedS + CHOICES.rezAfterS;
 
-  it('never turns the stretch the death spans into a gap', () => {
+  it('never counts the wait the death spans as ready time', () => {
     const alive = ON_CADENCE.filter(castS => castS < diedS || castS >= backS);
 
-    expect(cadence.measureGap(alive, [[0, diedS], [backS, FIGHT_S]], {})?.gapS).toBe((ON_CADENCE[3] ?? 0) - (ON_CADENCE[2] ?? 0));
+    expect(ready.measure(alive, [[0, diedS], [backS, FIGHT_S]], COOLDOWN, {})?.readyS).toBe(ON_CADENCE[0]);
   });
 });
 

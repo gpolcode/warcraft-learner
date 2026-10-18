@@ -11,7 +11,7 @@ import { bench } from '../../rotation/rotation-harness';
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
 import { rotationLog, SB } from './calibration-harness';
 import { NOT_GRADED } from './arming-service';
-import { LATE_OPENER_FAMILY } from '../../rotation/cadence-judge-service';
+import { READY_TIME_FAMILY } from '../../rotation/ready-time-judge-service';
 import { DOWNTIME_FAMILY } from '../../rotation/downtime-judge-service';
 
 const indices = TestBed.inject(CalibrationIndexService);
@@ -20,11 +20,11 @@ const hashes = TestBed.inject(RegistryHashService);
 
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER = 7;
-const FAMILY = 'rotation.late_opener';
+const FAMILY = 'rotation.ready_time';
 const PAGE = { spec: SPEC, encounterId: ENCOUNTER };
 const TOP_N = 6;
-/** Thirty seconds past the shared 5s opener. */
-const LATE = [35, 125, 215];
+/** The shared cadence with its 95s use skipped: Shadow Blades sits ready from 95s to 185s, one whole cooldown. */
+const SKIPPED = [5, 185, 275];
 
 /** The real caps service over a fixed source; every other spec runs on the providers file's uncapped stand-in. */
 const capsWith = (load: () => Promise<unknown>) => {
@@ -93,6 +93,13 @@ describe('CalibrationIndexService build', () => {
     expect(indices.build([encounterOf({}, { invariants: untested })]).invariants[0]?.passed).toBe(true);
   });
 
+  it('keeps a family whose perturbation flags nothing on few tests, and fails it on one flag there', () => {
+    const tally = (amber: number) => ({ truncate: { [FAMILY]: { base: { tests: 7, amber: 0, red: 0 }, perturbed: { tests: 1, amber, red: 0 } } } });
+
+    expect(indices.build([encounterOf({}, { invariants: tally(0) })]).invariants[0]?.passed).toBe(true);
+    expect(indices.build([encounterOf({}, { invariants: tally(1) })]).invariants[0]?.passed).toBe(false);
+  });
+
   it('fails the lust invariant on any Bloodlust row outside the band', () => {
     const outside = { 'lust-120': { [OUTSIDE_BAND]: { base: { tests: 0, amber: 0, red: 0 }, perturbed: { tests: 1, amber: 1, red: 0 } } } };
 
@@ -129,7 +136,7 @@ describe('CalibrationIndexService breaches', () => {
 });
 
 describe('EncounterCalibrationService', () => {
-  const logs = [rotationLog({ cd_casts_s: { [SB]: LATE } }), ...Array.from({ length: TOP_N - 1 }, () => rotationLog())];
+  const logs = [rotationLog({ cd_casts_s: { [SB]: SKIPPED } }), ...Array.from({ length: TOP_N - 1 }, () => rotationLog())];
   const benches = { rotation: bench({ sources: benchSources(TOP_N), sample_count: TOP_N, per_parse: logs }), defensive: null, gear: null, burst: null };
   const calibrated = encounters.calibrate(SPEC, ENCOUNTER, benches, 'signed');
 
@@ -138,11 +145,11 @@ describe('EncounterCalibrationService', () => {
     expect(calibrated.page.pulls).toBe(TOP_N);
   });
 
-  it('flags the one top log that opened late and none of the others', () => {
-    expect(calibrated.families[FAMILY]).toEqual({ tests: TOP_N, amber: 1, red: 0 });
+  it('flags the one top log that left its cooldown ready for a whole cooldown and none of the others', () => {
+    expect(calibrated.families[FAMILY]).toEqual({ tests: TOP_N, amber: 1, red: 1 });
   });
 
-  it('tries the delayed opener on every log that can take it', () => {
+  it('tries the injected mistakes on every log that can take them', () => {
     expect(calibrated.detection[FAMILY]?.trials).toBeGreaterThan(0);
   });
 
@@ -180,28 +187,28 @@ describe('CalibrationCapsService', () => {
     const tooFew = index({ specs: { [SPEC]: { [FAMILY]: { status: 'comparison', cap: 'neutral', reason: NOT_GRADED.tooFew } } } });
     const service = capsWith(() => Promise.resolve(Results.ok(tooFew)));
 
-    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [LATE_OPENER_FAMILY]))
-      .toEqual([{ label: LATE_OPENER_FAMILY.label, reason: NOT_GRADED.tooFew }]);
+    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [READY_TIME_FAMILY]))
+      .toEqual([{ label: READY_TIME_FAMILY.label, reason: NOT_GRADED.tooFew }]);
   });
 
   it('leaves a graded family off the not-graded list', async () => {
     const service = capsWith(() => Promise.resolve(Results.ok(index())));
 
-    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [LATE_OPENER_FAMILY])).toEqual([]);
+    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [READY_TIME_FAMILY])).toEqual([]);
   });
 
   it('names the boss as the reason on a bench whose own rate demoted the family', async () => {
     const demoted = index({ demoted: { [SPEC]: { [String(ENCOUNTER)]: [FAMILY] } } });
     const service = capsWith(() => Promise.resolve(Results.ok(demoted)));
 
-    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [LATE_OPENER_FAMILY]))
-      .toEqual([{ label: LATE_OPENER_FAMILY.label, reason: NOT_GRADED.bench }]);
+    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [READY_TIME_FAMILY]))
+      .toEqual([{ label: READY_TIME_FAMILY.label, reason: NOT_GRADED.bench }]);
   });
 
   it('lists every family as not graded when no index is published', async () => {
     const service = capsWith(() => Promise.resolve(Results.missing('Not yet ingested.')));
 
-    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [LATE_OPENER_FAMILY, DOWNTIME_FAMILY]).map(note => note.label))
-      .toEqual([LATE_OPENER_FAMILY.label, DOWNTIME_FAMILY.label]);
+    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [READY_TIME_FAMILY, DOWNTIME_FAMILY]).map(note => note.label))
+      .toEqual([READY_TIME_FAMILY.label, DOWNTIME_FAMILY.label]);
   });
 });

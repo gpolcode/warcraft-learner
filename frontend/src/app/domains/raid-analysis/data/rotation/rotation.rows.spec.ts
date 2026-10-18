@@ -23,7 +23,7 @@ describe('bucketRotationFindings', () => {
   it('splits downtime rows, cd issue rows and on-plan chips', () => {
     const findings: AnalysisFinding[] = [
       { severity: tone('amber'), category: 'cast_efficiency', label: 'Low cast efficiency', message: '', measured: { value: '80.0%' }, details: { remedy: 'fix' }, occurrences: [] },
-      { severity: tone('amber'), category: 'cooldown_delay', cd_name: 'Shadow Blades', message: '', measured: { value: '+3s' }, timestamp_s: 4, occurrences: [] },
+      { severity: tone('amber'), category: 'lost_cooldown', cd_name: 'Shadow Blades', message: '', measured: { value: '+3s' }, timestamp_s: 4, occurrences: [] },
       vanishOnPlan,
     ];
     const out = svc['bucketRotationFindings'](findings, { 'Shadow Blades': SHADOW_BLADES, 'Vanish': VANISH }, abilities);
@@ -31,7 +31,7 @@ describe('bucketRotationFindings', () => {
     assert.exists(out.downtimeRows[0]);
     expect(out.downtimeRows[0].what).toBe('Low cast efficiency');
     expect(out.offensiveRows).toHaveLength(1);
-    expect(out.offensiveRows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'late' });
+    expect(out.offensiveRows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'lost cast' });
     expect(out.onPlan).toEqual([{ name: 'Vanish', spellId: VANISH, icon: 'vanish' }]);
   });
 });
@@ -39,7 +39,7 @@ describe('bucketRotationFindings', () => {
 describe('rotation finding partition and row builders', () => {
   const abilities = { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' }, [VANISH]: { icon: 'vanish', name: 'Vanish' } };
   const downtimeFinding: AnalysisFinding = { severity: tone('amber'), category: 'cast_efficiency', label: 'Low cast efficiency', message: 'You were casting 80.0% of the fight.', measured: { value: '80.0%' }, details: { remedy: 'fix' }, occurrences: [] };
-  const issueFinding: AnalysisFinding = { severity: tone('amber'), category: 'cooldown_delay', cd_name: 'Shadow Blades', message: 'Shadow Blades was first used at 0:04.', measured: { value: '+3s' }, timestamp_s: 4, occurrences: [] };
+  const issueFinding: AnalysisFinding = { severity: tone('amber'), category: 'lost_cooldown', cd_name: 'Shadow Blades', message: 'Shadow Blades was first used at 0:04.', measured: { value: '+3s' }, timestamp_s: 4, occurrences: [] };
   const holdFinding: AnalysisFinding = { severity: tone('blue'), category: 'cooldown_hold', message: '', measured: { value: '1:00' }, details: { cd_name: 'Shadow Blades', remedy: 'hold' }, occurrences: [] };
   const onPlanFinding = vanishOnPlan;
 
@@ -66,7 +66,7 @@ describe('rotation finding partition and row builders', () => {
   it('builds offensive rows with resolved icon + chip per finding', () => {
     const rows = svc['buildOffensiveRows']({ 'Shadow Blades': { issues: [issueFinding], holds: [] } }, { 'Shadow Blades': SHADOW_BLADES }, abilities);
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'late', severity: 'amber' });
+    expect(rows[0]).toMatchObject({ name: 'Shadow Blades', spellId: SHADOW_BLADES, icon: 'sb', chip: 'lost cast', severity: 'amber' });
   });
 
   it('carries the finding sentence on an offensive row', () => {
