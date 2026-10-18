@@ -12,7 +12,8 @@ type InjectedMistake =
   | 'die-in-window'
   | 'swap-talent-node'
   | 'remove-enchant'
-  | 'press-off-list';
+  | 'press-off-list'
+  | 'move-cooldown-out-of-lust';
 
 /** How a raid decision enters the check: relative to the pull's own decision, gated on it matching the reference, or left out. */
 interface RaidDecisions {

@@ -384,3 +384,55 @@ None: the paper cites no gear file:line. The RC4 Gear row ("Most common build", 
 - Package 6's per-node talent construct replaces `TALENT_BUILD_FAMILY`'s measure (`talent_nodes` and `per_parse[].talent_key` are already baked); bump its `version` then.
 - `GearJudgeService.enchantLeaders` and `agreedLeaders` give any later view the merged enchant consensus with k and n.
 - `FINDING_REGISTRY`'s producing scenarios accept `family: string | null` (rows that are on plan carry null).
+
+## Package 4f: Bloodlust judge split and the legacy vocabulary (done)
+
+Branch `claude/verdict-validity-p4f-bloodlust`, PR against `claude/verdict-validity-p4e-gear`.
+
+### Done
+
+- **Families** in `FINDING_REGISTRY`, both declared in `data/rotation/bloodlust-judge-service.ts`, tier amber, cost medium, pending the overlap of the cooldown's aura with the raid's lust (package 6), new injected mistake `move-cooldown-out-of-lust`:
+  - `rotation.bloodlust`: `consensus` paired with the lust band (an `interval`), the alignment check.
+  - `rotation.bloodlust_timing`: `interval` on the offset from the lust, both sides, the timing check.
+- **Judge, callable at ingest with a top log as the player.** `BloodlustJudgeService`:
+  - `measureOffset(castTimesS, lustS)` is the one measure: the use closest to the lust inside `VERDICT_CHOICES.lustWindow` (30 s before, 55 s after, both edges inclusive). Ingest's `summarizeCooldownCasts` bakes `bl_aligned` and `bl_offset_s` through it; the runtime judges through it. The baked values are unchanged.
+  - `isMidFight(lustS)`: a lust later than the window's 30 s lead, so its window never holds the opener. The player's lust and every top log's baked `per_parse[].lust_s` go through it.
+  - `reference(perParse, name)`: `lustsS` (each mid-fight lust, n) and `offsetsS` (`measureOffset` over `per_parse[].cd_casts_s`, k). `wantsLust` needs at least `minReferenceN` mid-fight lusters and k / n of at least `VERDICT_CHOICES.lustWantShare` (0.5, new).
+  - `judgeBand(lustS, reference)`: inside when the player's lust is mid-fight and the `interval` rule (5 s timing floor) finds it on neither side of the top logs' lusts. `judgeAlignment` is `consensus({ differs: no use in the window, k, n, paired: inside })`: amber from 8 of 10, else blue, never red. `judgeTiming` is `interval` above, then below, with the 5 s floor.
+  - `findings(name, castTimesS, lustS, perParse)`: no lust or not wanted, nothing; outside the band and not pressed, a neutral context row ("Your raid's Bloodlust came at 00:01. The 5 top raiders who lusted mid-fight had theirs from 01:55 to 02:05, so X is not judged against yours."); inside and not pressed, the alignment row ("You did not press X from 30s before to 55s after your raid's Bloodlust at 02:00. 5 of 5 top raiders who lusted mid-fight pressed it for theirs."); inside and pressed, a timing row only when graded ("You pressed X 10s after your raid's Bloodlust at 02:00. 5 top raiders who lusted mid-fight pressed it 5s after theirs on average."). No row carries a remedy.
+- **Tone.** Every Bloodlust row passes through `ToneService.tone`, the context row through `ToneService.neutral()`. Rows carry spans and run through `foldFindings` as before.
+- **Plan view.** The Bloodlust badge (`CdPlanRow.bloodlust`) is `wantsLust` over `per_parse`; an old bench without `per_parse` shows none. `CdPlanRow.bloodlustPct` is gone (nothing rendered it).
+- **Legacy vocabulary retired.**
+  - `AnalysisFinding.severity` and `FindingRow.severity` are `Tone`. An on-plan finding is `FindingRowsService.onPlanFinding(name)`: a neutral tone with `onPlan: true`; rotation's success chip and the defensive on-plan chip both use it, and `bucketFindings` and `partitionRotationFindings` read `onPlan`.
+  - `FindingRowsService.rowSeverity`, `ToneService.isTone`, `wl-finding-table`'s legacy map, the `hold_suggestion` severity and category label, and the analysis-math outlier helpers (`isOutlierAbove`, `isOutlierBeyond`, `isOutlierBelow`, `OUTLIER_SIGMAS`, `TIMING_BAND_MIN_S`) are gone. `severityRank` takes a `Tone`.
+  - `bucketIssue`'s hold branch keys on `cooldown_hold`, the category every hold finding carries.
+  - `local/no-severity-literal` ignores only specs and `data/verdict/**`; no producer entry is left. The `warcraft-verdict` skill says so.
+- **Tests.** `bloodlust-judge.spec.ts` pairs every boundary (window edges, mid-fight at 30 s, the 0.5 want share, the 0.8 paired share, the band edge, both timing edges); `src/testing/builders/tone.ts` builds a `Tone` for fixtures without TestBed.
+
+### Decisions and deviations
+
+- **Two families, not one.** The 5.7 row is one row on the overlap construct. On today's construct (a use inside the window) alignment and timing are separate claims with separate rules, so each has its own entry; package 6 can fold both into one overlap family.
+- **Mid-fight is the window's lead.** "Lusted mid-fight" is a lust later than 30 s, the point from which its window no longer reaches the pull. No new chosen number; the window itself moved into `VERDICT_CHOICES.lustWindow`.
+- **The lust band is the `interval` rule** on the top logs' mid-fight lusts with the 5 s timing floor, both sides. "Paired with interval" reads as this band: the consensus is paired only inside it, and outside it nothing is judged.
+- **The player's lust must be mid-fight too.** A pull lust is context even when a wide band reaches the pull: its window holds the opener, which the opener family already judges.
+- **Context row only on a miss.** Outside the band, a cooldown pressed in the window has no row; one not pressed gets the neutral context row, so the reader learns why no flag was raised.
+- **The want gate** keeps blue rows to cooldowns at least half of the mid-fight lusters press for their lust; below it, no row.
+- **No remedy on either family**, amber included: lust timing is a raid decision, and the window construct cannot say which press the player should move.
+- **Defensive holds** used to fall into the "Unknown cooldown" bucket (category `cooldown_hold` with the name in `details`); the hold branch now keys on `cooldown_hold`, so they bucket under their defensive.
+- `PerCdBenchmark.bl_pct`, `avg_bl_offset_s` and `stddev_bl_offset_s` stay baked but have no runtime reader. Dropping them changes the bench, so it waits for the next `INGEST_VERSION` bump.
+- No `INGEST_VERSION` bump: `measureOffset` reproduces the baked `bl_offset_s` exactly (the transform spec pins it) and no bench field changed.
+
+### Drift against 6882b59
+
+- RC3's window (`rotation-transform-service.ts:27-28,138`) was at `:30-31,154`; the gate (`rotation-feature-service.ts:237`) and the critical miss (`:166-167`) were at `:274` and `:213`. All three are replaced by `BloodlustJudgeService`. The RC3 / TIME-4 / CON-5 / POP-8 claim ("wants Bloodlust" learned from pull lusts) no longer holds: the reference keeps only mid-fight lusts. The audit's chance rate of a critical miss is not re-measured (needs the harness).
+
+### Seams stubbed
+
+- `WindowStatus` (`window-comparison.models.ts`) still lists `good`, `warn` and `bad`, and `wl-window-comparison`'s `LOOK` maps them, though no producer emits them now. Retiring them touches `isOnContract`, which decides when ability rows keep their color; left for the windows' package 6 rebuild.
+- Calibration does not cap the tone yet (package 5); the harness that calls `BloodlustJudgeService.findings` at ingest is not built.
+
+### For the next package
+
+- Package 6's overlap construct replaces `measureOffset` in both Bloodlust families (bump their `version`); `per_parse[].lust_s` gives the lust start, the aura spans need a new baked field.
+- An on-plan finding is `FindingRowsService.onPlanFinding`; never set a severity word on a finding, the type no longer accepts one.
+- Fixtures build a tone with `tone(level)` from `src/testing/builders/tone.ts`.

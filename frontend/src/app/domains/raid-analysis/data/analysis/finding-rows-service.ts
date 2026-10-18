@@ -10,14 +10,9 @@ export class FindingRowsService {
   private readonly logger = inject(LoggerService);
   private readonly tones = inject(ToneService);
 
-  rowSeverity(severity: AnalysisFinding['severity']): FindingRow['severity'] {
-    if (this.tones.isTone(severity)) return severity;
-    return severity === 'critical' ? 'critical' : severity === 'info' ? 'info' : 'warning';
-  }
-
   /** Surfaces the button as an "On plan" chip when nothing else is flagged for it. */
   onPlanFinding(name: string): AnalysisFinding {
-    return { severity: 'success', category: 'cooldown_usage', cd_name: name, message: `${name} is on plan.`, occurrences: [] };
+    return { severity: this.tones.neutral(), onPlan: true, category: 'cooldown_usage', cd_name: name, message: `${name} is on plan.`, occurrences: [] };
   }
 
   rowsFromEntries(entries: FindingEntry[]): FindingRow[] {
@@ -26,7 +21,7 @@ export class FindingRowsService {
       if (!entry.hasIssue) continue;
       for (const f of entry.findings) {
         rows.push({
-          severity: this.rowSeverity(f.severity),
+          severity: f.severity,
           name: entry.name,
           spellId: entry.spellId,
           icon: entry.icon,
@@ -51,7 +46,7 @@ export class FindingRowsService {
   }
 
   private bucketIssue(byName: FindingBuckets, finding: AnalysisFinding): void {
-    if (finding.category === 'hold_suggestion' && finding.details?.cd_name) {
+    if (finding.category === 'cooldown_hold' && finding.details?.cd_name) {
       this.bucketOf(byName, finding.details.cd_name).holds.push(finding);
     } else if (finding.cd_name) {
       this.bucketOf(byName, finding.cd_name).issues.push(finding);
@@ -69,10 +64,10 @@ export class FindingRowsService {
     const byName: FindingBuckets = {};
 
     for (const finding of findings) {
-      if (finding.severity !== 'success') this.bucketIssue(byName, finding);
+      if (!finding.onPlan) this.bucketIssue(byName, finding);
     }
     for (const finding of findings) {
-      if (finding.severity !== 'success') continue;
+      if (!finding.onPlan) continue;
       const name = finding.cd_name;
       // The empty bucket is what surfaces the cooldown as an "On plan" chip.
       if (name) this.bucketOf(byName, name);
@@ -98,8 +93,7 @@ interface FindingMeasure {
 }
 
 export interface FindingRow {
-  /** A tone from a family on the verdict contract, else a legacy producer's word. */
-  severity: 'critical' | 'warning' | 'info' | Tone;
+  severity: Tone;
   /** Why a muted row was not judged. */
   unjudged?: UnjudgedCause;
   name?: string;

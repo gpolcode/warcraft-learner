@@ -74,15 +74,11 @@ describe('analyzeRotationFindings', () => {
     expect(svc['analyzeRotationFindings'](scan({ bench: bench() })).checked).toBe(1);
   });
 
-  it('emits a success when used on cd and BL-aligned', () => {
+  it('marks a cooldown used on cooldown as on plan, with a neutral tone', () => {
     const casts = [cast(SHADOW_BLADES, 6)];
-    const buffs = [applyBuff(BLOODLUST, 6)];
     const single = bench({ per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 0.5, stddev: 0.1 } }) } });
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single })).findings;
-    const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
-    expect(success).toBeDefined();
-    assert.exists(success);
-    expect(success.message).toContain('aligned with Bloodlust');
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: single })).findings;
+    expect(findings).toEqual([expect.objectContaining({ onPlan: true, severity: 'neutral', cd_name: 'Shadow Blades' })]);
   });
 
   it('flags a late opener against the top logs\' first uses', () => {
@@ -135,45 +131,34 @@ describe('analyzeRotationFindings pre-pull use', () => {
       castEvents: [cast(SHADOW_BLADES, SECOND_CAST_S)], buffEvents: [removeBuff(SHADOW_BLADES, 20)], bench: bench(),
     }));
     expect(findings.filter(f => f.category === 'cooldown_delay')).toEqual([]);
-    expect(findings.find(f => f.severity === 'success')?.message).toBe('Shadow Blades - 2/2 casts.');
+    expect(findings.some(f => f.onPlan)).toBe(true);
   });
 });
 
-describe('analyzeRotationFindings Bloodlust detection', () => {
-  // Aligned window [blTimeS-30, blTimeS+55]; offset from blTimeS must stay within 4s (2*stddev) to avoid an alignment warning.
-  const LOW_UPM = { avg: 0.5, stddev: 0.1, min: 0.4, max: 0.6 };
-  const single = bench({ per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: LOW_UPM }) } });
-  // Casts stay >= 0 (still bounded by fight start), so it opens right on the pull.
-  const OPEN_CAST_S = 0;
+describe('analyzeRotationFindings Bloodlust', () => {
+  const MID_LUST_S = 120;
+  const FIGHT_S = 300;
+  /** Five top logs whose raid lusted at 2:00 and who pressed Shadow Blades 5s into it. */
+  const lustBench = bench({ per_parse: Array.from({ length: 5 }, () => ({ ...topLog({ 'Shadow Blades': [MID_LUST_S + 5] }), lust_s: MID_LUST_S })) });
+  const lustAt = (lustS: number): WclEvent[] => [applyBuff(BLOODLUST, lustS)];
 
-  it('drives BL-aligned coaching from a Bloodlust popped before the pull (negative atS)', () => {
-    // WCL's fight start is the first damage event, so a pre-cast Lust lands at a negative atS.
-    const PRE_PULL_BL_S = -2;
-    const casts = [cast(SHADOW_BLADES, OPEN_CAST_S)];
-    const buffs = [applyBuff(BLOODLUST, PRE_PULL_BL_S)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single })).findings;
-    const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
-    expect(success?.message).toContain('aligned with Bloodlust');
+  it('judges the player against their own raid\'s lust, from the same buff stream ingest reads', () => {
+    const findings = svc['analyzeRotationFindings'](scan({
+      castEvents: [cast(SHADOW_BLADES, 5)], buffEvents: lustAt(MID_LUST_S), bench: lustBench, fightDurationS: FIGHT_S,
+    })).findings;
+    expect(findings.find(f => f.family === 'rotation.bloodlust')).toMatchObject({ severity: 'amber', timestamp_s: MID_LUST_S });
   });
 
-  it('drives BL-aligned coaching from a Bloodlust popped exactly at fight start (boundary)', () => {
-    const FIGHT_START_S = 0;
-    const casts = [cast(SHADOW_BLADES, OPEN_CAST_S)];
-    const buffs = [applyBuff(BLOODLUST, FIGHT_START_S)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single })).findings;
-    const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
-    expect(success?.message).toContain('aligned with Bloodlust');
+  it('flags no Bloodlust row for a cooldown pressed for the raid\'s lust', () => {
+    const findings = svc['analyzeRotationFindings'](scan({
+      castEvents: [cast(SHADOW_BLADES, MID_LUST_S + 5)], buffEvents: lustAt(MID_LUST_S), bench: lustBench, fightDurationS: FIGHT_S,
+    })).findings;
+    expect(findings.some(f => f.category === 'cooldown_alignment')).toBe(false);
   });
 
-  it('agrees with the ingest bench on the same buff stream, so neither path can diverge', () => {
+  it('agrees with the ingest bench on a lust before the pull', () => {
     const PRE_PULL_BL_S = -2;
-    const buffs = [applyBuff(BLOODLUST, PRE_PULL_BL_S)];
-    // RotationTransformService's ingest bench calls this same function on the same buff stream.
-    expect(bloodlust.detectBloodlust(wclProjections.withRelativeS(buffs, 0))).toBe(PRE_PULL_BL_S);
-    const casts = [cast(SHADOW_BLADES, OPEN_CAST_S)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single })).findings;
-    const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
-    expect(success?.message).toContain('aligned with Bloodlust');
+    expect(bloodlust.detectBloodlust(wclProjections.withRelativeS(lustAt(PRE_PULL_BL_S), 0))).toBe(PRE_PULL_BL_S);
   });
 });
 
@@ -201,61 +186,6 @@ describe('analyzeRotationFindings hold suggestions on the pull clock', () => {
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 160)];
     const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S })).findings;
     expect(findings.some(f => f.category === 'cooldown_hold')).toBe(false);
-  });
-});
-
-describe('checkBloodlustAlignment', () => {
-  const BL_AT_S = 10;
-  // BL window: 30s before BL to 40s duration + 15s trail -> [-30, +55] around BL_AT_S = [-20, 65].
-
-  it('flags a BL miss when the cooldown lands outside the window and parsers align it', () => {
-    // cast at 100s is outside [-20, 65]; wantsBL true.
-    const out = svc['checkBloodlustAlignment']('Shadow Blades', [100], cdBench(), BL_AT_S, true);
-    expect(out.blAligned).toBe(false);
-    expect(out.findings[0]?.measured).toEqual({ value: 'missed', unit: 'Bloodlust' });
-  });
-
-  it('does not flag a miss when parsers do not align it', () => {
-    const out = svc['checkBloodlustAlignment']('Shadow Blades', [100], cdBench(), BL_AT_S, false);
-    expect(out.blAligned).toBe(false);
-    expect(out.findings).toEqual([]);
-  });
-
-  it('flags an in-window offset more than 2 sigma off the top offset', () => {
-    // avg_bl_offset 0, stddev 2 -> outlier beyond |offset| > 4. Cast at BL+5s -> offset 5.
-    const out = svc['checkBloodlustAlignment']('Shadow Blades', [(BL_AT_S + 5)], cdBench(), BL_AT_S, true);
-    expect(out.blAligned).toBe(true);
-    expect(out.findings[0]?.measured).toEqual({ value: 'late', unit: 'in Bloodlust' });
-  });
-
-  it('does not flag an in-window offset exactly at the 2-sigma boundary (strict)', () => {
-    // offset exactly 4 == 2*stddev; strict so not flagged.
-    const out = svc['checkBloodlustAlignment']('Shadow Blades', [(BL_AT_S + 4)], cdBench(), BL_AT_S, true);
-    expect(out.blAligned).toBe(true);
-    expect(out.findings).toEqual([]);
-  });
-
-  it('gives top logs that agree to the second on their Bloodlust offset a 2s band, flagging only past it', () => {
-    const agreed = cdBench({ avg_bl_offset_s: 0, stddev_bl_offset_s: 0 });
-    expect(svc['checkBloodlustAlignment']('Shadow Blades', [BL_AT_S + 2], agreed, BL_AT_S, true).findings).toEqual([]);
-    const late = svc['checkBloodlustAlignment']('Shadow Blades', [BL_AT_S + 2.1], agreed, BL_AT_S, true);
-    expect(late.findings[0]?.measured).toEqual({ value: 'late', unit: 'in Bloodlust' });
-  });
-
-  it('stamps the judged cast, not the earliest in-window cast', () => {
-    // avg_bl_offset -8, stddev 2 -> in-band [-12, -4]; the later cast (closest to zero) is judged, not the earlier in-band one.
-    const EARLY_IN_BAND_S = BL_AT_S - 8;
-    const LATE_JUDGED_S = BL_AT_S - 2;
-    const out = svc['checkBloodlustAlignment'](
-      'Shadow Blades', [EARLY_IN_BAND_S, LATE_JUDGED_S],
-      cdBench({ avg_bl_offset_s: -8, stddev_bl_offset_s: 2 }), BL_AT_S, true);
-    expect(out.findings[0]?.measured).toEqual({ value: 'late', unit: 'in Bloodlust' });
-    expect(out.findings[0]?.timestamp_s).toBe(LATE_JUDGED_S);
-  });
-
-  it('returns not-aligned with no BL', () => {
-    expect(svc['checkBloodlustAlignment']('Shadow Blades', [5], cdBench(), null, true))
-      .toEqual({ blAligned: false, findings: [] });
   });
 });
 
@@ -313,16 +243,15 @@ describe('analyzeOneCooldown', () => {
     });
   });
 
-  it('reports success when a cooldown is used cleanly and BL-aligned', () => {
-    // first cast 6s (under 9s open threshold), BL at 6s -> aligned.
+  it('reports a cooldown used cleanly as on plan', () => {
     const result = svc['analyzeOneCooldown'](cd, [6], single, killed(120, 6), null);
     expect(result?.scan.issues).toEqual([]);
-    expect(result?.success?.message).toContain('aligned with Bloodlust');
+    expect(result?.onPlan).toMatchObject({ onPlan: true, cd_name: 'Shadow Blades' });
   });
 
-  it('reports an issue (no success) when the opener is late', () => {
+  it('reports an issue and no on-plan finding when the opener is late', () => {
     const result = svc['analyzeOneCooldown'](cd, [40], single, killed(120, 38), null, TOP_LOGS);
-    expect(result?.success).toBeNull();
+    expect(result?.onPlan).toBeNull();
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(true);
   });
 
@@ -330,7 +259,7 @@ describe('analyzeOneCooldown', () => {
     // Matching the top parses by not pressing it is not a lost cast.
     const result = svc['analyzeOneCooldown'](cd, [], rareUse, killed(FIGHT_DUR_S), null);
     expect(result?.scan.issues).toEqual([]);
-    expect(result?.success).toBeNull();
+    expect(result?.onPlan).toBeNull();
   });
 
   it('does not flag a late opener of a minority-use cooldown (use-share gate)', () => {
@@ -405,7 +334,8 @@ describe('rotation checks over the player timeline', () => {
       castEvents: [cast(SHADOW_BLADES, 6), cast(SHADOW_BLADES, 70)], bench: bench(),
       model: { judgedEndS: CALLED_S, judgedEndCause: 'wipe_called', aliveSpans: [[0, CALLED_S]] },
     }));
-    expect(findings.find(finding => finding.severity === 'success')?.message).toBe('Shadow Blades - 1/1 casts.');
+    expect(findings.some(finding => finding.onPlan)).toBe(true);
+    expect(findings.every(finding => (finding.timestamp_s ?? 0) < CALLED_S)).toBe(true);
   });
 });
 

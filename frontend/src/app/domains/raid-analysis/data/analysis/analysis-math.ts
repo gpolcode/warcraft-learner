@@ -1,5 +1,6 @@
 import { deviation, least, mean, median, pairs } from 'd3-array';
 import { AnalysisFinding } from './analysis.models';
+import type { Tone } from '../verdict/tone.models';
 import { CadenceBenchmark } from '../encounter/encounter.models';
 
 /** d3-array has no rounding helper. */
@@ -48,23 +49,6 @@ export function groupByTime<T extends { time_s: number }>(windows: T[], mergeS: 
     }
   }
   return clusters;
-}
-
-export const OUTLIER_SIGMAS = 2;
-
-/** Floor on a timing band's half-width, so top logs that agree to the second do not flag a cast a second off theirs. */
-export const TIMING_BAND_MIN_S = 2;
-
-export function isOutlierAbove(value: number, mean: number, stddev: number, sigmas = OUTLIER_SIGMAS, minBand = 0): boolean {
-  return value > mean + Math.max(sigmas * stddev, minBand);
-}
-
-export function isOutlierBeyond(value: number, mean: number, stddev: number, sigmas = OUTLIER_SIGMAS, minBand = 0): boolean {
-  return Math.abs(value - mean) > Math.max(sigmas * stddev, minBand);
-}
-
-export function isOutlierBelow(value: number, mean: number, stddev: number, sigmas = 2): boolean {
-  return value < mean - sigmas * stddev;
 }
 
 /** A talent-gated button counts as taken only when the pull's talents show one of its entries; with no entries or no talents to read, the pull cannot tell, so an unpressed one stays unjudged. */
@@ -145,11 +129,9 @@ export function fmtApart(value: number, edge: number): [string, string] {
   return [value.toFixed(decimals), edge.toFixed(decimals)];
 }
 
-const SEVERITY_ORDER: Record<string, number> = {
-  critical: 0, red: 0, warning: 1, amber: 1, info: 2, blue: 2, hold_suggestion: 2, neutral: 3, muted: 4, success: 5,
-};
-export function severityRank(severity: string): number {
-  return SEVERITY_ORDER[severity] ?? SEVERITY_ORDER['neutral'] ?? 0;
+const SEVERITY_ORDER: Record<string, number> = { red: 0, amber: 1, blue: 2, neutral: 3, muted: 4 };
+export function severityRank(severity: Tone): number {
+  return SEVERITY_ORDER[severity] ?? 0;
 }
 
 export function sortBySeverity(findings: AnalysisFinding[]): void {

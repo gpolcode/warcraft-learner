@@ -1,5 +1,5 @@
 import {
-  round, getOrInsert, groupByTime, isOutlierAbove, isOutlierBeyond, isOutlierBelow, OUTLIER_SIGMAS,
+  round, getOrInsert, groupByTime,
   castEfficiencyPct, closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
   AliveSpan, spansS, overlapS, castDowntimeS,
 } from './analysis-math';
@@ -44,66 +44,6 @@ describe('groupByTime', () => {
     const clusters = groupByTime([{ time_s: 0 }, { time_s: 4 }, { time_s: 20 }], MERGE_S);
     expect(clusters).toHaveLength(2);
     expect(clusters[1]).toEqual([{ time_s: 20 }]);
-  });
-});
-
-describe('isOutlierAbove', () => {
-  const MEAN = 10;
-  const STDDEV = 2;
-  // mean + 2*stddev = 14 is the strict boundary.
-  it('flags a value more than two sigma above the mean', () => {
-    expect(isOutlierAbove(14.1, MEAN, STDDEV)).toBe(true);
-  });
-  it('does not flag a value exactly at the two-sigma boundary', () => {
-    expect(isOutlierAbove(14, MEAN, STDDEV)).toBe(false);
-  });
-});
-
-describe('isOutlierBeyond', () => {
-  const MEAN = 10;
-  const STDDEV = 2;
-  it('flags a value more than two sigma below the mean', () => {
-    expect(isOutlierBeyond(5.9, MEAN, STDDEV)).toBe(true);
-  });
-  it('does not flag a value exactly at the boundary', () => {
-    expect(isOutlierBeyond(6, MEAN, STDDEV)).toBe(false);
-  });
-});
-
-describe('a band floor', () => {
-  const MEAN = 10;
-  const TIGHT_STDDEV = 0.2; // two sigma is only 0.4
-  const FLOOR = 2;
-
-  it('widens a tight band above the mean to the floor, flagging only past it', () => {
-    expect(isOutlierAbove(MEAN + FLOOR, MEAN, TIGHT_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(false);
-    expect(isOutlierAbove(MEAN + FLOOR + 0.1, MEAN, TIGHT_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(true);
-  });
-
-  it('widens a tight band on both sides of the mean to the floor', () => {
-    expect(isOutlierBeyond(MEAN - FLOOR, MEAN, TIGHT_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(false);
-    expect(isOutlierBeyond(MEAN - FLOOR - 0.1, MEAN, TIGHT_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(true);
-  });
-
-  it('leaves a band already wider than the floor at two sigma', () => {
-    const WIDE_STDDEV = 2; // two sigma is 4
-    expect(isOutlierAbove(MEAN + 4, MEAN, WIDE_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(false);
-    expect(isOutlierAbove(MEAN + 4.1, MEAN, WIDE_STDDEV, OUTLIER_SIGMAS, FLOOR)).toBe(true);
-  });
-});
-
-describe('isOutlierBelow', () => {
-  const MEAN = 10;
-  const STDDEV = 2;
-  it('flags a value more than the default two sigma below the mean', () => {
-    // mean - 2*stddev = 6 is the strict boundary.
-    expect(isOutlierBelow(5.9, MEAN, STDDEV)).toBe(true);
-    expect(isOutlierBelow(6, MEAN, STDDEV)).toBe(false);
-  });
-  it('honors an explicit sigma count (one sigma below)', () => {
-    // mean - stddev = 8 is the strict boundary.
-    expect(isOutlierBelow(7.9, MEAN, STDDEV, 1)).toBe(true);
-    expect(isOutlierBelow(8, MEAN, STDDEV, 1)).toBe(false);
   });
 });
 
@@ -266,15 +206,15 @@ describe('fmtClock', () => {
 });
 
 describe('sortBySeverity', () => {
-  it('orders critical first and success last, stable for equal ranks', () => {
-    // info and hold_suggestion share rank 2, so their input order must survive the sort.
+  it('orders red first and muted last, stable for equal tones', () => {
+    // Both blue findings share a rank, so their input order must survive the sort.
     const findings = [
-      { severity: 'success', message: 's' },
-      { severity: 'info', message: 'i' },
-      { severity: 'hold_suggestion', message: 'h' },
-      { severity: 'critical', message: 'c' },
+      { severity: 'muted', message: 'm' },
+      { severity: 'blue', message: 'b1' },
+      { severity: 'blue', message: 'b2' },
+      { severity: 'red', message: 'r' },
     ] as AnalysisFinding[];
     sortBySeverity(findings);
-    expect(findings.map(finding => finding.message)).toEqual(['c', 'i', 'h', 's']);
+    expect(findings.map(finding => finding.message)).toEqual(['r', 'b1', 'b2', 'm']);
   });
 });

@@ -7,6 +7,7 @@ import { ListFindingService } from '../rotation/priority-list/list-finding-servi
 import { bench, cdBench } from '../rotation/rotation-harness';
 import { CadenceJudgeService } from '../rotation/cadence-judge-service';
 import { DowntimeJudgeService } from '../rotation/downtime-judge-service';
+import { BloodlustJudgeService } from '../rotation/bloodlust-judge-service';
 import { BurstJudgeService } from '../burst-windows/burst-judge-service';
 import type { BurstWindow } from '../analysis/analysis.models';
 import { DefensiveJudgeService } from '../defensive/defensive-judge-service';
@@ -23,6 +24,10 @@ const ALL_USED = Array.from({ length: 10 }, () => 4);
 /** Ten top logs that open at 5s, press again at 95s and cast 90% of the pull. */
 const TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
   ({ efficiency_pct: 90, lust_s: null, phase_starts: [], cd_casts_s: { 'Shadow Blades': [5, 95] }, buttons: {} }));
+/** Ten top logs whose raid lusted at 2:00 and who pressed Shadow Blades 5s into it. */
+const MID_LUST_S = 120;
+const LUST_TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
+  ({ efficiency_pct: null, lust_s: MID_LUST_S, phase_starts: [], cd_casts_s: { 'Shadow Blades': [MID_LUST_S + 5] }, buttons: {} }));
 const HELD_TO_130 = { '2': { target_s: 130, delay_s: 30, band_s: 5, effective_cd_s: 90, count: 8, total_samples: 10 } };
 const PULL_S = 300;
 /** Five top logs that dealt 1000 in a window the player dealt nothing in. */
@@ -63,6 +68,8 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
     const casting = judges.measure([0, PULL_S], 1.5, [[0, PULL_S]]);
     return [casting ? judges.finding(casting, judges.reference(TOP_LOGS), PULL_S) ?? {} : {}];
   },
+  'rotation.bloodlust': async () => TestBed.inject(BloodlustJudgeService).findings('Shadow Blades', [], MID_LUST_S, LUST_TOP_LOGS),
+  'rotation.bloodlust_timing': async () => TestBed.inject(BloodlustJudgeService).findings('Shadow Blades', [MID_LUST_S + 40], MID_LUST_S, LUST_TOP_LOGS),
   'burst.window': async () => [TestBed.inject(BurstJudgeService).verdict(BURST, 0, 10)],
   'defensive.uses': async () => [TestBed.inject(DefensiveJudgeService).usesFinding(
     'Cloak', [], defBench({ sample_count: 10, used_sample_count: 10, uses_per_min: { avg: 1.4, stddev: 0.1 }, avg_gap_s: 40 }), pullModel(), DEFENSIVE_TOP_LOGS, false,
