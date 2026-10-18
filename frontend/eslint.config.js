@@ -9,6 +9,7 @@ import bannedCharacters from './eslint-rules/banned-characters.js';
 import pathConventions from './eslint-rules/path-conventions.js';
 import noFunctionAliasMembers from './eslint-rules/no-function-alias-members.js';
 import themeUtilitiesOnly from './eslint-rules/theme-utilities-only.js';
+import noSeverityLiteral from './eslint-rules/no-severity-literal.js';
 
 const local = {
   rules: {
@@ -17,6 +18,7 @@ const local = {
     'path-conventions': pathConventions,
     'no-function-alias-members': noFunctionAliasMembers,
     'theme-utilities-only': themeUtilitiesOnly,
+    'no-severity-literal': noSeverityLiteral,
   },
 };
 
@@ -197,6 +199,23 @@ export default defineConfig([
     files: ['src/app/**/*.ts'],
     ignores: ['src/**/*.spec.ts'],
     rules: { 'local/theme-utilities-only': 'error' },
+  },
+  {
+    // The verdict folder is the contract itself; the producers listed after it still grade their own rows and leave this list as they move onto ToneService.
+    files: ['src/app/domains/raid-analysis/data/**/*.ts'],
+    ignores: [
+      'src/**/*.spec.ts',
+      'src/app/domains/raid-analysis/data/verdict/**',
+      'src/app/domains/raid-analysis/data/analysis/cast-cadence-service.ts',
+      'src/app/domains/raid-analysis/data/analysis/finding-rows-service.ts',
+      'src/app/domains/raid-analysis/data/analysis/hold-targets-service.ts',
+      'src/app/domains/raid-analysis/data/burst-windows/burst-feature-service.ts',
+      'src/app/domains/raid-analysis/data/defensive/defensive-feature-service.ts',
+      'src/app/domains/raid-analysis/data/gear/gear-comparison-service.ts',
+      'src/app/domains/raid-analysis/data/rotation/priority-list/list-finding-service.ts',
+      'src/app/domains/raid-analysis/data/rotation/rotation-feature-service.ts',
+    ],
+    rules: { 'local/no-severity-literal': 'error' },
   },
   {
     files: ['src/**/*.ts'],

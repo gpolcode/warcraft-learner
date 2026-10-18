@@ -14,7 +14,7 @@ Your damage in each burst window and the damage you took in each defensive windo
 
 Any finding, death, window or judged press opens a scrubbable map of where you and the top raiders stood at that moment. During a live raid the page re-analyzes as new pulls upload, and an opt-in screen recording cuts a clip of each window without ever leaving the browser.
 
-Every threshold is derived from the top 10 Mythic parses for the same encounter and spec, not from arbitrary constants.
+Every reference is measured from the top Mythic logs for the same encounter and spec, one value per log. The numbers that are chosen rather than measured, such as how often a color may flag a top raider and the smallest group worth comparing against, live in one file, `frontend/src/app/domains/raid-analysis/data/verdict/verdict-choices.ts`.
 
 ## Run locally
 

@@ -108,3 +108,43 @@ The bump re-benches all 400 spec-encounter pairs (40 specs). Rankings reads are 
 - Per-parse arrays index `sources`; a leave-one-out fold drops index i from `sources` and every `per_parse`/`members` entry with `parse === i`.
 - Button counts: `ListCheckService.rightCounts`; efficiency: `computeEfficiencyThresholds(...).efficiencies`.
 - `BenchHeader.metric` says what a bench was ranked on; compare it before mixing a bench's amounts with the player's figure.
+
+## Package 3: verdict contract (done)
+
+Branch `claude/verdict-validity-p3-contract`, PR against `claude/verdict-validity-p2-reference`.
+
+### Done
+
+All under `RA/data/verdict/`:
+
+- **Chosen numbers**: `verdict-choices.ts` (`VERDICT_CHOICES`): per-test budgets (1%, 5%), page budgets (0.1, 1.0), arming bounds and minimum pooled tests (2% / 1,500, 8% / 500), `minReferenceN` 5, effect floors (2 and 3 excess misses, 1 use and 25% of expected, 5 s), paired consensus share 0.8, reaction 0.35 s, wipe dead share 0.5, phase guard 15 s, lift 2 / 1.3 and AUC 0.6. `MIN_SAMPLE_COUNT` (`top-parse-selection-service.ts`) and `PullModelService.halfRaid` read it.
+- **Tone**: `tone.models.ts` has `ToneLevel` (`neutral < blue < amber < red`), the branded `Tone` (a level or `muted`), `CostClass` and `Evidence` (`level`, `observed`, `n`, `target`, `excess`). `ToneService.tone(family, evidence)` returns `min(tier, evidence level, cost cap)`; cost cap: high red, medium amber, low amber on red evidence, blue on blue evidence, else neutral. `ToneService.muted()` for unjudged checks.
+- **Rules**: `DecisionRuleService` with `interval`, `excessRate`, `count`, `mechanistic`, `consensus`, `fact`; tail math in `DistributionService` (t quantile, binomial upper tail, Poisson CDF). Every rule returns neutral evidence on a bench under `minReferenceN`. Specs pair every boundary, s = 0 included.
+- **Registry**: `FindingFamily` (`finding-family.models.ts`), `FINDING_REGISTRY` (`finding-registry.ts`, empty), conformance spec `finding-registry.spec.ts` (unique ids, complete fields, red only on high cost, graded tiers name injected mistakes, minN at least 5, and a producing scenario per family in `PRODUCING_SCENARIOS` that must emit a finding whose `family` is the entry id). `AnalysisFinding.family?` is the id.
+- **Lint**: `local/no-severity-literal` (`frontend/eslint-rules/no-severity-literal.js`) fails a string literal of any severity, status or tone word (`critical`, `warning`, `info`, `success`, `hold_suggestion`, `good`, `warn`, `bad`, `red`, `amber`, `blue`) and any cast to `Tone` under `RA/data/**`; type positions, comparisons, switch cases and keys are allowed. Specs and `data/verdict/**` are exempt.
+- **Docs**: `.claude/skills/warcraft-verdict/SKILL.md`, its CLAUDE.md router row, the pointer from `warcraft-change`'s "New finding", the tier voice in `warcraft-writing`, README's measured vs chosen line.
+
+### Decisions and deviations
+
+- `AnalysisFinding.severity` keeps its string union: branding it breaks every producer, which is package 4. The branded `Tone` exists; package 4 switches the field (or the row mapping) to it.
+- Legacy producers sit in the `local/no-severity-literal` ignores in `frontend/eslint.config.js`: `cast-cadence-service`, `finding-rows-service`, `hold-targets-service`, `burst-feature-service`, `defensive-feature-service`, `gear-comparison-service`, `list-finding-service`, `rotation-feature-service`. Each leaves the list when its card moves.
+- Producer use is witnessed at runtime, not by scanning source: the Angular test build cannot read files (`node:fs` does not resolve), so each family needs a producing scenario.
+- `count` uses a Poisson lower bound on the expected uses (no per-parse count spread is baked). Cooldown counts are underdispersed against Poisson, so the bound errs toward fewer flags; calibration measures it.
+- `consensus`: alone, k = n is amber, red only once `1 / (n + 2)` is within the red budget (n >= 98); paired, amber from a share of 0.8 (a chosen number), else blue. Red for a paired consensus waits for calibration.
+- `fact`: a game rule backs it with red evidence (the tier and cost class cap it); a consensus backs it with that evidence.
+- Excess-rate reference rate is `max(misses / moments, 1 / (moments + 2))` over the pooled reference moments.
+
+### Drift against 6882b59
+
+None: sections 5.1 to 5.3 and 7 carry no file:line reference; `halfRaid` and `MIN_SAMPLE_COUNT` are where packages 1 and 2 left them.
+
+### Seams stubbed
+
+- `FINDING_REGISTRY` and `PRODUCING_SCENARIOS` are empty.
+- Calibration status (graded, comparison, hidden) does not cap `ToneService` yet; package 5 adds it as a fourth cap.
+- MARKER for package 5: add the calibration suite's command to the CLAUDE.md command table once it has a name.
+
+### For the next package
+
+- Per card: declare each family, call one `DecisionRuleService` rule on the shared measure, pass the evidence to `ToneService.tone`, set `family`, add the producing scenario, drop the producer from the lint ignores.
+- `Evidence.target` is the amber edge in the construct's unit (for `excessRate` the most misses tolerated, for `count` the fewest uses tolerated): print it as the row's target.
