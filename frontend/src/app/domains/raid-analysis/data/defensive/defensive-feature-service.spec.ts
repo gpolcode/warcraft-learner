@@ -111,7 +111,7 @@ describe('analyzeOneDefensive', () => {
 
   it('puts a defensive used as often as the top logs on plan', () => {
     const out = svc['analyzeOneDefensive'](player({ uses: 2, cast_times_s: [10, 70] }), bench, WHOLE, TOP_LOGS).findings;
-    expect(out).toEqual([expect.objectContaining({ severity: 'success', cd_name: 'Cloak of Shadows' })]);
+    expect(out).toEqual([expect.objectContaining({ onPlan: true, cd_name: 'Cloak of Shadows' })]);
   });
 
   it('skips a talent-gated defensive that was never used, and counts it unchecked', () => {
@@ -120,7 +120,7 @@ describe('analyzeOneDefensive', () => {
 
   it('puts a used defensive with no bench on plan, and counts it unchecked', () => {
     expect(svc['analyzeOneDefensive'](player({ uses: 1, cast_times_s: [10] }), undefined, WHOLE)).toMatchObject({
-      findings: [expect.objectContaining({ severity: 'success' })], checked: 0,
+      findings: [expect.objectContaining({ onPlan: true })], checked: 0,
     });
     expect(svc['analyzeOneDefensive'](player({ uses: 0 }), undefined, WHOLE).findings).toEqual([]);
   });

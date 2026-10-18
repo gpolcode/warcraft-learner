@@ -36,12 +36,6 @@ describe('ToneService', () => {
     expect(tones.tone({ tier: 'blue', costClass: 'low' }, evidence('blue'))).toBe('blue');
   });
 
-  it('tells a tone apart from a legacy severity word', () => {
-    expect(tones.isTone('amber')).toBe(true);
-    expect(tones.isTone('muted')).toBe(true);
-    expect(tones.isTone('warning')).toBe(false);
-  });
-
   it('marks an unjudged check muted', () => {
     expect(tones.muted()).toBe('muted');
   });

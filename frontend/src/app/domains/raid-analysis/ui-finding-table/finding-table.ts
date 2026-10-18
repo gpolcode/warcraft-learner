@@ -17,7 +17,6 @@ export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-servi
 
 type RowTone = 'red' | 'amber' | 'blue' | 'neutral' | 'muted';
 
-const LEGACY_TONE: Record<string, RowTone> = { critical: 'red', warning: 'amber', info: 'blue' };
 const TONE_ICON: Record<Exclude<RowTone, 'muted'>, string> = { red: 'error', amber: 'warning_amber', blue: 'info', neutral: 'compare_arrows' };
 const UNJUDGED_ICON: Record<UnjudgedCause, string> = { dead: 'skull', after_wipe: 'flag', not_reached: 'schedule' };
 
@@ -61,7 +60,7 @@ export class FindingTable {
 
   /** A legacy producer's word read as the tone it stands for, so both kinds of row share one look. */
   toneOf(row: FindingRow): RowTone {
-    return LEGACY_TONE[row.severity] ?? (row.severity as RowTone);
+    return row.severity;
   }
 
   iconOf(row: FindingRow): string {

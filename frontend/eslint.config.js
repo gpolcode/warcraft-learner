@@ -201,13 +201,11 @@ export default defineConfig([
     rules: { 'local/theme-utilities-only': 'error' },
   },
   {
-    // The verdict folder is the contract itself; the producers listed after it still grade their own rows and leave this list as they move onto ToneService.
+    // The verdict folder is the contract itself, so it alone writes a tone.
     files: ['src/app/domains/raid-analysis/data/**/*.ts'],
     ignores: [
       'src/**/*.spec.ts',
       'src/app/domains/raid-analysis/data/verdict/**',
-      'src/app/domains/raid-analysis/data/analysis/finding-rows-service.ts',
-      'src/app/domains/raid-analysis/data/rotation/rotation-feature-service.ts',
     ],
     rules: { 'local/no-severity-literal': 'error' },
   },

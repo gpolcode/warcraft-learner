@@ -26,8 +26,9 @@ export interface ConditionCheck {
 export interface AnalysisFinding {
   /** The `FindingFamily.id` of a family on the verdict contract. */
   family?: string;
-  /** A family on the verdict contract carries the tone `ToneService` made; a legacy producer still names its own word. */
-  severity: 'critical' | 'warning' | 'info' | 'hold_suggestion' | 'success' | Tone;
+  severity: Tone;
+  /** Nothing is flagged for the cooldown, so it surfaces as an "On plan" chip rather than a row. */
+  onPlan?: boolean;
   /** Why a muted finding was not judged. */
   unjudged?: UnjudgedCause;
   category: string;
@@ -106,6 +107,5 @@ export const CAT_LABEL: Record<string, string> = {
   cooldown_delay: 'late',
   cooldown_alignment: 'Bloodlust',
   cast_efficiency: 'downtime',
-  hold_suggestion: 'hold until',
   cooldown_hold: 'hold until',
 };

@@ -3,6 +3,7 @@ import { FindingEntry, UNKNOWN_COOLDOWN_LABEL, FindingRowsService } from './find
 import type { AnalysisFinding } from './analysis.models';
 import { SHADOW_BLADES, VANISH } from '../../../../../testing/spell-ids';
 import { TestBed } from '@angular/core/testing';
+import { tone } from '../../../../../testing/builders/tone';
 
 const rowBuilder = TestBed.inject(FindingRowsService);
 
@@ -28,8 +29,8 @@ describe('bucketFindings', () => {
   beforeEach(() => { warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined); });
   afterEach(() => { warnSpy.mockRestore(); });
 
-  it('groups critical issue under its cooldown name', () => {
-    const finding = f('critical', 'lost_cooldown', 'Shadow Blades');
+  it('groups a red issue under its cooldown name', () => {
+    const finding = f(tone('red'), 'lost_cooldown', 'Shadow Blades');
     const entries = rowBuilder.bucketFindings([finding], { spellId, icon });
 
     expect(entries).toHaveLength(1);
@@ -39,11 +40,10 @@ describe('bucketFindings', () => {
     expect(entries[0].hasIssue).toBe(true);
   });
 
-  it('routes hold_suggestion with details.cd_name to the holds bucket (not issues)', () => {
-    // Note: hold_suggestion routing uses finding.details?.cd_name, NOT finding.cd_name.
+  it('buckets a hold under the cooldown its details name, since a hold finding carries no cd_name of its own', () => {
     const finding: AnalysisFinding = {
-      severity: 'info',
-      category: 'hold_suggestion',
+      severity: tone('blue'),
+      category: 'cooldown_hold',
       message: 'hold tip',
       details: { cd_name: 'Feint' },
       occurrences: [],
@@ -58,7 +58,7 @@ describe('bucketFindings', () => {
   });
 
   it('buckets a rule_violation under its cooldown name', () => {
-    const finding: AnalysisFinding = f('warning', 'rule_violation', 'Shadow Blades');
+    const finding: AnalysisFinding = f(tone('amber'), 'rule_violation', 'Shadow Blades');
     const entries = rowBuilder.bucketFindings([finding], { spellId, icon });
 
     expect(entries).toHaveLength(1);
@@ -66,8 +66,8 @@ describe('bucketFindings', () => {
     expect(entries[0].name).toBe('Shadow Blades');
   });
 
-  it('success finding with cd_name creates an entry with hasIssue=false', () => {
-    const finding = f('success', 'cooldown_usage', 'Shadow Blades');
+  it('gives an on-plan finding an entry with no issue, so it surfaces as a chip', () => {
+    const finding = rowBuilder.onPlanFinding('Shadow Blades');
     const entries = rowBuilder.bucketFindings([finding], { spellId, icon });
 
     expect(entries).toHaveLength(1);
@@ -82,7 +82,7 @@ describe('bucketFindings', () => {
   });
 
   it('surfaces a finding with no cd_name as an Unknown cooldown entry', () => {
-    const finding = f('warning', 'cast_efficiency');
+    const finding = f(tone('amber'), 'cast_efficiency');
     const entries = rowBuilder.bucketFindings([finding], { spellId, icon });
     expect(entries).toHaveLength(1);
     assert.exists(entries[0]);
@@ -94,7 +94,7 @@ describe('bucketFindings', () => {
   });
 
   it('logs a warning carrying the finding so an unidentified cooldown can be reproduced', () => {
-    const finding = f('warning', 'cast_efficiency');
+    const finding = f(tone('amber'), 'cast_efficiency');
     rowBuilder.bucketFindings([finding], { spellId, icon });
     expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('unknown-cooldown'), finding);
   });
@@ -107,7 +107,7 @@ describe('rowsFromEntries', () => {
     icon: '',
     hasIssue: true,
     findings: [
-      { severity: 'critical', category: 'lost_cooldown', message: 'lost', measured: { value: '0 / 2', unit: 'cast(s)' }, occurrences: [] },
+      { severity: tone('red'), category: 'lost_cooldown', message: 'lost', measured: { value: '0 / 2', unit: 'cast(s)' }, occurrences: [] },
     ],
   };
 
@@ -137,7 +137,7 @@ describe('rowsFromEntries', () => {
   it('leaves the chip off a category that has no label, so no row shows an empty tag', () => {
     const entry: FindingEntry = {
       name: 'Shadow Blades', spellId: null, icon: '', hasIssue: true,
-      findings: [{ severity: 'warning', category: 'rule_violation', message: 'bad', occurrences: [] }],
+      findings: [{ severity: tone('amber'), category: 'rule_violation', message: 'bad', occurrences: [] }],
     };
     const rows = rowBuilder.rowsFromEntries([entry]);
     assert.exists(rows[0]);
@@ -151,29 +151,23 @@ describe('rowsFromEntries', () => {
   it('uses a dash placeholder when finding.measured is absent', () => {
     const entry: FindingEntry = {
       name: 'Shadow Blades', spellId: null, icon: '', hasIssue: true,
-      findings: [{ severity: 'warning', category: 'rule_violation', message: 'bad', occurrences: [] }],
+      findings: [{ severity: tone('amber'), category: 'rule_violation', message: 'bad', occurrences: [] }],
     };
     const rows = rowBuilder.rowsFromEntries([entry]);
     assert.exists(rows[0]);
     expect(rows[0].measured).toEqual({ value: '-' });
   });
 
-  it('maps critical to "critical", info to its own "info" state, everything else to "warning"', () => {
+  it('carries each finding\'s tone onto its row unchanged', () => {
     const mixedEntry: FindingEntry = {
       ...issueEntry,
       findings: [
-        { severity: 'critical', category: 'lost_cooldown',   message: '', measured: { value: '', unit: '' }, occurrences: [] },
-        { severity: 'info',     category: 'cast_efficiency',  message: '', measured: { value: '', unit: '' }, occurrences: [] },
-        { severity: 'warning',  category: 'cooldown_delay',   message: '', measured: { value: '', unit: '' }, occurrences: [] },
+        { severity: tone('red'), category: 'lost_cooldown', message: '', measured: { value: '', unit: '' }, occurrences: [] },
+        { severity: tone('blue'), category: 'cooldown_hold', message: '', measured: { value: '', unit: '' }, occurrences: [] },
+        { severity: tone('muted'), category: 'cooldown_delay', message: '', measured: { value: '', unit: '' }, occurrences: [] },
       ],
     };
-    const rows = rowBuilder.rowsFromEntries([mixedEntry]);
-    assert.exists(rows[0]);
-    expect(rows[0].severity).toBe('critical');
-    assert.exists(rows[1]);
-    expect(rows[1].severity).toBe('info');
-    assert.exists(rows[2]);
-    expect(rows[2].severity).toBe('warning');
+    expect(rowBuilder.rowsFromEntries([mixedEntry]).map(row => row.severity)).toEqual(['red', 'blue', 'muted']);
   });
 });
 

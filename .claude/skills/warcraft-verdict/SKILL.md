@@ -46,4 +46,4 @@ The contract lives in `frontend/src/app/domains/raid-analysis/data/verdict/`. Ev
 6. Bump the family's `version` on any change to its measure, rule or parameters.
 7. Copy follows the tier voice in **warcraft-writing**; the row prints its reference as a count.
 
-The producers listed in the `local/no-severity-literal` ignores in `frontend/eslint.config.js` still grade their own rows. A producer moved onto the contract leaves that list in the same change.
+`local/no-severity-literal` ignores only specs and `data/verdict/**`: `AnalysisFinding.severity` and `FindingRow.severity` are a `Tone`, and an on-plan finding is a neutral tone with `onPlan` set. Any new entry in its ignores carries a one-line justification in `frontend/eslint.config.js`.

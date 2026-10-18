@@ -6,7 +6,7 @@ import { PlanCooldown, PlanItem, PriorityList } from '../plan/plan.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { group, quantile } from 'd3-array';
 import {
-  round, avgOr, stddevOr, closestToZero,
+  round, avgOr, stddevOr,
 } from '../analysis/analysis-math';
 import { HoldWindow } from '../analysis/hold-targets-service';
 import { WclProjectionsService, TimedEvent, PhaseStart } from '../analysis/wcl-projections-service';
@@ -26,9 +26,8 @@ import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { CooldownUseJudgeService } from './cooldown-use-judge-service';
 import { DowntimeJudgeService } from './downtime-judge-service';
+import { BloodlustJudgeService } from './bloodlust-judge-service';
 
-const BL_WINDOW_BEFORE_S = 30;
-const BL_WINDOW_AFTER_S = 55;
 const DOWNTIME_PERCENTILE = 0.9;
 const DEFAULT_DOWNTIME_THRESHOLD_S = 1.5;
 
@@ -69,6 +68,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly listBench = inject(ListBenchService);
   private readonly cooldownUses = inject(CooldownUseJudgeService);
   private readonly downtime = inject(DowntimeJudgeService);
+  private readonly lust = inject(BloodlustJudgeService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<RotationBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
@@ -147,15 +147,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
     return cooldowns.map(cooldown => {
       const castTimesS = this.cooldownUses.castTimesS(castEvents, cooldown.spell_id, upAtPull, fightDurS);
 
-      let blAligned = false;
-      let blOffsetS: number | null = null;
-      if (blTimeS != null && castTimesS.length) {
-        const windowOffsets = castTimesS
-          .filter(timeS => blTimeS - BL_WINDOW_BEFORE_S <= timeS && timeS <= blTimeS + BL_WINDOW_AFTER_S)
-          .map(timeS => timeS - blTimeS);
-        blAligned = windowOffsets.length > 0;
-        if (windowOffsets.length) blOffsetS = round(closestToZero(windowOffsets));
-      }
+      const blOffsetS = this.lust.measureOffset(castTimesS, blTimeS);
 
       const holdWindows = this.holdTargets.detectHoldWindows(castTimesS, cooldown.cooldown);
 
@@ -163,8 +155,8 @@ export class RotationTransformService implements DataSource<RotationBench> {
         name: cooldown.name,
         total_uses: castTimesS.length,
         first_cast_s: castTimesS[0] != null ? round(castTimesS[0]) : null,
-        bl_aligned: blAligned,
-        bl_offset_s: blOffsetS,
+        bl_aligned: blOffsetS !== null,
+        bl_offset_s: blOffsetS === null ? null : round(blOffsetS),
         cast_times_s: castTimesS.map(timeS => round(timeS, 2)),
         hold_windows: holdWindows,
         cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',

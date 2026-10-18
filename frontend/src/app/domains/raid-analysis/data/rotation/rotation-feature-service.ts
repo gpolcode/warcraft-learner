@@ -5,9 +5,7 @@ import { FindingRow, FindingRowsService, OnPlanChip } from '../analysis/finding-
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { PlanCooldown } from '../plan/plan.models';
 import { Result, Results } from '../../../shared/util-http/result';
-import {
-  isOutlierBeyond, OUTLIER_SIGMAS, TIMING_BAND_MIN_S, closestToZero, benchExpectedUses, fmtClock, sortBySeverity, buttonTaken,
-} from '../analysis/analysis-math';
+import { sortBySeverity, buttonTaken } from '../analysis/analysis-math';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../analysis/wcl-projections-service';
 import { PullContextService, PullContext, PullRef } from '../analysis/pull-context-service';
 import { ListLogService } from './priority-list/list-log-service';
@@ -23,6 +21,7 @@ import { SpecRoleService } from '../analysis/spec-role-service';
 import { CooldownUseJudgeService } from './cooldown-use-judge-service';
 import { CadenceJudgeService } from './cadence-judge-service';
 import { DowntimeJudgeService } from './downtime-judge-service';
+import { BloodlustJudgeService } from './bloodlust-judge-service';
 
 export interface CdPlanRow {
   name: string;
@@ -34,8 +33,8 @@ export interface CdPlanRow {
   usedSampleCount: number;
   sampleCount: number;
   usesPerMin: number | null;
+  /** Most top logs whose raid lusted mid-fight pressed it for their lust. */
   bloodlust: boolean;
-  bloodlustPct: number | null;
   holds: { castIndex: number; targetS: number }[];
 }
 
@@ -63,11 +62,6 @@ export interface RotationPlanView {
   rows: CdPlanRow[];
 }
 
-const BLOODLUST_DURATION_S = 40;
-const BL_WINDOW_LEAD_S = 30;
-const BL_WINDOW_TRAIL_S = 15;
-const BL_CONSENSUS_PCT = 50;
-
 export interface RotationScanInput {
   model: PullModel;
   castEvents: TimedEvent[];
@@ -77,7 +71,7 @@ export interface RotationScanInput {
   talents: ReadonlyMap<number, number> | null;
 }
 
-interface CooldownScan { issues: AnalysisFinding[]; holds: AnalysisFinding[]; blAligned: boolean; folded: FoldCounts; }
+interface CooldownScan { issues: AnalysisFinding[]; holds: AnalysisFinding[]; folded: FoldCounts; }
 
 interface RotationScan { findings: AnalysisFinding[]; folded: FoldCounts; checked: number; downtimeEmpty: string; }
 
@@ -88,11 +82,11 @@ interface ResolvedCd { spellId: number | null; icon: string; rowName: string }
 interface PartitionedFindings {
   downtimeFindings: AnalysisFinding[];
   byName: Record<string, FindingBucket>;
-  successNames: Set<string>;
+  onPlanNames: Set<string>;
 }
 
 type CdPlanUsage = Pick<
-  CdPlanRow, 'firstCastS' | 'typicalUses' | 'usedSampleCount' | 'sampleCount' | 'usesPerMin' | 'bloodlust' | 'bloodlustPct'
+  CdPlanRow, 'firstCastS' | 'typicalUses' | 'usedSampleCount' | 'sampleCount' | 'usesPerMin' | 'bloodlust'
 >;
 
 @Injectable({ providedIn: 'root' })
@@ -113,6 +107,7 @@ export class RotationFeatureService {
   private readonly cooldownUses = inject(CooldownUseJudgeService);
   private readonly cadence = inject(CadenceJudgeService);
   private readonly downtime = inject(DowntimeJudgeService);
+  private readonly lust = inject(BloodlustJudgeService);
   private readonly findingRows = inject(FindingRowsService);
 
   async loadPlayerView(
@@ -197,46 +192,8 @@ export class RotationFeatureService {
   async loadPlanView(spec: string, encounterId: number): Promise<Result<RotationPlanView>> {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return Results.ok({ rows: this.buildCdPlan(bench.value.major_cooldowns, bench.value.per_cd_benchmarks, bench.value.ability_icons) });
-  }
-
-  protected checkBloodlustAlignment(
-    cdName: string, castTimesS: number[], cdBench: PerCdBenchmark, blTimeS: number | null, wantsBL: boolean,
-  ): { blAligned: boolean; findings: AnalysisFinding[] } {
-    const firstCastS = castTimesS[0];
-    if (blTimeS === null || firstCastS == null) return { blAligned: false, findings: [] };
-    const inWindow = castTimesS.filter(timeS =>
-      timeS >= blTimeS - BL_WINDOW_LEAD_S && timeS <= blTimeS + BLOODLUST_DURATION_S + BL_WINDOW_TRAIL_S);
-    const blAligned = inWindow.length > 0;
-    const findings: AnalysisFinding[] = [];
-    if (!blAligned && wantsBL) {
-      findings.push({ severity: 'critical', category: 'cooldown_alignment', cd_name: cdName,
-        timestamp_s: firstCastS,
-        span: { fromS: blTimeS - BL_WINDOW_LEAD_S, toS: blTimeS + BLOODLUST_DURATION_S + BL_WINDOW_TRAIL_S },
-        measured: { value: 'missed', unit: 'Bloodlust' },
-        message: `${cdName} missed Bloodlust. Bloodlust started at ${fmtClock(blTimeS)}, ${cdName} at ${fmtClock(firstCastS)}.`,
-        details: { remedy: `Align ${cdName} with Bloodlust.` }, occurrences: [] });
-    } else if (blAligned) {
-      const timing = this.bloodlustTiming(cdName, inWindow, cdBench, blTimeS);
-      if (timing) findings.push(timing);
-    }
-    return { blAligned, findings };
-  }
-
-  private bloodlustTiming(cdName: string, inWindow: number[], cdBench: PerCdBenchmark, blTimeS: number): AnalysisFinding | null {
-    if (cdBench.avg_bl_offset_s == null || cdBench.stddev_bl_offset_s == null) return null;
-    // The judged cast (closest-to-zero offset) is not always the earliest in the window.
-    const offsets = inWindow.map(timeS => timeS - blTimeS);
-    const playerOffset = closestToZero(offsets);
-    const judgedCastS = inWindow[offsets.indexOf(playerOffset)] ?? blTimeS + playerOffset;
-    if (!isOutlierBeyond(playerOffset, cdBench.avg_bl_offset_s, cdBench.stddev_bl_offset_s, OUTLIER_SIGMAS, TIMING_BAND_MIN_S)) return null;
-    const dir = playerOffset > cdBench.avg_bl_offset_s ? 'late' : 'early';
-    return { severity: 'warning', category: 'cooldown_alignment', cd_name: cdName,
-      timestamp_s: judgedCastS,
-      span: { fromS: Math.min(blTimeS, judgedCastS), toS: Math.max(blTimeS, judgedCastS) },
-      measured: { value: dir, unit: 'in Bloodlust' },
-      message: `${cdName} was ${dir} inside the Bloodlust window.`,
-      details: { remedy: `Tighten ${cdName} to the Bloodlust window.` }, occurrences: [] };
+    const stored: Partial<RotationBench> = bench.value;
+    return Results.ok({ rows: this.buildCdPlan(bench.value.major_cooldowns, bench.value.per_cd_benchmarks, bench.value.ability_icons, stored.per_parse ?? []) });
   }
 
   /** `castTimesS` are every cast inside the judged span; the empty state names how many top logs judged it. */
@@ -249,33 +206,20 @@ export class RotationFeatureService {
     return { finding: this.downtime.finding(casting, reference, model.fightDurationS), empty: this.downtimeEmpty(reference.length, bench) };
   }
 
-  private cooldownSuccess(cdName: string, actual: number, detail: string): AnalysisFinding | null {
-    return actual > 0
-      ? { severity: 'success', category: 'cooldown_usage', cd_name: cdName, message: `${cdName}${detail}`, occurrences: [] }
-      : null;
-  }
-
   /** `castTimesS` are fight-relative seconds, ascending, inside the judged span. Null when the cooldown went unused and the player's talents do not show it. */
   protected analyzeOneCooldown(
     cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark | undefined,
     model: PullModel, talents: ReadonlyMap<number, number> | null, perParse: readonly RotationParseMeasures[] = [],
-  ): { success: AnalysisFinding | null; scan: CooldownScan } | null {
+  ): { onPlan: AnalysisFinding | null; scan: CooldownScan } | null {
     const cdName = cd.name;
     const actual = castTimesS.length;
     if (actual === 0 && !buttonTaken(cd, talents)) return null;
 
-    if (!cdBench) {
-      const success = this.cooldownSuccess(cdName, actual, `: ${actual} casts (no bench data).`);
-      return { success, scan: { issues: [], holds: [], blAligned: false, folded: this.pullModel.noFolds() } };
-    }
-
-    // BL alignment is data-driven: a cooldown "wants BL" when most top parses align it.
-    const wantsBL = cdBench.bl_pct >= BL_CONSENSUS_PCT;
-    const { expected } = benchExpectedUses(model.aliveSpans, cdBench);
+    const onPlan = actual > 0 ? this.findingRows.onPlanFinding(cdName) : null;
+    if (!cdBench) return { onPlan, scan: { issues: [], holds: [], folded: this.pullModel.noFolds() } };
 
     const { checked, uses } = this.majorityChecks(cd, castTimesS, cdBench, { model, talents, perParse });
-    const bl = this.checkBloodlustAlignment(cdName, castTimesS, cdBench, model.lust?.startS ?? null, wantsBL);
-    checked.push(...bl.findings);
+    checked.push(...this.lust.findings(cdName, castTimesS, model.lust?.startS ?? null, perParse));
     const gap = this.cadence.gapFinding(cdName, castTimesS, model.aliveSpans, perParse, cdBench.hold_targets);
     checked.push(...[gap].filter(finding => finding !== null));
     const checkedHolds = this.cadence.holdFindings(cdName, castTimesS, cdBench.hold_targets);
@@ -284,9 +228,7 @@ export class RotationFeatureService {
     const issues = [...uses, ...kept];
     const { kept: holds, folded: foldedHolds } = this.pullModel.foldFindings(model, checkedHolds);
 
-    const blNote = bl.blAligned && wantsBL ? ', aligned with Bloodlust' : '';
-    const success = issues.length ? null : this.cooldownSuccess(cdName, actual, ` - ${actual}/${expected} casts${blNote}.`);
-    return { success, scan: { issues, holds, blAligned: bl.blAligned, folded: this.pullModel.addFolds(folded, foldedHolds) } };
+    return { onPlan: issues.length ? null : onPlan, scan: { issues, holds, folded: this.pullModel.addFolds(folded, foldedHolds) } };
   }
 
   /** A cooldown most top logs skip has a noisy expected count and opener, so neither is checked. */
@@ -322,7 +264,7 @@ export class RotationFeatureService {
       checked += 1;
       folded = this.pullModel.addFolds(folded, result.scan.folded);
       if (result.scan.issues.length) findings.push(...result.scan.issues);
-      else if (result.success) findings.push(result.success);
+      else if (result.onPlan) findings.push(result.onPlan);
       if (castTimesS.length) findings.push(...result.scan.holds);
     }
 
@@ -345,21 +287,21 @@ export class RotationFeatureService {
   protected partitionRotationFindings(findings: AnalysisFinding[]): PartitionedFindings {
     const downtimeFindings: AnalysisFinding[] = [];
     const byName: Record<string, FindingBucket> = {};
-    const successNames = new Set<string>();
+    const onPlanNames = new Set<string>();
     const bucketFor = (name: string): FindingBucket => (byName[name] ??= { issues: [], holds: [] });
     for (const finding of findings) {
-      if (finding.severity === 'success') { if (finding.cd_name) successNames.add(finding.cd_name); continue; }
+      if (finding.onPlan) { if (finding.cd_name) onPlanNames.add(finding.cd_name); continue; }
       const holdName = finding.category === 'cooldown_hold' ? finding.details?.cd_name : undefined;
       if (holdName) bucketFor(holdName).holds.push(finding);
       else if (!finding.cd_name) downtimeFindings.push(finding);
       else bucketFor(finding.cd_name).issues.push(finding);
     }
-    return { downtimeFindings, byName, successNames };
+    return { downtimeFindings, byName, onPlanNames };
   }
 
   protected buildDowntimeRows(downtimeFindings: AnalysisFinding[]): FindingRow[] {
     return downtimeFindings.map(finding => ({
-      severity: this.findingRows.rowSeverity(finding.severity),
+      severity: finding.severity,
       name: '',
       icon: '',
       what: finding.label,
@@ -381,7 +323,7 @@ export class RotationFeatureService {
       const { spellId, icon, rowName } = this.resolveCd(name, cdSpellIds, abilities);
       for (const finding of [...bucket.issues, ...bucket.holds]) {
         offensiveRows.push({
-          severity: this.findingRows.rowSeverity(finding.severity),
+          severity: finding.severity,
           name: rowName,
           spellId,
           icon,
@@ -401,9 +343,9 @@ export class RotationFeatureService {
   protected buildOnPlanChips(
     partition: PartitionedFindings, cdSpellIds: Record<string, number>, abilities: AbilityIcons,
   ): OnPlanChip[] {
-    const { byName, successNames } = partition;
+    const { byName, onPlanNames } = partition;
     const onPlan: OnPlanChip[] = [];
-    for (const name of successNames) {
+    for (const name of onPlanNames) {
       if (!byName[name] || (!byName[name].issues.length && !byName[name].holds.length)) {
         const { spellId, icon, rowName } = this.resolveCd(name, cdSpellIds, abilities);
         onPlan.push({ name: rowName, spellId, icon });
@@ -423,34 +365,36 @@ export class RotationFeatureService {
     };
   }
 
-  private cdPlanUsageOf(cdBench: PerCdBenchmark | undefined): CdPlanUsage {
+  private cdPlanUsageOf(name: string, cdBench: PerCdBenchmark | undefined, perParse: readonly RotationParseMeasures[]): CdPlanUsage {
     const usage = this.castCadence.cadencePlanUsage(cdBench);
-    if (!cdBench) return { ...usage, usesPerMin: null, bloodlust: false, bloodlustPct: null };
-    const alignedWithBl = cdBench.bl_pct >= BL_CONSENSUS_PCT;
+    if (!cdBench) return { ...usage, usesPerMin: null, bloodlust: false };
     return {
       ...usage,
       usesPerMin: this.castCadence.usedByMajority(cdBench) ? cdBench.uses_per_min.avg : null,
-      bloodlust: alignedWithBl, bloodlustPct: alignedWithBl ? cdBench.bl_pct : null,
+      bloodlust: this.lust.wantsLust(this.lust.reference(perParse, name)),
     };
   }
 
-  private cdPlanRow(cd: PlanCooldown, cdBench: PerCdBenchmark | undefined, abilities: AbilityIcons): CdPlanRow {
+  private cdPlanRow(
+    cd: PlanCooldown, cdBench: PerCdBenchmark | undefined, abilities: AbilityIcons, perParse: readonly RotationParseMeasures[],
+  ): CdPlanRow {
     const ability = abilities[cd.spell_id];
     if (!ability) this.logger.logWarn('buildCdPlan: ability id missing from ability map', cd.spell_id);
     return {
-      name: cd.name, spellId: cd.spell_id, icon: ability?.icon ?? '', ...this.cdPlanUsageOf(cdBench),
+      name: cd.name, spellId: cd.spell_id, icon: ability?.icon ?? '', ...this.cdPlanUsageOf(cd.name, cdBench, perParse),
       holds: this.castCadence.holdsOf(cdBench),
     };
   }
 
   protected buildCdPlan(
     cooldowns: PlanCooldown[], benchmarks: Record<string, PerCdBenchmark>, abilities: AbilityIcons,
+    perParse: readonly RotationParseMeasures[] = [],
   ): CdPlanRow[] {
     const ordered = [...cooldowns].sort((a, b) => {
       const pa = a.opener_priority ?? 99;
       const pb = b.opener_priority ?? 99;
       return pa !== pb ? pa - pb : a.name.localeCompare(b.name);
     });
-    return ordered.map(cd => this.cdPlanRow(cd, benchmarks[cd.name], abilities));
+    return ordered.map(cd => this.cdPlanRow(cd, benchmarks[cd.name], abilities, perParse));
   }
 }
