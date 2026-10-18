@@ -5,8 +5,9 @@ import { PullModel } from '../../analysis/pull-model-service';
 import { PerCdBenchmark } from '../../encounter/encounter.models';
 import { PlanCooldown } from '../../plan/plan.models';
 import { ButtonJudgeService, ROTATION_BUTTON_FAMILY } from '../../rotation/priority-list/button-judge-service';
-import { CooldownUseJudgeService, LOST_CAST_FAMILY, NEVER_USED_FAMILY } from '../../rotation/cooldown-use-judge-service';
-import { CadenceJudgeService, COOLDOWN_GAP_FAMILY, COOLDOWN_HOLD_FAMILY, LATE_OPENER_FAMILY } from '../../rotation/cadence-judge-service';
+import { CooldownUseJudgeService, NEVER_USED_FAMILY } from '../../rotation/cooldown-use-judge-service';
+import { CadenceJudgeService, COOLDOWN_HOLD_FAMILY } from '../../rotation/cadence-judge-service';
+import { READY_TIME_FAMILY, ReadyTimeJudgeService } from '../../rotation/ready-time-judge-service';
 import { DOWNTIME_FAMILY, DowntimeJudgeService } from '../../rotation/downtime-judge-service';
 import { BLOODLUST_ALIGNMENT_FAMILY, BLOODLUST_TIMING_FAMILY, BloodlustJudgeService } from '../../rotation/bloodlust-judge-service';
 import { RotationBench, RotationParseMeasures } from '../../rotation/rotation-data-source';
@@ -28,6 +29,7 @@ export class RotationHeldOutService {
   private readonly buttons = inject(ButtonJudgeService);
   private readonly uses = inject(CooldownUseJudgeService);
   private readonly cadence = inject(CadenceJudgeService);
+  private readonly readyTime = inject(ReadyTimeJudgeService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly downtime = inject(DowntimeJudgeService);
   private readonly lust = inject(BloodlustJudgeService);
@@ -59,29 +61,29 @@ export class RotationHeldOutService {
     return [
       ...this.castCadence.usedByMajority(cdBench) ? this.majorityRows(fold, log, { cooldown, castTimesS, cdBench, taken }) : [],
       ...this.lustRows(fold, log, cooldown.name, castTimesS),
-      ...this.gapRows(fold, model, cooldown.name, castTimesS, cdBench),
       ...this.holdRows(model, castTimesS, cdBench),
     ];
   }
 
+  /** A used cooldown is a ready-time test, an unused one a never-used test. */
   private majorityRows(
     fold: RotationBench, log: RotationHeldOut,
     check: { cooldown: PlanCooldown; castTimesS: number[]; cdBench: PerCdBenchmark; taken: boolean },
   ): HeldOutRow[] {
     const { cooldown, castTimesS, cdBench, taken } = check;
-    const name = cooldown.name;
-    const firstS = this.cadence.measureOpener(castTimesS);
-    const opener = firstS === null ? [] : this.rows.row(
-      LATE_OPENER_FAMILY, this.cadence.judgeOpener(firstS, this.cadence.referenceOpeners(fold.per_parse.map(parse => parse.cd_casts_s), name)),
-      log.model, { fromS: 0, toS: firstS },
-    );
-    const uses = this.uses.measure(castTimesS, log.model.aliveSpans, cdBench);
-    if (uses.expected === 0) return opener;
-    const reference = this.uses.referenceUses(fold.per_parse, name);
-    const judgement = this.uses.judge(uses, reference, taken);
-    const family = uses.uses === 0 ? NEVER_USED_FAMILY : LOST_CAST_FAMILY;
-    const evidence = judgement?.evidence ?? { level: 'neutral' as const, n: reference.length, observed: uses.uses, target: null, excess: 0 };
-    return [...opener, ...this.rows.row(family, evidence)];
+    const { model } = log;
+    const casts = fold.per_parse.map(parse => parse.cd_casts_s);
+    if (!castTimesS.length) {
+      const uses = this.uses.measure(castTimesS, model.aliveSpans, cdBench);
+      const evidence = uses.expected === 0 ? null : this.uses.judge(uses, this.uses.referenceFirstUses(casts, cooldown.name), model.aliveSpans, { taken, cooldownS: cooldown.cooldown });
+      return evidence ? this.rows.row(NEVER_USED_FAMILY, evidence) : [];
+    }
+    const ready = this.readyTime.readyCooldown(cooldown, casts, cooldown.name);
+    const measured = this.readyTime.measure(castTimesS, model.aliveSpans, ready, cdBench.hold_targets);
+    if (!measured) return [];
+    const killsS = fold.sources.map(source => source.duration_s);
+    const reference = this.readyTime.reference(casts, killsS, cooldown.name, ready, cdBench.hold_targets, model.aliveSpans);
+    return this.rows.row(READY_TIME_FAMILY, this.readyTime.judge(measured, reference, ready));
   }
 
   /** Inside the band every lust is an alignment test, and a pressed one also a timing test; outside it nothing is judged. */
@@ -98,13 +100,6 @@ export class RotationHeldOutService {
     const castS = lustS + offsetS;
     const span = { fromS: Math.min(lustS, castS), toS: Math.max(lustS, castS) };
     return [...alignment, ...this.rows.row(BLOODLUST_TIMING_FAMILY, this.lust.judgeTiming(offsetS, reference), log.model, span)];
-  }
-
-  private gapRows(fold: RotationBench, model: PullModel, name: string, castTimesS: readonly number[], cdBench: PerCdBenchmark): HeldOutRow[] {
-    const gap = this.cadence.measureGap(castTimesS, model.aliveSpans, cdBench.hold_targets);
-    if (!gap) return [];
-    const reference = this.cadence.referenceGaps(fold.per_parse.map(parse => parse.cd_casts_s), name, cdBench.hold_targets);
-    return this.rows.row(COOLDOWN_GAP_FAMILY, this.cadence.judgeGap(gap.gapS, reference), model, { fromS: gap.fromS, toS: gap.toS });
   }
 
   /** A hold target is a test on every log that used the cooldown; only an early use flags it. */

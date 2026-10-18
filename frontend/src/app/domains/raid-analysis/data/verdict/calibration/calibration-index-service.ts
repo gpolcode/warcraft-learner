@@ -172,7 +172,8 @@ export class CalibrationIndexService {
     const smoothed = (tally: FlagTally): number => (tally.amber + 1) / (tally.tests + 2);
     // A perturbation that leaves no test flags nothing; smoothing its empty tally would read as the 0.5 prior.
     if (!perturbed.tests) return { name, family, baseRate: smoothed(base), perturbedRate: 0, passed: true };
-    const passed = smoothed(perturbed) <= CHOICES.perturbedRateRatio * smoothed(base);
+    // A perturbation that flags nothing cannot have raised the rate, however few tests it left.
+    const passed = perturbed.amber === 0 || smoothed(perturbed) <= CHOICES.perturbedRateRatio * smoothed(base);
     return { name, family, baseRate: smoothed(base), perturbedRate: smoothed(perturbed), passed };
   }
 

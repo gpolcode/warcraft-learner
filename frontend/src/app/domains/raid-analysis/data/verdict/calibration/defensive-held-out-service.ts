@@ -6,8 +6,9 @@ import { CooldownUseJudgeService } from '../../rotation/cooldown-use-judge-servi
 import { CadenceJudgeService, CastsByName } from '../../rotation/cadence-judge-service';
 import { DefensiveBench, DefensivePlanMeta } from '../../defensive/defensive-data-source';
 import {
-  DEFENSIVE_FIRST_USE_FAMILY, DEFENSIVE_GAP_FAMILY, DEFENSIVE_HOLD_FAMILY, DEFENSIVE_USES_FAMILY, DEFENSIVE_WINDOW_FAMILY, DefensiveJudgeService,
+  DEFENSIVE_HOLD_FAMILY, DEFENSIVE_READY_TIME_FAMILY, DEFENSIVE_USES_FAMILY, DEFENSIVE_WINDOW_FAMILY, DefensiveJudgeService,
 } from '../../defensive/defensive-judge-service';
+import { ReadyTimeJudgeService } from '../../rotation/ready-time-judge-service';
 import { PerDefensiveBenchmark } from '../../encounter/encounter.models';
 import { HeldOutRow } from './calibration.models';
 import { HeldOutRowService } from './held-out-row-service';
@@ -29,6 +30,7 @@ export class DefensiveHeldOutService {
   private readonly rows = inject(HeldOutRowService);
   private readonly judges = inject(DefensiveJudgeService);
   private readonly cadence = inject(CadenceJudgeService);
+  private readonly readyTime = inject(ReadyTimeJudgeService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly uses = inject(CooldownUseJudgeService);
 
@@ -58,9 +60,10 @@ export class DefensiveHeldOutService {
     const defBench = fold.per_defensive_benchmarks[defensive.name];
     if ((!useTimesS.length && !buttonTaken(defensive, log.talents)) || !defBench) return [];
     const majority = this.castCadence.usedByMajority(defBench);
+    const killsS = fold.sources.map(source => source.duration_s);
     return [
       ...majority ? this.majorityRows(defensive.name, useTimesS, defBench, { model, casts }) : [],
-      ...this.gapRows(defensive.name, useTimesS, defBench, { model, casts }),
+      ...majority ? this.readyRows(defensive, useTimesS, defBench, { model, casts, killsS }) : [],
       ...this.holdRows(useTimesS, defBench, model),
     ];
   }
@@ -68,27 +71,25 @@ export class DefensiveHeldOutService {
   private majorityRows(
     name: string, useTimesS: number[], defBench: PerDefensiveBenchmark, pull: { model: PullModel; casts: CastsByName[] },
   ): HeldOutRow[] {
-    const firstS = this.cadence.measureOpener(useTimesS);
-    const first = firstS === null ? [] : this.rows.row(
-      DEFENSIVE_FIRST_USE_FAMILY, this.cadence.judgeOpener(firstS, this.cadence.referenceOpeners(pull.casts, name)),
-      pull.model, { fromS: 0, toS: firstS },
-    );
     const { uses, expected } = this.uses.measure(useTimesS, pull.model.aliveSpans, defBench);
-    if (expected === 0) return first;
+    if (expected === 0) return [];
     const reference = this.judges.referenceUses(pull.casts, name);
     const evidence = uses < expected
       ? this.judges.judgeUses(uses, expected, reference)
       : { level: 'neutral' as const, n: reference.length, observed: uses, target: null, excess: 0 };
-    return [...first, ...this.rows.row(DEFENSIVE_USES_FAMILY, evidence)];
+    return this.rows.row(DEFENSIVE_USES_FAMILY, evidence);
   }
 
-  private gapRows(
-    name: string, useTimesS: number[], defBench: PerDefensiveBenchmark, pull: { model: PullModel; casts: CastsByName[] },
+  private readyRows(
+    defensive: DefensivePlanMeta, useTimesS: number[], defBench: PerDefensiveBenchmark,
+    pull: { model: PullModel; casts: CastsByName[]; killsS: (number | null)[] },
   ): HeldOutRow[] {
-    const gap = this.cadence.measureGap(useTimesS, pull.model.aliveSpans, defBench.hold_targets);
-    if (!gap) return [];
-    const reference = this.cadence.referenceGaps(pull.casts, name, defBench.hold_targets);
-    return this.rows.row(DEFENSIVE_GAP_FAMILY, this.cadence.judgeGap(gap.gapS, reference), pull.model, { fromS: gap.fromS, toS: gap.toS });
+    if (!useTimesS.length) return [];
+    const ready = this.readyTime.readyCooldown(defensive, pull.casts, defensive.name);
+    const measured = this.readyTime.measure(useTimesS, pull.model.aliveSpans, ready, defBench.hold_targets);
+    if (!measured) return [];
+    const reference = this.readyTime.reference(pull.casts, pull.killsS, defensive.name, ready, defBench.hold_targets, pull.model.aliveSpans);
+    return this.rows.row(DEFENSIVE_READY_TIME_FAMILY, this.readyTime.judge(measured, reference, ready));
   }
 
   private holdRows(useTimesS: number[], defBench: PerDefensiveBenchmark, model: PullModel): HeldOutRow[] {

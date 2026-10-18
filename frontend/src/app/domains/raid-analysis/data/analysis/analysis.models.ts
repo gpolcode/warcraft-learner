@@ -94,6 +94,9 @@ export interface DefensiveWindow {
 
 export interface PlayerDefensive {
   name: string;
+  /** The plan's cooldown and charges, which the ready-time check runs on. */
+  cooldown: number;
+  charges?: number;
   uses: number;
   cast_times_s?: number[];
   windows: DefensiveWindow[];
@@ -104,7 +107,6 @@ export interface PlayerDefensive {
 export const CAT_LABEL: Record<string, string> = {
   lost_cooldown: 'lost cast',
   never_used: 'never used',
-  cooldown_delay: 'late',
   cooldown_alignment: 'Bloodlust',
   cast_efficiency: 'downtime',
   cooldown_hold: 'hold until',

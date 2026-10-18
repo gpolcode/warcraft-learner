@@ -21,12 +21,13 @@ import {
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
+import { CastsByName } from '../rotation/cadence-judge-service';
 import { GearExtractService } from '../gear/gear-extract-service';
 import { WindowViewService } from '../analysis/window-view-service';
 import { FoldCounts, JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
 import { DefensiveUsesService } from './defensive-uses-service';
 import {
-  DEAD_IN_WINDOW_FAMILY, DEFENSIVE_FIRST_USE_FAMILY, DEFENSIVE_GAP_FAMILY, DEFENSIVE_HOLD_FAMILY, DEFENSIVE_USES_FAMILY, DEFENSIVE_WINDOW_FAMILY,
+  DEAD_IN_WINDOW_FAMILY, DEFENSIVE_HOLD_FAMILY, DEFENSIVE_READY_TIME_FAMILY, DEFENSIVE_USES_FAMILY, DEFENSIVE_WINDOW_FAMILY,
   DefensiveJudgeService,
 } from './defensive-judge-service';
 import { NotGradedNote } from '../verdict/calibration/calibration.models';
@@ -89,6 +90,11 @@ export interface DefensiveWindowsInput {
 
 interface DefensiveScan { findings: AnalysisFinding[]; folded: FoldCounts; checked: number; }
 
+/** The bench's top logs as the defensive checks read them: their uses and each kill's length, both in the order of `sources`. */
+interface DefensiveTopLogs { perParse: readonly CastsByName[]; killsS: readonly (number | null)[]; }
+
+const NO_TOP_LOGS: DefensiveTopLogs = { perParse: [], killsS: [] };
+
 @Injectable({ providedIn: 'root' })
 export class DefensiveFeatureService {
   private readonly logger = inject(LoggerService);
@@ -122,7 +128,7 @@ export class DefensiveFeatureService {
     const caps = await this.calibration.load(spec, encounterId);
     const strip = this.benchStrips.strip(bench.value);
     const notGraded = {
-      defensives: this.calibration.notGraded(caps, [DEFENSIVE_USES_FAMILY, DEFENSIVE_FIRST_USE_FAMILY, DEFENSIVE_GAP_FAMILY, DEFENSIVE_HOLD_FAMILY]),
+      defensives: this.calibration.notGraded(caps, [DEFENSIVE_USES_FAMILY, DEFENSIVE_READY_TIME_FAMILY, DEFENSIVE_HOLD_FAMILY]),
       windows: this.calibration.notGraded(caps, [DEFENSIVE_WINDOW_FAMILY, DEAD_IN_WINDOW_FAMILY]),
     };
     return this.pullContext.analyzePull(this.wclApi, pull, {
@@ -234,7 +240,8 @@ export class DefensiveFeatureService {
         this.auraWindows.spansNamed(buffWin, defensive, abilities), this.defensiveUses.castTimesS(castEvents, defensive.spell_id), fightEndS,
       ).map(use => ({ start_s: round(use.start_s), end_s: round(use.end_s) }));
       const cast_times_s = this.judge.measureUseTimes(windows);
-      const entry: PlayerDefensive = { name: defensive.name, uses: windows.length, cast_times_s, windows };
+      const entry: PlayerDefensive = { name: defensive.name, cooldown: defensive.cooldown, uses: windows.length, cast_times_s, windows };
+      if (defensive.charges !== undefined) entry.charges = defensive.charges;
       if (!buttonTaken(defensive, talents)) entry.talent_gated = true;
       return entry;
     });
@@ -249,7 +256,7 @@ export class DefensiveFeatureService {
     defensive: PlayerDefensive,
     defBench: PerDefensiveBenchmark | undefined,
     model: PullModel,
-    perParse: DefensiveBench['per_parse'] = [],
+    top: DefensiveTopLogs = NO_TOP_LOGS,
     caps?: FamilyCaps,
   ): DefensiveScan {
     const { name, uses } = defensive;
@@ -260,43 +267,42 @@ export class DefensiveFeatureService {
     if (!defBench) return { findings: this.onPlan(name, uses), folded: none, checked: 0 };
 
     const useTimesS = defensive.cast_times_s ?? [];
-    const casts = perParse.map(parse => parse.def_casts_s);
     const external = this.judge.isExternal(defensive.windows);
     const majority = this.castCadence.usedByMajority(defBench);
-    const counted = majority ? this.judge.usesFinding(name, useTimesS, defBench, model, casts, external, caps) : null;
+    const counted = majority ? this.judge.usesFinding(name, useTimesS, defBench, model, top.perParse, external, caps) : null;
     // Who receives an external and when is an assignment, so only its count is shown.
-    const timing = external ? { timed: [], holds: [] } : this.timingFindings(name, useTimesS, defBench, { model, casts, majority, caps });
-    const { kept, folded } = this.pullModel.foldFindings(model, timing.timed);
-    const { kept: holds, folded: foldedHolds } = this.pullModel.foldFindings(model, timing.holds);
+    const timing = external ? { ready: null, holds: [] } : this.timingFindings(defensive, defBench, { model, top, majority, caps });
+    const { kept: holds, folded } = this.pullModel.foldFindings(model, timing.holds);
 
-    const issues = [...counted ? [counted] : [], ...kept];
+    const issues = [counted, timing.ready].filter(finding => finding !== null);
     const findings = issues.length ? issues : this.onPlan(name, uses);
-    return { findings: [...findings, ...holds], folded: this.pullModel.addFolds(folded, foldedHolds), checked: 1 };
+    return { findings: [...findings, ...holds], folded, checked: 1 };
   }
 
-  /** A defensive most top logs skip has a noisy first use, so only its gaps and holds are checked. */
+  /** A defensive most top logs skip has a noisy reference, so only its holds are checked. */
   private timingFindings(
-    name: string, useTimesS: readonly number[], defBench: PerDefensiveBenchmark,
-    pull: { model: PullModel; casts: DefensiveBench['per_parse'][number]['def_casts_s'][]; majority: boolean; caps?: FamilyCaps },
-  ): { timed: AnalysisFinding[]; holds: AnalysisFinding[] } {
-    const timed = [
-      pull.majority ? this.judge.firstUseFinding(name, useTimesS, pull.casts, pull.caps) : null,
-      this.judge.gapFinding(name, useTimesS, pull.model.aliveSpans, pull.casts, defBench.hold_targets, pull.caps),
-    ].filter(finding => finding !== null);
-    return { timed, holds: this.judge.holdFindings(name, useTimesS, defBench.hold_targets, pull.caps) };
+    defensive: PlayerDefensive, defBench: PerDefensiveBenchmark,
+    pull: { model: PullModel; top: DefensiveTopLogs; majority: boolean; caps?: FamilyCaps },
+  ): { ready: AnalysisFinding | null; holds: AnalysisFinding[] } {
+    const useTimesS = defensive.cast_times_s ?? [];
+    const ready = pull.majority && useTimesS.length
+      ? this.judge.readyTimeFinding(defensive, useTimesS, pull.model, pull.top, defBench.hold_targets, pull.caps)
+      : null;
+    return { ready, holds: this.judge.holdFindings(defensive.name, useTimesS, defBench.hold_targets, pull.caps) };
   }
 
   protected analyzeDefensiveFindings(
     playerDefensives: PlayerDefensive[],
-    bench: Pick<DefensiveBench, 'per_defensive_benchmarks' | 'per_parse'>,
+    bench: Pick<DefensiveBench, 'per_defensive_benchmarks' | 'per_parse'> & Partial<Pick<DefensiveBench, 'sources'>>,
     model: PullModel,
     caps?: FamilyCaps,
   ): DefensiveScan {
+    const top: DefensiveTopLogs = { perParse: bench.per_parse.map(parse => parse.def_casts_s), killsS: (bench.sources ?? []).map(source => source.duration_s) };
     const findings: AnalysisFinding[] = [];
     let folded = this.pullModel.noFolds();
     let checked = 0;
     for (const defensive of playerDefensives) {
-      const scan = this.analyzeOneDefensive(defensive, bench.per_defensive_benchmarks[defensive.name], model, bench.per_parse, caps);
+      const scan = this.analyzeOneDefensive(defensive, bench.per_defensive_benchmarks[defensive.name], model, top, caps);
       findings.push(...scan.findings);
       folded = this.pullModel.addFolds(folded, scan.folded);
       checked += scan.checked;

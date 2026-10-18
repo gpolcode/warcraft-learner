@@ -629,3 +629,67 @@ Branch `claude/verdict-validity-p6a-burst-amplification`, PR against `claude/ver
 - `BurstBench.per_parse[].damage_per_s` is on disk for the three re-benched specs and arrives with the full ingest at version 45; a gh-pages bench before 45 has none, so its windows render "No top log carries its own damage" and the harness names it unfoldable.
 - Detection for `burst.window` is bounded by the top logs' spread; a sharper construct (6b to 6f do not touch it) or the contrast cohort (7a) is where it can improve, not the floor.
 - `wl-window-comparison` colors only through a `Tone`; a new window card must return one from its adapter.
+
+## Package 6b: cooldown timing as unused ready time (done)
+
+Branch `claude/verdict-validity-p6b-ready-time`, PR against `claude/verdict-validity-p6a-burst-amplification`.
+
+### Done
+
+- **Construct** (`data/rotation/ready-time-judge-service.ts`, `ReadyTimeJudgeService`, shared by rotation and defensives):
+  - `readyCooldown(button, perParse, name)`: the cooldown checked against the observed top cadence first. Each top log's uses prove a recharge of at most `t / (k - charges)` for any run of `k` uses inside `t` seconds; the recharge is the stored cooldown or the median top log's proven one, whichever is shorter. On the calibration subset 3 of 21 rotation cooldowns run faster than stored (Fury of Elune 19 s on two bosses, Force of Nature 32 s, both stored at 60 s).
+  - `measure(castTimesS, spans, cooldown, holds)`: the stretches in which every charge was ready (all charges ready at the pull), a use with no charge left restarting the recharge as a reset would; a stretch ending on a use a hold target explains is left out, and so is one that crosses a death (the press it would have had fell while dead). Returns ready seconds, alive seconds, their share and the longest stretch.
+  - `reference(perParse, killsS, name, cooldown, holds, spans)`: every top log that used it, measured with the same function over the player's alive spans cut at its own kill (the 6a "same span on both sides").
+  - `judge`: `mechanistic` with the game amount one recharge of ready time and the floor the 5 s timing floor, both as shares of alive time. `finding` emits a row only when the rule flags (red or amber evidence), on the calibrated tone, so it reads as a comparison until graded; the target and remedy print only when graded.
+- **No baked field changed.** The construct reads `per_parse[].cd_casts_s` and `def_casts_s`, `sources[].duration_s` and the plan's `cooldown` and `charges`, all already on disk, so no `INGEST_VERSION` bump and no re-bake; no WCL points were spent. The calibration subset on `calibration-testdata` measures it as it stands.
+- **Families.**
+  - `rotation.ready_time` (new, version 1): tier red, cost high, `mechanistic`, mistakes `drop-major-cooldown-cast` and `delay-cooldown-30s`. Replaces `rotation.late_opener`, `rotation.cooldown_gap` and `rotation.lost_cast`, which are removed with their measures (`CadenceJudgeService` keeps only the hold check; `CooldownUseJudgeService` keeps `castTimesS`, `measure` and the never-used check).
+  - `defensive.ready_time` (new, version 1): tier amber, cost medium, same construct, mistake `delay-cooldown-30s`. Replaces `defensive.first_use` and `defensive.gap`. Not for externals.
+  - `rotation.never_used` version 2: judged only once the alive time runs one stored cooldown past every top log's first use (the gate 5b asked for), else muted with the cause when the pull has one; `pendingRebuild: null`.
+  - `defensive.uses` keeps the count rule (5.7's Defensive cadence construct), `pendingRebuild: null`.
+- **Page.** Offensives: a used majority cooldown gets at most one ready-time row, an unused one the never-used row; a ready-time row has no span to fold (measured on alive time). Defensives: the uses row and at most one ready-time row per defensive, then holds. Ready-time rows carry the `lost_cooldown` category (chip "lost cast": the game amount is one cast's worth); the `cooldown_delay` category and its "late" chip are gone. `PlayerDefensive` carries the plan's `cooldown` and `charges`. Not-graded lists name the new families. README line 11 names the new checks.
+- **Harness.** `RotationHeldOutService` judges a used majority cooldown on ready time and an unused one on never-used, `DefensiveHeldOutService` adds the ready-time test beside the uses test, both through the page's methods and gates. `CalibrationIndexService.rateBound`: a perturbation that flags nothing passes, however few tests it left (with 5 to 7 tests the smoothed rate of zero flags on fewer perturbed tests read as a rise). Specs: `ready-time-judge.spec.ts`, the never-used gate pair, the zero-flag invariant pair, and the death and wipe invariants on the new measure.
+
+### The measured report (rules' tone, before the caps)
+
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate`:
+
+| Family | Tests | Red rate | Amber rate | Amber bound | Detection | Verdict |
+|---|---|---|---|---|---|---|
+| rotation.ready_time | 191 | 0.5% | 1.0% | 3.3% | 60 of 354 (17%) | comparison: detection under the floors (and under the minimum tests on the subset) |
+| rotation.never_used | 5 | 0% | 0% | 45% | 0 of 8 | comparison: too few tests; the dropped-use variants stay blue, as pairing needs 2 expected uses and 8 of 10 agreeing |
+| defensive.ready_time | 160 | 0% | 1.9% | 4.8% | 3 of 219 (1%) | comparison: detection |
+
+- Page load: DPS 0.42 amber and 0.02 red per held-out pull (0.72 and 0.00 before), tank 0.33 (0.57), healer 0.63 (0.83); armed red stays 0.00. The removed opener, gap and first-use families carried most of the amber.
+- Invariants: truncation, both deaths, the lust shifts and damage scale hold for both ready-time families and for `rotation.never_used` (which failed truncation and death before). Only `defensive.window`'s truncation failure remains, as in 5b.
+- Against the families replaced: late opener 34%, gap 19%, lost cast 1 of 119; defensive first use 4%, gap 7%. The ready-time family detects less than the opener did, at a sixth of its amber rate.
+
+### Why detection stays low, and what would raise it
+
+- **The spread, mostly.** Over the first majority cooldown of each held-out log (the one the mistakes change), a prototype of the same measure finds 73% of the injected variants inside the top logs' interval, and the game amount alone blocking 12%. The median variant adds 20 s of ready time; the median amber edge sits 32 s above the top logs' mean. The spread comes from cooldowns top logs hold or pool on purpose: Vanish is bimodal (5 of 10 logs near 0.07 of alive time, 5 near 0.45), Thistle Tea's three charges run from 0.12 to 1.00, Kingsbane has two logs at 0.29 against eight near 0.10.
+- **The game amount.** One recharge of ready time is the paper's mechanistic amount; a 30 s delay of a 60 s or 120 s cooldown is under it by construction, and dropping the last use near the end adds only the time left. Without the amount (interval alone) the prototype detects about 31% at a 2.6% flag rate, still under the floors.
+- **Defensives** are pressed when the damage comes, so their ready time spreads across the whole range; a 30 s delay almost never leaves it. Their count (`defensive.uses`, 74%) stays the defensive card's strongest check.
+- **What would raise it:** hold windows the bench does not detect as holds (pooled charges, a bimodal cooldown) taken out of both sides per log, or the reference split by cast pattern; the contrast cohort (7a) for a lift gate in place of the held-out power floor; injected mistakes shaped like the claim (one dropped mid-pull use rather than the last).
+
+### Decisions and deviations
+
+- **No new baked field.** 5.4.1 lists unused ready time as a per-parse measure. The fold and the runtime both need it over the player's spans and on the fold's own recharge, so a value baked over each log's whole kill would leak and could not be respanned; the baked casts let ingest, the harness and the page measure it through the one function (6a's reasoning for the burst series).
+- **Defensive cadence.** The paper's Defensive cadence row keeps a count over available time, so `defensive.uses` stays; ready time replaces only the first-use and gap rows (section 6 removes those). The two rows can show for one defensive, as uses and gap did.
+- **Never used stays its own family** (5.7 "Keep, corrected gate"); a used cooldown goes to ready time, an unused one to never used, so one cooldown gives at most one row.
+- **Tiers.** `rotation.ready_time` is red tier and high cost like the lost cast it replaces; `defensive.ready_time` amber and medium like the defensive rows it replaces.
+- **A wait crossing a death is left out** on both sides, as the gap measure did: an inserted death with a rez otherwise read the dropped presses as ready time (0.016 to 0.098). A limit names it.
+- Not a deviation: the harness keeps both ready-time families as comparisons.
+
+### Drift against 6882b59
+
+- None beyond earlier packages: RC1's `cast-cadence-service.ts:81` was already gone (4d), and 5.4.2's plan gate is at `bench-pipeline-service.ts:81` (package 5).
+
+### Seams stubbed
+
+- None.
+
+### For the next package
+
+- `ReadyTimeJudgeService` is the one ready-time measure; 5.8's "never-pressed buttons judged by ready time" can call it with a list button's cooldown and charges.
+- A page that judged `rotation.late_opener`, `rotation.cooldown_gap`, `rotation.lost_cast`, `defensive.first_use` or `defensive.gap` now reads `rotation.ready_time`, `rotation.never_used` or `defensive.ready_time`; the registry hash changed, so every family renders as a comparison until the next ingest recalibrates.
+- The full ingest measures the same construct on every bench at version 45 or 44 with no re-bench; expect the pooled tests to pass the minimums and detection to stay where the spread puts it.

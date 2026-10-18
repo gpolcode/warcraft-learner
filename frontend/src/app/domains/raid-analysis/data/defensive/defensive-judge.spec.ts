@@ -73,38 +73,20 @@ describe('DefensiveJudgeService.usesFinding', () => {
   });
 });
 
-describe('DefensiveJudgeService.firstUseFinding', () => {
-  /** Ten top logs first use it at 10s; with no spread the edge is the 2 s floor past it. */
-  const TOP_FIRST_S = 10;
-  const EDGE_S = TOP_FIRST_S + 2;
-  const topLogs = Array.from({ length: TOP_N }, () => ({ [NAME]: [TOP_FIRST_S, 130] }));
+describe('DefensiveJudgeService.readyTimeFinding', () => {
+  // Composition only: the measure and the rule are specced on ReadyTimeJudgeService.
+  /** Ten top logs press it at 10s and on its 120s cooldown after, so it sits ready only for the first 10s. */
+  const CLOAK = { name: NAME, cooldown: 120 };
+  const top = { perParse: Array.from({ length: TOP_N }, () => ({ [NAME]: [10, 130, 250] })), killsS: Array.from({ length: TOP_N }, () => PULL_S) };
 
-  it('flags a first use past the top logs\' interval amber, naming them as a count', () => {
-    const finding = judge.firstUseFinding(NAME, [EDGE_S + 0.1, 200], topLogs);
+  it('flags a defensive left ready for a whole cooldown amber, with the defensive\'s remedy', () => {
+    const finding = judge.readyTimeFinding(CLOAK, [10, 250], WHOLE, top, {});
 
-    expect(finding).toMatchObject({ family: 'defensive.first_use', severity: 'amber', category: 'cooldown_delay', span: { fromS: 0, toS: EDGE_S + 0.1 } });
-    expect(finding?.message).toBe('You first used Cloak of Shadows at 12.1s. 10 top logs use it by 12.0s.');
+    expect(finding).toMatchObject({ family: 'defensive.ready_time', severity: 'amber', category: 'lost_cooldown', details: { remedy: 'Use Cloak of Shadows more often while it is ready.' } });
   });
 
-  it('does not flag a first use at the edge', () => {
-    expect(judge.firstUseFinding(NAME, [EDGE_S], topLogs)).toBeNull();
-  });
-});
-
-describe('DefensiveJudgeService.gapFinding', () => {
-  /** Ten top logs wait 60s between uses; with no spread the edge is the 5 s floor past it. */
-  const TOP_GAP_S = 60;
-  const EDGE_S = TOP_GAP_S + 5;
-  const topLogs = Array.from({ length: TOP_N }, () => ({ [NAME]: [10, 10 + TOP_GAP_S, 10 + 2 * TOP_GAP_S] }));
-
-  it('flags the longest wait past the top logs\' interval amber', () => {
-    const finding = judge.gapFinding(NAME, [10, 10 + EDGE_S + 1], [[0, PULL_S]], topLogs, {});
-
-    expect(finding).toMatchObject({ family: 'defensive.gap', severity: 'amber', measured: { value: '66s', unit: 'top 60s, 10 top logs' } });
-  });
-
-  it('does not flag a wait at the edge', () => {
-    expect(judge.gapFinding(NAME, [10, 10 + EDGE_S], [[0, PULL_S]], topLogs, {})).toBeNull();
+  it('says nothing of a defensive pressed as the top logs press it', () => {
+    expect(judge.readyTimeFinding(CLOAK, [10, 130, 250], WHOLE, top, {})).toBeNull();
   });
 });
 

@@ -1,13 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { median } from 'd3-array';
 import { AnalysisFinding, BurstWindow, DefensiveWindow } from '../analysis/analysis.models';
-import { AliveSpan, fmtApart, fmtClock, round, spansS } from '../analysis/analysis-math';
+import { fmtClock, round, spansS } from '../analysis/analysis-math';
 import { DeadSpan } from '../analysis/death-timeline-service';
 import { PullModel } from '../analysis/pull-model-service';
 import { TimedEvent } from '../analysis/wcl-projections-service';
 import { CadenceBenchmark, CdHoldTargets } from '../encounter/encounter.models';
 import { CadenceJudgeService, CastsByName } from '../rotation/cadence-judge-service';
 import { CooldownUseJudgeService } from '../rotation/cooldown-use-judge-service';
+import { ReadyTimeJudgeService, ReadyVoice } from '../rotation/ready-time-judge-service';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
@@ -16,8 +17,8 @@ import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
 const TOP_LOG_REFERENCE = { population: 'Top Mythic logs for the spec and boss, ranked on its metric', minN: VERDICT_CHOICES.minReferenceN };
 const DEFENSIVE_LIMITS = ['Which mechanic a defensive was saved for', 'Assignments: soaks, debuff targets, the active tank', 'Externals and healing the player received'];
-const CADENCE_REBUILD = 'Unused ready time of the defensive';
 const COVERAGE_REBUILD = 'Coverage by any defensive active at the hit, damage as context';
+const DEFENSIVE_VOICE: ReadyVoice = { remedy: name => `Use ${name} more often while it is ready.` };
 /** A use touching the window this close to either edge still covered it: an aura logs a moment off the hit it was pressed for. */
 const COVER_SLACK_S = 3;
 
@@ -28,7 +29,7 @@ export const DEFENSIVE_USES_FAMILY: FindingFamily = {
   tier: 'amber',
   claim: 'You pressed a defensive fewer times over your alive time than top raiders press it over the same time.',
   construct: 'Uses of one plan defensive inside the judged span, against the top logs\' uses per alive minute capped by their cadence fit.',
-  pendingRebuild: CADENCE_REBUILD,
+  pendingRebuild: null,
   reference: TOP_LOG_REFERENCE,
   alignment: 'Alive time before the judged end',
   availability: ['Talent taken, where the defensive is a talent', 'Used by at least half of the top logs', 'At least one expected use over the alive time', 'Pressed on the player, not as an external'],
@@ -41,44 +42,27 @@ export const DEFENSIVE_USES_FAMILY: FindingFamily = {
   limits: DEFENSIVE_LIMITS,
 };
 
-export const DEFENSIVE_FIRST_USE_FAMILY: FindingFamily = {
-  id: 'defensive.first_use',
-  label: 'First defensive',
+export const DEFENSIVE_READY_TIME_FAMILY: FindingFamily = {
+  id: 'defensive.ready_time',
+  label: 'Defensive ready time',
   version: 1,
   tier: 'amber',
-  claim: 'You first used a defensive later than top raiders first use it.',
-  construct: 'Pull time of the first use of one plan defensive, a use before the pull counting as 0.',
-  pendingRebuild: CADENCE_REBUILD,
-  reference: TOP_LOG_REFERENCE,
-  alignment: 'Pull clock, the stretch from the pull to the first use alive and before the judged end',
+  claim: 'A defensive sat ready and unused for at least one cooldown\'s worth of your alive time, longer than top raiders leave it over the same time.',
+  construct: 'Share of alive time before the judged end in which every charge of one plan defensive was ready and unused, on the stored cooldown or the faster one the top logs show, leaving out a wait a hold target explains or one that crosses a death.',
+  pendingRebuild: null,
+  reference: { population: 'Top Mythic logs for the spec and boss that used the defensive, ranked on its metric', minN: VERDICT_CHOICES.minReferenceN },
+  alignment: 'The player\'s alive spans before the judged end, each top log read over the same spans cut at its kill',
   availability: ['Used by at least half of the top logs', 'At least one use in the pull', 'Pressed on the player, not as an external'],
-  raidDecisions: { relative: [], gated: [], excluded: ['External assignments'] },
-  rule: 'interval',
-  costClass: 'medium',
-  uncertaintyShown: 'The top logs\' average first use, with their count',
-  copy: { message: 'You first used {cd} at {first}. {n} top logs use it by {target}.', remedy: 'Use {cd} earlier.' },
-  injectedMistakes: ['delay-cooldown-30s'],
-  limits: DEFENSIVE_LIMITS,
-};
-
-export const DEFENSIVE_GAP_FAMILY: FindingFamily = {
-  id: 'defensive.gap',
-  label: 'Defensive gaps',
-  version: 1,
-  tier: 'amber',
-  claim: 'Your longest wait between uses of a defensive was longer than top raiders\' longest wait.',
-  construct: 'Longest stretch between two uses of one plan defensive wholly inside alive time, leaving out a use a hold target explains.',
-  pendingRebuild: CADENCE_REBUILD,
-  reference: TOP_LOG_REFERENCE,
-  alignment: 'Alive time before the judged end',
-  availability: ['At least two uses in the pull', 'At least two uses in each top log counted', 'Pressed on the player, not as an external'],
   raidDecisions: { relative: [], gated: ['Holds most top logs make for a later mechanic'], excluded: ['External assignments'] },
-  rule: 'interval',
+  rule: 'mechanistic',
   costClass: 'medium',
-  uncertaintyShown: 'The top logs\' average longest wait, with their count',
-  copy: { message: '{cd} sat {gap} before your use at {at}, your longest wait. {n} top logs wait {avg} at most on average.', remedy: 'Use {cd} sooner after it is ready.' },
+  uncertaintyShown: 'Your ready time and the top logs\' average over the same time, with their count',
+  copy: {
+    message: '{cd} sat ready and unpressed for {ready} of the {alive} you were alive, the longest from {from} to {to}. {n} top logs leave it ready {avg} on average in that time.',
+    remedy: 'Use {cd} more often while it is ready.',
+  },
   injectedMistakes: ['delay-cooldown-30s'],
-  limits: DEFENSIVE_LIMITS,
+  limits: [...DEFENSIVE_LIMITS, 'A wait that crosses a death'],
 };
 
 export const DEFENSIVE_HOLD_FAMILY: FindingFamily = {
@@ -174,6 +158,7 @@ export class DefensiveJudgeService {
   private readonly tones = inject(ToneService);
   private readonly cadence = inject(CadenceJudgeService);
   private readonly cooldownUses = inject(CooldownUseJudgeService);
+  private readonly readyTime = inject(ReadyTimeJudgeService);
 
   /** Ascending pull seconds; ingest bakes these into `per_parse[].def_casts_s`. */
   measureUseTimes(uses: readonly DefensiveWindow[]): number[] {
@@ -216,45 +201,16 @@ export class DefensiveJudgeService {
     };
   }
 
-  /** Null when the evidence grades nothing. */
-  firstUseFinding(name: string, useTimesS: readonly number[], perParse: readonly CastsByName[], caps?: FamilyCaps): AnalysisFinding | null {
-    const firstS = this.cadence.measureOpener(useTimesS);
-    if (firstS === null) return null;
-    const reference = this.cadence.referenceOpeners(perParse, name);
-    const evidence = this.cadence.judgeOpener(firstS, reference);
-    const severity = this.tones.tone(DEFENSIVE_FIRST_USE_FAMILY, evidence, caps);
-    if (!this.tones.graded(severity) || evidence.target === null) return null;
-    const avgS = this.average(reference);
-    const [at, by] = this.cadence.clocksApart(firstS, evidence.target);
-    return {
-      family: DEFENSIVE_FIRST_USE_FAMILY.id, severity,
-      category: 'cooldown_delay', cd_name: name, timestamp_s: firstS, span: { fromS: 0, toS: firstS },
-      measured: { value: `+${(firstS - avgS).toFixed(0)}s`, unit: `top ${fmtClock(avgS)}, ${evidence.n} top logs` },
-      message: `You first used ${name} at ${at}. ${evidence.n} top logs use it by ${by}.`,
-      details: { remedy: `Use ${name} earlier.` }, occurrences: [],
-    };
-  }
-
-  /** One row per defensive, on its longest wait; null when the evidence grades nothing. */
-  gapFinding(
-    name: string, useTimesS: readonly number[], spans: readonly AliveSpan[], perParse: readonly CastsByName[], holds: CdHoldTargets, caps?: FamilyCaps,
+  /** One row per defensive, when the rule flags its ready time. */
+  readyTimeFinding(
+    defensive: { name: string; cooldown: number; charges?: number }, useTimesS: readonly number[], model: PullModel,
+    top: { perParse: readonly CastsByName[]; killsS: readonly (number | null)[] }, holds: CdHoldTargets, caps?: FamilyCaps,
   ): AnalysisFinding | null {
-    const gap = this.cadence.measureGap(useTimesS, spans, holds);
-    if (!gap) return null;
-    const reference = this.cadence.referenceGaps(perParse, name, holds);
-    const evidence = this.cadence.judgeGap(gap.gapS, reference);
-    const severity = this.tones.tone(DEFENSIVE_GAP_FAMILY, evidence, caps);
-    if (!this.tones.graded(severity) || evidence.target === null) return null;
-    const avgS = this.average(reference);
-    const [gapText, targetText] = fmtApart(gap.gapS, evidence.target);
-    return {
-      family: DEFENSIVE_GAP_FAMILY.id, severity,
-      category: 'cooldown_delay', cd_name: name, timestamp_s: gap.toS, span: { fromS: gap.fromS, toS: gap.toS },
-      measured: { value: `${gapText}s`, unit: `top ${avgS.toFixed(0)}s, ${evidence.n} top logs` },
-      message: `${name} sat ${gapText}s before your use at ${fmtClock(gap.toS)}, your longest wait. `
-        + `The longest wait of ${evidence.n} top logs averages ${avgS.toFixed(0)}s. Aim for ${targetText}s or less.`,
-      details: { remedy: `Use ${name} sooner after it is ready.` }, occurrences: [],
-    };
+    const cooldown = this.readyTime.readyCooldown(defensive, top.perParse, defensive.name);
+    const ready = this.readyTime.measure(useTimesS, model.aliveSpans, cooldown, holds);
+    if (!ready) return null;
+    const reference = this.readyTime.reference(top.perParse, top.killsS, defensive.name, cooldown, holds, model.aliveSpans);
+    return this.readyTime.finding(DEFENSIVE_READY_TIME_FAMILY, DEFENSIVE_VOICE, defensive.name, { ready, reference, cooldown, fightDurationS: model.fightDurationS, caps });
   }
 
   /** A count of top raiders as a fact, never an order, so the rows carry no remedy. */
@@ -349,9 +305,5 @@ export class DefensiveJudgeService {
 
   private graded(severity: Tone): boolean {
     return severity === 'red' || severity === 'amber';
-  }
-
-  private average(values: readonly number[]): number {
-    return values.reduce((sum, value) => sum + value, 0) / values.length;
   }
 }

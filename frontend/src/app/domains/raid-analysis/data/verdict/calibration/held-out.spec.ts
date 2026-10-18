@@ -11,7 +11,7 @@ import { bench } from '../../rotation/rotation-harness';
 import { benchWith, CLOAK_META, defBench } from '../../defensive/defensive-harness';
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
 import {
-  BURST_AT_S, BURST_S, burstBench, burstLog, burstWindow, CLOAK, defensiveLog, defensiveWindow, FIGHT_S, gearBench, gearLog, ON_CADENCE, rotationLog, SB,
+  BURST_AT_S, BURST_S, burstBench, burstLog, burstWindow, CLOAK, defensiveLog, defensiveWindow, FIGHT_S, gearBench, gearLog, rotationLog, SB,
 } from './calibration-harness';
 import { BurstHeldOutService } from './burst-held-out-service';
 
@@ -27,8 +27,8 @@ const burst = TestBed.inject(BurstHeldOutService);
 const TOP_N = 6;
 const UNDER_N = 5;
 const HELD_OUT = 0;
-/** Thirty seconds past the others' shared opener is well beyond the 2s floor of an interval with no spread. */
-const LATE_OPENER = [35, 125, 215];
+/** The shared cadence with its 95s use skipped: ready from 95s to 185s, one whole cooldown past the others' 5s. */
+const SKIPPED = [5, 185, 275];
 const ACTION = 'eviscerate';
 const BUTTON = { right: 18, moments: 20 };
 
@@ -48,14 +48,13 @@ describe('RotationHeldOutService', () => {
     const rows = judgeRotation(rotationLog({ buttons: { [ACTION]: BUTTON } }));
 
     expect(rows.filter(row => row.level === 'amber' || row.level === 'red')).toEqual([]);
-    expect(levelsOf(rows, 'rotation.late_opener')).toEqual(['neutral']);
-    expect(levelsOf(rows, 'rotation.lost_cast')).toEqual(['neutral']);
+    expect(levelsOf(rows, 'rotation.ready_time')).toEqual(['neutral']);
     expect(levelsOf(rows, 'rotation.downtime')).toEqual(['neutral']);
     expect(levelsOf(rows, 'rotation.button')).toEqual(['neutral']);
   });
 
-  it('flags a top log that opens half a minute late', () => {
-    expect(levelsOf(judgeRotation(rotationLog({ cd_casts_s: { [SB]: LATE_OPENER } })), 'rotation.late_opener')).toEqual(['amber']);
+  it('flags a top log that leaves its cooldown ready for a whole cooldown', () => {
+    expect(levelsOf(judgeRotation(rotationLog({ cd_casts_s: { [SB]: SKIPPED } })), 'rotation.ready_time')).toEqual(['red']);
   });
 
   it('counts no test against fewer than five other top logs', () => {
@@ -68,10 +67,10 @@ describe('RotationHeldOutService', () => {
     expect(levelsOf(judgeRotation(rotationLog(), TOP_N, cut), 'rotation.downtime')).toEqual([]);
   });
 
-  it('drops an opener test a death explains', () => {
-    const diedBeforeOpener = heldOutRows.withDeaths(FIGHT_S, FIGHT_S, [[1, 2]]);
+  it('leaves out the ready time a death crosses', () => {
+    const diedInTheWait = heldOutRows.withDeaths(FIGHT_S, FIGHT_S, [[100, 150]]);
 
-    expect(levelsOf(judgeRotation(rotationLog({ cd_casts_s: { [SB]: ON_CADENCE } }), TOP_N, diedBeforeOpener), 'rotation.late_opener')).toEqual([]);
+    expect(levelsOf(judgeRotation(rotationLog({ cd_casts_s: { [SB]: SKIPPED } }), TOP_N, diedInTheWait), 'rotation.ready_time')).toEqual(['neutral']);
   });
 });
 

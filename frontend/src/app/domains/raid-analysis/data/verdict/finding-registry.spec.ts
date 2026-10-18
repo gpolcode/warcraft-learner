@@ -6,6 +6,7 @@ import { CooldownUseJudgeService } from '../rotation/cooldown-use-judge-service'
 import { ListFindingService } from '../rotation/priority-list/list-finding-service';
 import { bench, cdBench } from '../rotation/rotation-harness';
 import { CadenceJudgeService } from '../rotation/cadence-judge-service';
+import { READY_TIME_FAMILY, ReadyTimeJudgeService } from '../rotation/ready-time-judge-service';
 import { DowntimeJudgeService } from '../rotation/downtime-judge-service';
 import { BloodlustJudgeService } from '../rotation/bloodlust-judge-service';
 import { BurstJudgeService } from '../burst-windows/burst-judge-service';
@@ -19,8 +20,6 @@ import { FindingFamily } from './finding-family.models';
 import { FINDING_REGISTRY } from './finding-registry';
 import { VERDICT_CHOICES } from './verdict-choices';
 
-/** Ten top logs that each pressed the cooldown four times. */
-const ALL_USED = Array.from({ length: 10 }, () => 4);
 /** Ten top logs that open at 5s, press again at 95s and cast 90% of the pull. */
 const TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
   ({ efficiency_pct: 90, lust_s: null, phase_starts: [], cd_casts_s: { 'Shadow Blades': [5, 95] }, buttons: {} }));
@@ -28,6 +27,8 @@ const TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
 const MID_LUST_S = 120;
 const LUST_TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
   ({ efficiency_pct: null, lust_s: MID_LUST_S, phase_starts: [], cd_casts_s: { 'Shadow Blades': [MID_LUST_S + 5] }, buttons: {} }));
+/** The plan's Shadow Blades: a 90s cooldown. */
+const SHADOW_BLADES = { name: 'Shadow Blades', cooldown: 90 };
 const HELD_TO_130 = { '2': { target_s: 130, delay_s: 30, band_s: 5, effective_cd_s: 90, count: 8, total_samples: 10 } };
 const PULL_S = 300;
 /** A window the player dealt nothing in, and five top logs that dealt twice their average there. */
@@ -57,11 +58,16 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
     { casts: new Map([['eviscerate', [{ atS: 10, verdict: 'off', line: 0, lines: [] }]]]), order: [], ids: new Map() },
     pullModel(),
   ),
-  'rotation.lost_cast': async () => [TestBed.inject(CooldownUseJudgeService).finding('Shadow Blades', [5], cdBench(), pullModel(), ALL_USED, true) ?? {}],
-  'rotation.never_used': async () => [TestBed.inject(CooldownUseJudgeService).finding('Shadow Blades', [], cdBench(), pullModel(), ALL_USED, true) ?? {}],
-  'rotation.late_opener': async () => [TestBed.inject(CadenceJudgeService).openerFinding('Shadow Blades', [40], TOP_LOGS) ?? {}],
-  'rotation.cooldown_gap': async () =>
-    [TestBed.inject(CadenceJudgeService).gapFinding('Shadow Blades', [5, 200], [[0, PULL_S]], TOP_LOGS, {}) ?? {}],
+  'rotation.ready_time': async () => {
+    const judges = TestBed.inject(ReadyTimeJudgeService);
+    const casts = TOP_LOGS.map(parse => parse.cd_casts_s);
+    const cooldown = judges.readyCooldown(SHADOW_BLADES, casts, SHADOW_BLADES.name);
+    const ready = judges.measure([5], [[0, PULL_S]], cooldown, {});
+    const reference = judges.reference(casts, casts.map(() => PULL_S), SHADOW_BLADES.name, cooldown, {}, [[0, PULL_S]]);
+    return [ready ? judges.finding(READY_TIME_FAMILY, { remedy: String }, SHADOW_BLADES.name, { ready, reference, cooldown, fightDurationS: PULL_S }) ?? {} : {}];
+  },
+  'rotation.never_used': async () =>
+    [TestBed.inject(CooldownUseJudgeService).finding(SHADOW_BLADES, [], cdBench(), pullModel(), TOP_LOGS.map(parse => parse.cd_casts_s), true) ?? {}],
   'rotation.hold': async () => TestBed.inject(CadenceJudgeService).holdFindings('Shadow Blades', [0, 100], HELD_TO_130),
   'rotation.downtime': async () => {
     const judges = TestBed.inject(DowntimeJudgeService);
@@ -76,8 +82,9 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
   'defensive.uses': async () => [TestBed.inject(DefensiveJudgeService).usesFinding(
     'Cloak', [], defBench({ sample_count: 10, used_sample_count: 10, uses_per_min: { avg: 1.4, stddev: 0.1 }, avg_gap_s: 40 }), pullModel(), DEFENSIVE_TOP_LOGS, false,
   ) ?? {}],
-  'defensive.first_use': async () => [TestBed.inject(DefensiveJudgeService).firstUseFinding('Cloak', [40], DEFENSIVE_TOP_LOGS) ?? {}],
-  'defensive.gap': async () => [TestBed.inject(DefensiveJudgeService).gapFinding('Cloak', [5, 200], [[0, PULL_S]], DEFENSIVE_TOP_LOGS, {}) ?? {}],
+  'defensive.ready_time': async () => [TestBed.inject(DefensiveJudgeService).readyTimeFinding(
+    { name: 'Cloak', cooldown: 90 }, [5], pullModel({ fightDurationS: PULL_S }), { perParse: DEFENSIVE_TOP_LOGS, killsS: DEFENSIVE_TOP_LOGS.map(() => PULL_S) }, {},
+  ) ?? {}],
   'defensive.hold': async () => TestBed.inject(DefensiveJudgeService).holdFindings('Cloak', [0, 100], HELD_TO_130),
   'defensive.window': async () => [TestBed.inject(DefensiveJudgeService).windowVerdict(DEFENSIVE_WINDOW, { damage: 2000, covered: false, tank: false }, 10)],
   'defensive.dead_in_window': async () => [TestBed.inject(DefensiveJudgeService).deathVerdict(15)],

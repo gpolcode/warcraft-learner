@@ -6,7 +6,7 @@ import { CALIBRATION_SOURCE } from '../verdict/calibration/calibration-source';
 import { RegistryHashService } from '../verdict/calibration/registry-hash-service';
 import { NOT_GRADED } from '../verdict/calibration/arming-service';
 import { CalibrationIndex, FamilyCalibration } from '../verdict/calibration/calibration.models';
-import { LATE_OPENER_FAMILY } from '../rotation/cadence-judge-service';
+import { DOWNTIME_FAMILY } from '../rotation/downtime-judge-service';
 import { ENCHANT_MISSING_FAMILY } from '../gear/gear-judge-service';
 
 const hash = TestBed.inject(RegistryHashService).registryHash();
@@ -25,7 +25,7 @@ const ENCHANTS: FamilyCalibration = {
 
 const index = (over: Partial<CalibrationIndex> = {}): CalibrationIndex => ({
   registry_hash: hash, encounters: 6, pulls: 60,
-  families: { [LATE_OPENER_FAMILY.id]: OPENER, [ENCHANT_MISSING_FAMILY.id]: ENCHANTS },
+  families: { [DOWNTIME_FAMILY.id]: OPENER, [ENCHANT_MISSING_FAMILY.id]: ENCHANTS },
   specs: {}, demoted: {}, invariants: [], unfoldable: {},
   page: {
     measured: { dps: DPS_LOAD, tank: { pulls: 0, amber: 0, red: 0 }, healer: { pulls: 0, amber: 0, red: 0 } },
@@ -51,7 +51,7 @@ describe('ValidityFeatureService.loadView', () => {
 
     expect(measurement?.families).toEqual([
       {
-        label: LATE_OPENER_FAMILY.label, tag: 'Not graded', graded: false, tests: 200, redRate: 0, amberRate: 10 / 200,
+        label: DOWNTIME_FAMILY.label, tag: 'Not graded', graded: false, tests: 200, redRate: 0, amberRate: 10 / 200,
         detection: OPENER.detection, reason: NOT_GRADED.tooFew,
       },
       {
@@ -63,7 +63,7 @@ describe('ValidityFeatureService.loadView', () => {
 
   it('gives a check no top log was judged on no rate', async () => {
     const untested = { ...OPENER, pooled: { tests: 0, amber: 0, red: 0 } };
-    const measurement = await measurementOf(Results.ok(index({ families: { [LATE_OPENER_FAMILY.id]: untested } })));
+    const measurement = await measurementOf(Results.ok(index({ families: { [DOWNTIME_FAMILY.id]: untested } })));
 
     expect(measurement?.families[0]).toMatchObject({ redRate: null, amberRate: null });
   });

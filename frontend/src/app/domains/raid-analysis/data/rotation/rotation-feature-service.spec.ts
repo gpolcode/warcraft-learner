@@ -49,9 +49,13 @@ function topLog(cdCastsS: Record<string, number[]>, efficiencyPct: number | null
   return { efficiency_pct: efficiencyPct, lust_s: null, phase_starts: [], cd_casts_s: cdCastsS, buttons: {} };
 }
 
-/** Five top logs that open Shadow Blades at 5s, press it again at 95s and cast 90% of the pull; with no spread, the opener edge is 7s, the gap edge 95s and the casting edge 5s of idle under 90%. */
+/** Five top logs that open Shadow Blades at 5s, press it again at 95s and cast 90% of the pull; with no spread, the casting edge is 5s of idle under 90%. */
 const TOP_LOGS = Array.from({ length: 5 }, () => topLog({ 'Shadow Blades': [5, 95] }, 90));
 const measured = bench({ per_parse: TOP_LOGS });
+/** The same top logs as the cooldown checks read them, each killing at 5:00. */
+const TOP = { perParse: TOP_LOGS, killsS: TOP_LOGS.map(() => 300) };
+/** On a 5:00 pull the top logs leave Shadow Blades ready 5s before the opener and 115s after its 90s cooldown runs out at 3:05; a single 5s press leaves it ready 205s, past both the spread and one cooldown. */
+const ONE_PRESS = [5];
 
 /** A killed pull of `fightS`, with a Bloodlust from `lustS` when given. */
 function killed(fightS: number, lustS: number | null = null): PullModel {
@@ -81,16 +85,15 @@ describe('analyzeRotationFindings', () => {
     expect(findings).toEqual([expect.objectContaining({ onPlan: true, severity: 'neutral', cd_name: 'Shadow Blades' })]);
   });
 
-  it('flags a late opener against the top logs\' first uses', () => {
-    const casts = [cast(SHADOW_BLADES, 40)];
-    const buffs = [applyBuff(BLOODLUST, 38)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: measured })).findings;
-    expect(findings.find(f => f.category === 'cooldown_delay')).toMatchObject({ family: 'rotation.late_opener', severity: 'amber' });
+  it('flags ready time against the top logs\' over the same pull', () => {
+    const casts = ONE_PRESS.map(atS => cast(SHADOW_BLADES, atS));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: measured, fightDurationS: 300 })).findings;
+    expect(findings.find(f => f.family === 'rotation.ready_time')).toMatchObject({ severity: 'red', category: 'lost_cooldown' });
   });
 
-  it('flags no opener on a bench that carries no per-log uses', () => {
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: [cast(SHADOW_BLADES, 40)], bench: bench() })).findings;
-    expect(findings.some(f => f.category === 'cooldown_delay')).toBe(false);
+  it('flags no ready time on a bench that carries no per-log uses', () => {
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: ONE_PRESS.map(atS => cast(SHADOW_BLADES, atS)), bench: bench(), fightDurationS: 300 })).findings;
+    expect(findings.some(f => f.family === 'rotation.ready_time')).toBe(false);
   });
 
   it('gives the cast-efficiency finding a label and a remedy so the row is not blank', () => {
@@ -124,14 +127,22 @@ describe('analyzeRotationFindings', () => {
 });
 
 describe('analyzeRotationFindings pre-pull use', () => {
-  it('reads a use before the pull from its aura still up at it, so the opener is not late', () => {
-    // bench(): first cast 5s give or take 2, 1 use a minute; the aura drops at 0:20 with no apply before it.
+  it('reads a use before the pull from its aura still up at it, so the cooldown never sat ready before its second press', () => {
+    // Top logs press at the pull and on the 90s cooldown; the aura drops at 0:20 with no apply before it.
     const SECOND_CAST_S = 90;
+    const pressedAtPull = bench({ per_parse: Array.from({ length: 5 }, () => topLog({ 'Shadow Blades': [0, SECOND_CAST_S] })) });
     const { findings } = svc['analyzeRotationFindings'](scan({
-      castEvents: [cast(SHADOW_BLADES, SECOND_CAST_S)], buffEvents: [removeBuff(SHADOW_BLADES, 20)], bench: bench(),
+      castEvents: [cast(SHADOW_BLADES, SECOND_CAST_S)], buffEvents: [removeBuff(SHADOW_BLADES, 20)], bench: pressedAtPull,
     }));
-    expect(findings.filter(f => f.category === 'cooldown_delay')).toEqual([]);
+    expect(findings.some(f => f.family === 'rotation.ready_time')).toBe(false);
     expect(findings.some(f => f.onPlan)).toBe(true);
+  });
+
+  it('reads the same press with no aura at the pull as a cooldown ready for 90s', () => {
+    const SECOND_CAST_S = 90;
+    const pressedAtPull = bench({ per_parse: Array.from({ length: 5 }, () => topLog({ 'Shadow Blades': [0, SECOND_CAST_S] })) });
+    const { findings } = svc['analyzeRotationFindings'](scan({ castEvents: [cast(SHADOW_BLADES, SECOND_CAST_S)], bench: pressedAtPull }));
+    expect(findings.some(f => f.family === 'rotation.ready_time')).toBe(true);
   });
 });
 
@@ -249,10 +260,10 @@ describe('analyzeOneCooldown', () => {
     expect(result?.onPlan).toMatchObject({ onPlan: true, cd_name: 'Shadow Blades' });
   });
 
-  it('reports an issue and no on-plan finding when the opener is late', () => {
-    const result = svc['analyzeOneCooldown'](cd, [40], single, killed(120, 38), null, TOP_LOGS);
+  it('reports an issue and no on-plan finding when the cooldown sat ready past the top logs', () => {
+    const result = svc['analyzeOneCooldown'](cd, ONE_PRESS, single, killed(300), null, TOP);
     expect(result?.onPlan).toBeNull();
-    expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(true);
+    expect(result?.scan.issues.some(finding => finding.family === 'rotation.ready_time')).toBe(true);
   });
 
   it('does not flag an unused cooldown that only a minority of top parses use (use-share gate)', () => {
@@ -262,11 +273,9 @@ describe('analyzeOneCooldown', () => {
     expect(result?.onPlan).toBeNull();
   });
 
-  it('does not flag a late opener of a minority-use cooldown (use-share gate)', () => {
-    // Opened well past 2 sigma over the 5s top first cast, but the first-cast check is gated off.
-    const LATE_OPENER_S = 40;
-    const result = svc['analyzeOneCooldown'](cd, [LATE_OPENER_S], rareUse, killed(FIGHT_DUR_S), null, TOP_LOGS);
-    expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(false);
+  it('does not judge the ready time of a minority-use cooldown (use-share gate)', () => {
+    const result = svc['analyzeOneCooldown'](cd, ONE_PRESS, rareUse, killed(300), null, TOP);
+    expect(result?.scan.issues.some(finding => finding.family === 'rotation.ready_time')).toBe(false);
   });
 });
 
@@ -295,6 +304,7 @@ describe('rotation checks over the player timeline', () => {
   });
 
   const cd = { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 };
+  const LONG_FIGHT_S = 300;
 
   it('mutes the use count of a player who died before top raiders open with it and never came back', () => {
     // bench: open at 5s, then 1 a minute; dead from 3s on.
@@ -306,25 +316,18 @@ describe('rotation checks over the player timeline', () => {
     expect(svc['analyzeOneCooldown'](cd, [], cdBench(), killed(FIGHT_S), null)?.scan.issues[0]).toMatchObject({ category: 'never_used' });
   });
 
-  // The top logs wait 90s, so a wait past 95s flags; this one runs 6s to 150s.
-  const GAP_CASTS = [6, 150];
-  const LONG_FIGHT_S = 300;
-  const gapOf = (model: PullModel): AnalysisFinding | undefined =>
-    svc['analyzeOneCooldown'](cd, GAP_CASTS, cdBench(), model, null, TOP_LOGS)?.scan.issues.find(finding => finding.family === 'rotation.cooldown_gap');
+  // Top logs on the 90s cadence leave it ready only for the 5s opener; pressing at 5s and 275s leaves it ready 180s between.
+  const ON_CADENCE_TOP = { perParse: Array.from({ length: 5 }, () => topLog({ 'Shadow Blades': [5, 95, 185, 275] })), killsS: Array.from({ length: 5 }, () => LONG_FIGHT_S) };
+  const SKIPPED_TWO = [5, 275];
+  const readyOf = (model: PullModel): AnalysisFinding | undefined =>
+    svc['analyzeOneCooldown'](cd, SKIPPED_TWO, cdBench(), model, null, ON_CADENCE_TOP)?.scan.issues.find(finding => finding.family === 'rotation.ready_time');
 
-  it('judges no wait the player spent partly dead, so the death is the one row', () => {
-    expect(gapOf(pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[20, 140]] }))).toBeUndefined();
+  it('leaves out a wait the player spent partly dead, so the death is the one row', () => {
+    expect(readyOf(pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[100, 260]] }))).toBeUndefined();
   });
 
   it('keeps the wait when the death begins the instant the later cast lands', () => {
-    expect(gapOf(pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[150, 200]] }))).toMatchObject({ severity: 'amber' });
-  });
-
-  it('folds a late opener the player spent dead under the death', () => {
-    const deadBeforeIt = pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[2, 30]] });
-    const result = svc['analyzeOneCooldown'](cd, [40], cdBench(), deadBeforeIt, null, TOP_LOGS);
-    expect(result?.scan.issues.some(finding => finding.family === 'rotation.late_opener')).toBe(false);
-    expect(result?.scan.folded.dead).toBe(1);
+    expect(readyOf(pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[275, 290]] }))).toMatchObject({ severity: 'red' });
   });
 
   it('judges no cast after the called wipe', () => {

@@ -2,8 +2,9 @@ import { CalibrationCapsService } from '../verdict/calibration/calibration-caps-
 import { FamilyCaps } from '../verdict/tone.models';
 import { NotGradedNote } from '../verdict/calibration/calibration.models';
 import { ROTATION_BUTTON_FAMILY } from './priority-list/button-judge-service';
-import { LOST_CAST_FAMILY, NEVER_USED_FAMILY } from './cooldown-use-judge-service';
-import { COOLDOWN_GAP_FAMILY, COOLDOWN_HOLD_FAMILY, LATE_OPENER_FAMILY } from './cadence-judge-service';
+import { NEVER_USED_FAMILY } from './cooldown-use-judge-service';
+import { COOLDOWN_HOLD_FAMILY } from './cadence-judge-service';
+import { READY_TIME_FAMILY, ReadyTimeJudgeService, ReadyVoice } from './ready-time-judge-service';
 import { DOWNTIME_FAMILY } from './downtime-judge-service';
 import { BLOODLUST_ALIGNMENT_FAMILY, BLOODLUST_TIMING_FAMILY } from './bloodlust-judge-service';
 import { Injectable, inject } from '@angular/core';
@@ -27,7 +28,7 @@ import { FoldCounts, JudgedSpan, PullModel, PullModelService } from '../analysis
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
 import { SpecRoleService } from '../analysis/spec-role-service';
 import { CooldownUseJudgeService } from './cooldown-use-judge-service';
-import { CadenceJudgeService } from './cadence-judge-service';
+import { CadenceJudgeService, CastsByName } from './cadence-judge-service';
 import { DowntimeJudgeService } from './downtime-judge-service';
 import { BloodlustJudgeService } from './bloodlust-judge-service';
 
@@ -75,7 +76,7 @@ interface RotationNotGraded {
 }
 
 const OFFENSIVE_FAMILIES = [
-  LOST_CAST_FAMILY, NEVER_USED_FAMILY, LATE_OPENER_FAMILY, COOLDOWN_GAP_FAMILY, COOLDOWN_HOLD_FAMILY, BLOODLUST_ALIGNMENT_FAMILY, BLOODLUST_TIMING_FAMILY,
+  READY_TIME_FAMILY, NEVER_USED_FAMILY, COOLDOWN_HOLD_FAMILY, BLOODLUST_ALIGNMENT_FAMILY, BLOODLUST_TIMING_FAMILY,
 ];
 
 export interface RotationPlanView {
@@ -93,6 +94,13 @@ export interface RotationScanInput {
 }
 
 interface CooldownScan { issues: AnalysisFinding[]; holds: AnalysisFinding[]; folded: FoldCounts; }
+
+/** The bench's top logs as the cooldown checks read them: their measures and each kill's length, both in the order of `sources`. */
+interface TopLogs { perParse: readonly RotationParseMeasures[]; killsS: readonly (number | null)[]; }
+
+const NO_TOP_LOGS: TopLogs = { perParse: [], killsS: [] };
+
+const OFFENSIVE_VOICE: ReadyVoice = { remedy: name => `Press ${name} as soon as it is ready.` };
 
 interface RotationScan { findings: AnalysisFinding[]; folded: FoldCounts; checked: number; downtimeEmpty: string; }
 
@@ -127,6 +135,7 @@ export class RotationFeatureService {
   private readonly specRoles = inject(SpecRoleService);
   private readonly cooldownUses = inject(CooldownUseJudgeService);
   private readonly cadence = inject(CadenceJudgeService);
+  private readonly readyTime = inject(ReadyTimeJudgeService);
   private readonly downtime = inject(DowntimeJudgeService);
   private readonly lust = inject(BloodlustJudgeService);
   private readonly findingRows = inject(FindingRowsService);
@@ -164,6 +173,11 @@ export class RotationFeatureService {
   }
 
   /** A bench an older ingest wrote carries no list, and judges no button until the next ingest re-benches it; without per-log measures every check is a comparison. */
+  private topLogs(bench: RotationBench): TopLogs {
+    const stored: Partial<RotationBench> = bench;
+    return { perParse: bench.per_parse, killsS: (stored.sources ?? []).map(source => source.duration_s) };
+  }
+
   private withList(bench: RotationBench): RotationBench {
     const stored: Partial<RotationBench> = bench;
     const listed = stored.list && stored.buttons ? bench : { ...bench, list: { lines: [], variables: [], spells: {}, talents: {} }, buttons: [] };
@@ -237,7 +251,7 @@ export class RotationFeatureService {
   /** `castTimesS` are fight-relative seconds, ascending, inside the judged span. Null when the cooldown went unused and the player's talents do not show it. */
   protected analyzeOneCooldown(
     cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark | undefined,
-    model: PullModel, talents: ReadonlyMap<number, number> | null, perParse: readonly RotationParseMeasures[] = [], caps?: FamilyCaps,
+    model: PullModel, talents: ReadonlyMap<number, number> | null, top: TopLogs = NO_TOP_LOGS, caps?: FamilyCaps,
   ): { onPlan: AnalysisFinding | null; scan: CooldownScan } | null {
     const cdName = cd.name;
     const actual = castTimesS.length;
@@ -246,29 +260,40 @@ export class RotationFeatureService {
     const onPlan = actual > 0 ? this.findingRows.onPlanFinding(cdName) : null;
     if (!cdBench) return { onPlan, scan: { issues: [], holds: [], folded: this.pullModel.noFolds() } };
 
-    const { checked, uses } = this.majorityChecks(cd, castTimesS, cdBench, { model, talents, perParse, caps });
-    checked.push(...this.lust.findings(cdName, castTimesS, model.lust?.startS ?? null, perParse, caps));
-    const gap = this.cadence.gapFinding(cdName, castTimesS, model.aliveSpans, perParse, cdBench.hold_targets, caps);
-    checked.push(...[gap].filter(finding => finding !== null));
+    const uses = this.majorityChecks(cd, castTimesS, cdBench, { model, talents, top, caps });
+    const checked = this.lust.findings(cdName, castTimesS, model.lust?.startS ?? null, top.perParse, caps);
     const checkedHolds = this.cadence.holdFindings(cdName, castTimesS, cdBench.hold_targets, caps);
     const { kept, folded } = this.pullModel.foldFindings(model, checked);
-    // Lost uses are counted on alive time, so they carry no span to fold.
+    // Ready time and never-used checks are measured on alive time, so they carry no span to fold.
     const issues = [...uses, ...kept];
     const { kept: holds, folded: foldedHolds } = this.pullModel.foldFindings(model, checkedHolds);
 
     return { onPlan: issues.length ? null : onPlan, scan: { issues, holds, folded: this.pullModel.addFolds(folded, foldedHolds) } };
   }
 
-  /** A cooldown most top logs skip has a noisy expected count and opener, so neither is checked. */
+  /** A cooldown most top logs skip has a noisy reference, so it is not checked; a used one is judged on ready time, an unused one as never used. */
   private majorityChecks(
     cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark,
-    pull: { model: PullModel; talents: ReadonlyMap<number, number> | null; perParse: readonly RotationParseMeasures[]; caps?: FamilyCaps },
-  ): { checked: AnalysisFinding[]; uses: AnalysisFinding[] } {
-    if (!this.castCadence.usedByMajority(cdBench)) return { checked: [], uses: [] };
-    const opener = this.cadence.openerFinding(cd.name, castTimesS, pull.perParse, pull.caps);
-    const reference = this.cooldownUses.referenceUses(pull.perParse, cd.name);
-    const uses = this.cooldownUses.finding(cd.name, castTimesS, cdBench, pull.model, reference, buttonTaken(cd, pull.talents), pull.caps);
-    return { checked: opener ? [opener] : [], uses: uses ? [uses] : [] };
+    pull: { model: PullModel; talents: ReadonlyMap<number, number> | null; top: TopLogs; caps?: FamilyCaps },
+  ): AnalysisFinding[] {
+    if (!this.castCadence.usedByMajority(cdBench)) return [];
+    const casts = pull.top.perParse.map(parse => parse.cd_casts_s);
+    const finding = castTimesS.length
+      ? this.readyTimeFinding(cd, castTimesS, cdBench, casts, pull)
+      : this.cooldownUses.finding(cd, castTimesS, cdBench, pull.model, casts, buttonTaken(cd, pull.talents), pull.caps);
+    return finding ? [finding] : [];
+  }
+
+  private readyTimeFinding(
+    cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark, casts: CastsByName[],
+    pull: { model: PullModel; top: TopLogs; caps?: FamilyCaps },
+  ): AnalysisFinding | null {
+    const { model } = pull;
+    const cooldown = this.readyTime.readyCooldown(cd, casts, cd.name);
+    const ready = this.readyTime.measure(castTimesS, model.aliveSpans, cooldown, cdBench.hold_targets);
+    if (!ready) return null;
+    const reference = this.readyTime.reference(casts, pull.top.killsS, cd.name, cooldown, cdBench.hold_targets, model.aliveSpans);
+    return this.readyTime.finding(READY_TIME_FAMILY, OFFENSIVE_VOICE, cd.name, { ready, reference, cooldown, fightDurationS: model.fightDurationS, caps: pull.caps });
   }
 
   protected analyzeRotationFindings(input: RotationScanInput): RotationScan {
@@ -287,7 +312,7 @@ export class RotationFeatureService {
     const perCdBench = bench.per_cd_benchmarks;
     for (const cd of cooldowns) {
       const castTimesS = this.cooldownUses.castTimesS(castEvents, cd.spell_id, upAtPull, model.judgedEndS);
-      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], model, talents, bench.per_parse, caps);
+      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], model, talents, this.topLogs(bench), caps);
       if (!result) continue;
       checked += 1;
       folded = this.pullModel.addFolds(folded, result.scan.folded);
