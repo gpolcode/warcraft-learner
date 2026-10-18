@@ -4,10 +4,14 @@ import { ClipAnchor } from '../capture/capture.models';
 import { ComparisonWindow, RangeRow, WindowStatus } from './window-comparison.models';
 import { AbilityIcons, TimedEvent } from './wcl-projections-service';
 import { WclProjectionsService } from './wcl-projections-service';
+import { FoldCounts, PullModel, PullModelService, UnjudgedCause } from './pull-model-service';
+
+const UNJUDGED_ICON: Record<UnjudgedCause, string> = { dead: 'skull', after_wipe: 'flag', not_reached: 'schedule' };
 
 @Injectable({ providedIn: 'root' })
 export class WindowViewService {
   private readonly projections = inject(WclProjectionsService);
+  private readonly pullModel = inject(PullModelService);
 
   private eventDamage(event: TimedEvent): number {
     return (event.amount ?? 0) + (event.absorbed ?? 0);
@@ -88,18 +92,23 @@ export class WindowViewService {
     });
   }
 
+  /** A window is judged only when it lies wholly in alive, pre-wipe time; a null model is a bench-only view with no pull to judge. */
   buildWindowView<A>(
-    { topWindows, playerWindows, fightDurationS, abilities, adapter }: WindowViewInput<A>,
+    { topWindows, playerWindows, model, abilities, adapter }: WindowViewInput<A>,
   ): WindowView<A> {
     const windows: ComparisonWindow[] = [];
     const anchors: A[] = [];
     const clipAnchors: ClipAnchor[] = [];
+    const folded = this.pullModel.noFolds();
     topWindows.forEach((window, index) => {
-      const notReached = window.time_s > fightDurationS;
+      const unjudged = model ? this.pullModel.causeOf(model, window.time_s, window.time_s + window.window_length_s) : null;
+      if (unjudged) folded[unjudged] += 1;
       // playerWindows is the index-aligned aggregation over these same topWindows, so a time-based match would drift.
-      const playerWindow = notReached ? null : (playerWindows[index] ?? null);
+      const playerWindow = unjudged ? null : (playerWindows[index] ?? null);
       const playerDamage = playerWindow?.window_damage ?? null;
-      const { status, icon, note } = adapter.status(window, playerDamage, notReached);
+      const { status, icon, note } = unjudged
+        ? { status: 'muted' as const, icon: UNJUDGED_ICON[unjudged], note: '' }
+        : adapter.status(window, playerDamage);
       const { spellIds, labels } = adapter.chips(window);
       windows.push({
         timeStartS: window.time_s,
@@ -109,13 +118,14 @@ export class WindowViewService {
         note: note ?? '',
         status,
         statusIcon: icon,
+        unjudged,
         overview: { label: '', icon: '', playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max },
         detailRows: this.windowDetailRows(window.ability_breakdown, playerWindow, abilities, adapter.castColumns ?? false),
       });
       anchors.push(adapter.mapAnchor(window));
       clipAnchors.push(adapter.clipAnchor(window, index));
     });
-    return { windows, anchors, clipAnchors };
+    return { windows, anchors, clipAnchors, folded };
   }
 }
 
@@ -143,7 +153,7 @@ interface WindowChips {
 }
 
 export interface WindowViewAdapter<A> {
-  status: (window: BurstWindow, playerDamage: number | null, notReached: boolean) => WindowVerdict;
+  status: (window: BurstWindow, playerDamage: number | null) => WindowVerdict;
   chips: (window: BurstWindow) => WindowChips;
   mapAnchor: (window: BurstWindow) => A;
   clipAnchor: (window: BurstWindow, index: number) => ClipAnchor;
@@ -153,7 +163,7 @@ export interface WindowViewAdapter<A> {
 interface WindowViewInput<A> {
   topWindows: BurstWindow[];
   playerWindows: PlayerBurstWindow[];
-  fightDurationS: number;
+  model: PullModel | null;
   abilities: AbilityIcons;
   adapter: WindowViewAdapter<A>;
 }
@@ -162,4 +172,5 @@ export interface WindowView<A> {
   windows: ComparisonWindow[];
   anchors: A[];
   clipAnchors: ClipAnchor[];
+  folded: FoldCounts;
 }

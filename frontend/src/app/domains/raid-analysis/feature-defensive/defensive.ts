@@ -54,6 +54,8 @@ export class Defensive {
 
   protected readonly findingRows = computed<FindingRow[]>(() => this.load.value()?.findingRows ?? []);
   protected readonly onPlan = computed<OnPlanChip[]>(() => this.load.value()?.onPlan ?? []);
+  protected readonly findingsSpan = computed(() => this.load.value()?.findingsSpan ?? null);
+  protected readonly windowsSpan = computed(() => this.load.value()?.windowsSpan ?? null);
 
   protected onOpenMap(index: number): void {
     const anchor = this.anchors()[index];

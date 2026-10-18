@@ -7,6 +7,7 @@
       subtitle="How you used your survival cooldowns compared with the top logs."
       [rows]="findingRows()"
       [onPlan]="onPlan()"
+      [judged]="findingsSpan()"
       [showMap]="showMap()"
       [showClip]="showClip()"
       (openMap)="onFindingMap($event)"
@@ -16,6 +17,7 @@
     @if (windows().length > 0) {
       <wl-window-comparison
         [windows]="windows()"
+        [judged]="windowsSpan()"
         [higherIsBetter]="false"
         [showCasts]="false"
         [showMap]="showMap()"

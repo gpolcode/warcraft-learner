@@ -55,7 +55,7 @@ describe('RotationFeatureService', () => {
     });
 
     const onMissingFight = await service.loadPlayerView('SubtletyRogue', 1, 'rX', UNLOGGED_FIGHT_ID, 10);
-    expect(onMissingFight).toEqual(Results.ok({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [] }));
+    expect(onMissingFight).toEqual(Results.ok({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null }));
 
     const onFailure = await service.loadPlayerView('SubtletyRogue', 1, FAILING_CODE, 1, 10);
     expect(onFailure.ok).toBe(false);

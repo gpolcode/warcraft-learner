@@ -1,0 +1,13 @@
+@let s = span();
+@let one = noun();
+<span>Judged 0:00 to {{ s.endS | formatDuration }}, alive {{ s.aliveS | formatDuration }}.</span>
+<!-- Each sentence stays on one line, so template whitespace never lands before its punctuation. -->
+@if (dead(); as count) {
+  <span>You were dead @for (d of s.deadSpans; track d.fromS) {from {{ d.fromS | formatDuration }} to {{ d.toS | formatDuration }}{{ $last ? '' : ' and ' }}}, so {{ count }} {{ count === 1 ? one + ' there is' : one + 's there are' }} not judged.</span>
+}
+@if (afterWipe(); as count) {
+  <span>@switch (s.endCause) {@case ('wipe_called') {The raid called the wipe}@case ('raid_collapse') {Half the raid was dead}@default {The pull wiped}} at {{ s.endS | formatDuration }}, so {{ count }} {{ count === 1 ? one + ' after it is' : one + 's after it are' }} not judged.</span>
+}
+@if (notReached(); as count) {
+  <span>The boss died at {{ s.endS | formatDuration }}, so {{ count }} {{ count === 1 ? one + ' after it is' : one + 's after it are' }} not judged.</span>
+}

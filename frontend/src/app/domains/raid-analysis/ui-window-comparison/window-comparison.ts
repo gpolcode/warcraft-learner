@@ -10,6 +10,8 @@ import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe'
 import { FormatDamagePipe } from '../../shared/ui-format/format-damage-pipe';
 import { SignedPercentPipe } from '../../shared/ui-format/signed-percent-pipe';
 import type { RangeRow, ComparisonWindow } from '../data/analysis/window-comparison.models';
+import type { JudgedSpan } from '../data/analysis/pull-model-service';
+import { JudgedSpanCaption } from '../ui-judged-span/judged-span';
 
 type TimelineCell =
   | { readonly kind: 'window'; readonly index: number; readonly window: ComparisonWindow }
@@ -25,7 +27,7 @@ let nextInstanceSeq = 0;
   host: { class: 'block' },
   imports: [
     TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChip, GameIcon, CompactAbilityRow, RangeBar, RangeLegend,
-    FormatDurationPipe, FormatDamagePipe, SignedPercentPipe,
+    FormatDurationPipe, FormatDamagePipe, SignedPercentPipe, JudgedSpanCaption,
   ],
   templateUrl: './window-comparison.html',
 })
@@ -37,6 +39,8 @@ export class WindowComparison {
   readonly showCasts = input<boolean>(true);
   readonly heading = input<string>('');
   readonly subtitle = input<string>('');
+  /** The pull time the windows were judged over; null on a bench-only view. */
+  readonly judged = input<JudgedSpan | null>(null);
   readonly metricLabel = input.required<string>();
   readonly chipsLabel = input.required<string>();
   readonly rangeLabel = input.required<string>();

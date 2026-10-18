@@ -10,6 +10,9 @@
           }
         </hgroup>
       </header>
+      @if (judged(); as span) {
+        <wl-judged-span class="pb-2" noun="window" [span]="span"></wl-judged-span>
+      }
     }
 
     <!-- Chip size is decoupled from fight time, so windows never overlap however tightly they fire. -->
@@ -86,7 +89,7 @@
             } @else if (activeIsBenchOnly()) {
               <span class="tabular-nums text-value">{{ w.overview.topAvg | formatDamage }}</span>
             } @else {
-              <span class="text-value text-muted">Not reached</span>
+              <span class="text-value text-muted">@switch (w.unjudged) {@case ('dead') {Dead}@case ('after_wipe') {After the wipe}@default {Not reached}}</span>
             }
           </div>
           @if (!activeIsMuted() && overviewDelta() !== null) {

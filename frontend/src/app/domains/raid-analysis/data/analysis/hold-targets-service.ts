@@ -51,7 +51,7 @@ export class HoldTargetsService {
 
   /** Prior-relative (cascade-free): compares the player's own gap from their previous cast against the band; flags only a clear under-hold whose press is still on cooldown at the recommended slot, tolerates over-holding. */
   holdSuggestionFindings(
-    name: string, castTimesS: number[], holdTargets: CdHoldTargets, fightDurationS: number,
+    name: string, castTimesS: number[], holdTargets: CdHoldTargets, judgedEndS: number,
   ): AnalysisFinding[] {
     const findings: AnalysisFinding[] = [];
     if (!castTimesS.length) return findings;
@@ -73,12 +73,13 @@ export class HoldTargetsService {
       const underHeld = castS - readyS < target.delay_s - target.band_s;
       // An early press already back by the slot costs nothing there, as with a short cooldown pressed on cooldown.
       const blocksSlot = castS + target.effective_cd_s > holdToS;
-      // A hold past the pull's end would mean not pressing it at all.
-      if (underHeld && blocksSlot && holdToS < fightDurationS) {
+      // A hold past the judged end would mean not pressing it at all.
+      if (underHeld && blocksSlot && holdToS < judgedEndS) {
         findings.push({
           severity: 'info',
           category: 'hold_suggestion',
           timestamp_s: castS,
+          span: { fromS: prevCastS, toS: holdToS },
           measured: { value: fmtClock(castS), unit: `hold to ${fmtClock(holdToS)}` },
           message: `${name} cast ${idxStr} at ${fmtClock(castS)}. ${target.count} of ${target.total_samples} top raiders wait ${Math.round(target.delay_s)}s after it is ready.`,
           details: { remedy: `Hold ${name} to ${fmtClock(holdToS)}.`, cd_name: name },

@@ -24,6 +24,9 @@ const CLOCK_RANGE = cell(`${CLOCK.source} - ${CLOCK.source}`);
 export const AMOUNT = cell(FIGURE);
 const GAP = cell(`[+-]${FIGURE}|Not used`);
 const CASTS = cell('\\d+ / (\\d+|-)|Passive');
+const UNJUDGED = cell('Dead|After the wipe|Not reached');
+/** The caption every card that judges the pull states first, before any cause it names. */
+export const JUDGED_SPAN = new RegExp(`^Judged 0:00 to ${CLOCK.source}, alive ${CLOCK.source}\\.$`);
 
 /** Mirrors CAT_LABEL in src/app/domains/raid-analysis/data/analysis/analysis.models.ts. */
 export const CD_CHIP = /\b(lost cast|late|Bloodlust|downtime|hold until)\b/;
@@ -115,15 +118,18 @@ interface WindowFields {
   casts?: boolean;
 }
 
-/** The panel renders the active window alone, so once the first chip is picked every field on it belongs to the first window. */
-export async function showsFirstWindow(card: Locator, fields: WindowFields): Promise<void> {
+/** The panel renders the active window alone, so once the first chip is picked every field on it belongs to the first window. Resolves whether that window was judged. */
+export async function showsFirstWindow(card: Locator, fields: WindowFields): Promise<boolean> {
   const first = card.getByRole('option').first();
   await first.click();
   await expect(first).toHaveAttribute('aria-selected', 'true');
   await expect(first).toHaveAccessibleName(CLOCK);
   await expect(valueOf(card, 'Window')).toHaveText(CLOCK_RANGE);
-  await expect(valueOf(card, fields.metric)).toHaveText(AMOUNT);
-  if (fields.range) {
+  // The log decides whether the first window lies in alive, pre-wipe time; one that does not names why in place of a number.
+  const metric = valueOf(card, fields.metric);
+  const judged = AMOUNT.test(await metric.innerText());
+  await expect(metric).toHaveText(judged ? AMOUNT : UNJUDGED);
+  if (fields.range && judged) {
     await expect(valueOf(card, 'Vs top raiders average')).toHaveText(PERCENT);
     await expect(valueOf(card, fields.range)).toBeVisible();
     await shows(card, 'You');
@@ -138,14 +144,15 @@ export async function showsFirstWindow(card: Locator, fields: WindowFields): Pro
   const ability = card.locator('wl-compact-ability-row').first();
   await expect(ability.locator('wl-game-icon')).toHaveText(ANY_TEXT);
   await expect(ability.locator('span.text-body')).toHaveText(AMOUNT);
-  if (fields.range) {
+  if (fields.range && judged) {
     await shows(card, 'Gap');
     await expect(ability.locator('span.text-value')).toHaveText(GAP);
   }
-  if (fields.casts) {
+  if (fields.casts && judged) {
     await shows(card, 'Casts');
     await expect(ability.locator('[tuiBadge]')).toHaveText(CASTS);
   }
+  return judged;
 }
 
 /** The rows put the cooldowns top logs used first, so the first row carries a measured plan rather than dashes. */

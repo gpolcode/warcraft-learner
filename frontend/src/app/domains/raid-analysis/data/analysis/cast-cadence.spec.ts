@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { CadenceBenchmark } from '../encounter/encounter.models';
 import { CadenceEntry, CadenceVoice, CastCadenceService } from './cast-cadence-service';
 import { TestBed } from '@angular/core/testing';
+import { fmtClock } from './analysis-math';
 
 const castCadence = TestBed.inject(CastCadenceService);
 
@@ -103,27 +104,39 @@ describe('usedByMajority', () => {
 });
 
 describe('checkLostUses', () => {
+  const WHOLE_PULL = { aliveS: FIGHT_DUR_S, fightDurS: FIGHT_DUR_S };
+
   it('flags a critical when the ability is never used but expected', () => {
-    const finding = castCadence.checkLostUses(VOICE, 'Cloak', 0, 2, 2, FIGHT_DUR_S);
+    const finding = castCadence.checkLostUses(VOICE, 'Cloak', 0, 2, 2, WHOLE_PULL);
     expect(finding).toMatchObject({ severity: 'critical', category: 'lost_cooldown', measured: { value: '0 / 2', unit: 'press(es)' } });
+  });
+
+  it('names the fight length when the player was judged alive for all of it', () => {
+    expect(castCadence.checkLostUses(VOICE, 'Cloak', 0, 2, 2, WHOLE_PULL)?.message).toBe(`Cloak was never used. Top raiders get 2 on a ${fmtClock(FIGHT_DUR_S)} fight.`);
+  });
+
+  it('names the alive time the count was taken over when a death or the wipe cut it short', () => {
+    const ALIVE_S = FIGHT_DUR_S - 60;
+    const finding = castCadence.checkLostUses(VOICE, 'Cloak', 0, 2, 2, { aliveS: ALIVE_S, fightDurS: FIGHT_DUR_S });
+    expect(finding?.message).toBe(`Cloak was never used. Top raiders get 2 in ${fmtClock(ALIVE_S)} of alive time.`);
   });
 
   it('flags a critical below the floor, with the voice remedy', () => {
     // 1 use, floor 3 -> 2 missing.
-    const finding = castCadence.checkLostUses(VOICE, 'Cloak', 1, 3, 3, FIGHT_DUR_S);
+    const finding = castCadence.checkLostUses(VOICE, 'Cloak', 1, 3, 3, WHOLE_PULL);
     expect(finding?.category).toBe('lost_cooldown');
     expect(finding?.details?.remedy).toBe('Cloak +2');
   });
 
   it('asks for the uses up to the top count it shows, not up to the floor', () => {
     const ACTUAL = 23, EXPECTED = 25, FLOOR = 24;
-    const finding = castCadence.checkLostUses(VOICE, 'Cloak', ACTUAL, EXPECTED, FLOOR, FIGHT_DUR_S);
+    const finding = castCadence.checkLostUses(VOICE, 'Cloak', ACTUAL, EXPECTED, FLOOR, WHOLE_PULL);
     expect(finding?.measured).toEqual({ value: `${ACTUAL} / ${EXPECTED}`, unit: 'press(es)' });
     expect(finding?.details?.remedy).toBe(`Cloak +${EXPECTED - ACTUAL}`);
   });
 
   it('does not flag a use count exactly at the floor (strict)', () => {
-    expect(castCadence.checkLostUses(VOICE, 'Cloak', 2, 2, 2, FIGHT_DUR_S)).toBeNull();
+    expect(castCadence.checkLostUses(VOICE, 'Cloak', 2, 2, 2, WHOLE_PULL)).toBeNull();
   });
 });
 

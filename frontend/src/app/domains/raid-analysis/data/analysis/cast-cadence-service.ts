@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { AnalysisFinding } from './analysis.models';
 import { CadenceBenchmark } from '../encounter/encounter.models';
-import { avgOr, stddevOr, medianOr, castGaps, round, fmtClock, isOutlierAbove, OUTLIER_SIGMAS, TIMING_BAND_MIN_S } from './analysis-math';
+import { avgOr, stddevOr, medianOr, castGaps, round, fmtClock, isOutlierAbove, OUTLIER_SIGMAS, TIMING_BAND_MIN_S, spansS } from './analysis-math';
+import type { PullModel } from './pull-model-service';
 import { HoldWindow, HOLD_CONSENSUS_FRAC } from './hold-targets-service';
 import { HoldTargetsService } from './hold-targets-service';
 
@@ -35,13 +36,15 @@ export class CastCadenceService {
     return bench.used_sample_count / bench.sample_count >= MIN_USE_SHARE_FRAC;
   }
 
+  /** `expected` was counted over `aliveS`, so once that falls short of the fight the sentence names it instead of the fight length. */
   checkLostUses(
-    voice: CadenceVoice, name: string, actual: number, expected: number, floor: number, fightDurS: number,
+    voice: CadenceVoice, name: string, actual: number, expected: number, floor: number, time: { aliveS: number; fightDurS: number },
   ): AnalysisFinding | null {
+    const over = time.aliveS < time.fightDurS ? `in ${fmtClock(time.aliveS)} of alive time` : `on a ${fmtClock(time.fightDurS)} fight`;
     if (actual === 0 && expected >= 1) return {
       severity: 'critical', category: 'lost_cooldown', cd_name: name,
       measured: { value: `0 / ${expected}`, unit: voice.unit },
-      message: `${name} was never used. Top raiders get ${expected} on a ${fmtClock(fightDurS)} fight.`,
+      message: `${name} was never used. Top raiders get ${expected} ${over}.`,
       details: { remedy: `Use ${name} ${expected}x this fight.` }, occurrences: [] };
     if (actual > 0 && actual < floor) return {
       severity: 'critical', category: 'lost_cooldown', cd_name: name,
@@ -50,6 +53,18 @@ export class CastCadenceService {
       // The row shows the top count, so the fix counts up to it rather than to the looser floor.
       details: { remedy: voice.underuseRemedy(name, expected - actual) }, occurrences: [] };
     return null;
+  }
+
+  checkUseCount(
+    voice: CadenceVoice, name: string, castTimesS: number[], bench: CadenceBenchmark,
+    judged: { expected: number; floor: number; model: PullModel },
+  ): AnalysisFinding[] {
+    const { expected, floor, model } = judged;
+    const time = { aliveS: spansS(model.aliveSpans), fightDurS: model.fightDurationS };
+    return [
+      this.checkLostUses(voice, name, castTimesS.length, expected, floor, time),
+      this.checkFirstCastDelay(voice, name, castTimesS, bench),
+    ].filter((finding): finding is AnalysisFinding => finding !== null);
   }
 
   checkFirstCastDelay(
@@ -62,6 +77,7 @@ export class CastCadenceService {
     return {
       severity: 'warning', category: 'cooldown_delay', cd_name: name,
       timestamp_s: firstS,
+      span: { fromS: 0, toS: firstS },
       measured: { value: `+${lateS}s`, unit: `top ${fmtClock(bench.avg_first_cast_s)}` },
       message: `${name} ${voice.firstCastPhrase} ${fmtClock(firstS)}, ${lateS}s later than top raiders. Aim for ${fmtClock(bench.avg_first_cast_s)}.`,
       details: { remedy: voice.firstCastRemedy(name) }, occurrences: [] };
@@ -75,12 +91,14 @@ export class CastCadenceService {
     const avgGapS = bench.avg_gap_s;
     let prevS: number | undefined;
     for (const timeS of castTimesS) {
-      const gap = prevS != null ? timeS - prevS : null;
+      const fromS = prevS;
       prevS = timeS;
-      if (gap == null) continue;
+      if (fromS == null) continue;
+      const gap = timeS - fromS;
       if (isOutlierAbove(gap, avgGapS, bench.stddev_gap_s)) findings.push({
         severity: 'warning', category: 'cooldown_delay', cd_name: name,
         timestamp_s: timeS,
+        span: { fromS, toS: timeS },
         measured: { value: `${gap.toFixed(0)}s`, unit: `avg ${avgGapS.toFixed(0)}s` },
         message: `${name} sat ${gap.toFixed(0)}s between ${voice.gapNoun} at ${fmtClock(timeS)}. Top raiders average ${avgGapS.toFixed(0)}s.`,
         details: { remedy: voice.gapRemedy(name, avgGapS) }, occurrences: [] });

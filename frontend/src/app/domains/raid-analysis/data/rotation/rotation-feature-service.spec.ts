@@ -12,6 +12,8 @@ import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
 import { ROTATION_DATA_SOURCE } from './rotation-data-source';
+import { pullModel } from '../../../../../testing/builders/pull-model';
+import { PullModel } from '../analysis/pull-model-service';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 const bloodlust = TestBed.inject(RotationBloodlustService);
@@ -24,22 +26,31 @@ TestBed.configureTestingModule({ providers: [
 const svc = TestBed.inject(RotationFeatureService);
 TestBed.resetTestingModule();
 
+/** The pull model reads Bloodlust from the same buff stream the scan carries. */
 function scan(over: {
   bench: RotationBench; fightDurationS?: number; castEvents?: WclEvent[]; buffEvents?: WclEvent[]; cooldowns?: PlanCooldown[];
+  model?: Partial<PullModel>;
 }): RotationScanInput {
+  const fightDurationS = over.fightDurationS ?? 120;
+  const buffEvents = wclProjections.withRelativeS(over.buffEvents ?? [], 0);
   return {
     bench: over.bench,
-    fightDurationS: over.fightDurationS ?? 120,
+    model: pullModel({ fightDurationS, lust: bloodlust.lustSpan(buffEvents, fightDurationS), ...over.model }),
     castEvents: wclProjections.withRelativeS(over.castEvents ?? [], 0),
-    buffEvents: wclProjections.withRelativeS(over.buffEvents ?? [], 0),
+    buffEvents,
     cooldowns: over.cooldowns ?? over.bench.major_cooldowns,
     talents: null,
   };
 }
 
+/** A killed pull of `fightS`, with a Bloodlust from `lustS` when given. */
+function killed(fightS: number, lustS: number | null = null): PullModel {
+  return pullModel({ fightDurationS: fightS, lust: lustS === null ? null : { startS: lustS, endS: lustS + 40 } });
+}
+
 describe('analyzeRotationFindings', () => {
   it('emits a lost-cooldown critical when never used and expected', () => {
-    const findings = svc['analyzeRotationFindings'](scan({ bench: bench() }));
+    const findings = svc['analyzeRotationFindings'](scan({ bench: bench() })).findings;
     const lost = findings.find(f => f.category === 'lost_cooldown');
     expect(lost?.severity).toBe('critical');
   });
@@ -48,7 +59,7 @@ describe('analyzeRotationFindings', () => {
     const casts = [cast(SHADOW_BLADES, 6)];
     const buffs = [applyBuff(BLOODLUST, 6)];
     const single = bench({ per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 0.5, stddev: 0.1 } }) } });
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single })).findings;
     const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
     expect(success).toBeDefined();
     assert.exists(success);
@@ -58,7 +69,7 @@ describe('analyzeRotationFindings', () => {
   it('flags a late opener', () => {
     const casts = [cast(SHADOW_BLADES, 40)];
     const buffs = [applyBuff(BLOODLUST, 38)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: bench() }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: bench() })).findings;
     expect(findings.some(f => f.category === 'cooldown_delay')).toBe(true);
   });
 
@@ -67,7 +78,7 @@ describe('analyzeRotationFindings', () => {
     const FIRST_CAST_S = 6;
     const LATE_CAST_S = 30;
     const casts = [cast(SHADOW_BLADES, FIRST_CAST_S), cast(SHADOW_BLADES, LATE_CAST_S)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: bench() }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: bench() })).findings;
     const efficiency = findings.find(f => f.category === 'cast_efficiency');
     expect(efficiency).toBeDefined();
     assert.exists(efficiency);
@@ -81,7 +92,7 @@ describe('analyzeRotationFindings pre-pull use', () => {
   it('reads a use before the pull from its aura still up at it, so the opener is not late', () => {
     // bench(): first cast 5s give or take 2, 1 use a minute; the aura drops at 0:20 with no apply before it.
     const SECOND_CAST_S = 90;
-    const findings = svc['analyzeRotationFindings'](scan({
+    const { findings } = svc['analyzeRotationFindings'](scan({
       castEvents: [cast(SHADOW_BLADES, SECOND_CAST_S)], buffEvents: [removeBuff(SHADOW_BLADES, 20)], bench: bench(),
     }));
     expect(findings.filter(f => f.category === 'cooldown_delay')).toEqual([]);
@@ -101,7 +112,7 @@ describe('analyzeRotationFindings Bloodlust detection', () => {
     const PRE_PULL_BL_S = -2;
     const casts = [cast(SHADOW_BLADES, OPEN_CAST_S)];
     const buffs = [applyBuff(BLOODLUST, PRE_PULL_BL_S)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single })).findings;
     const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
     expect(success?.message).toContain('aligned with Bloodlust');
   });
@@ -110,7 +121,7 @@ describe('analyzeRotationFindings Bloodlust detection', () => {
     const FIGHT_START_S = 0;
     const casts = [cast(SHADOW_BLADES, OPEN_CAST_S)];
     const buffs = [applyBuff(BLOODLUST, FIGHT_START_S)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single })).findings;
     const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
     expect(success?.message).toContain('aligned with Bloodlust');
   });
@@ -121,7 +132,7 @@ describe('analyzeRotationFindings Bloodlust detection', () => {
     // RotationTransformService's ingest bench calls this same function on the same buff stream.
     expect(bloodlust.detectBloodlust(wclProjections.withRelativeS(buffs, 0))).toBe(PRE_PULL_BL_S);
     const casts = [cast(SHADOW_BLADES, OPEN_CAST_S)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: single })).findings;
     const success = findings.find(f => f.category === 'cooldown_usage' && f.severity === 'success');
     expect(success?.message).toContain('aligned with Bloodlust');
   });
@@ -138,20 +149,20 @@ describe('analyzeRotationFindings hold suggestions (prior-relative)', () => {
   it('flags an under-hold below the consensus band', () => {
     // gap 100, effective_cd 90 -> playerDelay 10 < (delay 30 - band 5 = 25).
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 100)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S })).findings;
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(true);
   });
 
   it('does not flag a player exactly at the band edge (strict)', () => {
     // gap 115 -> playerDelay 25, exactly delay - band; strict < so not flagged.
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 115)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S })).findings;
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
   });
 
   it('does not flag an over-hold', () => {
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 160)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S }));
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S })).findings;
     expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
   });
 });
@@ -219,14 +230,14 @@ describe('checkCastEfficiency', () => {
   const IDLE_ABOVE_AVG_S = 1.6; // just over the 1.5s downtime floor -> 98.7%, above top avg
 
   it('flags low cast efficiency more than 1 sigma below the top parses', () => {
-    const finding = svc['checkCastEfficiency']([0, IDLE_BELOW_BAND_S], FIGHT_DUR_S, bench());
+    const finding = svc['checkCastEfficiency']([0, IDLE_BELOW_BAND_S], killed(FIGHT_DUR_S), bench());
     expect(finding?.category).toBe('cast_efficiency');
     expect(finding?.severity).toBe('warning');
     expect(finding?.details?.remedy).toBeTruthy();
   });
 
   it('never escalates to critical, however far below', () => {
-    expect(svc['checkCastEfficiency']([0, IDLE_FAR_BELOW_S], FIGHT_DUR_S, bench())?.severity).toBe('warning');
+    expect(svc['checkCastEfficiency']([0, IDLE_FAR_BELOW_S], killed(FIGHT_DUR_S), bench())?.severity).toBe('warning');
   });
 
   it('does not flag efficiency exactly at the 1-sigma boundary (strict), but flags one bin below', () => {
@@ -234,17 +245,17 @@ describe('checkCastEfficiency', () => {
     const boundaryBench = bench({ top_avg_efficiency: 80, top_efficiency_stddev: 5 });
     const BOUNDARY_FIGHT_S = 128;
     // 32s idle -> exactly 75% = top - 1 sigma: strict boundary, no finding.
-    expect(svc['checkCastEfficiency']([0, 32], BOUNDARY_FIGHT_S, boundaryBench)).toBeNull();
+    expect(svc['checkCastEfficiency']([0, 32], killed(BOUNDARY_FIGHT_S), boundaryBench)).toBeNull();
     // 33s idle -> 74.21875% < 75%: one bin below the boundary, warns.
-    expect(svc['checkCastEfficiency']([0, 33], BOUNDARY_FIGHT_S, boundaryBench)?.severity).toBe('warning');
+    expect(svc['checkCastEfficiency']([0, 33], killed(BOUNDARY_FIGHT_S), boundaryBench)?.severity).toBe('warning');
   });
 
   it('does not flag when the player beats the top parses', () => {
-    expect(svc['checkCastEfficiency']([0, IDLE_ABOVE_AVG_S], FIGHT_DUR_S, bench())).toBeNull();
+    expect(svc['checkCastEfficiency']([0, IDLE_ABOVE_AVG_S], killed(FIGHT_DUR_S), bench())).toBeNull();
   });
 
   it('returns null with fewer than two casts', () => {
-    expect(svc['checkCastEfficiency']([0], FIGHT_DUR_S, bench())).toBeNull();
+    expect(svc['checkCastEfficiency']([0], killed(FIGHT_DUR_S), bench())).toBeNull();
   });
 });
 
@@ -263,36 +274,36 @@ describe('analyzeOneCooldown', () => {
     const gated = { ...cd, talent_gated: true, talent_entries: [TALENT_ENTRY] };
 
     it('is flagged as never used when the player\'s talents show it', () => {
-      const result = svc['analyzeOneCooldown'](gated, [], single, FIGHT_DUR_S, null, new Map([[TALENT_ENTRY, 1]]));
+      const result = svc['analyzeOneCooldown'](gated, [], single, killed(FIGHT_DUR_S), new Map([[TALENT_ENTRY, 1]]));
       expect(result?.scan.issues[0]).toMatchObject({ category: 'lost_cooldown', measured: { value: '0 / 1' } });
     });
 
     it('is skipped when the player\'s talents do not show it', () => {
-      expect(svc['analyzeOneCooldown'](gated, [], single, FIGHT_DUR_S, null, new Map([[TALENT_ENTRY + 1, 1]]))).toBeNull();
+      expect(svc['analyzeOneCooldown'](gated, [], single, killed(FIGHT_DUR_S), new Map([[TALENT_ENTRY + 1, 1]]))).toBeNull();
     });
 
     it('is skipped when the pull carries no talents, or the bench names no entry to check', () => {
-      expect(svc['analyzeOneCooldown'](gated, [], single, FIGHT_DUR_S, null, null)).toBeNull();
-      expect(svc['analyzeOneCooldown']({ ...cd, talent_gated: true }, [], single, FIGHT_DUR_S, null, new Map([[TALENT_ENTRY, 1]]))).toBeNull();
+      expect(svc['analyzeOneCooldown'](gated, [], single, killed(FIGHT_DUR_S), null)).toBeNull();
+      expect(svc['analyzeOneCooldown']({ ...cd, talent_gated: true }, [], single, killed(FIGHT_DUR_S), new Map([[TALENT_ENTRY, 1]]))).toBeNull();
     });
   });
 
   it('reports success when a cooldown is used cleanly and BL-aligned', () => {
     // first cast 6s (under 9s open threshold), BL at 6s -> aligned.
-    const result = svc['analyzeOneCooldown'](cd, [6], single, 120, 6, null);
+    const result = svc['analyzeOneCooldown'](cd, [6], single, killed(120, 6), null);
     expect(result?.scan.issues).toEqual([]);
     expect(result?.success?.message).toContain('aligned with Bloodlust');
   });
 
   it('reports an issue (no success) when the opener is late', () => {
-    const result = svc['analyzeOneCooldown'](cd, [40], single, 120, 38, null);
+    const result = svc['analyzeOneCooldown'](cd, [40], single, killed(120, 38), null);
     expect(result?.success).toBeNull();
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(true);
   });
 
   it('does not flag an unused cooldown that only a minority of top parses use (use-share gate)', () => {
     // Matching the top parses by not pressing it is not a lost cast.
-    const result = svc['analyzeOneCooldown'](cd, [], rareUse, FIGHT_DUR_S, null, null);
+    const result = svc['analyzeOneCooldown'](cd, [], rareUse, killed(FIGHT_DUR_S), null);
     expect(result?.scan.issues).toEqual([]);
     expect(result?.success).toBeNull();
   });
@@ -300,7 +311,72 @@ describe('analyzeOneCooldown', () => {
   it('does not flag a late opener of a minority-use cooldown (use-share gate)', () => {
     // Opened well past 2 sigma over the 5s top first cast, but the first-cast check is gated off.
     const LATE_OPENER_S = 40;
-    const result = svc['analyzeOneCooldown'](cd, [LATE_OPENER_S], rareUse, FIGHT_DUR_S, null, null);
+    const result = svc['analyzeOneCooldown'](cd, [LATE_OPENER_S], rareUse, killed(FIGHT_DUR_S), null);
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(false);
+  });
+});
+
+describe('rotation checks over the player timeline', () => {
+  const FIGHT_S = 120;
+  // A press every second while alive, so no gap clears the 1.5s downtime floor.
+  const everySecond = (fromS: number, toS: number): number[] => Array.from({ length: toS - fromS + 1 }, (_unused, i) => fromS + i);
+  const DIED_S = 10;
+  const BACK_S = 95;
+  const PRESSES = [...everySecond(0, DIED_S), ...everySecond(BACK_S, FIGHT_S)];
+
+  it('reads no idle time into the stretch the player was dead', () => {
+    const deadForIt = pullModel({ fightDurationS: FIGHT_S, deadSpans: [[DIED_S, BACK_S]] });
+    expect(svc['checkCastEfficiency'](PRESSES, deadForIt, bench())).toBeNull();
+  });
+
+  it('reads the same stretch as idle when the player was alive for it', () => {
+    expect(svc['checkCastEfficiency'](PRESSES, killed(FIGHT_S), bench())?.message).toContain('of the fight');
+  });
+
+  it('names the alive time as the base when a death shortened it', () => {
+    // Alive 0..10 and 95..120; one 20s idle gap from 100 to 120 of the 35s alive.
+    const deadForIt = pullModel({ fightDurationS: FIGHT_S, deadSpans: [[DIED_S, BACK_S]] });
+    const finding = svc['checkCastEfficiency']([...everySecond(0, DIED_S), BACK_S, 100, FIGHT_S], deadForIt, bench());
+    expect(finding?.message).toContain('of your alive time');
+  });
+
+  const cd = { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 };
+
+  it('expects no cast from a player who died before top raiders open with it and never came back', () => {
+    // bench: open at 5s, then 1 a minute; dead from 3s on.
+    const diedEarly = pullModel({ fightDurationS: FIGHT_S, deadSpans: [[3, FIGHT_S]] });
+    expect(svc['analyzeOneCooldown'](cd, [], cdBench(), diedEarly, null)?.scan.issues).toEqual([]);
+  });
+
+  it('flags the same unused cooldown as lost for a player alive the whole pull', () => {
+    expect(svc['analyzeOneCooldown'](cd, [], cdBench(), killed(FIGHT_S), null)?.scan.issues[0]).toMatchObject({ category: 'lost_cooldown' });
+  });
+
+  // bench: a 90s gap with a 5s spread, so a gap past 100s flags; this one runs 6s to 150s.
+  const GAP_CASTS = [6, 150];
+  const LONG_FIGHT_S = 300;
+
+  it('folds a long gap the player spent dead under the death, so the death is the one row', () => {
+    const deadInGap = pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[20, 140]] });
+    const result = svc['analyzeOneCooldown'](cd, GAP_CASTS, cdBench(), deadInGap, null);
+    expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(false);
+    expect(result?.scan.folded.dead).toBe(1);
+  });
+
+  it('keeps the gap when the death begins the instant the later cast lands', () => {
+    const deadAfter = pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[150, 200]] });
+    const result = svc['analyzeOneCooldown'](cd, GAP_CASTS, cdBench(), deadAfter, null);
+    expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(true);
+    expect(result?.scan.folded.dead).toBe(0);
+  });
+
+  it('judges no cast after the called wipe', () => {
+    // The wipe was called at 60s; a 70s press would otherwise open a 64s gap and a second use.
+    const CALLED_S = 60;
+    const { findings } = svc['analyzeRotationFindings'](scan({
+      castEvents: [cast(SHADOW_BLADES, 6), cast(SHADOW_BLADES, 70)], bench: bench(),
+      model: { judgedEndS: CALLED_S, judgedEndCause: 'wipe_called', aliveSpans: [[0, CALLED_S]] },
+    }));
+    expect(findings.find(finding => finding.severity === 'success')?.message).toBe('Shadow Blades - 1/1 casts.');
   });
 });

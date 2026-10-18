@@ -9,13 +9,15 @@ import { WindowView, WindowViewAdapter } from '../analysis/window-view-service';
 import { PullContextService, PullContext, PullRef } from '../analysis/pull-context-service';
 import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
 import { WindowViewService } from '../analysis/window-view-service';
+import { JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
 
 export interface BurstMapAnchor {
   timeS: number;
   windowLengthS: number;
 }
 
-export type BurstView = WindowView<BurstMapAnchor>;
+/** `judged` is null on a bench-only view, which judges no pull. */
+export type BurstView = WindowView<BurstMapAnchor> & { judged: JudgedSpan | null };
 
 @Injectable({ providedIn: 'root' })
 export class BurstFeatureService {
@@ -24,6 +26,7 @@ export class BurstFeatureService {
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(BURST_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
+  private readonly pullModel = inject(PullModelService);
 
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
@@ -31,20 +34,18 @@ export class BurstFeatureService {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
 
-    const pull: PullRef = { reportCode, fightId };
+    const pull: PullRef = { reportCode, fightId, playerId };
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'BurstFeatureService.loadPlayerView',
       errorId: 'burst.player-view',
       emptyView: () => this.benchOnlyView(bench.value),
-      analyze: context => this.playerView(bench.value, pull, playerId, context),
+      analyze: context => this.playerView(bench.value, pull, context),
     });
   }
 
-  private async playerView(
-    bench: BurstBench, pull: PullRef, playerId: number, context: PullContext,
-  ): Promise<BurstView> {
-    const { reportCode, fightId } = pull;
-    const { report, fight, fightDurationS } = context;
+  private async playerView(bench: BurstBench, pull: PullRef, context: PullContext): Promise<BurstView> {
+    const { reportCode, fightId, playerId } = pull;
+    const { report, fight, model } = context;
     const abilities = report.masterData?.abilities ?? [];
     // Names only, to attribute the player's casts by ability name in each window.
     const abilityNames = new Map<number, string>();
@@ -60,7 +61,7 @@ export class BurstFeatureService {
     const playerWindows = this.findPlayerBurstWindows(
       bench.windows, this.wclProjections.withRelativeS(damage, fight.startTime), this.wclProjections.withRelativeS(presses, fight.startTime), abilityNames,
     );
-    return this.buildBurstView(bench.windows, playerWindows, fightDurationS, bench.cd_spell_ids, bench.ability_icons);
+    return this.buildBurstView(bench.windows, playerWindows, model, bench.cd_spell_ids, bench.ability_icons);
   }
 
   async loadBenchView(spec: string, encounterId: number): Promise<Result<BurstView>> {
@@ -75,12 +76,10 @@ export class BurstFeatureService {
     topAvg: number,
     topMin: number,
     stddev: number,
-    notReached: boolean,
     benchOnly = false,
   ): { status: WindowStatus; icon: string } {
     // Pre-fight has no player log to compare, so the window is purely informational.
     if (benchOnly) return { status: 'info', icon: 'insights' };
-    if (notReached) return { status: 'muted', icon: 'schedule' };
     if (playerDamage === null) return { status: 'muted', icon: 'help_outline' };
     if (playerDamage < topMin - stddev) return { status: 'bad', icon: 'error' };
     if (topAvg > 0 && playerDamage < topAvg - stddev) return { status: 'warn', icon: 'warning_amber' };
@@ -112,8 +111,8 @@ export class BurstFeatureService {
 
   private burstAdapter(cdSpellIds: Record<string, number>, benchOnly: boolean): WindowViewAdapter<BurstMapAnchor> {
     return {
-      status: (window, playerDamage, notReached) =>
-        this.burstWindowStatus(playerDamage, window.dmg_avg, window.dmg_min, window.dmg_stddev, notReached, benchOnly),
+      status: (window, playerDamage) =>
+        this.burstWindowStatus(playerDamage, window.dmg_avg, window.dmg_min, window.dmg_stddev, benchOnly),
       chips: window => this.splitCommonCds(window.common_cds, cdSpellIds),
       mapAnchor: window => this.burstMapAnchor(window),
       clipAnchor: (window, index) => this.burstClipAnchor(window, index),
@@ -124,18 +123,18 @@ export class BurstFeatureService {
   protected buildBurstView(
     topWindows: BurstWindow[],
     playerWindows: PlayerBurstWindow[],
-    fightDurationS: number,
+    model: PullModel | null,
     cdSpellIds: Record<string, number>,
     abilities: AbilityIcons,
-    benchOnly = false,
   ): BurstView {
-    return this.windowView.buildWindowView({
-      topWindows, playerWindows, fightDurationS, abilities, adapter: this.burstAdapter(cdSpellIds, benchOnly),
+    const view = this.windowView.buildWindowView({
+      topWindows, playerWindows, model, abilities, adapter: this.burstAdapter(cdSpellIds, model === null),
     });
+    return { ...view, judged: model ? this.pullModel.judgedSpan(model, view.folded) : null };
   }
 
   private benchOnlyView(bench: BurstBench): BurstView {
-    return this.buildBurstView(bench.windows, [], Number.POSITIVE_INFINITY, bench.cd_spell_ids, bench.ability_icons, true);
+    return this.buildBurstView(bench.windows, [], null, bench.cd_spell_ids, bench.ability_icons);
   }
 
   protected findPlayerBurstWindows(

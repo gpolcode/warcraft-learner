@@ -94,7 +94,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     expect(result.value.findingRows.map(row => row.measured.value)).toContain('1 / 2');
   });
 
-  it('marks a window the player was dead in bad, reading only their own deaths and resurrects', async () => {
+  it('mutes a window the player was dead in, reading only their own deaths and resurrects, and names the death once', async () => {
     const PLAYER_ID = 10;
     const OTHER_PLAYER_ID = 11;
     const DIED_S = 20;
@@ -110,7 +110,9 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const result = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', 1, PLAYER_ID);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.value.windows[0]).toMatchObject({ status: 'bad', note: 'dead' });
+    expect(result.value.windows[0]).toMatchObject({ status: 'muted', unjudged: 'dead' });
+    // The other player's resurrect does not close this player's death, which runs to the 300s fight end.
+    expect(result.value.windowsSpan).toMatchObject({ deadSpans: [{ fromS: DIED_S, toS: 300 }], folded: { dead: 1 } });
   });
 
   it('shapes a missed defensive into a finding row and a defensive used on plan into a chip', async () => {
@@ -163,7 +165,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
 
     const onMissingFight = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', UNLOGGED_FIGHT_ID, 10);
     expect(onMissingFight).toEqual(Results.ok({
-      findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [],
+      findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null,
     }));
 
     const onFailure = await service.loadAnalysisView('SubtletyRogue', 1, FAILING_CODE, 1, 10);

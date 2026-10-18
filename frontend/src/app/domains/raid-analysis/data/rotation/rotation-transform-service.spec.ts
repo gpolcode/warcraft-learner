@@ -137,7 +137,7 @@ describe('buildCdBenchmark', () => {
 
 describe('computeEfficiencyThresholds', () => {
   it('derives a p90 downtime floor and per-parse efficiency mean', () => {
-    const result = svc['computeEfficiencyThresholds']([{ gapListS: [0.5, 0.6, 0.7, 5], durationS: 100 }]);
+    const result = svc['computeEfficiencyThresholds']([{ gapListS: [0.5, 0.6, 0.7, 5], castTimesS: [0, 0.5, 1.1, 1.8, 6.8], durationS: 100 }]);
     // d3 p90 quantile of [0.5,0.6,0.7,5]: 0.7 + 0.7*(5-0.7) = 3.71s.
     expect(result.downtimeThresholdS).toBe(3.71);
     // only the 5s gap clears the floor -> 5s downtime over 100s -> (1 - 5/100)*100 = 95%.
@@ -145,7 +145,7 @@ describe('computeEfficiencyThresholds', () => {
   });
 
   it('falls back to the default floor with no gaps', () => {
-    const result = svc['computeEfficiencyThresholds']([{ gapListS: [], durationS: 100 }]);
+    const result = svc['computeEfficiencyThresholds']([{ gapListS: [], castTimesS: [], durationS: 100 }]);
     expect(result.downtimeThresholdS).toBe(1.5);
     expect(result.topAvgEfficiency).toBe(0);
   });

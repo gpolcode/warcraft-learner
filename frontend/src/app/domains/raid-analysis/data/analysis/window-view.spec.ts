@@ -9,6 +9,8 @@ import {
   WCL_MELEE_EVENT_ABILITY_ID, WOW_AUTO_ATTACK_SPELL_ID, WCL_SYNTHETIC_SOURCE_FALLBACK_ID,
 } from '../../../../../testing/spell-ids';
 import { TestBed } from '@angular/core/testing';
+import { pullModel } from '../../../../../testing/builders/pull-model';
+import { PullModel } from './pull-model-service';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 const windowView = TestBed.inject(WindowViewService);
@@ -49,11 +51,10 @@ interface ProbeAnchor {
 
 // Wording distinct from every feature's, so each assertion proves the value came from the adapter and not from the builder.
 const PROBE_STATUS = { status: 'good', icon: 'probe_reached' } as const;
-const PROBE_NOT_REACHED = { status: 'muted', icon: 'probe_past_end' } as const;
 
 function probeAdapter(over: Partial<WindowViewAdapter<ProbeAnchor>> = {}): WindowViewAdapter<ProbeAnchor> {
   return {
-    status: (_window, _playerDamage, notReached) => notReached ? PROBE_NOT_REACHED : PROBE_STATUS,
+    status: () => PROBE_STATUS,
     chips: () => ({ spellIds: [], labels: [] }),
     mapAnchor: window => ({ timeS: window.time_s }),
     clipAnchor: (window, index) => ({ timeS: window.time_s, windowLengthS: window.window_length_s, key: `probe-${index}` }),
@@ -64,7 +65,7 @@ function probeAdapter(over: Partial<WindowViewAdapter<ProbeAnchor>> = {}): Windo
 const VIEW_INPUT = {
   topWindows: [topWindow()],
   playerWindows: [] as PlayerBurstWindow[],
-  fightDurationS: FIGHT_DURATION_S,
+  model: pullModel({ fightDurationS: FIGHT_DURATION_S }) as PullModel | null,
   abilities: ABILITIES,
   adapter: probeAdapter(),
 };
@@ -98,24 +99,51 @@ describe('buildWindowView', () => {
     expect(windows.map(window => window.overview.playerPct)).toEqual([PLAYER_DAMAGE, null]);
   });
 
-  it('reaches a window starting exactly at the fight end', () => {
-    const { windows } = viewOf({ playerWindows: [playerWindow(PLAYER_DAMAGE)], fightDurationS: WINDOW_START_S });
-    expect(first(windows).overview.playerPct).toBe(PLAYER_DAMAGE);
-    expect(first(windows).statusIcon).toBe(PROBE_STATUS.icon);
-  });
+  describe('window eligibility', () => {
+    const JUST_S = 0.1;
+    const calledAt = (judgedEndS: number): PullModel =>
+      pullModel({ fightDurationS: FIGHT_DURATION_S, judgedEndS, judgedEndCause: 'wipe_called' });
 
-  it('does not reach a window starting one second past the fight end, and drops its player damage', () => {
-    const ONE_SECOND_SHORT_S = WINDOW_START_S - 1;
-    const { windows } = viewOf({ playerWindows: [playerWindow(PLAYER_DAMAGE)], fightDurationS: ONE_SECOND_SHORT_S });
-    expect(first(windows).overview.playerPct).toBeNull();
-    expect(first(windows).statusIcon).toBe(PROBE_NOT_REACHED.icon);
-  });
+    it('judges a window ending exactly at the judged end', () => {
+      const view = viewOf({ playerWindows: [playerWindow(PLAYER_DAMAGE)], model: calledAt(WINDOW_END_S) });
+      expect(first(view.windows)).toMatchObject({ statusIcon: PROBE_STATUS.icon, unjudged: null });
+      expect(first(view.windows).overview.playerPct).toBe(PLAYER_DAMAGE);
+      expect(view.folded.after_wipe).toBe(0);
+    });
 
-  it('reaches every window when the caller passes no player windows and an unbounded fight', () => {
-    const LATE_START_S = 9_999;
-    const { windows } = viewOf({ topWindows: [topWindow({ time_s: LATE_START_S })], fightDurationS: Number.POSITIVE_INFINITY });
-    expect(first(windows).statusIcon).toBe(PROBE_STATUS.icon);
-    expect(first(windows).overview.playerPct).toBeNull();
+    it('mutes a window ending just after the called wipe as after the wipe, and drops its player damage', () => {
+      const view = viewOf({ playerWindows: [playerWindow(PLAYER_DAMAGE)], model: calledAt(WINDOW_END_S - JUST_S) });
+      expect(first(view.windows)).toMatchObject({ status: 'muted', statusIcon: 'flag', unjudged: 'after_wipe' });
+      expect(first(view.windows).overview.playerPct).toBeNull();
+      expect(view.folded.after_wipe).toBe(1);
+    });
+
+    it('mutes a window a kill ended inside as not reached', () => {
+      const kill = pullModel({ fightDurationS: WINDOW_END_S - JUST_S });
+      expect(first(viewOf({ model: kill }).windows)).toMatchObject({ status: 'muted', statusIcon: 'schedule', unjudged: 'not_reached' });
+    });
+
+    it('mutes a window the player died in as dead, ahead of the wipe that follows', () => {
+      const diedInIt = pullModel({
+        fightDurationS: FIGHT_DURATION_S, judgedEndS: WINDOW_END_S - JUST_S, judgedEndCause: 'raid_collapse',
+        deadSpans: [[WINDOW_END_S - 1, WINDOW_END_S - JUST_S]],
+      });
+      const view = viewOf({ model: diedInIt });
+      expect(first(view.windows)).toMatchObject({ status: 'muted', statusIcon: 'skull', unjudged: 'dead' });
+      expect(view.folded).toEqual({ dead: 1, after_wipe: 0, not_reached: 0 });
+    });
+
+    it('judges a window that opens the instant a resurrect lands', () => {
+      const backForIt = pullModel({ fightDurationS: FIGHT_DURATION_S, deadSpans: [[0, WINDOW_START_S]] });
+      expect(first(viewOf({ model: backForIt }).windows).unjudged).toBeNull();
+    });
+
+    it('judges every window of a bench-only view, which has no pull', () => {
+      const LATE_START_S = 9_999;
+      const { windows } = viewOf({ topWindows: [topWindow({ time_s: LATE_START_S })], model: null });
+      expect(first(windows).statusIcon).toBe(PROBE_STATUS.icon);
+      expect(first(windows).overview.playerPct).toBeNull();
+    });
   });
 
   it('spans the window and carries the top-parse band into the overview row', () => {

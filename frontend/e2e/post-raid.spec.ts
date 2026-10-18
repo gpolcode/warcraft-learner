@@ -2,7 +2,7 @@ import { expect, test, Locator, Page } from '@playwright/test';
 import { baseEnvironment } from '../src/environments/base-environment';
 import {
   shows, showsFindingTable, showsFirstOption, showsFirstWindow, showsGearConsensus, picksFirst, holdsPullResolve, gearSection, valueOf,
-  AMOUNT, ANY_TEXT, CD_CHIP, CLOCK, OPENED_AT, PERCENT,
+  AMOUNT, ANY_TEXT, CD_CHIP, CLOCK, JUDGED_SPAN, OPENED_AT, PERCENT,
 } from './support';
 
 const { e2eReportCode: REPORT_CODE, wclApiUrl: WCL_API_URL } = baseEnvironment;
@@ -155,11 +155,13 @@ test('offensives flag the cooldown casts that missed the top-parse plan, and dow
   const rotation = page.locator('wl-rotation');
   const offensives = rotation.locator('wl-finding-table').filter({ hasText: 'How you used your damage cooldowns compared with the top logs.' });
   await shows(offensives, 'Offensives');
+  await shows(offensives, JUDGED_SPAN);
   await showsFindingTable(offensives, CD_CHIP);
   // A pull that never idles past the bench's threshold draws no downtime table at all.
   const downtime = rotation.locator('wl-finding-table').filter({ hasText: 'Time you spent not casting, compared with the top logs.' });
   if (await downtime.count()) {
     await shows(downtime, 'Downtime');
+    await shows(downtime, JUDGED_SPAN);
     await showsFindingTable(downtime, /downtime/);
   }
 });
@@ -168,6 +170,7 @@ test('burst windows compare the first window\'s damage and abilities against the
   const burstWindows = page.locator('wl-burst-windows');
   await shows(burstWindows, 'Burst windows');
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
+  await shows(burstWindows, JUDGED_SPAN);
   await showsFirstWindow(burstWindows, { metric: 'Damage', chips: 'Cooldowns top raiders use here', range: 'Damage vs top range', casts: true });
 });
 
@@ -176,14 +179,16 @@ test('defensives flag the mistimed cooldowns and benchmark the damage taken in t
   const table = defensives.locator('wl-finding-table');
   await shows(table, 'Defensives');
   await shows(table, 'How you used your survival cooldowns compared with the top logs.');
+  await shows(table, JUDGED_SPAN);
   await showsFindingTable(table, CD_CHIP);
   // A bench keeps only the windows its top logs share, so a re-ingest can leave an encounter with none and the section hidden.
   const windows = defensives.locator('wl-window-comparison');
   if (await windows.count()) {
     await shows(windows, 'Defensive windows');
     await shows(windows, 'Damage taken in each defensive window vs top logs.');
-    await showsFirstWindow(windows, { metric: 'Damage taken', chips: 'Defensives top raiders use here', range: 'Damage taken vs top range' });
-    await expect(valueOf(windows, 'What you did')).toHaveText(ANY_TEXT);
+    await shows(windows, JUDGED_SPAN);
+    const judged = await showsFirstWindow(windows, { metric: 'Damage taken', chips: 'Defensives top raiders use here', range: 'Damage taken vs top range' });
+    if (judged) await expect(valueOf(windows, 'What you did')).toHaveText(ANY_TEXT);
   }
 });
 

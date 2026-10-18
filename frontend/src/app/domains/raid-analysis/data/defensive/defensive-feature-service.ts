@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { WclAbility, WclEvent } from '../wcl/wcl.models';
+import { WclAbility } from '../wcl/wcl.models';
 import {
   AnalysisFinding, BurstWindow, PlayerBurstWindow, PlayerDefensive,
 } from '../analysis/analysis.models';
@@ -23,7 +23,7 @@ import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { GearExtractService } from '../gear/gear-extract-service';
 import { WindowViewService } from '../analysis/window-view-service';
-import { DeathTimelineService, DeadSpan } from '../analysis/death-timeline-service';
+import { FoldCounts, JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
 import { DefensiveUsesService } from './defensive-uses-service';
 
 export interface DefensiveMapAnchor {
@@ -38,6 +38,9 @@ export interface DefensiveView {
   windows: ComparisonWindow[];
   anchors: DefensiveMapAnchor[];
   clipAnchors: ClipAnchor[];
+  /** Null on the empty view, where no pull was judged. */
+  findingsSpan: JudgedSpan | null;
+  windowsSpan: JudgedSpan | null;
 }
 
 export interface DefensivePlanRow {
@@ -76,16 +79,15 @@ const NOTE_NO_DEFENSIVE = 'no defensive used';
 const NOTE_USED_WRONGLY = 'defensive used wrongly';
 const NOTE_NEEDED_UNUSED = 'defensive needed, unused';
 
-const NOTE_DEAD = 'dead';
-
 export interface DefensiveWindowsInput {
   topWindows: BurstWindow[];
   playerWindows: PlayerBurstWindow[];
   playerDefensives: PlayerDefensive[];
-  deadSpans: DeadSpan[];
-  fightDurationS: number;
+  model: PullModel;
   abilities: AbilityIcons;
 }
+
+interface DefensiveScan { findings: AnalysisFinding[]; folded: FoldCounts; }
 
 @Injectable({ providedIn: 'root' })
 export class DefensiveFeatureService {
@@ -96,7 +98,7 @@ export class DefensiveFeatureService {
   private readonly defensiveUses = inject(DefensiveUsesService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly windowView = inject(WindowViewService);
-  private readonly deathTimeline = inject(DeathTimelineService);
+  private readonly pullModel = inject(PullModelService);
   private readonly pullContext = inject(PullContextService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(DEFENSIVE_DATA_SOURCE);
@@ -114,43 +116,38 @@ export class DefensiveFeatureService {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
 
-    const pull: PullRef = { reportCode, fightId };
+    const pull: PullRef = { reportCode, fightId, playerId };
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'DefensiveFeatureService.loadAnalysisView',
       errorId: 'defensive.player-view',
-      emptyView: () => ({ findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [] }),
-      analyze: context => this.analysisView(bench.value, pull, playerId, context),
+      emptyView: () => ({ findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null }),
+      analyze: context => this.analysisView(bench.value, pull, context),
     });
   }
 
-  private async analysisView(
-    bench: DefensiveBench, pull: PullRef, playerId: number, context: PullContext,
-  ): Promise<DefensiveView> {
-    const { reportCode, fightId } = pull;
-    const { fight, fightDurationS } = context;
+  private async analysisView(bench: DefensiveBench, pull: PullRef, context: PullContext): Promise<DefensiveView> {
+    const { reportCode, fightId, playerId } = pull;
+    const { fight, model } = context;
 
-    const [casts, buffs, dtEvents, deaths, combatants] = await Promise.all([
+    const [casts, buffs, dtEvents, combatants] = await Promise.all([
       // With resources, the same read the rotation card makes, so one fetch serves both.
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
       this.wclApi.getAllEvents(reportCode, fightId, 'DamageTaken', fight.startTime, fight.endTime, playerId),
-      // Raid-wide, the same read the pull overview makes, so the cache serves both.
-      this.wclApi.getAllEvents(reportCode, fightId, 'Deaths', fight.startTime, fight.endTime),
       this.wclApi.getCombatantInfo(reportCode, fightId, playerId),
     ]);
-    const deadSpans = await this.playerDeadSpans(pull, context, playerId, deaths);
 
     const dtEventsTimed = this.wclProjections.withRelativeS(dtEvents, fight.startTime);
     const abilities = context.report.masterData?.abilities ?? [];
     const presses = this.wclProjections.presses(casts, this.wclProjections.pressFolds(bench.defensives), { buffs, abilities });
     const playerDefensives = this.analyzeDefensives(
-      bench.defensives, this.wclProjections.withRelativeS(presses, fight.startTime), this.wclProjections.withRelativeS(buffs, fight.startTime), fightDurationS,
+      bench.defensives, this.wclProjections.withRelativeS(presses, fight.startTime), this.wclProjections.withRelativeS(buffs, fight.startTime), model.judgedEndS,
       abilities,
       this.gearExtract.pickedTalents(this.gearExtract.selectCombatantInfo(combatants, playerId)),
     );
-    const findings = bench.defensives.length && playerDefensives.length
-      ? this.analyzeDefensiveFindings(playerDefensives, bench.per_defensive_benchmarks, fightDurationS)
-      : [];
+    const { findings, folded } = bench.defensives.length && playerDefensives.length
+      ? this.analyzeDefensiveFindings(playerDefensives, bench.per_defensive_benchmarks, model)
+      : { findings: [], folded: this.pullModel.noFolds() };
 
     const playerWindows = this.computePlayerDefensiveWindows(bench.defensive_windows, dtEventsTimed);
     const iconByName: Record<string, string> = {};
@@ -159,8 +156,8 @@ export class DefensiveFeatureService {
       if (!ability) this.logger.logWarn('loadAnalysisView: ability id missing from ability map', spellId);
       iconByName[name] = ability?.icon ?? '';
     }
-    const { windows, anchors, clipAnchors } = this.buildDefensiveWindows({
-      topWindows: bench.defensive_windows, playerWindows, playerDefensives, deadSpans, fightDurationS, abilities: bench.ability_icons,
+    const { windows, anchors, clipAnchors, folded: windowsFolded } = this.buildDefensiveWindows({
+      topWindows: bench.defensive_windows, playerWindows, playerDefensives, model, abilities: bench.ability_icons,
     });
     const entries = this.findingRows.bucketFindings(findings, {
       spellId: name => bench.cd_spell_ids[name] ?? null,
@@ -170,18 +167,9 @@ export class DefensiveFeatureService {
       findingRows: this.findingRows.rowsFromEntries(entries),
       onPlan: this.findingRows.onPlanFromEntries(entries),
       windows, anchors, clipAnchors,
+      findingsSpan: this.pullModel.judgedSpan(model, folded),
+      windowsSpan: this.pullModel.judgedSpan(model, windowsFolded),
     };
-  }
-
-  private async playerDeadSpans(
-    { reportCode, fightId }: PullRef, { fight, fightDurationS }: PullContext, playerId: number, deaths: WclEvent[],
-  ): Promise<DeadSpan[]> {
-    if (!deaths.some(event => event.targetID === playerId)) return [];
-    const resurrects = await this.wclApi.getResurrects(reportCode, fightId, fight.startTime, fight.endTime);
-    const spans = this.deathTimeline.deadSpans(
-      this.wclProjections.withRelativeS(deaths, fight.startTime), this.wclProjections.withRelativeS(resurrects, fight.startTime), fightDurationS,
-    );
-    return spans.get(playerId) ?? [];
   }
 
   async loadPlan(spec: string, encounterId: number): Promise<Result<DefensivePlanView>> {
@@ -227,42 +215,45 @@ export class DefensiveFeatureService {
   protected analyzeOneDefensive(
     defensive: PlayerDefensive,
     defBench: PerDefensiveBenchmark | undefined,
-    fightDurS: number,
-  ): AnalysisFinding[] {
+    model: PullModel,
+  ): DefensiveScan {
     const { name, uses } = defensive;
+    const none = this.pullModel.noFolds();
 
-    if (defensive.talent_gated && uses === 0) return [];
+    if (defensive.talent_gated && uses === 0) return { findings: [], folded: none };
 
-    if (!defBench) return this.unbenchedFindings(name, uses);
+    if (!defBench) return { findings: this.unbenchedFindings(name, uses), folded: none };
 
-    const { expected, floor } = benchExpectedUses(fightDurS, defBench);
+    const { expected, floor } = benchExpectedUses(model.aliveSpans, defBench);
     const castTimesS = defensive.cast_times_s ?? [];
 
-    const issues: AnalysisFinding[] = [];
-    if (this.castCadence.usedByMajority(defBench)) {
-      const lost = this.castCadence.checkLostUses(DEFENSIVE_VOICE, name, uses, expected, floor, fightDurS);
-      if (lost) issues.push(lost);
-      const lateFirst = this.castCadence.checkFirstCastDelay(DEFENSIVE_VOICE, name, castTimesS, defBench);
-      if (lateFirst) issues.push(lateFirst);
-    }
-    issues.push(...this.castCadence.checkGaps(DEFENSIVE_VOICE, name, castTimesS, defBench));
+    const checked = this.castCadence.usedByMajority(defBench)
+      ? this.castCadence.checkUseCount(DEFENSIVE_VOICE, name, castTimesS, defBench, { expected, floor, model })
+      : [];
+    checked.push(...this.castCadence.checkGaps(DEFENSIVE_VOICE, name, castTimesS, defBench));
+    if (uses > 0) checked.push(...this.holdTargets.holdSuggestionFindings(name, castTimesS, defBench.hold_targets, model.judgedEndS));
+    const { kept, folded } = this.pullModel.foldFindings(model, checked);
 
-    const result = issues.length ? issues : this.usageSuccessFindings(name, uses, expected);
-    if (uses > 0) result.push(...this.holdTargets.holdSuggestionFindings(name, castTimesS, defBench.hold_targets, fightDurS));
-    return result;
+    const issues = kept.filter(finding => finding.category !== 'hold_suggestion');
+    const holds = kept.filter(finding => finding.category === 'hold_suggestion');
+    const findings = issues.length ? issues : this.usageSuccessFindings(name, uses, expected);
+    return { findings: [...findings, ...holds], folded };
   }
 
   protected analyzeDefensiveFindings(
     playerDefensives: PlayerDefensive[],
     perDefBench: Record<string, PerDefensiveBenchmark>,
-    fightDurS: number,
-  ): AnalysisFinding[] {
+    model: PullModel,
+  ): DefensiveScan {
     const findings: AnalysisFinding[] = [];
+    let folded = this.pullModel.noFolds();
     for (const defensive of playerDefensives) {
-      findings.push(...this.analyzeOneDefensive(defensive, perDefBench[defensive.name], fightDurS));
+      const scan = this.analyzeOneDefensive(defensive, perDefBench[defensive.name], model);
+      findings.push(...scan.findings);
+      folded = this.pullModel.addFolds(folded, scan.folded);
     }
     sortBySeverity(findings);
-    return findings;
+    return { findings, folded };
   }
 
   protected computePlayerDefensiveWindows(topDefWindows: BurstWindow[], dtEvents: TimedEvent[]): PlayerBurstWindow[] {
@@ -283,13 +274,8 @@ export class DefensiveFeatureService {
     playerDamage: number | null,
     topMax: number,
     stddev: number,
-    notReached: boolean,
     covered: boolean,
-    dead: boolean,
   ): { status: WindowStatus; icon: string; note: string } {
-    if (notReached) return { status: 'muted', icon: 'schedule', note: '' };
-    // A dead player takes no damage, so the band alone would read the death as a clean window.
-    if (dead) return { status: 'bad', icon: 'error', note: NOTE_DEAD };
     if (playerDamage === null) return { status: 'muted', icon: 'help_outline', note: '' };
     const aboveBand = playerDamage > topMax + stddev;
     if (aboveBand) {
@@ -315,14 +301,11 @@ export class DefensiveFeatureService {
     return { timeS: timestampS, windowLengthS: 0, key: `defensive-find-${timestampS}` };
   }
 
-  private defensiveAdapter(playerDefensives: PlayerDefensive[], deadSpans: DeadSpan[]): WindowViewAdapter<DefensiveMapAnchor> {
+  private defensiveAdapter(playerDefensives: PlayerDefensive[]): WindowViewAdapter<DefensiveMapAnchor> {
     const coveredBy = (window: BurstWindow): boolean =>
       this.playerCoveredWindow(window, playerDefensives.find(entry => entry.name === (window.defensive_name ?? '')));
     return {
-      status: (window, playerDamage, notReached) => this.defensiveWindowStatus(
-        playerDamage, window.dmg_max, window.dmg_stddev, notReached, coveredBy(window),
-        this.deathTimeline.deadWithin(deadSpans, window.time_s, window.time_s + window.window_length_s),
-      ),
+      status: (window, playerDamage) => this.defensiveWindowStatus(playerDamage, window.dmg_max, window.dmg_stddev, coveredBy(window)),
       chips: window => ({
         spellIds: window.spell_id != null ? [window.spell_id] : [],
         labels: window.spell_id == null && window.defensive_name ? [window.defensive_name] : [],
@@ -333,10 +316,10 @@ export class DefensiveFeatureService {
   }
 
   protected buildDefensiveWindows(
-    { topWindows, playerWindows, playerDefensives, deadSpans, fightDurationS, abilities }: DefensiveWindowsInput,
+    { topWindows, playerWindows, playerDefensives, model, abilities }: DefensiveWindowsInput,
   ): WindowView<DefensiveMapAnchor> {
     return this.windowView.buildWindowView({
-      topWindows, playerWindows, fightDurationS, abilities, adapter: this.defensiveAdapter(playerDefensives, deadSpans),
+      topWindows, playerWindows, model, abilities, adapter: this.defensiveAdapter(playerDefensives),
     });
   }
 

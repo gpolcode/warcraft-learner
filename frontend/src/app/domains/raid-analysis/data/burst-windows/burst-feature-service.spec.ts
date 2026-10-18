@@ -9,6 +9,7 @@ import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE, THE_HUNT, THE_HUNT_LANDING } from 
 import { cast, damage } from '../../../../../testing/builders/events';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { TestBed } from '@angular/core/testing';
+import { pullModel } from '../../../../../testing/builders/pull-model';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
 
@@ -46,20 +47,19 @@ describe('burstWindowStatus', () => {
   const BELOW_WARN_EDGE = WARN_EDGE - STDDEV / 2;
 
   it.each([
-    { name: 'is muted when the window was not reached', player: TOP_AVG, notReached: true, status: 'muted', icon: 'schedule' },
-    { name: 'is muted when the player has no damage in the window', player: null, notReached: false, status: 'muted', icon: 'help_outline' },
-    { name: 'is bad when the damage falls below the bad-band edge', player: BELOW_BAD_EDGE, notReached: false, status: 'bad', icon: 'error' },
-    { name: 'is warn when the damage falls below the warn-band edge', player: BELOW_WARN_EDGE, notReached: false, status: 'warn', icon: 'warning_amber' },
-    { name: 'is good when the damage matches the top average', player: TOP_AVG, notReached: false, status: 'good', icon: 'check_circle' },
-    { name: 'is warn, not bad, at the exact bad-band edge', player: BAD_EDGE, notReached: false, status: 'warn', icon: 'warning_amber' },
-    { name: 'is good, not warn, at the exact warn-band edge', player: WARN_EDGE, notReached: false, status: 'good', icon: 'check_circle' },
-  ])('$name', ({ player, notReached, status, icon }) => {
-    expect(svc['burstWindowStatus'](player, TOP_AVG, TOP_MIN, STDDEV, notReached)).toEqual({ status, icon });
+    { name: 'is muted when the player has no damage in the window', player: null, status: 'muted', icon: 'help_outline' },
+    { name: 'is bad when the damage falls below the bad-band edge', player: BELOW_BAD_EDGE, status: 'bad', icon: 'error' },
+    { name: 'is warn when the damage falls below the warn-band edge', player: BELOW_WARN_EDGE, status: 'warn', icon: 'warning_amber' },
+    { name: 'is good when the damage matches the top average', player: TOP_AVG, status: 'good', icon: 'check_circle' },
+    { name: 'is warn, not bad, at the exact bad-band edge', player: BAD_EDGE, status: 'warn', icon: 'warning_amber' },
+    { name: 'is good, not warn, at the exact warn-band edge', player: WARN_EDGE, status: 'good', icon: 'check_circle' },
+  ])('$name', ({ player, status, icon }) => {
+    expect(svc['burstWindowStatus'](player, TOP_AVG, TOP_MIN, STDDEV)).toEqual({ status, icon });
   });
 
-  it('is neutral info on a bench-only window, whatever the player damage and the window reach', () => {
-    expect(svc['burstWindowStatus'](null, TOP_AVG, TOP_MIN, STDDEV, true, true)).toEqual({ status: 'info', icon: 'insights' });
-    expect(svc['burstWindowStatus'](BELOW_BAD_EDGE, TOP_AVG, TOP_MIN, STDDEV, false, true)).toEqual({ status: 'info', icon: 'insights' });
+  it('is neutral info on a bench-only window, whatever the player damage', () => {
+    expect(svc['burstWindowStatus'](null, TOP_AVG, TOP_MIN, STDDEV, true)).toEqual({ status: 'info', icon: 'insights' });
+    expect(svc['burstWindowStatus'](BELOW_BAD_EDGE, TOP_AVG, TOP_MIN, STDDEV, true)).toEqual({ status: 'info', icon: 'insights' });
   });
 });
 
@@ -102,7 +102,7 @@ describe('buildBurstView', () => {
     const player: PlayerBurstWindow[] = [
       { window_damage: 950, ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, damage: 550, casts: 2 }] },
     ];
-    const view = svc['buildBurstView']([window], player, 300, { 'Shadow Blades': SHADOW_BLADES }, abilities);
+    const view = svc['buildBurstView']([window], player, pullModel(), { 'Shadow Blades': SHADOW_BLADES }, abilities);
     expect(view.windows).toHaveLength(1);
     const burstWindow = first(view.windows);
     expect(burstWindow.overview.playerPct).toBe(950);
@@ -119,18 +119,31 @@ describe('buildBurstView', () => {
         { spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 0, is_passive: true },
       ],
     };
-    const view = svc['buildBurstView']([passiveWindow], [], 300, {}, abilities, true);
+    const view = svc['buildBurstView']([passiveWindow], [], null, {}, abilities);
     expect(first(first(view.windows).detailRows).passive).toBe(true);
     // The default (non-passive) bench ability stays passive=false.
-    const benchWindow = first(svc['buildBurstView']([window], [], 300, {}, abilities, true).windows);
+    const benchWindow = first(svc['buildBurstView']([window], [], null, {}, abilities).windows);
     expect(first(benchWindow.detailRows).passive).toBe(false);
   });
 
   it('bench-only marks windows neutral info (no player overlay) instead of muted', () => {
-    const burstWindow = first(svc['buildBurstView']([window], [], Number.POSITIVE_INFINITY, {}, abilities, true).windows);
+    const view = svc['buildBurstView']([window], [], null, {}, abilities);
+    const burstWindow = first(view.windows);
     expect(burstWindow.status).toBe('info');
     expect(burstWindow.statusIcon).toBe('insights');
     expect(burstWindow.overview.playerPct).toBeNull();
+    expect(view.judged).toBeNull();
+  });
+
+  it('mutes a window the player was dead for instead of reading the death as zero damage, and names the death in the caption', () => {
+    // Dead from 15s, inside the 10..30 window, and back at 40s.
+    const DIED_S = 15;
+    const BACK_S = 40;
+    const deadInIt = pullModel({ deadSpans: [[DIED_S, BACK_S]] });
+    const view = svc['buildBurstView']([window], [{ window_damage: 0, ability_breakdown: [] }], deadInIt, {}, abilities);
+    expect(first(view.windows)).toMatchObject({ status: 'muted', unjudged: 'dead' });
+    expect(view.judged?.folded.dead).toBe(1);
+    expect(view.judged?.deadSpans).toEqual([{ fromS: DIED_S, toS: BACK_S }]);
   });
 });
 

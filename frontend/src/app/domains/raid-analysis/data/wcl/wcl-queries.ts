@@ -5,7 +5,7 @@ export const REPORT_Q = gql`
 query Report($code:String!){reportData{report(code:$code){
   title
   startTime
-  fights(killType:All){id name startTime endTime kill encounterID difficulty friendlyPlayers fightPercentage}
+  fights(killType:All){id name startTime endTime kill encounterID difficulty friendlyPlayers fightPercentage phaseTransitions{id startTime} wipeCalledTime}
   masterData{
     actors(type:"Player"){id name subType server}
     enemies:actors(type:"NPC"){id name gameID}

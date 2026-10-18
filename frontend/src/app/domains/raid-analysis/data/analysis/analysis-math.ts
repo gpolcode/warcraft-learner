@@ -80,6 +80,27 @@ export function castEfficiencyPct(totalDowntimeS: number, fightDurS: number): nu
   return Math.max(0, (1 - totalDowntimeS / fightDurS) * 100);
 }
 
+/** `[startS, endS)` of pull time in which the player was alive and the encounter still live. */
+export type AliveSpan = readonly [number, number];
+
+export function spansS(spans: readonly AliveSpan[]): number {
+  return spans.reduce((sum, [startS, endS]) => sum + Math.max(0, endS - startS), 0);
+}
+
+export function overlapS(spans: readonly AliveSpan[], fromS: number, toS: number): number {
+  return spans.reduce((sum, [startS, endS]) => sum + Math.max(0, Math.min(endS, toS) - Math.max(startS, fromS)), 0);
+}
+
+/** Only the alive part of a gap counts toward it, so a death between two casts never reads as idle time; time after the last cast never counts. */
+export function castDowntimeS(castTimesS: readonly number[], thresholdS: number, spans: readonly AliveSpan[]): number {
+  const firstS = spans[0]?.[0] ?? 0;
+  const lastS = spans.at(-1)?.[1] ?? 0;
+  const judged = castTimesS.filter(timeS => timeS >= firstS && timeS <= lastS);
+  return pairs(judged, (prevS, nextS) => overlapS(spans, prevS, nextS))
+    .filter(gapS => gapS > thresholdS)
+    .reduce((sum, gapS) => sum + gapS, 0);
+}
+
 export function closestToZero(values: number[]): number {
   return least(values, value => Math.abs(value)) ?? 0;
 }
@@ -94,15 +115,22 @@ function castsCadenceFits(fightDurS: number, avgFirstCastS: number, avgGapS: num
   return 1 + Math.floor((fightDurS - avgFirstCastS) / avgGapS + WHOLE_CAST_TOLERANCE);
 }
 
+/** A span that resumes after a resurrect has no opener, and only a whole gap of it buys a cast, so a short life never adds one. */
+function resumedCadenceFits(spanS: number, avgGapS: number | null): number {
+  return avgGapS ? Math.floor(spanS / avgGapS + WHOLE_CAST_TOLERANCE) : 0;
+}
+
 export function benchExpectedUses(
-  fightDurS: number, bench: Pick<CadenceBenchmark, 'uses_per_min' | 'avg_first_cast_s' | 'avg_gap_s'>,
+  spans: readonly AliveSpan[], bench: Pick<CadenceBenchmark, 'uses_per_min' | 'avg_first_cast_s' | 'avg_gap_s'>,
 ): { expected: number; floor: number } {
-  const fightMin = fightDurS / 60;
+  const aliveMin = spansS(spans) / 60;
   const upm = bench.uses_per_min;
+  const fits = spans.reduce((sum, [startS, endS]) => sum + (startS === 0
+    ? castsCadenceFits(endS, bench.avg_first_cast_s, bench.avg_gap_s)
+    : resumedCadenceFits(endS - startS, bench.avg_gap_s)), 0);
   // The rate alone rounds 12.6 up to a 13th cast that would land after the pull ends.
-  const expected = Math.min(
-    Math.round(upm.avg * fightMin), castsCadenceFits(fightDurS, bench.avg_first_cast_s, bench.avg_gap_s));
-  const floor = Math.max(0, Math.round(expected - upm.stddev * fightMin));
+  const expected = Math.min(Math.round(upm.avg * aliveMin), fits);
+  const floor = Math.max(0, Math.round(expected - upm.stddev * aliveMin));
   return { expected, floor };
 }
 

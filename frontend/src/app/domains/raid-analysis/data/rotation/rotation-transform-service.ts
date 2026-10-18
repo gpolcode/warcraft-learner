@@ -6,7 +6,7 @@ import { PlanCooldown, PlanItem, PriorityList } from '../plan/plan.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { group, quantile } from 'd3-array';
 import {
-  round, avgOr, stddevOr, castEfficiencyPct, closestToZero,
+  round, avgOr, stddevOr, castEfficiencyPct, closestToZero, castDowntimeS,
 } from '../analysis/analysis-math';
 import { HoldWindow } from '../analysis/hold-targets-service';
 import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
@@ -44,6 +44,7 @@ export interface CdSummary {
 interface ParseRotation {
   summaries: CdSummary[];
   gapListS: number[];
+  castTimesS: number[];
   durationS: number;
   reading: LogReading;
 }
@@ -115,6 +116,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
     return {
       summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, blTimeS, this.auraWindows.upAtPull(buffsTimed)),
       gapListS: this.castGapListS(castsTimed),
+      castTimesS: castsTimed.filter(event => event.type === 'cast').map(event => event.atS).sort((a, b) => a - b),
       durationS: fightDurS,
       reading,
     };
@@ -181,8 +183,9 @@ export class RotationTransformService implements DataSource<RotationBench> {
     };
   }
 
+  /** A top log is judged alive for its whole pull, through the same downtime measure the runtime applies to the player's alive spans. */
   protected computeEfficiencyThresholds(
-    parses: { gapListS: number[]; durationS: number }[],
+    parses: { gapListS: number[]; castTimesS: number[]; durationS: number }[],
   ): { downtimeThresholdS: number; topAvgEfficiency: number; topEfficiencyStddev: number } {
     const allGaps = parses.flatMap(parse => parse.gapListS).sort((a, b) => a - b);
     let downtimeThresholdS = DEFAULT_DOWNTIME_THRESHOLD_S;
@@ -190,9 +193,9 @@ export class RotationTransformService implements DataSource<RotationBench> {
       downtimeThresholdS = quantile(allGaps, DOWNTIME_PERCENTILE) ?? DEFAULT_DOWNTIME_THRESHOLD_S;
     }
     const efficiencies: number[] = [];
-    for (const { gapListS, durationS } of parses) {
+    for (const { gapListS, castTimesS, durationS } of parses) {
       if (gapListS.length && durationS > 0) {
-        const downtimeS = gapListS.filter(gap => gap > downtimeThresholdS).reduce((sum, gap) => sum + gap, 0);
+        const downtimeS = castDowntimeS(castTimesS, downtimeThresholdS, [[0, durationS]]);
         efficiencies.push(round(castEfficiencyPct(downtimeS, durationS)));
       }
     }
