@@ -25,7 +25,7 @@ const DEFAULT_FIGHT_NAME = 'Boss';
 const DEFAULT_ENCOUNTER_ID = 1;
 const DEFAULT_FIGHT_END_MS = 300_000;
 const MS_PER_S = 1000;
-const ACTOR_ID_PER_PARSE = 10;
+export const ACTOR_ID_PER_PARSE = 10;
 
 function defaultFight(over: ReportOverrides): WclFight {
   const endTime = over.endTimeMs ?? DEFAULT_FIGHT_END_MS;

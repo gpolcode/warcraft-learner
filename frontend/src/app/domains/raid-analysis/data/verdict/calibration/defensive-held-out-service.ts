@@ -4,9 +4,11 @@ import { CastCadenceService } from '../../analysis/cast-cadence-service';
 import { PullModel } from '../../analysis/pull-model-service';
 import { CooldownUseJudgeService } from '../../rotation/cooldown-use-judge-service';
 import { CadenceJudgeService, CastsByName } from '../../rotation/cadence-judge-service';
-import { DefensiveBench, DefensivePlanMeta } from '../../defensive/defensive-data-source';
+import { AuraSpan, DefensivePlanMeta } from '../../defensive/defensive-data-source';
+import { PullModelService } from '../../analysis/pull-model-service';
+import { ToneService } from '../tone-service';
 import {
-  DEFENSIVE_HOLD_FAMILY, DEFENSIVE_READY_TIME_FAMILY, DEFENSIVE_USES_FAMILY, DEFENSIVE_WINDOW_FAMILY, DefensiveJudgeService,
+  DEAD_IN_WINDOW_FAMILY, DEFENSIVE_HOLD_FAMILY, DEFENSIVE_READY_TIME_FAMILY, DEFENSIVE_USES_FAMILY, DEFENSIVE_WINDOW_FAMILY, DefensiveJudgeService,
 } from '../../defensive/defensive-judge-service';
 import { ReadyTimeJudgeService } from '../../rotation/ready-time-judge-service';
 import { PerDefensiveBenchmark } from '../../encounter/encounter.models';
@@ -19,8 +21,9 @@ export interface DefensiveHeldOut {
   casts: CastsByName;
   model: PullModel;
   talents: ReadonlyMap<number, number> | null;
-  /** Each window the log's own use formed, by its index in the full bench, with the damage it took there. */
-  covered: ReadonlyMap<number, number>;
+  /** Absent on a bench baked before coverage, which gives the window checks no test. */
+  up: Readonly<Record<string, readonly AuraSpan[]>> | null;
+  takenPerS: readonly number[] | null;
   tank: boolean;
 }
 
@@ -33,16 +36,8 @@ export class DefensiveHeldOutService {
   private readonly readyTime = inject(ReadyTimeJudgeService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly uses = inject(CooldownUseJudgeService);
-
-  /** The held-out log's windows and the damage it took in each, read from the members of the full bench. */
-  coveredBy(bench: DefensiveBench, i: number): Map<number, number> {
-    const covered = new Map<number, number>();
-    bench.defensive_windows.forEach((window, index) => {
-      const own = window.members.filter(member => member.parse === i);
-      if (own.length) covered.set(index, own.reduce((sum, member) => sum + member.damage, 0));
-    });
-    return covered;
-  }
+  private readonly pullModel = inject(PullModelService);
+  private readonly tones = inject(ToneService);
 
   /** `fold` is the bench rebuilt without the held-out log. */
   judge(fold: FoldedDefensiveBench, log: DefensiveHeldOut): HeldOutRow[] {
@@ -102,15 +97,23 @@ export class DefensiveHeldOutService {
     });
   }
 
-  /** The bench bakes damage only where a log's own use formed the window, so an uncovered log counts as taking more than the median: an upper bound on the flag rate. */
+  /** A window the log died in is the death's home, as on the page; any other window it was alive through is a coverage test and a death test. */
   private windowRows(fold: FoldedDefensiveBench, log: DefensiveHeldOut): HeldOutRow[] {
-    const n = fold.sources.length;
-    return fold.defensive_windows.flatMap(window => {
-      const damage = log.covered.get(window.index);
-      const evidence = this.judges.judgeWindow(
-        { damage: damage ?? Number.POSITIVE_INFINITY, covered: damage !== undefined, tank: log.tank }, this.judges.reference(window, n),
-      );
-      return this.rows.row(DEFENSIVE_WINDOW_FAMILY, evidence, log.model, { fromS: window.time_s, toS: window.time_s + window.window_length_s });
+    const { up, takenPerS, model } = log;
+    if (!up || !takenPerS) return [];
+    const killsS = fold.sources.map(source => source.duration_s);
+    const deaths = this.judges.deathHomes(fold.defensive_windows, model.deadSpans);
+    return fold.defensive_windows.flatMap((window, at) => {
+      const reference = this.judges.reference(window, fold.per_parse, killsS);
+      const span = { fromS: window.time_s, toS: window.time_s + window.window_length_s };
+      const diedS = deaths.get(at);
+      if (diedS !== undefined) return this.rows.toneRow(DEAD_IN_WINDOW_FAMILY.id, this.judges.deathVerdict(diedS).status, reference.n);
+      if (this.pullModel.causeOf(model, span.fromS, span.toS)) return [];
+      const pull = { damage: this.judges.measureTaken(takenPerS, window), covered: this.judges.measureCover(window, up).length > 0, tank: log.tank };
+      return [
+        ...this.rows.row(DEFENSIVE_WINDOW_FAMILY, this.judges.judgeWindow(pull, reference), model, span),
+        ...this.rows.toneRow(DEAD_IN_WINDOW_FAMILY.id, this.tones.neutral(), reference.n),
+      ];
     });
   }
 }

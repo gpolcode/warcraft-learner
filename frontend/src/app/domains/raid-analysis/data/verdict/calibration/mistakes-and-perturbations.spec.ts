@@ -10,6 +10,7 @@ import { benchWith, CLOAK_META, defBench } from '../../defensive/defensive-harne
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
 import {
   BURST_AT_S, BURST_S, burstBench, burstLog, burstWindow, CLOAK, defensiveLog, defensiveWindow, FIGHT_S, gearBench, gearLog, ON_CADENCE, rotationLog, SB,
+  WINDOW_AT_S, WINDOW_DAMAGE,
 } from './calibration-harness';
 import { VERDICT_CHOICES } from '../verdict-choices';
 
@@ -39,18 +40,21 @@ const rotationCase = (held = rotationLog()): RotationCase => {
   const full = bench({ sources: benchSources(TOP_N), sample_count: TOP_N, per_parse: [held, ...Array.from({ length: TOP_N - 1 }, () => rotationLog())] });
   return { card: 'rotation', source: 'r1:1', fold: folds.foldRotation(full, 0), log: { measures: held, model: heldOutRows.wholePull(FIGHT_S), talents: null } };
 };
-const defensiveCase = (): DefensiveCase => {
+const defensiveCase = (held = defensiveLog()): DefensiveCase => {
   const full = benchWith({
-    sources: benchSources(TOP_N), sample_count: TOP_N, per_parse: Array.from({ length: TOP_N }, () => defensiveLog()),
+    sources: benchSources(TOP_N), sample_count: TOP_N, per_parse: [held, ...Array.from({ length: TOP_N - 1 }, () => defensiveLog())],
     defensives: [CLOAK_META], per_defensive_benchmarks: { [CLOAK]: defBench() }, defensive_windows: [defensiveWindow([0, 1, 2, 3])],
   });
   return {
     card: 'defensive', source: 'r1:1', fold: folds.foldDefensive(full, 0),
-    log: { casts: defensiveLog().def_casts_s, model: heldOutRows.wholePull(FIGHT_S), talents: null, covered: defensive(full), tank: false },
+    log: {
+      casts: held.def_casts_s, model: heldOutRows.withDeaths(FIGHT_S, FIGHT_S, held.dead_s ?? []), talents: null,
+      up: held.def_up_s ?? null, takenPerS: held.taken_per_s ?? null, tank: false,
+    },
   };
 };
-const defensive = (full: ReturnType<typeof benchWith>) => new Map(full.defensive_windows.flatMap((window, index) =>
-  window.members.some(member => member.parse === 0) ? [[index, 1000] as const] : []));
+const upOf = (heldOut: HeldOutCase | null | undefined) => heldOut?.card === 'defensive' ? heldOut.log.up : null;
+const deadOf = (heldOut: HeldOutCase | null | undefined) => heldOut?.card === 'defensive' ? heldOut.log.model.deadSpans : [];
 const castsOf = (heldOut: HeldOutCase | null | undefined): number[] =>
   heldOut?.card === 'rotation' ? heldOut.log.measures.cd_casts_s[SB] ?? [] : [];
 
@@ -91,11 +95,36 @@ describe('InjectedMistakeService', () => {
     expect(mistakes.variants('move-cooldown-out-of-lust', rotationCase())).toEqual([]);
   });
 
-  it('strips a defensive of its uses and its covered windows', () => {
+  it('strips a defensive of its uses and its auras', () => {
     const [variant] = mistakes.variants('strip-defensive', defensiveCase());
 
     expect(variant?.card === 'defensive' && variant.log.casts[CLOAK]).toEqual([]);
-    expect(variant?.card === 'defensive' && variant.log.covered.size).toBe(0);
+    expect(upOf(variant)).toEqual({ [CLOAK]: [] });
+  });
+
+  it('takes every aura up at a covered window away from it, one variant per window, and keeps the damage', () => {
+    const LATER: [number, number] = [200, 210];
+    const held = defensiveLog();
+    const [variant, ...rest] = mistakes.variants('uncover-window', defensiveCase({ ...held, def_up_s: { [CLOAK]: [...held.def_up_s?.[CLOAK] ?? [], LATER] } }));
+
+    expect(rest).toEqual([]);
+    expect(upOf(variant)).toEqual({ [CLOAK]: [LATER] });
+    expect(variant?.card === 'defensive' && variant.log.takenPerS).toEqual(held.taken_per_s);
+  });
+
+  it('has no window to uncover where no defensive was up', () => {
+    expect(mistakes.variants('uncover-window', defensiveCase(defensiveLog(undefined, { covered: false })))).toEqual([]);
+  });
+
+  it('kills the log halfway into each window it was alive through, with no rez', () => {
+    const [variant] = mistakes.variants('die-in-window', defensiveCase());
+    const HALFWAY_S = WINDOW_AT_S + 2.5;
+
+    expect(deadOf(variant)).toEqual([[HALFWAY_S, FIGHT_S]]);
+  });
+
+  it('has no window to die in that the log was already dead for', () => {
+    expect(mistakes.variants('die-in-window', defensiveCase(defensiveLog(undefined, { dead: [[WINDOW_AT_S - 5, FIGHT_S]] })))).toEqual([]);
   });
 
   it('delays a defensive\'s first use, and separately its second, by thirty seconds', () => {
@@ -241,10 +270,27 @@ describe('PerturbationService', () => {
     expect(castsOf(perturbations.perturb('jitter', rotationCase()))).toEqual(once);
   });
 
-  it('scales the damage a defensive log took in its windows', () => {
+  it('scales the damage a defensive log took', () => {
     const scaled = perturbations.perturb('damage-scale', defensiveCase());
 
-    expect(scaled?.card === 'defensive' && [...scaled.log.covered.values()]).toEqual([1000 * CHOICES.damageScale]);
+    expect(scaled?.card === 'defensive' && scaled.log.takenPerS?.[WINDOW_AT_S]).toBe(WINDOW_DAMAGE * CHOICES.damageScale);
+  });
+
+  it('keeps a defensive log\'s own death beside the inserted one', () => {
+    const OWN_DEATH: [number, number] = [10, 20];
+    const died = perturbations.perturb('death', defensiveCase(defensiveLog(undefined, { dead: [OWN_DEATH] })));
+
+    expect(deadOf(died)[0]).toEqual(OWN_DEATH);
+    expect(deadOf(died)).toHaveLength(2);
+  });
+
+  it('drops a defensive log\'s auras and damage taken once it dies', () => {
+    const held = defensiveLog(undefined, { dead: [], damage: WINDOW_DAMAGE });
+    const died = perturbations.perturb('death', defensiveCase({ ...held, taken_per_s: held.taken_per_s?.map(() => 1), def_up_s: { [CLOAK]: [[0, FIGHT_S]] } }));
+    const [[diedS] = [0]] = deadOf(died);
+
+    expect(upOf(died)).toEqual({ [CLOAK]: [[0, diedS]] });
+    expect(died?.card === 'defensive' && died.log.takenPerS?.slice(Math.ceil(diedS)).every(value => value === 0)).toBe(true);
   });
 
   it('leaves a gear log alone', () => {

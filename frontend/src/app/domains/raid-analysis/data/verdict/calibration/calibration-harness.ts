@@ -1,6 +1,7 @@
 import { BurstWindow } from '../../analysis/analysis.models';
 import { RotationParseMeasures } from '../../rotation/rotation-data-source';
 import { DefensiveParseMeasures } from '../../defensive/defensive-data-source';
+import { DeadSpan } from '../../analysis/death-timeline-service';
 import { GearBench, GearParseMeasures } from '../../gear/gear-data-source';
 import { BurstBench, BurstParseMeasures } from '../../burst-windows/burst-data-source';
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
@@ -17,8 +18,21 @@ export function rotationLog(over: Partial<RotationParseMeasures> = {}): Rotation
   return { idle_s: [[100, 160]], lust_s: null, phase_starts: [], cd_casts_s: { [SB]: ON_CADENCE }, buttons: {}, ...over };
 }
 
-export function defensiveLog(casts: number[] = [10, 130]): DefensiveParseMeasures {
-  return { def_casts_s: { [CLOAK]: casts } };
+/** Every fixture defensive window's start; it runs five seconds. */
+export const WINDOW_AT_S = 30;
+/** Damage a fixture top log takes in the window, all in its first second. */
+export const WINDOW_DAMAGE = 1000;
+
+/** A top log with Cloak of Shadows up through the window at 30s unless `covered` is false. */
+export function defensiveLog(
+  casts: number[] = [10, 130], { covered = true, damage = WINDOW_DAMAGE, dead = [] }: { covered?: boolean; damage?: number; dead?: DeadSpan[] } = {},
+): DefensiveParseMeasures {
+  return {
+    def_casts_s: { [CLOAK]: casts },
+    def_up_s: { [CLOAK]: covered ? [[WINDOW_AT_S - 1, WINDOW_AT_S + 6]] : [] },
+    taken_per_s: Array.from({ length: FIGHT_S }, (_unused, second) => second === WINDOW_AT_S ? damage : 0),
+    dead_s: dead,
+  };
 }
 
 export function gearLog(over: Partial<GearParseMeasures> = {}): GearParseMeasures {
@@ -35,7 +49,7 @@ export function gearBench(perParse: GearParseMeasures[]): GearBench {
 }
 
 /** A defensive window formed by `parses`, each taking `damage` there. */
-export function defensiveWindow(parses: number[], damage = 1000, timeS = 30): BurstWindow {
+export function defensiveWindow(parses: number[], damage = WINDOW_DAMAGE, timeS = WINDOW_AT_S): BurstWindow {
   return {
     time_s: timeS, window_length_s: 5, dmg_avg: damage, dmg_min: damage, dmg_max: damage, dmg_stddev: 0,
     defensive_name: CLOAK, common_cds: [CLOAK], ability_breakdown: [],

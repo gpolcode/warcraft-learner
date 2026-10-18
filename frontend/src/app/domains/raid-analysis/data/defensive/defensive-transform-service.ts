@@ -17,6 +17,7 @@ import { DefensiveBench, DefensiveParseMeasures, DefensivePlanMeta } from './def
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { DefensiveUsesService } from './defensive-uses-service';
 import { DefensiveJudgeService } from './defensive-judge-service';
+import { DeathTimelineService } from '../analysis/death-timeline-service';
 
 const CONSENSUS_FRAC = 0.5;
 const MEMBER_MAJORITY_FRAC = 0.5;
@@ -57,6 +58,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
   private readonly defensiveUses = inject(DefensiveUsesService);
   private readonly judge = inject(DefensiveJudgeService);
   private readonly benchPipeline = inject(BenchPipelineService);
+  private readonly deathTimeline = inject(DeathTimelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
   private readonly specPlanLoader = inject(SpecPlanLoaderService);
@@ -84,7 +86,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
           defensive_windows: this.clusterDefensiveWindows(allWindows, parses.length),
           defensives: this.defensivePlanMeta(defensives),
           cd_spell_ids: this.benchPipeline.spellIdsByName(defensives),
-          per_parse: parses.map(parse => this.parseMeasures(parse.summaries, defensives)),
+          per_parse: parses.map(parse => this.parseMeasures(parse.summaries, defensives, parse.cover)),
         };
       },
     });
@@ -92,14 +94,16 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
 
   private async parseDefensives(
     { ranking, report, fight, player }: BenchParse, defensives: PlanDefensive[],
-  ): Promise<{ windows: ParseDefWindow[]; summaries: ParseDefensiveSummary[] }> {
+  ): Promise<{ windows: ParseDefWindow[]; summaries: ParseDefensiveSummary[]; cover: Omit<DefensiveParseMeasures, 'def_casts_s'> }> {
     const gameIdByActorId = new Map<number, number>();
     for (const enemy of report.masterData?.enemies ?? []) gameIdByActorId.set(enemy.id, enemy.gameID);
 
-    const [buffs, casts, dmgTaken] = await Promise.all([
+    const [buffs, casts, dmgTaken, deaths] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageTaken', fight.startTime, fight.endTime, player.id),
+      // A death names its victim as the target, so only the raid-wide read finds the player's.
+      this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Deaths', fight.startTime, fight.endTime),
     ]);
 
     const fightDurationS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
@@ -109,15 +113,27 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     const uses: UsesBySpell = new Map(defensives.map(defensive => [defensive.spell_id, this.defensiveUses.uses(
       this.auraWindows.spansNamed(auras, defensive, abilities), this.defensiveUses.castTimesS(presses, defensive.spell_id), fightDurationS,
     )]));
+    const taken = this.wclProjections.withRelativeS(dmgTaken, fight.startTime);
+    const deathsTimed = this.wclProjections.withRelativeS(deaths, fight.startTime);
+    const resurrects = deathsTimed.some(event => event.targetID === player.id)
+      ? this.wclProjections.withRelativeS(await this.wclApi.getResurrects(ranking.report_code, fight.id, fight.startTime, fight.endTime), fight.startTime)
+      : [];
     return {
-      windows: this.findParseDefensiveWindows(this.wclProjections.withRelativeS(dmgTaken, fight.startTime), uses, defensives, gameIdByActorId),
+      windows: this.findParseDefensiveWindows(taken, uses, defensives, gameIdByActorId),
       summaries: this.summarizeDefensiveCasts(defensives, uses, fightDurationS),
+      cover: {
+        def_up_s: this.judge.coverSpans(defensives.map(defensive => ({ name: defensive.name, windows: uses.get(defensive.spell_id) ?? [] }))),
+        taken_per_s: this.judge.takenSeries(taken, fightDurationS),
+        dead_s: this.deathTimeline.deadSpans(deathsTimed, resurrects, fightDurationS).get(player.id) ?? [],
+      },
     };
   }
 
-  protected parseMeasures(summaries: ParseDefensiveSummary[], defensives: PlanDefensive[]): DefensiveParseMeasures {
+  protected parseMeasures(
+    summaries: ParseDefensiveSummary[], defensives: PlanDefensive[], cover: Omit<DefensiveParseMeasures, 'def_casts_s'>,
+  ): DefensiveParseMeasures {
     const used = new Map(summaries.map(summary => [summary.name, summary.cast_times_s]));
-    return { def_casts_s: Object.fromEntries(defensives.map(defensive => [defensive.name, used.get(defensive.name) ?? []])) };
+    return { def_casts_s: Object.fromEntries(defensives.map(defensive => [defensive.name, used.get(defensive.name) ?? []])), ...cover };
   }
 
   protected defensivePlanMeta(defensives: PlanDefensive[]): DefensivePlanMeta[] {

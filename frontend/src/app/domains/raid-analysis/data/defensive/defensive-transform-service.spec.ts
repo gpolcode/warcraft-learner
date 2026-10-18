@@ -1,9 +1,9 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DefensiveTransformService, ParseDefWindow, ParseDefensiveSummary } from './defensive-transform-service';
-import { applyBuff, removeBuff, damageTaken, cast } from '../../../../../testing/builders/events';
+import { applyBuff, removeBuff, damageTaken, cast, death, resurrect } from '../../../../../testing/builders/events';
 import { planLoader, specPlan } from '../../../../../testing/builders/spec-plan';
-import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
+import { abilityLookup, ACTOR_ID_PER_PARSE, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { BLUR, BLUR_BUFF, CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
@@ -248,6 +248,7 @@ const wclFake = {
   getAllEvents: async (_code: string, _fightId: number, dataType: string) => {
     if (dataType === 'Buffs') return [applyBuff(CLOAK_OF_SHADOWS, 30), removeBuff(CLOAK_OF_SHADOWS, 35)];
     if (dataType === 'Casts') return [cast(CLOAK_OF_SHADOWS, 30)];
+    if (dataType === 'Deaths') return [];
     return [damageTaken(700, 32, 1000, { source: 9 })]; // DamageTaken
   },
   getAbilities: abilityLookup({ 700: { icon: 'hit', name: 'Boss Hit' }, [CLOAK_OF_SHADOWS]: { icon: 'cloak', name: 'Cloak of Shadows' } }),
@@ -287,8 +288,34 @@ describe('DefensiveTransformService (live, in-browser)', () => {
     expect(bench.value.defensive_windows[0]?.members).toEqual(Array.from({ length: SKIPPING_PARSE }, (_unused, parse) => ({
       parse, time_s: CLOAK_S, window_length_s: CLOAK_LENGTH_S, damage: HIT_DAMAGE,
     })));
-    expect(bench.value.per_parse[0]).toEqual({ def_casts_s: { 'Cloak of Shadows': [CLOAK_S] } });
-    expect(bench.value.per_parse[SKIPPING_PARSE]).toEqual({ def_casts_s: { 'Cloak of Shadows': [] } });
+    expect(bench.value.per_parse[0]).toMatchObject({
+      def_casts_s: { 'Cloak of Shadows': [CLOAK_S] }, def_up_s: { 'Cloak of Shadows': [[CLOAK_S, CLOAK_S + CLOAK_LENGTH_S]] }, dead_s: [],
+    });
+    expect(bench.value.per_parse[SKIPPING_PARSE]).toMatchObject({ def_casts_s: { 'Cloak of Shadows': [] }, def_up_s: { 'Cloak of Shadows': [] } });
+  });
+
+  it('bakes each top log\'s damage taken per second and its dead spans, read raid-wide with the resurrect that ends one', async () => {
+    const HIT_S = 32, HIT_DAMAGE = 1000;
+    /** The first ranking's player, one block of actor ids per parse. */
+    const FIRST_PLAYER_ID = ACTOR_ID_PER_PARSE;
+    const DIED_S = 100, BACK_S = 130, OTHER_RAIDER_ID = 999;
+    const dying = {
+      ...wclFake,
+      getAllEvents: async (code: string, fightId: number, dataType: string) => (dataType === 'Deaths'
+        ? [death(FIRST_PLAYER_ID, DIED_S), death(OTHER_RAIDER_ID, DIED_S)]
+        : wclFake.getAllEvents(code, fightId, dataType)),
+      getResurrects: async () => [resurrect(FIRST_PLAYER_ID, BACK_S)],
+    };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: dying, plans: plansFake }) });
+
+    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
+
+    assert(bench.ok);
+    const [first, second] = bench.value.per_parse;
+    expect(first?.taken_per_s).toHaveLength(FIGHT_DUR_S);
+    expect(first?.taken_per_s?.[HIT_S]).toBe(HIT_DAMAGE);
+    expect(first?.dead_s).toEqual([[DIED_S, BACK_S]]);
+    expect(second?.dead_s).toEqual([]);
   });
 
   it('finds the window of a defensive whose buff the log carries under another id of its name', async () => {
@@ -299,6 +326,7 @@ describe('DefensiveTransformService (live, in-browser)', () => {
       getAllEvents: async (_code: string, _fightId: number, dataType: string) => {
         if (dataType === 'Buffs') return [applyBuff(BLUR_BUFF, 30), removeBuff(BLUR_BUFF, 40)];
         if (dataType === 'Casts') return [cast(BLUR, 30)];
+        if (dataType === 'Deaths') return [];
         return [damageTaken(700, 32, 1000, { source: 9 })];
       },
     };

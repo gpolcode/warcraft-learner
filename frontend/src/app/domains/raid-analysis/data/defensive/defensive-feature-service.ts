@@ -1,6 +1,7 @@
 import { CalibrationCapsService } from '../verdict/calibration/calibration-caps-service';
 import { FamilyCaps } from '../verdict/tone.models';
 import { Injectable, inject } from '@angular/core';
+import { max, mean, min } from 'd3-array';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { WclAbility } from '../wcl/wcl.models';
 import {
@@ -83,8 +84,10 @@ export interface DefensiveWindowsInput {
   playerDefensives: PlayerDefensive[];
   model: PullModel;
   abilities: AbilityIcons;
-  /** The bench's accepted top logs, the count every window's coverage is out of. */
-  topLogs: number;
+  /** Damage the player took in each whole second, the measure every top log's is baked in. */
+  takenPerS: number[];
+  /** The bench's top logs as the window checks read them. */
+  top: Pick<DefensiveBench, 'per_parse' | 'sources'>;
   caps?: FamilyCaps;
 }
 
@@ -166,7 +169,8 @@ export class DefensiveFeatureService {
       ? this.analyzeDefensiveFindings(playerDefensives, this.withPerParse(bench), model, caps)
       : { findings: [], folded: this.pullModel.noFolds(), checked: 0 };
 
-    const playerWindows = this.computePlayerDefensiveWindows(bench.defensive_windows, dtEventsTimed);
+    const takenPerS = this.judge.takenSeries(dtEventsTimed, model.fightDurationS);
+    const playerWindows = this.computePlayerDefensiveWindows(bench.defensive_windows, dtEventsTimed, takenPerS);
     const iconByName: Record<string, string> = {};
     for (const [name, spellId] of Object.entries(bench.cd_spell_ids)) {
       const ability = bench.ability_icons[spellId];
@@ -174,7 +178,7 @@ export class DefensiveFeatureService {
       iconByName[name] = ability?.icon ?? '';
     }
     const { windows, anchors, clipAnchors, folded: windowsFolded } = this.buildDefensiveWindows({
-      topWindows: bench.defensive_windows, playerWindows, playerDefensives, model, abilities: bench.ability_icons, topLogs: this.topLogs(bench), caps,
+      topWindows: bench.defensive_windows, playerWindows, playerDefensives, model, abilities: bench.ability_icons, takenPerS, top: this.withPerParse(bench), caps,
     });
     const entries = this.findingRows.bucketFindings(findings, {
       spellId: name => bench.cd_spell_ids[name] ?? null,
@@ -199,7 +203,7 @@ export class DefensiveFeatureService {
   /** A bench baked before per-log measures reads as no top log, so every check is a comparison. */
   private withPerParse(bench: DefensiveBench): DefensiveBench {
     const stored: Partial<DefensiveBench> = bench;
-    return stored.per_parse ? bench : { ...bench, per_parse: [] };
+    return { ...bench, per_parse: stored.per_parse ?? [], sources: stored.sources ?? [] };
   }
 
   private findingsEmpty(checked: number, bench: DefensiveBench): string {
@@ -213,8 +217,12 @@ export class DefensiveFeatureService {
     const topLogs = `${n} top ${n === 1 ? 'log' : 'logs'}`;
     if (!windows.length) return `No defensive window to compare. The defensives of the ${topLogs} do not line up in time.`;
     if (windows.some(window => window.status === 'amber' || window.status === 'red')) return '';
-    const checked = bench.defensive_windows.filter((window, index) =>
-      windows[index]?.status !== 'muted' && n >= VERDICT_CHOICES.minReferenceN && this.judge.reference(window, n).k > 0).length;
+    const top = this.withPerParse(bench);
+    const killsS = top.sources.map(source => source.duration_s);
+    const checked = bench.defensive_windows.filter((window, index) => {
+      const reference = this.judge.reference(window, top.per_parse, killsS);
+      return windows[index]?.status !== 'muted' && reference.n >= VERDICT_CHOICES.minReferenceN && reference.k > 0;
+    }).length;
     return `Nothing flagged. ${checked} of ${windows.length} ${windows.length === 1 ? 'window' : 'windows'} checked against the ${topLogs}.`;
   }
 
@@ -312,12 +320,11 @@ export class DefensiveFeatureService {
   }
 
   /** The judged figure is the same measure ingest bakes for each top log, so the overview never shows a second number. */
-  protected computePlayerDefensiveWindows(topDefWindows: BurstWindow[], dtEvents: TimedEvent[]): PlayerBurstWindow[] {
+  protected computePlayerDefensiveWindows(topDefWindows: BurstWindow[], dtEvents: TimedEvent[], takenPerS: readonly number[]): PlayerBurstWindow[] {
     const breakdowns = this.windowView.playerWindowDamage(topDefWindows, dtEvents, { maxAbilities: TOP_DAMAGE_SOURCES });
     return breakdowns.map((breakdown, index) => {
       const window = topDefWindows[index];
-      if (!window) return breakdown;
-      return { ...breakdown, window_damage: this.judge.measureDamage(dtEvents, window.time_s, window.time_s + window.window_length_s) };
+      return window ? { ...breakdown, window_damage: this.judge.measureTaken(takenPerS, window) } : breakdown;
     });
   }
 
@@ -339,14 +346,21 @@ export class DefensiveFeatureService {
   }
 
   private defensiveAdapter(
-    { topWindows, playerDefensives, model, topLogs, caps }: Omit<DefensiveWindowsInput, 'playerWindows' | 'abilities'>,
+    { topWindows, playerDefensives, model, takenPerS, top, caps }: Omit<DefensiveWindowsInput, 'playerWindows' | 'abilities'>,
   ): WindowViewAdapter<DefensiveMapAnchor> {
-    const usesOf = (window: BurstWindow) => playerDefensives.find(entry => entry.name === (window.defensive_name ?? ''))?.windows ?? [];
+    const up = this.judge.coverSpans(playerDefensives);
+    const killsS = top.sources.map(source => source.duration_s);
+    const references = topWindows.map(window => this.judge.reference(window, top.per_parse, killsS));
     const deaths = this.judge.deathHomes(topWindows, model.deadSpans);
     return {
-      status: (window, playerDamage) => this.judge.windowVerdict(window, {
-        damage: playerDamage ?? 0, covered: this.judge.measureCovered(window, usesOf(window)), tank: model.role === 'tank',
-      }, topLogs, caps),
+      status: (window, _playerDamage, index) => this.judge.windowVerdict(window, {
+        damage: this.judge.measureTaken(takenPerS, window), cover: this.judge.measureCover(window, up), tank: model.role === 'tank',
+      }, references[index] ?? this.judge.reference(window, [], []), caps),
+      overview: (window, index) => {
+        const damages = references[index]?.damages ?? [];
+        if (!damages.length) return { playerPct: this.judge.measureTaken(takenPerS, window), topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max };
+        return { playerPct: this.judge.measureTaken(takenPerS, window), topAvg: Math.round(mean(damages) ?? 0), topMin: min(damages) ?? 0, topMax: max(damages) ?? 0 };
+      },
       claim: (_window, cause, index) => {
         const diedS = deaths.get(index);
         return cause === 'dead' && diedS !== undefined ? this.judge.deathVerdict(diedS, caps) : null;
@@ -361,10 +375,10 @@ export class DefensiveFeatureService {
   }
 
   protected buildDefensiveWindows(
-    { topWindows, playerWindows, playerDefensives, model, abilities, topLogs, caps }: DefensiveWindowsInput,
+    { topWindows, playerWindows, playerDefensives, model, abilities, takenPerS, top, caps }: DefensiveWindowsInput,
   ): WindowView<DefensiveMapAnchor> {
     return this.windowView.buildWindowView({
-      topWindows, playerWindows, model, abilities, adapter: this.defensiveAdapter({ topWindows, playerDefensives, model, topLogs, caps }),
+      topWindows, playerWindows, model, abilities, adapter: this.defensiveAdapter({ topWindows, playerDefensives, model, takenPerS, top, caps }),
     });
   }
 
