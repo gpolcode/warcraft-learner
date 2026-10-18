@@ -4,7 +4,7 @@ import { PlayerDetailGroups, WclFight } from '../wcl/wcl.models';
 import { AnalysisFinding } from './analysis.models';
 import { AliveSpan, spansS } from './analysis-math';
 import { DeadSpan, DeathTimelineService } from './death-timeline-service';
-import { TimedEvent, WclProjectionsService } from './wcl-projections-service';
+import { PhaseStart, TimedEvent, WclProjectionsService } from './wcl-projections-service';
 import { RotationBloodlustService } from '../rotation/rotation-bloodlust-service';
 
 export type PlayerRole = 'tank' | 'healer' | 'dps' | 'unknown';
@@ -26,7 +26,7 @@ export interface PullModel {
   aliveSpans: AliveSpan[];
   lust: { startS: number; endS: number } | null;
   /** Pull-relative; empty where WCL reports none for the boss. */
-  phases: { id: number; startS: number }[];
+  phases: PhaseStart[];
   role: PlayerRole;
 }
 
@@ -89,9 +89,7 @@ export class PullModelService {
       deadSpans,
       aliveSpans: this.aliveSpans(deadSpans, endS),
       lust: this.bloodlust.lustSpan(buffs, fightDurationS),
-      phases: (fight.phaseTransitions ?? []).map(phase => ({
-        id: phase.id, startS: this.projections.relativeS(phase.startTime, fight.startTime),
-      })),
+      phases: this.projections.phaseStarts(fight),
       role,
     };
   }

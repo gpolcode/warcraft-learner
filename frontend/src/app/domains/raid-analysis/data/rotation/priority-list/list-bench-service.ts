@@ -3,7 +3,7 @@ import { max, mean, min, mode } from 'd3-array';
 import { round } from '../../analysis/analysis-math';
 import type { PriorityList } from '../../plan/plan.models';
 import type { ButtonBench } from '../rotation-data-source';
-import { ListCheckService, LogReading } from './list-check-service';
+import { ButtonCounts, ListCheckService, LogReading } from './list-check-service';
 
 /** Below this many top logs a share is one log's habit rather than the field's. */
 export const MIN_MEASURED_PARSES = 5;
@@ -26,5 +26,14 @@ export class ListBenchService {
         right: { lo: round(min(shares) ?? 0, SHARE_DIGITS), avg: round(avg, SHARE_DIGITS), hi: round(max(shares) ?? 0, SHARE_DIGITS) },
       }];
     });
+  }
+
+  /** Per log, every list button it had moments for, so a bench can be rebuilt without any one log. */
+  counts(list: PriorityList, readings: LogReading[]): Record<string, ButtonCounts>[] {
+    const actions = [...this.checks.buttons(list).keys()];
+    return readings.map(reading => Object.fromEntries(actions.flatMap(action => {
+      const counts = this.checks.rightCounts(reading, action);
+      return counts ? [[action, counts]] : [];
+    })));
   }
 }

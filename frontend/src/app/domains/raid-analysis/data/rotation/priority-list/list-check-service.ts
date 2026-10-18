@@ -69,6 +69,11 @@ export interface OrderCheck {
   terms: TermReading[];
 }
 
+export interface ButtonCounts {
+  right: number;
+  moments: number;
+}
+
 export interface LogReading {
   casts: Map<string, CastCheck[]>;
   /** The id this log cast each button under most. */
@@ -178,10 +183,16 @@ export class ListCheckService {
 
   /** A skip when due counts against the button like a cast off its lines. */
   rightShare(reading: LogReading, action: string): number | null {
+    const counts = this.rightCounts(reading, action);
+    return counts ? counts.right / counts.moments : null;
+  }
+
+  /** A button's moments are its judged presses plus the skips where the list wanted it; null when it had none. */
+  rightCounts(reading: LogReading, action: string): ButtonCounts | null {
     const judged = (reading.casts.get(action) ?? []).filter(check => check.verdict !== 'unjudged');
     const skipped = reading.order.filter(check => check.expected === action && check.pressed !== action);
     const moments = judged.length + skipped.length;
-    return moments ? judged.filter(check => check.verdict === 'on').length / moments : null;
+    return moments ? { right: judged.filter(check => check.verdict === 'on').length, moments } : null;
   }
 
   junction(term: AplNode): Junction | null {

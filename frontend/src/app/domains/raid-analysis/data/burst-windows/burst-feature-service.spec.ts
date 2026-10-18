@@ -12,6 +12,7 @@ import { TestBed } from '@angular/core/testing';
 import { pullModel } from '../../../../../testing/builders/pull-model';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { benchSources } from '../../../../../testing/builders/bench-sources';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -91,7 +92,7 @@ describe('burstClipAnchor', () => {
 describe('buildBurstView', () => {
   const window: BurstWindow = {
     time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
-    common_cds: ['Shadow Blades'],
+    members: [], common_cds: ['Shadow Blades'],
     ability_breakdown: [
       { spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 2 },
     ],
@@ -149,7 +150,7 @@ describe('buildBurstView', () => {
 
 describe('findPlayerBurstWindows', () => {
   const window: BurstWindow = {
-    time_s: 10, window_length_s: 20, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
+    time_s: 10, window_length_s: 20, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, members: [], common_cds: [], ability_breakdown: [],
   };
   const HIT_S = 12, CAST_S = 11, HIT_DAMAGE = 400, CAST_COUNT = 1;
 
@@ -200,13 +201,13 @@ function withBench(bench: Result<BurstBench>, wcl: unknown = wclFake): BurstFeat
 }
 
 const benchFixture: BurstBench = {
-  spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Test', sample_count: 5,
+  spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Test', metric: 'dps', sample_count: 5, sources: benchSources(5),
   cd_spell_ids: { 'Shadow Blades': SHADOW_BLADES },
   ability_icons: { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' }, [SHADOW_BLADES_DAMAGE]: { icon: 'evis', name: 'Eviscerate' } },
   windows: [{
     time_s: BENCH_WINDOW_START_S, window_length_s: BENCH_WINDOW_LENGTH_S,
     dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
-    common_cds: ['Shadow Blades'],
+    members: [], common_cds: ['Shadow Blades'],
     ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 2 }],
   }],
 };

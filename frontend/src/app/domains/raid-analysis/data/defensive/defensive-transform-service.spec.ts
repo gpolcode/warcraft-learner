@@ -9,6 +9,7 @@ import { BLUR, BLUR_BUFF, CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBA
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { MIN_SAMPLE_COUNT } from '../analysis/top-parse-selection-service';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -242,7 +243,7 @@ const reportShape = {
 
 const wclFake = {
   // getRankings returns the raw WCL envelope ({ rankings }); the transform unwraps it.
-  getRankings: async () => ({ rankings: parseRankings(2) }),
+  getRankings: async () => ({ rankings: parseRankings(MIN_SAMPLE_COUNT) }),
   getReport: reportsByCode(reportShape),
   getAllEvents: async (_code: string, _fightId: number, dataType: string) => {
     if (dataType === 'Buffs') return [applyBuff(CLOAK_OF_SHADOWS, 30), removeBuff(CLOAK_OF_SHADOWS, 35)];
@@ -259,13 +260,35 @@ describe('DefensiveTransformService (live, in-browser)', () => {
     const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
-    expect(bench.value.sample_count).toBe(2);
+    expect(bench.value.sample_count).toBe(MIN_SAMPLE_COUNT);
     expect(bench.value.encounter_name).toBe('Boss');
     expect(bench.value.cd_spell_ids).toEqual({ 'Cloak of Shadows': CLOAK_OF_SHADOWS });
     expect(bench.value.defensives[0]).toMatchObject({ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS });
     expect(bench.value.defensive_windows).toHaveLength(1);
     expect(bench.value.defensive_windows[0]).toMatchObject({ defensive_name: 'Cloak of Shadows', dmg_avg: 1000, ref_game_id: 6666 });
     expect(bench.value.ability_icons[700]).toEqual({ icon: 'hit', name: 'Boss Hit' });
+  });
+
+  it('names each top log in a window it covered, and bakes each log\'s uses, empty for the log that never pressed it', async () => {
+    const CLOAK_S = 30;
+    const CLOAK_LENGTH_S = 5;
+    const HIT_DAMAGE = 1000;
+    const SKIPPING_CODE = `r${MIN_SAMPLE_COUNT}`;
+    const SKIPPING_PARSE = MIN_SAMPLE_COUNT - 1;
+    const oneSkips = {
+      ...wclFake,
+      getAllEvents: async (code: string, fightId: number, dataType: string) => (code === SKIPPING_CODE ? [] : wclFake.getAllEvents(code, fightId, dataType)),
+    };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: oneSkips, plans: plansFake }) });
+
+    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
+
+    assert(bench.ok);
+    expect(bench.value.defensive_windows[0]?.members).toEqual(Array.from({ length: SKIPPING_PARSE }, (_unused, parse) => ({
+      parse, time_s: CLOAK_S, window_length_s: CLOAK_LENGTH_S, damage: HIT_DAMAGE,
+    })));
+    expect(bench.value.per_parse[0]).toEqual({ def_casts_s: { 'Cloak of Shadows': [CLOAK_S] } });
+    expect(bench.value.per_parse[SKIPPING_PARSE]).toEqual({ def_casts_s: { 'Cloak of Shadows': [] } });
   });
 
   it('finds the window of a defensive whose buff the log carries under another id of its name', async () => {

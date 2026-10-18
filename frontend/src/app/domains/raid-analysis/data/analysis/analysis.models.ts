@@ -48,6 +48,15 @@ interface AbilityBreakdown {
   is_passive?: boolean;
 }
 
+/** One top log's own window inside a baked cluster. */
+export interface WindowMember {
+  /** Index of the log in the bench's `sources`. */
+  parse: number;
+  time_s: number;
+  window_length_s: number;
+  damage: number;
+}
+
 export interface BurstWindow {
   time_s: number;
   dmg_avg: number;
@@ -60,6 +69,8 @@ export interface BurstWindow {
   defensive_name?: string;
   spell_id?: number;
   ref_game_id?: number | null;
+  /** Every top log whose window formed this one; a log the window lacks had no window there. */
+  members: WindowMember[];
 }
 
 export interface PlayerBurstWindow {

@@ -7,6 +7,7 @@ import { GearFeatureService } from './gear-feature-service';
 import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { benchSources } from '../../../../../testing/builders/bench-sources';
 
 TestBed.configureTestingModule({ providers: [
   { provide: WCL_TRANSPORT, useValue: {} },
@@ -24,10 +25,11 @@ const STANDARD_TRINKETS = [{ slot: 12, id: GAZE.id, name: GAZE.name }, { slot: 1
 
 function benchWith(overrides: Partial<GearBench> = {}): GearBench {
   return {
-    spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', sample_count: 10,
+    spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', metric: 'dps', sample_count: 10, sources: benchSources(10),
     talent_builds: [{ key: STANDARD_KEY, pct: 80, report_code: 'abc', fight_id: 2, player_name: 'Top', source_id: 5, diff: [] }],
     trinket_sets: STANDARD_PAIR,
     enchants: { 15: [{ id: 8041, name: 'Sophic', icon: '', item_id: null, pct: 90 }] },
+    talent_nodes: [], talent_sample_count: 10, per_parse: [],
     ...overrides,
   };
 }

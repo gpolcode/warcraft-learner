@@ -67,6 +67,17 @@ describe('ListBenchService', () => {
     expect(benchOf(readings)?.right.avg).toBe(FOUR_FIFTHS);
   });
 
+  it('counts each log\'s right presses over its moments, a skip when due being a moment it got wrong', () => {
+    const RIGHT = 4;
+    const MOMENTS = 5;
+    const counts = benches.counts(list, [log(clean, { order: [decision('backstab')] })]);
+    expect(counts).toEqual([{ eviscerate: { right: RIGHT, moments: MOMENTS } }]);
+  });
+
+  it('leaves out of a log\'s counts a button it had no moment for', () => {
+    expect(benches.counts(list, [log([cast('unjudged')])])).toEqual([{}]);
+  });
+
   it('names the button\'s icon by the id most top logs cast it under', () => {
     const readings = [...field(3, clean, { id: EVISCERATE_HERO }), ...field(2, clean)];
     expect(benchOf(readings)?.spell_id).toBe(EVISCERATE_HERO);

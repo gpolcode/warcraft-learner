@@ -1,6 +1,7 @@
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { SHADOW_BLADES } from '../../../../../testing/spell-ids';
 import { RotationBench } from './rotation-data-source';
+import { benchSources } from '../../../../../testing/builders/bench-sources';
 
 export function cdBench(over: Partial<PerCdBenchmark> = {}): PerCdBenchmark {
   return {
@@ -16,12 +17,13 @@ export function cdBench(over: Partial<PerCdBenchmark> = {}): PerCdBenchmark {
 
 export function bench(over: Partial<RotationBench> = {}): RotationBench {
   return {
-    spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', sample_count: 5,
+    spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', metric: 'dps', sample_count: 5, sources: benchSources(5),
     downtime_threshold_s: 1.5, top_avg_efficiency: 90, top_efficiency_stddev: 3,
     per_cd_benchmarks: { 'Shadow Blades': cdBench() },
     major_cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }],
     list: { lines: [], variables: [], spells: {}, talents: {} },
     buttons: [],
+    per_parse: [],
     cd_spell_ids: { 'Shadow Blades': SHADOW_BLADES },
     ability_icons: { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' } },
     ...over,

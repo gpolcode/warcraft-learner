@@ -28,7 +28,7 @@ describe('computePlayerDefensiveWindows', () => {
   const WIN_START_S = 10;
   const WIN_LEN_S = 5;
   const top: BurstWindow[] = [
-    { time_s: WIN_START_S, window_length_s: WIN_LEN_S, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [] },
+    { time_s: WIN_START_S, window_length_s: WIN_LEN_S, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, members: [], common_cds: [], ability_breakdown: [] },
   ];
 
   it('sums the damage the player took in the window, with no cast count to report', () => {
@@ -129,7 +129,7 @@ describe('defensiveFindingClipAnchor', () => {
 describe('buildDefensiveWindows', () => {
   const window: BurstWindow = {
     time_s: 30, window_length_s: 5, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
-    defensive_name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, ref_game_id: 6666, common_cds: ['Cloak of Shadows'],
+    defensive_name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS, ref_game_id: 6666, members: [], common_cds: ['Cloak of Shadows'],
     ability_breakdown: [{ spell_id: BOSS_HIT_SPELL_ID, avg_damage: 600, min_damage: 400, max_damage: 800 }],
   };
   const abilities = {

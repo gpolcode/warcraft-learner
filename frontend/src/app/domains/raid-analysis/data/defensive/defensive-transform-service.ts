@@ -13,7 +13,7 @@ import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
-import { DefensiveBench, DefensivePlanMeta } from './defensive-data-source';
+import { DefensiveBench, DefensiveParseMeasures, DefensivePlanMeta } from './defensive-data-source';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { DefensiveUsesService } from './defensive-uses-service';
@@ -84,6 +84,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
           defensive_windows: this.clusterDefensiveWindows(allWindows, parses.length),
           defensives: this.defensivePlanMeta(defensives),
           cd_spell_ids: this.benchPipeline.spellIdsByName(defensives),
+          per_parse: parses.map(parse => this.parseMeasures(parse.summaries, defensives)),
         };
       },
     });
@@ -112,6 +113,11 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       windows: this.findParseDefensiveWindows(this.wclProjections.withRelativeS(dmgTaken, fight.startTime), uses, defensives, gameIdByActorId),
       summaries: this.summarizeDefensiveCasts(defensives, uses, fightDurationS),
     };
+  }
+
+  protected parseMeasures(summaries: ParseDefensiveSummary[], defensives: PlanDefensive[]): DefensiveParseMeasures {
+    const used = new Map(summaries.map(summary => [summary.name, summary.cast_times_s]));
+    return { def_casts_s: Object.fromEntries(defensives.map(defensive => [defensive.name, used.get(defensive.name) ?? []])) };
   }
 
   protected defensivePlanMeta(defensives: PlanDefensive[]): DefensivePlanMeta[] {
@@ -274,6 +280,9 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
           common_cds: [defensiveName],
           ref_game_id: this.majorityRefGameId(cluster),
           ability_breakdown: this.clusterAbilityBreakdown(cluster),
+          members: cluster.map(member => ({
+            parse: member.parse_index, time_s: member.time_s, window_length_s: member.window_length_s, damage: member.window_damage,
+          })),
         });
       }
     }
