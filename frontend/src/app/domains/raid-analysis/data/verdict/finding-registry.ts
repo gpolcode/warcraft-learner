@@ -4,10 +4,14 @@ import { ROTATION_BUTTON_FAMILY } from '../rotation/priority-list/button-judge-s
 import { COOLDOWN_GAP_FAMILY, COOLDOWN_HOLD_FAMILY, LATE_OPENER_FAMILY } from '../rotation/cadence-judge-service';
 import { DOWNTIME_FAMILY } from '../rotation/downtime-judge-service';
 import { BURST_WINDOW_FAMILY } from '../burst-windows/burst-judge-service';
+import {
+  DEAD_IN_WINDOW_FAMILY, DEFENSIVE_FIRST_USE_FAMILY, DEFENSIVE_GAP_FAMILY, DEFENSIVE_HOLD_FAMILY, DEFENSIVE_USES_FAMILY, DEFENSIVE_WINDOW_FAMILY,
+} from '../defensive/defensive-judge-service';
 
 /** Every finding family the page can color; the conformance spec walks it. */
 export const FINDING_REGISTRY: readonly FindingFamily[] = [
   ROTATION_BUTTON_FAMILY, LOST_CAST_FAMILY, NEVER_USED_FAMILY,
   LATE_OPENER_FAMILY, COOLDOWN_GAP_FAMILY, COOLDOWN_HOLD_FAMILY, DOWNTIME_FAMILY,
   BURST_WINDOW_FAMILY,
+  DEFENSIVE_USES_FAMILY, DEFENSIVE_FIRST_USE_FAMILY, DEFENSIVE_GAP_FAMILY, DEFENSIVE_HOLD_FAMILY, DEFENSIVE_WINDOW_FAMILY, DEAD_IN_WINDOW_FAMILY,
 ];

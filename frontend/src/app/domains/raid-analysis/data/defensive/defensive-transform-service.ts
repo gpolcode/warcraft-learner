@@ -17,6 +17,7 @@ import { DefensiveBench, DefensiveParseMeasures, DefensivePlanMeta } from './def
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { DefensiveUsesService } from './defensive-uses-service';
+import { DefensiveJudgeService } from './defensive-judge-service';
 
 const CONSENSUS_FRAC = 0.5;
 const MEMBER_MAJORITY_FRAC = 0.5;
@@ -56,6 +57,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
   private readonly castCadence = inject(CastCadenceService);
   private readonly auraWindows = inject(AuraWindowsService);
   private readonly defensiveUses = inject(DefensiveUsesService);
+  private readonly judge = inject(DefensiveJudgeService);
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
@@ -140,7 +142,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     const summaries: ParseDefensiveSummary[] = [];
     for (const defensive of defensives) {
       const cooldownS = defensive.cooldown;
-      const castTimes = (uses.get(defensive.spell_id) ?? []).map(use => round(use.start_s));
+      const castTimes = this.judge.measureUseTimes(uses.get(defensive.spell_id) ?? []);
       const holdWindows = this.holdTargets.detectHoldWindows(castTimes, cooldownS);
 
       const firstCastS = castTimes[0];
@@ -200,7 +202,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       // A point use is an external on another raider, so none of the caster's damage taken falls in its window.
       for (const { start_s: startS, end_s: endS } of (uses.get(spellId) ?? []).filter(use => use.end_s > use.start_s)) {
         const windowHits = hits.filter(hit => hit[0] >= startS && hit[0] <= endS);
-        const windowDmg = windowHits.reduce((sum, hit) => sum + hit[1], 0);
+        const windowDmg = this.judge.measureDamage(damageTaken, startS, endS);
 
         result.push({
           time_s: round(startS),

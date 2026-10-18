@@ -9,6 +9,7 @@ type InjectedMistake =
   | 'idle-5-gcds'
   | 'shift-burst-15s'
   | 'strip-defensive'
+  | 'die-in-window'
   | 'swap-talent-node'
   | 'remove-enchant'
   | 'press-off-list';

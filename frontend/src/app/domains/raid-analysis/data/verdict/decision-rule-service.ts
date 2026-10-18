@@ -45,6 +45,8 @@ export interface ConsensusInput {
   n: number;
   /** An independent second condition holds, such as the talent taken with at least 2 expected uses. */
   paired: boolean;
+  /** The family's claim needs the second condition, so without it every top log agreeing is still only a count. */
+  pairedOnly?: boolean;
 }
 
 export interface FactInput {
@@ -118,7 +120,7 @@ export class DecisionRuleService {
     const base = { n: input.n, observed: input.k, target: input.k, excess: 0 };
     if (!input.differs || input.n < VERDICT_CHOICES.minReferenceN) return { ...base, level: 'neutral' };
     if (input.paired) return { ...base, level: input.k / input.n >= VERDICT_CHOICES.pairedConsensusShare ? 'amber' : 'blue' };
-    if (input.k < input.n) return { ...base, level: 'blue' };
+    if (input.k < input.n || input.pairedOnly) return { ...base, level: 'blue' };
     const laplaceRate = 1 / (input.n + 2);
     return { ...base, level: laplaceRate <= VERDICT_CHOICES.perTestBudget.red ? 'red' : 'amber' };
   }

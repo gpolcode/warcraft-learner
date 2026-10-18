@@ -57,7 +57,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     assert.exists(result.value.windows[0]);
     expect(result.value.windows[0].overview.playerPct).toBe(1150);
     expect(result.value.anchors[0]).toMatchObject({ refGameId: WINDOW_REF_GAME_ID });
-    // 1 use vs avg ~2, but only one buff window -> first cast at 30 (late) gives a warning finding.
+    // 1 use of the 2 expected shows as a comparison row.
     expect(result.value.findingRows.length).toBeGreaterThan(0);
   });
 
@@ -133,10 +133,22 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.value.findingRows).toHaveLength(1);
+    // The bench carries no per-log uses, so the row is a comparison.
     expect(result.value.findingRows[0]).toMatchObject({
-      severity: 'critical', name: 'Cloak of Shadows', spellId: CLOAK_OF_SHADOWS, icon: 'cloak',
+      severity: 'neutral', name: 'Cloak of Shadows', spellId: CLOAK_OF_SHADOWS, icon: 'cloak',
     });
     expect(result.value.onPlan).toEqual([{ name: 'Evasion', spellId: EVASION, icon: 'evasion' }]);
+  });
+
+  it('counts the defensives checked against the top logs when nothing is flagged', async () => {
+    const wcl = {
+      getReport: async () => wclReport({ playerName: 'P' }),
+      getCombatantInfo: async () => [],
+      getAllEvents: async (_c: string, _f: number, dataType: string) => (dataType === 'Casts' ? [cast(CLOAK_OF_SHADOWS, 10), cast(CLOAK_OF_SHADOWS, 70)] : []),
+    };
+    const result = await serviceWith(Results.ok(fullBench()), wcl).loadAnalysisView('SubtletyRogue', 1, 'r1', 1, 10);
+    assert(result.ok);
+    expect(result.value.findingsEmpty).toBe('Nothing flagged. 1 defensive checked against 5 top logs.');
   });
 
   it('does not throw and yields an empty icon when a cd spell id is missing from the ability map', async () => {
@@ -168,6 +180,8 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
     const onMissingFight = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', UNLOGGED_FIGHT_ID, 10);
     expect(onMissingFight).toEqual(Results.ok({
       findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null, bench: TestBed.inject(BenchStripService).strip(benchWith()),
+      findingsEmpty: 'Nothing flagged. No defensive on the plan was checked in this pull.',
+      windowsEmpty: 'No defensive window to compare. The defensives of the 5 top logs do not line up in time.',
     }));
 
     const onFailure = await service.loadAnalysisView('SubtletyRogue', 1, FAILING_CODE, 1, 10);

@@ -193,6 +193,14 @@ describe('DecisionRuleService.consensus', () => {
     expect(differ(7, TOP_N, true).level).toBe('blue');
   });
 
+  it('keeps all 10 of 10 a blue count when the claim needs a second condition that does not hold', () => {
+    expect(rules.consensus({ differs: true, k: TOP_N, n: TOP_N, paired: false, pairedOnly: true }).level).toBe('blue');
+  });
+
+  it('flags amber at 8 of 10 when the claim needs a second condition and it holds', () => {
+    expect(rules.consensus({ differs: true, k: AGREEING_USERS, n: TOP_N, paired: true, pairedOnly: true }).level).toBe('amber');
+  });
+
   it('stays neutral where the player does what the top logs do', () => {
     expect(rules.consensus({ differs: false, k: TOP_N, n: TOP_N, paired: true }).level).toBe('neutral');
   });

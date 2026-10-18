@@ -203,14 +203,18 @@ test('defensives flag the mistimed cooldowns and benchmark the damage taken in t
   await shows(table, JUDGED_SPAN);
   await showsBenchStrip(table);
   await showsFindingTable(table, CD_CHIP);
-  // A bench keeps only the windows its top logs share, so a re-ingest can leave an encounter with none and the section hidden.
   const windows = defensives.locator('wl-window-comparison');
-  if (await windows.count()) {
-    await shows(windows, 'Defensive windows');
-    await shows(windows, 'Damage taken in each defensive window vs top logs.');
-    await shows(windows, JUDGED_SPAN);
+  await shows(windows, 'Defensive windows');
+  await shows(windows, 'Each moment top logs press a defensive, and whether you had it up.');
+  await shows(windows, JUDGED_SPAN);
+  // A bench keeps only the windows its top logs share, so a re-ingest can leave an encounter with none.
+  if (await windows.getByRole('option').count()) {
     const judged = await showsFirstWindow(windows, { metric: 'Damage taken', chips: 'Defensives top raiders use here', range: 'Damage taken vs top range' });
-    if (judged) await expect(valueOf(windows, 'What you did')).toHaveText(ANY_TEXT);
+    if (judged) await expect(windows.getByText(/^(You had|You did not have|You died at|Only \d+ top logs? backs?|No top log carries) /)).toBeVisible();
+    const nothingFlagged = windows.getByText(/^Nothing flagged\./);
+    if (await nothingFlagged.count()) await expect(nothingFlagged).toHaveText(/^Nothing flagged\. \d+ of \d+ windows? checked against the \d+ top logs?\.$/);
+  } else {
+    await expect(windows.getByText(/^No defensive window to compare\./)).toHaveText(/^No defensive window to compare\. The defensives of the \d+ top logs? do not line up in time\.$/);
   }
 });
 
