@@ -1,10 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { BurstWindow, PlayerBurstWindow } from '../analysis/analysis.models';
-import { WindowStatus } from '../analysis/window-comparison.models';
 import { ClipAnchor } from '../capture/capture.models';
 import { Result, Results } from '../../../shared/util-http/result';
-import { WclProjectionsService, AbilityIcons, TimedEvent } from '../analysis/wcl-projections-service';
+import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
 import { WindowView, WindowViewAdapter } from '../analysis/window-view-service';
 import { PullContextService, PullContext, PullRef } from '../analysis/pull-context-service';
 import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
@@ -12,6 +11,8 @@ import { WindowViewService } from '../analysis/window-view-service';
 import { JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
 import { SpecRoleService } from '../analysis/spec-role-service';
+import { BurstJudgeService } from './burst-judge-service';
+import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
 const HEALER_REASON = 'Top raiders on your spec are ranked on healing, so there are no burst windows to compare your damage with.';
 
@@ -20,8 +21,14 @@ export interface BurstMapAnchor {
   windowLengthS: number;
 }
 
-/** `judged` is null on a bench-only view, which judges no pull; `bench` is null on a spec the card compares nothing for. */
-export type BurstView = WindowView<BurstMapAnchor> & { judged: JudgedSpan | null; bench: BenchStrip | null };
+/** `judged` is null on a bench-only view, which judges no pull; `bench` is null on a spec the card compares nothing for; `empty` says, with counts, why nothing is flagged. */
+export type BurstView = WindowView<BurstMapAnchor> & { judged: JudgedSpan | null; bench: BenchStrip | null; empty: string };
+
+/** The player's damage, measured the way ingest measures a top log's. */
+interface PlayerDamage {
+  windows: PlayerBurstWindow[];
+  ratePerS: number;
+}
 
 type JudgedWindows = Omit<BurstView, 'bench'>;
 
@@ -35,6 +42,7 @@ export class BurstFeatureService {
   private readonly pullModel = inject(PullModelService);
   private readonly benchStrips = inject(BenchStripService);
   private readonly specRoles = inject(SpecRoleService);
+  private readonly judge = inject(BurstJudgeService);
 
   /** Null where the card compares the spec's damage; a healer's top logs are ranked on healing, so none of their damage is a reference. */
   notComparedReason(spec: string): string | null {
@@ -49,17 +57,27 @@ export class BurstFeatureService {
     if (!bench.ok) return bench;
 
     const pull: PullRef = { reportCode, fightId, playerId };
-    const strip = this.benchStrips.strip(bench.value);
+    const stored = this.withMembers(bench.value);
+    const strip = this.benchStrips.strip(stored);
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'BurstFeatureService.loadPlayerView',
       errorId: 'burst.player-view',
-      emptyView: () => ({ ...this.benchOnlyView(bench.value), bench: strip }),
-      analyze: async context => ({ ...await this.playerView(bench.value, pull, context), bench: strip }),
+      emptyView: () => ({ ...this.benchOnlyView(stored), bench: strip }),
+      analyze: async context => ({ ...await this.playerView(stored, pull, context), bench: strip }),
     });
   }
 
+  /** A bench an older ingest wrote carries no per-log window damage, so every one of its windows is a comparison. */
+  private withMembers(bench: BurstBench): BurstBench {
+    const windows = bench.windows.map(window => {
+      const stored: Partial<BurstWindow> = window;
+      return stored.members ? window : { ...window, members: [] };
+    });
+    return { ...bench, windows };
+  }
+
   private notComparedView(): BurstView {
-    return { windows: [], anchors: [], clipAnchors: [], folded: this.pullModel.noFolds(), judged: null, bench: null };
+    return { windows: [], anchors: [], clipAnchors: [], folded: this.pullModel.noFolds(), judged: null, bench: null, empty: '' };
   }
 
   private async playerView(bench: BurstBench, pull: PullRef, context: PullContext): Promise<JudgedWindows> {
@@ -77,33 +95,20 @@ export class BurstFeatureService {
       this.wclApi.getAllEvents(reportCode, fightId, 'DamageDone', fight.startTime, fight.endTime, playerId, true),
     ]);
     const presses = this.wclProjections.presses(casts, bench.press_folds ?? [], { buffs, abilities });
+    const damageS = this.wclProjections.withRelativeS(damage, fight.startTime);
     const playerWindows = this.findPlayerBurstWindows(
-      bench.windows, this.wclProjections.withRelativeS(damage, fight.startTime), this.wclProjections.withRelativeS(presses, fight.startTime), abilityNames,
+      bench.windows, damageS, this.wclProjections.withRelativeS(presses, fight.startTime), abilityNames,
+      this.wclProjections.relativeS(fight.endTime, fight.startTime),
     );
-    return this.buildBurstView(bench.windows, playerWindows, model, bench.cd_spell_ids, bench.ability_icons);
+    const player = { windows: playerWindows, ratePerS: this.judge.aliveRate(damageS, model.aliveSpans) };
+    return this.buildBurstView(bench, player, model);
   }
 
   async loadBenchView(spec: string, encounterId: number): Promise<Result<BurstView>> {
     if (this.notComparedReason(spec)) return Results.ok(this.notComparedView());
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return Results.ok({ ...this.benchOnlyView(bench.value), bench: this.benchStrips.strip(bench.value) });
-  }
-
-  /** Higher player damage is better, so falling short of the top-parse range is the problem. */
-  protected burstWindowStatus(
-    playerDamage: number | null,
-    topAvg: number,
-    topMin: number,
-    stddev: number,
-    benchOnly = false,
-  ): { status: WindowStatus; icon: string } {
-    // Pre-fight has no player log to compare, so the window is purely informational.
-    if (benchOnly) return { status: 'info', icon: 'insights' };
-    if (playerDamage === null) return { status: 'muted', icon: 'help_outline' };
-    if (playerDamage < topMin - stddev) return { status: 'bad', icon: 'error' };
-    if (topAvg > 0 && playerDamage < topAvg - stddev) return { status: 'warn', icon: 'warning_amber' };
-    return { status: 'good', icon: 'check_circle' };
+    return Results.ok({ ...this.benchOnlyView(this.withMembers(bench.value)), bench: this.benchStrips.strip(bench.value) });
   }
 
   protected splitCommonCds(
@@ -129,10 +134,12 @@ export class BurstFeatureService {
     return { timeS: window.time_s, windowLengthS: window.window_length_s, key: `burst-${index}` };
   }
 
-  private burstAdapter(cdSpellIds: Record<string, number>, benchOnly: boolean): WindowViewAdapter<BurstMapAnchor> {
+  /** A null rate is a bench-only view, which has no player damage to judge. */
+  private burstAdapter(cdSpellIds: Record<string, number>, ratePerS: number | null): WindowViewAdapter<BurstMapAnchor> {
     return {
-      status: (window, playerDamage) =>
-        this.burstWindowStatus(playerDamage, window.dmg_avg, window.dmg_min, window.dmg_stddev, benchOnly),
+      status: (window, playerDamage) => ratePerS === null
+        ? { ...this.judge.benchVerdict(window), benchOnly: true }
+        : this.judge.verdict(window, playerDamage ?? 0, ratePerS),
       chips: window => this.splitCommonCds(window.common_cds, cdSpellIds),
       mapAnchor: window => this.burstMapAnchor(window),
       clipAnchor: (window, index) => this.burstClipAnchor(window, index),
@@ -140,21 +147,32 @@ export class BurstFeatureService {
     };
   }
 
-  protected buildBurstView(
-    topWindows: BurstWindow[],
-    playerWindows: PlayerBurstWindow[],
-    model: PullModel | null,
-    cdSpellIds: Record<string, number>,
-    abilities: AbilityIcons,
-  ): JudgedWindows {
+  /** A null model is a bench-only view; the player's damage comes with it. */
+  protected buildBurstView(bench: BurstBench, player: PlayerDamage | null, model: PullModel | null): JudgedWindows {
+    const ratePerS = model && player ? player.ratePerS : null;
     const view = this.windowView.buildWindowView({
-      topWindows, playerWindows, model, abilities, adapter: this.burstAdapter(cdSpellIds, model === null),
+      topWindows: bench.windows, playerWindows: player?.windows ?? [], model, abilities: bench.ability_icons,
+      adapter: this.burstAdapter(bench.cd_spell_ids, ratePerS),
     });
-    return { ...view, judged: model ? this.pullModel.judgedSpan(model, view.folded) : null };
+    return {
+      ...view,
+      judged: model ? this.pullModel.judgedSpan(model, view.folded) : null,
+      empty: this.emptyState(bench, view.windows, ratePerS !== null),
+    };
   }
 
   private benchOnlyView(bench: BurstBench): JudgedWindows {
-    return this.buildBurstView(bench.windows, [], null, bench.cd_spell_ids, bench.ability_icons);
+    return this.buildBurstView(bench, null, null);
+  }
+
+  /** Empty where a window is flagged, or on a pre-fight view that has windows. */
+  protected emptyState(bench: BurstBench, windows: readonly { status: string; message: string }[], judgesPull: boolean): string {
+    const topLogs = `${bench.sample_count} top ${bench.sample_count === 1 ? 'log' : 'logs'}`;
+    if (!windows.length) return `No burst window to compare. The biggest bursts of the ${topLogs} do not line up in time.`;
+    if (!judgesPull || windows.some(window => window.status === 'amber' || window.status === 'red')) return '';
+    const checked = bench.windows.filter((window, index) =>
+      windows[index]?.status !== 'muted' && window.members.length >= VERDICT_CHOICES.minReferenceN).length;
+    return `Nothing flagged. ${checked} of ${windows.length} ${windows.length === 1 ? 'window' : 'windows'} checked against the ${topLogs}.`;
   }
 
   protected findPlayerBurstWindows(
@@ -162,8 +180,16 @@ export class BurstFeatureService {
     dmgEvents: TimedEvent[],
     castEvents: TimedEvent[],
     abilityNames: Map<number, string>,
+    fightLenS: number,
   ): PlayerBurstWindow[] {
     const nameOf = (spellId: number): string => abilityNames.get(spellId) ?? `Spell ${spellId}`;
-    return this.windowView.playerWindowDamage(topWindows, dmgEvents, { attribution: { casts: castEvents, nameOf } });
+    const breakdowns = this.windowView.playerWindowDamage(topWindows, dmgEvents, { attribution: { casts: castEvents, nameOf } });
+    // The judged figure is the same measure ingest bakes for each top log, so the overview never shows a second number.
+    return breakdowns.map((breakdown, index) => {
+      const window = topWindows[index];
+      if (!window) return breakdown;
+      const endS = window.time_s + window.window_length_s;
+      return { ...breakdown, window_damage: this.judge.measure(dmgEvents, window.time_s, endS, endS >= fightLenS) };
+    });
   }
 }

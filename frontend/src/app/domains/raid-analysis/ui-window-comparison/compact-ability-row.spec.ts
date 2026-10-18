@@ -113,3 +113,12 @@ describe('CompactAbilityRow label', () => {
     expect(render(row({ label: LABEL })).dom.text()).toContain(LABEL);
   });
 });
+
+describe('CompactAbilityRow on an untoned window', () => {
+  it('prints the gap and the casts with no color', () => {
+    const { gap, casts } = render(row({ playerPct: 60, topAvg: 100, playerCasts: 0, topCasts: 3 }), { toned: false });
+
+    expect(statusColor(gap)).toBeNull();
+    expect(appearance(casts)).toBe('neutral');
+  });
+});

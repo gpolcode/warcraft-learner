@@ -4,7 +4,8 @@ import { GameIcon } from '../ui-game-icon/game-icon';
 import { FormatDamagePipe } from '../../shared/ui-format/format-damage-pipe';
 import type { RangeRow } from '../data/analysis/window-comparison.models';
 
-export type RowStatus = 'success' | 'warning' | 'critical' | 'muted';
+/** `plain` is a figure with no rule behind its color. */
+export type RowStatus = 'success' | 'warning' | 'critical' | 'muted' | 'plain';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,6 +18,8 @@ export class CompactAbilityRow {
   readonly higherIsBetter = input<boolean>(true);
   readonly showCasts = input<boolean>(true);
   readonly hidePlayer = input<boolean>(false);
+  /** False on a window the verdict contract judges: no rule grades a single ability, so its row shows numbers only. */
+  readonly toned = input<boolean>(true);
 
   private readonly gap = computed<number | null>(() => {
     const { playerPct, topAvg } = this.row();
@@ -29,6 +32,7 @@ export class CompactAbilityRow {
 
   protected readonly gapStatus = computed<RowStatus>(() => {
     const { playerPct, topAvg } = this.row();
+    if (!this.toned()) return 'plain';
     if (playerPct == null) return 'critical';
     const gap = this.gap();
     if (gap == null || topAvg == null || topAvg === 0) return 'muted';
@@ -44,6 +48,7 @@ export class CompactAbilityRow {
 
   protected readonly castsStatus = computed<RowStatus>(() => {
     const { playerCasts, topCasts } = this.row();
+    if (!this.toned()) return 'plain';
     if (topCasts == null) return 'muted';
     const player = playerCasts ?? 0;
     if (player >= topCasts) return 'success';

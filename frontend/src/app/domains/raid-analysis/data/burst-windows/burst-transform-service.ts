@@ -11,6 +11,7 @@ import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-s
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
 import { BurstBench } from './burst-data-source';
+import { BurstJudgeService } from './burst-judge-service';
 
 const CLUSTER_MIN_FRAC = 0.4;
 const MEMBER_MAJORITY_FRAC = 0.5;
@@ -67,6 +68,7 @@ export interface ParseWindowScan {
 }
 
 interface RunWindowContext {
+  damage: readonly TimedEvent[];
   hits: DamageHit[];
   total: number;
   binCount: number;
@@ -89,6 +91,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
   private readonly specPlanLoader = inject(SpecPlanLoaderService);
+  private readonly judge = inject(BurstJudgeService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<BurstBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
@@ -259,7 +262,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
 
     const windows: ParseWindow[] = [];
     const context: RunWindowContext = {
-      hits, total, binCount, damagePerBin, timings, castRows, nameOf, castNamesInParse, tuning,
+      damage, hits, total, binCount, damagePerBin, timings, castRows, nameOf, castNamesInParse, tuning,
     };
     for (const run of denseRuns) {
       const window = this.windowFromRun(run, context);
@@ -269,7 +272,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
   }
 
   private windowFromRun(run: BinRun, context: RunWindowContext): ParseWindow | null {
-    const { hits, total, binCount, damagePerBin, timings, castRows, nameOf, castNamesInParse, tuning } = context;
+    const { damage, hits, total, binCount, damagePerBin, timings, castRows, nameOf, castNamesInParse, tuning } = context;
     const trimmed = this.trimRunToDamage(run, damagePerBin);
     if (!trimmed) return null;
     const windowStartS = trimmed.startBin * tuning.binS;
@@ -277,7 +280,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
     // The fight-closing window counts the fight-end hit bucketDamagePerBin clamps into the last bin; interior windows stay half-open.
     const closesFight = trimmed.endBin === binCount - 1;
     const windowHits = hits.filter(hit => hit[0] >= windowStartS && (closesFight ? hit[0] <= windowEndS : hit[0] < windowEndS));
-    const windowDmg = windowHits.reduce((sum, hit) => sum + hit[1], 0);
+    const windowDmg = this.judge.measure(damage, windowStartS, windowEndS, closesFight);
     if (!windowDmg || windowDmg / total < tuning.significancePct) return null;
     return {
       time_s: round(windowStartS),

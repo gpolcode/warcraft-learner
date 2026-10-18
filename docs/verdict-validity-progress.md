@@ -242,3 +242,42 @@ Branch `claude/verdict-validity-p4b-cadence`, PR against `claude/verdict-validit
 
 - `CadenceJudgeService` takes cast times and `per_parse`, so the defensive card (4d) can reuse `measureOpener`, `measureGap` and `measureHold` once `per_parse.def_casts_s` feeds the references.
 - `fmtApart(value, edge)` prints a flagged value and its target apart.
+
+## Package 4c: Burst windows judge split (done)
+
+Branch `claude/verdict-validity-p4c-burst`, PR against `claude/verdict-validity-p4b-cadence`.
+
+### Done
+
+- **Family** `burst.window` in `FINDING_REGISTRY`, declared in `data/burst-windows/burst-judge-service.ts`: tier amber, cost medium, `interval` below; pending the amplification construct on the common span (package 6). Injected mistake `shift-burst-15s`.
+- **Judge, callable at ingest with a top log as the player.** `BurstJudgeService`:
+  - `measure(damage, startS, endS, closesFight)` is the one window-damage measure: `damage`-type hits, amount plus absorbed, `[start, end)`, the end kept on a window that closes the fight. Ingest's `windowFromRun` bakes each parse window's `window_damage` (and so every `members[].damage`) through it; the runtime overwrites `PlayerBurstWindow.window_damage` with it (`findPlayerBurstWindows`, which now takes the fight length). The baked values are unchanged.
+  - `aliveRate(damage, spans)` is damage per alive second; ingest passes `[[0, duration]]`.
+  - `reference(window)` is `members[].damage` (n = top logs that formed the window); `judge(damage, reference, ratePerS)` is `interval` below with the floor `effectFloors.timingS * ratePerS`; `verdict(window, damage, ratePerS)` returns `{ family, status: Tone, icon, message, n }`; `benchVerdict(window)` is the pre-fight window (neutral, "N top logs had this window.").
+- **Tone.** `ToneService.tone(BURST_WINDOW_FAMILY, evidence)` sets every judged window; `ToneService.neutral()` is new for the pre-fight window. Amber at most; under 5 members, or on a bench whose windows carry no `members` (an older ingest; `BurstFeatureService.withMembers` fills `[]`), the window is a neutral comparison with a message saying why. Muted windows come from `WindowViewService` as package 1 set them, with no message.
+- **Rows.** `ComparisonWindow` gains `benchOnly`, `message` and `family`; `WindowStatus` accepts a `Tone` beside the legacy words (`info` is gone: bench-only is the `benchOnly` flag). `wl-window-comparison` reads either vocabulary as one look (`lookOf`), prints `message` under the window (amber text on a graded window), and on a contract window (`isOnContract`) leaves the delta uncolored unless graded and the ability rows uncolored (`wl-compact-ability-row` `toned` input). `wl-range-bar` and `wl-range-legend` take a `RangeLook` (`success`, `warning`, `critical`, `accent`, `muted`); the button table maps to it.
+- **Empty state with counts** (`BurstView.empty`, `empty` input on `wl-window-comparison`): no windows: "No burst window to compare. The biggest bursts of the N top logs do not line up in time." as the card's empty state; a judged pull with no amber window: "Nothing flagged. a of b windows checked against the N top logs." as a line above the strip (a = windows not muted with at least 5 members).
+- **Lint.** `burst-feature-service.ts` left the `local/no-severity-literal` ignores.
+- **E2E.** Post-raid checks the judged first window's message by shape and the "Nothing flagged" line when drawn; pre-fight checks "N top logs had this window." when drawn.
+
+### Decisions and deviations
+
+- **Floor.** The 5.7 row names no floor; the rule needs one in damage, so it is the timing floor's 5 s at the player's own alive-time damage rate (no new chosen number, and the same unit the pending amplification construct uses).
+- **Reference.** The members that formed the window, not every accepted parse; "all accepted parses" is the rebuilt construct's reference (package 6). The 5.7 contrast-lift gate waits for the harness (package 5).
+- The amber window carries no remedy: the construct cannot tell a moved burst from a weak one, so no fix is named.
+- The pre-fight window is a neutral tone, not a separate state; its look matches a comparison window, so the pre-fight strip turns grey instead of blue.
+- No `INGEST_VERSION` bump: `measure` reproduces the baked window damage exactly.
+
+### Drift against 6882b59
+
+- `burst-feature-service.ts:85-86` (the burst rule) was at `:104-105` at the stack base; it is gone now. `window-view-service.ts:98` held as package 1 left it.
+
+### Seams stubbed
+
+- The defensive windows card (4d) still uses the legacy `WindowStatus` words through the same `WindowViewService`; its windows keep their colors and its ability rows stay toned.
+- Calibration does not cap the tone yet (package 5); the harness that calls `verdict` at ingest is not built.
+
+### For the next package
+
+- A window card moves onto the contract by returning a `Tone`, `message` and `family` from its `WindowViewAdapter.status`; `wl-window-comparison` then drops the colors no rule backs on its own.
+- Defensive windows (4d) can mirror `BurstJudgeService`: `measure` on damage taken over the window span through one function shared with ingest, `members` as the reference.

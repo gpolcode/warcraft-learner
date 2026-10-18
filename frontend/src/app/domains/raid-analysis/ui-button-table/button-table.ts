@@ -11,10 +11,10 @@ import { RangeLegend } from '../ui-range-bar/range-legend';
 import type { ButtonRow } from '../data/rotation/priority-list/list-finding-service';
 import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
 import type { BenchStrip } from '../data/analysis/bench-strip-service';
-import type { WindowStatus } from '../data/analysis/window-comparison.models';
+import type { RangeLook } from '../ui-range-bar/range-bar';
 import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 
-const BAR_STATUS: Record<string, WindowStatus> = { red: 'bad', amber: 'warn', blue: 'info' };
+const BAR_STATUS: Record<string, RangeLook> = { red: 'critical', amber: 'warning', blue: 'accent' };
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,7 +48,7 @@ export class ButtonTable {
   });
 
   /** A comparison row's bar stays grey; only a graded row takes a color. */
-  barStatus(row: ButtonRow): WindowStatus {
+  barStatus(row: ButtonRow): RangeLook {
     return BAR_STATUS[row.status] ?? 'muted';
   }
 

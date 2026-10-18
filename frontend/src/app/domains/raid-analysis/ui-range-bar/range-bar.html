@@ -1,8 +1,8 @@
 @let fill =
-  status() === 'good' ? 'bg-success' :
-  status() === 'warn' ? 'bg-warning' :
-  status() === 'bad' ? 'bg-critical' :
-  status() === 'muted' ? 'bg-muted' : 'bg-accent';
+  status() === 'success' ? 'bg-success' :
+  status() === 'warning' ? 'bg-warning' :
+  status() === 'critical' ? 'bg-critical' :
+  status() === 'accent' ? 'bg-accent' : 'bg-muted';
 @if (you() !== null) {
   <div [class]="'absolute inset-y-0 left-0 rounded opacity-65 ' + fill" [style.width.%]="you()"></div>
 }

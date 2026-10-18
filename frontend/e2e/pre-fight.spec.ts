@@ -93,6 +93,9 @@ test('burst windows show the first top-parse window with its bench damage and ab
   await shows(burstWindows, 'Burst windows');
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
   await showsFirstWindow(burstWindows, { metric: 'Damage', chips: 'Cooldowns top raiders use here' });
+  // A bench an older ingest wrote carries no per-log damage, so the count is drawn only once it has one.
+  const formedBy = burstWindows.getByText(/top logs? had this window\.$/);
+  if (await formedBy.count()) await expect(formedBy).toHaveText(/^\d+ top logs? had this window\.$/);
 });
 
 test('the positioning map opens anchored on the selected burst window', async () => {

@@ -14,6 +14,14 @@ import type { JudgedSpan } from '../data/analysis/pull-model-service';
 import { JudgedSpanCaption } from '../ui-judged-span/judged-span';
 import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
 import type { BenchStrip } from '../data/analysis/bench-strip-service';
+import { TONE_LEVELS } from '../data/verdict/tone.models';
+import { EmptyState } from '../../shared/ui-empty-state/empty-state';
+import type { RangeLook } from '../ui-range-bar/range-bar';
+
+/** A legacy producer's word and a verdict tone read as one look; neutral and muted carry no color. */
+const LOOK: Record<string, RangeLook> = {
+  good: 'success', warn: 'warning', bad: 'critical', red: 'critical', amber: 'warning', blue: 'accent',
+};
 
 type TimelineCell =
   | { readonly kind: 'window'; readonly index: number; readonly window: ComparisonWindow }
@@ -30,7 +38,7 @@ let nextInstanceSeq = 0;
   imports: [
     BenchStripCaption,
     TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChip, GameIcon, CompactAbilityRow, RangeBar, RangeLegend,
-    FormatDurationPipe, FormatDamagePipe, SignedPercentPipe, JudgedSpanCaption,
+    FormatDurationPipe, FormatDamagePipe, SignedPercentPipe, JudgedSpanCaption, EmptyState,
   ],
   templateUrl: './window-comparison.html',
 })
@@ -49,6 +57,8 @@ export class WindowComparison {
   readonly metricLabel = input.required<string>();
   readonly chipsLabel = input.required<string>();
   readonly rangeLabel = input.required<string>();
+  /** Why nothing is flagged, with counts: the card's empty state with no windows, a line above them otherwise; empty renders nothing. */
+  readonly empty = input<string>('');
   readonly openMap = output<number>();
   readonly openClip = output<number>();
 
@@ -126,14 +136,23 @@ export class WindowComparison {
     if (next >= 0 && next < this.windows().length) this.select(next);
   }
 
-  // 'info' (bench-only, pre-fight) has no player overlay, so it hides the absent player columns/delta like a muted window.
+  protected lookOf(window: ComparisonWindow): RangeLook {
+    return LOOK[window.status] ?? 'muted';
+  }
+
+  /** A window judged through the verdict contract colors only through its tone, so its ability rows stay uncolored. */
+  protected isOnContract(window: ComparisonWindow): boolean {
+    return window.family !== undefined || TONE_LEVELS.some(level => level === window.status);
+  }
+
+  // A bench-only (pre-fight) window has no player overlay, so it hides the absent player columns/delta like a muted window.
   protected readonly activeIsMuted = computed(() => {
-    const status = this.activeWindow()?.status;
-    return status === 'muted' || status === 'info';
+    const window = this.activeWindow();
+    return window?.status === 'muted' || window?.benchOnly === true;
   });
 
   // Bench-only (pre-fight) window has no player overlay, so the You/Top bar is hidden and the header shows top-parse damage instead.
-  protected readonly activeIsBenchOnly = computed(() => this.activeWindow()?.status === 'info');
+  protected readonly activeIsBenchOnly = computed(() => this.activeWindow()?.benchOnly === true);
 
   // Sorted by absolute gap so the biggest loss surfaces first; direction-aware since burst wants player >= top but defensives want player <= top.
   protected readonly activeDetailRows = computed<RangeRow[]>(() => {
@@ -171,9 +190,14 @@ export class WindowComparison {
     return Number.isFinite(delta) ? delta : null;
   });
 
-  protected readonly overviewDeltaStatus = computed<'muted' | 'better' | 'worse'>(() => {
+  protected readonly overviewDeltaStatus = computed<'muted' | 'plain' | 'better' | 'differs' | 'worse'>(() => {
     const delta = this.overviewDelta();
-    if (delta == null) return 'muted';
+    const window = this.activeWindow();
+    if (delta == null || !window) return 'muted';
+    if (this.isOnContract(window)) {
+      const look = this.lookOf(window);
+      return look === 'critical' ? 'worse' : look === 'warning' ? 'differs' : 'plain';
+    }
     const isBetter = this.higherIsBetter() ? delta >= 0 : delta <= 0;
     return isBetter ? 'better' : 'worse';
   });

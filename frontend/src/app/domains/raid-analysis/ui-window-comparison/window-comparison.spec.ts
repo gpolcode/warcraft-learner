@@ -23,11 +23,15 @@ function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): Compar
     note: '',
     status,
     statusIcon: 'check_circle',
+    benchOnly: false,
+    message: '',
     unjudged: null,
     overview: { label: '', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overview },
     detailRows: [],
   };
 }
+
+const benchWin = (overview: Partial<RangeRow>): ComparisonWindow => ({ ...win(overview, 'muted'), benchOnly: true });
 
 // Wording distinct from either card's, so an assertion about a label proves it came from the input.
 const WORDING = {
@@ -235,7 +239,7 @@ describe('WindowComparison damage bar', () => {
   });
 
   it('drops the legend with the bar for a bench-only window, which draws no player mark', () => {
-    const dom = render([win({ topAvg: 50, topMin: 40, topMax: 80 }, 'info')]);
+    const dom = render([benchWin({ topAvg: 50, topMin: 40, topMax: 80 })]);
 
     expect(dom.query(BAR_TRACK)).toBeNull();
     expect(dom.query(LEGEND)).toBeNull();
@@ -284,7 +288,7 @@ describe('WindowComparison delta badge', () => {
   it('shows the top-parse damage, never the player\'s, for a bench-only window', () => {
     const PLAYER_DAMAGE = 2_000_000;
     const TOP_AVG_DAMAGE = 1_000_000;
-    const dom = render([win({ playerPct: PLAYER_DAMAGE, topAvg: TOP_AVG_DAMAGE }, 'info')]);
+    const dom = render([benchWin({ playerPct: PLAYER_DAMAGE, topAvg: TOP_AVG_DAMAGE })]);
 
     expect(dom.text()).toContain('1M');
     expect(dom.text()).not.toContain('2M');

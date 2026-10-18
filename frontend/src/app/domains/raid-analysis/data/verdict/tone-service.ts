@@ -14,6 +14,11 @@ export class ToneService {
     return severity === 'muted' || TONE_LEVELS.some(level => level === severity);
   }
 
+  /** A measurement shown with no rule behind it, such as a pre-fight window. */
+  neutral(): Tone {
+    return this.brand('neutral');
+  }
+
   /** A check the pull could not judge: dead, after the wipe, not reached. */
   muted(): Tone {
     return this.brand('muted');

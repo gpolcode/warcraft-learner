@@ -49,6 +49,6 @@ describe('ButtonTable', () => {
     const { vm } = mountVm(ButtonTable, { heading: 'Rotation rules', rows });
     const graded = { ...row('Eviscerate', EVISCERATE), status: tones.tone({ tier: 'amber', costClass: 'low' }, { level: 'red', n: 10, observed: 5, target: 3, excess: 2 }) };
     expect(vm.barStatus(row('Eviscerate', EVISCERATE))).toBe('muted');
-    expect(vm.barStatus(graded)).toBe('warn');
+    expect(vm.barStatus(graded)).toBe('warning');
   });
 });
