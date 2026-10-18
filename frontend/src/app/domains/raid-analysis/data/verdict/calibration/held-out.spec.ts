@@ -12,8 +12,10 @@ import { benchWith, CLOAK_META, defBench } from '../../defensive/defensive-harne
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
 import {
   BURST_AT_S, BURST_S, burstBench, burstLog, burstWindow, CLOAK, defensiveLog, defensiveWindow, FIGHT_S, gearBench, gearLog, rotationLog, SB,
+  WINDOW_AT_S, WINDOW_DAMAGE,
 } from './calibration-harness';
 import { BurstHeldOutService } from './burst-held-out-service';
+import { DefensiveParseMeasures } from '../../defensive/defensive-data-source';
 
 const folds = TestBed.inject(LeaveOneOutService);
 const heldOutRows = TestBed.inject(HeldOutRowService);
@@ -76,33 +78,51 @@ describe('RotationHeldOutService', () => {
 });
 
 describe('DefensiveHeldOutService', () => {
-  const defensiveBench = (windowParses: number[]) => benchWith({
-    sources: benchSources(TOP_N), sample_count: TOP_N, per_parse: Array.from({ length: TOP_N }, () => defensiveLog()),
-    defensives: [CLOAK_META], per_defensive_benchmarks: { [CLOAK]: defBench() }, defensive_windows: [defensiveWindow(windowParses)],
-  });
-  const judgeDefensive = (windowParses: number[], tank = false) => {
-    const full = defensiveBench(windowParses);
+  const others = Array.from({ length: TOP_N - 1 }, () => defensiveLog());
+  const judgeDefensive = (held: DefensiveParseMeasures, tank = false) => {
+    const full = benchWith({
+      sources: benchSources(TOP_N), sample_count: TOP_N, per_parse: [held, ...others],
+      defensives: [CLOAK_META], per_defensive_benchmarks: { [CLOAK]: defBench() }, defensive_windows: [defensiveWindow([1, 2, 3])],
+    });
+    const model = heldOutRows.withDeaths(FIGHT_S, FIGHT_S, held.dead_s ?? []);
     return defensive.judge(folds.foldDefensive(full, HELD_OUT), {
-      casts: defensiveLog().def_casts_s, model: heldOutRows.wholePull(FIGHT_S), talents: null,
-      covered: defensive.coveredBy(full, HELD_OUT), tank,
+      casts: held.def_casts_s, model, talents: null, up: held.def_up_s ?? null, takenPerS: held.taken_per_s ?? null, tank,
     });
   };
-  const EVERY_OTHER_LOG = [1, 2, 3, 4, 5];
+  const uncovered = (damage: number) => defensiveLog(undefined, { covered: false, damage });
 
-  it('reads the windows the held-out log formed, with its damage there', () => {
-    expect([...defensive.coveredBy(defensiveBench([HELD_OUT, 1, 2]), HELD_OUT)]).toEqual([[0, 1000]]);
+  it('flags amber where no defensive was up, every other log had one up and the damage is above their median', () => {
+    expect(levelsOf(judgeDefensive(uncovered(WINDOW_DAMAGE + 1)), 'defensive.window')).toEqual(['amber']);
   });
 
-  it('counts an uncovered log as taking more than the median, so every other log covering it flags amber', () => {
-    expect(levelsOf(judgeDefensive(EVERY_OTHER_LOG), 'defensive.window')).toEqual(['amber']);
+  it('keeps an uncovered log at the others\' median damage a blue count', () => {
+    expect(levelsOf(judgeDefensive(uncovered(WINDOW_DAMAGE)), 'defensive.window')).toEqual(['blue']);
   });
 
   it('keeps a covered log neutral', () => {
-    expect(levelsOf(judgeDefensive([HELD_OUT, ...EVERY_OTHER_LOG]), 'defensive.window')).toEqual(['neutral']);
+    expect(levelsOf(judgeDefensive(defensiveLog()), 'defensive.window')).toEqual(['neutral']);
   });
 
   it('judges a tank on coverage alone, a count', () => {
-    expect(levelsOf(judgeDefensive(EVERY_OTHER_LOG, true), 'defensive.window')).toEqual(['blue']);
+    expect(levelsOf(judgeDefensive(uncovered(WINDOW_DAMAGE * 3), true), 'defensive.window')).toEqual(['blue']);
+  });
+
+  it('counts a window the log was alive through as a death test that holds no death', () => {
+    expect(levelsOf(judgeDefensive(defensiveLog()), 'defensive.dead_in_window')).toEqual(['neutral']);
+  });
+
+  it('gives a death inside the window its red fact in place of the coverage test', () => {
+    const rows = judgeDefensive(defensiveLog(undefined, { dead: [[WINDOW_AT_S + 2, FIGHT_S]] }));
+
+    expect(levelsOf(rows, 'defensive.dead_in_window')).toEqual(['red']);
+    expect(levelsOf(rows, 'defensive.window')).toEqual([]);
+  });
+
+  it('counts no window test on a log baked before coverage', () => {
+    const rows = judgeDefensive({ def_casts_s: defensiveLog().def_casts_s });
+
+    expect(levelsOf(rows, 'defensive.window')).toEqual([]);
+    expect(levelsOf(rows, 'defensive.dead_in_window')).toEqual([]);
   });
 });
 

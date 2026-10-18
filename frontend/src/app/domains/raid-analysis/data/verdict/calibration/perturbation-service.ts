@@ -1,5 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PullModel } from '../../analysis/pull-model-service';
+import { DeadSpan } from '../../analysis/death-timeline-service';
+import { AuraSpan } from '../../defensive/defensive-data-source';
 import { IdleStretch } from '../../rotation/rotation-data-source';
 import { VERDICT_CHOICES } from '../verdict-choices';
 import { HeldOutCase } from './held-out-case-service';
@@ -30,10 +32,14 @@ export class PerturbationService {
     const durationS = heldOut.log.model.fightDurationS;
     const atS = durationS * (CHOICES.perturbedShare.from + draw() * (CHOICES.perturbedShare.to - CHOICES.perturbedShare.from));
     if (heldOut.card === 'burst') return this.burst(name, heldOut, atS, draw);
+    const died = heldOut.log.model.deadSpans;
     switch (name) {
-      case 'truncate': return this.withModel(heldOut, this.rows.withDeaths(durationS, atS, []));
-      case 'death': return this.withModel(heldOut, this.rows.withDeaths(durationS, durationS, [[atS, durationS]]));
-      case 'death-rez': return this.withModel(heldOut, this.rows.withDeaths(durationS, durationS, [[atS, Math.min(durationS, atS + CHOICES.rezAfterS)]]));
+      case 'truncate': return this.withModel(heldOut, this.rows.withDeaths(durationS, atS, this.deadBefore(died, [], atS)));
+      case 'death': return this.withModel(heldOut, this.rows.withDeaths(durationS, durationS, this.deadBefore(died, [[atS, durationS]], durationS)));
+      case 'death-rez': {
+        const rez: DeadSpan = [atS, Math.min(durationS, atS + CHOICES.rezAfterS)];
+        return this.withModel(heldOut, this.rows.withDeaths(durationS, durationS, this.deadBefore(died, [rez], durationS)));
+      }
       case 'lust-120': return this.withLust(heldOut, CHOICES.lustShiftsS[0]);
       case 'lust-180': return this.withLust(heldOut, CHOICES.lustShiftsS[1]);
       case 'jitter': return this.jittered(heldOut, draw);
@@ -51,7 +57,31 @@ export class PerturbationService {
       const idle = measures.idle_s ? this.idleWithModel(measures.idle_s, model) : measures.idle_s;
       return { ...heldOut, log: { ...heldOut.log, model, measures: { ...measures, cd_casts_s: keep(measures.cd_casts_s), idle_s: idle } } };
     }
-    return { ...heldOut, log: { ...heldOut.log, model, casts: keep(heldOut.log.casts) } };
+    const { up, takenPerS } = heldOut.log;
+    const living = up ? Object.fromEntries(Object.entries(up).map(([name, spans]) => [name, this.aliveParts(spans, model)])) : null;
+    const taken = takenPerS?.map((value, second) => alive(second) && second < model.judgedEndS ? value : 0) ?? null;
+    return { ...heldOut, log: { ...heldOut.log, model, casts: keep(heldOut.log.casts), up: living, takenPerS: taken } };
+  }
+
+  /** A log's own deaths stay beside the inserted one, merged and cut at the judged end, as the page's model keeps them. */
+  private deadBefore(died: readonly DeadSpan[], added: readonly DeadSpan[], judgedEndS: number): DeadSpan[] {
+    const merged: DeadSpan[] = [];
+    for (const [diedS, backS] of [...died, ...added].sort((a, b) => a[0] - b[0])) {
+      if (diedS >= judgedEndS) continue;
+      const last = merged.at(-1);
+      if (last && diedS <= last[1]) last[1] = Math.max(last[1], Math.min(backS, judgedEndS));
+      else merged.push([diedS, Math.min(backS, judgedEndS)]);
+    }
+    return merged;
+  }
+
+  /** A dead player's auras drop at the death, and none is up past the judged end. */
+  private aliveParts(spans: readonly AuraSpan[], model: PullModel): AuraSpan[] {
+    return spans.flatMap(([fromS, toS]) => model.aliveSpans.flatMap(([aliveFromS, aliveToS]): AuraSpan[] => {
+      const lo = Math.max(fromS, aliveFromS);
+      const hi = Math.min(toS, aliveToS);
+      return lo < hi ? [[lo, hi]] : [];
+    }));
   }
 
   /** The casts a dead span drops join the stretches around it into one; a stretch no cast closes before the last alive moment is gone, as on the page. */
@@ -85,8 +115,7 @@ export class PerturbationService {
   /** Only the defensive windows read damage among the timed checks; every other one reads none. */
   private scaled(heldOut: TimedCase): HeldOutCase {
     if (heldOut.card === 'rotation') return heldOut;
-    const covered = new Map([...heldOut.log.covered].map(([index, damage]) => [index, damage * CHOICES.damageScale]));
-    return { ...heldOut, log: { ...heldOut.log, covered } };
+    return { ...heldOut, log: { ...heldOut.log, takenPerS: heldOut.log.takenPerS?.map(value => value * CHOICES.damageScale) ?? null } };
   }
 
   private burst(name: Perturbation, heldOut: BurstCase, atS: number, draw: () => number): HeldOutCase | null {

@@ -40,7 +40,12 @@ const BURST: BurstWindow = {
 /** Ten top logs that each pressed the defensive at 5s and again at 95s. */
 const DEFENSIVE_TOP_LOGS = Array.from({ length: 10 }, () => ({ Cloak: [5, 95] }));
 /** Ten top logs that had Cloak up in a window they took 1000 in. */
-const DEFENSIVE_WINDOW: BurstWindow = { ...BURST, defensive_name: 'Cloak', members: Array.from({ length: 10 }, (_unused, parse) => ({ parse, time_s: 10, window_length_s: 20, damage: 1000 })) };
+const DEFENSIVE_WINDOW: BurstWindow = { ...BURST, defensive_name: 'Cloak' };
+/** Ten top logs with a defensive up through the window, each taking 1000 in its first second. */
+const COVERED_TOP_LOGS = Array.from({ length: 10 }, () => ({
+  def_casts_s: {}, def_up_s: { Cloak: [[DEFENSIVE_WINDOW.time_s, DEFENSIVE_WINDOW.time_s + DEFENSIVE_WINDOW.window_length_s] as [number, number]] },
+  taken_per_s: Array.from({ length: PULL_S }, (_unused, second) => second === DEFENSIVE_WINDOW.time_s ? 1000 : 0), dead_s: [],
+}));
 
 const MAIN_HAND = 15;
 const SOPHIC = { id: 8041, name: 'Sophic Devotion' };
@@ -86,7 +91,11 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
     { name: 'Cloak', cooldown: 90 }, [5], pullModel({ fightDurationS: PULL_S }), { perParse: DEFENSIVE_TOP_LOGS, killsS: DEFENSIVE_TOP_LOGS.map(() => PULL_S) }, {},
   ) ?? {}],
   'defensive.hold': async () => TestBed.inject(DefensiveJudgeService).holdFindings('Cloak', [0, 100], HELD_TO_130),
-  'defensive.window': async () => [TestBed.inject(DefensiveJudgeService).windowVerdict(DEFENSIVE_WINDOW, { damage: 2000, covered: false, tank: false }, 10)],
+  'defensive.window': async () => {
+    const judge = TestBed.inject(DefensiveJudgeService);
+    const reference = judge.reference(DEFENSIVE_WINDOW, COVERED_TOP_LOGS, COVERED_TOP_LOGS.map(() => PULL_S));
+    return [judge.windowVerdict(DEFENSIVE_WINDOW, { damage: 2000, cover: [], tank: false }, reference)];
+  },
   'defensive.dead_in_window': async () => [TestBed.inject(DefensiveJudgeService).deathVerdict(15)],
   'gear.talent_build': async () => {
     const judge = TestBed.inject(GearJudgeService);

@@ -9,6 +9,7 @@ export type InjectedMistake =
   | 'idle-5-gcds'
   | 'shift-burst-15s'
   | 'strip-defensive'
+  | 'uncover-window'
   | 'die-in-window'
   | 'swap-talent-node'
   | 'remove-enchant'

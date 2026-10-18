@@ -91,9 +91,10 @@ export class HeldOutCaseService {
       const source = bench.sources[i];
       if (!source) return [];
       const key = this.sourceKey(source);
+      const durationS = source.duration_s ?? 0;
       const log = {
-        casts: measures.def_casts_s, model: this.rows.wholePull(source.duration_s ?? 0), talents: talents.get(key) ?? null,
-        covered: this.defensive.coveredBy(bench, i), tank,
+        casts: measures.def_casts_s, model: this.rows.withDeaths(durationS, durationS, measures.dead_s ?? []), talents: talents.get(key) ?? null,
+        up: measures.def_up_s ?? null, takenPerS: measures.taken_per_s ?? null, tank,
       };
       return [{ card: 'defensive' as const, source: key, fold: this.folds.foldDefensive(bench, i), log }];
     });

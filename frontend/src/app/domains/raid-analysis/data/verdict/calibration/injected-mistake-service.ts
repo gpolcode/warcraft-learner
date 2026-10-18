@@ -5,6 +5,10 @@ import { InjectedMistake } from '../finding-family.models';
 import { IdleStretch } from '../../rotation/rotation-data-source';
 import { VERDICT_CHOICES } from '../verdict-choices';
 import { HeldOutCase } from './held-out-case-service';
+import { HeldOutRowService } from './held-out-row-service';
+import { DefensiveJudgeService } from '../../defensive/defensive-judge-service';
+import { PullModelService } from '../../analysis/pull-model-service';
+import { DeadSpan } from '../../analysis/death-timeline-service';
 
 type RotationCase = Extract<HeldOutCase, { card: 'rotation' }>;
 type DefensiveCase = Extract<HeldOutCase, { card: 'defensive' }>;
@@ -20,6 +24,9 @@ const SWAPPED_ENTRY = 'x';
 export class InjectedMistakeService {
   private readonly castCadence = inject(CastCadenceService);
   private readonly bursts = inject(BurstJudgeService);
+  private readonly defensives = inject(DefensiveJudgeService);
+  private readonly pullModel = inject(PullModelService);
+  private readonly rows = inject(HeldOutRowService);
 
   /** Each way the mistake fits this log; none when the log has nothing it applies to, or the bench bakes nothing it changes. */
   variants(mistake: InjectedMistake, heldOut: HeldOutCase): HeldOutCase[] {
@@ -97,8 +104,10 @@ export class InjectedMistakeService {
     return { ...heldOut, log: { ...heldOut.log, measures: { ...heldOut.log.measures, cd_casts_s } } };
   }
 
-  /** Each variant changes the first defensive most of the other top logs use. */
+  /** Each cadence variant changes the first defensive most of the other top logs use; each window variant one window. */
   private defensiveVariants(mistake: InjectedMistake, heldOut: DefensiveCase): DefensiveCase[] {
+    if (mistake === 'uncover-window') return this.uncoveredWindows(heldOut);
+    if (mistake === 'die-in-window') return this.deathsInWindows(heldOut);
     const defensive = heldOut.fold.defensives.find(entry => {
       const defBench = heldOut.fold.per_defensive_benchmarks[entry.name];
       return defBench && this.castCadence.usedByMajority(defBench) && (heldOut.log.casts[entry.name]?.length ?? 0) > 0;
@@ -112,11 +121,36 @@ export class InjectedMistakeService {
       : []);
   }
 
-  /** The first defensive most of the other top logs use goes unpressed: no use, and none of its windows covered. */
+  /** The first defensive most of the other top logs use goes unpressed: no use, and no aura of it up. */
   private stripDefensive(heldOut: DefensiveCase, name: string): DefensiveCase[] {
-    const ownWindows = new Set(heldOut.fold.defensive_windows.filter(window => window.defensive_name === name).map(window => window.index));
-    const covered = new Map([...heldOut.log.covered].filter(([index]) => !ownWindows.has(index)));
-    return [{ ...heldOut, log: { ...heldOut.log, casts: { ...heldOut.log.casts, [name]: [] }, covered } }];
+    const up = heldOut.log.up ? { ...heldOut.log.up, [name]: [] } : null;
+    return [{ ...heldOut, log: { ...heldOut.log, casts: { ...heldOut.log.casts, [name]: [] }, up } }];
+  }
+
+  /** Per window the log covered, every aura up at it is gone; the damage it took stays, so the mistake costs it no extra damage. */
+  private uncoveredWindows(heldOut: DefensiveCase): DefensiveCase[] {
+    const { up } = heldOut.log;
+    if (!up) return [];
+    return heldOut.fold.defensive_windows.flatMap(window => {
+      const cover = this.defensives.measureCover(window, up);
+      if (!cover.length) return [];
+      const kept = Object.fromEntries(Object.entries(up).map(([name, spans]) => [
+        name, cover.includes(name) ? spans.filter(span => !this.defensives.measureCover(window, { [name]: [span] }).length) : spans,
+      ]));
+      return [{ ...heldOut, log: { ...heldOut.log, up: kept } }];
+    });
+  }
+
+  /** Per window the log was alive through, it dies halfway in and is not brought back. */
+  private deathsInWindows(heldOut: DefensiveCase): DefensiveCase[] {
+    const { model } = heldOut.log;
+    return heldOut.fold.defensive_windows.flatMap(window => {
+      const endS = window.time_s + window.window_length_s;
+      if (this.pullModel.causeOf(model, window.time_s, endS)) return [];
+      const diedS = window.time_s + window.window_length_s / 2;
+      const deadSpans = [...model.deadSpans.filter(([fromS]) => fromS < diedS), [diedS, model.fightDurationS] as DeadSpan];
+      return [{ ...heldOut, log: { ...heldOut.log, model: this.rows.withDeaths(model.fightDurationS, model.judgedEndS, deadSpans) } }];
+    });
   }
 
   /** One variant per window: the log's own burst there lands later by the shift, and the damage it displaced comes earlier, so the pull's total stays. */

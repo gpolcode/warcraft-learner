@@ -755,3 +755,74 @@ Branch `claude/verdict-validity-p6c-downtime`, PR against `claude/verdict-validi
 - `per_parse[].idle_s` is on disk for the three re-benched specs and arrives with the full ingest at version 46; a bench before 46 has none, so the card reads "None of the N top logs carries its idle time to compare with." and the harness counts no downtime test.
 - The registry hash changed (downtime version 2), so every family renders as a comparison until the next ingest recalibrates.
 - `DowntimeJudgeService.idleStretches` is the one idle measure; a resource-wait exclusion would go there, read the same way in ingest and at runtime.
+
+## Package 6d: Defensive windows as coverage by any defensive (done)
+
+Branch `claude/verdict-validity-p6d-defensive-coverage`, PR against `claude/verdict-validity-p6c-downtime`.
+
+### Done
+
+- **Construct** (`DefensiveJudgeService`, one set of functions for ingest, the harness and the page):
+  - `coverSpans(defensives)`: each plan defensive's own aura spans, rounded; a use that opened no aura (an external) covers nothing.
+  - `measureCover(window, up)`: the names of every defensive whose aura touches the window within the 3 s slack; empty is uncovered. Any defensive counts, not only the one whose uses formed the window.
+  - `takenSeries(events, fightLenS)` (the burst `series` over damage taken) and `measureTaken(perS, window)`: damage taken in every whole second the window touches, its last one included.
+  - `reference(window, perParse, killsS)`: every top log that carries the new fields, whose kill reaches the window's end and that is alive through it; k = those with any defensive up, the median and the list of their damage taken there, `immune` when none took damage.
+  - `judgeWindow` keeps the rule: `consensus` paired with damage above the top logs' median, `pairedOnly`, the pairing forced false for tanks and immunity windows (coverage only). With `pairedConsensusShare` it is amber only when uncovered, at least 8 of 10 top logs covered and the damage above their median.
+- **Baked measure.** `DefensiveParseMeasures` gains `def_up_s` (aura spans per defensive), `taken_per_s` (damage taken per whole second) and `dead_s` (the log's dead spans, from a raid-wide Deaths read, plus Resurrects when the player died), all optional for older benches. `INGEST_VERSION` 47. A defensive bench grows from about 10 KB to 19 to 35 KB.
+- **Page.** The window verdict reads "No defensive was up at 3:25. 8 of 10 top raiders had one up.", with "You took more damage here than half of the top raiders." only when graded, and "You had Evasion up at 3:25. ..." when covered. Comparisons: "No top log carries its defensives for this window, so it is not judged." (a bench before 47), "Only N top logs are alive through this window, too few to judge.", "None of the N top raiders had a defensive up here.". The headline is the player's damage taken against the reference logs' mean, min and max on the same series (`WindowViewAdapter.overview`), the baked window figures only on a bench before 47. Card subtitle: "Each moment top logs press a defensive, and whether you had any defensive up."; README line 13 says the same.
+- **Families.** `defensive.window` version 2, `pendingRebuild: null`, reference "whose kill reaches the window and who are alive through it", mistakes `strip-defensive` and the new `uncover-window`. `defensive.dead_in_window` version 2 (reference alive into the window; tests now exist).
+- **Harness.** `DefensiveHeldOut` carries `up` and `takenPerS` in place of `covered`, and its model carries the baked `dead_s`. `DefensiveHeldOutService.windowRows` gives a window the log died in a `dead_in_window` red row, and every other judged window one coverage test and one neutral `dead_in_window` test. `InjectedMistakeService`: `strip-defensive` also removes the defensive's auras; `uncover-window` removes every aura up at one covered window (damage kept); `die-in-window` kills the log halfway into each window it was alive through. `PerturbationService` keeps a log's own deaths beside an inserted one (merged, cut at the judged end), cuts its auras at a death and zeroes its damage taken while dead or past the cut, and scales `takenPerS`. `CalibrationIndexService` runs no death or death-rez invariant on `defensive.dead_in_window`: the inserted death is the fact it states.
+
+### Calibration test data and its cost
+
+- One re-run of the one-off data workflow on this branch (run 39174009447, removed in the PR's last commit), seeded from `calibration-testdata` and re-benching Assassination Rogue, Balance Druid and Protection Paladin on 3470, 3445 and 3455 at version 47. `calibration-testdata` was force-updated; gh-pages and main were not touched, and the response cache was not saved.
+- **Points: over the limit.** The budget read 2,976 of 3,600 before the run and 892 after it (E2E needs 50): 2,084 points over the run window, against the about 450 this package was allowed. The run's own tallies sum to about 1,392 (13.75 startup plus nine encounters of 116 to 169 each, with 19 to 52 uncached reads each); the rest was spent on the shared pair inside the same window, which the log cannot attribute. The new raid-wide Deaths read (and Resurrects where a top log died) missed the restored response cache for every top log of every bench; the per-read cost of those misses was not estimated before the run, which is how the limit was breached. The full ingest pays the same Deaths read once per top log on its version 47 re-bench.
+- Holy Paladin keeps its version 44 benches, which carry no coverage fields, so the healer has no window test on the subset.
+
+### The measured report (rules' tone, before the caps)
+
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate`:
+
+| Family | Tests | Red rate | Amber rate | Amber bound | Detection | Verdict |
+|---|---|---|---|---|---|---|
+| defensive.window | 140 | 0% | 1.4% | 4.4% | 21 of 148 (14%) | comparison: detection under 70% (and under the minimum tests on the subset) |
+| defensive.dead_in_window | 140 | 0% | 0% | 2.1% (red) | 140 of 140 | comparison: under the 1,500 red minimum on the subset |
+
+- Against the construct replaced: `defensive.window` 217 tests at 2.8% (an upper bound) and 0 of 84 detected; `defensive.dead_in_window` had no test.
+- Fewer window tests: a top log dead in the window or whose kill ends inside it is no longer counted, and the healer's version 44 benches give none.
+- Two top logs died on the subset (Balance Druid 3445, Protection Paladin 3455), neither inside a window, so the death fact flags no held-out log.
+- Page load: DPS 0.38 amber and 0.02 red per held-out pull, tank 0.33, healer 0.37 (no healer window test); armed red stays 0.00.
+- Invariants: death, death-rez, jitter and damage scale hold for `defensive.window`; truncation still fails on few tests (0.021 to 0.037 smoothed, the same 2 flags on fewer tests), as it did for the old construct. `defensive.dead_in_window` holds truncation.
+
+### Why detection stays low, and what would raise it
+
+- **Tanks.** Of the 121 `uncover-window` trials, 67 are Protection Paladin windows, which the rule judges on coverage alone (a blue count), so they can never reach amber. That is the paper's rule, not a defect.
+- **The coverage share.** Even counting any defensive, top logs cover a median 0.75 of a window (0.5 to 1.0 over the 17 windows): a window forms where half of the logs pressed one defensive, and the rest are often uncovered. 31 trials sit on windows under the 8 of 10 the rule needs.
+- **The damage condition.** 13 more trials have the log's damage at or below the others' median: the mistake removes the aura but not the damage it would have saved, so a log that took little damage stays under the median. 10 trials are detected; `strip-defensive` adds 11 of 27.
+- **What would raise it:** a mitigation estimate added back to the damage taken in an uncovered variant (the aura's known damage reduction), which the bench does not bake; windows formed on any defensive rather than one defensive's uses, so a window means "top logs cover this moment"; and for tanks the contrast cohort (7a) rather than held-out power, since the rule never colors them.
+
+### Decisions and deviations
+
+- **Spans and a series, not a per-window boolean.** 5.4.1 names "coverage per window" as the baked measure; the fold respans each window on its remaining members, so a value baked on the full bench's span would leak the held-out log. The aura spans and the per-second damage let ingest, the harness and the page measure any span through one function (6a's reasoning).
+- **"At the hit" is the window with the 3 s slack**, the slack already used; no new chosen number.
+- **The reference is every top log alive through the window**, not the members that formed it, and the median damage is over all of them.
+- **Deaths in the reference.** A top log dead inside the window is left out of the coverage reference; a top log's baked death also shortens its own alive spans when it is the held-out log, which changes its defensive use and ready-time tests as the page would.
+- **No death invariant for the death fact.** The paper's death insertion invariant guards rules a death confounds; for `dead_in_window` the inserted death is the claim, so its rise is detection. Truncation still runs on it.
+- **The healer stays at version 44** on the subset to keep the run's cost down; the full ingest measures every spec.
+- The WCL spend breached this package's limit (above); it is not a deviation from the paper's plan, which the work follows.
+- Not a deviation: the harness keeps both families comparisons.
+
+### Drift against 6882b59
+
+- None beyond earlier packages: the RC4 row's `DefensiveFeatureService.defensiveWindowStatus` was replaced in 4d.
+
+### Seams stubbed
+
+- None.
+
+### For the next package
+
+- `per_parse[].def_up_s`, `taken_per_s` and `dead_s` are on disk for the three re-benched specs and arrive with the full ingest at version 47; a bench before 47 renders every window as "No top log carries its defensives for this window, so it is not judged." and gives the harness no window or death test.
+- `dead_s` is the first baked top-log death. Downtime (6c) and ready time (6b) still treat every top log as alive for its whole kill; they can read `dead_s` from the defensive bench of the same encounter.
+- The registry hash changed (both window families at version 2), so every family renders as a comparison until the next ingest recalibrates.
+- Expect each version 47 re-bench to pay one Deaths read per top log that the response cache does not hold yet.

@@ -13,6 +13,7 @@ import { rotationLog, SB } from './calibration-harness';
 import { NOT_GRADED } from './arming-service';
 import { READY_TIME_FAMILY } from '../../rotation/ready-time-judge-service';
 import { DOWNTIME_FAMILY } from '../../rotation/downtime-judge-service';
+import { DEAD_IN_WINDOW_FAMILY } from '../../defensive/defensive-judge-service';
 
 const indices = TestBed.inject(CalibrationIndexService);
 const encounters = TestBed.inject(EncounterCalibrationService);
@@ -98,6 +99,14 @@ describe('CalibrationIndexService build', () => {
 
     expect(indices.build([encounterOf({}, { invariants: tally(0) })]).invariants[0]?.passed).toBe(true);
     expect(indices.build([encounterOf({}, { invariants: tally(1) })]).invariants[0]?.passed).toBe(false);
+  });
+
+  it('runs no death invariant on the deaths in windows, whose claim is the inserted death, and still runs truncation on it', () => {
+    const rising = { tests: 100, amber: 20, red: 20 };
+    const base = { tests: 100, amber: 1, red: 1 };
+    const invariants = Object.fromEntries(['death', 'death-rez', 'truncate'].map(name => [name, { [DEAD_IN_WINDOW_FAMILY.id]: { base, perturbed: rising } }]));
+
+    expect(indices.build([encounterOf({}, { invariants })]).invariants.map(result => result.name)).toEqual(['truncate']);
   });
 
   it('fails the lust invariant on any Bloodlust row outside the band', () => {

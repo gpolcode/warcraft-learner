@@ -7,12 +7,16 @@ import { ArmingService, NOT_GRADED } from './arming-service';
 import { CalibrationIndex, EncounterCalibration, FamilyVerdict, FlagTally, InvariantResult, OUTSIDE_BAND, PageLoad } from './calibration.models';
 import { COMPARISON } from './calibration-caps-service';
 import { RegistryHashService } from './registry-hash-service';
+import { DEAD_IN_WINDOW_FAMILY } from '../../defensive/defensive-judge-service';
 
 const CHOICES = VERDICT_CHOICES.calibration;
 const NONE: FlagTally = { tests: 0, amber: 0, red: 0 };
 /** Perturbations whose flag rate may grow by at most the chosen ratio. */
 const RATE_BOUND = new Set(['truncate', 'death', 'death-rez']);
 const BURST_FAMILY = 'burst.window';
+/** An inserted death is the fact this family states, so a death perturbation raising its rate is the family catching it, not a confound. */
+const DEATH_FACT = DEAD_IN_WINDOW_FAMILY.id;
+const DEATH_INSERTIONS = new Set(['death', 'death-rez']);
 /** Damage is read by no cadence check and by no coverage verdict, and burst reads it only as a ratio to the log's own average. */
 const DAMAGE_BLIND = new Set(FINDING_REGISTRY
   .filter(family => family.id.startsWith('rotation.') || family.id.startsWith('defensive.') || family.id === BURST_FAMILY)
@@ -151,7 +155,9 @@ export class CalibrationIndexService {
           sum.perturbed = this.arming.add(sum.perturbed, tally.perturbed);
         }
       }
-      return Object.entries(families).flatMap(([family, tally]) => this.invariant(name, family, tally.base, tally.perturbed));
+      return Object.entries(families)
+        .filter(([family]) => !(DEATH_INSERTIONS.has(name) && family === DEATH_FACT))
+        .flatMap(([family, tally]) => this.invariant(name, family, tally.base, tally.perturbed));
     });
   }
 
