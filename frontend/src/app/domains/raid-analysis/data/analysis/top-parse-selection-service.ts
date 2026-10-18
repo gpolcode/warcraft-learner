@@ -26,9 +26,9 @@ import { WclApiService } from '../wcl/wcl-api-service';
 import { TopParseSelection } from '../wcl/wcl.models';
 import { WclProjectionsService } from './wcl-projections-service';
 import { SpecRoleService } from './spec-role-service';
+import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
-/** Fewer top logs than this describe one log's habit rather than the field's, for every bench. */
-export const MIN_SAMPLE_COUNT = 5;
+export const MIN_SAMPLE_COUNT = VERDICT_CHOICES.minReferenceN;
 
 // Over-fetch past the sampled top parses so a private or unfetchable one is backfilled by the next-best.
 const CANDIDATE_POOL_DEPTH = 20;

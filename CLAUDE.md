@@ -55,6 +55,7 @@ The detailed conventions live in the `warcraft-*` skills under `.claude/skills/`
 | Building or changing any code (finding, SimC condition, feature, page, component) | **warcraft-change** |
 | Writing or changing any string a user sees | **warcraft-writing** |
 | Touching WCL queries, gear / spec / talent / enchant extraction, positions, or the WCL client pair and how it reaches a build | **warcraft-wcl-data** |
+| Adding or changing a finding, a threshold, a tone or a reference population | **warcraft-verdict** |
 | Reviewing code, a diff, or a PR | **warcraft-change** (the verification section applies) |
 
 On any conflict between a skill and this file, **this file wins**.

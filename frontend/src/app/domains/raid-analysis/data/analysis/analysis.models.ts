@@ -21,6 +21,8 @@ export interface ConditionCheck {
 }
 
 export interface AnalysisFinding {
+  /** The `FindingFamily.id` of a family on the verdict contract. */
+  family?: string;
   severity: 'critical' | 'warning' | 'info' | 'hold_suggestion' | 'success';
   category: string;
   cd_name?: string;

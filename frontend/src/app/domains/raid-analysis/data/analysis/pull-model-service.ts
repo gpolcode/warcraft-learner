@@ -6,6 +6,7 @@ import { AliveSpan, spansS } from './analysis-math';
 import { DeadSpan, DeathTimelineService } from './death-timeline-service';
 import { PhaseStart, TimedEvent, WclProjectionsService } from './wcl-projections-service';
 import { RotationBloodlustService } from '../rotation/rotation-bloodlust-service';
+import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
 export type PlayerRole = 'tank' | 'healer' | 'dps' | 'unknown';
 
@@ -159,7 +160,7 @@ export class PullModelService {
   }
 
   private halfRaid(fight: WclFight): number {
-    return Math.ceil(fight.friendlyPlayers.length / 2);
+    return Math.ceil(fight.friendlyPlayers.length * VERDICT_CHOICES.wipeDeadShare);
   }
 
   private clipDeadSpans(spans: DeadSpan[], judgedEndS: number): DeadSpan[] {
