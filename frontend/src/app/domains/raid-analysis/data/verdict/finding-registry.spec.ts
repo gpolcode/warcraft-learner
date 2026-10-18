@@ -1,11 +1,27 @@
 import { describe, it, expect } from 'vitest';
-import { AnalysisFinding } from '../analysis/analysis.models';
+import { TestBed } from '@angular/core/testing';
+import { EVISCERATE } from '../../../../../testing/spell-ids';
+import { pullModel } from '../../../../../testing/builders/pull-model';
+import { CooldownUseJudgeService } from '../rotation/cooldown-use-judge-service';
+import { ListFindingService } from '../rotation/priority-list/list-finding-service';
+import { bench, cdBench } from '../rotation/rotation-harness';
 import { FindingFamily } from './finding-family.models';
 import { FINDING_REGISTRY } from './finding-registry';
 import { VERDICT_CHOICES } from './verdict-choices';
 
+/** Ten top logs that each pressed the cooldown four times. */
+const ALL_USED = Array.from({ length: 10 }, () => 4);
+
 /** One scenario per family that runs its producer on a pull with the family's mistake in it; it witnesses that some producer emits the family. */
-const PRODUCING_SCENARIOS: Record<string, () => Promise<AnalysisFinding[]>> = {};
+const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: string }[]>> = {
+  'rotation.button': async () => TestBed.inject(ListFindingService).rows(
+    bench({ buttons: [{ action: 'eviscerate', spell_id: EVISCERATE, right: { lo: 1, avg: 1, hi: 1 } }] }),
+    { casts: new Map([['eviscerate', [{ atS: 10, verdict: 'off', line: 0, lines: [] }]]]), order: [], ids: new Map() },
+    pullModel(),
+  ),
+  'rotation.lost_cast': async () => [TestBed.inject(CooldownUseJudgeService).finding('Shadow Blades', [5], cdBench(), pullModel(), ALL_USED, true) ?? {}],
+  'rotation.never_used': async () => [TestBed.inject(CooldownUseJudgeService).finding('Shadow Blades', [], cdBench(), pullModel(), ALL_USED, true) ?? {}],
+};
 
 const blank = (text: string): boolean => text.trim() === '';
 
@@ -30,6 +46,7 @@ const family = (over: Partial<FindingFamily> = {}): FindingFamily => ({
   id: 'lost_cooldown', version: 1, tier: 'red',
   claim: 'You pressed a major cooldown fewer times than top raiders do over the same alive time.',
   construct: 'Casts of one cooldown over alive, pre-wipe time.',
+  pendingRebuild: null,
   reference: { population: 'Top Mythic kills for the spec and boss', minN: VERDICT_CHOICES.minReferenceN },
   alignment: 'Alive time',
   availability: ['talent taken'],

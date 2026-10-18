@@ -2,12 +2,13 @@
   @if (error() || !available()) {
     <wl-load-state heading="Offensives" subtitle="How you used your damage cooldowns compared with the top logs." [error]="error()"></wl-load-state>
   } @else {
-    @if (buttonRows().length) {
+    @if (judgesButtons() && (buttonRows().length || buttonsBenched())) {
       <wl-button-table
         heading="Rotation rules"
         subtitle="How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press at the wrong time and a skip when it was due both count as a miss."
         [bench]="bench()"
         [rows]="buttonRows()"
+        [empty]="buttonsEmpty()"
         [showMap]="showMap()"
         [showClip]="showClip()"
         (openMap)="onOpenMap($event)"
@@ -38,6 +39,7 @@
       [rows]="offensiveRows()"
       [bench]="bench()"
       [onPlan]="onPlan()"
+      [empty]="offensivesEmpty()"
       [judged]="offensiveSpan()"
       [showMap]="showMap()"
       [showClip]="showClip()"

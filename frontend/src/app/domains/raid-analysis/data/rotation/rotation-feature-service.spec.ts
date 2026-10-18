@@ -4,7 +4,7 @@ import { SHADOW_BLADES, BLOODLUST } from '../../../../../testing/spell-ids';
 import { cast, applyBuff, removeBuff } from '../../../../../testing/builders/events';
 import { WclEvent } from '../wcl/wcl.models';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
-import { RotationBench } from './rotation-data-source';
+import { RotationBench, RotationParseMeasures } from './rotation-data-source';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { RotationScanInput, RotationFeatureService } from './rotation-feature-service';
 import { bench, cdBench } from './rotation-harness';
@@ -43,16 +43,30 @@ function scan(over: {
   };
 }
 
+/** One top log's measures, with only its cooldown uses set. */
+function topLog(cdCastsS: Record<string, number[]>): RotationParseMeasures {
+  return { efficiency_pct: null, lust_s: null, phase_starts: [], cd_casts_s: cdCastsS, buttons: {} };
+}
+
 /** A killed pull of `fightS`, with a Bloodlust from `lustS` when given. */
 function killed(fightS: number, lustS: number | null = null): PullModel {
   return pullModel({ fightDurationS: fightS, lust: lustS === null ? null : { startS: lustS, endS: lustS + 40 } });
 }
 
 describe('analyzeRotationFindings', () => {
-  it('emits a lost-cooldown critical when never used and expected', () => {
+  it('emits a never-used comparison when the bench carries no per-log uses', () => {
     const findings = svc['analyzeRotationFindings'](scan({ bench: bench() })).findings;
-    const lost = findings.find(f => f.category === 'lost_cooldown');
-    expect(lost?.severity).toBe('critical');
+    expect(findings.find(f => f.family === 'rotation.never_used')?.severity).toBe('neutral');
+  });
+
+  it('emits a never-used amber when all 5 top logs pressed it and 2 uses were expected', () => {
+    const usedByAll = bench({ per_parse: Array.from({ length: 5 }, () => topLog({ 'Shadow Blades': [5, 95] })) });
+    const findings = svc['analyzeRotationFindings'](scan({ bench: usedByAll })).findings;
+    expect(findings.find(f => f.family === 'rotation.never_used')).toMatchObject({ severity: 'amber', measured: { value: '0 / 2', unit: 'cast(s), 5 top logs' } });
+  });
+
+  it('counts each cooldown checked for the empty state', () => {
+    expect(svc['analyzeRotationFindings'](scan({ bench: bench() })).checked).toBe(1);
   });
 
   it('emits a success when used on cd and BL-aligned', () => {
@@ -275,7 +289,7 @@ describe('analyzeOneCooldown', () => {
 
     it('is flagged as never used when the player\'s talents show it', () => {
       const result = svc['analyzeOneCooldown'](gated, [], single, killed(FIGHT_DUR_S), new Map([[TALENT_ENTRY, 1]]));
-      expect(result?.scan.issues[0]).toMatchObject({ category: 'lost_cooldown', measured: { value: '0 / 1' } });
+      expect(result?.scan.issues[0]).toMatchObject({ category: 'never_used', measured: { value: '0 / 1' } });
     });
 
     it('is skipped when the player\'s talents do not show it', () => {
@@ -342,14 +356,14 @@ describe('rotation checks over the player timeline', () => {
 
   const cd = { name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 };
 
-  it('expects no cast from a player who died before top raiders open with it and never came back', () => {
+  it('mutes the use count of a player who died before top raiders open with it and never came back', () => {
     // bench: open at 5s, then 1 a minute; dead from 3s on.
     const diedEarly = pullModel({ fightDurationS: FIGHT_S, deadSpans: [[3, FIGHT_S]] });
-    expect(svc['analyzeOneCooldown'](cd, [], cdBench(), diedEarly, null)?.scan.issues).toEqual([]);
+    expect(svc['analyzeOneCooldown'](cd, [], cdBench(), diedEarly, null)?.scan.issues).toMatchObject([{ severity: 'muted', unjudged: 'dead' }]);
   });
 
-  it('flags the same unused cooldown as lost for a player alive the whole pull', () => {
-    expect(svc['analyzeOneCooldown'](cd, [], cdBench(), killed(FIGHT_S), null)?.scan.issues[0]).toMatchObject({ category: 'lost_cooldown' });
+  it('flags the same unused cooldown as never used for a player alive the whole pull', () => {
+    expect(svc['analyzeOneCooldown'](cd, [], cdBench(), killed(FIGHT_S), null)?.scan.issues[0]).toMatchObject({ category: 'never_used' });
   });
 
   // bench: a 90s gap with a 5s spread, so a gap past 100s flags; this one runs 6s to 150s.

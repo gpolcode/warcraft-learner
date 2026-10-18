@@ -187,6 +187,12 @@ export class ListCheckService {
     return counts ? counts.right / counts.moments : null;
   }
 
+  /** The reading cut to the moments at or before `endS`, so nothing after the judged end counts. */
+  within(reading: LogReading, endS: number): LogReading {
+    const casts = new Map([...reading.casts].map(([action, checks]) => [action, checks.filter(check => check.atS <= endS)]));
+    return { ...reading, casts, order: reading.order.filter(check => check.atS <= endS) };
+  }
+
   /** A button's moments are its judged presses plus the skips where the list wanted it; null when it had none. */
   rightCounts(reading: LogReading, action: string): ButtonCounts | null {
     const judged = (reading.casts.get(action) ?? []).filter(check => check.verdict !== 'unjudged');

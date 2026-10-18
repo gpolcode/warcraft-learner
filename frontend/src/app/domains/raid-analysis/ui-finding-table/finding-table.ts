@@ -9,11 +9,17 @@ import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe'
 import type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
 import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 import { JudgedSpanCaption } from '../ui-judged-span/judged-span';
-import type { JudgedSpan } from '../data/analysis/pull-model-service';
+import type { JudgedSpan, UnjudgedCause } from '../data/analysis/pull-model-service';
 import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
 import type { BenchStrip } from '../data/analysis/bench-strip-service';
 
 export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
+
+type RowTone = 'red' | 'amber' | 'blue' | 'neutral' | 'muted';
+
+const LEGACY_TONE: Record<string, RowTone> = { critical: 'red', warning: 'amber', info: 'blue' };
+const TONE_ICON: Record<Exclude<RowTone, 'muted'>, string> = { red: 'error', amber: 'warning_amber', blue: 'info', neutral: 'compare_arrows' };
+const UNJUDGED_ICON: Record<UnjudgedCause, string> = { dead: 'skull', after_wipe: 'flag', not_reached: 'schedule' };
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +42,8 @@ export class FindingTable {
   readonly judged = input<JudgedSpan | null>(null);
   readonly rows = input.required<FindingRow[]>();
   readonly onPlan = input<OnPlanChip[]>([]);
+  /** Shown when nothing is flagged and nothing is on plan. */
+  readonly empty = input<string>('Nothing flagged.');
   readonly showMap = input<boolean>(false);
   readonly showClip = input<boolean>(false);
   readonly openMap = output<FindingRow>();
@@ -49,6 +57,16 @@ export class FindingTable {
 
   toggle(index: number): void {
     this.openIndex.update(current => current === index ? null : index);
+  }
+
+  /** A legacy producer's word read as the tone it stands for, so both kinds of row share one look. */
+  toneOf(row: FindingRow): RowTone {
+    return LEGACY_TONE[row.severity] ?? (row.severity as RowTone);
+  }
+
+  iconOf(row: FindingRow): string {
+    const tone = this.toneOf(row);
+    return tone === 'muted' ? UNJUDGED_ICON[row.unjudged ?? 'dead'] : TONE_ICON[tone];
   }
 
   /** An occurrence's moment, so the page opens the map or clip on it rather than on the row's own time. */

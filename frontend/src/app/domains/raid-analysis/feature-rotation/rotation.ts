@@ -55,6 +55,9 @@ export class Rotation {
   protected readonly downtimeSpan = computed(() => this.load.value()?.downtimeSpan ?? null);
   protected readonly offensiveSpan = computed(() => this.load.value()?.offensiveSpan ?? null);
   protected readonly bench = computed(() => this.load.value()?.bench ?? null);
+  protected readonly buttonsEmpty = computed(() => this.load.value()?.buttonsEmpty ?? '');
+  protected readonly buttonsBenched = computed(() => this.load.value()?.buttonsBenched ?? false);
+  protected readonly offensivesEmpty = computed(() => this.load.value()?.offensivesEmpty ?? 'Nothing flagged.');
   protected readonly judgesButtons = computed(() => this.rotation.judgesButtons(this.spec()));
 
   protected onOpenMap(timeS: number): void {

@@ -29,6 +29,8 @@ export interface CountInput {
   /** Expected uses over the available time, already capped by the cadence fit. */
   expected: number;
   n: number;
+  /** Top logs that used it at all; red needs the paired consensus share of them, so a cooldown many skip is never a red loss. */
+  users: number;
 }
 
 export interface MechanisticInput extends Omit<IntervalInput, 'side'> {
@@ -96,8 +98,10 @@ export class DecisionRuleService {
     const bigEnough = shortfall >= Math.max(floors.lostUses, floors.lostUsesShare * input.expected);
     const boundOf = (level: GradedLevel): number => Math.min(this.poissonLowerBound(input.expected, level), input.expected - 1);
     const target = boundOf('amber');
+    const agreed = input.users / input.n >= VERDICT_CHOICES.pairedConsensusShare;
+    const levels = agreed ? GRADED : GRADED.filter(level => level !== 'red');
     return {
-      level: bigEnough ? GRADED.find(level => input.uses < boundOf(level)) ?? 'neutral' : 'neutral',
+      level: bigEnough ? levels.find(level => input.uses < boundOf(level)) ?? 'neutral' : 'neutral',
       n: input.n, observed: input.uses, target,
       excess: Math.max(0, target - input.uses),
     };

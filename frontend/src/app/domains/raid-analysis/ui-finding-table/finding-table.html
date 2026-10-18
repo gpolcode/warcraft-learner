@@ -25,12 +25,14 @@
       <div class="border-t border-line">
         <div class="grid grid-cols-(--cols-card-sm-toggle) md:grid-cols-(--cols-card) gap-x-(--gap-card) gap-y-2 md:gap-y-0 py-2.5 items-center">
 
+          @let tone = toneOf(row);
           <div class="flex items-center justify-center">
             <tui-icon class="icon-18"
-              [class.text-critical]="row.severity === 'critical'"
-              [class.text-warning]="row.severity === 'warning'"
-              [class.text-accent]="row.severity === 'info'"
-              [icon]="row.severity === 'critical' ? 'error' : row.severity === 'info' ? 'info' : 'warning_amber'" />
+              [class.text-critical]="tone === 'red'"
+              [class.text-warning]="tone === 'amber'"
+              [class.text-accent]="tone === 'blue'"
+              [class.text-muted]="tone === 'neutral' || tone === 'muted'"
+              [icon]="iconOf(row)" />
           </div>
 
           <div class="min-w-0">
@@ -55,15 +57,16 @@
                 <span class="text-name">{{ row.what }}</span>
               }
               @if (row.chip) {
-                <span tuiBadge size="m" class="text-label" [appearance]="row.severity === 'critical' ? 'negative' : row.severity">{{ row.chip }}</span>
+                <span tuiBadge size="m" class="text-label" [appearance]="tone === 'red' ? 'negative' : tone === 'amber' ? 'warning' : tone === 'blue' ? 'info' : 'neutral'">{{ row.chip }}</span>
               }
             </div>
           </div>
 
           <div class="col-start-2 md:col-auto text-left md:text-right"
-            [class.text-critical]="row.severity === 'critical'"
-            [class.text-warning]="row.severity === 'warning'"
-            [class.text-accent]="row.severity === 'info'">
+            [class.text-critical]="tone === 'red'"
+            [class.text-warning]="tone === 'amber'"
+            [class.text-accent]="tone === 'blue'"
+            [class.text-muted]="tone === 'muted'">
             <span class="md:hidden block text-label text-muted mb-1">Measured</span>
             <div class="flex items-baseline gap-2 md:block">
               <div class="tabular-nums text-value">{{ row.measured.value }}</div>
@@ -111,7 +114,7 @@
     }
 
     @if (!rows().length && !onPlan().length) {
-      <wl-empty-state icon="check_circle" tone="success" class="border-t border-line">Nothing flagged.</wl-empty-state>
+      <wl-empty-state icon="check_circle" tone="success" class="border-t border-line">{{ empty() }}</wl-empty-state>
     }
 
     @if (onPlan().length) {

@@ -38,9 +38,9 @@ The contract lives in `frontend/src/app/domains/raid-analysis/data/verdict/`. Ev
 
 ## Adding or changing a finding
 
-1. Declare its `FindingFamily` beside its producer and list it in `FINDING_REGISTRY` (`finding-registry.ts`). Every field is required: the conformance spec (`finding-registry.spec.ts`) fails an incomplete entry.
+1. Declare its `FindingFamily` beside its producer and list it in `FINDING_REGISTRY` (`finding-registry.ts`). Every field is required: the conformance spec (`finding-registry.spec.ts`) fails an incomplete entry. A family still measured on a construct due for rebuild names its replacement in `pendingRebuild`.
 2. Measure once: the same `measure` method feeds ingest's per-parse values and the runtime's value, over the same kind of time (alive, before the judged end, window wholly inside the pull).
-3. Feed the measure to the family's rule, and the rule's `Evidence` to `ToneService.tone`. Set `AnalysisFinding.family` to the entry's id. The producer emits evidence, never a severity: `local/no-severity-literal` fails a severity literal or a cast to `Tone` under `RA/data/**`.
+3. Feed the measure to the family's rule, and the rule's `Evidence` to `ToneService.tone`. Set `AnalysisFinding.family` to the entry's id. The producer emits evidence, never a severity: `local/no-severity-literal` fails a severity literal or a cast to `Tone` under `RA/data/**`; a family's `tier` is a ceiling, not a tone, and passes.
 4. Add the family's producing scenario to `PRODUCING_SCENARIOS` in `finding-registry.spec.ts`: a pull with the family's mistake in it, run through the producer, which must emit a finding with the family's id.
 5. Name the injected mistakes the family must catch and the availability masks that decide whether it runs.
 6. Bump the family's `version` on any change to its measure, rule or parameters.

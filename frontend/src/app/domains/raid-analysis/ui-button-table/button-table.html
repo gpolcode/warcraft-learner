@@ -23,19 +23,24 @@
             <div class="flex min-w-0 flex-1 items-center overflow-hidden">
               <wl-game-icon [id]="row.spellId" [icon]="row.icon" [name]="row.name"></wl-game-icon>
             </div>
-            <wl-range-bar class="h-4 w-28 sm:w-45 shrink-0"
-              [you]="row.you * 100" [rangeLeft]="row.top.lo * 100" [rangeWidth]="(row.top.hi - row.top.lo) * 100" [avg]="row.top.avg * 100"
-              [status]="row.status">
-            </wl-range-bar>
-            <span class="sr-only">
-              You {{ row.you | percent }}.
-              Top raiders {{ row.top.lo | percent }} to {{ row.top.hi | percent }}, {{ row.top.avg | percent }} on average.
-            </span>
+            @if (row.you === null) {
+              <span class="text-value text-muted shrink-0">@switch (row.unjudged) {@case ('dead') {Dead}@case ('after_wipe') {After the wipe}@default {Not reached}}</span>
+            } @else {
+              <wl-range-bar class="h-4 w-28 sm:w-45 shrink-0"
+                [you]="row.you * 100" [rangeLeft]="row.top.lo * 100" [rangeWidth]="(row.top.hi - row.top.lo) * 100" [avg]="row.top.avg * 100"
+                [status]="barStatus(row)">
+              </wl-range-bar>
+              <span class="sr-only">
+                You {{ row.you | percent }}.
+                Top raiders {{ row.top.lo | percent }} to {{ row.top.hi | percent }}, {{ row.top.avg | percent }} on average.
+              </span>
+            }
             <button tuiIconButton type="button" appearance="flat-grayscale"
               [tuiChevron]="open"
               [attr.aria-expanded]="open"
               (click)="toggle($index)">{{ open ? 'Hide instances' : 'Show instances' }}</button>
           </div>
+          <p class="text-body pt-1.5" [class.text-warning]="row.status === 'amber' || row.status === 'red'" [class.text-muted]="row.status === 'muted'">{{ row.message }}</p>
 
           <tui-expand [expanded]="open">
             <wl-finding-occurrences
@@ -48,6 +53,8 @@
             </wl-finding-occurrences>
           </tui-expand>
         </div>
+      } @empty {
+        <wl-empty-state icon="info" tone="muted">{{ empty() }}</wl-empty-state>
       }
     </div>
 

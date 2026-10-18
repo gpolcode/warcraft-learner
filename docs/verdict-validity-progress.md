@@ -148,3 +148,49 @@ None: sections 5.1 to 5.3 and 7 carry no file:line reference; `halfRaid` and `MI
 
 - Per card: declare each family, call one `DecisionRuleService` rule on the shared measure, pass the evidence to `ToneService.tone`, set `family`, add the producing scenario, drop the producer from the lint ignores.
 - `Evidence.target` is the amber edge in the construct's unit (for `excessRate` the most misses tolerated, for `count` the fewest uses tolerated): print it as the row's target.
+
+## Package 4a: rotation buttons and lost casts (done)
+
+Branch `claude/verdict-validity-p4a-rotation`, PR against `claude/verdict-validity-p3-contract`.
+
+### Done
+
+- **Families** in `FINDING_REGISTRY`, each declared beside its judge and marked `pendingRebuild` (new `FindingFamily` field: the construct that replaces it, or null):
+  - `rotation.button` (`data/rotation/priority-list/button-judge-service.ts`): tier amber, cost low, `excess-rate`; pending the SimC reaction-model decision points.
+  - `rotation.lost_cast` (`data/rotation/cooldown-use-judge-service.ts`): tier red, cost high, `count`; pending unused ready time.
+  - `rotation.never_used` (same file): tier red, cost high, `consensus`; pending unused ready time.
+- **Judges, callable at ingest with a top log as the player.**
+  - `ButtonJudgeService`: `measure(reading, action, endS)` is `ListCheckService.rightCounts` over `ListCheckService.within(reading, endS)`; ingest's `ListBenchService.counts` (the baked `per_parse[].buttons`) calls the same `measure` with an infinite end. `reference(perParse, action)` takes the top logs that had the button; `judge(counts, reference)` is `excessRate` on pooled reference misses and moments, n = logs with the button.
+  - `CooldownUseJudgeService`: `castTimesS(events, spellId, upAtPull, endS)` is the one cast measure (ingest's `summarizeCooldownCasts`, which bakes `per_parse[].cd_casts_s`, and runtime both call it); `measure(castTimesS, spans, bench)` gives uses and `benchExpectedUses` over the spans (ingest passes `[[0, duration]]`); `referenceUses(perParse, name)`; `judge(uses, reference, taken)` returns null at or above the expected uses, `consensus` (k = top logs with a use, paired on talent taken and at least 2 expected uses) for 0 uses, else `count`.
+- **Rules.** `DecisionRuleService.count` takes `users`: red only when `users / n` reaches `pairedConsensusShare` (the 5.7 "with 8 of 10 top logs using it"), else amber at most.
+- **Tone.** Both producers pass evidence to `ToneService.tone`; `AnalysisFinding.severity` and `FindingRow.severity` accept a `Tone` beside the legacy words; `FindingRowsService.rowSeverity` passes a tone through (`ToneService.isTone`). `sortBySeverity` ranks via `severityRank` (red/critical, amber/warning, blue/info/hold, neutral, muted, success). `wl-finding-table` maps either vocabulary to one look (`toneOf`, `iconOf`): neutral is a muted `compare_arrows` row, muted takes the cause icon (skull, flag, schedule).
+- **Muted from the timeline.** A button whose moments all fall after the judged end is a muted row (`you: null`, cause from `PullModelService.causeOf`, "Every moment came after the wipe, so none is judged."); moments after the judged end are never counted. A cooldown whose alive time fits no expected use while the whole fight fits one is a muted `lost_cooldown` row with `unjudged` set ("You were dead before X was due, so it is not judged.").
+- **Rows show n and counts.** Button rows carry `right`, `moments`, `n`, `family` and a `message` ("You got 15 of 20 moments right. 10 top logs miss about 1 in 20." plus "Aim for 17 or more." on a graded row, with `Evidence.target` as the tolerated misses); the bar is grey unless graded. Lost and never-used rows print `uses / expected` with "cast(s), 10 top logs" and name the top logs in the message; only red and amber rows carry a remedy. Sort: tone, then moments times shortfall under the top average.
+- **Empty states with counts.** Rotation rules renders whenever the bench judges buttons: "Your log shows no judged moment for any of the N buttons the list judges."; Offensives: "Nothing flagged. N cooldowns checked against M top logs." (`buttonsBenched`, `buttonsEmpty`, `offensivesEmpty` on `RotationPlayerView`; `wl-finding-table` and `wl-button-table` take an `empty` input).
+- **Lint.** `list-finding-service.ts` left the `local/no-severity-literal` ignores. The rule allows a literal that is a `tier` property's value (a ceiling, not a tone); the skill says so.
+- **E2E.** The Rotation rules test accepts the empty state, pins the row message by shape and stops at a muted first row; the empty Offensives state is matched by its first sentence; `CD_CHIP` includes `never used`.
+
+### Decisions and deviations
+
+- The `count` rule is package 3's Poisson lower bound, so "two short amber" from the 5.7 row holds only where Poisson says so (at 7 expected, 2 uses are amber and 1 red; at 4 expected, 1 use is neutral). One short is always a neutral comparison row.
+- Lost-cast and never-used checks keep the use-share gate (`usedByMajority`): a cooldown under half the top logs press is not checked, as the current construct's expected count is noise there.
+- The button family's target is `Evidence.target`, the amber-evidence edge, which on this low-cost family is one miss stricter than where the row turns amber (red-level evidence). The row prints it only when graded.
+- An old bench without `per_parse` reads as n = 0: every button, lost-cast and never-used row is a comparison (neutral), never an unmeasured color.
+- No `INGEST_VERSION` bump: `castTimesS` and `measure` reproduce the baked values exactly.
+- New injected mistake `press-off-list` for the button family.
+
+### Drift against 6882b59
+
+None for this package: `list-finding-service.ts:71-74` (the button status) and `cast-cadence-service.ts:41-51` (`checkLostUses`) matched at the stack base.
+
+### Seams stubbed
+
+- `CastCadenceService.checkUseCount` and `checkLostUses` stay for the defensive card (another package); rotation no longer calls them. `ROTATION_VOICE.underuseRemedy` stays because `CadenceVoice` requires it.
+- `rotation-feature-service.ts` and `cast-cadence-service.ts` stay in the lint ignores: they still grade the first cast, gaps, Bloodlust, efficiency and the success chip.
+- Calibration does not cap the tone yet (package 5); the harness that calls the judges at ingest is not built.
+
+### For the next package
+
+- Mixed rows: a producer on the contract sets `severity` to the `Tone` and `family`; muted rows set `unjudged`. Row mapping goes through `FindingRowsService.rowSeverity`.
+- A judge takes a measure and a reference list aligned with `sources`; build both through the same method the transform uses.
+- `DecisionRuleService.count` needs `users`.

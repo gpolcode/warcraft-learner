@@ -14,7 +14,9 @@ function isRead(node) {
   if (parent.type === 'TSLiteralType' || parent.type === 'SwitchCase') return true;
   if (parent.type === 'BinaryExpression') return COMPARISONS.has(parent.operator);
   if (parent.type === 'MemberExpression') return parent.property === node;
-  return parent.type === 'Property' && parent.key === node;
+  if (parent.type !== 'Property') return false;
+  // A finding family's `tier` is the ceiling ToneService caps it at, never a tone the family gives itself.
+  return parent.key === node || (parent.key?.type === 'Identifier' && parent.key.name === 'tier');
 }
 
 /** @type {import('eslint').Rule.RuleModule} */

@@ -11,13 +11,17 @@ import { RangeLegend } from '../ui-range-bar/range-legend';
 import type { ButtonRow } from '../data/rotation/priority-list/list-finding-service';
 import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
 import type { BenchStrip } from '../data/analysis/bench-strip-service';
+import type { WindowStatus } from '../data/analysis/window-comparison.models';
+import { EmptyState } from '../../shared/ui-empty-state/empty-state';
+
+const BAR_STATUS: Record<string, WindowStatus> = { red: 'bad', amber: 'warn', blue: 'info' };
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-button-table',
   host: { class: 'block' },
   imports: [
-    BenchStripCaption,
+    BenchStripCaption, EmptyState,
     PercentPipe, TuiCardLarge, TuiCardCollapsed, TuiHeader, TuiTitle, TuiButton, TuiChevron, TuiExpand, TuiItem,
     GameIcon, FindingOccurrences, RangeBar, RangeLegend,
   ],
@@ -29,6 +33,8 @@ export class ButtonTable {
   /** Who the card was compared with; null on a card no bench backs. */
   readonly bench = input<BenchStrip | null>(null);
   readonly rows = input.required<ButtonRow[]>();
+  /** Shown when no button had a judged moment. */
+  readonly empty = input<string>('');
   readonly showMap = input<boolean>(false);
   readonly showClip = input<boolean>(false);
   /** The open occurrence's second, for the page's map and clip overlays. */
@@ -40,6 +46,11 @@ export class ButtonTable {
     source: this.rows,
     computation: () => null,
   });
+
+  /** A comparison row's bar stays grey; only a graded row takes a color. */
+  barStatus(row: ButtonRow): WindowStatus {
+    return BAR_STATUS[row.status] ?? 'muted';
+  }
 
   toggle(index: number): void {
     this.openIndex.update(current => current === index ? null : index);

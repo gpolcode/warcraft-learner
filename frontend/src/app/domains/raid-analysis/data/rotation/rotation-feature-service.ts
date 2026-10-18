@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { AnalysisFinding, CAT_LABEL } from '../analysis/analysis.models';
-import type { FindingRow, OnPlanChip } from '../analysis/finding-rows-service';
+import { FindingRow, FindingRowsService, OnPlanChip } from '../analysis/finding-rows-service';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { PlanCooldown } from '../plan/plan.models';
 import { Result, Results } from '../../../shared/util-http/result';
@@ -23,6 +23,7 @@ import { GearExtractService } from '../gear/gear-extract-service';
 import { FoldCounts, JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
 import { SpecRoleService } from '../analysis/spec-role-service';
+import { CooldownUseJudgeService } from './cooldown-use-judge-service';
 
 export interface CdPlanRow {
   name: string;
@@ -48,6 +49,12 @@ export interface RotationPlayerView {
   /** Null on the empty view, where no pull was judged. */
   downtimeSpan: JudgedSpan | null;
   offensiveSpan: JudgedSpan | null;
+  /** The bench judges at least one button, so the Rotation rules card renders even when the pull settled none. */
+  buttonsBenched: boolean;
+  /** The Rotation rules card's empty state, with how many buttons the list judges. */
+  buttonsEmpty: string;
+  /** The Offensives card's empty state, with how many cooldowns were checked against how many top logs. */
+  offensivesEmpty: string;
   bench: BenchStrip | null;
 }
 
@@ -80,7 +87,7 @@ export interface RotationScanInput {
 
 interface CooldownScan { issues: AnalysisFinding[]; holds: AnalysisFinding[]; blAligned: boolean; folded: FoldCounts; }
 
-interface RotationScan { findings: AnalysisFinding[]; folded: FoldCounts; }
+interface RotationScan { findings: AnalysisFinding[]; folded: FoldCounts; checked: number; }
 
 interface FindingBucket { issues: AnalysisFinding[]; holds: AnalysisFinding[]; }
 
@@ -112,6 +119,8 @@ export class RotationFeatureService {
   private readonly pullModel = inject(PullModelService);
   private readonly benchStrips = inject(BenchStripService);
   private readonly specRoles = inject(SpecRoleService);
+  private readonly cooldownUses = inject(CooldownUseJudgeService);
+  private readonly findingRows = inject(FindingRowsService);
 
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
@@ -124,7 +133,10 @@ export class RotationFeatureService {
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'RotationFeatureService.loadPlayerView',
       errorId: 'rotation.player-view',
-      emptyView: () => ({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null, bench: strip }),
+      emptyView: () => ({
+        buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null,
+        buttonsBenched: false, buttonsEmpty: this.buttonsEmpty(bench.value), offensivesEmpty: this.offensivesEmpty(0, bench.value), bench: strip,
+      }),
       analyze: async context => ({ ...await this.playerView(this.withList(bench.value), pull, context), bench: strip }),
     });
   }
@@ -134,10 +146,24 @@ export class RotationFeatureService {
     return !this.specRoles.isHealer(spec);
   }
 
-  /** A bench an older ingest wrote carries no list, and judges no button until the next ingest re-benches it. */
+  /** A bench an older ingest wrote carries no list, and judges no button until the next ingest re-benches it; without per-log measures every check is a comparison. */
   private withList(bench: RotationBench): RotationBench {
     const stored: Partial<RotationBench> = bench;
-    return stored.list && stored.buttons ? bench : { ...bench, list: { lines: [], variables: [], spells: {}, talents: {} }, buttons: [] };
+    const listed = stored.list && stored.buttons ? bench : { ...bench, list: { lines: [], variables: [], spells: {}, talents: {} }, buttons: [] };
+    return stored.per_parse ? listed : { ...listed, per_parse: [] };
+  }
+
+  private buttonsEmpty(bench: RotationBench): string {
+    const stored: Partial<RotationBench> = bench;
+    const count = stored.buttons?.length ?? 0;
+    return `Your log shows no judged moment for any of the ${count} buttons the list judges.`;
+  }
+
+  private offensivesEmpty(checked: number, bench: RotationBench): string {
+    if (!checked) return 'Nothing flagged. No cooldown on the plan was checked in this pull.';
+    const stored: Partial<RotationBench> = bench;
+    const n = stored.sources?.length ?? bench.sample_count;
+    return `Nothing flagged. ${checked} ${checked === 1 ? 'cooldown' : 'cooldowns'} checked against ${n} top logs.`;
   }
 
   private async playerView(bench: RotationBench, pull: PullRef, context: PullContext): Promise<Omit<RotationPlayerView, 'bench'>> {
@@ -151,7 +177,7 @@ export class RotationFeatureService {
       this.listLogs.read(bench.list, { reportCode, fight, playerId, abilities, folds }),
       this.wclApi.getCombatantInfo(reportCode, fightId, playerId),
     ]);
-    const { findings, folded } = this.analyzeRotationFindings({
+    const { findings, folded, checked } = this.analyzeRotationFindings({
       model,
       castEvents: this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime),
       buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime),
@@ -160,8 +186,9 @@ export class RotationFeatureService {
     });
     const { downtimeRows, offensiveRows, onPlan } = this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
     return {
-      buttonRows: this.listFindings.rows(bench, reading), downtimeRows, offensiveRows, onPlan,
+      buttonRows: this.listFindings.rows(bench, reading, model), downtimeRows, offensiveRows, onPlan,
       downtimeSpan: this.pullModel.judgedSpan(model), offensiveSpan: this.pullModel.judgedSpan(model, folded),
+      buttonsBenched: bench.buttons.length > 0, buttonsEmpty: this.buttonsEmpty(bench), offensivesEmpty: this.offensivesEmpty(checked, bench),
     };
   }
 
@@ -237,10 +264,10 @@ export class RotationFeatureService {
       : null;
   }
 
-  /** `castTimesS` are fight-relative seconds, ascending, inside the judged span. Null when the cooldown went unused and the player's talents do not show it. */
+  /** `castTimesS` are fight-relative seconds, ascending, inside the judged span; `reference` is each top log's uses. Null when the cooldown went unused and the player's talents do not show it. */
   protected analyzeOneCooldown(
     cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark | undefined,
-    model: PullModel, talents: ReadonlyMap<number, number> | null,
+    model: PullModel, talents: ReadonlyMap<number, number> | null, reference: readonly number[] = [],
   ): { success: AnalysisFinding | null; scan: CooldownScan } | null {
     const cdName = cd.name;
     const actual = castTimesS.length;
@@ -253,21 +280,32 @@ export class RotationFeatureService {
 
     // BL alignment is data-driven: a cooldown "wants BL" when most top parses align it.
     const wantsBL = cdBench.bl_pct >= BL_CONSENSUS_PCT;
-    const { expected, floor } = benchExpectedUses(model.aliveSpans, cdBench);
+    const { expected } = benchExpectedUses(model.aliveSpans, cdBench);
 
-    const checked = this.castCadence.usedByMajority(cdBench)
-      ? this.castCadence.checkUseCount(ROTATION_VOICE, cdName, castTimesS, cdBench, { expected, floor, model })
-      : [];
+    const { checked, uses } = this.majorityChecks(cd, castTimesS, cdBench, { model, talents, reference });
     const bl = this.checkBloodlustAlignment(cdName, castTimesS, cdBench, model.lust?.startS ?? null, wantsBL);
     checked.push(...bl.findings);
     checked.push(...this.castCadence.checkGaps(ROTATION_VOICE, cdName, castTimesS, cdBench));
     const checkedHolds = this.holdTargets.holdSuggestionFindings(cdName, castTimesS, cdBench.hold_targets, model.judgedEndS);
-    const { kept: issues, folded } = this.pullModel.foldFindings(model, checked);
+    const { kept, folded } = this.pullModel.foldFindings(model, checked);
+    // Lost uses are counted on alive time, so they carry no span to fold.
+    const issues = [...uses, ...kept];
     const { kept: holds, folded: foldedHolds } = this.pullModel.foldFindings(model, checkedHolds);
 
     const blNote = bl.blAligned && wantsBL ? ', aligned with Bloodlust' : '';
     const success = issues.length ? null : this.cooldownSuccess(cdName, actual, ` - ${actual}/${expected} casts${blNote}.`);
     return { success, scan: { issues, holds, blAligned: bl.blAligned, folded: this.pullModel.addFolds(folded, foldedHolds) } };
+  }
+
+  /** A cooldown most top logs skip has a noisy expected count and opener, so neither is checked. */
+  private majorityChecks(
+    cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark,
+    pull: { model: PullModel; talents: ReadonlyMap<number, number> | null; reference: readonly number[] },
+  ): { checked: AnalysisFinding[]; uses: AnalysisFinding[] } {
+    if (!this.castCadence.usedByMajority(cdBench)) return { checked: [], uses: [] };
+    const opener = this.castCadence.checkFirstCastDelay(ROTATION_VOICE, cd.name, castTimesS, cdBench);
+    const uses = this.cooldownUses.finding(cd.name, castTimesS, cdBench, pull.model, pull.reference, buttonTaken(cd, pull.talents));
+    return { checked: opener ? [opener] : [], uses: uses ? [uses] : [] };
   }
 
   protected analyzeRotationFindings(input: RotationScanInput): RotationScan {
@@ -279,18 +317,17 @@ export class RotationFeatureService {
 
     const findings: AnalysisFinding[] = [];
     let folded = this.pullModel.noFolds();
+    let checked = 0;
 
     const upAtPull = this.auraWindows.upAtPull(buffEvents);
 
     const perCdBench = bench.per_cd_benchmarks;
     for (const cd of cooldowns) {
-      const castTimesS = [
-        // A use before the pull logs no cast, only its aura still up when the pull starts.
-        ...(upAtPull.has(cd.spell_id) ? [0] : []),
-        ...casts.filter(cast => cast.abilityGameID === cd.spell_id).map(cast => cast.atS),
-      ];
-      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], model, talents);
+      const castTimesS = this.cooldownUses.castTimesS(castEvents, cd.spell_id, upAtPull, model.judgedEndS);
+      const reference = this.cooldownUses.referenceUses(bench.per_parse, cd.name);
+      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], model, talents, reference);
       if (!result) continue;
+      checked += 1;
       folded = this.pullModel.addFolds(folded, result.scan.folded);
       if (result.scan.issues.length) findings.push(...result.scan.issues);
       else if (result.success) findings.push(result.success);
@@ -301,7 +338,7 @@ export class RotationFeatureService {
     if (efficiency) findings.push(efficiency);
 
     sortBySeverity(findings);
-    return { findings, folded };
+    return { findings, folded, checked };
   }
 
   private resolveCd(name: string, cdSpellIds: Record<string, number>, abilities: AbilityIcons): ResolvedCd {
@@ -328,13 +365,9 @@ export class RotationFeatureService {
     return { downtimeFindings, byName, successNames };
   }
 
-  private rowSeverity(severity: AnalysisFinding['severity']): FindingRow['severity'] {
-    return severity === 'critical' ? 'critical' : severity === 'info' ? 'info' : 'warning';
-  }
-
   protected buildDowntimeRows(downtimeFindings: AnalysisFinding[]): FindingRow[] {
     return downtimeFindings.map(finding => ({
-      severity: this.rowSeverity(finding.severity),
+      severity: this.findingRows.rowSeverity(finding.severity),
       name: '',
       icon: '',
       what: finding.label,
@@ -356,7 +389,7 @@ export class RotationFeatureService {
       const { spellId, icon, rowName } = this.resolveCd(name, cdSpellIds, abilities);
       for (const finding of [...bucket.issues, ...bucket.holds]) {
         offensiveRows.push({
-          severity: this.rowSeverity(finding.severity),
+          severity: this.findingRows.rowSeverity(finding.severity),
           name: rowName,
           spellId,
           icon,
@@ -365,6 +398,7 @@ export class RotationFeatureService {
           measured: finding.measured ?? { value: '-' },
           message: finding.message,
           fix: finding.details?.remedy,
+          ...(finding.unjudged ? { unjudged: finding.unjudged } : {}),
           occurrences: finding.occurrences,
         });
       }
