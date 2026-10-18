@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { CastCadenceService } from '../../analysis/cast-cadence-service';
 import { BurstJudgeService } from '../../burst-windows/burst-judge-service';
 import { InjectedMistake } from '../finding-family.models';
+import { IdleStretch } from '../../rotation/rotation-data-source';
 import { VERDICT_CHOICES } from '../verdict-choices';
 import { HeldOutCase } from './held-out-case-service';
 
@@ -65,13 +66,22 @@ export class InjectedMistakeService {
       .map(([name, casts]) => this.withCasts(heldOut, name, casts.map(castS => inWindow(castS) ? lustS + afterS + CHOICES.delayS : castS).sort((a, b) => a - b)));
   }
 
-  /** Five global cooldowns of idle time off the whole pull's casting share. */
+  /** Five global cooldowns of idle time on the stretch idle at mid-pull or the first after it, the rest of the pull playing that much later and its tail cut at the kill. */
   private idle(heldOut: RotationCase): RotationCase[] {
-    const pct = heldOut.log.measures.efficiency_pct;
+    const stretches = heldOut.log.measures.idle_s;
     const durationS = heldOut.log.model.fightDurationS;
-    if (pct === null || durationS <= 0) return [];
-    const idlePct = 100 * CHOICES.idleGcds * CHOICES.gcdS / durationS;
-    return [{ ...heldOut, log: { ...heldOut.log, measures: { ...heldOut.log.measures, efficiency_pct: Math.max(0, pct - idlePct) } } }];
+    if (!stretches || durationS <= 0) return [];
+    const pauseS = CHOICES.idleGcds * CHOICES.gcdS;
+    const midS = durationS / 2;
+    const at = stretches.findIndex(([, toS]) => toS >= midS);
+    const idle_s: IdleStretch[] = at === -1
+      ? [...stretches, [midS, midS + pauseS]]
+      : stretches.flatMap(([fromS, toS], index): IdleStretch[] => {
+        if (index < at) return [[fromS, toS]];
+        return index === at ? [[fromS, toS + pauseS]] : [[fromS + pauseS, toS + pauseS]];
+      });
+    const kept = idle_s.filter(([fromS]) => fromS < durationS).map(([fromS, toS]): IdleStretch => [fromS, Math.min(durationS, toS)]);
+    return [{ ...heldOut, log: { ...heldOut.log, measures: { ...heldOut.log.measures, idle_s: kept } } }];
   }
 
   /** A run of presses off the list turns that many right moments of the most-judged button into misses. */

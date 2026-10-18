@@ -12,9 +12,9 @@ export const FIGHT_S = 300;
 /** Ninety seconds apart, the cooldown's own cadence, from a 5s opener. */
 export const ON_CADENCE = [5, 95, 185, 275];
 
-/** A top log's rotation measures: on cadence, casting 80% of the pull, no lust. */
+/** A top log's rotation measures: on cadence, idle 60s (a fifth) of the pull, no lust. */
 export function rotationLog(over: Partial<RotationParseMeasures> = {}): RotationParseMeasures {
-  return { efficiency_pct: 80, lust_s: null, phase_starts: [], cd_casts_s: { [SB]: ON_CADENCE }, buttons: {}, ...over };
+  return { idle_s: [[100, 160]], lust_s: null, phase_starts: [], cd_casts_s: { [SB]: ON_CADENCE }, buttons: {}, ...over };
 }
 
 export function defensiveLog(casts: number[] = [10, 130]): DefensiveParseMeasures {

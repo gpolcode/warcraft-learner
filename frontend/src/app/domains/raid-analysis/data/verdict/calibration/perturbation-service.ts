@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { PullModel } from '../../analysis/pull-model-service';
+import { IdleStretch } from '../../rotation/rotation-data-source';
 import { VERDICT_CHOICES } from '../verdict-choices';
 import { HeldOutCase } from './held-out-case-service';
 import { HeldOutRowService } from './held-out-row-service';
@@ -46,9 +47,23 @@ export class PerturbationService {
     const keep = (casts: Readonly<Record<string, readonly number[]>>): Record<string, number[]> =>
       Object.fromEntries(Object.entries(casts).map(([name, times]) => [name, times.filter(alive)]));
     if (heldOut.card === 'rotation') {
-      return { ...heldOut, log: { ...heldOut.log, model, measures: { ...heldOut.log.measures, cd_casts_s: keep(heldOut.log.measures.cd_casts_s) } } };
+      const { measures } = heldOut.log;
+      const idle = measures.idle_s ? this.idleWithModel(measures.idle_s, model) : measures.idle_s;
+      return { ...heldOut, log: { ...heldOut.log, model, measures: { ...measures, cd_casts_s: keep(measures.cd_casts_s), idle_s: idle } } };
     }
     return { ...heldOut, log: { ...heldOut.log, model, casts: keep(heldOut.log.casts) } };
+  }
+
+  /** The casts a dead span drops join the stretches around it into one; a stretch no cast closes before the last alive moment is gone, as on the page. */
+  private idleWithModel(stretches: readonly IdleStretch[], model: PullModel): IdleStretch[] {
+    const lastAliveS = model.aliveSpans.at(-1)?.[1] ?? 0;
+    const merged: IdleStretch[] = [];
+    for (const [fromS, toS] of [...stretches, ...model.deadSpans].sort((a, b) => a[0] - b[0])) {
+      const last = merged.at(-1);
+      if (last && fromS <= last[1]) last[1] = Math.max(last[1], toS);
+      else merged.push([fromS, toS]);
+    }
+    return merged.filter(([, toS]) => toS <= lastAliveS);
   }
 
   private withLust(heldOut: TimedCase, lustS: number): HeldOutCase | null {

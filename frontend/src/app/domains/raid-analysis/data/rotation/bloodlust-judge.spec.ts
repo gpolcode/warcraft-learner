@@ -21,7 +21,7 @@ const EARLY_EDGE_S = TOP_OFFSET_S - FLOOR_S;
 const BAND_TOP_S = LUST_S + FLOOR_S;
 
 const topLog = (lustS: number | null, castsS: number[]): RotationParseMeasures =>
-  ({ efficiency_pct: null, lust_s: lustS, phase_starts: [], cd_casts_s: { [NAME]: castsS }, buttons: {} });
+  ({ idle_s: null, lust_s: lustS, phase_starts: [], cd_casts_s: { [NAME]: castsS }, buttons: {} });
 /** `pressed` of `n` top logs lusting at 2:00 pressed it 5s in; the rest pressed it a minute after the window. */
 const topLogs = (pressed: number, n = TOP_N): RotationParseMeasures[] =>
   Array.from({ length: n }, (_unused, index) => topLog(LUST_S, [index < pressed ? LUST_S + TOP_OFFSET_S : LUST_S + AFTER_S + 60]));

@@ -20,13 +20,13 @@ import { FindingFamily } from './finding-family.models';
 import { FINDING_REGISTRY } from './finding-registry';
 import { VERDICT_CHOICES } from './verdict-choices';
 
-/** Ten top logs that open at 5s, press again at 95s and cast 90% of the pull. */
+/** Ten top logs that open at 5s, press again at 95s and idle 30s of the pull. */
 const TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
-  ({ efficiency_pct: 90, lust_s: null, phase_starts: [], cd_casts_s: { 'Shadow Blades': [5, 95] }, buttons: {} }));
+  ({ idle_s: [[100, 130]], lust_s: null, phase_starts: [], cd_casts_s: { 'Shadow Blades': [5, 95] }, buttons: {} }));
 /** Ten top logs whose raid lusted at 2:00 and who pressed Shadow Blades 5s into it. */
 const MID_LUST_S = 120;
 const LUST_TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
-  ({ efficiency_pct: null, lust_s: MID_LUST_S, phase_starts: [], cd_casts_s: { 'Shadow Blades': [MID_LUST_S + 5] }, buttons: {} }));
+  ({ idle_s: null, lust_s: MID_LUST_S, phase_starts: [], cd_casts_s: { 'Shadow Blades': [MID_LUST_S + 5] }, buttons: {} }));
 /** The plan's Shadow Blades: a 90s cooldown. */
 const SHADOW_BLADES = { name: 'Shadow Blades', cooldown: 90 };
 const HELD_TO_130 = { '2': { target_s: 130, delay_s: 30, band_s: 5, effective_cd_s: 90, count: 8, total_samples: 10 } };
@@ -71,8 +71,8 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
   'rotation.hold': async () => TestBed.inject(CadenceJudgeService).holdFindings('Shadow Blades', [0, 100], HELD_TO_130),
   'rotation.downtime': async () => {
     const judges = TestBed.inject(DowntimeJudgeService);
-    const casting = judges.measure([0, PULL_S], 1.5, [[0, PULL_S]]);
-    return [casting ? judges.finding(casting, judges.reference(TOP_LOGS), PULL_S) ?? {} : {}];
+    const casting = judges.measure([[10, PULL_S]], [[0, PULL_S]]);
+    return [casting ? judges.finding(casting, judges.reference(TOP_LOGS, TOP_LOGS.map(() => PULL_S)), PULL_S) ?? {} : {}];
   },
   'rotation.bloodlust': async () => TestBed.inject(BloodlustJudgeService).findings('Shadow Blades', [], MID_LUST_S, LUST_TOP_LOGS),
   'rotation.bloodlust_timing': async () => TestBed.inject(BloodlustJudgeService).findings('Shadow Blades', [MID_LUST_S + 40], MID_LUST_S, LUST_TOP_LOGS),

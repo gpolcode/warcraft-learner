@@ -178,7 +178,7 @@ test('offensives flag the cooldown casts that missed the top-parse plan, and dow
   await showsBenchStrip(offensives);
   await showsFindingTable(offensives, CD_CHIP);
   await showsNotGraded(offensives);
-  const downtime = rotation.locator('wl-finding-table').filter({ hasText: 'Time you spent not casting, compared with the top logs.' });
+  const downtime = rotation.locator('wl-finding-table').filter({ hasText: 'Time you spent idle past each cast's global cooldown and cast time, compared with the top logs.' });
   await shows(downtime, 'Downtime');
   await shows(downtime, JUDGED_SPAN);
   await showsFindingTable(downtime, /downtime/);

@@ -1,7 +1,7 @@
 import {
   round, getOrInsert, groupByTime,
-  castEfficiencyPct, closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
-  AliveSpan, spansS, overlapS, castDowntimeS,
+  closestToZero, benchExpectedUses, fmtClock, sortBySeverity,
+  AliveSpan, spansS, overlapS,
 } from './analysis-math';
 import { AnalysisFinding } from './analysis.models';
 
@@ -44,16 +44,6 @@ describe('groupByTime', () => {
     const clusters = groupByTime([{ time_s: 0 }, { time_s: 4 }, { time_s: 20 }], MERGE_S);
     expect(clusters).toHaveLength(2);
     expect(clusters[1]).toEqual([{ time_s: 20 }]);
-  });
-});
-
-describe('castEfficiencyPct', () => {
-  const FIGHT_DUR_S = 100;
-  it('reports the share of fight time spent casting', () => {
-    expect(castEfficiencyPct(20, FIGHT_DUR_S)).toBe(80);
-  });
-  it('clamps to zero when downtime exceeds the fight', () => {
-    expect(castEfficiencyPct(150, FIGHT_DUR_S)).toBe(0);
   });
 });
 
@@ -168,34 +158,6 @@ describe('spansS and overlapS', () => {
   });
   it('counts nothing for a stretch that lies wholly in a death', () => {
     expect(overlapS(SPANS, 20, 50)).toBe(0);
-  });
-});
-
-describe('castDowntimeS', () => {
-  const THRESHOLD_S = 4;
-  const SPANS: AliveSpan[] = [[0, 20], [50, 100]];
-
-  it('counts a gap over the threshold in full', () => {
-    expect(castDowntimeS([0, 10], THRESHOLD_S, wholePull(100))).toBe(10);
-  });
-  it('does not count a gap exactly at the threshold', () => {
-    expect(castDowntimeS([0, THRESHOLD_S], THRESHOLD_S, wholePull(100))).toBe(0);
-  });
-  it('counts only the alive part of a gap across a death', () => {
-    // 10..20 and 50..60 alive.
-    expect(castDowntimeS([10, 60], THRESHOLD_S, SPANS)).toBe(20);
-  });
-  it('does not count a gap across a death whose alive part is exactly the threshold', () => {
-    // 18..20 and 50..52 alive: 4s.
-    expect(castDowntimeS([18, 52], THRESHOLD_S, SPANS)).toBe(0);
-  });
-  it('counts a gap across a death whose alive part is just over the threshold', () => {
-    // 17.9..20 and 50..52 alive: 4.1s.
-    expect(castDowntimeS([17.9, 52], THRESHOLD_S, SPANS)).toBeCloseTo(4.1);
-  });
-  it('never counts the time after the last cast inside the judged span', () => {
-    // The 50s cast falls after the judged end at 30s, so only the 0..10 gap is judged.
-    expect(castDowntimeS([0, 10, 50], THRESHOLD_S, wholePull(30))).toBe(10);
   });
 });
 

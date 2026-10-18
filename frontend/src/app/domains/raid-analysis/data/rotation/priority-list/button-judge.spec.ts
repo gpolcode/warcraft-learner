@@ -14,7 +14,7 @@ const reading: LogReading = {
   ids: new Map([['eviscerate', EVISCERATE]]),
 };
 const topLog = (buttons: RotationParseMeasures['buttons']): RotationParseMeasures =>
-  ({ efficiency_pct: null, lust_s: null, phase_starts: [], cd_casts_s: {}, buttons });
+  ({ idle_s: null, lust_s: null, phase_starts: [], cd_casts_s: {}, buttons });
 /** 10 top logs missing 1 in 20 of their moments. */
 const MISS_ONE_IN_TWENTY = Array.from({ length: 10 }, () => ({ right: 19, moments: 20 }));
 

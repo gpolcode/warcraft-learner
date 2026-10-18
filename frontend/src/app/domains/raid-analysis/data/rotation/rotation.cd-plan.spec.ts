@@ -41,7 +41,7 @@ describe('buildCdPlan', () => {
     const TOP_LOGS = 10;
     /** `pressed` of ten top logs lusting at `lustS` pressed Shadow Blades for it; the rest pressed it a minute after the lust window. */
     const lusting = (lustS: number, pressed: number): RotationParseMeasures[] => Array.from({ length: TOP_LOGS }, (_unused, index) => ({
-      efficiency_pct: null, lust_s: lustS, phase_starts: [], buttons: {},
+      idle_s: null, lust_s: lustS, phase_starts: [], buttons: {},
       cd_casts_s: { 'Shadow Blades': [index < pressed ? lustS + IN_LUST_OFFSET_S : lustS + OUT_OF_LUST_OFFSET_S] },
     }));
     const badge = (perParse: RotationParseMeasures[]): boolean | undefined =>
