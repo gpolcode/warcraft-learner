@@ -93,7 +93,7 @@ test('burst windows show the first top-parse window with its bench damage and ab
   const burstWindows = page.locator('wl-burst-windows');
   await shows(burstWindows, 'Burst windows');
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
-  await showsFirstWindow(burstWindows, { metric: 'Damage', chips: 'Cooldowns top raiders use here' });
+  await showsFirstWindow(burstWindows, { metric: 'Damage vs pull average', chips: 'Cooldowns top raiders use here', multiple: true });
   // A bench an older ingest wrote carries no per-log damage, so the count is drawn only once it has one.
   const formedBy = burstWindows.getByText(/top logs? had this window\.$/);
   if (await formedBy.count()) await expect(formedBy).toHaveText(/^\d+ top logs? had this window\.$/);

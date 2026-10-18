@@ -412,7 +412,7 @@ const plansFake = planLoader(specPlan({
 }));
 
 describe('BurstTransformService (live, in-browser)', () => {
-  it('computes a clustered burst bench from the top parses', async () => {
+  it('computes a clustered burst bench from the top parses, with each one\'s damage per second', async () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: plansFake }) });
     const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
@@ -423,6 +423,7 @@ describe('BurstTransformService (live, in-browser)', () => {
     expect(bench.value.windows).toHaveLength(1);
     assert.exists(bench.value.windows[0]);
     expect(bench.value.windows[0].common_cds).toContain('Shadow Blades');
+    expect(bench.value.per_parse?.map(parse => parse.damage_per_s.slice(10, 13))).toEqual(bench.value.sources.map(() => [BIN_DAMAGE, BIN_DAMAGE, BIN_DAMAGE]));
     // ability_icons is complete: header cooldown AND every window ability resolved by id.
     expect(bench.value.ability_icons[SHADOW_BLADES]).toEqual({ icon: `icon_${SHADOW_BLADES}`, name: `name_${SHADOW_BLADES}` });
     expect(bench.value.ability_icons[SHADOW_BLADES_DAMAGE]).toEqual({ icon: `icon_${SHADOW_BLADES_DAMAGE}`, name: `name_${SHADOW_BLADES_DAMAGE}` });

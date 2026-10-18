@@ -8,7 +8,9 @@ import { HeldOutCase } from './held-out-case-service';
 import { bench } from '../../rotation/rotation-harness';
 import { benchWith, CLOAK_META, defBench } from '../../defensive/defensive-harness';
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
-import { CLOAK, defensiveLog, defensiveWindow, FIGHT_S, gearBench, gearLog, ON_CADENCE, rotationLog, SB } from './calibration-harness';
+import {
+  BURST_AT_S, BURST_S, burstBench, burstLog, burstWindow, CLOAK, defensiveLog, defensiveWindow, FIGHT_S, gearBench, gearLog, ON_CADENCE, rotationLog, SB,
+} from './calibration-harness';
 import { VERDICT_CHOICES } from '../verdict-choices';
 
 const folds = TestBed.inject(LeaveOneOutService);
@@ -106,6 +108,70 @@ describe('InjectedMistakeService', () => {
 
     expect(mistakes.variants('swap-talent-node', gearCase).map(variant => variant.card === 'gear' && variant.picks.talent_key)).not.toEqual([picks.talent_key]);
     expect(mistakes.variants('remove-enchant', gearCase).map(variant => variant.card === 'gear' && variant.picks.enchant_ids)).toEqual([{}]);
+  });
+});
+
+const burstCase = (): HeldOutCase => {
+  const logs = Array.from({ length: TOP_N }, () => burstLog());
+  return {
+    card: 'burst', source: 'r1:1', fold: folds.foldBurst(burstBench(logs, [burstWindow([1, 2, 3])]), 0),
+    log: { damagePerS: burstLog().damage_per_s, model: heldOutRows.wholePull(FIGHT_S) },
+  };
+};
+const damageOf = (heldOut: HeldOutCase | null | undefined): number[] => heldOut?.card === 'burst' ? heldOut.log.damagePerS : [];
+const sum = (values: readonly number[]): number => values.reduce((total, value) => total + value, 0);
+
+describe('InjectedMistakeService on a burst', () => {
+  it('moves the log\'s burst fifteen seconds later and keeps the pull\'s total', () => {
+    const [shifted] = mistakes.variants('shift-burst-15s', burstCase());
+    const perS = damageOf(shifted);
+
+    expect(perS.slice(BURST_AT_S + CHOICES.burstShiftS, BURST_AT_S + CHOICES.burstShiftS + BURST_S)).toEqual(burstLog().damage_per_s.slice(BURST_AT_S, BURST_AT_S + BURST_S));
+    expect(sum(perS)).toBe(sum(damageOf(burstCase())));
+  });
+
+  it('has nothing to shift a burst that would leave the pull', () => {
+    const lateWindow = { ...burstWindow([1, 2, 3]), time_s: FIGHT_S - BURST_S };
+    const heldOut = burstCase();
+    const late = heldOut.card === 'burst' ? { ...heldOut, fold: { ...heldOut.fold, windows: [{ ...lateWindow, index: 0 }] } } : heldOut;
+
+    expect(mistakes.variants('shift-burst-15s', late)).toEqual([]);
+  });
+
+  it('makes no burst variant for a mistake that is not a burst\'s', () => {
+    expect(mistakes.variants('drop-major-cooldown-cast', burstCase())).toEqual([]);
+  });
+});
+
+describe('PerturbationService on a burst', () => {
+  it('deals no damage past a wipe', () => {
+    const cut = perturbations.perturb('truncate', burstCase());
+    const endS = cut?.card === 'burst' ? cut.log.model.judgedEndS : 0;
+
+    expect(damageOf(cut).slice(Math.ceil(endS)).every(value => value === 0)).toBe(true);
+  });
+
+  it('deals no damage while dead', () => {
+    const died = perturbations.perturb('death', burstCase());
+    const [[diedS] = [0]] = died?.card === 'burst' ? died.log.model.deadSpans : [];
+
+    expect(damageOf(died).slice(Math.ceil(diedS)).every(value => value === 0)).toBe(true);
+  });
+
+  it('moves each second\'s damage at most two seconds and keeps the total, the same way on every run', () => {
+    const once = damageOf(perturbations.perturb('jitter', burstCase()));
+
+    expect(sum(once)).toBe(sum(damageOf(burstCase())));
+    expect(once).not.toEqual(damageOf(burstCase()));
+    expect(damageOf(perturbations.perturb('jitter', burstCase()))).toEqual(once);
+  });
+
+  it('scales every second\'s damage', () => {
+    expect(damageOf(perturbations.perturb('damage-scale', burstCase()))[0]).toBe((burstLog().damage_per_s[0] ?? 0) * CHOICES.damageScale);
+  });
+
+  it('leaves the lust to the rotation card', () => {
+    expect(perturbations.perturb('lust-120', burstCase())).toBeNull();
   });
 });
 

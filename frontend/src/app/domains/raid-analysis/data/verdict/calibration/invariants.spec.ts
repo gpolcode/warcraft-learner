@@ -70,21 +70,36 @@ describe('Two seconds of jitter in a top pull', () => {
   const START_S = 10;
   const END_S = 30;
   const HIT = 100;
+  const STEADY_HIT = 10;
   const HITS_AT = [14, 18, 22, 26];
   const window: BurstWindow = {
     time_s: START_S, window_length_s: END_S - START_S, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
-    members: Array.from({ length: TOP_N }, (_unused, parse) => ({ parse, time_s: START_S, window_length_s: END_S - START_S, damage: HITS_AT.length * HIT })),
+    members: [],
   };
-  const dealt = (shiftS: number) => burst.measure(timed(HITS_AT.map(atS => damage(SHADOW_BLADES_DAMAGE, atS + shiftS, HIT))), START_S, END_S, false);
+  const pull = (shiftS: number) => burst.series(timed([
+    ...Array.from({ length: FIGHT_S }, (_unused, atS) => damage(SHADOW_BLADES_DAMAGE, atS, STEADY_HIT)),
+    ...HITS_AT.map(atS => damage(SHADOW_BLADES_DAMAGE, atS + shiftS, HIT)),
+  ]), FIGHT_S);
+  const measuredAt = (shiftS: number) => burst.measure(pull(shiftS), window, [[0, FIGHT_S]]);
+  const topLogs = Array.from({ length: TOP_N }, () => measuredAt(0)?.amplification ?? 0);
 
-  it('leaves the window\'s damage, and so its verdict, where it was', () => {
+  it('leaves the window\'s measure, and so its verdict, where it was', () => {
     for (const shiftS of [-CHOICES.jitterS, CHOICES.jitterS]) {
-      expect(burst.verdict(window, dealt(shiftS), HIT).status).toBe(burst.verdict(window, dealt(0), HIT).status);
+      expect(measuredAt(shiftS)?.amplification).toBe(measuredAt(0)?.amplification);
+      expect(burst.verdict(window, measuredAt(shiftS), topLogs).status).toBe(burst.verdict(window, measuredAt(0), topLogs).status);
     }
   });
 });
 
 describe('Damage scaled in a top pull', () => {
+  it('leaves a burst window\'s multiple unchanged, since it reads damage only against the pull\'s own average', () => {
+    const window: BurstWindow = { time_s: 40, window_length_s: 10, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [], members: [] };
+    const perS = Array.from({ length: FIGHT_S }, (_unused, second) => second >= 40 && second < 50 ? 40 : 10);
+
+    expect(burst.measure(perS.map(value => value * CHOICES.damageScale), window, [[0, FIGHT_S]])?.amplification)
+      .toBeCloseTo(burst.measure(perS, window, [[0, FIGHT_S]])?.amplification ?? 0);
+  });
+
   it('leaves every cadence measure unchanged, since none reads damage', () => {
     const withDamage = (scale: number) => timed([...ON_CADENCE.map(atS => cast(SHADOW_BLADES, atS)), damage(SHADOW_BLADES_DAMAGE, 50, 1000 * scale)]);
 

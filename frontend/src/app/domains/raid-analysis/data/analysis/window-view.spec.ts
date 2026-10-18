@@ -11,6 +11,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { pullModel } from '../../../../../testing/builders/pull-model';
 import { PullModel } from './pull-model-service';
+import { tone } from '../../../../../testing/builders/tone';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 const windowView = TestBed.inject(WindowViewService);
@@ -50,7 +51,7 @@ interface ProbeAnchor {
 }
 
 // Wording distinct from every feature's, so each assertion proves the value came from the adapter and not from the builder.
-const PROBE_STATUS = { status: 'good', icon: 'probe_reached' } as const;
+const PROBE_STATUS = { status: tone('neutral'), icon: 'probe_reached' };
 
 function probeAdapter(over: Partial<WindowViewAdapter<ProbeAnchor>> = {}): WindowViewAdapter<ProbeAnchor> {
   return {
@@ -144,6 +145,21 @@ describe('buildWindowView', () => {
       expect(first(windows).statusIcon).toBe(PROBE_STATUS.icon);
       expect(first(windows).overview.playerPct).toBeNull();
     });
+  });
+
+  it('takes the overview figures from the adapter that measures them in its own unit', () => {
+    const FIGURES = { playerPct: 1.5, topAvg: 2, topMin: 1.8, topMax: 2.2 };
+    const { windows } = viewOf({ playerWindows: [playerWindow(PLAYER_DAMAGE)], adapter: probeAdapter({ overview: () => FIGURES }) });
+
+    expect(first(windows).overview).toMatchObject(FIGURES);
+  });
+
+  it('drops the adapter\'s player figure on a muted window', () => {
+    const FIGURES = { playerPct: 1.5, topAvg: 2, topMin: 1.8, topMax: 2.2 };
+    const kill = pullModel({ fightDurationS: WINDOW_END_S - 1 });
+    const { windows } = viewOf({ playerWindows: [playerWindow(PLAYER_DAMAGE)], model: kill, adapter: probeAdapter({ overview: () => FIGURES }) });
+
+    expect(first(windows).overview).toMatchObject({ ...FIGURES, playerPct: null });
   });
 
   it('spans the window and carries the top-parse band into the overview row', () => {

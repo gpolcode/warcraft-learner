@@ -94,10 +94,15 @@
           </div>
           <div class="flex flex-col shrink-0">
             <span class="text-label text-muted">{{ metricLabel() }}</span>
-            @if (!activeIsMuted()) {
-              <span class="tabular-nums text-value">{{ w.overview.playerPct | formatDamage }}</span>
-            } @else if (activeIsBenchOnly()) {
-              <span class="tabular-nums text-value">{{ w.overview.topAvg | formatDamage }}</span>
+            @let headline = activeIsBenchOnly() ? w.overview.topAvg : w.overview.playerPct;
+            @if (!activeIsMuted() || activeIsBenchOnly()) {
+              @if (headline == null) {
+                <span class="text-value text-muted">Not measured</span>
+              } @else if (metricUnit() === 'multiple') {
+                <span class="tabular-nums text-value">{{ headline | formatMultiple }}</span>
+              } @else {
+                <span class="tabular-nums text-value">{{ headline | formatDamage }}</span>
+              }
             } @else {
               <span class="text-value text-muted">@switch (w.unjudged) {@case ('dead') {Dead}@case ('after_wipe') {After the wipe}@default {Not reached}}</span>
             }
@@ -107,7 +112,6 @@
               <span class="text-label text-muted">Vs top raiders average</span>
               <span class="tabular-nums text-value"
                 [class.text-muted]="overviewDeltaStatus() === 'muted'"
-                [class.text-success]="overviewDeltaStatus() === 'better'"
                 [class.text-warning]="overviewDeltaStatus() === 'differs'"
                 [class.text-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDelta() | signedPercent }}</span>
             </div>
@@ -174,10 +178,8 @@
           @for (row of activeDetailRows(); track row.spellId) {
             <wl-compact-ability-row
               [row]="row"
-              [higherIsBetter]="higherIsBetter()"
               [showCasts]="showCasts()"
-              [hidePlayer]="activeIsMuted()"
-              [toned]="!isOnContract(w)">
+              [hidePlayer]="activeIsMuted()">
             </wl-compact-ability-row>
           }
         </div>

@@ -30,7 +30,7 @@ const LUST_TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
   ({ efficiency_pct: null, lust_s: MID_LUST_S, phase_starts: [], cd_casts_s: { 'Shadow Blades': [MID_LUST_S + 5] }, buttons: {} }));
 const HELD_TO_130 = { '2': { target_s: 130, delay_s: 30, band_s: 5, effective_cd_s: 90, count: 8, total_samples: 10 } };
 const PULL_S = 300;
-/** Five top logs that dealt 1000 in a window the player dealt nothing in. */
+/** A window the player dealt nothing in, and five top logs that dealt twice their average there. */
 const BURST: BurstWindow = {
   time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 1000, dmg_max: 1000, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
   members: Array.from({ length: 5 }, (_unused, parse) => ({ parse, time_s: 10, window_length_s: 20, damage: 1000 })),
@@ -70,7 +70,9 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
   },
   'rotation.bloodlust': async () => TestBed.inject(BloodlustJudgeService).findings('Shadow Blades', [], MID_LUST_S, LUST_TOP_LOGS),
   'rotation.bloodlust_timing': async () => TestBed.inject(BloodlustJudgeService).findings('Shadow Blades', [MID_LUST_S + 40], MID_LUST_S, LUST_TOP_LOGS),
-  'burst.window': async () => [TestBed.inject(BurstJudgeService).verdict(BURST, 0, 10)],
+  'burst.window': async () => [TestBed.inject(BurstJudgeService).verdict(
+    BURST, { damage: 0, amplification: 0, startS: 10, lengthS: 20 }, Array.from({ length: 5 }, () => 2),
+  )],
   'defensive.uses': async () => [TestBed.inject(DefensiveJudgeService).usesFinding(
     'Cloak', [], defBench({ sample_count: 10, used_sample_count: 10, uses_per_min: { avg: 1.4, stddev: 0.1 }, avg_gap_s: 40 }), pullModel(), DEFENSIVE_TOP_LOGS, false,
   ) ?? {}],

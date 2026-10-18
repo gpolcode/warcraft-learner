@@ -4,7 +4,7 @@ import { LeaveOneOutService } from './leave-one-out-service';
 import { bench } from '../../rotation/rotation-harness';
 import { benchWith, CLOAK_META, defBench } from '../../defensive/defensive-harness';
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
-import { CLOAK, defensiveLog, defensiveWindow, ON_CADENCE, rotationLog, SB } from './calibration-harness';
+import { burstBench, burstLog, burstWindow, CLOAK, defensiveLog, defensiveWindow, ON_CADENCE, rotationLog, SB } from './calibration-harness';
 
 const folds = TestBed.inject(LeaveOneOutService);
 
@@ -78,5 +78,34 @@ describe('LeaveOneOutService foldDefensive', () => {
 
   it('rebuilds the defensive cadence from the other top logs', () => {
     expect(folds.foldDefensive(defensiveBench([0, 1, 3]), HELD_OUT).per_defensive_benchmarks[CLOAK]?.sample_count).toBe(TOP_N - 1);
+  });
+});
+
+describe('LeaveOneOutService foldBurst', () => {
+  const logs = Array.from({ length: TOP_N }, () => burstLog());
+  /** Two of the six logs form the window, the fewest a fold of five keeps at the 0.4 share. */
+  const FEWEST = 2;
+
+  it('respans a window on its remaining members, the median start', () => {
+    const [window] = folds.foldBurst(burstBench(logs, [burstWindow([0, 1, HELD_OUT, 3], [38, 40, 60, 42])]), HELD_OUT).windows;
+
+    expect(window?.time_s).toBe(40);
+    expect(window?.members.map(member => member.parse)).toEqual([0, 1, 2]);
+  });
+
+  it('keeps a window as many other top logs form as the transform needs', () => {
+    const parses = [HELD_OUT, ...[0, 1].slice(0, FEWEST)];
+
+    expect(folds.foldBurst(burstBench(logs, [burstWindow(parses)]), HELD_OUT).windows).toHaveLength(1);
+  });
+
+  it('drops a window one fewer other top log forms', () => {
+    const parses = [HELD_OUT, ...[0, 1].slice(0, FEWEST - 1)];
+
+    expect(folds.foldBurst(burstBench(logs, [burstWindow(parses)]), HELD_OUT).windows).toEqual([]);
+  });
+
+  it('measures every remaining top log, the held-out one gone', () => {
+    expect(folds.foldBurst(burstBench(logs, [burstWindow([0, 1, 3])]), HELD_OUT).per_parse).toHaveLength(TOP_N - 1);
   });
 });

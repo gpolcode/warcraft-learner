@@ -22,8 +22,8 @@ export interface WindowSpell {
   name: string;
 }
 
-/** A tone from a check on the verdict contract, else a legacy producer's word. */
-export type WindowStatus = 'good' | 'warn' | 'bad' | 'muted' | Tone;
+/** A tone from the window's check, or muted where the pull model leaves the window unjudged. */
+export type WindowStatus = 'muted' | Tone;
 
 export interface ComparisonWindow {
   timeStartS: number;
