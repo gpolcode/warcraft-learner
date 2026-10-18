@@ -84,6 +84,12 @@ describe('CalibrationIndexService build', () => {
     expect(built.invariants.find(result => result.family === FAMILY)?.passed).toBe(false);
   });
 
+  it('keeps a family whose perturbation leaves it no test, as a truncated pull leaves downtime', () => {
+    const untested = { truncate: { [FAMILY]: { base: { tests: 1000, amber: 70, red: 0 }, perturbed: { tests: 0, amber: 0, red: 0 } } } };
+
+    expect(indices.build([encounterOf({}, { invariants: untested })]).invariants[0]?.passed).toBe(true);
+  });
+
   it('fails the lust invariant on any Bloodlust row outside the band', () => {
     const outside = { 'lust-120': { [OUTSIDE_BAND]: { base: { tests: 0, amber: 0, red: 0 }, perturbed: { tests: 1, amber: 1, red: 0 } } } };
 
