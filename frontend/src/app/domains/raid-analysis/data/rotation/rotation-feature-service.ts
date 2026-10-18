@@ -7,7 +7,7 @@ import { PlanCooldown } from '../plan/plan.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import {
   isOutlierBeyond, isOutlierBelow, castEfficiencyPct, OUTLIER_SIGMAS, TIMING_BAND_MIN_S,
-  closestToZero, benchExpectedUses, fmtClock, sortBySeverity, buttonTaken,
+  closestToZero, benchExpectedUses, fmtClock, sortBySeverity, buttonTaken, castDowntimeS, spansS,
 } from '../analysis/analysis-math';
 import { CadenceVoice } from '../analysis/cast-cadence-service';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../analysis/wcl-projections-service';
@@ -18,9 +18,9 @@ import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
-import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { GearExtractService } from '../gear/gear-extract-service';
+import { FoldCounts, JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
 
 export interface CdPlanRow {
   name: string;
@@ -43,6 +43,9 @@ export interface RotationPlayerView {
   downtimeRows: FindingRow[];
   offensiveRows: FindingRow[];
   onPlan: OnPlanChip[];
+  /** Null on the empty view, where no pull was judged. */
+  downtimeSpan: JudgedSpan | null;
+  offensiveSpan: JudgedSpan | null;
 }
 
 export interface RotationPlanView {
@@ -64,7 +67,7 @@ const ROTATION_VOICE: CadenceVoice = {
 };
 
 export interface RotationScanInput {
-  fightDurationS: number;
+  model: PullModel;
   castEvents: TimedEvent[];
   buffEvents: TimedEvent[];
   cooldowns: PlanCooldown[];
@@ -72,7 +75,9 @@ export interface RotationScanInput {
   talents: ReadonlyMap<number, number> | null;
 }
 
-interface CooldownScan { issues: AnalysisFinding[]; holds: AnalysisFinding[]; blAligned: boolean; }
+interface CooldownScan { issues: AnalysisFinding[]; holds: AnalysisFinding[]; blAligned: boolean; folded: FoldCounts; }
+
+interface RotationScan { findings: AnalysisFinding[]; folded: FoldCounts; }
 
 interface FindingBucket { issues: AnalysisFinding[]; holds: AnalysisFinding[]; }
 
@@ -93,7 +98,6 @@ export class RotationFeatureService {
   private readonly logger = inject(LoggerService);
   private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
-  private readonly bloodlust = inject(RotationBloodlustService);
   private readonly auraWindows = inject(AuraWindowsService);
   private readonly listLogs = inject(ListLogService);
   private readonly listFindings = inject(ListFindingService);
@@ -102,6 +106,7 @@ export class RotationFeatureService {
   private readonly source = inject(ROTATION_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
   private readonly gearExtract = inject(GearExtractService);
+  private readonly pullModel = inject(PullModelService);
 
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
@@ -109,12 +114,12 @@ export class RotationFeatureService {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
 
-    const pull: PullRef = { reportCode, fightId };
+    const pull: PullRef = { reportCode, fightId, playerId };
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'RotationFeatureService.loadPlayerView',
       errorId: 'rotation.player-view',
-      emptyView: () => ({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [] }),
-      analyze: context => this.playerView(this.withList(bench.value), pull, playerId, context),
+      emptyView: () => ({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null }),
+      analyze: context => this.playerView(this.withList(bench.value), pull, context),
     });
   }
 
@@ -124,11 +129,9 @@ export class RotationFeatureService {
     return stored.list && stored.buttons ? bench : { ...bench, list: { lines: [], variables: [], spells: {}, talents: {} }, buttons: [] };
   }
 
-  private async playerView(
-    bench: RotationBench, pull: PullRef, playerId: number, context: PullContext,
-  ): Promise<RotationPlayerView> {
-    const { reportCode, fightId } = pull;
-    const { report, fight, fightDurationS } = context;
+  private async playerView(bench: RotationBench, pull: PullRef, context: PullContext): Promise<RotationPlayerView> {
+    const { reportCode, fightId, playerId } = pull;
+    const { report, fight, model } = context;
     const abilities = report.masterData?.abilities ?? [];
     const folds = this.wclProjections.pressFolds(bench.major_cooldowns);
     const [casts, buffs, reading, combatants] = await Promise.all([
@@ -137,15 +140,18 @@ export class RotationFeatureService {
       this.listLogs.read(bench.list, { reportCode, fight, playerId, abilities, folds }),
       this.wclApi.getCombatantInfo(reportCode, fightId, playerId),
     ]);
-    const findings = this.analyzeRotationFindings({
-      fightDurationS,
+    const { findings, folded } = this.analyzeRotationFindings({
+      model,
       castEvents: this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime),
       buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime),
       cooldowns: bench.major_cooldowns, bench,
       talents: this.gearExtract.pickedTalents(this.gearExtract.selectCombatantInfo(combatants, playerId)),
     });
     const { downtimeRows, offensiveRows, onPlan } = this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
-    return { buttonRows: this.listFindings.rows(bench, reading), downtimeRows, offensiveRows, onPlan };
+    return {
+      buttonRows: this.listFindings.rows(bench, reading), downtimeRows, offensiveRows, onPlan,
+      downtimeSpan: this.pullModel.judgedSpan(model), offensiveSpan: this.pullModel.judgedSpan(model, folded),
+    };
   }
 
   async loadPlanView(spec: string, encounterId: number): Promise<Result<RotationPlanView>> {
@@ -166,42 +172,43 @@ export class RotationFeatureService {
     if (!blAligned && wantsBL) {
       findings.push({ severity: 'critical', category: 'cooldown_alignment', cd_name: cdName,
         timestamp_s: firstCastS,
+        span: { fromS: blTimeS - BL_WINDOW_LEAD_S, toS: blTimeS + BLOODLUST_DURATION_S + BL_WINDOW_TRAIL_S },
         measured: { value: 'missed', unit: 'Bloodlust' },
         message: `${cdName} missed Bloodlust. Bloodlust started at ${fmtClock(blTimeS)}, ${cdName} at ${fmtClock(firstCastS)}.`,
         details: { remedy: `Align ${cdName} with Bloodlust.` }, occurrences: [] });
-    } else if (blAligned && cdBench.avg_bl_offset_s != null && cdBench.stddev_bl_offset_s != null) {
-      const offsets = inWindow.map(timeS => timeS - blTimeS);
-      const playerOffset = closestToZero(offsets);
-      if (isOutlierBeyond(playerOffset, cdBench.avg_bl_offset_s, cdBench.stddev_bl_offset_s, OUTLIER_SIGMAS, TIMING_BAND_MIN_S)) {
-        const dir = playerOffset > cdBench.avg_bl_offset_s ? 'late' : 'early';
-        // The judged cast (closest-to-zero offset) is not always the earliest in the window.
-        const judgedCastS = inWindow[offsets.indexOf(playerOffset)];
-        findings.push({ severity: 'warning', category: 'cooldown_alignment', cd_name: cdName,
-          timestamp_s: judgedCastS,
-          measured: { value: dir, unit: 'in Bloodlust' },
-          message: `${cdName} was ${dir} inside the Bloodlust window.`,
-          details: { remedy: `Tighten ${cdName} to the Bloodlust window.` }, occurrences: [] });
-      }
+    } else if (blAligned) {
+      const timing = this.bloodlustTiming(cdName, inWindow, cdBench, blTimeS);
+      if (timing) findings.push(timing);
     }
     return { blAligned, findings };
   }
 
+  private bloodlustTiming(cdName: string, inWindow: number[], cdBench: PerCdBenchmark, blTimeS: number): AnalysisFinding | null {
+    if (cdBench.avg_bl_offset_s == null || cdBench.stddev_bl_offset_s == null) return null;
+    // The judged cast (closest-to-zero offset) is not always the earliest in the window.
+    const offsets = inWindow.map(timeS => timeS - blTimeS);
+    const playerOffset = closestToZero(offsets);
+    const judgedCastS = inWindow[offsets.indexOf(playerOffset)] ?? blTimeS + playerOffset;
+    if (!isOutlierBeyond(playerOffset, cdBench.avg_bl_offset_s, cdBench.stddev_bl_offset_s, OUTLIER_SIGMAS, TIMING_BAND_MIN_S)) return null;
+    const dir = playerOffset > cdBench.avg_bl_offset_s ? 'late' : 'early';
+    return { severity: 'warning', category: 'cooldown_alignment', cd_name: cdName,
+      timestamp_s: judgedCastS,
+      span: { fromS: Math.min(blTimeS, judgedCastS), toS: Math.max(blTimeS, judgedCastS) },
+      measured: { value: dir, unit: 'in Bloodlust' },
+      message: `${cdName} was ${dir} inside the Bloodlust window.`,
+      details: { remedy: `Tighten ${cdName} to the Bloodlust window.` }, occurrences: [] };
+  }
+
   protected checkCastEfficiency(
-    castTimesS: number[], fightDurS: number, bench: RotationBench,
+    castTimesS: number[], model: PullModel, bench: RotationBench,
   ): AnalysisFinding | null {
-    if (castTimesS.length < 2) return null;
-    let totalDtS = 0;
-    let prevS: number | undefined;
-    for (const timeS of castTimesS) {
-      if (prevS != null) {
-        const gap = timeS - prevS;
-        if (gap > bench.downtime_threshold_s) totalDtS += gap;
-      }
-      prevS = timeS;
-    }
+    const aliveS = spansS(model.aliveSpans);
+    if (castTimesS.length < 2 || aliveS <= 0) return null;
+    const totalDtS = castDowntimeS(castTimesS, bench.downtime_threshold_s, model.aliveSpans);
     const topE = bench.top_avg_efficiency;
     const topSD = bench.top_efficiency_stddev;
-    const effPct = castEfficiencyPct(totalDtS, fightDurS);
+    const effPct = castEfficiencyPct(totalDtS, aliveS);
+    const over = aliveS < model.fightDurationS ? 'your alive time' : 'the fight';
     // Flag only more than 1 sigma below the top-parse efficiency, so beating the top parses never trips a warning.
     const WARN_SIGMAS_BELOW = 1;
     if (!isOutlierBelow(effPct, topE, topSD, WARN_SIGMAS_BELOW)) return null;
@@ -209,7 +216,7 @@ export class RotationFeatureService {
       severity: 'warning', category: 'cast_efficiency',
       label: 'Low cast efficiency',
       measured: { value: `${effPct.toFixed(1)}%`, unit: `top ${topE.toFixed(1)}%` },
-      message: `You were casting ${effPct.toFixed(1)}% of the fight, idle for ${totalDtS.toFixed(1)}s. Aim for ${topE.toFixed(1)}% or more.`,
+      message: `You were casting ${effPct.toFixed(1)}% of ${over}, idle for ${totalDtS.toFixed(1)}s. Aim for ${topE.toFixed(1)}% or more.`,
       details: { remedy: `Fill ${totalDtS.toFixed(1)}s of gaps.` }, occurrences: [] };
   }
 
@@ -219,10 +226,10 @@ export class RotationFeatureService {
       : null;
   }
 
-  /** `castTimesS` are fight-relative seconds, ascending. Null when the cooldown went unused and the player's talents do not show it. */
+  /** `castTimesS` are fight-relative seconds, ascending, inside the judged span. Null when the cooldown went unused and the player's talents do not show it. */
   protected analyzeOneCooldown(
     cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark | undefined,
-    fightDurS: number, blTimeS: number | null, talents: ReadonlyMap<number, number> | null,
+    model: PullModel, talents: ReadonlyMap<number, number> | null,
   ): { success: AnalysisFinding | null; scan: CooldownScan } | null {
     const cdName = cd.name;
     const actual = castTimesS.length;
@@ -230,40 +237,38 @@ export class RotationFeatureService {
 
     if (!cdBench) {
       const success = this.cooldownSuccess(cdName, actual, `: ${actual} casts (no bench data).`);
-      return { success, scan: { issues: [], holds: [], blAligned: false } };
+      return { success, scan: { issues: [], holds: [], blAligned: false, folded: this.pullModel.noFolds() } };
     }
 
     // BL alignment is data-driven: a cooldown "wants BL" when most top parses align it.
     const wantsBL = cdBench.bl_pct >= BL_CONSENSUS_PCT;
-    const { expected, floor } = benchExpectedUses(fightDurS, cdBench);
+    const { expected, floor } = benchExpectedUses(model.aliveSpans, cdBench);
 
-    const issues: AnalysisFinding[] = [];
-    if (this.castCadence.usedByMajority(cdBench)) {
-      const lost = this.castCadence.checkLostUses(ROTATION_VOICE, cdName, actual, expected, floor, fightDurS);
-      if (lost) issues.push(lost);
-      const lateOpener = this.castCadence.checkFirstCastDelay(ROTATION_VOICE, cdName, castTimesS, cdBench);
-      if (lateOpener) issues.push(lateOpener);
-    }
-    const bl = this.checkBloodlustAlignment(cdName, castTimesS, cdBench, blTimeS, wantsBL);
-    issues.push(...bl.findings);
-    issues.push(...this.castCadence.checkGaps(ROTATION_VOICE, cdName, castTimesS, cdBench));
-    const holds = this.holdTargets.holdSuggestionFindings(cdName, castTimesS, cdBench.hold_targets, fightDurS);
+    const checked = this.castCadence.usedByMajority(cdBench)
+      ? this.castCadence.checkUseCount(ROTATION_VOICE, cdName, castTimesS, cdBench, { expected, floor, model })
+      : [];
+    const bl = this.checkBloodlustAlignment(cdName, castTimesS, cdBench, model.lust?.startS ?? null, wantsBL);
+    checked.push(...bl.findings);
+    checked.push(...this.castCadence.checkGaps(ROTATION_VOICE, cdName, castTimesS, cdBench));
+    const checkedHolds = this.holdTargets.holdSuggestionFindings(cdName, castTimesS, cdBench.hold_targets, model.judgedEndS);
+    const { kept: issues, folded } = this.pullModel.foldFindings(model, checked);
+    const { kept: holds, folded: foldedHolds } = this.pullModel.foldFindings(model, checkedHolds);
 
     const blNote = bl.blAligned && wantsBL ? ', aligned with Bloodlust' : '';
     const success = issues.length ? null : this.cooldownSuccess(cdName, actual, ` - ${actual}/${expected} casts${blNote}.`);
-    return { success, scan: { issues, holds, blAligned: bl.blAligned } };
+    return { success, scan: { issues, holds, blAligned: bl.blAligned, folded: this.pullModel.addFolds(folded, foldedHolds) } };
   }
 
-  protected analyzeRotationFindings(input: RotationScanInput): AnalysisFinding[] {
-    const { fightDurationS: fightDurS, castEvents, buffEvents, cooldowns, bench, talents } = input;
-    const inFight = (event: TimedEvent): boolean => event.atS >= 0 && event.atS <= fightDurS;
+  protected analyzeRotationFindings(input: RotationScanInput): RotationScan {
+    const { model, castEvents, buffEvents, cooldowns, bench, talents } = input;
+    const judged = (event: TimedEvent): boolean => event.atS >= 0 && event.atS <= model.judgedEndS;
     const casts = castEvents
-      .filter(event => event.type === 'cast' && inFight(event))
+      .filter(event => event.type === 'cast' && judged(event))
       .sort((a, b) => a.atS - b.atS);
 
     const findings: AnalysisFinding[] = [];
+    let folded = this.pullModel.noFolds();
 
-    const blTimeS = this.bloodlust.detectBloodlust(buffEvents);
     const upAtPull = this.auraWindows.upAtPull(buffEvents);
 
     const perCdBench = bench.per_cd_benchmarks;
@@ -273,18 +278,19 @@ export class RotationFeatureService {
         ...(upAtPull.has(cd.spell_id) ? [0] : []),
         ...casts.filter(cast => cast.abilityGameID === cd.spell_id).map(cast => cast.atS),
       ];
-      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], fightDurS, blTimeS, talents);
+      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], model, talents);
       if (!result) continue;
+      folded = this.pullModel.addFolds(folded, result.scan.folded);
       if (result.scan.issues.length) findings.push(...result.scan.issues);
       else if (result.success) findings.push(result.success);
       if (castTimesS.length) findings.push(...result.scan.holds);
     }
 
-    const efficiency = this.checkCastEfficiency(casts.map(cast => cast.atS), fightDurS, bench);
+    const efficiency = this.checkCastEfficiency(casts.map(cast => cast.atS), model, bench);
     if (efficiency) findings.push(efficiency);
 
     sortBySeverity(findings);
-    return findings;
+    return { findings, folded };
   }
 
   private resolveCd(name: string, cdSpellIds: Record<string, number>, abilities: AbilityIcons): ResolvedCd {

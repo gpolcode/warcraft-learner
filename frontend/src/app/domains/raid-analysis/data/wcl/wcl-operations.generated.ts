@@ -43,7 +43,7 @@ export type ReportQueryVariables = Exact<{
   code: string;
 }>;
 
-export type ReportQuery = { reportData: { report: { title: string, startTime: number, fights: Array<{ id: number, name: string, startTime: number, endTime: number, kill: boolean | null, encounterID: number, difficulty: number | null, friendlyPlayers: Array<number | null> | null, fightPercentage: number | null } | null> | null, masterData: { actors: Array<{ id: number | null, name: string | null, subType: string | null, server: string | null } | null> | null, enemies: Array<{ id: number | null, name: string | null, gameID: number | null } | null> | null, abilities: Array<{ gameID: number | null, name: string | null, icon: string | null } | null> | null } | null } | null } | null };
+export type ReportQuery = { reportData: { report: { title: string, startTime: number, fights: Array<{ id: number, name: string, startTime: number, endTime: number, kill: boolean | null, encounterID: number, difficulty: number | null, friendlyPlayers: Array<number | null> | null, fightPercentage: number | null, wipeCalledTime: number | null, phaseTransitions: Array<{ id: number, startTime: number }> | null } | null> | null, masterData: { actors: Array<{ id: number | null, name: string | null, subType: string | null, server: string | null } | null> | null, enemies: Array<{ id: number | null, name: string | null, gameID: number | null } | null> | null, abilities: Array<{ gameID: number | null, name: string | null, icon: string | null } | null> | null } | null } | null } | null };
 
 export type ReportFightsQueryVariables = Exact<{
   code: string;

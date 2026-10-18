@@ -8,6 +8,8 @@ import { FindingOccurrences } from './finding-occurrences';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
 import { EmptyState } from '../../shared/ui-empty-state/empty-state';
+import { JudgedSpanCaption } from '../ui-judged-span/judged-span';
+import type { JudgedSpan } from '../data/analysis/pull-model-service';
 
 export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
 
@@ -18,13 +20,15 @@ export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-servi
   host: { class: 'block' },
   imports: [
     EmptyState, TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChevron, TuiExpand, TuiItem, TuiBadge, TuiChip,
-    GameIcon, FindingOccurrences, FormatDurationPipe,
+    GameIcon, FindingOccurrences, FormatDurationPipe, JudgedSpanCaption,
   ],
   templateUrl: './finding-table.html',
 })
 export class FindingTable {
   readonly heading = input.required<string>();
   readonly subtitle = input<string>('');
+  /** The pull time the rows were judged over; null on a card that judges no pull. */
+  readonly judged = input<JudgedSpan | null>(null);
   readonly rows = input.required<FindingRow[]>();
   readonly onPlan = input<OnPlanChip[]>([]);
   readonly showMap = input<boolean>(false);

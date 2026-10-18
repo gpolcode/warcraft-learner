@@ -9,6 +9,9 @@
             <p tuiSubtitle>{{ subtitle() }}</p>
           }
         </hgroup>
+        @if (judged(); as span) {
+          <wl-judged-span class="mt-1" [span]="span"></wl-judged-span>
+        }
       </div>
       <div class="tabular-nums hidden md:block text-label text-muted text-right">Measured</div>
       <div class="hidden md:block text-label text-muted card-inset">Fix</div>

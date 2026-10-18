@@ -52,6 +52,8 @@ export class Rotation {
   protected readonly downtimeRows = computed<FindingRow[]>(() => this.load.value()?.downtimeRows ?? []);
   protected readonly offensiveRows = computed<FindingRow[]>(() => this.load.value()?.offensiveRows ?? []);
   protected readonly onPlan = computed<OnPlanChip[]>(() => this.load.value()?.onPlan ?? []);
+  protected readonly downtimeSpan = computed(() => this.load.value()?.downtimeSpan ?? null);
+  protected readonly offensiveSpan = computed(() => this.load.value()?.offensiveSpan ?? null);
 
   protected onOpenMap(timeS: number): void {
     this.openMap.emit({ timeS, windowLengthS: 0 });

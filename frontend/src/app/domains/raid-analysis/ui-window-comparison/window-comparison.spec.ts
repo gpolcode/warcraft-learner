@@ -23,6 +23,7 @@ function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): Compar
     note: '',
     status,
     statusIcon: 'check_circle',
+    unjudged: null,
     overview: { label: '', icon: '', playerPct: null, topAvg: null, topMin: null, topMax: null, ...overview },
     detailRows: [],
   };
@@ -268,6 +269,16 @@ describe('WindowComparison delta badge', () => {
 
     expect(dom.text()).toContain('Not reached');
     expect(dom.query(DELTA_BADGE)).toBeNull();
+  });
+
+  it.each([
+    { unjudged: 'dead', reads: 'Dead' },
+    { unjudged: 'after_wipe', reads: 'After the wipe' },
+  ] as const)('reads "$reads" for a window muted for that cause', ({ unjudged, reads }) => {
+    const dom = render([{ ...win({ playerPct: null, topAvg: 100 }, 'muted'), unjudged }]);
+
+    expect(dom.text()).toContain(reads);
+    expect(dom.text()).not.toContain('Not reached');
   });
 
   it('shows the top-parse damage, never the player\'s, for a bench-only window', () => {

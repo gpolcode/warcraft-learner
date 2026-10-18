@@ -29,6 +29,8 @@ export interface AnalysisFinding {
   measured?: { value: string; unit?: string };
   label?: string;
   timestamp_s?: number;
+  /** The pull time the finding rests on; a death or the wipe inside it is the root cause, so the finding folds under that cause instead of rendering. */
+  span?: { fromS: number; toS: number };
   details?: {
     cd_name?: string;
     remedy?: string;

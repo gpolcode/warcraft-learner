@@ -12,6 +12,10 @@ export interface WclFight {
   fightPercentage: number;
   /** WCL difficulty id: 3/4/5 are raid normal/heroic/mythic, 10 a Mythic+ dungeon boss. */
   difficulty?: number | null;
+  /** Report-relative ms, like `startTime`. Absent on fights read through the fights-only query. */
+  phaseTransitions?: { id: number; startTime: number }[] | null;
+  /** Report-relative ms; set only when the raid called the wipe through the Companion app. */
+  wipeCalledTime?: number | null;
 }
 
 export const MYTHIC_DIFFICULTY = 5;

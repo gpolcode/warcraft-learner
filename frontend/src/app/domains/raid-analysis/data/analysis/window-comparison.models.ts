@@ -1,3 +1,5 @@
+import type { UnjudgedCause } from './pull-model-service';
+
 export interface RangeRow {
   spellId?: number;
   label: string;
@@ -30,6 +32,8 @@ export interface ComparisonWindow {
   note: string;
   status: WindowStatus;
   statusIcon: string;
+  /** Why a muted window is not judged; null on a judged or bench-only window. */
+  unjudged: UnjudgedCause | null;
   overview: RangeRow;
   detailRows: RangeRow[];
 }

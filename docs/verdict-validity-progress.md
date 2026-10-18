@@ -30,3 +30,42 @@ None: the stack base is 6882b59 plus the paper, and every file:line reference th
 
 - Use `Results.unusableLog` for any new permanent failure caused by the user's log or report.
 - `FindingRow.message` is required; every row builder must set it.
+
+## Package 1: player timeline (done)
+
+Branch `claude/verdict-validity-p1-timeline`, PR against `ccr-b792d165-ypnein`.
+
+### Done
+
+- **`PullModelService`** (`RA/data/analysis/pull-model-service.ts`). `PullContextService.analyzePull` builds one `PullModel` per card call and hands it in `PullContext.model`; `PullRef` carries `playerId`. Reads: raid-wide `Deaths`, the player's `Buffs`, `playerDetails`, and `getResurrects` only when the player died or an uncalled wipe has half the raid dead. All are reads another card or the page makes, so the response cache serves them.
+  - Judged end: a kill runs to the fight end; a wipe ends at `wipeCalledTime` (report clock, made pull-relative) when it lies inside the pull, else at the first instant `ceil(friendlyPlayers / 2)` are dead at once (`DeathTimelineService.firstDeadAtOnceS`), else at the fight end (`judgedEndCause: 'wipe'`). The pull overview keeps its own three-dead outcome label.
+  - Dead spans are the player's own, cut at the judged end; a death at or after it is dropped. Alive spans are their complement on `[0, judgedEnd)`.
+  - Lust is the earliest Bloodlust aura on the player's own buffs (`RotationBloodlustService.lustSpan`; `detectBloodlust`, which ingest calls, reads through it). Phases are `phaseTransitions` made pull-relative. Role is the `playerDetails` group (`tanks`, `healers`, `dps`), else `unknown`.
+  - `causeOf(model, from, to)` returns the attribution precedence for a stretch: `dead`, then `after_wipe` (any non-kill end) or `not_reached` (kill), else null. A stretch ending exactly at the judged end is judged; a death ending exactly where a stretch starts does not touch it.
+- **`REPORT_Q`** selects `phaseTransitions{id startTime}` and `wipeCalledTime`; `WclFight` carries both as optional. `REPORT_FIGHTS_Q` is unchanged.
+- **Measures** (`analysis-math.ts`, shared by ingest and runtime): `AliveSpan`, `spansS`, `overlapS`, `castDowntimeS(castTimes, threshold, spans)`, and `benchExpectedUses(spans, bench)`. Expected uses are the rate over alive minutes, capped by the cadence: the span starting at 0 keeps the opener rule, a span resumed after a resurrect fits only whole top gaps (none without a gap). Ingest's `computeEfficiencyThresholds` measures each top log through `castDowntimeS` over `[[0, duration]]`.
+- **Consumers.** Rotation and defensive judge casts and uses inside `[0, judgedEnd]`, count expected uses over alive spans (the lost-use sentence names "in m:ss of alive time" once that is shorter than the fight), and rotation efficiency is downtime over alive time ("of your alive time"). Burst and defensive windows go through `WindowViewService.buildWindowView({ model })`: a window not wholly inside alive, pre-wipe time is muted with `unjudged` (`Dead`, `After the wipe`, `Not reached`; icons skull, flag, schedule) and no player damage. A null model is the bench-only view.
+- **One root cause, one row.** `AnalysisFinding.span` names the stretch a finding rests on (first cast: `[0, first]`; gap: `[prev, cast]`; hold: `[prev, holdTo]`; Bloodlust miss: the lust window; Bloodlust timing: lust to the judged cast). `PullModelService.foldFindings` drops a finding whose span has a cause and counts it per cause; a cooldown whose issues all fold reads as on plan. Lost uses and efficiency carry no span: they are measured on alive time instead.
+- **Captions.** `wl-judged-span` renders under the subtitle of Downtime, Offensives, Defensives, Burst windows and Defensive windows (`judged` input on `wl-finding-table` and `wl-window-comparison`): "Judged 0:00 to m:ss, alive m:ss." plus one sentence per cause that silenced something, with the count. The view models carry `JudgedSpan | null` (null on empty and bench-only views).
+- **E2E.** The cards pin the caption's first sentence; `showsFirstWindow` accepts an unjudged first window and returns whether it was judged.
+
+### Decisions and deviations
+
+- `npm run schema:pull` needs a WCL client pair, which this session lacked. The generated types were produced by the same codegen pipeline against the published WCL schema SDL (`math280h/go-wcl` `schema/schema.graphql`, which reproduces the committed types byte for byte before the change). Rerun `npm run schema:pull` with a pair to confirm; only `ReportQuery` should differ.
+- The defensive window rule "dead in the window is bad" is replaced by the muted `Dead` window; the death is named once in the caption.
+- Lust comes from the player's own buffs, so a player dead when lust was cast has no lust; Bloodlust checks for that player read none.
+- The model is built per card call (three cards), not memoized across cards; services stay stateless and the WCL reads are cached.
+
+### Drift against 6882b59
+
+None for the references this package used (RC3: `analysis-math.ts:97-107`, `window-view-service.ts:98`, `rotation-transform-service.ts:27-28,138`, `rotation-feature-service.ts:166-167,237`).
+
+### Seams stubbed
+
+- `PullModel.phases` and `PullModel.role` have no consumer yet. The phase guard waits for package 2's baked per-parse phase starts and reads `model.phases`.
+
+### For the next package
+
+- Every new timed check sets `AnalysisFinding.span` and runs through `PullModelService.foldFindings`; every new window goes through `buildWindowView` with the model.
+- Ingest and runtime measures stay in `analysis-math.ts` and take spans; ingest passes `[[0, duration]]`.
+- Test fixtures: `pullModel(over)` in `src/testing/builders/pull-model.ts`; `featureService` defaults `getPlayerDetails` and `getResurrects` on a WCL fake that leaves them out.
