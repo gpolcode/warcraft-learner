@@ -20,7 +20,7 @@ export class InjectedMistakeService {
   /** Each way the mistake fits this log; none when the log has nothing it applies to, or the bench bakes nothing it changes. */
   variants(mistake: InjectedMistake, heldOut: HeldOutCase): HeldOutCase[] {
     if (heldOut.card === 'rotation') return this.rotationVariants(mistake, heldOut);
-    if (heldOut.card === 'defensive') return mistake === 'strip-defensive' ? this.stripDefensive(heldOut) : [];
+    if (heldOut.card === 'defensive') return this.defensiveVariants(mistake, heldOut);
     return this.gearVariants(mistake, heldOut);
   }
 
@@ -45,7 +45,7 @@ export class InjectedMistakeService {
     return change([...heldOut.log.measures.cd_casts_s[cooldown.name] ?? []]).map(casts => this.withCasts(heldOut, cooldown.name, casts));
   }
 
-  private delayed(casts: number[], index: number): number[] {
+  private delayed(casts: readonly number[], index: number): number[] {
     return casts.map((castS, at) => at === index ? castS + CHOICES.delayS : castS).sort((a, b) => a - b);
   }
 
@@ -83,16 +83,26 @@ export class InjectedMistakeService {
     return { ...heldOut, log: { ...heldOut.log, measures: { ...heldOut.log.measures, cd_casts_s } } };
   }
 
-  /** The first defensive most of the other top logs use goes unpressed: no use, and none of its windows covered. */
-  private stripDefensive(heldOut: DefensiveCase): DefensiveCase[] {
+  /** Each variant changes the first defensive most of the other top logs use. */
+  private defensiveVariants(mistake: InjectedMistake, heldOut: DefensiveCase): DefensiveCase[] {
     const defensive = heldOut.fold.defensives.find(entry => {
       const defBench = heldOut.fold.per_defensive_benchmarks[entry.name];
       return defBench && this.castCadence.usedByMajority(defBench) && (heldOut.log.casts[entry.name]?.length ?? 0) > 0;
     });
     if (!defensive) return [];
-    const ownWindows = new Set(heldOut.fold.defensive_windows.filter(window => window.defensive_name === defensive.name).map(window => window.index));
+    if (mistake === 'strip-defensive') return this.stripDefensive(heldOut, defensive.name);
+    if (mistake !== 'delay-cooldown-30s') return [];
+    const uses = heldOut.log.casts[defensive.name] ?? [];
+    return [0, 1].flatMap(index => index < uses.length
+      ? [{ ...heldOut, log: { ...heldOut.log, casts: { ...heldOut.log.casts, [defensive.name]: this.delayed(uses, index) } } }]
+      : []);
+  }
+
+  /** The first defensive most of the other top logs use goes unpressed: no use, and none of its windows covered. */
+  private stripDefensive(heldOut: DefensiveCase, name: string): DefensiveCase[] {
+    const ownWindows = new Set(heldOut.fold.defensive_windows.filter(window => window.defensive_name === name).map(window => window.index));
     const covered = new Map([...heldOut.log.covered].filter(([index]) => !ownWindows.has(index)));
-    return [{ ...heldOut, log: { ...heldOut.log, casts: { ...heldOut.log.casts, [defensive.name]: [] }, covered } }];
+    return [{ ...heldOut, log: { ...heldOut.log, casts: { ...heldOut.log.casts, [name]: [] }, covered } }];
   }
 
   private gearVariants(mistake: InjectedMistake, heldOut: GearCase): GearCase[] {

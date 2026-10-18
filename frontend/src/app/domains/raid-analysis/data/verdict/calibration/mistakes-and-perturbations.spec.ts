@@ -22,6 +22,9 @@ const CHOICES = VERDICT_CHOICES.calibration;
 /** The 5s opener, and then the 95s use, thirty seconds later. */
 const FIRST_DELAYED = [35, 95, 185, 275];
 const SECOND_DELAYED = [5, 125, 185, 275];
+/** The defensive's 10s and 130s uses, each thirty seconds later in turn. */
+const DEFENSIVE_FIRST_DELAYED = [40, 130];
+const DEFENSIVE_SECOND_DELAYED = [10, 160];
 /** Five global cooldowns of 1.5s each, as a share of the 300s pull. */
 const IDLE_PCT = 100 * 5 * 1.5 / FIGHT_S;
 
@@ -82,6 +85,19 @@ describe('InjectedMistakeService', () => {
 
     expect(variant?.card === 'defensive' && variant.log.casts[CLOAK]).toEqual([]);
     expect(variant?.card === 'defensive' && variant.log.covered.size).toBe(0);
+  });
+
+  it('delays a defensive\'s first use, and separately its second, by thirty seconds', () => {
+    const variants = mistakes.variants('delay-cooldown-30s', defensiveCase());
+
+    expect(variants.map(variant => variant.card === 'defensive' ? variant.log.casts[CLOAK] : [])).toEqual([DEFENSIVE_FIRST_DELAYED, DEFENSIVE_SECOND_DELAYED]);
+  });
+
+  it('has no defensive to delay when the held-out log never pressed one', () => {
+    const unpressed = defensiveCase();
+    const variants = mistakes.variants('delay-cooldown-30s', { ...unpressed, log: { ...unpressed.log, casts: { [CLOAK]: [] } } });
+
+    expect(variants).toEqual([]);
   });
 
   it('swaps a talent and removes an enchant from a gear log', () => {
