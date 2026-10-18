@@ -10,6 +10,9 @@ import { Results } from '../../../../shared/util-http/result';
 import { bench } from '../../rotation/rotation-harness';
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
 import { rotationLog, SB } from './calibration-harness';
+import { NOT_GRADED } from './arming-service';
+import { LATE_OPENER_FAMILY } from '../../rotation/cadence-judge-service';
+import { DOWNTIME_FAMILY } from '../../rotation/downtime-judge-service';
 
 const indices = TestBed.inject(CalibrationIndexService);
 const encounters = TestBed.inject(EncounterCalibrationService);
@@ -82,6 +85,12 @@ describe('CalibrationIndexService build', () => {
 
     expect(built.specs[SPEC]?.[FAMILY]?.status).toBe('comparison');
     expect(built.invariants.find(result => result.family === FAMILY)?.passed).toBe(false);
+  });
+
+  it('keeps a family whose perturbation leaves it no test, as a truncated pull leaves downtime', () => {
+    const untested = { truncate: { [FAMILY]: { base: { tests: 1000, amber: 70, red: 0 }, perturbed: { tests: 0, amber: 0, red: 0 } } } };
+
+    expect(indices.build([encounterOf({}, { invariants: untested })]).invariants[0]?.passed).toBe(true);
   });
 
   it('fails the lust invariant on any Bloodlust row outside the band', () => {
@@ -165,5 +174,34 @@ describe('CalibrationCapsService', () => {
     const caps = await capsWith(() => Promise.resolve(Results.ok({ unrelated: true }))).load(SPEC, ENCOUNTER);
 
     expect(caps.capOf(FAMILY)).toBe('neutral');
+  });
+
+  it('lists a family the index leaves a comparison as not graded, with its reason', async () => {
+    const tooFew = index({ specs: { [SPEC]: { [FAMILY]: { status: 'comparison', cap: 'neutral', reason: NOT_GRADED.tooFew } } } });
+    const service = capsWith(() => Promise.resolve(Results.ok(tooFew)));
+
+    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [LATE_OPENER_FAMILY]))
+      .toEqual([{ label: LATE_OPENER_FAMILY.label, reason: NOT_GRADED.tooFew }]);
+  });
+
+  it('leaves a graded family off the not-graded list', async () => {
+    const service = capsWith(() => Promise.resolve(Results.ok(index())));
+
+    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [LATE_OPENER_FAMILY])).toEqual([]);
+  });
+
+  it('names the boss as the reason on a bench whose own rate demoted the family', async () => {
+    const demoted = index({ demoted: { [SPEC]: { [String(ENCOUNTER)]: [FAMILY] } } });
+    const service = capsWith(() => Promise.resolve(Results.ok(demoted)));
+
+    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [LATE_OPENER_FAMILY]))
+      .toEqual([{ label: LATE_OPENER_FAMILY.label, reason: NOT_GRADED.bench }]);
+  });
+
+  it('lists every family as not graded when no index is published', async () => {
+    const service = capsWith(() => Promise.resolve(Results.missing('Not yet ingested.')));
+
+    expect(service.notGraded(await service.load(SPEC, ENCOUNTER), [LATE_OPENER_FAMILY, DOWNTIME_FAMILY]).map(note => note.label))
+      .toEqual([LATE_OPENER_FAMILY.label, DOWNTIME_FAMILY.label]);
   });
 });

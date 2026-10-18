@@ -11,6 +11,7 @@ import chevronRight from '@taiga-ui/icons/src/chevron-right.svg';
 import circleAlert from '@taiga-ui/icons/src/circle-alert.svg';
 import circleCheck from '@taiga-ui/icons/src/circle-check.svg';
 import circleHelp from '@taiga-ui/icons/src/circle-help.svg';
+import clipboardCheck from '@taiga-ui/icons/src/clipboard-check.svg';
 import clock from '@taiga-ui/icons/src/clock.svg';
 import cloudOff from '@taiga-ui/icons/src/cloud-off.svg';
 import cloudSync from '@taiga-ui/icons/src/cloud-sync.svg';
@@ -46,6 +47,7 @@ const APP_ICONS: Record<string, string> = {
   download,
   emoji_events: trophy,
   error: circleAlert,
+  fact_check: clipboardCheck,
   flag,
   github,
   help_outline: circleHelp,

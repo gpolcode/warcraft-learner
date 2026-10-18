@@ -153,18 +153,25 @@ export class CalibrationIndexService {
     });
   }
 
-  /** Rates are smoothed by the rule of succession, so a family that never flags still has a rate the bound can scale. */
   private invariant(name: string, family: string, base: FlagTally, perturbed: FlagTally): InvariantResult[] {
-    const smoothed = (tally: FlagTally): number => (tally.amber + 1) / (tally.tests + 2);
     const raw = (tally: FlagTally): number => tally.tests ? tally.amber / tally.tests : 0;
     const result = (passed: boolean, baseRate: number, perturbedRate: number): InvariantResult[] => [{ name, family, baseRate, perturbedRate, passed }];
-    if (RATE_BOUND.has(name)) return result(smoothed(perturbed) <= CHOICES.perturbedRateRatio * smoothed(base), smoothed(base), smoothed(perturbed));
+    if (RATE_BOUND.has(name)) return [this.rateBound(name, family, base, perturbed)];
     if (name.startsWith('lust') && family === OUTSIDE_BAND) return result(perturbed.amber === 0, 0, raw(perturbed));
     if (name === 'jitter' && family === BURST_FAMILY) return result(Math.abs(raw(perturbed) - raw(base)) < CHOICES.jitterRateShift, raw(base), raw(perturbed));
     if (name === 'damage-scale' && DAMAGE_BLIND.has(family)) {
       return result(perturbed.amber === base.amber && perturbed.red === base.red && perturbed.tests === base.tests, raw(base), raw(perturbed));
     }
     return [];
+  }
+
+  /** Rates are smoothed by the rule of succession, so a family that never flags still has a rate the bound can scale. */
+  private rateBound(name: string, family: string, base: FlagTally, perturbed: FlagTally): InvariantResult {
+    const smoothed = (tally: FlagTally): number => (tally.amber + 1) / (tally.tests + 2);
+    // A perturbation that leaves no test flags nothing; smoothing its empty tally would read as the 0.5 prior.
+    if (!perturbed.tests) return { name, family, baseRate: smoothed(base), perturbedRate: 0, passed: true };
+    const passed = smoothed(perturbed) <= CHOICES.perturbedRateRatio * smoothed(base);
+    return { name, family, baseRate: smoothed(base), perturbedRate: smoothed(perturbed), passed };
   }
 
   private unfoldable(encounters: readonly EncounterCalibration[]): Record<string, number> {

@@ -21,7 +21,7 @@ import { SpecPlanLoaderService } from '../data/simc/spec-plan-loader-service';
 import type { SpecPlan } from '../data/simc/spec-plan-service';
 import { PLAN_KEY, planLoader, specPlan } from '../../../../testing/builders/spec-plan';
 import { ENVIRONMENT } from '../../../../environments/environment-token';
-import { baseEnvironment } from '../../../../environments/base-environment';
+import { baseEnvironment, type IngestSubset } from '../../../../environments/base-environment';
 
 const signatures = TestBed.inject(IngestSignatureService);
 TestBed.resetTestingModule();
@@ -136,13 +136,13 @@ const cleanTransport = transportFailing();
 
 function ingest(
   disk: FakeDisk, wcl: WclApiService, currentRaids: string, plans = planLoader(specPlan()),
-  benches = new Map<BenchTransform, StubTransform>(), transport = cleanTransport,
+  benches = new Map<BenchTransform, StubTransform>(), transport = cleanTransport, ingestSubset: IngestSubset | null = null,
 ): Promise<void> {
   TestBed.configureTestingModule({
     providers: [
       {
         provide: ENVIRONMENT,
-        useValue: { ...baseEnvironment, currentRaids: currentRaids ? [currentRaids] : [], prioritySpecs: [PRIORITY_SPEC] },
+        useValue: { ...baseEnvironment, currentRaids: currentRaids ? [currentRaids] : [], prioritySpecs: [PRIORITY_SPEC], ingestSubset },
       },
       { provide: DATA_FILE_TRANSPORT, useValue: disk },
       { provide: WclApiService, useValue: wcl },
@@ -366,6 +366,37 @@ describe('IngestOrchestratorService.run', () => {
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 
     expect(disk.files.has(benchPath(CURRENT_BOSS.id))).toBe(true);
+  });
+
+  describe('with a subset naming one spec and one encounter', () => {
+    const SUBSET: IngestSubset = { specs: [SPEC], encounterIds: [CURRENT_BOSS.id] };
+    const ingestSubset = (disk: FakeDisk) => ingest(
+      disk, fakeWcl([CURRENT_BOSS, NEW_BOSS], { [CURRENT_BOSS.id]: RANKED, [NEW_BOSS.id]: RANKED }, pointsSpent(NOTHING_SPENT), [SUBTLETY, ASSASSINATION]),
+      RAID, planLoader(specPlan()), new Map(), cleanTransport, SUBSET);
+
+    it('benches the named encounter of the named spec', async () => {
+      const disk = fakeDisk({});
+
+      await ingestSubset(disk);
+
+      expect(disk.files.has(benchPath(CURRENT_BOSS.id))).toBe(true);
+    });
+
+    it('leaves an encounter the subset does not name unbenched', async () => {
+      const disk = fakeDisk({});
+
+      await ingestSubset(disk);
+
+      expect(disk.files.has(benchPath(NEW_BOSS.id))).toBe(false);
+    });
+
+    it('leaves a spec the subset does not name unbenched, though the schedule ranks it first', async () => {
+      const disk = fakeDisk({});
+
+      await ingestSubset(disk);
+
+      expect(disk.files.has(`${PRIORITY_SPEC}/${LEAD_BENCH}/${CURRENT_BOSS.id}.json`)).toBe(false);
+    });
   });
 
   describe('with an earlier rotation file on disk', () => {

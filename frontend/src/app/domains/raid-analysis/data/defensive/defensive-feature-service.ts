@@ -25,7 +25,11 @@ import { GearExtractService } from '../gear/gear-extract-service';
 import { WindowViewService } from '../analysis/window-view-service';
 import { FoldCounts, JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
 import { DefensiveUsesService } from './defensive-uses-service';
-import { DefensiveJudgeService } from './defensive-judge-service';
+import {
+  DEAD_IN_WINDOW_FAMILY, DEFENSIVE_FIRST_USE_FAMILY, DEFENSIVE_GAP_FAMILY, DEFENSIVE_HOLD_FAMILY, DEFENSIVE_USES_FAMILY, DEFENSIVE_WINDOW_FAMILY,
+  DefensiveJudgeService,
+} from './defensive-judge-service';
+import { NotGradedNote } from '../verdict/calibration/calibration.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
 
@@ -45,6 +49,8 @@ export interface DefensiveView {
   findingsSpan: JudgedSpan | null;
   windowsSpan: JudgedSpan | null;
   bench: BenchStrip | null;
+  /** Each defensive card's checks calibration leaves without a color. */
+  notGraded: { defensives: NotGradedNote[]; windows: NotGradedNote[] };
   /** Why the Defensives card flags nothing, with counts. */
   findingsEmpty: string;
   /** Why the Defensive windows card flags nothing, with counts; empty where a window is flagged. */
@@ -115,18 +121,22 @@ export class DefensiveFeatureService {
     const pull: PullRef = { reportCode, fightId, playerId };
     const caps = await this.calibration.load(spec, encounterId);
     const strip = this.benchStrips.strip(bench.value);
+    const notGraded = {
+      defensives: this.calibration.notGraded(caps, [DEFENSIVE_USES_FAMILY, DEFENSIVE_FIRST_USE_FAMILY, DEFENSIVE_GAP_FAMILY, DEFENSIVE_HOLD_FAMILY]),
+      windows: this.calibration.notGraded(caps, [DEFENSIVE_WINDOW_FAMILY, DEAD_IN_WINDOW_FAMILY]),
+    };
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'DefensiveFeatureService.loadAnalysisView',
       errorId: 'defensive.player-view',
       emptyView: () => ({
-        findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null, bench: strip,
+        findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null, bench: strip, notGraded,
         findingsEmpty: this.findingsEmpty(0, bench.value), windowsEmpty: this.windowsEmpty(bench.value, []),
       }),
-      analyze: async context => ({ ...await this.analysisView(bench.value, pull, context, caps), bench: strip }),
+      analyze: async context => ({ ...await this.analysisView(bench.value, pull, context, caps), bench: strip, notGraded }),
     });
   }
 
-  private async analysisView(bench: DefensiveBench, pull: PullRef, context: PullContext, caps?: FamilyCaps): Promise<Omit<DefensiveView, 'bench'>> {
+  private async analysisView(bench: DefensiveBench, pull: PullRef, context: PullContext, caps?: FamilyCaps): Promise<Omit<DefensiveView, 'bench' | 'notGraded'>> {
     const { reportCode, fightId, playerId } = pull;
     const { fight, model } = context;
 

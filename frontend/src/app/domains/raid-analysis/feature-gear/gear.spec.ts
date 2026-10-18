@@ -34,7 +34,7 @@ function benchView(over: Partial<GearComparisonView> = {}): GearComparisonView {
       { slotName: 'Head', enchant: HELM_ENCHANT, share: '9 of 10 top logs' },
       { slotName: 'Legs', enchant: ARMOR_KIT, share: '8 of 10 top logs' },
     ],
-    bench: null,
+    bench: null, notGraded: [],
     ...over,
   };
 }

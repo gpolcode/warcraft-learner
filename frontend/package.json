@@ -13,7 +13,7 @@
     "e2e": "playwright test",
     "lint": "ng lint && eslint scripts e2e playwright.config.ts",
     "knip": "knip",
-    "data:pull": "git -C .. fetch origin gh-pages && rm -rf public/data/specs && git -C .. archive origin/gh-pages data/specs | tar -x -C public",
+    "data:pull": "git -C .. fetch origin +refs/heads/${DATA_REF:-gh-pages}:refs/remotes/origin/${DATA_REF:-gh-pages} && rm -rf public/data/specs && git -C .. archive origin/${DATA_REF:-gh-pages} data/specs | tar -x -C public",
     "schema:pull": "node scripts/schema-pull.mjs"
   },
   "private": true,

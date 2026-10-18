@@ -15,6 +15,7 @@ const { beforeS: LUST_BEFORE_S, afterS: LUST_AFTER_S } = VERDICT_CHOICES.lustWin
 
 export const BLOODLUST_ALIGNMENT_FAMILY: FindingFamily = {
   id: 'rotation.bloodlust',
+  label: 'Cooldowns in Bloodlust',
   version: 1,
   tier: 'amber',
   claim: 'k of n top raiders whose raid lusted mid-fight pressed a cooldown for their lust; you did not press it for your raid\'s lust.',
@@ -34,6 +35,7 @@ export const BLOODLUST_ALIGNMENT_FAMILY: FindingFamily = {
 
 export const BLOODLUST_TIMING_FAMILY: FindingFamily = {
   id: 'rotation.bloodlust_timing',
+  label: 'Bloodlust timing',
   version: 1,
   tier: 'amber',
   claim: 'You pressed a cooldown further from your raid\'s Bloodlust than top raiders who lusted mid-fight press it from theirs.',

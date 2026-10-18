@@ -30,13 +30,15 @@ type TimelineCell =
 // Distinguishes option ids when several comparison cards share a page (burst + defensive).
 let nextInstanceSeq = 0;
 
+import { NotGraded } from '../ui-not-graded/not-graded';
+import type { NotGradedNote } from '../data/verdict/calibration/calibration.models';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-window-comparison',
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    BenchStripCaption,
+    BenchStripCaption, NotGraded,
     TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChip, GameIcon, CompactAbilityRow, RangeBar, RangeLegend,
     FormatDurationPipe, FormatDamagePipe, SignedPercentPipe, JudgedSpanCaption, EmptyState,
   ],
@@ -59,6 +61,8 @@ export class WindowComparison {
   readonly rangeLabel = input.required<string>();
   /** Why nothing is flagged, with counts: the card's empty state with no windows, a line above them otherwise; empty renders nothing. */
   readonly empty = input<string>('');
+  /** The card's checks calibration leaves without a color, listed under its rows. */
+  readonly notGraded = input<readonly NotGradedNote[]>([]);
   readonly openMap = output<number>();
   readonly openClip = output<number>();
 

@@ -97,7 +97,7 @@ const CONFORMANCE: readonly { problem: string; fails: (family: FindingFamily) =>
   { problem: 'version below 1', fails: family => !Number.isInteger(family.version) || family.version < 1 },
   {
     problem: 'blank text field',
-    fails: family => [family.id, family.claim, family.construct, family.alignment, family.uncertaintyShown, family.copy.message,
+    fails: family => [family.id, family.label, family.claim, family.construct, family.alignment, family.uncertaintyShown, family.copy.message,
       family.reference.population].some(blank),
   },
   { problem: 'reference under the minimum n', fails: family => family.reference.minN < VERDICT_CHOICES.minReferenceN },
@@ -111,7 +111,7 @@ const problemsOf = (family: FindingFamily): string[] =>
   CONFORMANCE.filter(check => check.fails(family)).map(check => check.problem);
 
 const family = (over: Partial<FindingFamily> = {}): FindingFamily => ({
-  id: 'lost_cooldown', version: 1, tier: 'red',
+  id: 'lost_cooldown', label: 'Cooldown uses', version: 1, tier: 'red',
   claim: 'You pressed a major cooldown fewer times than top raiders do over the same alive time.',
   construct: 'Casts of one cooldown over alive, pre-wipe time.',
   pendingRebuild: null,
@@ -168,6 +168,10 @@ describe('the registry conformance check', () => {
 
   it('fails a family with a blank claim', () => {
     expect(problemsOf(family({ claim: ' ' }))).toEqual(['blank text field']);
+  });
+
+  it('fails a family with a blank label', () => {
+    expect(problemsOf(family({ label: '' }))).toEqual(['blank text field']);
   });
 
   it('fails a reference one log under the minimum', () => {

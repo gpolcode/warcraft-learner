@@ -18,10 +18,22 @@ const CONFIGURATION = process.argv[2] === 'calibrate' ? 'calibrate' : 'ingest';
 const RESOURCE_FAILURE = 'Failed to load resource';
 const NOT_FOUND = /\b404\b/;
 
+const GROUP_KILL = process.platform !== 'win32';
+
 const children = [];
 
+function signal(child, name) {
+  try {
+    if (GROUP_KILL) process.kill(-child.pid, name);
+    else child.kill(name);
+  } catch {
+    // The group is already gone, which is what the signal was for.
+  }
+}
+
 function startChild(name, command, args) {
-  const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'] });
+  // Its own process group, so shutdown reaches the server npx starts and not only npx, which leaves port 4200 bound.
+  const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'], detached: GROUP_KILL });
   const forward = chunk => {
     for (const line of chunk.toString().split('\n')) {
       if (line.trim()) console.log(`[${name}] ${line}`);
@@ -47,8 +59,8 @@ let browser = null;
 async function endChild(child) {
   if (child.exitCode !== null || child.signalCode !== null) return;
   const exited = once(child, 'exit');
-  child.kill('SIGTERM');
-  const escalation = setTimeout(() => child.kill('SIGKILL'), KILL_GRACE_MS);
+  signal(child, 'SIGTERM');
+  const escalation = setTimeout(() => signal(child, 'SIGKILL'), KILL_GRACE_MS);
   try {
     await exited;
   } finally {

@@ -8,6 +8,7 @@ import { ButtonCounts, ListCheckService, LogReading } from './list-check-service
 
 export const ROTATION_BUTTON_FAMILY: FindingFamily = {
   id: 'rotation.button',
+  label: 'Button choices',
   version: 1,
   tier: 'amber',
   claim: 'You missed more of a button\'s moments than top raiders miss of theirs.',

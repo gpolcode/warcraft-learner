@@ -2,7 +2,7 @@ import { expect, test, Locator, Page } from '@playwright/test';
 import { baseEnvironment } from '../src/environments/base-environment';
 import {
   shows, showsFindingTable, showsFirstOption, showsFirstWindow, showsGearConsensus, picksFirst, holdsPullResolve, gearSection, valueOf,
-  AMOUNT, ANY_TEXT, CD_CHIP, CLOCK, FIGURE, JUDGED_SPAN, OPENED_AT, PERCENT, showsBenchStrip,
+  AMOUNT, ANY_TEXT, CD_CHIP, CLOCK, FIGURE, JUDGED_SPAN, OPENED_AT, PERCENT, showsBenchStrip, showsNotGraded,
 } from './support';
 
 const { e2eReportCode: REPORT_CODE, wclApiUrl: WCL_API_URL } = baseEnvironment;
@@ -124,6 +124,7 @@ test('rotation rules bar the first button against the top logs and open its mome
   await shows(rotationRules, 'You');
   await shows(rotationRules, 'Top raiders, lowest to highest');
   await shows(rotationRules, 'Top raiders average');
+  await showsNotGraded(rotationRules);
 
   const buttons = rotationRules.locator('div[tuiCardLarge]');
   if (!await buttons.count()) {
@@ -176,10 +177,12 @@ test('offensives flag the cooldown casts that missed the top-parse plan, and dow
   await shows(offensives, JUDGED_SPAN);
   await showsBenchStrip(offensives);
   await showsFindingTable(offensives, CD_CHIP);
+  await showsNotGraded(offensives);
   const downtime = rotation.locator('wl-finding-table').filter({ hasText: 'Time you spent not casting, compared with the top logs.' });
   await shows(downtime, 'Downtime');
   await shows(downtime, JUDGED_SPAN);
   await showsFindingTable(downtime, /downtime/);
+  await showsNotGraded(downtime);
 });
 
 test('burst windows compare the first window\'s damage and abilities against the top logs', async () => {
@@ -188,6 +191,7 @@ test('burst windows compare the first window\'s damage and abilities against the
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
   await shows(burstWindows, JUDGED_SPAN);
   await showsBenchStrip(burstWindows);
+  await showsNotGraded(burstWindows);
   const judged = await showsFirstWindow(burstWindows, { metric: 'Damage', chips: 'Cooldowns top raiders use here', range: 'Damage vs top range', casts: true });
   // A judged window names its top logs as a count; the bench decides whether it has enough of them to judge.
   if (judged) await expect(burstWindows.getByText(/^You dealt \S+ here[.,] /)).toBeVisible();
@@ -203,10 +207,12 @@ test('defensives flag the mistimed cooldowns and benchmark the damage taken in t
   await shows(table, JUDGED_SPAN);
   await showsBenchStrip(table);
   await showsFindingTable(table, CD_CHIP);
+  await showsNotGraded(table);
   const windows = defensives.locator('wl-window-comparison');
   await shows(windows, 'Defensive windows');
   await shows(windows, 'Each moment top logs press a defensive, and whether you had it up.');
   await shows(windows, JUDGED_SPAN);
+  await showsNotGraded(windows);
   // A bench keeps only the windows its top logs share, so a re-ingest can leave an encounter with none.
   if (await windows.getByRole('option').count()) {
     const judged = await showsFirstWindow(windows, { metric: 'Damage taken', chips: 'Defensives top raiders use here', range: 'Damage taken vs top range' });
@@ -234,6 +240,7 @@ test('gear sets the build, the trinkets and the enchants against the top logs', 
   await shows(trinkets, 'Your pair against the pairs top raiders use.');
   await expect(verdictOf(trinkets, 'Your pair')).toHaveText(ANY_TEXT);
   await showsGearConsensus(gear);
+  await showsNotGraded(gear);
 
   const enchants = gearSection(gear, 'Enchants');
   const issues = enchants.locator('div.grid');

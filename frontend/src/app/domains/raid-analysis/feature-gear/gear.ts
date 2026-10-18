@@ -8,6 +8,7 @@ import { GearFeatureService } from '../data/gear/gear-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
 import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
+import { NotGraded } from '../ui-not-graded/not-graded';
 
 const COPY_TEXTS = ['Copy name', 'Copied'] as const;
 const CHIP_LINES = 2;
@@ -15,7 +16,7 @@ const CHIP_LINES = 2;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [EmptyState, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiIcon, TuiLink, TuiBadge, TuiChip, TuiItemsWithMore, GameIcon, LoadState, BenchStripCaption],
+  imports: [EmptyState, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiIcon, TuiLink, TuiBadge, TuiChip, TuiItemsWithMore, GameIcon, LoadState, BenchStripCaption, NotGraded],
   templateUrl: './gear.html',
   providers: [{ provide: TUI_COPY_TEXTS, useValue: signal(COPY_TEXTS) }],
 })

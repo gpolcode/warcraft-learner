@@ -1,0 +1,8 @@
+<span class="block text-label text-muted">Not graded</span>
+<p class="text-body text-muted mt-0.5">These checks show their numbers without a color.</p>
+@for (note of notes(); track note.label) {
+  <div class="mt-2">
+    <span class="block text-label text-muted mb-1">{{ note.label }}</span>
+    <span class="text-body">{{ note.reason }}</span>
+  </div>
+}

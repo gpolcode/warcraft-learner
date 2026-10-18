@@ -36,6 +36,28 @@ export async function showsBenchStrip(card: Locator): Promise<void> {
   if (await strip.count()) await shows(strip, BENCH_STRIP);
 }
 
+/** Mirrors NOT_GRADED in src/app/domains/raid-analysis/data/verdict/calibration/arming-service.ts and COMPARISON beside CalibrationCapsService. */
+const NOT_GRADED_REASON = new RegExp(`^(${[
+  'It flags top raiders too often',
+  'Too few top logs to measure how often it flags them',
+  'It misses the mistakes it claims to catch',
+  'With it, the page would flag top raiders too often',
+  'It flags more often when the pull is cut short, the player dies or the lust moves',
+  'On this boss it flags top raiders far more often than on the others',
+  'No measurement of how often it flags top raiders matches this version of the check',
+].join('|')})\\.$`);
+
+/** A card whose every check is graded draws no not-graded list, so the list is checked when drawn. */
+export async function showsNotGraded(card: Locator): Promise<void> {
+  const block = card.locator('wl-not-graded');
+  if (!await block.count()) return;
+  await shows(block, 'Not graded');
+  await shows(block, 'These checks show their numbers without a color.');
+  const note = block.locator('div').first();
+  await expect(note.locator('span.text-label')).toHaveText(ANY_TEXT);
+  await expect(note.locator('span.text-body')).toHaveText(NOT_GRADED_REASON);
+}
+
 /** Mirrors CAT_LABEL in src/app/domains/raid-analysis/data/analysis/analysis.models.ts. */
 export const CD_CHIP = /\b(lost cast|never used|late|Bloodlust|downtime|hold until)\b/;
 

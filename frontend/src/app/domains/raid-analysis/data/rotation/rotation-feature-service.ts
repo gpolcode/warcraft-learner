@@ -1,5 +1,11 @@
 import { CalibrationCapsService } from '../verdict/calibration/calibration-caps-service';
 import { FamilyCaps } from '../verdict/tone.models';
+import { NotGradedNote } from '../verdict/calibration/calibration.models';
+import { ROTATION_BUTTON_FAMILY } from './priority-list/button-judge-service';
+import { LOST_CAST_FAMILY, NEVER_USED_FAMILY } from './cooldown-use-judge-service';
+import { COOLDOWN_GAP_FAMILY, COOLDOWN_HOLD_FAMILY, LATE_OPENER_FAMILY } from './cadence-judge-service';
+import { DOWNTIME_FAMILY } from './downtime-judge-service';
+import { BLOODLUST_ALIGNMENT_FAMILY, BLOODLUST_TIMING_FAMILY } from './bloodlust-judge-service';
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { AnalysisFinding, CAT_LABEL } from '../analysis/analysis.models';
@@ -58,7 +64,19 @@ export interface RotationPlayerView {
   /** The Downtime card's empty state, with how many top logs the casting time was checked against. */
   downtimeEmpty: string;
   bench: BenchStrip | null;
+  notGraded: RotationNotGraded;
 }
+
+/** Each rotation card's checks calibration leaves without a color. */
+interface RotationNotGraded {
+  buttons: NotGradedNote[];
+  downtime: NotGradedNote[];
+  offensives: NotGradedNote[];
+}
+
+const OFFENSIVE_FAMILIES = [
+  LOST_CAST_FAMILY, NEVER_USED_FAMILY, LATE_OPENER_FAMILY, COOLDOWN_GAP_FAMILY, COOLDOWN_HOLD_FAMILY, BLOODLUST_ALIGNMENT_FAMILY, BLOODLUST_TIMING_FAMILY,
+];
 
 export interface RotationPlanView {
   rows: CdPlanRow[];
@@ -123,15 +141,20 @@ export class RotationFeatureService {
     const pull: PullRef = { reportCode, fightId, playerId };
     const caps = await this.calibration.load(spec, encounterId);
     const strip = this.benchStrips.strip(bench.value);
+    const notGraded: RotationNotGraded = {
+      buttons: this.calibration.notGraded(caps, [ROTATION_BUTTON_FAMILY]),
+      downtime: this.calibration.notGraded(caps, [DOWNTIME_FAMILY]),
+      offensives: this.calibration.notGraded(caps, OFFENSIVE_FAMILIES),
+    };
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'RotationFeatureService.loadPlayerView',
       errorId: 'rotation.player-view',
       emptyView: () => ({
         buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null,
         buttonsBenched: false, buttonsEmpty: this.buttonsEmpty(bench.value), offensivesEmpty: this.offensivesEmpty(0, bench.value),
-        downtimeEmpty: this.downtimeEmpty(null, bench.value), bench: strip,
+        downtimeEmpty: this.downtimeEmpty(null, bench.value), bench: strip, notGraded,
       }),
-      analyze: async context => ({ ...await this.playerView(this.withList(bench.value), pull, context, caps), bench: strip }),
+      analyze: async context => ({ ...await this.playerView(this.withList(bench.value), pull, context, caps), bench: strip, notGraded }),
     });
   }
 
@@ -167,7 +190,7 @@ export class RotationFeatureService {
     return `Nothing flagged. Your casting time was checked against ${judged} top logs.`;
   }
 
-  private async playerView(bench: RotationBench, pull: PullRef, context: PullContext, caps?: FamilyCaps): Promise<Omit<RotationPlayerView, 'bench'>> {
+  private async playerView(bench: RotationBench, pull: PullRef, context: PullContext, caps?: FamilyCaps): Promise<Omit<RotationPlayerView, 'bench' | 'notGraded'>> {
     const { reportCode, fightId, playerId } = pull;
     const { report, fight, model } = context;
     const abilities = report.masterData?.abilities ?? [];

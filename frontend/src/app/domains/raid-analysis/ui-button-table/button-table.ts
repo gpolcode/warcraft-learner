@@ -16,12 +16,14 @@ import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 
 const BAR_STATUS: Record<string, RangeLook> = { red: 'critical', amber: 'warning', blue: 'accent' };
 
+import { NotGraded } from '../ui-not-graded/not-graded';
+import type { NotGradedNote } from '../data/verdict/calibration/calibration.models';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-button-table',
   host: { class: 'block' },
   imports: [
-    BenchStripCaption, EmptyState,
+    BenchStripCaption, NotGraded, EmptyState,
     PercentPipe, TuiCardLarge, TuiCardCollapsed, TuiHeader, TuiTitle, TuiButton, TuiChevron, TuiExpand, TuiItem,
     GameIcon, FindingOccurrences, RangeBar, RangeLegend,
   ],
@@ -35,6 +37,8 @@ export class ButtonTable {
   readonly rows = input.required<ButtonRow[]>();
   /** Shown when no button had a judged moment. */
   readonly empty = input<string>('');
+  /** The card's checks calibration leaves without a color, listed under its rows. */
+  readonly notGraded = input<readonly NotGradedNote[]>([]);
   readonly showMap = input<boolean>(false);
   readonly showClip = input<boolean>(false);
   /** The open occurrence's second, for the page's map and clip overlays. */

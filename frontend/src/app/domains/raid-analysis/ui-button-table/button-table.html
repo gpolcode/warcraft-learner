@@ -58,5 +58,9 @@
       }
     </div>
 
+    @if (notGraded().length) {
+      <wl-not-graded [notes]="notGraded()"></wl-not-graded>
+    }
+
   </div>
 </section>
