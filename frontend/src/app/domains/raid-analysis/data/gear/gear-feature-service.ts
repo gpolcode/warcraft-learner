@@ -5,10 +5,10 @@ import { WclApiService } from '../wcl/wcl-api-service';
 import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from '../http/http-load-error';
 import { GearExtractService, GameNames } from './gear-extract-service';
-import { GearStatus, EnchantRow, TalentBuildRow, BenchEnchantRow, TrinketSetRow } from './gear-comparison-service';
-import { GEAR_DATA_SOURCE, GearBench } from './gear-data-source';
+import { TalentBuildRow, BenchEnchantRow, TrinketSetRow } from './gear-comparison-service';
+import { EnchantRow, GearJudgeService, GearVerdict } from './gear-judge-service';
+import { GEAR_DATA_SOURCE, GearBench, GearParseMeasures } from './gear-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
-import { TalentKeyService } from './talent-key-service';
 import { GearComparisonService } from './gear-comparison-service';
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
 
@@ -16,14 +16,19 @@ export interface GearComparisonView {
   comparison: boolean;
 
   talentBuilds: TalentBuildRow[];
-  talentStatus: { status: GearStatus; note: string };
+  /** Null where the pull or the bench has no build to compare. */
+  talentVerdict: GearVerdict | null;
+  talentEmpty: string;
 
   trinketSets: TrinketSetRow[];
-  trinketStatus: { status: GearStatus; note: string };
+  trinketVerdict: GearVerdict | null;
+  trinketEmpty: string;
 
   enchantRows: EnchantRow[];
-  enchantStatus: GearStatus;
   benchEnchantRows: BenchEnchantRow[];
+  enchantEmpty: string;
+  /** Shown when every enchant row matches the top logs. */
+  enchantsClean: string;
   /** Null on the placeholder no bench backs. */
   bench: BenchStrip | null;
 }
@@ -33,8 +38,8 @@ type GearRows = Omit<GearComparisonView, 'bench'>;
 @Injectable({ providedIn: 'root' })
 export class GearFeatureService {
   private readonly logger = inject(LoggerService);
-  private readonly talentKeys = inject(TalentKeyService);
   private readonly gearComparison = inject(GearComparisonService);
+  private readonly judge = inject(GearJudgeService);
   private readonly gearExtract = inject(GearExtractService);
   private readonly source = inject(GEAR_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
@@ -49,13 +54,13 @@ export class GearFeatureService {
     if (!bench.ok) return bench;
     const playerGear = await this.fetchPlayerGear(reportCode, fightId, playerId);
     if (!playerGear.ok) return playerGear;
-    return Results.ok({ ...this.buildGearView(playerGear.value, this.benchToStats(bench.value)), bench: this.benchStrips.strip(bench.value) });
+    return Results.ok({ ...this.buildGearView(playerGear.value, bench.value), bench: this.benchStrips.strip(bench.value) });
   }
 
   async loadBenchView(spec: string, encounterId: number): Promise<Result<GearComparisonView>> {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return Results.ok({ ...this.buildBenchGearView(this.benchToStats(bench.value)), bench: this.benchStrips.strip(bench.value) });
+    return Results.ok({ ...this.buildBenchGearView(bench.value), bench: this.benchStrips.strip(bench.value) });
   }
 
   // A WCL fetch failure becomes a mapped LoadError, never a silent fallback.
@@ -85,9 +90,9 @@ export class GearFeatureService {
   emptyGearView(): GearComparisonView {
     return {
       comparison: false,
-      talentBuilds: [], talentStatus: { status: 'unknown', note: 'No talent data.' },
-      trinketSets: [], trinketStatus: { status: 'unknown', note: 'No trinket data.' },
-      enchantRows: [], enchantStatus: 'ok', benchEnchantRows: [],
+      talentBuilds: [], talentVerdict: null, talentEmpty: 'No talent data.',
+      trinketSets: [], trinketVerdict: null, trinketEmpty: 'No trinket data.',
+      enchantRows: [], benchEnchantRows: [], enchantEmpty: 'No enchant data.', enchantsClean: '',
       bench: null,
     };
   }
@@ -101,7 +106,7 @@ export class GearFeatureService {
       return Results.unusableLog('This log has no combatant info.', 'gear.combatant-info');
     }
     const { trinkets, enchants } = this.gearExtract.extractGear(event.gear);
-    const talent_key = this.talentKeys.talentKeyFromTree(event.talentTree);
+    const talent_key = this.judge.measureTalentKey(event.talentTree);
 
     this.gearExtract.fillGameNames(trinkets, 'i', names);
     this.gearExtract.fillGameNames(enchants, 'e', names);
@@ -113,35 +118,70 @@ export class GearFeatureService {
     return { talent_builds: bench.talent_builds, trinket_sets: bench.trinket_sets, enchants: bench.enchants };
   }
 
-  // playerGear is never null: the card builds comparison rows only once the combatant-info gear is in hand.
-  protected buildGearView(playerGear: CharacterGear, stats: EncounterGearStats): GearRows {
-    const playerKey = playerGear.talent_key ?? '';
-    const trinketKey = this.gearComparison.trinketSetKey(playerGear.trinkets ?? []);
-    const enchantRows = this.gearComparison.buildEnchantRows(playerGear, stats);
+  // An older bench carries no per-log picks, so every check reads n = 0 and renders as a comparison.
+  protected perParse(bench: GearBench): GearParseMeasures[] {
+    const stored: Partial<GearBench> = bench;
+    return stored.per_parse ?? [];
+  }
 
+  // playerGear is never null: the card builds comparison rows only once the combatant-info gear is in hand.
+  protected buildGearView(playerGear: CharacterGear, bench: GearBench): GearRows {
+    const perParse = this.perParse(bench);
+    const stats = this.benchToStats(bench);
+    const playerKey = playerGear.talent_key ?? '';
+    const trinketKey = this.judge.trinketKey(this.judge.measureTrinkets(playerGear.trinkets ?? []));
+    const enchantRows = this.judge.enchantRows(playerGear, bench.enchants, perParse, slot => this.gearComparison.slotName(slot));
     return {
+      ...this.sections(perParse),
       comparison: true,
       talentBuilds: this.gearComparison.buildTalentBuilds(stats, playerKey),
-      talentStatus: this.gearComparison.talentStatusOf(stats, playerKey),
+      talentVerdict: this.judge.talentVerdict(playerKey, this.rankedBuilds(bench), this.judge.talentReference(perParse)),
       trinketSets: this.gearComparison.buildTrinketSets(stats, trinketKey),
-      trinketStatus: this.gearComparison.trinketStatusOf(stats, trinketKey),
+      trinketVerdict: this.judge.trinketVerdict(trinketKey, this.rankedPairs(bench), this.judge.trinketReference(perParse)),
       enchantRows,
-      enchantStatus: this.gearComparison.enchantStatusOf(enchantRows),
-      benchEnchantRows: [],
+      enchantEmpty: this.gearComparison.emptyNote('enchant', perParse.length, 'carries an enchant'),
+      enchantsClean: this.enchantsClean(enchantRows.length, perParse.length),
     };
   }
 
-  // Uses the dedicated bench enchant builder, so the comparison builder is never reached without a player.
-  protected buildBenchGearView(stats: EncounterGearStats): GearRows {
+  // Uses the leaders the bench agrees on, so the comparison builder is never reached without a player.
+  protected buildBenchGearView(bench: GearBench): GearRows {
+    const perParse = this.perParse(bench);
+    const stats = this.benchToStats(bench);
+    const leaders = this.judge.enchantLeaders(bench.enchants, perParse);
     return {
+      ...this.sections(perParse),
       comparison: false,
       talentBuilds: this.gearComparison.buildTalentBuilds(stats, ''),
-      talentStatus: this.gearComparison.talentStatusOf(stats, ''),
       trinketSets: this.gearComparison.buildTrinketSets(stats, ''),
-      trinketStatus: this.gearComparison.trinketStatusOf(stats, ''),
-      enchantRows: [],
-      enchantStatus: 'ok',
-      benchEnchantRows: this.gearComparison.buildBenchEnchantRows(stats),
+      benchEnchantRows: this.gearComparison.buildBenchEnchantRows(leaders),
+      enchantEmpty: leaders.length
+        ? `No enchant data. No slot where at least half of the ${perParse.length} top logs use one enchant.`
+        : this.gearComparison.emptyNote('enchant', perParse.length, 'carries an enchant'),
     };
+  }
+
+  private sections(perParse: readonly GearParseMeasures[]): GearRows {
+    return {
+      comparison: false,
+      talentBuilds: [], talentVerdict: null,
+      talentEmpty: this.gearComparison.emptyNote('talent', perParse.length, 'has a readable talent tree'),
+      trinketSets: [], trinketVerdict: null,
+      trinketEmpty: this.gearComparison.emptyNote('trinket', perParse.length, 'carries a trinket'),
+      enchantRows: [], benchEnchantRows: [], enchantEmpty: '', enchantsClean: '',
+    };
+  }
+
+  private enchantsClean(checked: number, n: number): string {
+    return `Nothing flagged. ${checked} ${checked === 1 ? 'enchant' : 'enchants'} checked against ${n} top logs.`;
+  }
+
+  private rankedBuilds(bench: GearBench): { key: string; label: string }[] {
+    return bench.talent_builds.map((build, i) => ({ key: build.key, label: this.gearComparison.rankLabel(i, 'build') }));
+  }
+
+  private rankedPairs(bench: GearBench): { key: string; label: string }[] {
+    return bench.trinket_sets.map((set, i) =>
+      ({ key: this.judge.trinketKey(this.judge.measureTrinkets(set.items)), label: this.gearComparison.rankLabel(i, 'pair') }));
   }
 }

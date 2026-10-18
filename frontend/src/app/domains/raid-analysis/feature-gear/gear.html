@@ -29,14 +29,15 @@
       </div>
 
       @if (view().talentBuilds.length) {
-        @if (view().comparison && view().talentStatus.status !== 'unknown') {
+        @if (view().comparison && view().talentVerdict; as verdict) {
           <div class="border-t border-line py-2.5">
             <span class="block text-label text-muted mb-1">Your build</span>
             <div class="flex items-center gap-2">
-              @if (view().talentStatus.status === 'warn') {
-                <tui-icon class="icon-18 text-warning" icon="warning_amber" />
+              @if (!verdict.onPlan) {
+                <tui-icon class="icon-18" [class.text-accent]="verdict.tone === 'blue'" [class.text-muted]="verdict.tone !== 'blue'"
+                  [icon]="verdict.tone === 'blue' ? 'info' : 'compare_arrows'" />
               }
-              <span>{{ view().talentStatus.note }}</span>
+              <span>{{ verdict.note }}</span>
             </div>
           </div>
         }
@@ -111,7 +112,7 @@
           }
         }
       } @else {
-        <wl-empty-state class="border-t border-line">No talent data.</wl-empty-state>
+        <wl-empty-state class="border-t border-line">{{ view().talentEmpty }}</wl-empty-state>
       }
     </div>
 
@@ -126,14 +127,15 @@
       </div>
 
       @if (view().trinketSets.length) {
-        @if (view().comparison && view().trinketStatus.status !== 'unknown') {
+        @if (view().comparison && view().trinketVerdict; as verdict) {
           <div class="border-t border-line py-2.5">
             <span class="block text-label text-muted mb-1">Your pair</span>
             <div class="flex items-center gap-2">
-              @if (view().trinketStatus.status === 'warn') {
-                <tui-icon class="icon-18 text-warning" icon="warning_amber" />
+              @if (!verdict.onPlan) {
+                <tui-icon class="icon-18" [class.text-accent]="verdict.tone === 'blue'" [class.text-muted]="verdict.tone !== 'blue'"
+                  [icon]="verdict.tone === 'blue' ? 'info' : 'compare_arrows'" />
               }
-              <span>{{ view().trinketStatus.note }}</span>
+              <span>{{ verdict.note }}</span>
             </div>
           </div>
         }
@@ -157,7 +159,7 @@
           </div>
         }
       } @else {
-        <wl-empty-state class="border-t border-line">No trinket data.</wl-empty-state>
+        <wl-empty-state class="border-t border-line">{{ view().trinketEmpty }}</wl-empty-state>
       }
     </div>
 
@@ -179,9 +181,10 @@
               <span class="col-start-2 text-label text-muted">{{ row.slotName }}</span>
               <div class="row-start-2 col-start-1 flex items-center justify-center">
                 <tui-icon class="icon-18"
-                  [class.text-warning]="row.status === 'warn'"
-                  [class.text-accent]="row.status === 'info'"
-                  [icon]="row.status === 'info' ? 'info' : 'warning_amber'" />
+                  [class.text-warning]="row.tone === 'amber'"
+                  [class.text-accent]="row.tone === 'blue'"
+                  [class.text-muted]="row.tone === 'neutral'"
+                  [icon]="row.tone === 'amber' ? 'warning_amber' : row.tone === 'blue' ? 'info' : 'compare_arrows'" />
               </div>
               <span class="row-start-2 col-start-2 min-w-0 text-name truncate">{{ row.name }}</span>
               <div class="col-start-2 md:col-start-4 md:row-start-1 md:row-span-2 mt-1 md:mt-0 text-body text-muted border-t md:border-t-0 md:card-fix border-line pt-2 md:pt-0">
@@ -200,22 +203,20 @@
             </div>
           }
         } @else if (view().enchantRows.length) {
-          <div class="border-t border-line py-2.5">
-            <span class="block text-label text-muted mb-1.5">On plan</span>
-            <span tuiChip appearance="neutral" size="xs">All enchants</span>
-          </div>
+          <wl-empty-state class="border-t border-line">{{ view().enchantsClean }}</wl-empty-state>
         } @else {
-          <wl-empty-state class="border-t border-line">No enchant data.</wl-empty-state>
+          <wl-empty-state class="border-t border-line">{{ view().enchantEmpty }}</wl-empty-state>
         }
       } @else {
           @for (row of view().benchEnchantRows; track row.slotName) {
             <div class="py-2.5 border-t border-line">
               <span class="block text-label text-muted mb-1">{{ row.slotName }}</span>
               <wl-game-icon kind="item" [id]="row.enchant.itemId" [name]="row.enchant.name" [icon]="row.enchant.icon" [copyable]="true"></wl-game-icon>
+              <div class="tabular-nums text-caption text-muted mt-px">{{ row.share }}</div>
             </div>
           }
         @empty {
-          <wl-empty-state class="border-t border-line">No enchant data.</wl-empty-state>
+          <wl-empty-state class="border-t border-line">{{ view().enchantEmpty }}</wl-empty-state>
         }
       }
     </div>

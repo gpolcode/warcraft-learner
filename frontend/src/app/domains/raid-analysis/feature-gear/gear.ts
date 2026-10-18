@@ -53,8 +53,8 @@ export class Gear {
   protected readonly available = this.load.available;
   protected readonly error = this.load.error;
 
-  protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
-  protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
+  protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => !row.onPlan));
+  protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.onPlan));
   private readonly openChipLists = signal<ReadonlySet<readonly unknown[]>>(new Set());
 
   protected chipLines(list: readonly unknown[]): number {

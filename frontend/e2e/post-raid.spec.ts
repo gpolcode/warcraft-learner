@@ -246,10 +246,10 @@ test('gear sets the build, the trinkets and the enchants against the top logs', 
     await expect(issue.locator('span.text-name').first()).toHaveText(ANY_TEXT);
     await expect(issue.locator('wl-game-icon')).toHaveText(ANY_TEXT);
     await expect(issue.getByRole('button', { name: 'Copy name' })).toBeVisible();
-    await expect(issue.getByText(/Most top raiders use it\./)).toBeVisible();
+    await expect(issue.getByText(/^\d+ of \d+ top raiders use it\./)).toBeVisible();
     if (await enchants.getByText(/\d+ enchants/).count()) await shows(enchants, 'On plan');
   } else {
-    await expect(enchants.getByText('All enchants').or(enchants.getByText('No enchant data.'))).toBeVisible();
+    await expect(enchants.getByText(/^Nothing flagged\. \d+ enchants? checked against \d+ top logs\.$/).or(enchants.getByText(/^No enchant data\./))).toBeVisible();
   }
 });
 

@@ -207,7 +207,6 @@ export default defineConfig([
       'src/**/*.spec.ts',
       'src/app/domains/raid-analysis/data/verdict/**',
       'src/app/domains/raid-analysis/data/analysis/finding-rows-service.ts',
-      'src/app/domains/raid-analysis/data/gear/gear-comparison-service.ts',
       'src/app/domains/raid-analysis/data/rotation/rotation-feature-service.ts',
     ],
     rules: { 'local/no-severity-literal': 'error' },

@@ -12,6 +12,8 @@ import type { BurstWindow } from '../analysis/analysis.models';
 import { DefensiveJudgeService } from '../defensive/defensive-judge-service';
 import { defBench } from '../defensive/defensive-harness';
 import type { RotationParseMeasures } from '../rotation/rotation-data-source';
+import { GearJudgeService } from '../gear/gear-judge-service';
+import type { GearParseMeasures } from '../gear/gear-data-source';
 import { FindingFamily } from './finding-family.models';
 import { FINDING_REGISTRY } from './finding-registry';
 import { VERDICT_CHOICES } from './verdict-choices';
@@ -34,8 +36,17 @@ const DEFENSIVE_TOP_LOGS = Array.from({ length: 10 }, () => ({ Cloak: [5, 95] })
 /** Ten top logs that had Cloak up in a window they took 1000 in. */
 const DEFENSIVE_WINDOW: BurstWindow = { ...BURST, defensive_name: 'Cloak', members: Array.from({ length: 10 }, (_unused, parse) => ({ parse, time_s: 10, window_length_s: 20, damage: 1000 })) };
 
+const MAIN_HAND = 15;
+const SOPHIC = { id: 8041, name: 'Sophic Devotion' };
+/** Ten top logs on one build, one trinket pair and Sophic on the main hand. */
+const GEAR_TOP_LOGS: GearParseMeasures[] = Array.from({ length: 10 }, () =>
+  ({ talent_key: 'v3:11.1', trinket_ids: [1, 2], enchant_ids: { [MAIN_HAND]: SOPHIC.id } }));
+const GEAR_TOP_ENCHANTS = { [MAIN_HAND]: [{ ...SOPHIC, icon: '', item_id: null, pct: 100 }] };
+const gearRows = (enchants: { slot: number; id: number; name: string }[]) =>
+  TestBed.inject(GearJudgeService).enchantRows({ enchants }, GEAR_TOP_ENCHANTS, GEAR_TOP_LOGS, String);
+
 /** One scenario per family that runs its producer on a pull with the family's mistake in it; it witnesses that some producer emits the family. */
-const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: string }[]>> = {
+const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: string | null }[]>> = {
   'rotation.button': async () => TestBed.inject(ListFindingService).rows(
     bench({ buttons: [{ action: 'eviscerate', spell_id: EVISCERATE, right: { lo: 1, avg: 1, hi: 1 } }] }),
     { casts: new Map([['eviscerate', [{ atS: 10, verdict: 'off', line: 0, lines: [] }]]]), order: [], ids: new Map() },
@@ -61,6 +72,16 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
   'defensive.hold': async () => TestBed.inject(DefensiveJudgeService).holdFindings('Cloak', [0, 100], HELD_TO_130),
   'defensive.window': async () => [TestBed.inject(DefensiveJudgeService).windowVerdict(DEFENSIVE_WINDOW, { damage: 2000, covered: false, tank: false }, 10)],
   'defensive.dead_in_window': async () => [TestBed.inject(DefensiveJudgeService).deathVerdict(15)],
+  'gear.talent_build': async () => {
+    const judge = TestBed.inject(GearJudgeService);
+    return [judge.talentVerdict('v3:12.1', [{ key: 'v3:11.1', label: 'Most common build' }], judge.talentReference(GEAR_TOP_LOGS)) ?? {}];
+  },
+  'gear.trinket_pair': async () => {
+    const judge = TestBed.inject(GearJudgeService);
+    return [judge.trinketVerdict('1-3', [{ key: '1-2', label: 'Most common pair' }], judge.trinketReference(GEAR_TOP_LOGS)) ?? {}];
+  },
+  'gear.enchant_missing': async () => gearRows([]),
+  'gear.enchant': async () => gearRows([{ slot: MAIN_HAND, id: 8039, name: 'Burning Devotion' }]),
 };
 
 const blank = (text: string): boolean => text.trim() === '';
