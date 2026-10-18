@@ -4,7 +4,7 @@ import { closestToZero, fmtApart, fmtClock } from '../analysis/analysis-math';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { Evidence } from '../verdict/tone.models';
+import { Evidence, FamilyCaps } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { RotationParseMeasures } from './rotation-data-source';
 
@@ -125,22 +125,24 @@ export class BloodlustJudgeService {
   }
 
   /** A raid decision reads as what happened and what top raids did, so no row carries a remedy. */
-  findings(name: string, castTimesS: readonly number[], lustS: number | null, perParse: readonly RotationParseMeasures[]): AnalysisFinding[] {
+  findings(
+    name: string, castTimesS: readonly number[], lustS: number | null, perParse: readonly RotationParseMeasures[], caps?: FamilyCaps,
+  ): AnalysisFinding[] {
     const reference = this.reference(perParse, name);
     if (lustS === null || !this.wantsLust(reference)) return [];
     const offsetS = this.measureOffset(castTimesS, lustS);
     const band = this.judgeBand(lustS, reference);
     if (!band.inside) return offsetS === null ? [this.outsideBand(name, lustS, reference, band)] : [];
-    if (offsetS === null) return [this.missed(name, lustS, reference, band)];
-    const timing = this.timing(name, castTimesS, lustS, offsetS, reference);
+    if (offsetS === null) return [this.missed(name, lustS, reference, band, caps)];
+    const timing = this.timing(name, castTimesS, { lustS, offsetS, caps }, reference);
     return timing ? [timing] : [];
   }
 
-  private missed(name: string, lustS: number, reference: LustReference, band: LustBand): AnalysisFinding {
+  private missed(name: string, lustS: number, reference: LustReference, band: LustBand, caps?: FamilyCaps): AnalysisFinding {
     const evidence = this.judgeAlignment(null, reference, band);
     const k = reference.offsetsS.length;
     return {
-      family: BLOODLUST_ALIGNMENT_FAMILY.id, severity: this.tones.tone(BLOODLUST_ALIGNMENT_FAMILY, evidence),
+      family: BLOODLUST_ALIGNMENT_FAMILY.id, severity: this.tones.tone(BLOODLUST_ALIGNMENT_FAMILY, evidence, caps),
       category: 'cooldown_alignment', cd_name: name, timestamp_s: lustS,
       span: { fromS: lustS - LUST_BEFORE_S, toS: lustS + LUST_AFTER_S },
       measured: { value: 'not pressed', unit: `${k} of ${evidence.n} top logs pressed it` },
@@ -173,13 +175,17 @@ export class BloodlustJudgeService {
     return [`${lust}s`, `${fromS.toFixed(decimals)}s`, `${toS.toFixed(decimals)}s`];
   }
 
-  private timing(name: string, castTimesS: readonly number[], lustS: number, offsetS: number, reference: LustReference): AnalysisFinding | null {
+  private timing(
+    name: string, castTimesS: readonly number[], judged: { lustS: number; offsetS: number; caps?: FamilyCaps }, reference: LustReference,
+  ): AnalysisFinding | null {
+    const { lustS, offsetS, caps } = judged;
     const evidence = this.judgeTiming(offsetS, reference);
-    if (evidence.level === 'neutral') return null;
+    const severity = this.tones.tone(BLOODLUST_TIMING_FAMILY, evidence, caps);
+    if (!this.tones.graded(severity)) return null;
     const castS = castTimesS.find(timeS => timeS - lustS === offsetS) ?? lustS + offsetS;
     const avgS = reference.offsetsS.reduce((sum, value) => sum + value, 0) / reference.offsetsS.length;
     return {
-      family: BLOODLUST_TIMING_FAMILY.id, severity: this.tones.tone(BLOODLUST_TIMING_FAMILY, evidence),
+      family: BLOODLUST_TIMING_FAMILY.id, severity,
       category: 'cooldown_alignment', cd_name: name, timestamp_s: castS,
       span: { fromS: Math.min(lustS, castS), toS: Math.max(lustS, castS) },
       measured: { value: this.signed(offsetS), unit: `top ${this.signed(avgS)}, ${evidence.n} top logs` },

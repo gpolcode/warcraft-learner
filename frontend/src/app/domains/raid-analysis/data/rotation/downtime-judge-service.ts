@@ -4,7 +4,7 @@ import { AliveSpan, castDowntimeS, castEfficiencyPct, fmtApart, spansS } from '.
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { Evidence } from '../verdict/tone.models';
+import { Evidence, FamilyCaps } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { RotationParseMeasures } from './rotation-data-source';
 
@@ -59,15 +59,16 @@ export class DowntimeJudgeService {
   }
 
   /** Null when the evidence grades nothing; the fix quotes only the idle time past the top logs' average. */
-  finding(casting: CastingTime, reference: readonly number[], fightDurationS: number): AnalysisFinding | null {
+  finding(casting: CastingTime, reference: readonly number[], fightDurationS: number, caps?: FamilyCaps): AnalysisFinding | null {
     const evidence = this.judge(casting, reference);
-    if (evidence.level === 'neutral' || evidence.target === null) return null;
+    const severity = this.tones.tone(DOWNTIME_FAMILY, evidence, caps);
+    if (!this.tones.graded(severity) || evidence.target === null) return null;
     const topPct = reference.reduce((sum, value) => sum + value, 0) / reference.length;
     const excessS = (casting.idleS - (100 - topPct) / 100 * casting.aliveS).toFixed(0);
     const over = casting.aliveS < fightDurationS ? 'your alive time' : 'the fight';
     const [pct, target] = fmtApart(casting.pct, evidence.target);
     return {
-      family: DOWNTIME_FAMILY.id, severity: this.tones.tone(DOWNTIME_FAMILY, evidence), category: 'cast_efficiency',
+      family: DOWNTIME_FAMILY.id, severity, category: 'cast_efficiency',
       label: 'Low cast efficiency',
       measured: { value: `${pct}%`, unit: `top ${topPct.toFixed(0)}%, ${evidence.n} top logs` },
       message: `You were casting ${pct}% of ${over}, idle ${excessS}s more than the average of ${evidence.n} top logs. Aim for ${target}% or more.`,

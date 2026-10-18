@@ -1,3 +1,5 @@
+import { CalibrationCapsService } from '../verdict/calibration/calibration-caps-service';
+import { FamilyCaps } from '../verdict/tone.models';
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { BurstWindow, PlayerBurstWindow } from '../analysis/analysis.models';
@@ -28,6 +30,7 @@ export type BurstView = WindowView<BurstMapAnchor> & { judged: JudgedSpan | null
 interface PlayerDamage {
   windows: PlayerBurstWindow[];
   ratePerS: number;
+  caps?: FamilyCaps;
 }
 
 type JudgedWindows = Omit<BurstView, 'bench'>;
@@ -38,6 +41,7 @@ export class BurstFeatureService {
   private readonly pullContext = inject(PullContextService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly source = inject(BURST_DATA_SOURCE);
+  private readonly calibration = inject(CalibrationCapsService);
   private readonly wclApi = inject(WclApiService);
   private readonly pullModel = inject(PullModelService);
   private readonly benchStrips = inject(BenchStripService);
@@ -57,13 +61,14 @@ export class BurstFeatureService {
     if (!bench.ok) return bench;
 
     const pull: PullRef = { reportCode, fightId, playerId };
+    const caps = await this.calibration.load(spec, encounterId);
     const stored = this.withMembers(bench.value);
     const strip = this.benchStrips.strip(stored);
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'BurstFeatureService.loadPlayerView',
       errorId: 'burst.player-view',
       emptyView: () => ({ ...this.benchOnlyView(stored), bench: strip }),
-      analyze: async context => ({ ...await this.playerView(stored, pull, context), bench: strip }),
+      analyze: async context => ({ ...await this.playerView(stored, pull, context, caps), bench: strip }),
     });
   }
 
@@ -80,7 +85,7 @@ export class BurstFeatureService {
     return { windows: [], anchors: [], clipAnchors: [], folded: this.pullModel.noFolds(), judged: null, bench: null, empty: '' };
   }
 
-  private async playerView(bench: BurstBench, pull: PullRef, context: PullContext): Promise<JudgedWindows> {
+  private async playerView(bench: BurstBench, pull: PullRef, context: PullContext, caps?: FamilyCaps): Promise<JudgedWindows> {
     const { reportCode, fightId, playerId } = pull;
     const { report, fight, model } = context;
     const abilities = report.masterData?.abilities ?? [];
@@ -100,7 +105,7 @@ export class BurstFeatureService {
       bench.windows, damageS, this.wclProjections.withRelativeS(presses, fight.startTime), abilityNames,
       this.wclProjections.relativeS(fight.endTime, fight.startTime),
     );
-    const player = { windows: playerWindows, ratePerS: this.judge.aliveRate(damageS, model.aliveSpans) };
+    const player = { windows: playerWindows, ratePerS: this.judge.aliveRate(damageS, model.aliveSpans), caps };
     return this.buildBurstView(bench, player, model);
   }
 
@@ -135,11 +140,11 @@ export class BurstFeatureService {
   }
 
   /** A null rate is a bench-only view, which has no player damage to judge. */
-  private burstAdapter(cdSpellIds: Record<string, number>, ratePerS: number | null): WindowViewAdapter<BurstMapAnchor> {
+  private burstAdapter(cdSpellIds: Record<string, number>, ratePerS: number | null, caps?: FamilyCaps): WindowViewAdapter<BurstMapAnchor> {
     return {
       status: (window, playerDamage) => ratePerS === null
         ? { ...this.judge.benchVerdict(window), benchOnly: true }
-        : this.judge.verdict(window, playerDamage ?? 0, ratePerS),
+        : this.judge.verdict(window, playerDamage ?? 0, ratePerS, caps),
       chips: window => this.splitCommonCds(window.common_cds, cdSpellIds),
       mapAnchor: window => this.burstMapAnchor(window),
       clipAnchor: (window, index) => this.burstClipAnchor(window, index),
@@ -152,7 +157,7 @@ export class BurstFeatureService {
     const ratePerS = model && player ? player.ratePerS : null;
     const view = this.windowView.buildWindowView({
       topWindows: bench.windows, playerWindows: player?.windows ?? [], model, abilities: bench.ability_icons,
-      adapter: this.burstAdapter(bench.cd_spell_ids, ratePerS),
+      adapter: this.burstAdapter(bench.cd_spell_ids, ratePerS, player?.caps),
     });
     return {
       ...view,

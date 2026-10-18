@@ -23,3 +23,8 @@ export interface Evidence {
   /** How far past the amber edge the observed value lies, in the construct's unit; 0 when inside. */
   excess: number;
 }
+
+/** The tone calibration lets each family reach on one page. */
+export interface FamilyCaps {
+  capOf(familyId: string): ToneLevel;
+}

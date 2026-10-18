@@ -8,6 +8,19 @@ import { HoldTargetsService } from './hold-targets-service';
 export class CastCadenceService {
   private readonly holdTargets = inject(HoldTargetsService);
 
+  /** One log's uses of one cooldown as the cadence bench reads them; ingest and the leave-one-out fold both build entries here. */
+  entry(castTimesS: readonly number[], fightDurationS: number, cooldownS: number): CadenceEntry {
+    const holdWindows = this.holdTargets.detectHoldWindows([...castTimesS], cooldownS);
+    const firstS = castTimesS[0];
+    return {
+      cast_times_s: castTimesS.map(timeS => round(timeS, 2)),
+      first_cast_s: firstS == null ? null : round(firstS),
+      fight_duration_s: fightDurationS,
+      hold_windows: holdWindows,
+      cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
+    };
+  }
+
   buildCadenceBenchmark(users: CadenceEntry[], effectiveCd: number, totalParses: number): CadenceBenchmark {
     const firstCasts = users.map(user => user.first_cast_s).filter((value): value is number => value != null);
     const gaps = castGaps(users);

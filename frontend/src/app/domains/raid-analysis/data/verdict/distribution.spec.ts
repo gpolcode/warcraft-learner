@@ -19,6 +19,13 @@ const BINOMIAL_20_TENTH_AT_LEAST_5 = 0.043174495;
 const POISSON_10_AT_MOST_3 = 0.010336051;
 const NINE_PLACES = 9;
 
+/** One-sided 95% Clopper-Pearson bounds, by bisection on the exact binomial CDF: the red design rate at the red pool size, the amber design rate at the amber pool size. */
+const CP_15_OF_1500 = 0.0153565;
+const CP_25_OF_500 = 0.0691361;
+/** With no event the bound has the closed form 1 - 0.05^(1/n). */
+const CP_0_OF_1500 = 1 - 0.05 ** (1 / 1500);
+const ARMING_CONFIDENCE = 0.95;
+
 describe('DistributionService', () => {
   it('reads the t quantiles of the standard tables', () => {
     expect(distribution.tQuantile(4, 0.95)).toBeCloseTo(T_4_AT_95, SIX_PLACES);
@@ -44,5 +51,16 @@ describe('DistributionService', () => {
 
   it('sums the Poisson lower tail', () => {
     expect(distribution.poissonCdf(3, 10)).toBeCloseTo(POISSON_10_AT_MOST_3, NINE_PLACES);
+  });
+
+  it('bounds a binomial rate from above the Clopper-Pearson way', () => {
+    expect(distribution.clopperPearsonUpper(15, 1500, ARMING_CONFIDENCE)).toBeCloseTo(CP_15_OF_1500, SIX_PLACES);
+    expect(distribution.clopperPearsonUpper(25, 500, ARMING_CONFIDENCE)).toBeCloseTo(CP_25_OF_500, SIX_PLACES);
+    expect(distribution.clopperPearsonUpper(0, 1500, ARMING_CONFIDENCE)).toBeCloseTo(CP_0_OF_1500, SIX_PLACES);
+  });
+
+  it('bounds a rate at 1 with no trial or with every trial an event', () => {
+    expect(distribution.clopperPearsonUpper(0, 0, ARMING_CONFIDENCE)).toBe(1);
+    expect(distribution.clopperPearsonUpper(10, 10, ARMING_CONFIDENCE)).toBe(1);
   });
 });

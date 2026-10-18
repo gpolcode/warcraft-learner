@@ -7,7 +7,7 @@ import { CadenceBenchmark } from '../encounter/encounter.models';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { Evidence, Tone } from '../verdict/tone.models';
+import { Evidence, FamilyCaps, Tone } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { RotationParseMeasures } from './rotation-data-source';
 
@@ -117,13 +117,13 @@ export class CooldownUseJudgeService {
   /** The pull's finding for one cooldown: judged on alive time, or muted when death or the wipe left no time for an expected use. */
   finding(
     name: string, castTimesS: readonly number[], bench: CadenceBenchmark, model: PullModel,
-    reference: readonly number[], taken: boolean,
+    reference: readonly number[], taken: boolean, caps?: FamilyCaps,
   ): AnalysisFinding | null {
     const uses = this.measure(castTimesS, model.aliveSpans, bench);
     if (uses.expected === 0) return this.unjudged(name, bench, model);
     const judgement = this.judge(uses, reference, taken);
     if (!judgement) return null;
-    const severity = this.tones.tone(judgement.family, judgement.evidence);
+    const severity = this.tones.tone(judgement.family, judgement.evidence, caps);
     const aliveS = spansS(model.aliveSpans);
     const row: UseRow = {
       name, uses, reference, severity, graded: severity === 'red' || severity === 'amber',

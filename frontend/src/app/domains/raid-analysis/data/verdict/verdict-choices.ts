@@ -34,6 +34,28 @@ export const VERDICT_CHOICES = {
   wipeDeadShare: 0.5,
   /** A window after a phase that began further than this from the bench median is muted. */
   phaseGuardS: 15,
+  /** The harness's own numbers: the arming bound's confidence, the per-bench anomaly test, the power floors and the perturbation invariants. */
+  calibration: {
+    armingConfidence: 0.95,
+    /** A bench whose own leave-one-out rate is this unlikely under the pooled rate demotes the family on that bench. */
+    anomalyP: 0.01,
+    /** Share of injected mistakes a tone must catch before it arms. */
+    detectionFloor: { red: 0.9, amber: 0.7 },
+    /** Truncation and an inserted death may raise a rule's flag rate by at most this factor. */
+    perturbedRateRatio: 1.5,
+    /** Jittering every event may move the burst flag rate by under this share. */
+    jitterRateShift: 0.02,
+    jitterS: 2,
+    lustShiftsS: [120, 180],
+    damageScale: 0.85,
+    delayS: 30,
+    idleGcds: 5,
+    gcdS: 1.5,
+    offListPresses: 5,
+    /** A held-out pull is cut, or its player dies, somewhere in this share of the pull. */
+    perturbedShare: { from: 0.2, to: 0.9 },
+    rezAfterS: 30,
+  },
   /** Discrimination gates against the contrast cohort. */
   discrimination: { minLift: 2, minLiftLowerBound: 1.3, minAuc: 0.6 },
 } as const;

@@ -43,6 +43,20 @@ export class DistributionService {
     return Math.min(1, sum);
   }
 
+  /** The one-sided Clopper-Pearson upper bound on a binomial rate after `k` events in `n` trials, at `confidence`. */
+  clopperPearsonUpper(k: number, n: number, confidence: number): number {
+    if (n <= 0 || k >= n) return 1;
+    let lo = 0;
+    let hi = 1;
+    for (let step = 0; step < BISECTION_STEPS; step++) {
+      const mid = (lo + hi) / 2;
+      // I_p(k + 1, n - k) is P(X >= k + 1) at rate p, so the bound is where k or fewer events fall to 1 - confidence.
+      if (this.regularizedBeta(mid, k + 1, n - k) < confidence) lo = mid;
+      else hi = mid;
+    }
+    return (lo + hi) / 2;
+  }
+
   /** P(X <= k) for X ~ Poisson(lambda). */
   poissonCdf(k: number, lambda: number): number {
     if (k < 0) return 0;

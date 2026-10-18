@@ -14,7 +14,6 @@ import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-s
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
 import { DefensiveBench, DefensiveParseMeasures, DefensivePlanMeta } from './defensive-data-source';
-import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { DefensiveUsesService } from './defensive-uses-service';
 import { DefensiveJudgeService } from './defensive-judge-service';
@@ -53,7 +52,6 @@ type UsesBySpell = Map<number, DefensiveWindow[]>;
 
 @Injectable({ providedIn: 'root' })
 export class DefensiveTransformService implements DataSource<DefensiveBench> {
-  private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly auraWindows = inject(AuraWindowsService);
   private readonly defensiveUses = inject(DefensiveUsesService);
@@ -141,21 +139,8 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
   ): ParseDefensiveSummary[] {
     const summaries: ParseDefensiveSummary[] = [];
     for (const defensive of defensives) {
-      const cooldownS = defensive.cooldown;
       const castTimes = this.judge.measureUseTimes(uses.get(defensive.spell_id) ?? []);
-      const holdWindows = this.holdTargets.detectHoldWindows(castTimes, cooldownS);
-
-      const firstCastS = castTimes[0];
-      if (firstCastS != null) {
-        summaries.push({
-          name: defensive.name,
-          cast_times_s: castTimes,
-          first_cast_s: firstCastS,
-          fight_duration_s: fightDurationS,
-          hold_windows: holdWindows,
-          cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
-        });
-      }
+      if (castTimes.length) summaries.push({ name: defensive.name, ...this.castCadence.entry(castTimes, fightDurationS, defensive.cooldown) });
     }
     return summaries;
   }

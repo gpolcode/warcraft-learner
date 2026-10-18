@@ -11,7 +11,7 @@ import { CooldownUseJudgeService } from '../rotation/cooldown-use-judge-service'
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { Evidence, Tone } from '../verdict/tone.models';
+import { Evidence, FamilyCaps, Tone } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
 const TOP_LOG_REFERENCE = { population: 'Top Mythic logs for the spec and boss, ranked on its metric', minN: VERDICT_CHOICES.minReferenceN };
@@ -191,12 +191,12 @@ export class DefensiveJudgeService {
   /** Null at or above the expected uses; an external is a context row, since who receives it is an assignment. */
   usesFinding(
     name: string, useTimesS: readonly number[], bench: CadenceBenchmark, model: PullModel,
-    perParse: readonly CastsByName[], external: boolean,
+    perParse: readonly CastsByName[], external: boolean, caps?: FamilyCaps,
   ): AnalysisFinding | null {
     const { uses, expected } = this.cooldownUses.measure(useTimesS, model.aliveSpans, bench);
     if (uses >= expected) return null;
     const reference = this.referenceUses(perParse, name);
-    const severity = external ? this.tones.neutral() : this.tones.tone(DEFENSIVE_USES_FAMILY, this.judgeUses(uses, expected, reference));
+    const severity = external ? this.tones.neutral() : this.tones.tone(DEFENSIVE_USES_FAMILY, this.judgeUses(uses, expected, reference), caps);
     const n = reference.length;
     const aliveS = spansS(model.aliveSpans);
     const over = aliveS < model.fightDurationS ? `in ${fmtClock(aliveS)} of alive time` : `on a ${fmtClock(model.fightDurationS)} fight`;
@@ -211,16 +211,17 @@ export class DefensiveJudgeService {
   }
 
   /** Null when the evidence grades nothing. */
-  firstUseFinding(name: string, useTimesS: readonly number[], perParse: readonly CastsByName[]): AnalysisFinding | null {
+  firstUseFinding(name: string, useTimesS: readonly number[], perParse: readonly CastsByName[], caps?: FamilyCaps): AnalysisFinding | null {
     const firstS = this.cadence.measureOpener(useTimesS);
     if (firstS === null) return null;
     const reference = this.cadence.referenceOpeners(perParse, name);
     const evidence = this.cadence.judgeOpener(firstS, reference);
-    if (evidence.level === 'neutral' || evidence.target === null) return null;
+    const severity = this.tones.tone(DEFENSIVE_FIRST_USE_FAMILY, evidence, caps);
+    if (!this.tones.graded(severity) || evidence.target === null) return null;
     const avgS = this.average(reference);
     const [at, by] = this.cadence.clocksApart(firstS, evidence.target);
     return {
-      family: DEFENSIVE_FIRST_USE_FAMILY.id, severity: this.tones.tone(DEFENSIVE_FIRST_USE_FAMILY, evidence),
+      family: DEFENSIVE_FIRST_USE_FAMILY.id, severity,
       category: 'cooldown_delay', cd_name: name, timestamp_s: firstS, span: { fromS: 0, toS: firstS },
       measured: { value: `+${(firstS - avgS).toFixed(0)}s`, unit: `top ${fmtClock(avgS)}, ${evidence.n} top logs` },
       message: `You first used ${name} at ${at}. ${evidence.n} top logs use it by ${by}.`,
@@ -230,17 +231,18 @@ export class DefensiveJudgeService {
 
   /** One row per defensive, on its longest wait; null when the evidence grades nothing. */
   gapFinding(
-    name: string, useTimesS: readonly number[], spans: readonly AliveSpan[], perParse: readonly CastsByName[], holds: CdHoldTargets,
+    name: string, useTimesS: readonly number[], spans: readonly AliveSpan[], perParse: readonly CastsByName[], holds: CdHoldTargets, caps?: FamilyCaps,
   ): AnalysisFinding | null {
     const gap = this.cadence.measureGap(useTimesS, spans, holds);
     if (!gap) return null;
     const reference = this.cadence.referenceGaps(perParse, name, holds);
     const evidence = this.cadence.judgeGap(gap.gapS, reference);
-    if (evidence.level === 'neutral' || evidence.target === null) return null;
+    const severity = this.tones.tone(DEFENSIVE_GAP_FAMILY, evidence, caps);
+    if (!this.tones.graded(severity) || evidence.target === null) return null;
     const avgS = this.average(reference);
     const [gapText, targetText] = fmtApart(gap.gapS, evidence.target);
     return {
-      family: DEFENSIVE_GAP_FAMILY.id, severity: this.tones.tone(DEFENSIVE_GAP_FAMILY, evidence),
+      family: DEFENSIVE_GAP_FAMILY.id, severity,
       category: 'cooldown_delay', cd_name: name, timestamp_s: gap.toS, span: { fromS: gap.fromS, toS: gap.toS },
       measured: { value: `${gapText}s`, unit: `top ${avgS.toFixed(0)}s, ${evidence.n} top logs` },
       message: `${name} sat ${gapText}s before your use at ${fmtClock(gap.toS)}, your longest wait. `
@@ -250,12 +252,12 @@ export class DefensiveJudgeService {
   }
 
   /** A count of top raiders as a fact, never an order, so the rows carry no remedy. */
-  holdFindings(name: string, useTimesS: readonly number[], holds: CdHoldTargets): AnalysisFinding[] {
+  holdFindings(name: string, useTimesS: readonly number[], holds: CdHoldTargets, caps?: FamilyCaps): AnalysisFinding[] {
     return Object.values(holds).flatMap(target => {
       const castS = this.cadence.measureHold(useTimesS, target);
       if (castS === null) return [];
       return [{
-        family: DEFENSIVE_HOLD_FAMILY.id, severity: this.tones.tone(DEFENSIVE_HOLD_FAMILY, this.cadence.judgeHold(target)),
+        family: DEFENSIVE_HOLD_FAMILY.id, severity: this.tones.tone(DEFENSIVE_HOLD_FAMILY, this.cadence.judgeHold(target), caps),
         category: 'cooldown_hold', timestamp_s: castS, span: { fromS: castS, toS: target.target_s },
         measured: { value: fmtClock(castS), unit: `hold to ${fmtClock(target.target_s)}` },
         message: `${target.count} of ${target.total_samples} top raiders hold ${name} for ${fmtClock(target.target_s)}. You pressed it at ${fmtClock(castS)}, so it was not ready then.`,
@@ -300,10 +302,10 @@ export class DefensiveJudgeService {
     });
   }
 
-  windowVerdict(window: BurstWindow, pull: WindowPull, n: number): DefensiveWindowVerdict {
+  windowVerdict(window: BurstWindow, pull: WindowPull, n: number, caps?: FamilyCaps): DefensiveWindowVerdict {
     const reference = this.reference(window, n);
     const evidence = this.judgeWindow(pull, reference);
-    const status = this.tones.tone(DEFENSIVE_WINDOW_FAMILY, evidence);
+    const status = this.tones.tone(DEFENSIVE_WINDOW_FAMILY, evidence, caps);
     const name = window.defensive_name ?? 'the defensive';
     const base = { family: DEFENSIVE_WINDOW_FAMILY.id, status, icon: WINDOW_ICON[status] ?? WINDOW_ICON['neutral'] ?? '', n: reference.n };
     const tooFew = this.tooFew(reference);
@@ -325,10 +327,10 @@ export class DefensiveJudgeService {
     return homes;
   }
 
-  deathVerdict(diedS: number): DefensiveWindowVerdict {
+  deathVerdict(diedS: number, caps?: FamilyCaps): DefensiveWindowVerdict {
     const evidence = this.rules.fact({ holds: true, backing: 'game-rule' });
     return {
-      family: DEAD_IN_WINDOW_FAMILY.id, status: this.tones.tone(DEAD_IN_WINDOW_FAMILY, evidence), icon: 'skull', n: evidence.n,
+      family: DEAD_IN_WINDOW_FAMILY.id, status: this.tones.tone(DEAD_IN_WINDOW_FAMILY, evidence, caps), icon: 'skull', n: evidence.n,
       message: `You died at ${fmtClock(diedS)} in this window.`,
     };
   }

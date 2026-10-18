@@ -4,7 +4,7 @@ import { EncounterGearStats } from '../encounter/encounter.models';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { Tone } from '../verdict/tone.models';
+import { FamilyCaps, Tone } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { RING_SLOTS } from './gear-extract-service';
 import { GearParseMeasures } from './gear-data-source';
@@ -168,15 +168,15 @@ export class GearJudgeService {
   }
 
   /** `ranked` is the bench's list, most common first; null when the pull or the bench has nothing to compare. */
-  talentVerdict(playerKey: string, ranked: readonly RankedChoice[], reference: PickReference): GearVerdict | null {
+  talentVerdict(playerKey: string, ranked: readonly RankedChoice[], reference: PickReference, caps?: FamilyCaps): GearVerdict | null {
     const [leader] = ranked;
     if (!leader || !playerKey || playerKey.split(':')[0] !== leader.key.split(':')[0]) return null;
-    return this.choiceVerdict(TALENT_BUILD_FAMILY, playerKey, ranked, reference, 'build');
+    return this.choiceVerdict(TALENT_BUILD_FAMILY, playerKey, ranked, reference, { noun: 'build', caps });
   }
 
-  trinketVerdict(playerKey: string, ranked: readonly RankedChoice[], reference: PickReference): GearVerdict | null {
+  trinketVerdict(playerKey: string, ranked: readonly RankedChoice[], reference: PickReference, caps?: FamilyCaps): GearVerdict | null {
     if (!ranked.length || !playerKey) return null;
-    return this.choiceVerdict(TRINKET_PAIR_FAMILY, playerKey, ranked, reference, 'pair');
+    return this.choiceVerdict(TRINKET_PAIR_FAMILY, playerKey, ranked, reference, { noun: 'pair', caps });
   }
 
   /** Every slot any top log enchants, led by the enchant most of them use, ids sharing a name counted as one. */
@@ -203,7 +203,9 @@ export class GearJudgeService {
     return leaders.filter(leader => leader.n >= VERDICT_CHOICES.minReferenceN && this.passesGate(leader));
   }
 
-  enchantRows(gear: CharacterGear, top: TopEnchants, perParse: readonly GearParseMeasures[], slotName: (slot: number) => string): EnchantRow[] {
+  enchantRows(
+    gear: CharacterGear, top: TopEnchants, perParse: readonly GearParseMeasures[], slotName: (slot: number) => string, caps?: FamilyCaps,
+  ): EnchantRow[] {
     const leaders = this.enchantLeaders(top, perParse);
     const identityOf = this.enchantIdentities(top);
     const worn = this.measureEnchants(gear.enchants ?? []);
@@ -212,7 +214,7 @@ export class GearJudgeService {
     return [...slots].sort((a, b) => a - b).map(slot => {
       const leader = ringPairOnPlan && this.isRing(slot) ? undefined : leaders.find(entry => entry.slot === slot);
       const id = worn[slot];
-      return this.enchantRow(slotName(slot), id === undefined ? null : identityOf(id), this.wornName(gear, slot, id), leader);
+      return this.enchantRow(slotName(slot), id === undefined ? null : identityOf(id), this.wornName(gear, slot, id), leader, caps);
     }).filter(row => row !== null);
   }
 
@@ -222,17 +224,17 @@ export class GearJudgeService {
     return id ? `Enchant #${id}` : '';
   }
 
-  private enchantRow(slotName: string, worn: string | null, name: string, leader: EnchantLeader | undefined): EnchantRow | null {
+  private enchantRow(slotName: string, worn: string | null, name: string, leader: EnchantLeader | undefined, caps?: FamilyCaps): EnchantRow | null {
     if (!leader || worn === leader.identity) {
       return worn === null ? null : { slotName, family: null, tone: this.tones.neutral(), onPlan: true, name, note: null, top: null, n: leader?.n ?? 0 };
     }
     const agreement = this.rules.consensus({ differs: true, k: leader.k, n: leader.n, paired: false });
     if (worn === null) {
       const gated = leader.n >= VERDICT_CHOICES.minReferenceN && this.passesGate(leader);
-      const tone = this.tones.tone(ENCHANT_MISSING_FAMILY, this.rules.fact({ holds: true, backing: gated ? 'game-rule' : agreement }));
+      const tone = this.tones.tone(ENCHANT_MISSING_FAMILY, this.rules.fact({ holds: true, backing: gated ? 'game-rule' : agreement }), caps);
       return this.flaggedEnchant(slotName, 'Not enchanted', ENCHANT_MISSING_FAMILY, tone, leader);
     }
-    return this.flaggedEnchant(slotName, name, ENCHANT_CHOICE_FAMILY, this.tones.tone(ENCHANT_CHOICE_FAMILY, agreement), leader);
+    return this.flaggedEnchant(slotName, name, ENCHANT_CHOICE_FAMILY, this.tones.tone(ENCHANT_CHOICE_FAMILY, agreement, caps), leader);
   }
 
   private flaggedEnchant(slotName: string, name: string, family: FindingFamily, tone: Tone, leader: EnchantLeader): EnchantRow {
@@ -248,15 +250,15 @@ export class GearJudgeService {
   }
 
   private choiceVerdict(
-    family: FindingFamily, playerKey: string, ranked: readonly RankedChoice[], reference: PickReference, noun: string,
+    family: FindingFamily, playerKey: string, ranked: readonly RankedChoice[], reference: PickReference, copy: { noun: string; caps?: FamilyCaps },
   ): GearVerdict {
     const [leader] = ranked;
     const k = reference.counts.get(leader?.key ?? '') ?? 0;
     const differs = playerKey !== leader?.key;
     const evidence = this.rules.consensus({ differs, k, n: reference.n, paired: false });
-    const tone = differs ? this.tones.tone(family, evidence) : this.tones.neutral();
+    const tone = differs ? this.tones.tone(family, evidence, copy.caps) : this.tones.neutral();
     const rank = ranked.findIndex(choice => choice.key === playerKey);
-    const label = rank >= 0 ? ranked[rank]?.label ?? '' : `Uncommon ${noun}`;
+    const label = rank >= 0 ? ranked[rank]?.label ?? '' : `Uncommon ${copy.noun}`;
     return { family: family.id, tone, onPlan: !differs, note: `${label}.${this.choiceCounts(reference, playerKey, k, rank)}`, n: reference.n };
   }
 

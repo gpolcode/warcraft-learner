@@ -7,6 +7,8 @@ import { HttpLoadErrors } from '../http/http-load-error';
 import { GearExtractService, GameNames } from './gear-extract-service';
 import { TalentBuildRow, BenchEnchantRow, TrinketSetRow } from './gear-comparison-service';
 import { EnchantRow, GearJudgeService, GearVerdict } from './gear-judge-service';
+import { CalibrationCapsService } from '../verdict/calibration/calibration-caps-service';
+import { FamilyCaps } from '../verdict/tone.models';
 import { GEAR_DATA_SOURCE, GearBench, GearParseMeasures } from './gear-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { GearComparisonService } from './gear-comparison-service';
@@ -44,6 +46,7 @@ export class GearFeatureService {
   private readonly source = inject(GEAR_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
   private readonly benchStrips = inject(BenchStripService);
+  private readonly calibration = inject(CalibrationCapsService);
 
   // Propagates a non-ok bench and the player's own no-combatant-info error unchanged, never degrading to bench-only.
   async loadComparisonView(
@@ -54,7 +57,8 @@ export class GearFeatureService {
     if (!bench.ok) return bench;
     const playerGear = await this.fetchPlayerGear(reportCode, fightId, playerId);
     if (!playerGear.ok) return playerGear;
-    return Results.ok({ ...this.buildGearView(playerGear.value, bench.value), bench: this.benchStrips.strip(bench.value) });
+    const caps = await this.calibration.load(spec, encounterId);
+    return Results.ok({ ...this.buildGearView(playerGear.value, bench.value, caps), bench: this.benchStrips.strip(bench.value) });
   }
 
   async loadBenchView(spec: string, encounterId: number): Promise<Result<GearComparisonView>> {
@@ -125,19 +129,19 @@ export class GearFeatureService {
   }
 
   // playerGear is never null: the card builds comparison rows only once the combatant-info gear is in hand.
-  protected buildGearView(playerGear: CharacterGear, bench: GearBench): GearRows {
+  protected buildGearView(playerGear: CharacterGear, bench: GearBench, caps?: FamilyCaps): GearRows {
     const perParse = this.perParse(bench);
     const stats = this.benchToStats(bench);
     const playerKey = playerGear.talent_key ?? '';
     const trinketKey = this.judge.trinketKey(this.judge.measureTrinkets(playerGear.trinkets ?? []));
-    const enchantRows = this.judge.enchantRows(playerGear, bench.enchants, perParse, slot => this.gearComparison.slotName(slot));
+    const enchantRows = this.judge.enchantRows(playerGear, bench.enchants, perParse, slot => this.gearComparison.slotName(slot), caps);
     return {
       ...this.sections(perParse),
       comparison: true,
       talentBuilds: this.gearComparison.buildTalentBuilds(stats, playerKey),
-      talentVerdict: this.judge.talentVerdict(playerKey, this.rankedBuilds(bench), this.judge.talentReference(perParse)),
+      talentVerdict: this.judge.talentVerdict(playerKey, this.rankedBuilds(bench), this.judge.talentReference(perParse), caps),
       trinketSets: this.gearComparison.buildTrinketSets(stats, trinketKey),
-      trinketVerdict: this.judge.trinketVerdict(trinketKey, this.rankedPairs(bench), this.judge.trinketReference(perParse)),
+      trinketVerdict: this.judge.trinketVerdict(trinketKey, this.rankedPairs(bench), this.judge.trinketReference(perParse), caps),
       enchantRows,
       enchantEmpty: this.gearComparison.emptyNote('enchant', perParse.length, 'carries an enchant'),
       enchantsClean: this.enchantsClean(enchantRows.length, perParse.length),
