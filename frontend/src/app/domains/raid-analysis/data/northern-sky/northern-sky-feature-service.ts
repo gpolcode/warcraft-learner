@@ -4,6 +4,7 @@ import { round } from '../analysis/analysis-math';
 import { SelectionStore } from '../selection/selection-store';
 import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyBench, NorthernSkyAbility } from './northern-sky-data-source';
 import { NorthernSkyPhase } from './northern-sky-phases';
+import type { ParseRanking } from '../wcl/wcl.models';
 
 const MYTHIC_DIFFICULTY = 'Mythic';
 // The raid lead re-assigns lines to their roster on import; no Blizzard spec id is exposed to tag with.
@@ -44,6 +45,12 @@ export class NorthernSkyFeatureService {
   }
 
   // An empty table also covers a boss the addon keeps on one clock, so the tag states what the note carries rather than calling it wrong.
+  /** Null for a bench an older ingest wrote, which names no source until the next ingest re-benches it. */
+  sourceOf(bench: NorthernSkyBench): ParseRanking | null {
+    const stored: Partial<NorthernSkyBench> = bench;
+    return stored.source ?? null;
+  }
+
   hasPhaseTable(bench: NorthernSkyBench): boolean {
     return bench.phases.length > 0;
   }

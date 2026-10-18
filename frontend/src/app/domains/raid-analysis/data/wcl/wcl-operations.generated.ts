@@ -3,6 +3,39 @@ type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 import { WclEventData, PlayerDetailsBlob, WclRankingsBlob, WclTableBlob } from './wcl.models';
+export type CharacterRankingMetricType =
+  | 'bosscdps'
+  | 'bossdps'
+  | 'bossndps'
+  | 'bossrdps'
+  | 'cdps'
+  | 'default'
+  | 'dps'
+  | 'healercombinedbosscdps'
+  | 'healercombinedbossdps'
+  | 'healercombinedbossndps'
+  | 'healercombinedbossrdps'
+  | 'healercombinedcdps'
+  | 'healercombineddps'
+  | 'healercombinedndps'
+  | 'healercombinedrdps'
+  | 'hps'
+  | 'krsi'
+  | 'ndps'
+  | 'playerscore'
+  | 'playerspeed'
+  | 'rdps'
+  | 'tankcombinedbosscdps'
+  | 'tankcombinedbossdps'
+  | 'tankcombinedbossndps'
+  | 'tankcombinedbossrdps'
+  | 'tankcombinedcdps'
+  | 'tankcombineddps'
+  | 'tankcombinedndps'
+  | 'tankcombinedrdps'
+  | 'tankhps'
+  | 'wdps';
+
 export type EventDataType =
   | 'All'
   | 'Buffs'
@@ -93,6 +126,7 @@ export type RankingsQueryVariables = Exact<{
   encounterID: number;
   className: string;
   specName: string;
+  metric: CharacterRankingMetricType;
   partition?: number | null | undefined;
   difficulty: number;
 }>;

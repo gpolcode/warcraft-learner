@@ -9,18 +9,19 @@ import {
   round, avgOr, stddevOr, castEfficiencyPct, closestToZero, castDowntimeS,
 } from '../analysis/analysis-math';
 import { HoldWindow } from '../analysis/hold-targets-service';
-import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
+import { WclProjectionsService, TimedEvent, PhaseStart } from '../analysis/wcl-projections-service';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
 import { Result } from '../../../shared/util-http/result';
 import { SpecPlan } from '../simc/spec-plan-service';
-import { ListBenchService, MIN_MEASURED_PARSES } from './priority-list/list-bench-service';
+import { ListBenchService } from './priority-list/list-bench-service';
 import { LogReading } from './priority-list/list-check-service';
 import { ListLogService } from './priority-list/list-log-service';
 import { ItemDataService } from '../simc/item-data-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
-import { RotationBench } from './rotation-data-source';
+import { RotationBench, RotationParseMeasures } from './rotation-data-source';
+import type { ButtonCounts } from './priority-list/list-check-service';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 
@@ -47,6 +48,8 @@ interface ParseRotation {
   castTimesS: number[];
   durationS: number;
   reading: LogReading;
+  lustS: number | null;
+  phaseStarts: PhaseStart[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -67,10 +70,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'RotationTransformService',
       errorId: 'rotation.bench',
-      minSamples: MIN_MEASURED_PARSES,
       noRankingsMessage: 'No top logs for this encounter.',
-      tooFewParsesMessage: usable =>
-        `Only ${usable} usable top log(s) for this encounter; ${MIN_MEASURED_PARSES} are needed to bench it.`,
       plan: {
         plans: this.specPlanLoader,
         pick: plan => (plan.cooldowns.length || plan.lines.length ? plan : null),
@@ -79,7 +79,8 @@ export class RotationTransformService implements DataSource<RotationBench> {
       iconSpellIds: bench => [...Object.values(bench.cd_spell_ids), ...bench.buttons.map(button => button.spell_id)],
       parse: (parse, plan) => this.parseRotation(parse, plan),
       bench: ({ parses }, plan) => {
-        const { downtimeThresholdS, topAvgEfficiency, topEfficiencyStddev } = this.computeEfficiencyThresholds(parses);
+        const { downtimeThresholdS, topAvgEfficiency, topEfficiencyStddev, efficiencies } = this.computeEfficiencyThresholds(parses);
+        const buttonCounts = this.listBench.counts(plan, parses.map(parse => parse.reading));
         return {
           downtime_threshold_s: downtimeThresholdS,
           top_avg_efficiency: topAvgEfficiency,
@@ -89,6 +90,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
           list: this.listWithItems(plan, parses.map(parse => parse.reading)),
           buttons: this.listBench.bench(plan, parses.map(parse => parse.reading)),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
+          per_parse: parses.map((parse, index) => this.parseMeasures(parse, efficiencies[index] ?? null, buttonCounts[index] ?? {})),
         };
       },
     });
@@ -114,11 +116,23 @@ export class RotationTransformService implements DataSource<RotationBench> {
     const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
     const blTimeS = this.bloodlust.detectBloodlust(buffsTimed);
     return {
+      lustS: blTimeS,
+      phaseStarts: this.wclProjections.phaseStarts(fight),
       summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, blTimeS, this.auraWindows.upAtPull(buffsTimed)),
       gapListS: this.castGapListS(castsTimed),
       castTimesS: castsTimed.filter(event => event.type === 'cast').map(event => event.atS).sort((a, b) => a - b),
       durationS: fightDurS,
       reading,
+    };
+  }
+
+  protected parseMeasures(parse: ParseRotation, efficiencyPct: number | null, buttons: Record<string, ButtonCounts>): RotationParseMeasures {
+    return {
+      efficiency_pct: efficiencyPct,
+      lust_s: parse.lustS == null ? null : round(parse.lustS, 2),
+      phase_starts: parse.phaseStarts.map(phase => ({ id: phase.id, start_s: round(phase.startS, 2) })),
+      cd_casts_s: Object.fromEntries(parse.summaries.map(summary => [summary.name, summary.cast_times_s])),
+      buttons,
     };
   }
 
@@ -186,23 +200,21 @@ export class RotationTransformService implements DataSource<RotationBench> {
   /** A top log is judged alive for its whole pull, through the same downtime measure the runtime applies to the player's alive spans. */
   protected computeEfficiencyThresholds(
     parses: { gapListS: number[]; castTimesS: number[]; durationS: number }[],
-  ): { downtimeThresholdS: number; topAvgEfficiency: number; topEfficiencyStddev: number } {
+  ): { downtimeThresholdS: number; topAvgEfficiency: number; topEfficiencyStddev: number; efficiencies: (number | null)[] } {
     const allGaps = parses.flatMap(parse => parse.gapListS).sort((a, b) => a - b);
     let downtimeThresholdS = DEFAULT_DOWNTIME_THRESHOLD_S;
     if (allGaps.length) {
       downtimeThresholdS = quantile(allGaps, DOWNTIME_PERCENTILE) ?? DEFAULT_DOWNTIME_THRESHOLD_S;
     }
-    const efficiencies: number[] = [];
-    for (const { gapListS, castTimesS, durationS } of parses) {
-      if (gapListS.length && durationS > 0) {
-        const downtimeS = castDowntimeS(castTimesS, downtimeThresholdS, [[0, durationS]]);
-        efficiencies.push(round(castEfficiencyPct(downtimeS, durationS)));
-      }
-    }
+    const efficiencies = parses.map(({ gapListS, castTimesS, durationS }) => gapListS.length && durationS > 0
+      ? round(castEfficiencyPct(castDowntimeS(castTimesS, downtimeThresholdS, [[0, durationS]]), durationS))
+      : null);
+    const measured = efficiencies.filter(value => value !== null);
     return {
       downtimeThresholdS: round(downtimeThresholdS, 3),
-      topAvgEfficiency: avgOr(efficiencies, 0),
-      topEfficiencyStddev: stddevOr(efficiencies, 0),
+      topAvgEfficiency: avgOr(measured, 0),
+      topEfficiencyStddev: stddevOr(measured, 0),
+      efficiencies,
     };
   }
 

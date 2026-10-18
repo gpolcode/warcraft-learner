@@ -49,6 +49,8 @@ export class BurstWindows {
   protected readonly error = this.load.error;
   protected readonly windows = computed(() => this.load.value()?.windows ?? []);
   protected readonly judged = computed(() => this.load.value()?.judged ?? null);
+  protected readonly bench = computed(() => this.load.value()?.bench ?? null);
+  protected readonly reason = computed(() => this.burst.notComparedReason(this.spec()));
   private readonly anchors = computed<BurstMapAnchor[]>(() => this.load.value()?.anchors ?? []);
   private readonly clipAnchors = computed<ClipAnchor[]>(() => this.load.value()?.clipAnchors ?? []);
 

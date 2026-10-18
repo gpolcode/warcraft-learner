@@ -14,6 +14,11 @@ export class WclProjectionsService {
     return (laterMs - earlierMs) / 1000;
   }
 
+  /** Empty where WCL reports no phases for the boss. */
+  phaseStarts(fight: Pick<WclFight, 'startTime' | 'phaseTransitions'>): PhaseStart[] {
+    return (fight.phaseTransitions ?? []).map(phase => ({ id: phase.id, startS: this.relativeS(phase.startTime, fight.startTime) }));
+  }
+
   /** Stamps a WCL event stream with `atS` in one pass, so nothing past this point needs `fightStartMs` again. */
   withRelativeS(events: WclEvent[], fightStartMs: number): TimedEvent[] {
     return events.map(event => ({ ...event, atS: this.relativeS(event.timestamp, fightStartMs) }));
@@ -94,14 +99,26 @@ export class WclProjectionsService {
 
   toParseRankings(raw: WclRawRanking[], count: number): ParseRanking[] {
     return raw
-      .filter(ranking => ranking.report?.code && !ANONYMIZED_NAME.test(ranking.name ?? ''))
+      .map((ranking, index) => ({ ranking, rank: index + 1 }))
+      .filter(({ ranking }) => ranking.report?.code && !ANONYMIZED_NAME.test(ranking.name ?? ''))
       .slice(0, count)
-      .map(ranking => ({
+      .map(({ ranking, rank }) => ({
         player: ranking.name ?? '',
         server: ranking.server?.name ?? '',
         report_code: ranking.report?.code ?? '',
         fight_id: ranking.report?.fightID ?? 0,
+        rank,
+        ...this.rankingFacts(ranking),
       }));
+  }
+
+  private rankingFacts(ranking: WclRawRanking): Pick<ParseRanking, 'amount' | 'duration_s' | 'item_level' | 'started_at_s'> {
+    return {
+      amount: ranking.amount ?? null,
+      duration_s: ranking.duration == null ? null : round(ranking.duration / MS_PER_S, 1),
+      item_level: ranking.bracketData ?? null,
+      started_at_s: ranking.startTime == null ? null : Math.floor(ranking.startTime / MS_PER_S),
+    };
   }
 
   // A rankings row spells a realm "Twisting Nether" where a report actor spells it "Twisting-Nether", so identity is the alphanumerics.
@@ -133,13 +150,19 @@ export class WclProjectionsService {
 }
 
 import * as z from '../../../shared/util-validation/zod-mini';
-import { ParseRanking, WclAbility, WclEvent, WclRankingsBlob, WclRawAbility, WclRawRanking, WclReport } from '../wcl/wcl.models';
+import { ParseRanking, WclAbility, WclEvent, WclFight, WclRankingsBlob, WclRawAbility, WclRawRanking, WclReport } from '../wcl/wcl.models';
 import { WindowSpell } from './window-comparison.models';
 import { JsonCodecService } from '../../../shared/util-validation/json-codec-service';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import type { PlanCooldown } from '../plan/plan.models';
+import { round } from './analysis-math';
 
 export type TimedEvent = WclEvent & { atS: number };
+
+export interface PhaseStart {
+  id: number;
+  startS: number;
+}
 
 export interface PressFold {
   name: string;
@@ -158,6 +181,8 @@ export interface PressLog {
 // WCL anonymizes a privacy-protected parse's player name to "Character <id>-<id>", unfetchable since it can never match a report actor.
 const ANONYMIZED_NAME = /^Character \d+-\d+$/;
 
+const MS_PER_S = 1000;
+
 // A button on a shorter cooldown can gain a second charge from a talent the spell data leaves out (Healing Stream Totem) or come back in under half of it (Preservation's Fire Breath).
 const FOLDING_COOLDOWN_S = 60;
 
@@ -174,12 +199,18 @@ const WCL_SYNTHETIC_SOURCE_FALLBACK_ID = 291807;
 // A per-field fallback keeps a row carrying one unreadable value usable instead of voiding the whole ranking list.
 const OPTIONAL_STRING = z.catch(z.optional(z.string()), undefined);
 
+const OPTIONAL_NUMBER = z.catch(z.optional(z.number()), undefined);
+
 const RAW_RANKING_SCHEMA = z.looseObject({
   name: OPTIONAL_STRING,
+  amount: OPTIONAL_NUMBER,
+  duration: OPTIONAL_NUMBER,
+  bracketData: OPTIONAL_NUMBER,
+  startTime: OPTIONAL_NUMBER,
   server: z.catch(z.optional(z.looseObject({ name: OPTIONAL_STRING })), undefined),
   report: z.catch(z.optional(z.looseObject({
     code: OPTIONAL_STRING,
-    fightID: z.catch(z.optional(z.number()), undefined),
+    fightID: OPTIONAL_NUMBER,
   })), undefined),
 });
 

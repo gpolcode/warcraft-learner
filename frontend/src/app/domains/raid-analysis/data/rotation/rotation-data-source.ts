@@ -3,6 +3,7 @@ import { DataSource } from '../data-source/data-source';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { PlanCooldown, PriorityList } from '../plan/plan.models';
 import { BenchHeader } from '../analysis/bench-pipeline-service';
+import type { ButtonCounts } from './priority-list/list-check-service';
 
 export interface ShareRange {
   lo: number;
@@ -18,6 +19,19 @@ export interface ButtonBench {
   right: ShareRange;
 }
 
+/** One accepted top log's measures, at the index its ranking holds in `sources`. */
+export interface RotationParseMeasures {
+  /** Null for a log with fewer than two casts. */
+  efficiency_pct: number | null;
+  /** The log's first Bloodlust, pull-relative and negative when cast before the pull; null without one. */
+  lust_s: number | null;
+  /** Pull-relative, as WCL's phase transitions read; empty for a boss with none. */
+  phase_starts: { id: number; start_s: number }[];
+  /** Per plan cooldown, every use, which carries its count and first cast. */
+  cd_casts_s: Record<string, number[]>;
+  buttons: Record<string, ButtonCounts>;
+}
+
 export interface RotationBench extends BenchHeader {
   downtime_threshold_s: number;
   top_avg_efficiency: number;
@@ -28,6 +42,7 @@ export interface RotationBench extends BenchHeader {
   list: PriorityList;
   buttons: ButtonBench[];
   cd_spell_ids: Record<string, number>;
+  per_parse: RotationParseMeasures[];
   ability_icons: Record<number, { icon: string; name: string }>;
 }
 

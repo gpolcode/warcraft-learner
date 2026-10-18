@@ -10,6 +10,9 @@
           <h2>Gear</h2>
           <p tuiSubtitle>{{ view().comparison ? 'Gear vs top logs.' : 'Gear consensus across top logs.' }}</p>
         </hgroup>
+        @if (view().bench; as b) {
+          <wl-bench-strip class="mt-1" [strip]="b"></wl-bench-strip>
+        }
       </div>
       <div class="hidden md:block text-label text-muted text-right">Measured</div>
       <div class="hidden md:block text-label text-muted card-inset">Fix</div>

@@ -28,6 +28,7 @@ function benchView(over: Partial<GearComparisonView> = {}): GearComparisonView {
       { slotName: 'Head', enchant: HELM_ENCHANT },
       { slotName: 'Legs', enchant: ARMOR_KIT },
     ],
+    bench: null,
     ...over,
   };
 }

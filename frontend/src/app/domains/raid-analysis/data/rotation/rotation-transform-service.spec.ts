@@ -14,6 +14,7 @@ import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
 import type { ItemTable } from '../plan/plan.models';
 import { ItemDataService } from '../simc/item-data-service';
 import { TRINKET_SLOTS } from '../gear/gear-extract-service';
+import { MIN_SAMPLE_COUNT } from '../analysis/top-parse-selection-service';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -149,6 +150,17 @@ describe('computeEfficiencyThresholds', () => {
     expect(result.downtimeThresholdS).toBe(1.5);
     expect(result.topAvgEfficiency).toBe(0);
   });
+
+  it('keeps each log\'s efficiency at its index, null for a log with no gap, which the mean leaves out', () => {
+    const MEASURED_PCT = 95;
+    const measured = { gapListS: [0.5, 0.6, 0.7, 5], castTimesS: [0, 0.5, 1.1, 1.8, 6.8], durationS: 100 };
+    const oneCast = { gapListS: [], castTimesS: [3], durationS: 100 };
+
+    const result = svc['computeEfficiencyThresholds']([oneCast, measured]);
+
+    expect(result.efficiencies).toEqual([null, MEASURED_PCT]);
+    expect(result.topAvgEfficiency).toBe(MEASURED_PCT);
+  });
 });
 
 describe('aggregateCdBenchmarks', () => {
@@ -173,9 +185,6 @@ const reportShape = {
 
 // An id outside the plan's cooldowns; exercises the cooldown-cast filter.
 const UNTRACKED_SPELL_ID = 99;
-
-// The floor the transform benches at: the list bench's own MIN_MEASURED_PARSES.
-const MIN_SAMPLE_COUNT = 5;
 
 const wclFake = {
   // getRankings returns the raw WCL envelope ({ rankings }); the transform unwraps it.
@@ -252,6 +261,28 @@ describe('RotationTransformService (live, in-browser)', () => {
     assert(result.ok);
     expect(result.value.list.items).toEqual(table.items);
     expect(result.value.list.spells).toEqual({ ...LIST.spells, ...table.spells });
+  });
+
+  it('bakes each top log\'s lust, phase starts, cooldown uses, button counts and efficiency, in source order', async () => {
+    const LUST_S = 6;
+    const PHASE_TWO = 2;
+    const PHASE_TWO_S = 60;
+    const COOLDOWN_S = 5;
+    const phased = { ...wclFake, getReport: reportsByCode({ ...reportShape, phaseTransitions: [{ id: PHASE_TWO, startTime: PHASE_TWO_S * 1000 }] }) };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: phased, plans: planLoader(specPlan({ cooldowns: COOLDOWNS, ...LIST })) }) });
+
+    const result = await TestBed.inject(RotationTransformService).getBench('SubtletyRogue', 1);
+
+    assert(result.ok);
+    const { per_parse: perParse, sources, top_avg_efficiency: topAvg } = result.value;
+    expect(perParse).toHaveLength(sources.length);
+    expect(perParse[0]).toEqual({
+      efficiency_pct: topAvg,
+      lust_s: LUST_S,
+      phase_starts: [{ id: PHASE_TWO, start_s: PHASE_TWO_S }],
+      cd_casts_s: { 'Shadow Blades': [COOLDOWN_S] },
+      buttons: { shadow_blades: { right: 1, moments: 1 } },
+    });
   });
 
   it('propagates a missing error when the spec\'s plan has neither cooldowns nor a list', async () => {

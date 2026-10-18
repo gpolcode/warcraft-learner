@@ -35,7 +35,7 @@ function topWindow(over: Partial<BurstWindow> = {}): BurstWindow {
   return {
     time_s: WINDOW_START_S, window_length_s: WINDOW_LENGTH_S,
     dmg_avg: TOP_AVG, dmg_min: TOP_MIN, dmg_max: TOP_MAX, dmg_stddev: TOP_STDDEV,
-    common_cds: [], ability_breakdown: [],
+    members: [], common_cds: [], ability_breakdown: [],
     ...over,
   };
 }

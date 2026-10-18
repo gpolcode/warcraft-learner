@@ -103,6 +103,8 @@
           }
 
           <wl-pull-overview
+            [spec]="spec()"
+            [encounterId]="selectedEncounterId()"
             [report]="reportCode()"
             [fight]="selectedFight()!"
             [player]="selectedPlayerId()!"

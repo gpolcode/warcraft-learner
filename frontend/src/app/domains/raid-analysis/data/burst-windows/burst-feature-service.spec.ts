@@ -12,6 +12,7 @@ import { TestBed } from '@angular/core/testing';
 import { pullModel } from '../../../../../testing/builders/pull-model';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { benchSources } from '../../../../../testing/builders/bench-sources';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -91,7 +92,7 @@ describe('burstClipAnchor', () => {
 describe('buildBurstView', () => {
   const window: BurstWindow = {
     time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
-    common_cds: ['Shadow Blades'],
+    members: [], common_cds: ['Shadow Blades'],
     ability_breakdown: [
       { spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 2 },
     ],
@@ -149,7 +150,7 @@ describe('buildBurstView', () => {
 
 describe('findPlayerBurstWindows', () => {
   const window: BurstWindow = {
-    time_s: 10, window_length_s: 20, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
+    time_s: 10, window_length_s: 20, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, members: [], common_cds: [], ability_breakdown: [],
   };
   const HIT_S = 12, CAST_S = 11, HIT_DAMAGE = 400, CAST_COUNT = 1;
 
@@ -200,13 +201,13 @@ function withBench(bench: Result<BurstBench>, wcl: unknown = wclFake): BurstFeat
 }
 
 const benchFixture: BurstBench = {
-  spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Test', sample_count: 5,
+  spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Test', metric: 'dps', sample_count: 5, sources: benchSources(5),
   cd_spell_ids: { 'Shadow Blades': SHADOW_BLADES },
   ability_icons: { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' }, [SHADOW_BLADES_DAMAGE]: { icon: 'evis', name: 'Eviscerate' } },
   windows: [{
     time_s: BENCH_WINDOW_START_S, window_length_s: BENCH_WINDOW_LENGTH_S,
     dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
-    common_cds: ['Shadow Blades'],
+    members: [], common_cds: ['Shadow Blades'],
     ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 2 }],
   }],
 };
@@ -216,6 +217,30 @@ describe('BurstFeatureService', () => {
 
   const benchOnlyView = async () => okValue(await withBench(Results.ok(benchFixture)).loadBenchView('SubtletyRogue', 1));
   const playerView = async () => okValue(await withBench(Results.ok(benchFixture)).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10));
+
+  it('names who the bench windows were compared with', async () => {
+    expect((await benchOnlyView()).bench?.count).toBe(benchFixture.sample_count);
+  });
+
+  it('names who the player\'s windows were compared with', async () => {
+    expect((await playerView()).bench?.count).toBe(benchFixture.sample_count);
+  });
+
+  it('compares nothing for a healer, reads neither the bench nor the log, and says why', async () => {
+    const HEALER_SPEC = 'HolyPaladin';
+    const untouched = withBench(Results.missing('Not yet ingested.'), {});
+
+    const view = okValue(await untouched.loadPlayerView(HEALER_SPEC, 1, 'rep', 1, 10));
+
+    expect(view.windows).toEqual([]);
+    expect(untouched.notComparedReason(HEALER_SPEC)).toBe(
+      'Top raiders on your spec are ranked on healing, so there are no burst windows to compare your damage with.');
+    expect(okValue(await untouched.loadBenchView(HEALER_SPEC, 1)).windows).toEqual([]);
+  });
+
+  it('compares a damage spec\'s windows, giving no reason', () => {
+    expect(withBench(Results.ok(benchFixture)).notComparedReason('SubtletyRogue')).toBeNull();
+  });
 
   it('propagates the data-source error when the bench read fails', async () => {
     const result = await withBench(Results.missing('Not yet ingested.')).loadBenchView('SubtletyRogue', 1);

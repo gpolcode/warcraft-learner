@@ -7,6 +7,8 @@ import { CLOAK_OF_SHADOWS, EVASION } from '../../../../../testing/spell-ids';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { Result, Results } from '../../../shared/util-http/result';
 import { BOSS_HIT_SPELL_ID, CLOAK_META, WINDOW_REF_GAME_ID, benchWith, defBench, fullBench } from './defensive-harness';
+import { BenchStripService } from '../analysis/bench-strip-service';
+import { TestBed } from '@angular/core/testing';
 
 function serviceWith(bench: Result<DefensiveBench>, wcl: Record<string, unknown> = {}): DefensiveFeatureService {
   return featureService(DEFENSIVE_DATA_SOURCE, DefensiveFeatureService, bench, wcl);
@@ -165,7 +167,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
 
     const onMissingFight = await service.loadAnalysisView('SubtletyRogue', 1, 'r1', UNLOGGED_FIGHT_ID, 10);
     expect(onMissingFight).toEqual(Results.ok({
-      findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null,
+      findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null, bench: TestBed.inject(BenchStripService).strip(benchWith()),
     }));
 
     const onFailure = await service.loadAnalysisView('SubtletyRogue', 1, FAILING_CODE, 1, 10);

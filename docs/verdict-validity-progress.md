@@ -69,3 +69,42 @@ None for the references this package used (RC3: `analysis-math.ts:97-107`, `wind
 - Every new timed check sets `AnalysisFinding.span` and runs through `PullModelService.foldFindings`; every new window goes through `buildWindowView` with the model.
 - Ingest and runtime measures stay in `analysis-math.ts` and take spans; ingest passes `[[0, duration]]`.
 - Test fixtures: `pullModel(over)` in `src/testing/builders/pull-model.ts`; `featureService` defaults `getPlayerDetails` and `getResurrects` on a WCL fake that leaves them out.
+
+## Package 2: reference class and per-parse measures (done)
+
+Branch `claude/verdict-validity-p2-reference`, PR against `claude/verdict-validity-p1-timeline`.
+
+### Done
+
+- **Reference class.** `RANKINGS_Q` takes `$metric: CharacterRankingMetricType!`; `SpecRoleService.rankingMetric` gives `hps` for the 7 healer folders, `dps` otherwise (tanks included). `TopParseSelectionService` walks partitions newest-first and takes the first with at least `MIN_SAMPLE_COUNT` (5, exported there) rows; when none reaches it, the newest non-empty pool, so the bench says how few it had. The pipeline floors every recipe at 5 with a default too-few message; Northern Sky sets `minSamples: 1` (it exports one log).
+- **Rankings facts.** `ParseRanking` keeps `rank` (position in WCL's list, counting the rows the selection skips), `amount`, `duration_s`, `item_level` (`bracketData`), `started_at_s`; an unreadable fact is null, never a dropped row. Every sampled bench header carries `metric` and `sources` (the accepted parses, in the order of every per-parse array); Northern Sky carries `metric` and `source` (`header: 'export'`). The map bench extends `BenchHeader`.
+- **Per-parse measures**, aligned with `sources`: rotation `per_parse` (`efficiency_pct`, `lust_s` through `lustSpan`, `phase_starts` through `WclProjectionsService.phaseStarts`, which `PullModelService` also reads, `cd_casts_s`, `buttons` as `{ right, moments }` through `ListCheckService.rightCounts`, which `rightShare` reads); defensive `per_parse.def_casts_s`; every burst and defensive window's `members` (`parse`, `time_s`, `window_length_s`, `damage`); gear `per_parse` (talent key, trinket ids, enchant per slot), `talent_nodes` (entry, rank, count via `parseTalentKey`) and `talent_sample_count`.
+- **UI.** `BenchStripService.strip` and `wl-bench-strip` ("Compared with 10 top logs[ ranked on healing], ranks a to b, item level a to b, kill times a to b." then "Benched 18 Oct 2026.") on Rotation rules, Downtime, Offensives, Burst windows, Defensives, Defensive windows and Gear. Pull overview: the figure on the spec's metric (`getTable` reads `Healing` for healers), the alive-time figure when the player died (resurrects read on a wipe or a death), and "Top logs a to b on kills" from the gear bench's sources when its metric matches. Northern Sky subtitle names `#rank`, player and kill time. `wl-load-state` has a `reason` state; healers get it on Burst windows (no bench or log read) and on Rotation rules.
+- `INGEST_VERSION` 44.
+
+### Decisions and deviations
+
+- Generated types came from the same codegen against the `math280h/go-wcl` SDL, as in package 1 (byte-identical before the change). Rerun `npm run schema:pull` with a client pair; only `CharacterRankingMetricType` and `RankingsQueryVariables.metric` should differ.
+- The constructs section 5.4 lists but the code does not have yet (unused ready time, damage on the common span, coverage by any defensive) are not baked; members carry the current window construct, and a defensive window's members are its coverage by that defensive.
+- Lust and phase starts are baked in the rotation bench only.
+- The pull overview reference comes from the gear bench, the one bench with no plan gate.
+- Runtime tolerates a bench written before this version: no strip, no Northern Sky source (old subtitle), no pull overview reference. E2E checks the strip and the pull overview captions when drawn and accepts both Northern Sky subtitles; tighten it once the re-bench lands.
+- The map overlay has no strip.
+
+### Drift against 6882b59
+
+None: `wcl-queries.ts:49-54` and `bench-pipeline-service.ts:138` matched.
+
+### Seams stubbed
+
+- The phase guard is not armed (a rule change): `per_parse[].phase_starts` and `PullModel.phases` exist, with no consumer.
+
+### WCL cost of the re-bench
+
+The bump re-benches all 400 spec-encounter pairs (40 specs). Rankings reads are never stored, as today; report and event reads come from the response store wherever the top parses are unchanged, apart from package 1's one-time `REPORT_Q` misses. The 70 healer pairs (7 specs x 10 encounters) are re-ranked on `hps`, so most of their top parses are new and fetched fresh, about the cost of a first bench of 7 specs. Expect several thousand points over several hourly runs, each stopping at `INGEST_POINTS_MARGIN`; the ingest log's per-encounter quota line measures it.
+
+### For the next package
+
+- Per-parse arrays index `sources`; a leave-one-out fold drops index i from `sources` and every `per_parse`/`members` entry with `parse === i`.
+- Button counts: `ListCheckService.rightCounts`; efficiency: `computeEfficiencyThresholds(...).efficiencies`.
+- `BenchHeader.metric` says what a bench was ranked on; compare it before mixing a bench's amounts with the player's figure.

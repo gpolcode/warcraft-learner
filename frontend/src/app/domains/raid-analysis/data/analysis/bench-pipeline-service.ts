@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { ParseRanking, TopParseSelection, WclFight, WclReport } from '../wcl/wcl.models';
+import { ParseRanking, RankingMetric, TopParseSelection, WclFight, WclReport } from '../wcl/wcl.models';
 import { SpecPlan, SpecPlanService } from '../simc/spec-plan-service';
 import type { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { Result, Results } from '../../../shared/util-http/result';
@@ -8,7 +8,8 @@ import { HttpLoadErrors } from '../http/http-load-error';
 import { ReportActor } from './wcl-projections-service';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { WclProjectionsService } from './wcl-projections-service';
-import { TopParseSelectionService } from './top-parse-selection-service';
+import { MIN_SAMPLE_COUNT, TopParseSelectionService } from './top-parse-selection-service';
+import { SpecRoleService } from './spec-role-service';
 
 @Injectable({ providedIn: 'root' })
 export class BenchPipelineService {
@@ -16,6 +17,7 @@ export class BenchPipelineService {
   private readonly projections = inject(WclProjectionsService);
   private readonly topParses = inject(TopParseSelectionService);
   private readonly specPlans = inject(SpecPlanService);
+  private readonly specRoles = inject(SpecRoleService);
 
   spellIdsByName(abilities: { name: string; spell_id: number }[]): Record<string, number> {
     const byName: Record<string, number> = {};
@@ -39,7 +41,7 @@ export class BenchPipelineService {
 
       const payload = await this.collectParses(wclApi, recipe, planned.value, rankings, limits.sampleTarget);
       const accepted = payload.parses.length;
-      if (accepted < limits.minSamples) return Results.missing(recipe.tooFewParsesMessage?.(accepted) ?? recipe.noRankingsMessage);
+      if (accepted < limits.minSamples) return Results.missing(recipe.tooFewParsesMessage?.(accepted) ?? tooFewParses(accepted, limits.minSamples));
 
       return await this.benchEnvelope(wclApi, recipe, planned.value, { spec, encounterId }, payload);
     } catch (cause) {
@@ -74,15 +76,20 @@ export class BenchPipelineService {
     recipe: BenchRecipe<TParse, TBench, TPlan>,
     plan: SpecPlan | null,
     query: { spec: string; encounterId: number },
-    { castIds, ...payload }: CollectedParses<TParse>,
+    { castIds, sources, ...payload }: CollectedParses<TParse>,
   ): Promise<Result<TBench>> {
     const benchPlan = this.topLogPlan(recipe, plan, castIds);
     if (benchPlan === null) return Results.missing(recipe.plan?.missingMessage ?? recipe.noRankingsMessage);
     const body = await recipe.bench(payload, benchPlan);
     const identity: BenchIdentity = {
       spec: query.spec, encounter_id: query.encounterId, encounter_name: payload.encounterName,
+      metric: this.specRoles.rankingMetric(query.spec),
     };
-    const header = recipe.header === 'identity' ? identity : { ...identity, sample_count: payload.parses.length };
+    const [exported] = sources;
+    if (recipe.header === 'export' && !exported) return Results.missing(recipe.noRankingsMessage);
+    const header = recipe.header === 'export'
+      ? { ...identity, source: exported }
+      : { ...identity, sample_count: payload.parses.length, sources };
     const icons = recipe.iconSpellIds
       ? { ability_icons: this.projections.abilityIcons(await wclApi.getAbilities(recipe.iconSpellIds(body))) }
       : {};
@@ -100,12 +107,13 @@ export class BenchPipelineService {
     wclApi: WclApiService, recipe: BenchRecipe<TParse, TBench, TPlan>, plan: SpecPlan | null,
     rankings: ParseRanking[], sampleTarget: number,
   ): Promise<CollectedParses<TParse>> {
-    const collected: CollectedParses<TParse> = { encounterName: '', parses: [], castIds: [] };
+    const collected: CollectedParses<TParse> = { encounterName: '', parses: [], castIds: [], sources: [] };
     for (const ranking of rankings) {
       const accepted = await this.parseCandidate(wclApi, recipe, plan, ranking);
       if (!accepted) continue;
       collected.parses.push(accepted.parse);
       collected.castIds.push(accepted.castIds);
+      collected.sources.push(ranking);
       collected.encounterName ||= accepted.encounterName;
       if (collected.parses.length >= sampleTarget) break;
     }
@@ -135,7 +143,10 @@ export class BenchPipelineService {
 }
 
 const TOP_PARSE_COUNT = 10;
-const MIN_SAMPLE_COUNT = 1;
+
+function tooFewParses(accepted: number, needed: number): string {
+  return `Only ${accepted} usable top log(s) for this encounter; ${needed} are needed to bench it.`;
+}
 
 export interface BenchParse {
   ranking: ParseRanking;
@@ -152,20 +163,32 @@ interface BenchPayload<TParse> {
 interface CollectedParses<TParse> extends BenchPayload<TParse> {
   /** Per accepted parse, the id each plan button was cast under. */
   castIds: Record<string, number>[];
+  sources: ParseRanking[];
 }
 
-export interface BenchIdentity {
+interface BenchIdentity {
   spec: string;
   encounter_id: number;
   encounter_name: string;
+  /** What the top logs were ranked on. */
+  metric: RankingMetric;
+  /** Stamped by ingest when the file is written. */
+  ingested_at_s?: number;
 }
 
 export interface BenchHeader extends BenchIdentity {
   sample_count: number;
+  /** The accepted top parses, in the order every per-parse array in the bench keeps. */
+  sources: ParseRanking[];
+}
+
+/** A file that exports one named parse rather than a sampled benchmark. */
+export interface ExportHeader extends BenchIdentity {
+  source: ParseRanking;
 }
 
 /** What a recipe's bench callback returns: the pipeline spreads the header before it and bakes the icon map after it. */
-type BenchBody<TBench> = Omit<TBench, keyof BenchHeader | 'ability_icons'>;
+type BenchBody<TBench> = Omit<TBench, keyof BenchHeader | keyof ExportHeader | 'ability_icons'>;
 
 interface BenchPlanStep<TPlan> {
   plans: SpecPlanLoaderService;
@@ -183,8 +206,8 @@ export interface BenchRecipe<TParse, TBench, TPlan = undefined> {
   minSamples?: number;
   noRankingsMessage: string;
   tooFewParsesMessage?: (accepted: number) => string;
-  /** 'identity' bakes no sample_count, for a file that exports one named parse rather than a sampled benchmark. */
-  header?: 'sampled' | 'identity';
+  /** 'export' bakes the one accepted parse as `source` in place of `sample_count` and `sources`. */
+  header?: 'sampled' | 'export';
   plan?: BenchPlanStep<TPlan>;
   /** Every spell id the baked file renders, so its icon map is complete and no card falls back. */
   iconSpellIds?: (bench: BenchBody<TBench>) => number[];

@@ -1,4 +1,5 @@
 import { WclAbility, WclFight, WclRawAbility, WclReport } from '../../app/domains/raid-analysis/data/wcl/wcl.models';
+import { parseRanking } from './bench-sources';
 
 interface FixtureActor { id: number; name: string; subType: string; server: string }
 interface FixtureEnemy { id: number; name: string; gameID: number }
@@ -14,6 +15,7 @@ export interface ReportOverrides {
   actors?: FixtureActor[];
   enemies?: FixtureEnemy[];
   abilities?: WclAbility[];
+  phaseTransitions?: { id: number; startTime: number }[];
 }
 
 const DEFAULT_PLAYER_ID = 10;
@@ -38,6 +40,7 @@ function defaultFight(over: ReportOverrides): WclFight {
     duration_s: endTime / MS_PER_S,
     friendlyPlayers: [],
     fightPercentage: 0,
+    ...(over.phaseTransitions && { phaseTransitions: over.phaseTransitions }),
   };
 }
 
@@ -65,13 +68,23 @@ export interface FixtureRanking {
   name: string;
   server?: { name: string };
   report: { code: string; fightID: number };
+  amount?: number;
+  duration?: number;
+  bracketData?: number;
+  startTime?: number;
 }
 
+/** Carries the facts `parseRanking` defaults to, so row `index` projects to `parseRanking({ rank: index })`. */
 export function rankingRow(index: number, over: { name?: string; server?: string } = {}): FixtureRanking {
+  const source = parseRanking({ rank: index });
   return {
-    name: over.name ?? `P${index}`,
+    name: over.name ?? source.player,
     ...(over.server !== undefined && { server: { name: over.server } }),
-    report: { code: `r${index}`, fightID: index },
+    report: { code: source.report_code, fightID: source.fight_id },
+    amount: source.amount ?? undefined,
+    duration: (source.duration_s ?? 0) * MS_PER_S,
+    bracketData: source.item_level ?? undefined,
+    startTime: (source.started_at_s ?? 0) * MS_PER_S,
   };
 }
 

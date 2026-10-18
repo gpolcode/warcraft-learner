@@ -9,13 +9,14 @@ import { LoadState } from '../../shared/ui-load-state/load-state';
 import { NorthernSkyBench } from '../data/northern-sky/northern-sky-data-source';
 import { NorthernSkyFeatureService } from '../data/northern-sky/northern-sky-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
+import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 
 const COPY_TEXTS = ['Copy note', 'Copied'] as const;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-northern-sky-export',
-  imports: [FormsModule, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiButtonCopy, TuiCheckbox, TuiLabel, TuiBadge, FlyoverPanel, GameIcon, LoadState],
+  imports: [FormsModule, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiButtonCopy, TuiCheckbox, TuiLabel, TuiBadge, FlyoverPanel, GameIcon, LoadState, FormatDurationPipe],
   templateUrl: './northern-sky-export.html',
   providers: [{ provide: TUI_COPY_TEXTS, useValue: signal(COPY_TEXTS) }],
 })
@@ -47,6 +48,10 @@ export class NorthernSkyExport {
   protected readonly cooldowns = computed(() => this.grouped().cooldowns);
   protected readonly defensives = computed(() => this.grouped().defensives);
   protected readonly available = this.load.available;
+  protected readonly source = computed(() => {
+    const bench = this.bench();
+    return bench ? this.feature.sourceOf(bench) : null;
+  });
   protected readonly phased = computed(() => {
     const bench = this.bench();
     return !!bench && this.feature.hasPhaseTable(bench);

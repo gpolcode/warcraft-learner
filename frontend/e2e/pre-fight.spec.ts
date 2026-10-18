@@ -29,7 +29,8 @@ test('picking the first class, spec and encounter loads that spec\'s plan', asyn
 test('the northern sky export offers the top log\'s cooldown timings as a note', async () => {
   const card = page.locator('wl-northern-sky-export');
   await shows(card, 'Northern Sky export');
-  await shows(card, 'Cooldown timings from one top Mythic log for your spec, as a note for the Northern Sky raid addon.');
+  // A bench ingest wrote before it named its source log says only that it is one top log.
+  await shows(card, new RegExp(`^Cooldown timings from (one top|the #\\d+) Mythic log for your spec( \\(.+(, ${CLOCK.source} kill)?\\))?, as a note for the Northern Sky raid addon\\.$`));
 
   await card.getByRole('button', { name: 'Export note' }).click();
   // The panel opens in Taiga's portal layer, outside the card, so it is found by its dialog role.

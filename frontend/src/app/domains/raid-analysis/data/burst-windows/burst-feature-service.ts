@@ -10,14 +10,20 @@ import { PullContextService, PullContext, PullRef } from '../analysis/pull-conte
 import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
 import { WindowViewService } from '../analysis/window-view-service';
 import { JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
+import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
+import { SpecRoleService } from '../analysis/spec-role-service';
+
+const HEALER_REASON = 'Top raiders on your spec are ranked on healing, so there are no burst windows to compare your damage with.';
 
 export interface BurstMapAnchor {
   timeS: number;
   windowLengthS: number;
 }
 
-/** `judged` is null on a bench-only view, which judges no pull. */
-export type BurstView = WindowView<BurstMapAnchor> & { judged: JudgedSpan | null };
+/** `judged` is null on a bench-only view, which judges no pull; `bench` is null on a spec the card compares nothing for. */
+export type BurstView = WindowView<BurstMapAnchor> & { judged: JudgedSpan | null; bench: BenchStrip | null };
+
+type JudgedWindows = Omit<BurstView, 'bench'>;
 
 @Injectable({ providedIn: 'root' })
 export class BurstFeatureService {
@@ -27,23 +33,36 @@ export class BurstFeatureService {
   private readonly source = inject(BURST_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
   private readonly pullModel = inject(PullModelService);
+  private readonly benchStrips = inject(BenchStripService);
+  private readonly specRoles = inject(SpecRoleService);
+
+  /** Null where the card compares the spec's damage; a healer's top logs are ranked on healing, so none of their damage is a reference. */
+  notComparedReason(spec: string): string | null {
+    return this.specRoles.isHealer(spec) ? HEALER_REASON : null;
+  }
 
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
   ): Promise<Result<BurstView>> {
+    if (this.notComparedReason(spec)) return Results.ok(this.notComparedView());
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
 
     const pull: PullRef = { reportCode, fightId, playerId };
+    const strip = this.benchStrips.strip(bench.value);
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'BurstFeatureService.loadPlayerView',
       errorId: 'burst.player-view',
-      emptyView: () => this.benchOnlyView(bench.value),
-      analyze: context => this.playerView(bench.value, pull, context),
+      emptyView: () => ({ ...this.benchOnlyView(bench.value), bench: strip }),
+      analyze: async context => ({ ...await this.playerView(bench.value, pull, context), bench: strip }),
     });
   }
 
-  private async playerView(bench: BurstBench, pull: PullRef, context: PullContext): Promise<BurstView> {
+  private notComparedView(): BurstView {
+    return { windows: [], anchors: [], clipAnchors: [], folded: this.pullModel.noFolds(), judged: null, bench: null };
+  }
+
+  private async playerView(bench: BurstBench, pull: PullRef, context: PullContext): Promise<JudgedWindows> {
     const { reportCode, fightId, playerId } = pull;
     const { report, fight, model } = context;
     const abilities = report.masterData?.abilities ?? [];
@@ -65,9 +84,10 @@ export class BurstFeatureService {
   }
 
   async loadBenchView(spec: string, encounterId: number): Promise<Result<BurstView>> {
+    if (this.notComparedReason(spec)) return Results.ok(this.notComparedView());
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return Results.ok(this.benchOnlyView(bench.value));
+    return Results.ok({ ...this.benchOnlyView(bench.value), bench: this.benchStrips.strip(bench.value) });
   }
 
   /** Higher player damage is better, so falling short of the top-parse range is the problem. */
@@ -126,14 +146,14 @@ export class BurstFeatureService {
     model: PullModel | null,
     cdSpellIds: Record<string, number>,
     abilities: AbilityIcons,
-  ): BurstView {
+  ): JudgedWindows {
     const view = this.windowView.buildWindowView({
       topWindows, playerWindows, model, abilities, adapter: this.burstAdapter(cdSpellIds, model === null),
     });
     return { ...view, judged: model ? this.pullModel.judgedSpan(model, view.folded) : null };
   }
 
-  private benchOnlyView(bench: BurstBench): BurstView {
+  private benchOnlyView(bench: BurstBench): JudgedWindows {
     return this.buildBurstView(bench.windows, [], null, bench.cd_spell_ids, bench.ability_icons);
   }
 

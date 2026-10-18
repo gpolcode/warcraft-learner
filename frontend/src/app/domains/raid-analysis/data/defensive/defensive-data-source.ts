@@ -19,11 +19,18 @@ interface BakedAbility {
   name: string;
 }
 
+/** One accepted top log's measures, at the index its ranking holds in `sources`. */
+export interface DefensiveParseMeasures {
+  /** Per plan defensive, every use, which carries its count and first cast. */
+  def_casts_s: Record<string, number[]>;
+}
+
 export interface DefensiveBench extends BenchHeader {
   per_defensive_benchmarks: Record<string, PerDefensiveBenchmark>;
   defensive_windows: BurstWindow[];
   defensives: DefensivePlanMeta[];
   cd_spell_ids: Record<string, number>;
+  per_parse: DefensiveParseMeasures[];
   ability_icons: Record<number, BakedAbility>;
 }
 

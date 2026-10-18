@@ -56,6 +56,7 @@ export class Defensive {
   protected readonly onPlan = computed<OnPlanChip[]>(() => this.load.value()?.onPlan ?? []);
   protected readonly findingsSpan = computed(() => this.load.value()?.findingsSpan ?? null);
   protected readonly windowsSpan = computed(() => this.load.value()?.windowsSpan ?? null);
+  protected readonly bench = computed(() => this.load.value()?.bench ?? null);
 
   protected onOpenMap(index: number): void {
     const anchor = this.anchors()[index];

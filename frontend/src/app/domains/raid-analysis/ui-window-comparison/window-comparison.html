@@ -10,6 +10,9 @@
           }
         </hgroup>
       </header>
+      @if (bench(); as b) {
+        <wl-bench-strip class="pb-2" [strip]="b"></wl-bench-strip>
+      }
       @if (judged(); as span) {
         <wl-judged-span class="pb-2" noun="window" [span]="span"></wl-judged-span>
       }

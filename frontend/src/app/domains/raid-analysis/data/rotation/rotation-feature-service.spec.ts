@@ -380,3 +380,13 @@ describe('rotation checks over the player timeline', () => {
     expect(findings.find(finding => finding.severity === 'success')?.message).toBe('Shadow Blades - 1/1 casts.');
   });
 });
+
+describe('judgesButtons', () => {
+  it('judges a damage spec\'s buttons against its list', () => {
+    expect(svc.judgesButtons('SubtletyRogue')).toBe(true);
+  });
+
+  it('judges no button for a healer, whose top logs follow no one damage priority list', () => {
+    expect(svc.judgesButtons('MistweaverMonk')).toBe(false);
+  });
+});

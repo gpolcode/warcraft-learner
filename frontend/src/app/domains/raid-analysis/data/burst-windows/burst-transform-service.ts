@@ -351,6 +351,9 @@ export class BurstTransformService implements DataSource<BurstBench> {
         common_cds: this.clusterCommonCds(members),
         window_length_s: round(mean(members.map(member => member.window_length_s)) ?? 0),
         ability_breakdown: this.clusterAbilityBreakdown(members),
+        members: members.map(member => ({
+          parse: member.parse_index, time_s: member.time_s, window_length_s: member.window_length_s, damage: member.window_damage,
+        })),
       });
     }
     return result.sort((a, b) => a.time_s - b.time_s);

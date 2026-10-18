@@ -4,7 +4,7 @@ import { WCL_TRANSPORT, WclReportUnavailableError, WclTransportError } from './w
 import {
   WclReport, WclEvent,
   PlayerDetailGroups, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
-  WclClass, WclExpansion,
+  WclClass, WclExpansion, RankingMetric,
   MYTHIC_DIFFICULTY,
 } from './wcl.models';
 import {
@@ -120,8 +120,8 @@ export class WclApiService {
     return report.events?.data ?? [];
   }
 
-  async getDamageDoneTable(code: string, fightId: number): Promise<WclTableBlob | null> {
-    const vars: TableQueryVariables = { code, fightIDs: [fightId], dataType: 'DamageDone' };
+  async getTable(code: string, fightId: number, dataType: 'DamageDone' | 'Healing'): Promise<WclTableBlob | null> {
+    const vars: TableQueryVariables = { code, fightIDs: [fightId], dataType };
     const result = await this.query<TableQuery>(TABLE_Q, vars);
     return result.reportData?.report?.table ?? null;
   }
@@ -152,10 +152,10 @@ export class WclApiService {
   }
 
   // Returned as-is (`null` for an unknown spec, since no query can be built); consumers unwrap both forms (see `unwrapRankings` / `toParseRankings`), and a null `partition` leaves the variable unset, which is what makes WCL fall back to the zone's current one.
-  async getRankings(spec: string, encounterId: number, partition: number | null): Promise<WclRankingsBlob | null> {
+  async getRankings(spec: string, encounterId: number, partition: number | null, metric: RankingMetric): Promise<WclRankingsBlob | null> {
     const meta = await this.specMeta.resolve(spec);
     if (!meta) return null;
-    const vars: RankingsQueryVariables = { encounterID: encounterId, className: meta.className, specName: meta.specName, difficulty: MYTHIC_DIFFICULTY };
+    const vars: RankingsQueryVariables = { encounterID: encounterId, className: meta.className, specName: meta.specName, metric, difficulty: MYTHIC_DIFFICULTY };
     if (partition != null) vars.partition = partition;
     const result = await this.query<RankingsQuery>(RANKINGS_Q, vars);
     return result.worldData?.encounter?.characterRankings ?? null;

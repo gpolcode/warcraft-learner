@@ -11,7 +11,7 @@ import { SpecTalents } from './talent.models';
 import { getOrInsert } from '../analysis/analysis-math';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
-import { GearBench } from './gear-data-source';
+import { GearBench, GearParseMeasures, TalentNodeCount } from './gear-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { GearComparisonService } from './gear-comparison-service';
 
@@ -59,6 +59,9 @@ export class GearTransformService implements DataSource<GearBench> {
         const stats = this.aggregateParseGear(parses);
         return {
           talent_builds: this.withTalentDiffs(stats.talent_builds, await this.talentData.getTalents(spec)),
+          talent_nodes: this.talentNodeCounts(parses),
+          talent_sample_count: parses.filter(parse => parse.talent_key).length,
+          per_parse: parses.map(parse => this.parseMeasures(parse)),
           trinket_sets: stats.trinket_sets,
           enchants: await this.withItemNames(stats.enchants),
         };
@@ -169,6 +172,24 @@ export class GearTransformService implements DataSource<GearBench> {
       .slice(0, MAX_TALENT_BUILDS)
       .map(([key, { count, report_code, fight_id, player_name, source_id }]) =>
         ({ key, pct: this.pct(count, total), report_code, fight_id, player_name, source_id, diff: [] }));
+  }
+
+  /** Read through the same key parse the runtime build diff uses, so a count and a diff name the same talent. */
+  protected talentNodeCounts(parses: ParseGear[]): TalentNodeCount[] {
+    const counts = new Map<string, TalentNodeCount>();
+    for (const pick of parses.flatMap(parse => this.talentKey.parseTalentKey(parse.talent_key))) {
+      const node = getOrInsert(counts, `${pick.entryId}.${pick.rank}`, () => ({ entry_id: pick.entryId, rank: pick.rank, count: 0 }));
+      node.count += 1;
+    }
+    return [...counts.values()].sort((a, b) => a.entry_id - b.entry_id || a.rank - b.rank);
+  }
+
+  protected parseMeasures(parse: ParseGear): GearParseMeasures {
+    return {
+      talent_key: parse.talent_key,
+      trinket_ids: parse.trinkets.map(trinket => trinket.id).sort((a, b) => a - b),
+      enchant_ids: Object.fromEntries(parse.enchants.filter(enchant => enchant.id).map(enchant => [enchant.slot, enchant.id])),
+    };
   }
 
   protected aggregateTrinketSets(parses: ParseGear[]): EncounterGearStats['trinket_sets'] {

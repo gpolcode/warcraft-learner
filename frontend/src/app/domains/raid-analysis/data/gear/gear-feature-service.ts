@@ -10,6 +10,7 @@ import { GEAR_DATA_SOURCE, GearBench } from './gear-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { TalentKeyService } from './talent-key-service';
 import { GearComparisonService } from './gear-comparison-service';
+import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
 
 export interface GearComparisonView {
   comparison: boolean;
@@ -23,7 +24,11 @@ export interface GearComparisonView {
   enchantRows: EnchantRow[];
   enchantStatus: GearStatus;
   benchEnchantRows: BenchEnchantRow[];
+  /** Null on the placeholder no bench backs. */
+  bench: BenchStrip | null;
 }
+
+type GearRows = Omit<GearComparisonView, 'bench'>;
 
 @Injectable({ providedIn: 'root' })
 export class GearFeatureService {
@@ -33,6 +38,7 @@ export class GearFeatureService {
   private readonly gearExtract = inject(GearExtractService);
   private readonly source = inject(GEAR_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
+  private readonly benchStrips = inject(BenchStripService);
 
   // Propagates a non-ok bench and the player's own no-combatant-info error unchanged, never degrading to bench-only.
   async loadComparisonView(
@@ -43,13 +49,13 @@ export class GearFeatureService {
     if (!bench.ok) return bench;
     const playerGear = await this.fetchPlayerGear(reportCode, fightId, playerId);
     if (!playerGear.ok) return playerGear;
-    return Results.ok(this.buildGearView(playerGear.value, this.benchToStats(bench.value)));
+    return Results.ok({ ...this.buildGearView(playerGear.value, this.benchToStats(bench.value)), bench: this.benchStrips.strip(bench.value) });
   }
 
   async loadBenchView(spec: string, encounterId: number): Promise<Result<GearComparisonView>> {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return Results.ok(this.buildBenchGearView(this.benchToStats(bench.value)));
+    return Results.ok({ ...this.buildBenchGearView(this.benchToStats(bench.value)), bench: this.benchStrips.strip(bench.value) });
   }
 
   // A WCL fetch failure becomes a mapped LoadError, never a silent fallback.
@@ -82,6 +88,7 @@ export class GearFeatureService {
       talentBuilds: [], talentStatus: { status: 'unknown', note: 'No talent data.' },
       trinketSets: [], trinketStatus: { status: 'unknown', note: 'No trinket data.' },
       enchantRows: [], enchantStatus: 'ok', benchEnchantRows: [],
+      bench: null,
     };
   }
 
@@ -107,7 +114,7 @@ export class GearFeatureService {
   }
 
   // playerGear is never null: the card builds comparison rows only once the combatant-info gear is in hand.
-  protected buildGearView(playerGear: CharacterGear, stats: EncounterGearStats): GearComparisonView {
+  protected buildGearView(playerGear: CharacterGear, stats: EncounterGearStats): GearRows {
     const playerKey = playerGear.talent_key ?? '';
     const trinketKey = this.gearComparison.trinketSetKey(playerGear.trinkets ?? []);
     const enchantRows = this.gearComparison.buildEnchantRows(playerGear, stats);
@@ -125,7 +132,7 @@ export class GearFeatureService {
   }
 
   // Uses the dedicated bench enchant builder, so the comparison builder is never reached without a player.
-  protected buildBenchGearView(stats: EncounterGearStats): GearComparisonView {
+  protected buildBenchGearView(stats: EncounterGearStats): GearRows {
     return {
       comparison: false,
       talentBuilds: this.gearComparison.buildTalentBuilds(stats, ''),

@@ -1,0 +1,6 @@
+@let s = strip();
+<!-- Each sentence stays on one line, so template whitespace never lands before its punctuation. -->
+<span>Compared with {{ s.count }} top {{ s.count === 1 ? 'log' : 'logs' }}{{ s.healing ? ' ranked on healing' : '' }}@if (s.ranks; as r) {, {{ r.lo === r.hi ? 'rank ' + r.lo : 'ranks ' + r.lo + ' to ' + r.hi }}}@if (s.itemLevels; as i) {, item level {{ i.lo }}@if (i.hi !== i.lo) { to {{ i.hi }}}}@if (s.killS; as k) {, {{ k.lo === k.hi ? 'kill time' : 'kill times' }} {{ k.lo | formatDuration }}@if (k.hi !== k.lo) { to {{ k.hi | formatDuration }}}}.</span>
+@if (s.benchedAtS; as at) {
+  <span>Benched {{ at | formatDay }}.</span>
+}
