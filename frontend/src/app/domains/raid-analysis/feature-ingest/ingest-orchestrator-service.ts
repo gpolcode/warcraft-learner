@@ -269,7 +269,9 @@ export class IngestOrchestratorService {
       const displayIngestedAtS = storedTimes.length ? Math.max(...storedTimes) : null;
       return { entry, displayVersion, displayIngestedAtS, emptyCount: emptyIds.length };
     }));
-    const { ordered, selected } = this.ordering.specsForRun(orderInputs.map(input => input.entry), this.environment.prioritySpecs);
+    const { ordered, selected: bySchedule } = this.ordering.specsForRun(orderInputs.map(input => input.entry), this.environment.prioritySpecs);
+    const subset = this.environment.ingestSubset;
+    const selected = subset ? subset.specs.filter(spec => knownSpecs.includes(spec)) : bySchedule;
     const displayBySpec = new Map(orderInputs.map(input => [input.entry.spec, input] as const));
     const selectedSpecs = new Set(selected);
     const rows: SpecReportRow[] = ordered.map(spec => ({
@@ -298,7 +300,7 @@ export class IngestOrchestratorService {
     const emptyThisPass: number[] = [];
 
     try {
-      for (const encounter of this.ordering.orderEncountersByMissingFirst(encounters, checkedIds)) {
+      for (const encounter of this.ordering.orderEncountersByMissingFirst(this.inSubset(encounters), checkedIds)) {
         this.currentRaids.assertPointsBudget(meter.reading, INGEST_POINTS_MARGIN);
         const run = await this.runEncounter(spec, encounter, version);
         if (EMPTY_OUTCOMES.has(run.outcome)) emptyThisPass.push(encounter.id);
@@ -316,6 +318,11 @@ export class IngestOrchestratorService {
     await this.finishSpec(spec, encounters, previousState, emptyThisPass);
     console.log(`Ingestion complete for ${spec}.`);
     return false;
+  }
+
+  private inSubset(encounters: IngestEncounter[]): IngestEncounter[] {
+    const ids = this.environment.ingestSubset?.encounterIds;
+    return ids ? encounters.filter(encounter => ids.includes(encounter.id)) : encounters;
   }
 
   private async runEncounter(spec: string, encounter: IngestEncounter, version: string): Promise<EncounterRun> {
