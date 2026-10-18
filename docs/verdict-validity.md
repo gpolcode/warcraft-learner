@@ -10,10 +10,10 @@ The question this document answers: where does what the site tells a raider diff
 
 **The core problem.** Every colored row on the post-raid page is an implicit statistical claim: "you differ from the top raiders here, in a way that matters". None of the rules that produce those rows has a known error rate, and none is ever checked against the logs it claims to describe. Measured on the real baked benches:
 
-- A log exchangeable with the bench's ten top logs draws about **1.07 red and 5.44 amber rows per pull** over a median of 48 tests; 66% of such pulls show at least one red, 99.5% at least one amber [estimated from the stored statistics, E5 3.2]. A leave-one-out replay of 317 real top parses through the cadence rules alone gives 0.26 red and 0.98 amber per pull [measured, E5 3.4].
+- A log exchangeable with the bench's ten top logs draws about **1.07 red and 5.44 amber rows per pull** over a median of 48 tests; 66% of such pulls show at least one red, 99.5% at least one amber [estimated from the stored statistics, E5 3.2]. A leave-one-out replay of 317 real top parses through the cadence rules alone gives 0.26 red and 0.98 amber per pull [measured, E5 3.4]. Under the rules as rebuilt by this plan, the validity harness measures 0.00 red and 0.68 amber rows per held-out top pull (DPS 0.68, tank 0.53, healer 0.83) over 120 top pulls of four specs on three bosses [measured, `npm run calibrate` over the `calibration-testdata` subset].
 - The colors barely separate good play from weaker play: burst windows flag 15.9% of windows for a top-10 player and 31.7% for a modelled rank ~950 player; 39% and 57% once the window displacement the bench itself shows is included [estimated, E2 and E5 3.5].
 - Several numbers measure something other than their label: burst "damage vs top" is mostly the overall DPS gap plus a measurement artifact; the "Uncommon build" warning hits 59% of the benched top players against their own bench; top logs are "idle" a median 23.7% of the fight under the downtime definition.
-- The tool has no model of the player's own pull: one death turns into several "lost cast" criticals and a red burst window. Bloodlust is compared against the player's own raid lust (sound), but "this cooldown wants Bloodlust" is learned from top raids that lust on the pull, so a raid that lusts mid-fight gets a critical "missed Bloodlust" by chance.
+- The tool has no model of the player's own pull: one death turns into several "lost cast" criticals and a red burst window. Bloodlust is compared against the player's own raid lust (sound), but "this cooldown wants Bloodlust" is learned from top raids that lust on the pull, so a raid that lusts mid-fight gets a critical "missed Bloodlust" by chance. On the version 44 subset 105 of 120 top logs lust within 30 s of the pull and no bench holds 5 mid-fight lusts, so the rebuilt Bloodlust rule makes no row there and its chance rate is 0 [measured].
 - Healers are benchmarked against the ten highest-damage healers; the Northern Sky export ships pull-relative lines that the addon drops at the first phase change on four bosses.
 
 **The solution** has three parts that overlap in time (part 1 is stage 0; part 2 is stages 1-3 and 5; part 3 is stages 4, 6 and 7 of section 6). It is assembled from four independently designed proposals scored by three independent judges (section 2):
@@ -77,7 +77,7 @@ Each root cause groups findings that share one conceptual error. "Reads" is what
 | Does | Of the judging cards only the defensive card reads deaths; the pull overview reads them to list deaths and place the wipe. Expected cooldown uses scale with the full WCL fight window (`analysis-math.ts:97-107`); burst windows count 0 damage while dead; a window that starts before the pull ends is judged on its fragment (`window-view-service.ts:98`). A cooldown "wants Bloodlust" when 50% of top parses cast inside [lust - 30 s, lust + 55 s] of their own raid's lust (window at `rotation-transform-service.ts:27-28,138`, gate at `rotation-feature-service.ts:237`); the player is judged against their own raid's lust, and a miss is critical (`rotation-feature-service.ts:166-167`). Defensive windows judge damage taken at the top raiders' press clock regardless of who was targeted. |
 | Reads | A death is one mistake; cooldown advice is about my cooldown use; "missed Bloodlust" is a cooldown-discipline error. |
 | Correct | Every measurement that requires the player to be alive and the encounter to be live is truncated at the death (resumed at a battle rez) and at the wipe point, and the lost value is attributed once to the death. Comparing against the player's own raid lust is right and stays; "wants Bloodlust" must be learned from top raids that lusted mid-fight, and a miss is never critical, because lust timing is the raid leader's decision. Damage at a mechanic depends on assignment (active tank, soaker, debuff target). |
-| Evidence | One death at 2:30 on a 5:40 kill yields four "lost cast" criticals and a red burst window (TIME-1). Top raids lust on the pull: for 77% of benched cooldowns the stored lust offset equals the opener time (POP-8). A soaker taking 3x the typical damage is red in 94% of defensive windows; the bench's own rank-1 parse is "covered" in only 60.6% of its windows (E3). Correction from verification: a death with no resurrect adds no downtime, because time after the last cast is never counted. |
+| Evidence | One death at 2:30 on a 5:40 kill yields four "lost cast" criticals and a red burst window (TIME-1). Top raids lust on the pull: for 77% of benched cooldowns the stored lust offset equals the opener time (POP-8). A soaker taking 3x the typical damage is red in 94% of defensive windows; the bench's own rank-1 parse is "covered" in only 60.6% of its windows (E3), 50% (13 of 26) on the version 44 subset. The rebuilt window rule colors no window red and flags at most 2.8% of held-out top-log windows amber (6 of 217, an upper bound) [measured]. Correction from verification: a death with no resurrect adds no downtime, because time after the last cast is never counted. |
 | Findings | TIME-1, TIME-4, TIME-5, TIME-7, TIME-8, TIME-9, TIME-10, POP-4, POP-6, POP-8, UX-3, UX-6, CON-4, CON-5 |
 
 ### RC4. Numbers that measure something other than their label
@@ -164,7 +164,7 @@ A family's **tier** is the highest tone its registry entry allows (red, amber, b
 | Neutral | A measurement or comparison without a judgement | none | none |
 | Muted | Not judged, with the reason ("you were dead from 2:10") | n/a | n/a |
 
-- **Page budget.** For a held-out top log, at most 0.1 red and 1.0 amber rows per pull, per role (DPS, tank, healer). Today: 1.07 and 5.44.
+- **Page budget.** For a held-out top log, at most 0.1 red and 1.0 amber rows per pull, per role (DPS, tank, healer). Under the audited rules: 1.07 and 5.44. Under the rebuilt rules, measured: 0.00 red and 0.68 amber per pull (DPS 0.68, tank 0.53, healer 0.83); under the armed caps 0.00 red and 0.05, 0.03 and 0.27 amber.
 - **Below the average is a position**, drawn as a marker and used for sorting, never amber.
 - **One root cause, one row.** Precedence: death, wipe point, window not reached, raid decision outside the reference band, player choice. A silenced check folds under its cause, named once per card.
 - **n is always shown.** Every colored row prints its reference as a count; a bench with n < 5 is context only; the page header carries a bench strip: "Compared with 10 top Mythic logs for Assassination Rogue on Sszorak: kills 5:06 to 6:42, item level 327 to 335, ranked by damage, refreshed Oct 12."
@@ -411,6 +411,10 @@ Verdict: confirmed or refuted by the adversarial refuter. Materiality: the refut
 | Tests per pull, median spec and boss | 47.8 (IQR 39.8-58.7) | measured | E5 3.2 |
 | Red / amber rows per pull, log exchangeable with the bench's top 10 | 1.07 / 5.44; P(at least one red) 66% | estimated | E5 3.2 |
 | Cadence rules only, leave-one-out replay of 317 real top parses | 0.26 red / 0.98 amber per pull; lost uses 5.9% (cooldowns), 9.5% (defensives) per test | measured | E5 3.4 |
+| Red / amber rows per held-out top pull, rebuilt rules, 120 top pulls (4 specs, 3 bosses) | 0.00 / 0.68 (DPS 0.68, tank 0.53, healer 0.83); under the armed caps 0.00 / 0.05, 0.03, 0.27 | measured | validity harness |
+| Cadence rules only, rebuilt, same 120 pulls | 0.00 red / 0.42 amber per pull (cooldowns 0.16, defensives 0.26); lost uses 1.6% (cooldowns, 3 of 191), 7.2% (defensives, 15 of 209) per test | measured | validity harness |
+| Defensive window, held-out top log, rebuilt rule | red 0 of 217, amber 6 of 217 (2.8%, an upper bound) | measured | validity harness |
+| Top logs whose raid lusts within 30 s of the pull | 105 of 120 (87.5%); 10 mid-fight, 5 without lust; no bench with 5 mid-fight lusts | measured | validity harness |
 | Benched buttons with lo = avg = hi = 1 | 538 of 1,629 (33%) | measured | E1 |
 | Button red rate for an exchangeable top player | 1/(n+1) = 9.1% per button at n = 10 | analytic | E1 |
 | Burst windows where red is unreachable (min - sd <= 0) | 915 of 2,427 (37.7%) | measured | E2 |
@@ -421,7 +425,7 @@ Verdict: confirmed or refuted by the adversarial refuter. Materiality: the refut
 | Top logs' own "idle" time under the downtime definition | median 23.7% of the fight, about 85 s per pull | measured | E1 |
 | Efficiency warning rate for an exchangeable top player | 18.3% per pull | analytic | E1 |
 | Defensive immunity windows with a top maximum of 0 | 18 | measured | E3 |
-| Rank-1 parse covered in its own bench's defensive windows | 60.6% | measured | E3 |
+| Rank-1 parse covered in its own bench's defensive windows | 60.6%; 50% (13 of 26) on the version 44 subset | measured | E3, validity harness |
 | Cooldowns whose stored lust offset equals the opener | 468 of 609 (77%) | measured | POP-8 refuter |
 | Northern Sky files with phases | 0 of 356 | measured | E3 |
 | Exported Northern Sky lines past a phase start | 1,985 of 6,689 (30%); Entombed Sentinels 81% | measured | TIME-6 |

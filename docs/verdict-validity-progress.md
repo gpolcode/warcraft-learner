@@ -437,13 +437,13 @@ Branch `claude/verdict-validity-p4f-bloodlust`, PR against `claude/verdict-valid
 - An on-plan finding is `FindingRowsService.onPlanFinding`; never set a severity word on a finding, the type no longer accepts one.
 - Fixtures build a tone with `tone(level)` from `src/testing/builders/tone.ts`.
 
-## Package 5: validity harness (done, with a deviation)
+## Package 5: validity harness (done)
 
 Branch `claude/verdict-validity-p5-harness`, PR against `claude/verdict-validity-p4f-bloodlust`.
 
-### Deviation: the first report cannot run on the baked benches
+### The measured report
 
-`npm run data:pull` fetches 396 encounters per bench kind, every one stamped `ingest_version` 43: no bench carries `sources`, `per_parse` or window `members` (rotation 349, defensive 395, gear 396, burst 396 files). Package 2's version 44 re-bench runs only once the stack is on main and the hourly ingest re-benches. Over these files the harness folds nothing: `npm run calibrate` reports 396 encounters, 0 held-out top pulls, every amber or red family a comparison for too few tests. The audit figures (1.07 red and 5.44 amber per pull, 0.26 and 0.98 for the cadence rules, the 94% soaker red, 60.6% rank-1 coverage, the chance rate of a critical Bloodlust miss) are neither reproduced nor refuted, and the paper keeps its numbers. The first measured report is the job summary of the first ingest run after the version 44 re-bench, or `npm run data:pull && npm run calibrate` once gh-pages carries version 44 benches.
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate` runs the harness over version 44 benches of four specs (Assassination Rogue, Balance Druid, Protection Paladin, Holy Paladin) on three bosses (3470, 3445, 3455): 12 encounters, 120 held-out top pulls, burst unfoldable on all 12. Package 5b records the figures and how they compare with the audit.
 
 ### Done
 
@@ -461,6 +461,7 @@ All under `RA/data/verdict/calibration/` unless named:
 - **CI recompute.** `npm run calibrate` (the `calibrate` build and serve configuration, `src/environments/environment.calibrate.ts`, `CalibrationCheckService`) recomputes every encounter from the pulled benches, ignoring stored files, and fails on a page-budget breach, a failed invariant on a previously graded family, or a family graded before that is not now. `.github/workflows/calibration.yml` runs it on PRs touching `RA/data/**`. CLAUDE.md lists the command (package 3's marker).
 - **Chosen numbers** added to `VERDICT_CHOICES.calibration`: arming confidence 0.95, anomaly p 0.01, detection floors 0.9 and 0.7, rate ratio 1.5, jitter shift 0.02 and 2 s, lust shifts 120 and 180 s, damage scale 0.85, delay 30 s, 5 idle GCDs of 1.5 s, 5 off-list presses, perturbation share 0.2 to 0.9 of the pull, rez after 30 s.
 - `SpecRoleService.role(spec)` gives `dps`, `tank` or `healer` (new tank list).
+- Package 5b adds the not-graded list on each card, the Method page, the zero-test invariant pass and the defensive delay variant; see there.
 
 ### Decisions and deviations
 
@@ -482,16 +483,93 @@ All under `RA/data/verdict/calibration/` unless named:
 
 ### Seams stubbed
 
-- The status reason ("Not graded: ...") is in `calibration.json` but no card renders it yet, nor a method page.
 - The contrast cohort and the lift and AUC gates (package 7a) are not built; arming uses held-out rates and power only.
 
 ### Remaining
 
-- The first measured report and its comparison with the audit figures, after the version 44 re-bench (see the deviation above). Update the paper's figures and this file then.
-- Rendering the comparison reason on each card and the report on a method page.
+- None; package 5b closed both items.
 
 ### For the next package
 
 - A new or rebuilt construct is calibrated by adding its test to the card's held-out service (same `judge*` method and gates the page uses) and a variant per injected mistake; bump the family `version`.
 - Package 6: bake per-log damage on every burst window's common span and per-log deaths, then give `burst.window` and `defensive.dead_in_window` held-out tests; drop the defensive window's upper-bound assumption once uncovered logs' damage is baked.
 - A page that adds a producer must load `CalibrationCapsService` and pass the caps; a producer called without them reads uncapped.
+
+## Package 5b: real calibration data and the first measured report (done)
+
+Branch `claude/verdict-validity-p5b-calibration-data`, PR against `claude/verdict-validity-p5-harness`.
+
+### Calibration test data
+
+- **Branch `calibration-testdata`** (orphan, data only, never deployed): `data/specs/**` for Assassination Rogue (melee, 4 cooldowns), Balance Druid (caster, 4 cooldowns), Protection Paladin (tank, 7 defensives) and Holy Paladin (healer, no SimC list) over Nek'zali the Soulcoiler (3470), Entombed Sentinels (3445) and Vashnik the Malignant (3455), every pair at n = 10, `ingest_version` 44, with the calibration files the ingest wrote. A one-off workflow on this branch benched it from the stack's own code (subset ingest, then `npm run calibrate`) in run 39161645971 on 2026-10-18; the workflow file is removed in the PR's last commit. The run spent about 870 of the hour's 3,600 points (2,728 left after it, against E2E's 50).
+- **`DATA_REF`.** `npm run data:pull` fetches `origin/${DATA_REF:-gh-pages}`; `DATA_REF=calibration-testdata npm run data:pull` then `npm run calibrate` reproduces the report below at zero WCL cost. Listed in CLAUDE.md's command table.
+- **`Environment.ingestSubset`** (default null): `{ specs, encounterIds }` makes an ingest bench exactly those specs over those encounters, skipping the version-first spec schedule. The workflow set it by rewriting `environment.ingest.ts`; nothing in the repository sets it.
+
+### The measured report (rules' tone, before the caps)
+
+| Role | Held-out pulls | Red per pull | Amber per pull | Red, armed | Amber, armed |
+|---|---|---|---|---|---|
+| DPS | 60 | 0.00 | 0.68 | 0.00 | 0.05 |
+| Tank | 30 | 0.00 | 0.53 | 0.00 | 0.03 |
+| Healer | 30 | 0.00 | 0.83 | 0.00 | 0.27 |
+
+| Family | Tests | Amber rate | Detection | Full ingest (about 400 benches, 33x the tests) |
+|---|---|---|---|---|
+| rotation.button | 368 | 1.6% | 35 of 89 (39%) | comparison: detection under 70% |
+| rotation.lost_cast | 191 | 1.6% | 1 of 119 | comparison: a one-cast drop stays inside the `count` floor |
+| rotation.never_used | 13 | 0% | 0 of 16 | comparison: truncation and death invariants fail, no detection |
+| rotation.late_opener | 191 | 6.3% | 79 of 235 (34%) | comparison: detection |
+| rotation.cooldown_gap | 169 | 2.4% | 40 of 215 (19%) | comparison: detection |
+| rotation.downtime | 120 | 6.7% | 3 of 120 | comparison: 5 idle GCDs sit inside the interval |
+| rotation.bloodlust, bloodlust_timing | 0 | none | none | comparison: no bench reaches 5 mid-fight lusts |
+| burst.window | 0 | none | none | comparison until package 6 bakes damage on the common span |
+| defensive.uses | 209 | 7.2% | 86 of 117 (74%) | arms amber if the bound stays under 8% (projected 7.7%) |
+| defensive.first_use | 160 | 6.3% | 8 of 219 | comparison: detection |
+| defensive.gap | 90 | 6.7% | 11 of 165 | comparison: detection |
+| defensive.window | 217 | 2.8% (upper bound) | 0 of 84 | comparison: no detection, truncation invariant fails |
+| defensive.dead_in_window | 0 | none | none | comparison until deaths are baked |
+| gear.enchant_missing | 1,095 | 1.1% | 115 of 120 | graded amber already (1,095 tests over the 500 minimum) |
+| rotation.hold, defensive.hold, gear.talent_build, gear.trinket_pair, gear.enchant | 94 to 1,095 | 0% | n/a | graded blue (counts need no arming) |
+
+- Red: no family reaches a red row on any held-out top log. The three red-tier families (`lost_cast`, `never_used`, `dead_in_window`) fail detection or have no test, so the full ingest arms red for none.
+- Pooled tests reached per family are in the Tests column; only `gear.enchant_missing` and `gear.enchant` (1,095 each) pass the amber minimum of 500 on the subset, none passes red's 1,500. At the full ingest every family with at least 15 tests here passes 500, and every one with at least 45 passes 1,500; arming is then decided by rate and detection as the last column says.
+- Invariants: `rotation.never_used` fails truncation (0.067 to 0.235 smoothed) and death (to 0.176): a pull cut before the reference's first use turns its uses into a never-used flag. `defensive.window` fails truncation (0.032 to 0.057 on 4 of 86 perturbed tests). Both are demoted by the harness; the full ingest's counts decide whether the window one is noise.
+
+### Against the audit figures
+
+- 1.07 red and 5.44 amber per pull (estimated, audited rules): the rebuilt rules measure 0.00 red and 0.68 amber per held-out top pull, inside the 0.1 and 1.0 budget before any cap, close to stage 0's estimate (0.01 and 0.5). The audit load is not reproduced because the rules it measured are gone; the paper now carries both.
+- 0.26 red and 0.98 amber for the cadence rules (measured, audited rules): now 0.00 red and 0.42 amber (cooldowns 0.16, defensives 0.26); lost uses per test 1.6% (cooldowns) and 7.2% (defensives) against 5.9% and 9.5%.
+- The 94% soaker red: the rebuilt window rule never colors red (`pairedOnly` consensus) and needs 80% of the other top logs covering the window for amber; 6 of 217 held-out windows flag amber, an upper bound since an uncovered log counts above the median.
+- 60.6% rank-1 coverage: 50% (13 of 26 windows) on the subset.
+- The Bloodlust chance rate: 105 of 120 top logs lust within 30 s of the pull, 10 mid-fight, 5 without; no bench reaches the 5 mid-fight lusts `wantsLust` needs, so the rule makes no row and its chance rate is 0.
+- The paper's summary, RC3 evidence, page budget line and Appendix B carry the measured figures beside the audit's.
+
+### Harness defects fixed
+
+- **An invariant with no perturbed test failed.** Truncation and death-with-rez leave downtime no test (it needs the whole pull); the rule-of-succession rate of the empty tally is 0.5, which failed the 1.5x bound and demoted the family. A rate-bound invariant whose perturbation leaves no test passes (`CalibrationIndexService.rateBound`, spec in `calibration-index.spec.ts`).
+- **`defensive.first_use` and `defensive.gap` had no trial.** Both name `delay-cooldown-30s`, which `InjectedMistakeService` made only on rotation cases; it now delays the first and, separately, the second use of the first majority defensive (spec in `mistakes-and-perturbations.spec.ts`). Their measured detection is 4% and 7%.
+- **`ng serve` outlived the headless runner**, keeping port 4200, so a second run in the same job (ingest then `npm run calibrate`) failed at once; the production ingest logs show the same orphan. `scripts/ingest-headless.mjs` starts each child in its own process group (not on Windows) and signals the group.
+
+### Remaining items of package 5, done here
+
+- **Not-graded list on each card.** `FindingFamily.label` names each check (conformance spec checks it is not blank). `CalibrationCapsService.load` returns `CalibrationCaps` (`capOf` plus `verdictOf`), and `notGraded(caps, families)` lists the families whose status is not graded with the reason. The post-raid feature services pass each card's families (Rotation rules, Downtime, Offensives, Defensives, Defensive windows, Burst windows, Gear on a comparison), and `wl-not-graded` renders the list under the card's rows through `wl-button-table`, `wl-finding-table`, `wl-window-comparison` and `wl-gear`. A bench whose own rate demotes a family reads `NOT_GRADED.bench`.
+- **Reasons are plain sentences** that read under a check's name (`NOT_GRADED`, `COMPARISON`), without a "Not graded:" prefix.
+- **Method page** (`/method`, nav item "Method"): `ValidityFeatureService` reads `calibration.json` through `CALIBRATION_SOURCE` and `wl-validity-report` prints the rows per pull per role under the armed caps, then every family in registry order with its tests, amber and red odds (`OddsPipe`), detection and verdict; a measurement for another registry hash says every check is uncolored; a missing index reads "No validity measurement is published."
+- E2E: `showsNotGraded` checks the list on each post-raid card when drawn, `e2e/method.spec.ts` the method page (no WCL spend).
+
+### Decisions
+
+- The subset is benched from empty (`public/data/specs` cleared), so calibration pools only the subset; gh-pages and main were never written.
+- The one-off workflow shared the `gh-pages` concurrency group so it never overlapped the hourly ingest's budget, read the budget with `wcl-budget.mjs ingest` and failed rather than skipped on a low budget, relied on the orchestrator's per-encounter `INGEST_POINTS_MARGIN` stop (500, far above E2E's 50) and confirmed E2E's budget afterwards. It did not save the WCL response cache, so main's cache entries keep their quota.
+- The paper's audit figures stay as the audit measured them; the measured figures sit beside them, since they measure different rules.
+
+### Drift against 6882b59
+
+- None beyond package 5's.
+
+### For the next package
+
+- `DATA_REF=calibration-testdata npm run data:pull && npm run calibrate` is the zero-cost loop for harness work; the stored calibration files there carry the reason strings of their run, a recompute rewrites them.
+- The full report arrives with the first hourly ingest after the stack reaches main (version 44 re-bench); expect `defensive.uses` to arm amber, `gear.enchant_missing` to stay amber and every other amber or red family to stay a comparison until package 6 and the constructs raise detection (late opener 34%, gap 19%, downtime 3%, defensive first use 4%, defensive gap 7%, window 0%).
+- `rotation.never_used` needs an availability gate on the reference's first use before the judged end, or the truncation and death invariants keep it demoted.
+- A new page that judges a family must add the family to its card's `notGraded` call.
