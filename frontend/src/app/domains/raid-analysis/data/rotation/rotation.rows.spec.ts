@@ -37,7 +37,7 @@ describe('rotation finding partition and row builders', () => {
   const abilities = { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' }, [VANISH]: { icon: 'vanish', name: 'Vanish' } };
   const downtimeFinding: AnalysisFinding = { severity: 'warning', category: 'cast_efficiency', label: 'Low cast efficiency', message: 'You were casting 80.0% of the fight.', measured: { value: '80.0%' }, details: { remedy: 'fix' }, occurrences: [] };
   const issueFinding: AnalysisFinding = { severity: 'warning', category: 'cooldown_delay', cd_name: 'Shadow Blades', message: 'Shadow Blades was first used at 0:04.', measured: { value: '+3s' }, timestamp_s: 4, occurrences: [] };
-  const holdFinding: AnalysisFinding = { severity: 'info', category: 'hold_suggestion', message: '', measured: { value: '1:00' }, details: { cd_name: 'Shadow Blades', remedy: 'hold' }, occurrences: [] };
+  const holdFinding: AnalysisFinding = { severity: 'info', category: 'cooldown_hold', message: '', measured: { value: '1:00' }, details: { cd_name: 'Shadow Blades', remedy: 'hold' }, occurrences: [] };
   const successFinding: AnalysisFinding = { severity: 'success', category: 'cooldown_usage', cd_name: 'Vanish', message: '', occurrences: [] };
 
   it('partitions downtime findings, per-cd buckets, and success names', () => {

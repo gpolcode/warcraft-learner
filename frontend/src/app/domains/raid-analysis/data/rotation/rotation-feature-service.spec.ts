@@ -14,6 +14,7 @@ import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
 import { ROTATION_DATA_SOURCE } from './rotation-data-source';
 import { pullModel } from '../../../../../testing/builders/pull-model';
 import { PullModel } from '../analysis/pull-model-service';
+import { AnalysisFinding } from '../analysis/analysis.models';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 const bloodlust = TestBed.inject(RotationBloodlustService);
@@ -43,10 +44,14 @@ function scan(over: {
   };
 }
 
-/** One top log's measures, with only its cooldown uses set. */
-function topLog(cdCastsS: Record<string, number[]>): RotationParseMeasures {
-  return { efficiency_pct: null, lust_s: null, phase_starts: [], cd_casts_s: cdCastsS, buttons: {} };
+/** One top log's measures, with only its cooldown uses and casting share set. */
+function topLog(cdCastsS: Record<string, number[]>, efficiencyPct: number | null = null): RotationParseMeasures {
+  return { efficiency_pct: efficiencyPct, lust_s: null, phase_starts: [], cd_casts_s: cdCastsS, buttons: {} };
 }
+
+/** Five top logs that open Shadow Blades at 5s, press it again at 95s and cast 90% of the pull; with no spread, the opener edge is 7s, the gap edge 95s and the casting edge 5s of idle under 90%. */
+const TOP_LOGS = Array.from({ length: 5 }, () => topLog({ 'Shadow Blades': [5, 95] }, 90));
+const measured = bench({ per_parse: TOP_LOGS });
 
 /** A killed pull of `fightS`, with a Bloodlust from `lustS` when given. */
 function killed(fightS: number, lustS: number | null = null): PullModel {
@@ -80,25 +85,45 @@ describe('analyzeRotationFindings', () => {
     expect(success.message).toContain('aligned with Bloodlust');
   });
 
-  it('flags a late opener', () => {
+  it('flags a late opener against the top logs\' first uses', () => {
     const casts = [cast(SHADOW_BLADES, 40)];
     const buffs = [applyBuff(BLOODLUST, 38)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: bench() })).findings;
-    expect(findings.some(f => f.category === 'cooldown_delay')).toBe(true);
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, buffEvents: buffs, bench: measured })).findings;
+    expect(findings.find(f => f.category === 'cooldown_delay')).toMatchObject({ family: 'rotation.late_opener', severity: 'amber' });
+  });
+
+  it('flags no opener on a bench that carries no per-log uses', () => {
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: [cast(SHADOW_BLADES, 40)], bench: bench() })).findings;
+    expect(findings.some(f => f.category === 'cooldown_delay')).toBe(false);
   });
 
   it('gives the cast-efficiency finding a label and a remedy so the row is not blank', () => {
-    // A 24s idle gap on the 120s scan fight = 80% efficiency, below the 87% (top avg 90 minus 1 sigma) warn threshold.
+    // A 24s idle gap on the 120s scan fight is 80% casting, under the 85.8% edge (90% less 5s of 120s).
     const FIRST_CAST_S = 6;
     const LATE_CAST_S = 30;
     const casts = [cast(SHADOW_BLADES, FIRST_CAST_S), cast(SHADOW_BLADES, LATE_CAST_S)];
-    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: bench() })).findings;
+    const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: measured })).findings;
     const efficiency = findings.find(f => f.category === 'cast_efficiency');
-    expect(efficiency).toBeDefined();
     assert.exists(efficiency);
     expect(efficiency.label).toBeTruthy();
-    assert.exists(efficiency);
     expect(efficiency.details?.remedy).toBeTruthy();
+  });
+
+  it('names the top logs the casting time was checked against when nothing is flagged', () => {
+    const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 1)];
+    expect(svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: measured, fightDurationS: 1 })).downtimeEmpty)
+      .toBe('Nothing flagged. Your casting time was checked against 5 top logs.');
+  });
+
+  it('says no casting time was judged on a pull with one cast', () => {
+    expect(svc['analyzeRotationFindings'](scan({ castEvents: [cast(SHADOW_BLADES, 6)], bench: measured })).downtimeEmpty)
+      .toBe('Nothing flagged. No casting time was judged in this pull.');
+  });
+
+  it('says no top log carries a casting time on a bench without per-log measures', () => {
+    const casts = [cast(SHADOW_BLADES, 6), cast(SHADOW_BLADES, 30)];
+    expect(svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: bench() })).downtimeEmpty)
+      .toBe('Nothing flagged. None of the 5 top logs carries a casting time to compare with.');
   });
 });
 
@@ -152,7 +177,7 @@ describe('analyzeRotationFindings Bloodlust detection', () => {
   });
 });
 
-describe('analyzeRotationFindings hold suggestions (prior-relative)', () => {
+describe('analyzeRotationFindings hold suggestions on the pull clock', () => {
   const holdBench = bench({
     per_cd_benchmarks: { 'Shadow Blades': cdBench({
       hold_targets: { '2': { target_s: 130, delay_s: 30, band_s: 5, effective_cd_s: 90, count: 4, total_samples: 5 } },
@@ -160,24 +185,22 @@ describe('analyzeRotationFindings hold suggestions (prior-relative)', () => {
   });
   const FIGHT_S = 300; // past the 0 + 90 + 30 hold-to, which a hold at the pull's end never suggests
 
-  it('flags an under-hold below the consensus band', () => {
-    // gap 100, effective_cd 90 -> playerDelay 10 < (delay 30 - band 5 = 25).
+  it('names a use before the band that leaves the cooldown running at the 130s target', () => {
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 100)];
     const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S })).findings;
-    expect(findings.some(f => f.category === 'hold_suggestion')).toBe(true);
+    expect(findings.some(f => f.category === 'cooldown_hold')).toBe(true);
   });
 
-  it('does not flag a player exactly at the band edge (strict)', () => {
-    // gap 115 -> playerDelay 25, exactly delay - band; strict < so not flagged.
-    const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 115)];
+  it('does not flag a use exactly at the band edge', () => {
+    const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 125)];
     const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S })).findings;
-    expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
+    expect(findings.some(f => f.category === 'cooldown_hold')).toBe(false);
   });
 
-  it('does not flag an over-hold', () => {
+  it('does not flag a use after the target', () => {
     const casts = [cast(SHADOW_BLADES, 0), cast(SHADOW_BLADES, 160)];
     const findings = svc['analyzeRotationFindings'](scan({ castEvents: casts, bench: holdBench, fightDurationS: FIGHT_S })).findings;
-    expect(findings.some(f => f.category === 'hold_suggestion')).toBe(false);
+    expect(findings.some(f => f.category === 'cooldown_hold')).toBe(false);
   });
 });
 
@@ -237,39 +260,27 @@ describe('checkBloodlustAlignment', () => {
 });
 
 describe('checkCastEfficiency', () => {
-  const FIGHT_DUR_S = 120;
-  // bench(): top_avg_efficiency 90%, top_efficiency_stddev 3% -> warn strictly below 87% (top - 1 sigma).
-  const IDLE_BELOW_BAND_S = 20;   // -> 83.3%, below the 87% warn threshold
-  const IDLE_FAR_BELOW_S = 60;    // -> 50%, far below the band
-  const IDLE_ABOVE_AVG_S = 1.6; // just over the 1.5s downtime floor -> 98.7%, above top avg
+  const FIGHT_S = 100;
+  // Five top logs casting 90% with no spread: the 5s floor over 100s alive puts the edge at 85%.
+  const EDGE_IDLE_S = 15;
+  /** A press every second, then one idle stretch of `idleS` to the pull's end. */
+  const idleAtEnd = (idleS: number): number[] => [...Array.from({ length: FIGHT_S - idleS + 1 }, (_unused, i) => i), FIGHT_S];
 
-  it('flags low cast efficiency more than 1 sigma below the top parses', () => {
-    const finding = svc['checkCastEfficiency']([0, IDLE_BELOW_BAND_S], killed(FIGHT_DUR_S), bench());
-    expect(finding?.category).toBe('cast_efficiency');
-    expect(finding?.severity).toBe('warning');
-    expect(finding?.details?.remedy).toBeTruthy();
+  it('flags casting one second of idle past the edge as amber', () => {
+    expect(svc['checkCastEfficiency'](idleAtEnd(EDGE_IDLE_S + 1), killed(FIGHT_S), measured).finding)
+      .toMatchObject({ family: 'rotation.downtime', severity: 'amber' });
   });
 
-  it('never escalates to critical, however far below', () => {
-    expect(svc['checkCastEfficiency']([0, IDLE_FAR_BELOW_S], killed(FIGHT_DUR_S), bench())?.severity).toBe('warning');
+  it('does not flag casting exactly at the edge', () => {
+    expect(svc['checkCastEfficiency'](idleAtEnd(EDGE_IDLE_S), killed(FIGHT_S), measured).finding).toBeNull();
   });
 
-  it('does not flag efficiency exactly at the 1-sigma boundary (strict), but flags one bin below', () => {
-    // Binary-exact bench: top avg 80%, stddev 5% -> warn strictly below 75%.
-    const boundaryBench = bench({ top_avg_efficiency: 80, top_efficiency_stddev: 5 });
-    const BOUNDARY_FIGHT_S = 128;
-    // 32s idle -> exactly 75% = top - 1 sigma: strict boundary, no finding.
-    expect(svc['checkCastEfficiency']([0, 32], killed(BOUNDARY_FIGHT_S), boundaryBench)).toBeNull();
-    // 33s idle -> 74.21875% < 75%: one bin below the boundary, warns.
-    expect(svc['checkCastEfficiency']([0, 33], killed(BOUNDARY_FIGHT_S), boundaryBench)?.severity).toBe('warning');
+  it('never escalates past amber, however far below', () => {
+    expect(svc['checkCastEfficiency']([0, FIGHT_S], killed(FIGHT_S), measured).finding?.severity).toBe('amber');
   });
 
-  it('does not flag when the player beats the top parses', () => {
-    expect(svc['checkCastEfficiency']([0, IDLE_ABOVE_AVG_S], killed(FIGHT_DUR_S), bench())).toBeNull();
-  });
-
-  it('returns null with fewer than two casts', () => {
-    expect(svc['checkCastEfficiency']([0], killed(FIGHT_DUR_S), bench())).toBeNull();
+  it('returns no finding with fewer than two casts', () => {
+    expect(svc['checkCastEfficiency']([0], killed(FIGHT_S), measured).finding).toBeNull();
   });
 });
 
@@ -310,7 +321,7 @@ describe('analyzeOneCooldown', () => {
   });
 
   it('reports an issue (no success) when the opener is late', () => {
-    const result = svc['analyzeOneCooldown'](cd, [40], single, killed(120, 38), null);
+    const result = svc['analyzeOneCooldown'](cd, [40], single, killed(120, 38), null, TOP_LOGS);
     expect(result?.success).toBeNull();
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(true);
   });
@@ -325,7 +336,7 @@ describe('analyzeOneCooldown', () => {
   it('does not flag a late opener of a minority-use cooldown (use-share gate)', () => {
     // Opened well past 2 sigma over the 5s top first cast, but the first-cast check is gated off.
     const LATE_OPENER_S = 40;
-    const result = svc['analyzeOneCooldown'](cd, [LATE_OPENER_S], rareUse, killed(FIGHT_DUR_S), null);
+    const result = svc['analyzeOneCooldown'](cd, [LATE_OPENER_S], rareUse, killed(FIGHT_DUR_S), null, TOP_LOGS);
     expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(false);
   });
 });
@@ -340,17 +351,17 @@ describe('rotation checks over the player timeline', () => {
 
   it('reads no idle time into the stretch the player was dead', () => {
     const deadForIt = pullModel({ fightDurationS: FIGHT_S, deadSpans: [[DIED_S, BACK_S]] });
-    expect(svc['checkCastEfficiency'](PRESSES, deadForIt, bench())).toBeNull();
+    expect(svc['checkCastEfficiency'](PRESSES, deadForIt, measured).finding).toBeNull();
   });
 
   it('reads the same stretch as idle when the player was alive for it', () => {
-    expect(svc['checkCastEfficiency'](PRESSES, killed(FIGHT_S), bench())?.message).toContain('of the fight');
+    expect(svc['checkCastEfficiency'](PRESSES, killed(FIGHT_S), measured).finding?.message).toContain('of the fight');
   });
 
   it('names the alive time as the base when a death shortened it', () => {
     // Alive 0..10 and 95..120; one 20s idle gap from 100 to 120 of the 35s alive.
     const deadForIt = pullModel({ fightDurationS: FIGHT_S, deadSpans: [[DIED_S, BACK_S]] });
-    const finding = svc['checkCastEfficiency']([...everySecond(0, DIED_S), BACK_S, 100, FIGHT_S], deadForIt, bench());
+    const { finding } = svc['checkCastEfficiency']([...everySecond(0, DIED_S), BACK_S, 100, FIGHT_S], deadForIt, measured);
     expect(finding?.message).toContain('of your alive time');
   });
 
@@ -366,22 +377,25 @@ describe('rotation checks over the player timeline', () => {
     expect(svc['analyzeOneCooldown'](cd, [], cdBench(), killed(FIGHT_S), null)?.scan.issues[0]).toMatchObject({ category: 'never_used' });
   });
 
-  // bench: a 90s gap with a 5s spread, so a gap past 100s flags; this one runs 6s to 150s.
+  // The top logs wait 90s, so a wait past 95s flags; this one runs 6s to 150s.
   const GAP_CASTS = [6, 150];
   const LONG_FIGHT_S = 300;
+  const gapOf = (model: PullModel): AnalysisFinding | undefined =>
+    svc['analyzeOneCooldown'](cd, GAP_CASTS, cdBench(), model, null, TOP_LOGS)?.scan.issues.find(finding => finding.family === 'rotation.cooldown_gap');
 
-  it('folds a long gap the player spent dead under the death, so the death is the one row', () => {
-    const deadInGap = pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[20, 140]] });
-    const result = svc['analyzeOneCooldown'](cd, GAP_CASTS, cdBench(), deadInGap, null);
-    expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(false);
-    expect(result?.scan.folded.dead).toBe(1);
+  it('judges no wait the player spent partly dead, so the death is the one row', () => {
+    expect(gapOf(pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[20, 140]] }))).toBeUndefined();
   });
 
-  it('keeps the gap when the death begins the instant the later cast lands', () => {
-    const deadAfter = pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[150, 200]] });
-    const result = svc['analyzeOneCooldown'](cd, GAP_CASTS, cdBench(), deadAfter, null);
-    expect(result?.scan.issues.some(finding => finding.category === 'cooldown_delay')).toBe(true);
-    expect(result?.scan.folded.dead).toBe(0);
+  it('keeps the wait when the death begins the instant the later cast lands', () => {
+    expect(gapOf(pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[150, 200]] }))).toMatchObject({ severity: 'amber' });
+  });
+
+  it('folds a late opener the player spent dead under the death', () => {
+    const deadBeforeIt = pullModel({ fightDurationS: LONG_FIGHT_S, deadSpans: [[2, 30]] });
+    const result = svc['analyzeOneCooldown'](cd, [40], cdBench(), deadBeforeIt, null, TOP_LOGS);
+    expect(result?.scan.issues.some(finding => finding.family === 'rotation.late_opener')).toBe(false);
+    expect(result?.scan.folded.dead).toBe(1);
   });
 
   it('judges no cast after the called wipe', () => {

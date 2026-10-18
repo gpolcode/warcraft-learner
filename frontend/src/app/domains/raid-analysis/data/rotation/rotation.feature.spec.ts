@@ -67,6 +67,7 @@ describe('RotationFeatureService', () => {
       buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null,
       buttonsBenched: false, buttonsEmpty: 'Your log shows no judged moment for any of the 0 buttons the list judges.',
       offensivesEmpty: 'Nothing flagged. No cooldown on the plan was checked in this pull.',
+      downtimeEmpty: 'Nothing flagged. No casting time was judged in this pull.',
       bench: TestBed.inject(BenchStripService).strip(bench()),
     }));
 

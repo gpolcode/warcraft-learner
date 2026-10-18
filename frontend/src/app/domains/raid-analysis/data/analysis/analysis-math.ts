@@ -138,6 +138,13 @@ export function fmtClock(seconds: number): string {
   return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 }
 
+/** A flagged value never prints as its own target: one more decimal while the two round to the same string. */
+export function fmtApart(value: number, edge: number): [string, string] {
+  let decimals = 0;
+  while (decimals < 2 && value.toFixed(decimals) === edge.toFixed(decimals)) decimals++;
+  return [value.toFixed(decimals), edge.toFixed(decimals)];
+}
+
 const SEVERITY_ORDER: Record<string, number> = {
   critical: 0, red: 0, warning: 1, amber: 1, info: 2, blue: 2, hold_suggestion: 2, neutral: 3, muted: 4, success: 5,
 };

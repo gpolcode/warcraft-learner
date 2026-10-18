@@ -6,17 +6,14 @@ import { PerCdBenchmark } from '../encounter/encounter.models';
 import { PlanCooldown } from '../plan/plan.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import {
-  isOutlierBeyond, isOutlierBelow, castEfficiencyPct, OUTLIER_SIGMAS, TIMING_BAND_MIN_S,
-  closestToZero, benchExpectedUses, fmtClock, sortBySeverity, buttonTaken, castDowntimeS, spansS,
+  isOutlierBeyond, OUTLIER_SIGMAS, TIMING_BAND_MIN_S, closestToZero, benchExpectedUses, fmtClock, sortBySeverity, buttonTaken,
 } from '../analysis/analysis-math';
-import { CadenceVoice } from '../analysis/cast-cadence-service';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../analysis/wcl-projections-service';
 import { PullContextService, PullContext, PullRef } from '../analysis/pull-context-service';
 import { ListLogService } from './priority-list/list-log-service';
 import { ButtonRow, ListFindingService } from './priority-list/list-finding-service';
-import { ROTATION_DATA_SOURCE, RotationBench } from './rotation-data-source';
+import { ROTATION_DATA_SOURCE, RotationBench, RotationParseMeasures } from './rotation-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
-import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { GearExtractService } from '../gear/gear-extract-service';
@@ -24,6 +21,8 @@ import { FoldCounts, JudgedSpan, PullModel, PullModelService } from '../analysis
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
 import { SpecRoleService } from '../analysis/spec-role-service';
 import { CooldownUseJudgeService } from './cooldown-use-judge-service';
+import { CadenceJudgeService } from './cadence-judge-service';
+import { DowntimeJudgeService } from './downtime-judge-service';
 
 export interface CdPlanRow {
   name: string;
@@ -55,6 +54,8 @@ export interface RotationPlayerView {
   buttonsEmpty: string;
   /** The Offensives card's empty state, with how many cooldowns were checked against how many top logs. */
   offensivesEmpty: string;
+  /** The Downtime card's empty state, with how many top logs the casting time was checked against. */
+  downtimeEmpty: string;
   bench: BenchStrip | null;
 }
 
@@ -67,15 +68,6 @@ const BL_WINDOW_LEAD_S = 30;
 const BL_WINDOW_TRAIL_S = 15;
 const BL_CONSENSUS_PCT = 50;
 
-const ROTATION_VOICE: CadenceVoice = {
-  unit: 'cast(s)',
-  firstCastPhrase: 'opened at',
-  gapNoun: 'casts',
-  underuseRemedy: (name, missing) => `Press ${name} ${missing}x more, sooner off cooldown.`,
-  firstCastRemedy: name => `Open with ${name} earlier.`,
-  gapRemedy: (name, avgGapS) => `Press ${name} sooner, about every ${avgGapS.toFixed(0)}s.`,
-};
-
 export interface RotationScanInput {
   model: PullModel;
   castEvents: TimedEvent[];
@@ -87,7 +79,7 @@ export interface RotationScanInput {
 
 interface CooldownScan { issues: AnalysisFinding[]; holds: AnalysisFinding[]; blAligned: boolean; folded: FoldCounts; }
 
-interface RotationScan { findings: AnalysisFinding[]; folded: FoldCounts; checked: number; }
+interface RotationScan { findings: AnalysisFinding[]; folded: FoldCounts; checked: number; downtimeEmpty: string; }
 
 interface FindingBucket { issues: AnalysisFinding[]; holds: AnalysisFinding[]; }
 
@@ -106,7 +98,6 @@ type CdPlanUsage = Pick<
 @Injectable({ providedIn: 'root' })
 export class RotationFeatureService {
   private readonly logger = inject(LoggerService);
-  private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly auraWindows = inject(AuraWindowsService);
   private readonly listLogs = inject(ListLogService);
@@ -120,6 +111,8 @@ export class RotationFeatureService {
   private readonly benchStrips = inject(BenchStripService);
   private readonly specRoles = inject(SpecRoleService);
   private readonly cooldownUses = inject(CooldownUseJudgeService);
+  private readonly cadence = inject(CadenceJudgeService);
+  private readonly downtime = inject(DowntimeJudgeService);
   private readonly findingRows = inject(FindingRowsService);
 
   async loadPlayerView(
@@ -135,7 +128,8 @@ export class RotationFeatureService {
       errorId: 'rotation.player-view',
       emptyView: () => ({
         buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null,
-        buttonsBenched: false, buttonsEmpty: this.buttonsEmpty(bench.value), offensivesEmpty: this.offensivesEmpty(0, bench.value), bench: strip,
+        buttonsBenched: false, buttonsEmpty: this.buttonsEmpty(bench.value), offensivesEmpty: this.offensivesEmpty(0, bench.value),
+        downtimeEmpty: this.downtimeEmpty(null, bench.value), bench: strip,
       }),
       analyze: async context => ({ ...await this.playerView(this.withList(bench.value), pull, context), bench: strip }),
     });
@@ -166,6 +160,13 @@ export class RotationFeatureService {
     return `Nothing flagged. ${checked} ${checked === 1 ? 'cooldown' : 'cooldowns'} checked against ${n} top logs.`;
   }
 
+  /** `judged` is the count of top logs the casting time was compared with, or null when the pull had under two casts to measure. */
+  private downtimeEmpty(judged: number | null, bench: RotationBench): string {
+    if (judged === null) return 'Nothing flagged. No casting time was judged in this pull.';
+    if (!judged) return `Nothing flagged. None of the ${bench.sample_count} top logs carries a casting time to compare with.`;
+    return `Nothing flagged. Your casting time was checked against ${judged} top logs.`;
+  }
+
   private async playerView(bench: RotationBench, pull: PullRef, context: PullContext): Promise<Omit<RotationPlayerView, 'bench'>> {
     const { reportCode, fightId, playerId } = pull;
     const { report, fight, model } = context;
@@ -177,7 +178,7 @@ export class RotationFeatureService {
       this.listLogs.read(bench.list, { reportCode, fight, playerId, abilities, folds }),
       this.wclApi.getCombatantInfo(reportCode, fightId, playerId),
     ]);
-    const { findings, folded, checked } = this.analyzeRotationFindings({
+    const { findings, folded, checked, downtimeEmpty } = this.analyzeRotationFindings({
       model,
       castEvents: this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime),
       buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime),
@@ -189,6 +190,7 @@ export class RotationFeatureService {
       buttonRows: this.listFindings.rows(bench, reading, model), downtimeRows, offensiveRows, onPlan,
       downtimeSpan: this.pullModel.judgedSpan(model), offensiveSpan: this.pullModel.judgedSpan(model, folded),
       buttonsBenched: bench.buttons.length > 0, buttonsEmpty: this.buttonsEmpty(bench), offensivesEmpty: this.offensivesEmpty(checked, bench),
+      downtimeEmpty,
     };
   }
 
@@ -237,25 +239,14 @@ export class RotationFeatureService {
       details: { remedy: `Tighten ${cdName} to the Bloodlust window.` }, occurrences: [] };
   }
 
+  /** `castTimesS` are every cast inside the judged span; the empty state names how many top logs judged it. */
   protected checkCastEfficiency(
     castTimesS: number[], model: PullModel, bench: RotationBench,
-  ): AnalysisFinding | null {
-    const aliveS = spansS(model.aliveSpans);
-    if (castTimesS.length < 2 || aliveS <= 0) return null;
-    const totalDtS = castDowntimeS(castTimesS, bench.downtime_threshold_s, model.aliveSpans);
-    const topE = bench.top_avg_efficiency;
-    const topSD = bench.top_efficiency_stddev;
-    const effPct = castEfficiencyPct(totalDtS, aliveS);
-    const over = aliveS < model.fightDurationS ? 'your alive time' : 'the fight';
-    // Flag only more than 1 sigma below the top-parse efficiency, so beating the top parses never trips a warning.
-    const WARN_SIGMAS_BELOW = 1;
-    if (!isOutlierBelow(effPct, topE, topSD, WARN_SIGMAS_BELOW)) return null;
-    return {
-      severity: 'warning', category: 'cast_efficiency',
-      label: 'Low cast efficiency',
-      measured: { value: `${effPct.toFixed(1)}%`, unit: `top ${topE.toFixed(1)}%` },
-      message: `You were casting ${effPct.toFixed(1)}% of ${over}, idle for ${totalDtS.toFixed(1)}s. Aim for ${topE.toFixed(1)}% or more.`,
-      details: { remedy: `Fill ${totalDtS.toFixed(1)}s of gaps.` }, occurrences: [] };
+  ): { finding: AnalysisFinding | null; empty: string } {
+    const casting = this.downtime.measure(castTimesS, bench.downtime_threshold_s, model.aliveSpans);
+    const reference = this.downtime.reference(bench.per_parse);
+    if (!casting) return { finding: null, empty: this.downtimeEmpty(null, bench) };
+    return { finding: this.downtime.finding(casting, reference, model.fightDurationS), empty: this.downtimeEmpty(reference.length, bench) };
   }
 
   private cooldownSuccess(cdName: string, actual: number, detail: string): AnalysisFinding | null {
@@ -264,10 +255,10 @@ export class RotationFeatureService {
       : null;
   }
 
-  /** `castTimesS` are fight-relative seconds, ascending, inside the judged span; `reference` is each top log's uses. Null when the cooldown went unused and the player's talents do not show it. */
+  /** `castTimesS` are fight-relative seconds, ascending, inside the judged span. Null when the cooldown went unused and the player's talents do not show it. */
   protected analyzeOneCooldown(
     cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark | undefined,
-    model: PullModel, talents: ReadonlyMap<number, number> | null, reference: readonly number[] = [],
+    model: PullModel, talents: ReadonlyMap<number, number> | null, perParse: readonly RotationParseMeasures[] = [],
   ): { success: AnalysisFinding | null; scan: CooldownScan } | null {
     const cdName = cd.name;
     const actual = castTimesS.length;
@@ -282,11 +273,12 @@ export class RotationFeatureService {
     const wantsBL = cdBench.bl_pct >= BL_CONSENSUS_PCT;
     const { expected } = benchExpectedUses(model.aliveSpans, cdBench);
 
-    const { checked, uses } = this.majorityChecks(cd, castTimesS, cdBench, { model, talents, reference });
+    const { checked, uses } = this.majorityChecks(cd, castTimesS, cdBench, { model, talents, perParse });
     const bl = this.checkBloodlustAlignment(cdName, castTimesS, cdBench, model.lust?.startS ?? null, wantsBL);
     checked.push(...bl.findings);
-    checked.push(...this.castCadence.checkGaps(ROTATION_VOICE, cdName, castTimesS, cdBench));
-    const checkedHolds = this.holdTargets.holdSuggestionFindings(cdName, castTimesS, cdBench.hold_targets, model.judgedEndS);
+    const gap = this.cadence.gapFinding(cdName, castTimesS, model.aliveSpans, perParse, cdBench.hold_targets);
+    checked.push(...[gap].filter(finding => finding !== null));
+    const checkedHolds = this.cadence.holdFindings(cdName, castTimesS, cdBench.hold_targets);
     const { kept, folded } = this.pullModel.foldFindings(model, checked);
     // Lost uses are counted on alive time, so they carry no span to fold.
     const issues = [...uses, ...kept];
@@ -300,11 +292,12 @@ export class RotationFeatureService {
   /** A cooldown most top logs skip has a noisy expected count and opener, so neither is checked. */
   private majorityChecks(
     cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark,
-    pull: { model: PullModel; talents: ReadonlyMap<number, number> | null; reference: readonly number[] },
+    pull: { model: PullModel; talents: ReadonlyMap<number, number> | null; perParse: readonly RotationParseMeasures[] },
   ): { checked: AnalysisFinding[]; uses: AnalysisFinding[] } {
     if (!this.castCadence.usedByMajority(cdBench)) return { checked: [], uses: [] };
-    const opener = this.castCadence.checkFirstCastDelay(ROTATION_VOICE, cd.name, castTimesS, cdBench);
-    const uses = this.cooldownUses.finding(cd.name, castTimesS, cdBench, pull.model, pull.reference, buttonTaken(cd, pull.talents));
+    const opener = this.cadence.openerFinding(cd.name, castTimesS, pull.perParse);
+    const reference = this.cooldownUses.referenceUses(pull.perParse, cd.name);
+    const uses = this.cooldownUses.finding(cd.name, castTimesS, cdBench, pull.model, reference, buttonTaken(cd, pull.talents));
     return { checked: opener ? [opener] : [], uses: uses ? [uses] : [] };
   }
 
@@ -324,8 +317,7 @@ export class RotationFeatureService {
     const perCdBench = bench.per_cd_benchmarks;
     for (const cd of cooldowns) {
       const castTimesS = this.cooldownUses.castTimesS(castEvents, cd.spell_id, upAtPull, model.judgedEndS);
-      const reference = this.cooldownUses.referenceUses(bench.per_parse, cd.name);
-      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], model, talents, reference);
+      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], model, talents, bench.per_parse);
       if (!result) continue;
       checked += 1;
       folded = this.pullModel.addFolds(folded, result.scan.folded);
@@ -335,10 +327,10 @@ export class RotationFeatureService {
     }
 
     const efficiency = this.checkCastEfficiency(casts.map(cast => cast.atS), model, bench);
-    if (efficiency) findings.push(efficiency);
+    if (efficiency.finding) findings.push(efficiency.finding);
 
     sortBySeverity(findings);
-    return { findings, folded, checked };
+    return { findings, folded, checked, downtimeEmpty: efficiency.empty };
   }
 
   private resolveCd(name: string, cdSpellIds: Record<string, number>, abilities: AbilityIcons): ResolvedCd {
@@ -357,7 +349,7 @@ export class RotationFeatureService {
     const bucketFor = (name: string): FindingBucket => (byName[name] ??= { issues: [], holds: [] });
     for (const finding of findings) {
       if (finding.severity === 'success') { if (finding.cd_name) successNames.add(finding.cd_name); continue; }
-      const holdName = finding.category === 'hold_suggestion' ? finding.details?.cd_name : undefined;
+      const holdName = finding.category === 'cooldown_hold' ? finding.details?.cd_name : undefined;
       if (holdName) bucketFor(holdName).holds.push(finding);
       else if (!finding.cd_name) downtimeFindings.push(finding);
       else bucketFor(finding.cd_name).issues.push(finding);

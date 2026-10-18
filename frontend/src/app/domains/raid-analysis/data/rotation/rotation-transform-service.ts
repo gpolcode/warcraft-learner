@@ -6,7 +6,7 @@ import { PlanCooldown, PlanItem, PriorityList } from '../plan/plan.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { group, quantile } from 'd3-array';
 import {
-  round, avgOr, stddevOr, castEfficiencyPct, closestToZero, castDowntimeS,
+  round, avgOr, stddevOr, closestToZero,
 } from '../analysis/analysis-math';
 import { HoldWindow } from '../analysis/hold-targets-service';
 import { WclProjectionsService, TimedEvent, PhaseStart } from '../analysis/wcl-projections-service';
@@ -25,6 +25,7 @@ import type { ButtonCounts } from './priority-list/list-check-service';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { CooldownUseJudgeService } from './cooldown-use-judge-service';
+import { DowntimeJudgeService } from './downtime-judge-service';
 
 const BL_WINDOW_BEFORE_S = 30;
 const BL_WINDOW_AFTER_S = 55;
@@ -67,6 +68,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly itemData = inject(ItemDataService);
   private readonly listBench = inject(ListBenchService);
   private readonly cooldownUses = inject(CooldownUseJudgeService);
+  private readonly downtime = inject(DowntimeJudgeService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<RotationBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
@@ -204,9 +206,10 @@ export class RotationTransformService implements DataSource<RotationBench> {
     if (allGaps.length) {
       downtimeThresholdS = quantile(allGaps, DOWNTIME_PERCENTILE) ?? DEFAULT_DOWNTIME_THRESHOLD_S;
     }
-    const efficiencies = parses.map(({ gapListS, castTimesS, durationS }) => gapListS.length && durationS > 0
-      ? round(castEfficiencyPct(castDowntimeS(castTimesS, downtimeThresholdS, [[0, durationS]]), durationS))
-      : null);
+    const efficiencies = parses.map(({ castTimesS, durationS }) => {
+      const casting = this.downtime.measure(castTimesS, downtimeThresholdS, [[0, durationS]]);
+      return casting ? round(casting.pct) : null;
+    });
     const measured = efficiencies.filter(value => value !== null);
     return {
       downtimeThresholdS: round(downtimeThresholdS, 3),

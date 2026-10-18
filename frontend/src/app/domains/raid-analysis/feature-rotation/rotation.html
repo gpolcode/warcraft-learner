@@ -19,19 +19,18 @@
         reason="Top raiders on your spec heal rather than follow one damage priority list, so no button is judged."></wl-load-state>
     }
 
-    @if (downtimeRows().length) {
-      <wl-finding-table
-        heading="Downtime"
-        subtitle="Time you spent not casting, compared with the top logs."
-        [rows]="downtimeRows()"
-        [bench]="bench()"
-        [judged]="downtimeSpan()"
-        [showMap]="showMap()"
-        [showClip]="showClip()"
-        (openMap)="onFindingMap($event)"
-        (openClip)="onFindingClip($event)">
-      </wl-finding-table>
-    }
+    <wl-finding-table
+      heading="Downtime"
+      subtitle="Time you spent not casting, compared with the top logs."
+      [rows]="downtimeRows()"
+      [bench]="bench()"
+      [empty]="downtimeEmpty()"
+      [judged]="downtimeSpan()"
+      [showMap]="showMap()"
+      [showClip]="showClip()"
+      (openMap)="onFindingMap($event)"
+      (openClip)="onFindingClip($event)">
+    </wl-finding-table>
 
     <wl-finding-table
       heading="Offensives"

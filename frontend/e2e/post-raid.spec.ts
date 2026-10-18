@@ -176,13 +176,10 @@ test('offensives flag the cooldown casts that missed the top-parse plan, and dow
   await shows(offensives, JUDGED_SPAN);
   await showsBenchStrip(offensives);
   await showsFindingTable(offensives, CD_CHIP);
-  // A pull that never idles past the bench's threshold draws no downtime table at all.
   const downtime = rotation.locator('wl-finding-table').filter({ hasText: 'Time you spent not casting, compared with the top logs.' });
-  if (await downtime.count()) {
-    await shows(downtime, 'Downtime');
-    await shows(downtime, JUDGED_SPAN);
-    await showsFindingTable(downtime, /downtime/);
-  }
+  await shows(downtime, 'Downtime');
+  await shows(downtime, JUDGED_SPAN);
+  await showsFindingTable(downtime, /downtime/);
 });
 
 test('burst windows compare the first window\'s damage and abilities against the top logs', async () => {

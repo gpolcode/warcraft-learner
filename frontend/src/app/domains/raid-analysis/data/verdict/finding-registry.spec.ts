@@ -5,12 +5,20 @@ import { pullModel } from '../../../../../testing/builders/pull-model';
 import { CooldownUseJudgeService } from '../rotation/cooldown-use-judge-service';
 import { ListFindingService } from '../rotation/priority-list/list-finding-service';
 import { bench, cdBench } from '../rotation/rotation-harness';
+import { CadenceJudgeService } from '../rotation/cadence-judge-service';
+import { DowntimeJudgeService } from '../rotation/downtime-judge-service';
+import type { RotationParseMeasures } from '../rotation/rotation-data-source';
 import { FindingFamily } from './finding-family.models';
 import { FINDING_REGISTRY } from './finding-registry';
 import { VERDICT_CHOICES } from './verdict-choices';
 
 /** Ten top logs that each pressed the cooldown four times. */
 const ALL_USED = Array.from({ length: 10 }, () => 4);
+/** Ten top logs that open at 5s, press again at 95s and cast 90% of the pull. */
+const TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
+  ({ efficiency_pct: 90, lust_s: null, phase_starts: [], cd_casts_s: { 'Shadow Blades': [5, 95] }, buttons: {} }));
+const HELD_TO_130 = { '2': { target_s: 130, delay_s: 30, band_s: 5, effective_cd_s: 90, count: 8, total_samples: 10 } };
+const PULL_S = 300;
 
 /** One scenario per family that runs its producer on a pull with the family's mistake in it; it witnesses that some producer emits the family. */
 const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: string }[]>> = {
@@ -21,6 +29,15 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
   ),
   'rotation.lost_cast': async () => [TestBed.inject(CooldownUseJudgeService).finding('Shadow Blades', [5], cdBench(), pullModel(), ALL_USED, true) ?? {}],
   'rotation.never_used': async () => [TestBed.inject(CooldownUseJudgeService).finding('Shadow Blades', [], cdBench(), pullModel(), ALL_USED, true) ?? {}],
+  'rotation.late_opener': async () => [TestBed.inject(CadenceJudgeService).openerFinding('Shadow Blades', [40], TOP_LOGS) ?? {}],
+  'rotation.cooldown_gap': async () =>
+    [TestBed.inject(CadenceJudgeService).gapFinding('Shadow Blades', [5, 200], [[0, PULL_S]], TOP_LOGS, {}) ?? {}],
+  'rotation.hold': async () => TestBed.inject(CadenceJudgeService).holdFindings('Shadow Blades', [0, 100], HELD_TO_130),
+  'rotation.downtime': async () => {
+    const judges = TestBed.inject(DowntimeJudgeService);
+    const casting = judges.measure([0, PULL_S], 1.5, [[0, PULL_S]]);
+    return [casting ? judges.finding(casting, judges.reference(TOP_LOGS), PULL_S) ?? {} : {}];
+  },
 };
 
 const blank = (text: string): boolean => text.trim() === '';
