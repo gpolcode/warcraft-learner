@@ -16,6 +16,7 @@ const COOLDOWN_LIMITS = ['Why a cooldown was held', 'Cooldown resets and charges
 
 export const LOST_CAST_FAMILY: FindingFamily = {
   id: 'rotation.lost_cast',
+  label: 'Cooldown uses',
   version: 1,
   tier: 'red',
   claim: 'You pressed a major cooldown fewer times over your alive time than top raiders press it over the same time.',
@@ -35,6 +36,7 @@ export const LOST_CAST_FAMILY: FindingFamily = {
 
 export const NEVER_USED_FAMILY: FindingFamily = {
   id: 'rotation.never_used',
+  label: 'Unused cooldowns',
   version: 1,
   tier: 'red',
   claim: 'You never pressed a major cooldown that k of n top logs pressed.',

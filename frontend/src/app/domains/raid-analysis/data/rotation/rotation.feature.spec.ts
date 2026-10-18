@@ -68,7 +68,7 @@ describe('RotationFeatureService', () => {
       buttonsBenched: false, buttonsEmpty: 'Your log shows no judged moment for any of the 0 buttons the list judges.',
       offensivesEmpty: 'Nothing flagged. No cooldown on the plan was checked in this pull.',
       downtimeEmpty: 'Nothing flagged. No casting time was judged in this pull.',
-      bench: TestBed.inject(BenchStripService).strip(bench()),
+      bench: TestBed.inject(BenchStripService).strip(bench()), notGraded: { buttons: [], downtime: [], offensives: [] },
     }));
 
     const onFailure = await service.loadPlayerView('SubtletyRogue', 1, FAILING_CODE, 1, 10);

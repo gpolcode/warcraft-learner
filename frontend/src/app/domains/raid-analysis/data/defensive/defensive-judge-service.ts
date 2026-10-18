@@ -23,6 +23,7 @@ const COVER_SLACK_S = 3;
 
 export const DEFENSIVE_USES_FAMILY: FindingFamily = {
   id: 'defensive.uses',
+  label: 'Defensive uses',
   version: 1,
   tier: 'amber',
   claim: 'You pressed a defensive fewer times over your alive time than top raiders press it over the same time.',
@@ -42,6 +43,7 @@ export const DEFENSIVE_USES_FAMILY: FindingFamily = {
 
 export const DEFENSIVE_FIRST_USE_FAMILY: FindingFamily = {
   id: 'defensive.first_use',
+  label: 'First defensive',
   version: 1,
   tier: 'amber',
   claim: 'You first used a defensive later than top raiders first use it.',
@@ -61,6 +63,7 @@ export const DEFENSIVE_FIRST_USE_FAMILY: FindingFamily = {
 
 export const DEFENSIVE_GAP_FAMILY: FindingFamily = {
   id: 'defensive.gap',
+  label: 'Defensive gaps',
   version: 1,
   tier: 'amber',
   claim: 'Your longest wait between uses of a defensive was longer than top raiders\' longest wait.',
@@ -80,6 +83,7 @@ export const DEFENSIVE_GAP_FAMILY: FindingFamily = {
 
 export const DEFENSIVE_HOLD_FAMILY: FindingFamily = {
   id: 'defensive.hold',
+  label: 'Defensive holds',
   version: 1,
   tier: 'blue',
   claim: 'k of n top raiders hold a defensive for a moment on the pull clock; you pressed it earlier, so it was not ready then.',
@@ -99,6 +103,7 @@ export const DEFENSIVE_HOLD_FAMILY: FindingFamily = {
 
 export const DEFENSIVE_WINDOW_FAMILY: FindingFamily = {
   id: 'defensive.window',
+  label: 'Defensive windows',
   version: 1,
   tier: 'amber',
   claim: 'You had no defensive up in a window most top raiders cover, and took more damage there than half of the top raiders who covered it.',
@@ -118,6 +123,7 @@ export const DEFENSIVE_WINDOW_FAMILY: FindingFamily = {
 
 export const DEAD_IN_WINDOW_FAMILY: FindingFamily = {
   id: 'defensive.dead_in_window',
+  label: 'Deaths in windows',
   version: 1,
   tier: 'red',
   claim: 'You died in a window top raiders cover with a defensive.',

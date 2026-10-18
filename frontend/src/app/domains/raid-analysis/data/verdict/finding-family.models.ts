@@ -26,6 +26,8 @@ interface RaidDecisions {
 export interface FindingFamily {
   /** The id every finding of the family carries in `AnalysisFinding.family`. */
   id: string;
+  /** The check's name where the page lists it, such as why it is not graded. */
+  label: string;
   /** Bumped on any change to the measure, the rule or its parameters, so calibration re-runs. */
   version: number;
   /** The highest tone the family may reach; calibration and the cost class only lower it. */

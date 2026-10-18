@@ -15,6 +15,7 @@ const GEAR_LIMITS = ['Item level and what the player owns', 'Fight-specific swap
 
 export const TALENT_BUILD_FAMILY: FindingFamily = {
   id: 'gear.talent_build',
+  label: 'Talent build',
   version: 1,
   tier: 'blue',
   claim: 'k of n top raiders use the most common talent build; yours differs from it.',
@@ -34,6 +35,7 @@ export const TALENT_BUILD_FAMILY: FindingFamily = {
 
 export const TRINKET_PAIR_FAMILY: FindingFamily = {
   id: 'gear.trinket_pair',
+  label: 'Trinket pair',
   version: 1,
   tier: 'blue',
   claim: 'k of n top raiders use the most common trinket pair; yours differs from it.',
@@ -53,6 +55,7 @@ export const TRINKET_PAIR_FAMILY: FindingFamily = {
 
 export const ENCHANT_MISSING_FAMILY: FindingFamily = {
   id: 'gear.enchant_missing',
+  label: 'Missing enchants',
   version: 1,
   tier: 'amber',
   claim: 'A slot at least half of the top raiders enchant with one enchant has no enchant.',
@@ -72,6 +75,7 @@ export const ENCHANT_MISSING_FAMILY: FindingFamily = {
 
 export const ENCHANT_CHOICE_FAMILY: FindingFamily = {
   id: 'gear.enchant',
+  label: 'Enchant choices',
   version: 1,
   tier: 'blue',
   claim: 'k of n top raiders use another enchant in this slot.',

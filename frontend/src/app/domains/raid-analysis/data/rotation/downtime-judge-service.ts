@@ -10,6 +10,7 @@ import { RotationParseMeasures } from './rotation-data-source';
 
 export const DOWNTIME_FAMILY: FindingFamily = {
   id: 'rotation.downtime',
+  label: 'Casting time',
   version: 1,
   tier: 'amber',
   claim: 'You spent a larger share of your alive time not casting than top raiders spend of theirs.',

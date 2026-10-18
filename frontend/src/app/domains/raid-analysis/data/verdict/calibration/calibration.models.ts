@@ -62,6 +62,12 @@ export interface FamilyVerdict {
   reason: string;
 }
 
+/** One check a card shows without a color, and why. */
+export interface NotGradedNote {
+  label: string;
+  reason: string;
+}
+
 export interface FamilyCalibration {
   tier: ToneLevel;
   pooled: FlagTally;

@@ -20,13 +20,15 @@ type RowTone = 'red' | 'amber' | 'blue' | 'neutral' | 'muted';
 const TONE_ICON: Record<Exclude<RowTone, 'muted'>, string> = { red: 'error', amber: 'warning_amber', blue: 'info', neutral: 'compare_arrows' };
 const UNJUDGED_ICON: Record<UnjudgedCause, string> = { dead: 'skull', after_wipe: 'flag', not_reached: 'schedule' };
 
+import { NotGraded } from '../ui-not-graded/not-graded';
+import type { NotGradedNote } from '../data/verdict/calibration/calibration.models';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-finding-table',
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
-    BenchStripCaption,
+    BenchStripCaption, NotGraded,
     EmptyState, TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChevron, TuiExpand, TuiItem, TuiBadge, TuiChip,
     GameIcon, FindingOccurrences, FormatDurationPipe, JudgedSpanCaption,
   ],
@@ -43,6 +45,8 @@ export class FindingTable {
   readonly onPlan = input<OnPlanChip[]>([]);
   /** Shown when nothing is flagged and nothing is on plan. */
   readonly empty = input<string>('Nothing flagged.');
+  /** The card's checks calibration leaves without a color, listed under its rows. */
+  readonly notGraded = input<readonly NotGradedNote[]>([]);
   readonly showMap = input<boolean>(false);
   readonly showClip = input<boolean>(false);
   readonly openMap = output<FindingRow>();

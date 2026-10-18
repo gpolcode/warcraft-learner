@@ -10,6 +10,7 @@ import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
 export const BURST_WINDOW_FAMILY: FindingFamily = {
   id: 'burst.window',
+  label: 'Burst windows',
   version: 1,
   tier: 'amber',
   claim: 'You dealt less damage in a burst window than the top raiders who had it, by more than they differ from each other.',

@@ -6,9 +6,12 @@ import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from '../http/http-load-error';
 import { GearExtractService, GameNames } from './gear-extract-service';
 import { TalentBuildRow, BenchEnchantRow, TrinketSetRow } from './gear-comparison-service';
-import { EnchantRow, GearJudgeService, GearVerdict } from './gear-judge-service';
+import {
+  ENCHANT_CHOICE_FAMILY, ENCHANT_MISSING_FAMILY, EnchantRow, GearJudgeService, GearVerdict, TALENT_BUILD_FAMILY, TRINKET_PAIR_FAMILY,
+} from './gear-judge-service';
 import { CalibrationCapsService } from '../verdict/calibration/calibration-caps-service';
 import { FamilyCaps } from '../verdict/tone.models';
+import { NotGradedNote } from '../verdict/calibration/calibration.models';
 import { GEAR_DATA_SOURCE, GearBench, GearParseMeasures } from './gear-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { GearComparisonService } from './gear-comparison-service';
@@ -33,9 +36,13 @@ export interface GearComparisonView {
   enchantsClean: string;
   /** Null on the placeholder no bench backs. */
   bench: BenchStrip | null;
+  /** Empty without a player's gear, since only a comparison carries a tone. */
+  notGraded: NotGradedNote[];
 }
 
-type GearRows = Omit<GearComparisonView, 'bench'>;
+type GearRows = Omit<GearComparisonView, 'bench' | 'notGraded'>;
+
+const GEAR_FAMILIES = [TALENT_BUILD_FAMILY, TRINKET_PAIR_FAMILY, ENCHANT_MISSING_FAMILY, ENCHANT_CHOICE_FAMILY];
 
 @Injectable({ providedIn: 'root' })
 export class GearFeatureService {
@@ -58,13 +65,16 @@ export class GearFeatureService {
     const playerGear = await this.fetchPlayerGear(reportCode, fightId, playerId);
     if (!playerGear.ok) return playerGear;
     const caps = await this.calibration.load(spec, encounterId);
-    return Results.ok({ ...this.buildGearView(playerGear.value, bench.value, caps), bench: this.benchStrips.strip(bench.value) });
+    return Results.ok({
+      ...this.buildGearView(playerGear.value, bench.value, caps),
+      bench: this.benchStrips.strip(bench.value), notGraded: this.calibration.notGraded(caps, GEAR_FAMILIES),
+    });
   }
 
   async loadBenchView(spec: string, encounterId: number): Promise<Result<GearComparisonView>> {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return Results.ok({ ...this.buildBenchGearView(bench.value), bench: this.benchStrips.strip(bench.value) });
+    return Results.ok({ ...this.buildBenchGearView(bench.value), bench: this.benchStrips.strip(bench.value), notGraded: [] });
   }
 
   // A WCL fetch failure becomes a mapped LoadError, never a silent fallback.
@@ -97,7 +107,7 @@ export class GearFeatureService {
       talentBuilds: [], talentVerdict: null, talentEmpty: 'No talent data.',
       trinketSets: [], trinketVerdict: null, trinketEmpty: 'No trinket data.',
       enchantRows: [], benchEnchantRows: [], enchantEmpty: 'No enchant data.', enchantsClean: '',
-      bench: null,
+      bench: null, notGraded: [],
     };
   }
 

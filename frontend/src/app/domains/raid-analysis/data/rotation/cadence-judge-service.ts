@@ -18,6 +18,7 @@ const SPAN_TOLERANCE_S = 1e-9;
 
 export const LATE_OPENER_FAMILY: FindingFamily = {
   id: 'rotation.late_opener',
+  label: 'Opener timing',
   version: 1,
   tier: 'amber',
   claim: 'You opened with a major cooldown later than top raiders open with it.',
@@ -37,6 +38,7 @@ export const LATE_OPENER_FAMILY: FindingFamily = {
 
 export const COOLDOWN_GAP_FAMILY: FindingFamily = {
   id: 'rotation.cooldown_gap',
+  label: 'Cooldown gaps',
   version: 1,
   tier: 'amber',
   claim: 'Your longest wait between uses of a major cooldown was longer than top raiders\' longest wait.',
@@ -56,6 +58,7 @@ export const COOLDOWN_GAP_FAMILY: FindingFamily = {
 
 export const COOLDOWN_HOLD_FAMILY: FindingFamily = {
   id: 'rotation.hold',
+  label: 'Cooldown holds',
   version: 1,
   tier: 'blue',
   claim: 'k of n top raiders hold a major cooldown for a moment on the pull clock; you pressed it earlier, so it was not ready then.',

@@ -11,5 +11,11 @@ export default [
   // The default signal reads localStorage on first inject, which a spec that makes storage throw must not trip.
   { provide: TUI_DARK_MODE, useValue: Object.assign(signal(true), { reset: () => undefined }) },
   // Producers are specified on their rules alone; the calibration specs provide the real caps.
-  { provide: CalibrationCapsService, useValue: { load: () => Promise.resolve({ capOf: () => 'red' }) } },
+  {
+    provide: CalibrationCapsService,
+    useValue: {
+      load: () => Promise.resolve({ capOf: () => 'red', verdictOf: () => ({ status: 'graded', cap: 'red', reason: '' }) }),
+      notGraded: () => [],
+    },
+  },
 ];

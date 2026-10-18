@@ -159,7 +159,7 @@ describe('emptyGearView', () => {
       comparison: false,
       talentBuilds: [], talentVerdict: null, talentEmpty: 'No talent data.',
       trinketSets: [], trinketVerdict: null, trinketEmpty: 'No trinket data.',
-      enchantRows: [], benchEnchantRows: [], enchantEmpty: 'No enchant data.', enchantsClean: '', bench: null,
+      enchantRows: [], benchEnchantRows: [], enchantEmpty: 'No enchant data.', enchantsClean: '', bench: null, notGraded: [],
     });
   });
 });

@@ -57,6 +57,7 @@ export class Defensive {
   protected readonly findingsSpan = computed(() => this.load.value()?.findingsSpan ?? null);
   protected readonly windowsSpan = computed(() => this.load.value()?.windowsSpan ?? null);
   protected readonly bench = computed(() => this.load.value()?.bench ?? null);
+  protected readonly notGraded = computed(() => this.load.value()?.notGraded ?? { defensives: [], windows: [] });
   protected readonly findingsEmpty = computed(() => this.load.value()?.findingsEmpty ?? '');
   protected readonly windowsEmpty = computed(() => this.load.value()?.windowsEmpty ?? '');
 

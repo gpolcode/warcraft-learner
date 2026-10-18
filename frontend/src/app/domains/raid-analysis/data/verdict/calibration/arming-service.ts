@@ -12,11 +12,12 @@ const CHOICES = VERDICT_CHOICES.calibration;
 const NONE: FlagTally = { tests: 0, amber: 0, red: 0 };
 
 export const NOT_GRADED = {
-  tooOften: 'Not graded: this check flags top raiders too often.',
-  tooFew: 'Not graded: too few held-out top logs to measure how often it flags them.',
-  weak: 'Not graded: it misses the mistakes it claims to catch.',
-  page: 'Not graded: the page would flag top raiders too often with it.',
-  invariant: 'Not graded: it flags more often when the pull is cut short, the player dies or the lust moves.',
+  tooOften: 'It flags top raiders too often.',
+  tooFew: 'Too few top logs to measure how often it flags them.',
+  weak: 'It misses the mistakes it claims to catch.',
+  page: 'With it, the page would flag top raiders too often.',
+  invariant: 'It flags more often when the pull is cut short, the player dies or the lust moves.',
+  bench: 'On this boss it flags top raiders far more often than on the others.',
 } as const;
 
 /** A tone-level tally: how many tests, and how many flagged at that tone. */

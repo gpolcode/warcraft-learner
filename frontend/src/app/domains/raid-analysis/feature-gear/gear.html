@@ -221,6 +221,10 @@
       }
     </div>
 
+    @if (view().notGraded.length) {
+      <wl-not-graded [notes]="view().notGraded"></wl-not-graded>
+    }
+
   </div>
 </section>
 }

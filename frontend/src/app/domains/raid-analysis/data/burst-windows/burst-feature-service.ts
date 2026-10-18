@@ -13,7 +13,8 @@ import { WindowViewService } from '../analysis/window-view-service';
 import { JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
 import { SpecRoleService } from '../analysis/spec-role-service';
-import { BurstJudgeService } from './burst-judge-service';
+import { BURST_WINDOW_FAMILY, BurstJudgeService } from './burst-judge-service';
+import { NotGradedNote } from '../verdict/calibration/calibration.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
 const HEALER_REASON = 'Top raiders on your spec are ranked on healing, so there are no burst windows to compare your damage with.';
@@ -23,8 +24,8 @@ export interface BurstMapAnchor {
   windowLengthS: number;
 }
 
-/** `judged` is null on a bench-only view, which judges no pull; `bench` is null on a spec the card compares nothing for; `empty` says, with counts, why nothing is flagged. */
-export type BurstView = WindowView<BurstMapAnchor> & { judged: JudgedSpan | null; bench: BenchStrip | null; empty: string };
+/** `judged` is null on a bench-only view, which judges no pull; `bench` is null on a spec the card compares nothing for; `empty` says, with counts, why nothing is flagged; `notGraded` is empty unless a pull is judged. */
+export type BurstView = WindowView<BurstMapAnchor> & { judged: JudgedSpan | null; bench: BenchStrip | null; empty: string; notGraded: NotGradedNote[] };
 
 /** The player's damage, measured the way ingest measures a top log's. */
 interface PlayerDamage {
@@ -33,7 +34,7 @@ interface PlayerDamage {
   caps?: FamilyCaps;
 }
 
-type JudgedWindows = Omit<BurstView, 'bench'>;
+type JudgedWindows = Omit<BurstView, 'bench' | 'notGraded'>;
 
 @Injectable({ providedIn: 'root' })
 export class BurstFeatureService {
@@ -64,11 +65,12 @@ export class BurstFeatureService {
     const caps = await this.calibration.load(spec, encounterId);
     const stored = this.withMembers(bench.value);
     const strip = this.benchStrips.strip(stored);
+    const notGraded = this.calibration.notGraded(caps, [BURST_WINDOW_FAMILY]);
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'BurstFeatureService.loadPlayerView',
       errorId: 'burst.player-view',
-      emptyView: () => ({ ...this.benchOnlyView(stored), bench: strip }),
-      analyze: async context => ({ ...await this.playerView(stored, pull, context, caps), bench: strip }),
+      emptyView: () => ({ ...this.benchOnlyView(stored), bench: strip, notGraded }),
+      analyze: async context => ({ ...await this.playerView(stored, pull, context, caps), bench: strip, notGraded }),
     });
   }
 
@@ -82,7 +84,7 @@ export class BurstFeatureService {
   }
 
   private notComparedView(): BurstView {
-    return { windows: [], anchors: [], clipAnchors: [], folded: this.pullModel.noFolds(), judged: null, bench: null, empty: '' };
+    return { windows: [], anchors: [], clipAnchors: [], folded: this.pullModel.noFolds(), judged: null, bench: null, empty: '', notGraded: [] };
   }
 
   private async playerView(bench: BurstBench, pull: PullRef, context: PullContext, caps?: FamilyCaps): Promise<JudgedWindows> {
@@ -113,7 +115,7 @@ export class BurstFeatureService {
     if (this.notComparedReason(spec)) return Results.ok(this.notComparedView());
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    return Results.ok({ ...this.benchOnlyView(this.withMembers(bench.value)), bench: this.benchStrips.strip(bench.value) });
+    return Results.ok({ ...this.benchOnlyView(this.withMembers(bench.value)), bench: this.benchStrips.strip(bench.value), notGraded: [] });
   }
 
   protected splitCommonCds(
