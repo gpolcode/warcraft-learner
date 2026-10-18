@@ -73,6 +73,9 @@ export const COOLDOWN_HOLD_FAMILY: FindingFamily = {
   limits: COOLDOWN_LIMITS,
 };
 
+/** One top log's uses of every plan button it is judged on, by name, as a bench's `per_parse` bakes them. */
+export type CastsByName = Readonly<Record<string, readonly number[]>>;
+
 interface Gap {
   gapS: number;
   fromS: number;
@@ -90,9 +93,9 @@ export class CadenceJudgeService {
   }
 
   /** Each top log's first use, for the logs that used it, in the order of the bench's sources. */
-  referenceOpeners(perParse: readonly RotationParseMeasures[], name: string): number[] {
-    return perParse.flatMap(parse => {
-      const firstS = this.measureOpener(parse.cd_casts_s[name] ?? []);
+  referenceOpeners(perParse: readonly CastsByName[], name: string): number[] {
+    return perParse.flatMap(casts => {
+      const firstS = this.measureOpener(casts[name] ?? []);
       return firstS === null ? [] : [firstS];
     });
   }
@@ -105,7 +108,7 @@ export class CadenceJudgeService {
   openerFinding(name: string, castTimesS: readonly number[], perParse: readonly RotationParseMeasures[]): AnalysisFinding | null {
     const firstS = this.measureOpener(castTimesS);
     if (firstS === null) return null;
-    const reference = this.referenceOpeners(perParse, name);
+    const reference = this.referenceOpeners(perParse.map(parse => parse.cd_casts_s), name);
     const evidence = this.judgeOpener(firstS, reference);
     if (evidence.level === 'neutral' || evidence.target === null) return null;
     const avgS = reference.reduce((sum, value) => sum + value, 0) / reference.length;
@@ -134,9 +137,9 @@ export class CadenceJudgeService {
   }
 
   /** Each top log's longest wait, for the logs with two uses or more, in the order of the bench's sources. */
-  referenceGaps(perParse: readonly RotationParseMeasures[], name: string, holds: CdHoldTargets): number[] {
-    return perParse.flatMap(parse => {
-      const gap = this.measureGap(parse.cd_casts_s[name] ?? [], WHOLE_PULL, holds);
+  referenceGaps(perParse: readonly CastsByName[], name: string, holds: CdHoldTargets): number[] {
+    return perParse.flatMap(casts => {
+      const gap = this.measureGap(casts[name] ?? [], WHOLE_PULL, holds);
       return gap ? [gap.gapS] : [];
     });
   }
@@ -152,7 +155,7 @@ export class CadenceJudgeService {
   ): AnalysisFinding | null {
     const gap = this.measureGap(castTimesS, spans, holds);
     if (!gap) return null;
-    const reference = this.referenceGaps(perParse, name, holds);
+    const reference = this.referenceGaps(perParse.map(parse => parse.cd_casts_s), name, holds);
     const evidence = this.judgeGap(gap.gapS, reference);
     if (evidence.level === 'neutral' || evidence.target === null) return null;
     const avgS = reference.reduce((sum, value) => sum + value, 0) / reference.length;
@@ -193,7 +196,7 @@ export class CadenceJudgeService {
   }
 
   /** Two moments a second apart share a clock string, so they fall back to seconds. */
-  private clocksApart(valueS: number, edgeS: number): [string, string] {
+  clocksApart(valueS: number, edgeS: number): [string, string] {
     if (fmtClock(valueS) !== fmtClock(edgeS)) return [fmtClock(valueS), fmtClock(edgeS)];
     const [value, edge] = fmtApart(valueS, edgeS);
     return [`${value}s`, `${edge}s`];

@@ -9,6 +9,8 @@ import { CadenceJudgeService } from '../rotation/cadence-judge-service';
 import { DowntimeJudgeService } from '../rotation/downtime-judge-service';
 import { BurstJudgeService } from '../burst-windows/burst-judge-service';
 import type { BurstWindow } from '../analysis/analysis.models';
+import { DefensiveJudgeService } from '../defensive/defensive-judge-service';
+import { defBench } from '../defensive/defensive-harness';
 import type { RotationParseMeasures } from '../rotation/rotation-data-source';
 import { FindingFamily } from './finding-family.models';
 import { FINDING_REGISTRY } from './finding-registry';
@@ -26,6 +28,11 @@ const BURST: BurstWindow = {
   time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 1000, dmg_max: 1000, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
   members: Array.from({ length: 5 }, (_unused, parse) => ({ parse, time_s: 10, window_length_s: 20, damage: 1000 })),
 };
+
+/** Ten top logs that each pressed the defensive at 5s and again at 95s. */
+const DEFENSIVE_TOP_LOGS = Array.from({ length: 10 }, () => ({ Cloak: [5, 95] }));
+/** Ten top logs that had Cloak up in a window they took 1000 in. */
+const DEFENSIVE_WINDOW: BurstWindow = { ...BURST, defensive_name: 'Cloak', members: Array.from({ length: 10 }, (_unused, parse) => ({ parse, time_s: 10, window_length_s: 20, damage: 1000 })) };
 
 /** One scenario per family that runs its producer on a pull with the family's mistake in it; it witnesses that some producer emits the family. */
 const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: string }[]>> = {
@@ -46,6 +53,14 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
     return [casting ? judges.finding(casting, judges.reference(TOP_LOGS), PULL_S) ?? {} : {}];
   },
   'burst.window': async () => [TestBed.inject(BurstJudgeService).verdict(BURST, 0, 10)],
+  'defensive.uses': async () => [TestBed.inject(DefensiveJudgeService).usesFinding(
+    'Cloak', [], defBench({ sample_count: 10, used_sample_count: 10, uses_per_min: { avg: 1.4, stddev: 0.1 }, avg_gap_s: 40 }), pullModel(), DEFENSIVE_TOP_LOGS, false,
+  ) ?? {}],
+  'defensive.first_use': async () => [TestBed.inject(DefensiveJudgeService).firstUseFinding('Cloak', [40], DEFENSIVE_TOP_LOGS) ?? {}],
+  'defensive.gap': async () => [TestBed.inject(DefensiveJudgeService).gapFinding('Cloak', [5, 200], [[0, PULL_S]], DEFENSIVE_TOP_LOGS, {}) ?? {}],
+  'defensive.hold': async () => TestBed.inject(DefensiveJudgeService).holdFindings('Cloak', [0, 100], HELD_TO_130),
+  'defensive.window': async () => [TestBed.inject(DefensiveJudgeService).windowVerdict(DEFENSIVE_WINDOW, { damage: 2000, covered: false, tank: false }, 10)],
+  'defensive.dead_in_window': async () => [TestBed.inject(DefensiveJudgeService).deathVerdict(15)],
 };
 
 const blank = (text: string): boolean => text.trim() === '';

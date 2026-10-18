@@ -137,7 +137,7 @@
           </div>
         }
         @if (w.message) {
-          <p class="mt-2.5 text-body" [class.text-warning]="lookOf(w) === 'warning' || lookOf(w) === 'critical'">{{ w.message }}</p>
+          <p class="mt-2.5 text-body" [class.text-warning]="lookOf(w) === 'warning'" [class.text-critical]="lookOf(w) === 'critical'">{{ w.message }}</p>
         }
         @if (w.note) {
           <div class="mt-2.5">

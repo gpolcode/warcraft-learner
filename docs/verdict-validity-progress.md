@@ -281,3 +281,57 @@ Branch `claude/verdict-validity-p4c-burst`, PR against `claude/verdict-validity-
 
 - A window card moves onto the contract by returning a `Tone`, `message` and `family` from its `WindowViewAdapter.status`; `wl-window-comparison` then drops the colors no rule backs on its own.
 - Defensive windows (4d) can mirror `BurstJudgeService`: `measure` on damage taken over the window span through one function shared with ingest, `members` as the reference.
+
+## Package 4d: Defensives and Defensive windows judge split (done)
+
+Branch `claude/verdict-validity-p4d-defensive`, PR against `claude/verdict-validity-p4c-burst`.
+
+### Done
+
+- **Families** in `FINDING_REGISTRY`, all declared in `data/defensive/defensive-judge-service.ts`:
+  - `defensive.uses`: tier amber, cost medium, `count`; pending unused ready time of the defensive. Injected mistake `strip-defensive`.
+  - `defensive.first_use`, `defensive.gap`: tier amber, cost medium, `interval` (2 s and 5 s floors, as rotation); pending unused ready time.
+  - `defensive.hold`: tier blue, cost medium, `consensus` alone; construct final.
+  - `defensive.window`: tier amber, cost medium, `consensus` with `pairedOnly`; pending coverage by any defensive active at the hit (package 6). Injected mistake `strip-defensive`.
+  - `defensive.dead_in_window`: tier red, cost high, `fact` backed by the game rule; construct final. New injected mistake `die-in-window`.
+- **Judge, callable at ingest with a top log as the player.** `DefensiveJudgeService`:
+  - `measureUseTimes(uses)` is the one use measure (rounded starts of `DefensiveUsesService.uses`): ingest's `summarizeDefensiveCasts`, which bakes `per_parse[].def_casts_s`, and the runtime's `analyzeDefensives` both call it.
+  - Cadence: `usesFinding` measures through `CooldownUseJudgeService.measure` (alive spans; ingest passes `[[0, duration]]`), references `per_parse[].def_casts_s` counts, rule `count` with `users`. `firstUseFinding`, `gapFinding` and `holdFindings` reuse `CadenceJudgeService.measureOpener/judgeOpener`, `measureGap/judgeGap` and `measureHold/judgeHold`; `referenceOpeners` and `referenceGaps` now take `CastsByName[]` (one casts-by-name map per top log), so rotation passes `per_parse.map(p => p.cd_casts_s)` and defensives `per_parse.map(p => p.def_casts_s)`.
+  - Windows: `measureDamage(damageTaken, start, end)` is the one window-damage measure (damage events, amount plus absorbed, end inclusive): ingest's `findParseDefensiveWindows` bakes each use's `window_damage` (so every `members[].damage`) through it, and the runtime overwrites `PlayerBurstWindow.window_damage` with it. `measureCovered(window, uses)` is the window's own defensive up within 3 s of either edge. `reference(window, n)` gives k = distinct member parses (the covered top logs), n = the bench's `sources`, their median damage and whether every member took none (immunity). `judgeWindow` is `consensus({ differs: uncovered, k, n, paired: damage > median, pairedOnly: true })`, with `paired` forced false for tanks (`PullModel.role === 'tank'`) and immunity windows.
+  - Death: `deathHomes(windows, deadSpans)` gives each death strictly inside a window the player was alive into to the first such window; `deathVerdict` is the red fact "You died at m:ss in this window."
+- **Rules.** `ConsensusInput.pairedOnly`: the family's claim needs the second condition, so without it k = n stays blue. Specs pair both sides.
+- **Tone.** Every defensive producer passes evidence to `ToneService.tone`; externals and on-plan chips carry no rule tone (`ToneService.neutral()`, `FindingRowsService.onPlanFinding`).
+- **Externals.** A defensive whose every use in the pull opened no self aura (`isExternal`) is an assignment: only its count shows, as a neutral row ("..., each on another raider."), and no first-use, gap or hold row is built.
+- **Timeline.** `WindowViewAdapter.claim(window, cause, index)` lets a card judge a window the model would mute; the defensive adapter claims only `dead` windows that are a death's home. Every other muted window stays as package 1 set it. A claimed window is not counted in the caption's folds. First-use, gap and hold findings carry spans and run through `foldFindings`.
+- **Rows show n.** Count rows print `uses / expected` with "use(s), N top logs"; first-use and gap rows print the top logs in the unit and the message; holds "k of n top raiders"; window messages "k of n top raiders had it up here." Intent notes ("covered", "defensive used wrongly", ...) are gone.
+- **Empty states with counts.** Defensives: "Nothing flagged. N defensives checked against M top logs." or "Nothing flagged. No defensive on the plan was checked in this pull." (`DefensiveView.findingsEmpty`). Defensive windows always renders: "No defensive window to compare. The defensives of the N top logs do not line up in time." with no windows, else "Nothing flagged. a of b windows checked against the N top logs." while no window is amber or red (`DefensiveView.windowsEmpty`). New subtitle: "Each moment top logs press a defensive, and whether you had it up."
+- **UI.** `wl-window-comparison` prints a red window's message in the critical color.
+- **Lint.** `cast-cadence-service.ts`, `hold-targets-service.ts` and `defensive-feature-service.ts` left the `local/no-severity-literal` ignores. `CastCadenceService.checkUseCount`, `checkLostUses`, `checkFirstCastDelay`, `checkGaps`, `CadenceVoice` and `HoldTargetsService.holdSuggestionFindings` are deleted: no caller remains.
+- **E2E.** The Defensive windows card is checked unconditionally: the judged first window's message by shape, the "Nothing flagged" line when drawn, the no-window empty state otherwise.
+
+### Decisions and deviations
+
+- **First use and gaps stay as graded rows** on the reused `CadenceJudgeService` measures and `interval` rule, emitted only when graded (as 4b). The 5.7 Defensive cadence row names only the count; section 6's "defensive first-use and gap rows removed" belongs to the skipped stage 0 row.
+- **Today's coverage construct.** "Covered" is the window's own defensive, as before; k counts the top logs whose use formed the window, n every accepted top log. A window forms only when half the top logs pressed it, so k / n is at least 0.5. "No defensive was up" in the 5.7 claim waits for package 6.
+- **Damage as the second condition, damage as context.** Above the top logs' median is strict; at the median the row is blue. The overview damage bar stays as context, uncolored unless graded.
+- **Dead in window.** Package 1 muted every window the player died in; the 5.7 "Dead in window: Red, keep" row now holds for the one window per death the player was alive into (death strictly after its start, before its end). A window wholly after the death stays muted. The death is still named in the caption's dead spans.
+- **External detection** is per pull: point uses only. A never-pressed external is judged as the player's own defensive (the plan has no external flag and the bench bakes none); the family's availability mask says so.
+- **Count rule** for defensives is the package 3 Poisson bound at tier amber, so at 7 expected 2 uses are amber, 3 a comparison; one short is always a comparison row. The use-share gate (`usedByMajority`) stays for the count and the first use.
+- **On-plan chips** come from `FindingRowsService.onPlanFinding`, which keeps the legacy `success` word in a file still on the ignores list for rotation.
+- No `INGEST_VERSION` bump: `measureUseTimes` and `measureDamage` reproduce the baked values exactly (the transform specs pin them).
+
+### Drift against 6882b59
+
+- `cast-cadence-service.ts:81` (the gap test, RC1) is deleted with its last caller. The defensive window rule the RC4 row describes (damage against max + sd) sat in `DefensiveFeatureService.defensiveWindowStatus` and is replaced. RC3's "Defensive windows judge damage taken at the top raiders' press clock" still holds for the window span, now as context only. The audit figures (94% soaker red, 60.6% rank-1 covered) are not re-measured: that needs the harness.
+
+### Seams stubbed
+
+- `AnalysisFinding.severity` keeps `hold_suggestion` and `FindingRowsService.bucketIssue` keeps its `hold_suggestion` branch; no producer emits it now. Leave them to whichever package retires the legacy words in `finding-rows-service.ts`.
+- `rotation-feature-service.ts` stays in the lint ignores for its Bloodlust literals (`checkBloodlustAlignment`, `bloodlustTiming`: `critical`, `warning`) and the success chip (package 4f). `finding-rows-service.ts` and `gear-comparison-service.ts` stay too (4e and the legacy row words).
+- Calibration does not cap the tone yet (package 5); the harness that calls the judges at ingest is not built.
+
+### For the next package
+
+- `WindowViewAdapter.claim` is the seam for a card that judges a window the timeline would mute.
+- `CadenceJudgeService.reference*` take `CastsByName[]`; `clocksApart` is public for a card that prints its own opener copy.
+- `DecisionRuleService.consensus` takes `pairedOnly` for a claim that needs its second condition (the gear enchant gate may reuse it).

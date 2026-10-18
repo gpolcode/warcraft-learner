@@ -100,6 +100,15 @@ export class WindowViewService {
     };
   }
 
+  /** A cause the adapter claims, such as the death a window holds, judges the window instead of muting it. */
+  private judgedAs<A>(
+    window: BurstWindow, index: number, model: PullModel | null, adapter: WindowViewAdapter<A>,
+  ): { unjudged: UnjudgedCause | null; claimed: WindowVerdict | null } {
+    const cause = model ? this.pullModel.causeOf(model, window.time_s, window.time_s + window.window_length_s) : null;
+    const claimed = cause ? adapter.claim?.(window, cause, index) ?? null : null;
+    return { unjudged: claimed ? null : cause, claimed };
+  }
+
   /** A window is judged only when it lies wholly in alive, pre-wipe time; a null model is a bench-only view with no pull to judge. */
   buildWindowView<A>(
     { topWindows, playerWindows, model, abilities, adapter }: WindowViewInput<A>,
@@ -109,14 +118,14 @@ export class WindowViewService {
     const clipAnchors: ClipAnchor[] = [];
     const folded = this.pullModel.noFolds();
     topWindows.forEach((window, index) => {
-      const unjudged = model ? this.pullModel.causeOf(model, window.time_s, window.time_s + window.window_length_s) : null;
+      const { unjudged, claimed } = this.judgedAs(window, index, model, adapter);
       if (unjudged) folded[unjudged] += 1;
       // playerWindows is the index-aligned aggregation over these same topWindows, so a time-based match would drift.
       const playerWindow = unjudged ? null : (playerWindows[index] ?? null);
       const playerDamage = playerWindow?.window_damage ?? null;
       const verdict: WindowVerdict = unjudged
         ? { status: 'muted' as const, icon: UNJUDGED_ICON[unjudged] }
-        : adapter.status(window, playerDamage);
+        : claimed ?? adapter.status(window, playerDamage);
       const { spellIds, labels } = adapter.chips(window);
       windows.push({
         timeStartS: window.time_s,
@@ -163,6 +172,8 @@ interface WindowChips {
 
 export interface WindowViewAdapter<A> {
   status: (window: BurstWindow, playerDamage: number | null) => WindowVerdict;
+  /** A verdict for a window the pull model would mute, such as the death it holds; null leaves it muted. */
+  claim?: (window: BurstWindow, cause: UnjudgedCause, index: number) => WindowVerdict | null;
   chips: (window: BurstWindow) => WindowChips;
   mapAnchor: (window: BurstWindow) => A;
   clipAnchor: (window: BurstWindow, index: number) => ClipAnchor;

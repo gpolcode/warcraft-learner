@@ -15,6 +15,11 @@ export class FindingRowsService {
     return severity === 'critical' ? 'critical' : severity === 'info' ? 'info' : 'warning';
   }
 
+  /** Surfaces the button as an "On plan" chip when nothing else is flagged for it. */
+  onPlanFinding(name: string): AnalysisFinding {
+    return { severity: 'success', category: 'cooldown_usage', cd_name: name, message: `${name} is on plan.`, occurrences: [] };
+  }
+
   rowsFromEntries(entries: FindingEntry[]): FindingRow[] {
     const rows: FindingRow[] = [];
     for (const entry of entries) {

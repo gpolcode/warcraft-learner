@@ -206,10 +206,7 @@ export default defineConfig([
     ignores: [
       'src/**/*.spec.ts',
       'src/app/domains/raid-analysis/data/verdict/**',
-      'src/app/domains/raid-analysis/data/analysis/cast-cadence-service.ts',
       'src/app/domains/raid-analysis/data/analysis/finding-rows-service.ts',
-      'src/app/domains/raid-analysis/data/analysis/hold-targets-service.ts',
-      'src/app/domains/raid-analysis/data/defensive/defensive-feature-service.ts',
       'src/app/domains/raid-analysis/data/gear/gear-comparison-service.ts',
       'src/app/domains/raid-analysis/data/rotation/rotation-feature-service.ts',
     ],

@@ -6,11 +6,10 @@ import {
 } from '../analysis/analysis.models';
 import { FindingRow, FindingRowsService, OnPlanChip } from '../analysis/finding-rows-service';
 import { PerDefensiveBenchmark } from '../encounter/encounter.models';
-import { ComparisonWindow, WindowStatus } from '../analysis/window-comparison.models';
+import { ComparisonWindow } from '../analysis/window-comparison.models';
 import { ClipAnchor } from '../capture/capture.models';
 import { Result, Results } from '../../../shared/util-http/result';
-import { benchExpectedUses, buttonTaken, round, sortBySeverity } from '../analysis/analysis-math';
-import { CadenceVoice } from '../analysis/cast-cadence-service';
+import { buttonTaken, round, sortBySeverity } from '../analysis/analysis-math';
 import { WclProjectionsService, AbilityIcons, TimedEvent } from '../analysis/wcl-projections-service';
 import { WindowView, WindowViewAdapter } from '../analysis/window-view-service';
 import { PullContextService, PullContext, PullRef } from '../analysis/pull-context-service';
@@ -18,13 +17,14 @@ import {
   DEFENSIVE_DATA_SOURCE, DefensiveBench, DefensivePlanMeta,
 } from './defensive-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
-import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { GearExtractService } from '../gear/gear-extract-service';
 import { WindowViewService } from '../analysis/window-view-service';
 import { FoldCounts, JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
 import { DefensiveUsesService } from './defensive-uses-service';
+import { DefensiveJudgeService } from './defensive-judge-service';
+import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
 
 export interface DefensiveMapAnchor {
@@ -43,6 +43,10 @@ export interface DefensiveView {
   findingsSpan: JudgedSpan | null;
   windowsSpan: JudgedSpan | null;
   bench: BenchStrip | null;
+  /** Why the Defensives card flags nothing, with counts. */
+  findingsEmpty: string;
+  /** Why the Defensive windows card flags nothing, with counts; empty where a window is flagged. */
+  windowsEmpty: string;
 }
 
 export interface DefensivePlanRow {
@@ -62,24 +66,7 @@ export interface DefensivePlanView {
   rows: DefensivePlanRow[];
 }
 
-const DEFENSIVE_VOICE: CadenceVoice = {
-  unit: 'use(s)',
-  firstCastPhrase: 'was first used at',
-  gapNoun: 'uses',
-  underuseRemedy: (name, missing) => `Use ${name} ${missing}x more.`,
-  firstCastRemedy: name => `Use ${name} earlier.`,
-  gapRemedy: name => `Use ${name} sooner after it resets.`,
-};
-
 const TOP_DAMAGE_SOURCES = 6;
-
-const WINDOW_NEAR_S = 3;
-
-/** Annotations naming whether the expected defensive was pressed; do not set the status. */
-const NOTE_COVERED = 'covered';
-const NOTE_NO_DEFENSIVE = 'no defensive used';
-const NOTE_USED_WRONGLY = 'defensive used wrongly';
-const NOTE_NEEDED_UNUSED = 'defensive needed, unused';
 
 export interface DefensiveWindowsInput {
   topWindows: BurstWindow[];
@@ -87,15 +74,17 @@ export interface DefensiveWindowsInput {
   playerDefensives: PlayerDefensive[];
   model: PullModel;
   abilities: AbilityIcons;
+  /** The bench's accepted top logs, the count every window's coverage is out of. */
+  topLogs: number;
 }
 
-interface DefensiveScan { findings: AnalysisFinding[]; folded: FoldCounts; }
+interface DefensiveScan { findings: AnalysisFinding[]; folded: FoldCounts; checked: number; }
 
 @Injectable({ providedIn: 'root' })
 export class DefensiveFeatureService {
   private readonly logger = inject(LoggerService);
   private readonly findingRows = inject(FindingRowsService);
-  private readonly holdTargets = inject(HoldTargetsService);
+  private readonly judge = inject(DefensiveJudgeService);
   private readonly auraWindows = inject(AuraWindowsService);
   private readonly defensiveUses = inject(DefensiveUsesService);
   private readonly castCadence = inject(CastCadenceService);
@@ -124,7 +113,10 @@ export class DefensiveFeatureService {
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'DefensiveFeatureService.loadAnalysisView',
       errorId: 'defensive.player-view',
-      emptyView: () => ({ findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null, bench: strip }),
+      emptyView: () => ({
+        findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null, bench: strip,
+        findingsEmpty: this.findingsEmpty(0, bench.value), windowsEmpty: this.windowsEmpty(bench.value, []),
+      }),
       analyze: async context => ({ ...await this.analysisView(bench.value, pull, context), bench: strip }),
     });
   }
@@ -149,9 +141,9 @@ export class DefensiveFeatureService {
       abilities,
       this.gearExtract.pickedTalents(this.gearExtract.selectCombatantInfo(combatants, playerId)),
     );
-    const { findings, folded } = bench.defensives.length && playerDefensives.length
-      ? this.analyzeDefensiveFindings(playerDefensives, bench.per_defensive_benchmarks, model)
-      : { findings: [], folded: this.pullModel.noFolds() };
+    const { findings, folded, checked } = bench.defensives.length && playerDefensives.length
+      ? this.analyzeDefensiveFindings(playerDefensives, this.withPerParse(bench), model)
+      : { findings: [], folded: this.pullModel.noFolds(), checked: 0 };
 
     const playerWindows = this.computePlayerDefensiveWindows(bench.defensive_windows, dtEventsTimed);
     const iconByName: Record<string, string> = {};
@@ -161,7 +153,7 @@ export class DefensiveFeatureService {
       iconByName[name] = ability?.icon ?? '';
     }
     const { windows, anchors, clipAnchors, folded: windowsFolded } = this.buildDefensiveWindows({
-      topWindows: bench.defensive_windows, playerWindows, playerDefensives, model, abilities: bench.ability_icons,
+      topWindows: bench.defensive_windows, playerWindows, playerDefensives, model, abilities: bench.ability_icons, topLogs: this.topLogs(bench),
     });
     const entries = this.findingRows.bucketFindings(findings, {
       spellId: name => bench.cd_spell_ids[name] ?? null,
@@ -173,7 +165,36 @@ export class DefensiveFeatureService {
       windows, anchors, clipAnchors,
       findingsSpan: this.pullModel.judgedSpan(model, folded),
       windowsSpan: this.pullModel.judgedSpan(model, windowsFolded),
+      findingsEmpty: this.findingsEmpty(checked, bench),
+      windowsEmpty: this.windowsEmpty(bench, windows),
     };
+  }
+
+  private topLogs(bench: DefensiveBench): number {
+    const stored: Partial<DefensiveBench> = bench;
+    return stored.sources?.length ?? 0;
+  }
+
+  /** A bench baked before per-log measures reads as no top log, so every check is a comparison. */
+  private withPerParse(bench: DefensiveBench): DefensiveBench {
+    const stored: Partial<DefensiveBench> = bench;
+    return stored.per_parse ? bench : { ...bench, per_parse: [] };
+  }
+
+  private findingsEmpty(checked: number, bench: DefensiveBench): string {
+    if (!checked) return 'Nothing flagged. No defensive on the plan was checked in this pull.';
+    return `Nothing flagged. ${checked} ${checked === 1 ? 'defensive' : 'defensives'} checked against ${this.topLogs(bench)} top logs.`;
+  }
+
+  /** Empty where a window is flagged. */
+  protected windowsEmpty(bench: DefensiveBench, windows: readonly ComparisonWindow[]): string {
+    const n = this.topLogs(bench);
+    const topLogs = `${n} top ${n === 1 ? 'log' : 'logs'}`;
+    if (!windows.length) return `No defensive window to compare. The defensives of the ${topLogs} do not line up in time.`;
+    if (windows.some(window => window.status === 'amber' || window.status === 'red')) return '';
+    const checked = bench.defensive_windows.filter((window, index) =>
+      windows[index]?.status !== 'muted' && n >= VERDICT_CHOICES.minReferenceN && this.judge.reference(window, n).k > 0).length;
+    return `Nothing flagged. ${checked} of ${windows.length} ${windows.length === 1 ? 'window' : 'windows'} checked against the ${topLogs}.`;
   }
 
   async loadPlan(spec: string, encounterId: number): Promise<Result<DefensivePlanView>> {
@@ -197,95 +218,84 @@ export class DefensiveFeatureService {
       const windows = this.defensiveUses.uses(
         this.auraWindows.spansNamed(buffWin, defensive, abilities), this.defensiveUses.castTimesS(castEvents, defensive.spell_id), fightEndS,
       ).map(use => ({ start_s: round(use.start_s), end_s: round(use.end_s) }));
-      const cast_times_s = windows.map(window => window.start_s);
+      const cast_times_s = this.judge.measureUseTimes(windows);
       const entry: PlayerDefensive = { name: defensive.name, uses: windows.length, cast_times_s, windows };
       if (!buttonTaken(defensive, talents)) entry.talent_gated = true;
       return entry;
     });
   }
 
-  private usageSuccessFindings(name: string, uses: number, expected: number): AnalysisFinding[] {
-    if (uses === 0) return [];
-    return [{ severity: 'success', category: 'cooldown_usage', cd_name: name,
-      message: `${name} - ${uses}/${expected} uses.`, occurrences: [] }];
-  }
-
-  private unbenchedFindings(name: string, uses: number): AnalysisFinding[] {
-    if (uses === 0) return [];
-    return [{ severity: 'success', category: 'cooldown_usage', cd_name: name,
-      message: `${name} was used ${uses} times. No top-parse data to compare against.`, occurrences: [] }];
+  /** A defensive used with no top-log figure to compare is on plan only as a chip. */
+  private onPlan(name: string, uses: number): AnalysisFinding[] {
+    return uses ? [this.findingRows.onPlanFinding(name)] : [];
   }
 
   protected analyzeOneDefensive(
     defensive: PlayerDefensive,
     defBench: PerDefensiveBenchmark | undefined,
     model: PullModel,
+    perParse: DefensiveBench['per_parse'] = [],
   ): DefensiveScan {
     const { name, uses } = defensive;
     const none = this.pullModel.noFolds();
 
-    if (defensive.talent_gated && uses === 0) return { findings: [], folded: none };
+    if (defensive.talent_gated && uses === 0) return { findings: [], folded: none, checked: 0 };
 
-    if (!defBench) return { findings: this.unbenchedFindings(name, uses), folded: none };
+    if (!defBench) return { findings: this.onPlan(name, uses), folded: none, checked: 0 };
 
-    const { expected, floor } = benchExpectedUses(model.aliveSpans, defBench);
-    const castTimesS = defensive.cast_times_s ?? [];
+    const useTimesS = defensive.cast_times_s ?? [];
+    const casts = perParse.map(parse => parse.def_casts_s);
+    const external = this.judge.isExternal(defensive.windows);
+    const majority = this.castCadence.usedByMajority(defBench);
+    const counted = majority ? this.judge.usesFinding(name, useTimesS, defBench, model, casts, external) : null;
+    // Who receives an external and when is an assignment, so only its count is shown.
+    const timing = external ? { timed: [], holds: [] } : this.timingFindings(name, useTimesS, defBench, { model, casts, majority });
+    const { kept, folded } = this.pullModel.foldFindings(model, timing.timed);
+    const { kept: holds, folded: foldedHolds } = this.pullModel.foldFindings(model, timing.holds);
 
-    const checked = this.castCadence.usedByMajority(defBench)
-      ? this.castCadence.checkUseCount(DEFENSIVE_VOICE, name, castTimesS, defBench, { expected, floor, model })
-      : [];
-    checked.push(...this.castCadence.checkGaps(DEFENSIVE_VOICE, name, castTimesS, defBench));
-    if (uses > 0) checked.push(...this.holdTargets.holdSuggestionFindings(name, castTimesS, defBench.hold_targets, model.judgedEndS));
-    const { kept, folded } = this.pullModel.foldFindings(model, checked);
+    const issues = [...counted ? [counted] : [], ...kept];
+    const findings = issues.length ? issues : this.onPlan(name, uses);
+    return { findings: [...findings, ...holds], folded: this.pullModel.addFolds(folded, foldedHolds), checked: 1 };
+  }
 
-    const issues = kept.filter(finding => finding.category !== 'hold_suggestion');
-    const holds = kept.filter(finding => finding.category === 'hold_suggestion');
-    const findings = issues.length ? issues : this.usageSuccessFindings(name, uses, expected);
-    return { findings: [...findings, ...holds], folded };
+  /** A defensive most top logs skip has a noisy first use, so only its gaps and holds are checked. */
+  private timingFindings(
+    name: string, useTimesS: readonly number[], defBench: PerDefensiveBenchmark,
+    pull: { model: PullModel; casts: DefensiveBench['per_parse'][number]['def_casts_s'][]; majority: boolean },
+  ): { timed: AnalysisFinding[]; holds: AnalysisFinding[] } {
+    const timed = [
+      pull.majority ? this.judge.firstUseFinding(name, useTimesS, pull.casts) : null,
+      this.judge.gapFinding(name, useTimesS, pull.model.aliveSpans, pull.casts, defBench.hold_targets),
+    ].filter(finding => finding !== null);
+    return { timed, holds: this.judge.holdFindings(name, useTimesS, defBench.hold_targets) };
   }
 
   protected analyzeDefensiveFindings(
     playerDefensives: PlayerDefensive[],
-    perDefBench: Record<string, PerDefensiveBenchmark>,
+    bench: Pick<DefensiveBench, 'per_defensive_benchmarks' | 'per_parse'>,
     model: PullModel,
   ): DefensiveScan {
     const findings: AnalysisFinding[] = [];
     let folded = this.pullModel.noFolds();
+    let checked = 0;
     for (const defensive of playerDefensives) {
-      const scan = this.analyzeOneDefensive(defensive, perDefBench[defensive.name], model);
+      const scan = this.analyzeOneDefensive(defensive, bench.per_defensive_benchmarks[defensive.name], model, bench.per_parse);
       findings.push(...scan.findings);
       folded = this.pullModel.addFolds(folded, scan.folded);
+      checked += scan.checked;
     }
     sortBySeverity(findings);
-    return { findings, folded };
+    return { findings, folded, checked };
   }
 
+  /** The judged figure is the same measure ingest bakes for each top log, so the overview never shows a second number. */
   protected computePlayerDefensiveWindows(topDefWindows: BurstWindow[], dtEvents: TimedEvent[]): PlayerBurstWindow[] {
-    return this.windowView.playerWindowDamage(topDefWindows, dtEvents, { maxAbilities: TOP_DAMAGE_SOURCES });
-  }
-
-  protected playerCoveredWindow(
-    window: BurstWindow, playerDefensive: PlayerDefensive | undefined,
-  ): boolean {
-    if (!playerDefensive) return false;
-    const lo = window.time_s - WINDOW_NEAR_S;
-    const hi = window.time_s + window.window_length_s + WINDOW_NEAR_S;
-    return playerDefensive.windows.some(span => span.start_s <= hi && span.end_s >= lo);
-  }
-
-  // Status is driven by damage TAKEN vs the band (less is better); coverage only annotates, never gates.
-  protected defensiveWindowStatus(
-    playerDamage: number | null,
-    topMax: number,
-    stddev: number,
-    covered: boolean,
-  ): { status: WindowStatus; icon: string; note: string } {
-    if (playerDamage === null) return { status: 'muted', icon: 'help_outline', note: '' };
-    const aboveBand = playerDamage > topMax + stddev;
-    if (aboveBand) {
-      return { status: 'bad', icon: 'error', note: covered ? NOTE_USED_WRONGLY : NOTE_NEEDED_UNUSED };
-    }
-    return { status: 'good', icon: 'check_circle', note: covered ? NOTE_COVERED : NOTE_NO_DEFENSIVE };
+    const breakdowns = this.windowView.playerWindowDamage(topDefWindows, dtEvents, { maxAbilities: TOP_DAMAGE_SOURCES });
+    return breakdowns.map((breakdown, index) => {
+      const window = topDefWindows[index];
+      if (!window) return breakdown;
+      return { ...breakdown, window_damage: this.judge.measureDamage(dtEvents, window.time_s, window.time_s + window.window_length_s) };
+    });
   }
 
   protected defensiveMapAnchor(window: BurstWindow): DefensiveMapAnchor {
@@ -305,11 +315,19 @@ export class DefensiveFeatureService {
     return { timeS: timestampS, windowLengthS: 0, key: `defensive-find-${timestampS}` };
   }
 
-  private defensiveAdapter(playerDefensives: PlayerDefensive[]): WindowViewAdapter<DefensiveMapAnchor> {
-    const coveredBy = (window: BurstWindow): boolean =>
-      this.playerCoveredWindow(window, playerDefensives.find(entry => entry.name === (window.defensive_name ?? '')));
+  private defensiveAdapter(
+    { topWindows, playerDefensives, model, topLogs }: Omit<DefensiveWindowsInput, 'playerWindows' | 'abilities'>,
+  ): WindowViewAdapter<DefensiveMapAnchor> {
+    const usesOf = (window: BurstWindow) => playerDefensives.find(entry => entry.name === (window.defensive_name ?? ''))?.windows ?? [];
+    const deaths = this.judge.deathHomes(topWindows, model.deadSpans);
     return {
-      status: (window, playerDamage) => this.defensiveWindowStatus(playerDamage, window.dmg_max, window.dmg_stddev, coveredBy(window)),
+      status: (window, playerDamage) => this.judge.windowVerdict(window, {
+        damage: playerDamage ?? 0, covered: this.judge.measureCovered(window, usesOf(window)), tank: model.role === 'tank',
+      }, topLogs),
+      claim: (_window, cause, index) => {
+        const diedS = deaths.get(index);
+        return cause === 'dead' && diedS !== undefined ? this.judge.deathVerdict(diedS) : null;
+      },
       chips: window => ({
         spellIds: window.spell_id != null ? [window.spell_id] : [],
         labels: window.spell_id == null && window.defensive_name ? [window.defensive_name] : [],
@@ -320,10 +338,10 @@ export class DefensiveFeatureService {
   }
 
   protected buildDefensiveWindows(
-    { topWindows, playerWindows, playerDefensives, model, abilities }: DefensiveWindowsInput,
+    { topWindows, playerWindows, playerDefensives, model, abilities, topLogs }: DefensiveWindowsInput,
   ): WindowView<DefensiveMapAnchor> {
     return this.windowView.buildWindowView({
-      topWindows, playerWindows, model, abilities, adapter: this.defensiveAdapter(playerDefensives),
+      topWindows, playerWindows, model, abilities, adapter: this.defensiveAdapter({ topWindows, playerDefensives, model, topLogs }),
     });
   }
 

@@ -22,7 +22,7 @@ const WHOLE_PULL: [number, number][] = [[0, 300]];
 
 describe('CadenceJudgeService opener', () => {
   it('reads each top log\'s first use in source order, skipping a log that never used it', () => {
-    expect(judges.referenceOpeners([topLog([0, 90]), topLog([]), topLog([12])], NAME)).toEqual([0, 12]);
+    expect(judges.referenceOpeners([topLog([0, 90]), topLog([]), topLog([12])].map(parse => parse.cd_casts_s), NAME)).toEqual([0, 12]);
   });
 
   it('flags an opener past the edge as amber, naming the top logs and the target', () => {
