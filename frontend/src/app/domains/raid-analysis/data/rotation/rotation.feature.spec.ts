@@ -8,6 +8,8 @@ import { ButtonBench, ROTATION_DATA_SOURCE, RotationBench } from './rotation-dat
 import { featureService } from '../../../../../testing/service-harness';
 import { RotationFeatureService } from './rotation-feature-service';
 import { bench, cdBench } from './rotation-harness';
+import { BenchStripService } from '../analysis/bench-strip-service';
+import { TestBed } from '@angular/core/testing';
 
 // Subtlety's Secret Technique inside Shadow Dance, which the top logs never press outside it.
 const LIST = {
@@ -45,6 +47,12 @@ describe('RotationFeatureService', () => {
     expect(result).toEqual(Results.missing('Not yet ingested.'));
   });
 
+  it('names who the pull was compared with, from the bench\'s sources', async () => {
+    const result = await withSource(Results.ok(bench())).loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
+    assert(result.ok);
+    expect(result.value.bench?.count).toBe(bench().sample_count);
+  });
+
   it('wires the shared pull context with the empty offensives view and the rotation repro id', async () => {
     const UNLOGGED_FIGHT_ID = 99;
     const FAILING_CODE = 'boom';
@@ -55,7 +63,9 @@ describe('RotationFeatureService', () => {
     });
 
     const onMissingFight = await service.loadPlayerView('SubtletyRogue', 1, 'rX', UNLOGGED_FIGHT_ID, 10);
-    expect(onMissingFight).toEqual(Results.ok({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null }));
+    expect(onMissingFight).toEqual(Results.ok({
+      buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null, bench: TestBed.inject(BenchStripService).strip(bench()),
+    }));
 
     const onFailure = await service.loadPlayerView('SubtletyRogue', 1, FAILING_CODE, 1, 10);
     expect(onFailure.ok).toBe(false);

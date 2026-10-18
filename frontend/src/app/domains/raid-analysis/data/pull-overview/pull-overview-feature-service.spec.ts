@@ -1,14 +1,16 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { WclApiService } from '../wcl/wcl-api-service';
-import { WclEvent, WclFight, WclReport, WclTableBlob } from '../wcl/wcl.models';
+import { RankingMetric, WclEvent, WclFight, WclReport, WclTableBlob } from '../wcl/wcl.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import { PullOverviewFeatureService, PullOverviewView } from './pull-overview-feature-service';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
-import { death } from '../../../../../testing/builders/events';
+import { death, resurrect } from '../../../../../testing/builders/events';
+import { parseRanking } from '../../../../../testing/builders/bench-sources';
+import { GEAR_DATA_SOURCE, GearBench } from '../gear/gear-data-source';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 const timed = (events: WclEvent[]) => wclProjections.withRelativeS(events, 0);
@@ -16,6 +18,7 @@ TestBed.resetTestingModule();
 TestBed.configureTestingModule({ providers: [
   { provide: WCL_TRANSPORT, useValue: {} },
   { provide: DATA_FILE_TRANSPORT, useValue: { readJson: () => new Promise(() => undefined) } },
+  { provide: GEAR_DATA_SOURCE, useValue: {} },
 ] });
 const svc = TestBed.inject(PullOverviewFeatureService);
 TestBed.resetTestingModule();
@@ -65,35 +68,45 @@ function report(): WclReport {
   });
 }
 
-describe('dpsFromTable', () => {
+describe('totalFromTable', () => {
   const blob = { data: { entries: [{ id: OTHER_PLAYER, total: 999 }, { id: PLAYER_ID, total: PLAYER_TOTAL }] } };
 
-  it('divides the player entry total by the pull length', () => {
-    expect(svc['dpsFromTable'](blob, PLAYER_ID, FIGHT_DURATION_S)).toEqual(Results.ok(EXPECTED_DPS));
+  it('reads the player entry\'s total', () => {
+    expect(svc['totalFromTable'](blob, PLAYER_ID, 'dps')).toEqual(Results.ok(PLAYER_TOTAL));
   });
 
   it('parses a JSON-string blob the same as an object blob', () => {
-    expect(svc['dpsFromTable'](JSON.stringify(blob), PLAYER_ID, FIGHT_DURATION_S)).toEqual(Results.ok(EXPECTED_DPS));
+    expect(svc['totalFromTable'](JSON.stringify(blob), PLAYER_ID, 'dps')).toEqual(Results.ok(PLAYER_TOTAL));
   });
 
   it('reports a null blob as a failed load, so the player never shows a bogus measured 0', () => {
-    expect(svc['dpsFromTable'](null, PLAYER_ID, FIGHT_DURATION_S)).toEqual(MISSING_TABLE_ERROR);
+    expect(svc['totalFromTable'](null, PLAYER_ID, 'dps')).toEqual(MISSING_TABLE_ERROR);
+  });
+
+  it('names the healing table when a healer\'s table is missing', () => {
+    expect(svc['totalFromTable'](null, PLAYER_ID, 'hps')).toEqual(Results.permanent('Healing table missing for this pull.', 'pull-overview.damage-table'));
   });
 
   it('reports an unparseable string blob as a failed load, not a measured 0', () => {
-    expect(svc['dpsFromTable']('{ not json', PLAYER_ID, FIGHT_DURATION_S)).toEqual(MISSING_TABLE_ERROR);
+    expect(svc['totalFromTable']('{ not json', PLAYER_ID, 'dps')).toEqual(MISSING_TABLE_ERROR);
   });
 
   it('reports a valid-JSON blob without a data.entries array as a failed load, not a measured 0', () => {
-    expect(svc['dpsFromTable']({ data: {} }, PLAYER_ID, FIGHT_DURATION_S)).toEqual(MISSING_TABLE_ERROR);
+    expect(svc['totalFromTable']({ data: {} }, PLAYER_ID, 'dps')).toEqual(MISSING_TABLE_ERROR);
   });
 
-  it('reports a real 0 for a player absent from a valid table (a healer with no damage entry)', () => {
-    expect(svc['dpsFromTable'](blob, ABSENT_PLAYER_ID, FIGHT_DURATION_S)).toEqual(Results.ok(0));
+  it('reports a real 0 for a player absent from a valid table', () => {
+    expect(svc['totalFromTable'](blob, ABSENT_PLAYER_ID, 'dps')).toEqual(Results.ok(0));
+  });
+});
+
+describe('perSecond', () => {
+  it('divides the total by the span', () => {
+    expect(svc['perSecond'](PLAYER_TOTAL, FIGHT_DURATION_S)).toBe(EXPECTED_DPS);
   });
 
-  it('reports a real 0 for a zero-length pull - an empty pull measures no damage, not a failure', () => {
-    expect(svc['dpsFromTable'](blob, PLAYER_ID, 0)).toEqual(Results.ok(0));
+  it('reports a real 0 over an empty span, which measures nothing rather than failing', () => {
+    expect(svc['perSecond'](PLAYER_TOTAL, 0)).toBe(0);
   });
 });
 
@@ -128,28 +141,51 @@ describe('buildDeathRows', () => {
   });
 });
 
-interface FakeCalls { dataTypes: string[] }
+interface FakeCalls { dataTypes: string[]; tables: string[] }
+
+const SPEC = 'SubtletyRogue';
+const HEALER_SPEC = 'RestorationShaman';
+const ENCOUNTER_ID = 3183;
+const TOP_LOW = 241_000;
+const TOP_HIGH = 258_000;
+
+function gearBench(metric: RankingMetric): Result<GearBench> {
+  return Results.ok({
+    spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: 'Boss', metric, sample_count: 2,
+    sources: [parseRanking({ rank: 1, amount: TOP_HIGH }), parseRanking({ rank: 2, amount: TOP_LOW })],
+    talent_builds: [], talent_nodes: [], talent_sample_count: 0, trinket_sets: [], enchants: {}, per_parse: [],
+  });
+}
 
 function makeService(over: {
-  fight?: Partial<WclFight>; deaths?: WclEvent[];
-  table?: WclTableBlob | null;
+  fight?: Partial<WclFight>; deaths?: WclEvent[]; resurrects?: WclEvent[];
+  table?: WclTableBlob | null; bench?: Result<GearBench>;
 } = {}): {
   service: PullOverviewFeatureService; calls: FakeCalls;
 } {
-  const calls: FakeCalls = { dataTypes: [] };
+  const calls: FakeCalls = { dataTypes: [], tables: [] };
   const defaultTable: WclTableBlob = { data: { entries: [{ id: PLAYER_ID, total: PLAYER_TOTAL }] } };
   const wcl = {
     getReport: async () => report(),
-    getDamageDoneTable: async () => ('table' in over ? over.table : defaultTable),
+    getTable: async (_c: string, _f: number, dataType: string) => {
+      calls.tables.push(dataType);
+      return 'table' in over ? over.table : defaultTable;
+    },
     getAllEvents: async (_c: string, _f: number, dataType: string) => {
       calls.dataTypes.push(dataType);
       return dataType === 'Deaths' ? (over.deaths ?? []) : [];
     },
-    getResurrects: async () => [],
+    getResurrects: async () => over.resurrects ?? [],
   };
-  TestBed.configureTestingModule({ providers: [{ provide: WclApiService, useValue: wcl as unknown as WclApiService }] });
+  const bench = over.bench ?? Results.missing('Not yet ingested.');
+  TestBed.configureTestingModule({ providers: [
+    { provide: WclApiService, useValue: wcl as unknown as WclApiService },
+    { provide: GEAR_DATA_SOURCE, useValue: { getBench: () => Promise.resolve(bench) } },
+  ] });
   return { service: TestBed.inject(PullOverviewFeatureService), calls };
 }
+
+const pullOf = (spec: string = SPEC) => ({ spec, encounterId: ENCOUNTER_ID, reportCode: 'r', playerId: PLAYER_ID });
 
 describe('PullOverviewFeatureService.loadView', () => {
   const RAID_D2_AT_S = 60;
@@ -163,7 +199,7 @@ describe('PullOverviewFeatureService.loadView', () => {
         death(OTHER_PLAYER + 1, RAID_D3_AT_S, FROST_BOMB),
       ],
     });
-    return { view: okValue(await service.loadView('r', PLAYER_ID, fight())), calls };
+    return { view: okValue(await service.loadView(pullOf(), fight())), calls };
   }
 
   it('reports a wipe with the boss percentage, pull length and player dps', async () => {
@@ -171,7 +207,7 @@ describe('PullOverviewFeatureService.loadView', () => {
     expect(view.result).toBe('wipe');
     expect(view.bossPercentage).toBe(BOSS_PERCENTAGE);
     expect(view.durationS).toBe(FIGHT_DURATION_S);
-    expect(view.dps).toBe(EXPECTED_DPS);
+    expect(view.amount).toBe(EXPECTED_DPS);
   });
 
   it('lists the player deaths and leaves the raidmates out', async () => {
@@ -191,7 +227,7 @@ describe('PullOverviewFeatureService.loadView', () => {
 
   it('marks a clean kill at the fight end', async () => {
     const { service } = makeService({ deaths: [death(OTHER_PLAYER, DEATH_1_AT_S, OVERWHELMING_BLAST)] });
-    const result = await service.loadView('r', PLAYER_ID, fight({ kill: true, fightPercentage: 0 }));
+    const result = await service.loadView(pullOf(), fight({ kill: true, fightPercentage: 0 }));
 
     expect(result.ok).toBe(true);
     if (!result.ok) return;
@@ -206,8 +242,53 @@ describe('PullOverviewFeatureService.loadView', () => {
       table: null,
       deaths: [death(OTHER_PLAYER, DEATH_1_AT_S, OVERWHELMING_BLAST)],
     });
-    const result = await service.loadView('r', PLAYER_ID, fight({ kill: true, fightPercentage: 0 }));
+    const result = await service.loadView(pullOf(), fight({ kill: true, fightPercentage: 0 }));
 
     expect(result).toEqual(MISSING_TABLE_ERROR);
+  });
+
+  it('measures a healer on healing, the figure their top logs are ranked on', async () => {
+    const { service, calls } = makeService();
+
+    const view = okValue(await service.loadView(pullOf(HEALER_SPEC), fight({ kill: true })));
+
+    expect(view.metric).toBe('hps');
+    expect(calls.tables).toEqual(['Healing']);
+  });
+
+  it('adds the figure over the player\'s alive time when they died, counting a battle res back to life', async () => {
+    const RESURRECT_AT_S = 61;
+    const DEAD_S = RESURRECT_AT_S - DEATH_1_AT_S;
+    const { service } = makeService({
+      deaths: [death(PLAYER_ID, DEATH_1_AT_S, OVERWHELMING_BLAST)], resurrects: [resurrect(PLAYER_ID, RESURRECT_AT_S)],
+    });
+
+    const view = okValue(await service.loadView(pullOf(), fight({ kill: true })));
+
+    expect(view.aliveAmount).toBe(PLAYER_TOTAL / (FIGHT_DURATION_S - DEAD_S));
+  });
+
+  it('gives no alive figure to a player who never died', async () => {
+    const { service } = makeService();
+
+    expect(okValue(await service.loadView(pullOf(), fight({ kill: true }))).aliveAmount).toBeNull();
+  });
+
+  it('spans the top logs\' ranked figures as the reference', async () => {
+    const { service } = makeService({ bench: gearBench('dps') });
+
+    expect(okValue(await service.loadView(pullOf(), fight())).reference).toEqual({ lo: TOP_LOW, hi: TOP_HIGH });
+  });
+
+  it('draws no reference from a bench ranked on another figure', async () => {
+    const { service } = makeService({ bench: gearBench('dps') });
+
+    expect(okValue(await service.loadView(pullOf(HEALER_SPEC), fight())).reference).toBeNull();
+  });
+
+  it('draws no reference without a bench', async () => {
+    const { service } = makeService();
+
+    expect(okValue(await service.loadView(pullOf(), fight())).reference).toBeNull();
   });
 });

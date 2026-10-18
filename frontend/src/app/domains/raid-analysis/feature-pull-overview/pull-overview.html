@@ -75,8 +75,14 @@
         <div class="pt-3.5 pb-3.5 md:pt-5 border-t md:border-t-0 md:card-fix border-line">
           <div class="flex items-baseline gap-6 md:flex-col md:items-stretch md:gap-4">
             <div>
-              <div class="text-label text-muted mb-1.5">Your DPS</div>
-              <div class="tabular-nums text-hero">{{ v.dps | formatDamage }}</div>
+              <div class="text-label text-muted mb-1.5">Your {{ v.metric === 'hps' ? 'HPS' : 'DPS' }}</div>
+              <div class="tabular-nums text-hero">{{ v.amount | formatDamage }}</div>
+              @if (v.aliveAmount !== null) {
+                <div class="tabular-nums text-caption text-muted">{{ v.aliveAmount | formatDamage }} over your alive time</div>
+              }
+              @if (v.reference; as r) {
+                <div class="tabular-nums text-caption text-muted">Top logs {{ r.lo | formatDamage }} to {{ r.hi | formatDamage }} on kills</div>
+              }
             </div>
             <div class="flex gap-6">
               <div>

@@ -9,12 +9,15 @@ import { FindingOccurrences } from '../ui-finding-table/finding-occurrences';
 import { RangeBar } from '../ui-range-bar/range-bar';
 import { RangeLegend } from '../ui-range-bar/range-legend';
 import type { ButtonRow } from '../data/rotation/priority-list/list-finding-service';
+import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
+import type { BenchStrip } from '../data/analysis/bench-strip-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-button-table',
   host: { class: 'block' },
   imports: [
+    BenchStripCaption,
     PercentPipe, TuiCardLarge, TuiCardCollapsed, TuiHeader, TuiTitle, TuiButton, TuiChevron, TuiExpand, TuiItem,
     GameIcon, FindingOccurrences, RangeBar, RangeLegend,
   ],
@@ -23,6 +26,8 @@ import type { ButtonRow } from '../data/rotation/priority-list/list-finding-serv
 export class ButtonTable {
   readonly heading = input.required<string>();
   readonly subtitle = input<string>('');
+  /** Who the card was compared with; null on a card no bench backs. */
+  readonly bench = input<BenchStrip | null>(null);
   readonly rows = input.required<ButtonRow[]>();
   readonly showMap = input<boolean>(false);
   readonly showClip = input<boolean>(false);

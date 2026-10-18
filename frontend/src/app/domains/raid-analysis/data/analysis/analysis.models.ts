@@ -49,7 +49,7 @@ interface AbilityBreakdown {
 }
 
 /** One top log's own window inside a baked cluster. */
-export interface WindowMember {
+interface WindowMember {
   /** Index of the log in the bench's `sources`. */
   parse: number;
   time_s: number;

@@ -10,7 +10,8 @@
             <span tuiBadge appearance="neutral" size="m" class="text-label">No phase table</span>
           }
         </h2>
-        <p tuiSubtitle>Cooldown timings from one top Mythic log for your spec, as a note for the Northern Sky raid addon.</p>
+        <!-- One line, so template whitespace never lands before its punctuation. -->
+        <p tuiSubtitle>@if (source(); as s) {Cooldown timings from the #{{ s.rank }} Mythic log for your spec ({{ s.player }}@if (s.duration_s !== null) {, {{ s.duration_s | formatDuration }} kill}), as a note for the Northern Sky raid addon.} @else {Cooldown timings from one top Mythic log for your spec, as a note for the Northern Sky raid addon.}</p>
       </hgroup>
       <div tuiAccessories>
         <!-- A body-l header sizes its buttons xs; the explicit s keeps the app-wide size. -->

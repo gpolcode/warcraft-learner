@@ -21,6 +21,8 @@ import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { GearExtractService } from '../gear/gear-extract-service';
 import { FoldCounts, JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
+import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
+import { SpecRoleService } from '../analysis/spec-role-service';
 
 export interface CdPlanRow {
   name: string;
@@ -46,6 +48,7 @@ export interface RotationPlayerView {
   /** Null on the empty view, where no pull was judged. */
   downtimeSpan: JudgedSpan | null;
   offensiveSpan: JudgedSpan | null;
+  bench: BenchStrip | null;
 }
 
 export interface RotationPlanView {
@@ -107,6 +110,8 @@ export class RotationFeatureService {
   private readonly wclApi = inject(WclApiService);
   private readonly gearExtract = inject(GearExtractService);
   private readonly pullModel = inject(PullModelService);
+  private readonly benchStrips = inject(BenchStripService);
+  private readonly specRoles = inject(SpecRoleService);
 
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
@@ -115,12 +120,18 @@ export class RotationFeatureService {
     if (!bench.ok) return bench;
 
     const pull: PullRef = { reportCode, fightId, playerId };
+    const strip = this.benchStrips.strip(bench.value);
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'RotationFeatureService.loadPlayerView',
       errorId: 'rotation.player-view',
-      emptyView: () => ({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null }),
-      analyze: context => this.playerView(this.withList(bench.value), pull, context),
+      emptyView: () => ({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null, bench: strip }),
+      analyze: async context => ({ ...await this.playerView(this.withList(bench.value), pull, context), bench: strip }),
     });
+  }
+
+  /** A healer's top logs heal, so no damage priority list describes how they press their buttons. */
+  judgesButtons(spec: string): boolean {
+    return !this.specRoles.isHealer(spec);
   }
 
   /** A bench an older ingest wrote carries no list, and judges no button until the next ingest re-benches it. */
@@ -129,7 +140,7 @@ export class RotationFeatureService {
     return stored.list && stored.buttons ? bench : { ...bench, list: { lines: [], variables: [], spells: {}, talents: {} }, buttons: [] };
   }
 
-  private async playerView(bench: RotationBench, pull: PullRef, context: PullContext): Promise<RotationPlayerView> {
+  private async playerView(bench: RotationBench, pull: PullRef, context: PullContext): Promise<Omit<RotationPlayerView, 'bench'>> {
     const { reportCode, fightId, playerId } = pull;
     const { report, fight, model } = context;
     const abilities = report.masterData?.abilities ?? [];

@@ -10,6 +10,8 @@ import type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-servi
 import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 import { JudgedSpanCaption } from '../ui-judged-span/judged-span';
 import type { JudgedSpan } from '../data/analysis/pull-model-service';
+import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
+import type { BenchStrip } from '../data/analysis/bench-strip-service';
 
 export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-service';
 
@@ -19,6 +21,7 @@ export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-servi
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
+    BenchStripCaption,
     EmptyState, TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChevron, TuiExpand, TuiItem, TuiBadge, TuiChip,
     GameIcon, FindingOccurrences, FormatDurationPipe, JudgedSpanCaption,
   ],
@@ -27,6 +30,8 @@ export type { FindingRow, OnPlanChip } from '../data/analysis/finding-rows-servi
 export class FindingTable {
   readonly heading = input.required<string>();
   readonly subtitle = input<string>('');
+  /** Who the card was compared with; null on a card no bench backs. */
+  readonly bench = input<BenchStrip | null>(null);
   /** The pull time the rows were judged over; null on a card that judges no pull. */
   readonly judged = input<JudgedSpan | null>(null);
   readonly rows = input.required<FindingRow[]>();

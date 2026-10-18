@@ -218,6 +218,30 @@ describe('BurstFeatureService', () => {
   const benchOnlyView = async () => okValue(await withBench(Results.ok(benchFixture)).loadBenchView('SubtletyRogue', 1));
   const playerView = async () => okValue(await withBench(Results.ok(benchFixture)).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10));
 
+  it('names who the bench windows were compared with', async () => {
+    expect((await benchOnlyView()).bench?.count).toBe(benchFixture.sample_count);
+  });
+
+  it('names who the player\'s windows were compared with', async () => {
+    expect((await playerView()).bench?.count).toBe(benchFixture.sample_count);
+  });
+
+  it('compares nothing for a healer, reads neither the bench nor the log, and says why', async () => {
+    const HEALER_SPEC = 'HolyPaladin';
+    const untouched = withBench(Results.missing('Not yet ingested.'), {});
+
+    const view = okValue(await untouched.loadPlayerView(HEALER_SPEC, 1, 'rep', 1, 10));
+
+    expect(view.windows).toEqual([]);
+    expect(untouched.notComparedReason(HEALER_SPEC)).toBe(
+      'Top raiders on your spec are ranked on healing, so there are no burst windows to compare your damage with.');
+    expect(okValue(await untouched.loadBenchView(HEALER_SPEC, 1)).windows).toEqual([]);
+  });
+
+  it('compares a damage spec\'s windows, giving no reason', () => {
+    expect(withBench(Results.ok(benchFixture)).notComparedReason('SubtletyRogue')).toBeNull();
+  });
+
   it('propagates the data-source error when the bench read fails', async () => {
     const result = await withBench(Results.missing('Not yet ingested.')).loadBenchView('SubtletyRogue', 1);
     expect(result).toEqual(Results.missing('Not yet ingested.'));

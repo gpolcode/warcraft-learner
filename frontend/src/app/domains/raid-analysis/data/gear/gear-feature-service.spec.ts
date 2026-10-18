@@ -145,7 +145,7 @@ describe('emptyGearView', () => {
       comparison: false,
       talentBuilds: [], talentStatus: { status: 'unknown', note: 'No talent data.' },
       trinketSets: [], trinketStatus: { status: 'unknown', note: 'No trinket data.' },
-      enchantRows: [], enchantStatus: 'ok', benchEnchantRows: [],
+      enchantRows: [], enchantStatus: 'ok', benchEnchantRows: [], bench: null,
     });
   });
 });

@@ -52,6 +52,22 @@ describe('LoadState', () => {
     });
   });
 
+  describe('reason state', () => {
+    const REASON = 'Top raiders on your spec are ranked on healing, so there are no burst windows to compare.';
+
+    it('states why the card compares nothing, with the muted info icon and no waiting copy', () => {
+      const { text, icon } = render({ heading: 'Burst windows', reason: REASON });
+      expect(text).toContain(REASON);
+      expect(text).not.toContain('Waiting for top logs');
+      expect(text).not.toContain('Built from the top logs for your spec.');
+      expect(icon).toBe('info');
+    });
+
+    it('gives way to an error, which says more about this load than the reason', () => {
+      expect(render({ heading: 'Burst windows', reason: REASON, error: TRANSIENT_ERROR }).text).not.toContain(REASON);
+    });
+  });
+
   describe('error state (shared UX with the waiting state)', () => {
     it('renders a transient error with its message, the cloud_off icon and a retry-on-sync guide', () => {
       const { text, icon } = render({ heading: 'Offensives', error: TRANSIENT_ERROR });

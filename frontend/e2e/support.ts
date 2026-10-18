@@ -13,7 +13,7 @@ export const PERCENT = /[+-]?\d+(\.\d+)?%/;
 export const OPENED_AT = new RegExp(`Opened at ${CLOCK.source}`);
 const TIMES = /\b\d+(\.\d+)?x\b/;
 /** formatDamage leaves a figure under a thousand bare, so an amount reads as a plain number as often as a K or M figure. */
-const FIGURE = '\\d+(\\.\\d+)?[KMB]?';
+export const FIGURE = '\\d+(\\.\\d+)?[KMB]?';
 
 /** Playwright runs a regex over the raw text, the template's padding included, so a whole-cell shape allows that padding. */
 function cell(shape: string): RegExp {
@@ -27,6 +27,14 @@ const CASTS = cell('\\d+ / (\\d+|-)|Passive');
 const UNJUDGED = cell('Dead|After the wipe|Not reached');
 /** The caption every card that judges the pull states first, before any cause it names. */
 export const JUDGED_SPAN = new RegExp(`^Judged 0:00 to ${CLOCK.source}, alive ${CLOCK.source}\\.$`);
+const BENCH_STRIP = new RegExp(
+  `^Compared with \\d+ top logs?( ranked on healing)?(, ranks? \\d+( to \\d+)?)?(, item level \\d+( to \\d+)?)?(, kill times? ${CLOCK.source}( to ${CLOCK.source})?)?\\.$`);
+
+/** A bench ingest wrote before it named its sources draws no strip, so the strip is checked when drawn. */
+export async function showsBenchStrip(card: Locator): Promise<void> {
+  const strip = card.locator('wl-bench-strip').first();
+  if (await strip.count()) await shows(strip, BENCH_STRIP);
+}
 
 /** Mirrors CAT_LABEL in src/app/domains/raid-analysis/data/analysis/analysis.models.ts. */
 export const CD_CHIP = /\b(lost cast|late|Bloodlust|downtime|hold until)\b/;

@@ -18,12 +18,14 @@ export class LoadState {
   readonly subtitle = input<string>('');
   readonly caption = input<string>('Built from the top logs for your spec.');
   readonly error = input<RenderableLoadError | null>(null);
+  /** Why the card has nothing to compare for this player at all, which no ingest will change. */
+  readonly reason = input<string>('');
 
   protected readonly state = computed<LoadStateKind>(() => {
     const error = this.error();
-    if (!error) return 'waiting';
+    if (!error) return this.reason() ? 'reason' : 'waiting';
     return error.kind === 'permanent' ? error.source : 'transient';
   });
 }
 
-type LoadStateKind = 'waiting' | 'transient' | 'app' | 'log';
+type LoadStateKind = 'waiting' | 'reason' | 'transient' | 'app' | 'log';

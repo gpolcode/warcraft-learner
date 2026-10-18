@@ -120,8 +120,8 @@ export class WclApiService {
     return report.events?.data ?? [];
   }
 
-  async getDamageDoneTable(code: string, fightId: number): Promise<WclTableBlob | null> {
-    const vars: TableQueryVariables = { code, fightIDs: [fightId], dataType: 'DamageDone' };
+  async getTable(code: string, fightId: number, dataType: 'DamageDone' | 'Healing'): Promise<WclTableBlob | null> {
+    const vars: TableQueryVariables = { code, fightIDs: [fightId], dataType };
     const result = await this.query<TableQuery>(TABLE_Q, vars);
     return result.reportData?.report?.table ?? null;
   }

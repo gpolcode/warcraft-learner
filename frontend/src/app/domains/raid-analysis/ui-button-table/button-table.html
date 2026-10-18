@@ -9,6 +9,9 @@
         }
       </hgroup>
     </header>
+    @if (bench(); as b) {
+      <wl-bench-strip class="pb-2" [strip]="b"></wl-bench-strip>
+    }
 
     <wl-range-legend class="pb-2.5"></wl-range-legend>
 

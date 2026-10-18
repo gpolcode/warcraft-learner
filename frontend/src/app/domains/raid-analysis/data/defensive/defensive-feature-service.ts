@@ -25,6 +25,7 @@ import { GearExtractService } from '../gear/gear-extract-service';
 import { WindowViewService } from '../analysis/window-view-service';
 import { FoldCounts, JudgedSpan, PullModel, PullModelService } from '../analysis/pull-model-service';
 import { DefensiveUsesService } from './defensive-uses-service';
+import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
 
 export interface DefensiveMapAnchor {
   timeS: number;
@@ -41,6 +42,7 @@ export interface DefensiveView {
   /** Null on the empty view, where no pull was judged. */
   findingsSpan: JudgedSpan | null;
   windowsSpan: JudgedSpan | null;
+  bench: BenchStrip | null;
 }
 
 export interface DefensivePlanRow {
@@ -104,6 +106,7 @@ export class DefensiveFeatureService {
   private readonly source = inject(DEFENSIVE_DATA_SOURCE);
   private readonly wclApi = inject(WclApiService);
   private readonly gearExtract = inject(GearExtractService);
+  private readonly benchStrips = inject(BenchStripService);
 
   // A WCL fetch failure surfaces as an err, never a silent bench-only degrade.
   async loadAnalysisView(
@@ -117,15 +120,16 @@ export class DefensiveFeatureService {
     if (!bench.ok) return bench;
 
     const pull: PullRef = { reportCode, fightId, playerId };
+    const strip = this.benchStrips.strip(bench.value);
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'DefensiveFeatureService.loadAnalysisView',
       errorId: 'defensive.player-view',
-      emptyView: () => ({ findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null }),
-      analyze: context => this.analysisView(bench.value, pull, context),
+      emptyView: () => ({ findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null, bench: strip }),
+      analyze: async context => ({ ...await this.analysisView(bench.value, pull, context), bench: strip }),
     });
   }
 
-  private async analysisView(bench: DefensiveBench, pull: PullRef, context: PullContext): Promise<DefensiveView> {
+  private async analysisView(bench: DefensiveBench, pull: PullRef, context: PullContext): Promise<Omit<DefensiveView, 'bench'>> {
     const { reportCode, fightId, playerId } = pull;
     const { fight, model } = context;
 

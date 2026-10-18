@@ -1,8 +1,11 @@
-@if (error() || !available()) {
+@if (reason(); as why) {
+  <wl-load-state heading="Burst windows" subtitle="The short stretches where top logs deal their biggest damage, compared with your log." [reason]="why"></wl-load-state>
+} @else if (error() || !available()) {
   <wl-load-state heading="Burst windows" subtitle="The short stretches where top logs deal their biggest damage, compared with your log." [error]="error()"></wl-load-state>
 } @else {
   <wl-window-comparison
     [windows]="windows()"
+    [bench]="bench()"
     [judged]="judged()"
     [higherIsBetter]="true"
     [showMap]="showMap()"

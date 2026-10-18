@@ -9,6 +9,9 @@
             <p tuiSubtitle>{{ subtitle() }}</p>
           }
         </hgroup>
+        @if (bench(); as b) {
+          <wl-bench-strip class="mt-1" [strip]="b"></wl-bench-strip>
+        }
         @if (judged(); as span) {
           <wl-judged-span class="mt-1" [span]="span"></wl-judged-span>
         }

@@ -6,12 +6,16 @@
       <wl-button-table
         heading="Rotation rules"
         subtitle="How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press at the wrong time and a skip when it was due both count as a miss."
+        [bench]="bench()"
         [rows]="buttonRows()"
         [showMap]="showMap()"
         [showClip]="showClip()"
         (openMap)="onOpenMap($event)"
         (openClip)="onOpenClip($event)">
       </wl-button-table>
+    } @else if (!judgesButtons()) {
+      <wl-load-state heading="Rotation rules" subtitle="How often you pressed each button at the right time, compared with the top Mythic logs for your spec."
+        reason="Top raiders on your spec heal rather than follow one damage priority list, so no button is judged."></wl-load-state>
     }
 
     @if (downtimeRows().length) {
@@ -19,6 +23,7 @@
         heading="Downtime"
         subtitle="Time you spent not casting, compared with the top logs."
         [rows]="downtimeRows()"
+        [bench]="bench()"
         [judged]="downtimeSpan()"
         [showMap]="showMap()"
         [showClip]="showClip()"
@@ -31,6 +36,7 @@
       heading="Offensives"
       subtitle="How you used your damage cooldowns compared with the top logs."
       [rows]="offensiveRows()"
+      [bench]="bench()"
       [onPlan]="onPlan()"
       [judged]="offensiveSpan()"
       [showMap]="showMap()"

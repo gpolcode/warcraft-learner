@@ -166,7 +166,7 @@ interface CollectedParses<TParse> extends BenchPayload<TParse> {
   sources: ParseRanking[];
 }
 
-export interface BenchIdentity {
+interface BenchIdentity {
   spec: string;
   encounter_id: number;
   encounter_name: string;

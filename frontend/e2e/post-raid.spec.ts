@@ -2,7 +2,7 @@ import { expect, test, Locator, Page } from '@playwright/test';
 import { baseEnvironment } from '../src/environments/base-environment';
 import {
   shows, showsFindingTable, showsFirstOption, showsFirstWindow, showsGearConsensus, picksFirst, holdsPullResolve, gearSection, valueOf,
-  AMOUNT, ANY_TEXT, CD_CHIP, CLOCK, JUDGED_SPAN, OPENED_AT, PERCENT,
+  AMOUNT, ANY_TEXT, CD_CHIP, CLOCK, FIGURE, JUDGED_SPAN, OPENED_AT, PERCENT, showsBenchStrip,
 } from './support';
 
 const { e2eReportCode: REPORT_CODE, wclApiUrl: WCL_API_URL } = baseEnvironment;
@@ -105,6 +105,10 @@ test('pull overview reports the result, the deaths, the DPS and the duration', a
   await expect(outcome.locator('span.text-accent')).toHaveText(CLOCK);
 
   await expect(valueOf(pullOverview, 'Your DPS')).toHaveText(AMOUNT);
+  const alive = pullOverview.getByText(/over your alive time$/);
+  if (await alive.count()) await expect(alive).toHaveText(new RegExp(`^\\s*${FIGURE} over your alive time$`));
+  const reference = pullOverview.getByText(/^Top logs .* on kills$/);
+  if (await reference.count()) await expect(reference).toHaveText(new RegExp(`^Top logs ${FIGURE} to ${FIGURE} on kills$`));
   await expect(valueOf(pullOverview, 'Duration')).toHaveText(CLOCK);
   if (kill) await expect(valueOf(pullOverview, 'Result')).toHaveText('Kill');
   else await expect(valueOf(pullOverview, 'Boss health')).toHaveText(PERCENT);
@@ -156,6 +160,7 @@ test('offensives flag the cooldown casts that missed the top-parse plan, and dow
   const offensives = rotation.locator('wl-finding-table').filter({ hasText: 'How you used your damage cooldowns compared with the top logs.' });
   await shows(offensives, 'Offensives');
   await shows(offensives, JUDGED_SPAN);
+  await showsBenchStrip(offensives);
   await showsFindingTable(offensives, CD_CHIP);
   // A pull that never idles past the bench's threshold draws no downtime table at all.
   const downtime = rotation.locator('wl-finding-table').filter({ hasText: 'Time you spent not casting, compared with the top logs.' });
@@ -171,6 +176,7 @@ test('burst windows compare the first window\'s damage and abilities against the
   await shows(burstWindows, 'Burst windows');
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
   await shows(burstWindows, JUDGED_SPAN);
+  await showsBenchStrip(burstWindows);
   await showsFirstWindow(burstWindows, { metric: 'Damage', chips: 'Cooldowns top raiders use here', range: 'Damage vs top range', casts: true });
 });
 
@@ -180,6 +186,7 @@ test('defensives flag the mistimed cooldowns and benchmark the damage taken in t
   await shows(table, 'Defensives');
   await shows(table, 'How you used your survival cooldowns compared with the top logs.');
   await shows(table, JUDGED_SPAN);
+  await showsBenchStrip(table);
   await showsFindingTable(table, CD_CHIP);
   // A bench keeps only the windows its top logs share, so a re-ingest can leave an encounter with none and the section hidden.
   const windows = defensives.locator('wl-window-comparison');

@@ -54,6 +54,8 @@ export class Rotation {
   protected readonly onPlan = computed<OnPlanChip[]>(() => this.load.value()?.onPlan ?? []);
   protected readonly downtimeSpan = computed(() => this.load.value()?.downtimeSpan ?? null);
   protected readonly offensiveSpan = computed(() => this.load.value()?.offensiveSpan ?? null);
+  protected readonly bench = computed(() => this.load.value()?.bench ?? null);
+  protected readonly judgesButtons = computed(() => this.rotation.judgesButtons(this.spec()));
 
   protected onOpenMap(timeS: number): void {
     this.openMap.emit({ timeS, windowLengthS: 0 });

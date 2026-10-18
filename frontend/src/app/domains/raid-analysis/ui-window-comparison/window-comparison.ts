@@ -12,6 +12,8 @@ import { SignedPercentPipe } from '../../shared/ui-format/signed-percent-pipe';
 import type { RangeRow, ComparisonWindow } from '../data/analysis/window-comparison.models';
 import type { JudgedSpan } from '../data/analysis/pull-model-service';
 import { JudgedSpanCaption } from '../ui-judged-span/judged-span';
+import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
+import type { BenchStrip } from '../data/analysis/bench-strip-service';
 
 type TimelineCell =
   | { readonly kind: 'window'; readonly index: number; readonly window: ComparisonWindow }
@@ -26,6 +28,7 @@ let nextInstanceSeq = 0;
   // Angular custom elements default to display:inline; block keeps the card full-width.
   host: { class: 'block' },
   imports: [
+    BenchStripCaption,
     TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChip, GameIcon, CompactAbilityRow, RangeBar, RangeLegend,
     FormatDurationPipe, FormatDamagePipe, SignedPercentPipe, JudgedSpanCaption,
   ],
@@ -39,6 +42,8 @@ export class WindowComparison {
   readonly showCasts = input<boolean>(true);
   readonly heading = input<string>('');
   readonly subtitle = input<string>('');
+  /** Who the card was compared with; null on a card no bench backs. */
+  readonly bench = input<BenchStrip | null>(null);
   /** The pull time the windows were judged over; null on a bench-only view. */
   readonly judged = input<JudgedSpan | null>(null);
   readonly metricLabel = input.required<string>();
