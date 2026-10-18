@@ -19,6 +19,9 @@ const JUDGED_CAST = new RegExp(`is only right when these conditions hold\\. At $
 const STATE_AT = new RegExp(`State at ${CLOCK.source}`);
 const VERDICT = /Right time|Wrong time|Not judged|Skipped when due/;
 const CONDITION_STATE = /^(Met|Not met|Not in the log)$/;
+const BUTTON_MESSAGE = /^(You got \d+ of \d+ moments right\.( .+)?|Every moment came .+, so none is judged\.)$/;
+const BUTTONS_EMPTY = /^Your log shows no judged moment for any of the \d+ buttons the list judges\.$/;
+const UNJUDGED = /^(Dead|After the wipe|Not reached)$/;
 
 // One shared page: the report is analyzed once, so a run costs one WCL analysis.
 test.describe.configure({ mode: 'serial' });
@@ -122,8 +125,19 @@ test('rotation rules bar the first button against the top logs and open its mome
   await shows(rotationRules, 'Top raiders, lowest to highest');
   await shows(rotationRules, 'Top raiders average');
 
-  const button = rotationRules.locator('div[tuiCardLarge]').first();
+  const buttons = rotationRules.locator('div[tuiCardLarge]');
+  if (!await buttons.count()) {
+    await shows(rotationRules, BUTTONS_EMPTY);
+    return;
+  }
+  const button = buttons.first();
   await expect(button.locator('wl-game-icon')).toHaveText(ANY_TEXT);
+  await expect(button.locator('p.text-body')).toHaveText(BUTTON_MESSAGE);
+  // Muted rows sort last, so a muted first row means the pull judged no button at all.
+  if (!await button.locator('wl-range-bar').count()) {
+    await expect(button.locator('span.text-value')).toHaveText(UNJUDGED);
+    return;
+  }
   await expect(button.locator('wl-range-bar')).toBeVisible();
   await expect(button.locator('span.sr-only')).toHaveText(/You \d+%\.\s+Top raiders \d+% to \d+%, \d+% on average\./);
 

@@ -4,6 +4,7 @@ import { round } from '../../analysis/analysis-math';
 import type { PriorityList } from '../../plan/plan.models';
 import type { ButtonBench } from '../rotation-data-source';
 import { ButtonCounts, ListCheckService, LogReading } from './list-check-service';
+import { ButtonJudgeService } from './button-judge-service';
 
 /** Below this many top logs a share is one log's habit rather than the field's. */
 export const MIN_MEASURED_PARSES = 5;
@@ -14,6 +15,7 @@ const SHARE_DIGITS = 3;
 @Injectable({ providedIn: 'root' })
 export class ListBenchService {
   private readonly checks = inject(ListCheckService);
+  private readonly judge = inject(ButtonJudgeService);
 
   bench(list: PriorityList, readings: LogReading[]): ButtonBench[] {
     return [...this.checks.buttons(list).keys()].flatMap(action => {
@@ -28,11 +30,11 @@ export class ListBenchService {
     });
   }
 
-  /** Per log, every list button it had moments for, so a bench can be rebuilt without any one log. */
+  /** Per log, every list button it had moments for, so a bench can be rebuilt without any one log; a top log is judged over its whole pull. */
   counts(list: PriorityList, readings: LogReading[]): Record<string, ButtonCounts>[] {
     const actions = [...this.checks.buttons(list).keys()];
     return readings.map(reading => Object.fromEntries(actions.flatMap(action => {
-      const counts = this.checks.rightCounts(reading, action);
+      const counts = this.judge.measure(reading, action, Number.POSITIVE_INFINITY);
       return counts ? [[action, counts]] : [];
     })));
   }

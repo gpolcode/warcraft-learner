@@ -212,7 +212,6 @@ export default defineConfig([
       'src/app/domains/raid-analysis/data/burst-windows/burst-feature-service.ts',
       'src/app/domains/raid-analysis/data/defensive/defensive-feature-service.ts',
       'src/app/domains/raid-analysis/data/gear/gear-comparison-service.ts',
-      'src/app/domains/raid-analysis/data/rotation/priority-list/list-finding-service.ts',
       'src/app/domains/raid-analysis/data/rotation/rotation-feature-service.ts',
     ],
     rules: { 'local/no-severity-literal': 'error' },

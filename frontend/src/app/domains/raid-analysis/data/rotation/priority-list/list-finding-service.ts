@@ -1,12 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import type jsep from 'jsep';
-import { round } from '../../analysis/analysis-math';
+import { round, severityRank } from '../../analysis/analysis-math';
 import type { ConditionCheck, FindingOccurrence } from '../../analysis/analysis.models';
-import type { WindowStatus } from '../../analysis/window-comparison.models';
+import { PullModel, PullModelService, UnjudgedCause } from '../../analysis/pull-model-service';
+import { ToneService } from '../../verdict/tone-service';
+import type { Tone } from '../../verdict/tone.models';
+import { VERDICT_CHOICES } from '../../verdict/verdict-choices';
 import type { PriorityList } from '../../plan/plan.models';
 import type { AplNode } from '../../simc/simc-apl-service';
 import type { ButtonBench, RotationBench, ShareRange } from '../rotation-data-source';
-import { CastCheck, CastVerdict, Junction, ListCheckService, LogReading, OrderCheck, ReadLine, TermReading } from './list-check-service';
+import { ButtonCounts, CastCheck, CastVerdict, Junction, ListCheckService, LogReading, OrderCheck, ReadLine, TermReading } from './list-check-service';
+import { ButtonJudgeService, ROTATION_BUTTON_FAMILY } from './button-judge-service';
 import { ConditionEvalService } from './condition-eval-service';
 import { ListTextService } from './list-text-service';
 import type { Truth } from './priority-list.models';
@@ -25,13 +29,27 @@ const CAST_READS: Record<CastVerdict, { result: string; detail: string; alone: s
   },
 };
 
+const UNJUDGED_MESSAGE: Record<UnjudgedCause, string> = {
+  dead: 'Every moment came while you were dead, so none is judged.',
+  after_wipe: 'Every moment came after the wipe, so none is judged.',
+  not_reached: 'Every moment came after the boss died, so none is judged.',
+};
+
 export interface ButtonRow {
+  family: string;
   name: string;
   spellId: number;
   icon: string;
-  you: number;
+  /** Null on a muted row, which judged no moment. */
+  you: number | null;
+  right: number;
+  moments: number;
+  /** Top logs the share was judged against. */
+  n: number;
   top: ShareRange;
-  status: WindowStatus;
+  status: Tone;
+  unjudged: UnjudgedCause | null;
+  message: string;
   occurrences: FindingOccurrence[];
 }
 
@@ -40,37 +58,75 @@ export class ListFindingService {
   private readonly checks = inject(ListCheckService);
   private readonly evaluator = inject(ConditionEvalService);
   private readonly text = inject(ListTextService);
+  private readonly judge = inject(ButtonJudgeService);
+  private readonly tones = inject(ToneService);
+  private readonly pullModel = inject(PullModelService);
 
-  /** The buttons furthest under the top raiders' average lead. */
-  rows(bench: RotationBench, reading: LogReading): ButtonRow[] {
+  /** Graded rows lead, then the most moments times the shortfall under the top raiders' average; muted rows close. */
+  rows(bench: RotationBench, reading: LogReading, model: PullModel): ButtonRow[] {
     const buttons = this.checks.buttons(bench.list);
-    const rows = bench.buttons.flatMap(entry => this.row(bench, entry, buttons.get(entry.action) ?? [], reading) ?? []);
-    const shortfall = (row: ButtonRow): number => row.top.avg - row.you;
-    return rows.sort((a, b) => shortfall(b) - shortfall(a));
+    const judged = this.checks.within(reading, model.judgedEndS);
+    const rows = bench.buttons.flatMap(entry => this.row(bench, entry, buttons.get(entry.action) ?? [], { reading, judged, model }) ?? []);
+    const weight = (row: ButtonRow): number => row.you === null ? 0 : row.moments * Math.max(0, row.top.avg - row.you);
+    return rows.sort((a, b) => severityRank(a.status) - severityRank(b.status) || weight(b) - weight(a));
   }
 
-  private row(bench: RotationBench, entry: ButtonBench, lines: ReadLine[], reading: LogReading): ButtonRow | null {
+  private row(
+    bench: RotationBench, entry: ButtonBench, lines: ReadLine[], pull: { reading: LogReading; judged: LogReading; model: PullModel },
+  ): ButtonRow | null {
     const { list } = bench;
-    const you = this.checks.rightShare(reading, entry.action);
-    // A button whose moments the log settled none of has no share to bar, only moments it cannot judge.
-    if (you === null) return null;
+    const { reading, judged, model } = pull;
     const spellId = reading.ids.get(entry.action) ?? entry.spell_id;
     const icon = bench.ability_icons[spellId] ?? bench.ability_icons[entry.spell_id];
     const name = icon?.name ?? this.text.name(list, entry.action);
-    const casts = (reading.casts.get(entry.action) ?? []).map(check => this.castOccurrence(list, lines, check, name));
-    const skips = reading.order.filter(check => check.expected === entry.action && check.pressed !== entry.action).map(check => this.skipOccurrence(list, lines, check, name));
-    const occurrences = [...casts, ...skips].sort((a, b) => a.atS - b.atS);
+    const base = { family: ROTATION_BUTTON_FAMILY.id, name, spellId, icon: icon?.icon ?? '', top: entry.right };
+    const counts = this.judge.measure(reading, entry.action, model.judgedEndS);
+    // A button whose moments the log settled none of has no share to bar, only moments it cannot judge.
+    if (!counts) return this.unjudgedRow(base, reading, entry.action, model);
+    const reference = this.judge.reference(bench.per_parse, entry.action);
+    const evidence = this.judge.judge(counts, reference);
+    const status = this.tones.tone(ROTATION_BUTTON_FAMILY, evidence);
     return {
-      name, spellId, icon: icon?.icon ?? '',
-      you: round(you, SHARE_DIGITS), top: entry.right, status: this.status(you, entry.right),
-      occurrences: this.thinned(occurrences),
+      ...base, you: round(counts.right / counts.moments, SHARE_DIGITS), right: counts.right, moments: counts.moments, n: reference.length,
+      status, unjudged: null, message: `You got ${counts.right} of ${counts.moments} moments right.${this.against(reference)}${this.aim(status, counts, evidence.target)}`,
+      occurrences: this.occurrences(list, lines, judged, entry.action, name),
     };
   }
 
-  /** The burst windows' reading: under every top log is bad, under their average a warning. */
-  private status(you: number, top: ShareRange): WindowStatus {
-    if (you < top.lo) return 'bad';
-    return you < top.avg ? 'warn' : 'good';
+  private occurrences(list: PriorityList, lines: ReadLine[], judged: LogReading, action: string, name: string): FindingOccurrence[] {
+    const casts = (judged.casts.get(action) ?? []).map(check => this.castOccurrence(list, lines, check, name));
+    const skips = judged.order.filter(check => check.expected === action && check.pressed !== action).map(check => this.skipOccurrence(list, lines, check, name));
+    return this.thinned([...casts, ...skips].sort((a, b) => a.atS - b.atS));
+  }
+
+  /** Muted when the log settled moments only after the judged end; nothing at all when it settled none. */
+  private unjudgedRow(
+    base: Pick<ButtonRow, 'family' | 'name' | 'spellId' | 'icon' | 'top'>, reading: LogReading, action: string, model: PullModel,
+  ): ButtonRow | null {
+    if (!this.judge.measure(reading, action, Number.POSITIVE_INFINITY)) return null;
+    const unjudged = this.pullModel.causeOf(model, model.judgedEndS, Number.POSITIVE_INFINITY);
+    if (!unjudged) return null;
+    return {
+      ...base, you: null, right: 0, moments: 0, n: 0, status: this.tones.muted(), unjudged,
+      message: UNJUDGED_MESSAGE[unjudged], occurrences: [],
+    };
+  }
+
+  /** Only a graded row names a target. */
+  private aim(status: Tone, counts: ButtonCounts, toleratedMisses: number | null): string {
+    const graded = status === 'amber' || status === 'red';
+    return graded ? ` Aim for ${counts.moments - (toleratedMisses ?? 0)} or more.` : '';
+  }
+
+  private against(reference: readonly ButtonCounts[]): string {
+    const n = reference.length;
+    if (!n) return '';
+    if (n < VERDICT_CHOICES.minReferenceN) return ` Only ${n} top logs had it, too few to judge.`;
+    const moments = reference.reduce((sum, top) => sum + top.moments, 0);
+    const misses = reference.reduce((sum, top) => sum + top.moments - top.right, 0);
+    return misses
+      ? ` ${n} top logs miss about 1 in ${Math.round(moments / misses)}.`
+      : ` ${n} top logs missed none of their ${moments}.`;
   }
 
   private castOccurrence(list: PriorityList, lines: ReadLine[], check: CastCheck, name: string): FindingOccurrence {

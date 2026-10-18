@@ -9,6 +9,11 @@ export class ToneService {
     return this.brand(caps.reduce((weakest, level) => TONE_LEVELS.indexOf(level) < TONE_LEVELS.indexOf(weakest) ? level : weakest));
   }
 
+  /** Tells a tone apart from a legacy severity word on a row both kinds of producer feed. */
+  isTone(severity: string): severity is Tone {
+    return severity === 'muted' || TONE_LEVELS.some(level => level === severity);
+  }
+
   /** A check the pull could not judge: dead, after the wipe, not reached. */
   muted(): Tone {
     return this.brand('muted');

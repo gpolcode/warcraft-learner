@@ -112,7 +112,9 @@ describe('DecisionRuleService.excessRate', () => {
   });
 });
 
-const uses = (count: number, expected: number): CountInput => ({ uses: count, expected, n: TOP_N });
+const uses = (count: number, expected: number, users = TOP_N): CountInput => ({ uses: count, expected, n: TOP_N, users });
+/** 8 of 10 is the paired consensus share. */
+const AGREEING_USERS = 8;
 
 describe('DecisionRuleService.count', () => {
   it('does not flag 5 of 10 expected uses, as P(X <= 4) is 2.9% but P(X <= 5) is 6.7%', () => {
@@ -129,6 +131,14 @@ describe('DecisionRuleService.count', () => {
 
   it('flags red at 2 of 10 expected uses', () => {
     expect(rules.count(uses(2, 10)).level).toBe('red');
+  });
+
+  it('keeps red when 8 of 10 top logs used the cooldown', () => {
+    expect(rules.count(uses(2, 10, AGREEING_USERS)).level).toBe('red');
+  });
+
+  it('holds red to amber when only 7 of 10 top logs used the cooldown', () => {
+    expect(rules.count(uses(2, 10, AGREEING_USERS - 1)).level).toBe('amber');
   });
 
   it('never flags one missing use', () => {

@@ -37,7 +37,7 @@ export async function showsBenchStrip(card: Locator): Promise<void> {
 }
 
 /** Mirrors CAT_LABEL in src/app/domains/raid-analysis/data/analysis/analysis.models.ts. */
-export const CD_CHIP = /\b(lost cast|late|Bloodlust|downtime|hold until)\b/;
+export const CD_CHIP = /\b(lost cast|never used|late|Bloodlust|downtime|hold until)\b/;
 
 /** A label sits directly above its value, so a field reads as the label's next sibling. */
 export function valueOf(scope: Locator, label: string): Locator {
@@ -104,7 +104,7 @@ export async function showsFindingTable(table: Locator, chip: RegExp): Promise<v
     await shows(table, 'On plan');
     await expect(onPlan.first().locator('wl-game-icon')).toHaveText(ANY_TEXT);
   }
-  if (!flagged && !planned) await shows(table, 'Nothing flagged.');
+  if (!flagged && !planned) await shows(table, /^Nothing flagged\./);
 }
 
 async function showsFindingRow(row: Locator, chip: RegExp): Promise<void> {

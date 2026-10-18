@@ -1,10 +1,19 @@
 import { inject, Injectable } from '@angular/core';
 import { type AnalysisFinding, type FindingOccurrence, CAT_LABEL } from './analysis.models';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
+import type { Tone } from '../verdict/tone.models';
+import { ToneService } from '../verdict/tone-service';
+import type { UnjudgedCause } from './pull-model-service';
 
 @Injectable({ providedIn: 'root' })
 export class FindingRowsService {
   private readonly logger = inject(LoggerService);
+  private readonly tones = inject(ToneService);
+
+  rowSeverity(severity: AnalysisFinding['severity']): FindingRow['severity'] {
+    if (this.tones.isTone(severity)) return severity;
+    return severity === 'critical' ? 'critical' : severity === 'info' ? 'info' : 'warning';
+  }
 
   rowsFromEntries(entries: FindingEntry[]): FindingRow[] {
     const rows: FindingRow[] = [];
@@ -12,7 +21,7 @@ export class FindingRowsService {
       if (!entry.hasIssue) continue;
       for (const f of entry.findings) {
         rows.push({
-          severity: f.severity === 'critical' ? 'critical' : f.severity === 'info' ? 'info' : 'warning',
+          severity: this.rowSeverity(f.severity),
           name: entry.name,
           spellId: entry.spellId,
           icon: entry.icon,
@@ -84,7 +93,10 @@ interface FindingMeasure {
 }
 
 export interface FindingRow {
-  severity: 'critical' | 'warning' | 'info';
+  /** A tone from a family on the verdict contract, else a legacy producer's word. */
+  severity: 'critical' | 'warning' | 'info' | Tone;
+  /** Why a muted row was not judged. */
+  unjudged?: UnjudgedCause;
   name?: string;
   spellId?: number | null;
   icon: string;

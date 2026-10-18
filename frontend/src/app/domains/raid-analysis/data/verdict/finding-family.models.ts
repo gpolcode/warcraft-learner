@@ -10,7 +10,8 @@ type InjectedMistake =
   | 'shift-burst-15s'
   | 'strip-defensive'
   | 'swap-talent-node'
-  | 'remove-enchant';
+  | 'remove-enchant'
+  | 'press-off-list';
 
 /** How a raid decision enters the check: relative to the pull's own decision, gated on it matching the reference, or left out. */
 interface RaidDecisions {
@@ -31,6 +32,8 @@ export interface FindingFamily {
   claim: string;
   /** What is measured, in which unit, over which time. */
   construct: string;
+  /** The construct that replaces this one once it is built; null when the construct is final. */
+  pendingRebuild: string | null;
   reference: { population: string; minN: number };
   /** How the player's pull and each top log line up: pull clock, alive time, phase, window. */
   alignment: string;

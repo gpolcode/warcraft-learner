@@ -138,9 +138,13 @@ export function fmtClock(seconds: number): string {
   return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 }
 
-const SEVERITY_ORDER: Record<AnalysisFinding['severity'], number> = {
-  critical: 0, warning: 1, info: 2, hold_suggestion: 2, success: 3,
+const SEVERITY_ORDER: Record<string, number> = {
+  critical: 0, red: 0, warning: 1, amber: 1, info: 2, blue: 2, hold_suggestion: 2, neutral: 3, muted: 4, success: 5,
 };
+export function severityRank(severity: string): number {
+  return SEVERITY_ORDER[severity] ?? SEVERITY_ORDER['neutral'] ?? 0;
+}
+
 export function sortBySeverity(findings: AnalysisFinding[]): void {
-  findings.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
+  findings.sort((a, b) => severityRank(a.severity) - severityRank(b.severity));
 }

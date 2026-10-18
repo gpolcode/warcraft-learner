@@ -1,3 +1,6 @@
+import type { Tone } from '../verdict/tone.models';
+import type { UnjudgedCause } from './pull-model-service';
+
 export interface FindingOccurrence {
   atS: number;
   ok: boolean;
@@ -23,7 +26,10 @@ export interface ConditionCheck {
 export interface AnalysisFinding {
   /** The `FindingFamily.id` of a family on the verdict contract. */
   family?: string;
-  severity: 'critical' | 'warning' | 'info' | 'hold_suggestion' | 'success';
+  /** A family on the verdict contract carries the tone `ToneService` made; a legacy producer still names its own word. */
+  severity: 'critical' | 'warning' | 'info' | 'hold_suggestion' | 'success' | Tone;
+  /** Why a muted finding was not judged. */
+  unjudged?: UnjudgedCause;
   category: string;
   cd_name?: string;
   message: string;
@@ -96,6 +102,7 @@ export interface PlayerDefensive {
 
 export const CAT_LABEL: Record<string, string> = {
   lost_cooldown: 'lost cast',
+  never_used: 'never used',
   cooldown_delay: 'late',
   cooldown_alignment: 'Bloodlust',
   cast_efficiency: 'downtime',

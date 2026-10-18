@@ -64,7 +64,10 @@ describe('RotationFeatureService', () => {
 
     const onMissingFight = await service.loadPlayerView('SubtletyRogue', 1, 'rX', UNLOGGED_FIGHT_ID, 10);
     expect(onMissingFight).toEqual(Results.ok({
-      buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null, bench: TestBed.inject(BenchStripService).strip(bench()),
+      buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null,
+      buttonsBenched: false, buttonsEmpty: 'Your log shows no judged moment for any of the 0 buttons the list judges.',
+      offensivesEmpty: 'Nothing flagged. No cooldown on the plan was checked in this pull.',
+      bench: TestBed.inject(BenchStripService).strip(bench()),
     }));
 
     const onFailure = await service.loadPlayerView('SubtletyRogue', 1, FAILING_CODE, 1, 10);

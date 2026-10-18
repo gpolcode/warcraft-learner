@@ -24,6 +24,7 @@ import { RotationBench, RotationParseMeasures } from './rotation-data-source';
 import type { ButtonCounts } from './priority-list/list-check-service';
 import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
+import { CooldownUseJudgeService } from './cooldown-use-judge-service';
 
 const BL_WINDOW_BEFORE_S = 30;
 const BL_WINDOW_AFTER_S = 55;
@@ -65,6 +66,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly listLogs = inject(ListLogService);
   private readonly itemData = inject(ItemDataService);
   private readonly listBench = inject(ListBenchService);
+  private readonly cooldownUses = inject(CooldownUseJudgeService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<RotationBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
@@ -141,11 +143,7 @@ export class RotationTransformService implements DataSource<RotationBench> {
     fightDurS: number, blTimeS: number | null, upAtPull: ReadonlySet<number>,
   ): CdSummary[] {
     return cooldowns.map(cooldown => {
-      const castTimesS = [
-        // A use before the pull logs no cast, only its aura still up when the pull starts.
-        ...(upAtPull.has(cooldown.spell_id) ? [0] : []),
-        ...castEvents.filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id).map(cast => cast.atS),
-      ].sort((a, b) => a - b);
+      const castTimesS = this.cooldownUses.castTimesS(castEvents, cooldown.spell_id, upAtPull, fightDurS);
 
       let blAligned = false;
       let blOffsetS: number | null = null;
