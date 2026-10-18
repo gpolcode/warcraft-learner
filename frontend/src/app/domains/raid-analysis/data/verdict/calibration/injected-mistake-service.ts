@@ -1,0 +1,109 @@
+import { inject, Injectable } from '@angular/core';
+import { CastCadenceService } from '../../analysis/cast-cadence-service';
+import { InjectedMistake } from '../finding-family.models';
+import { VERDICT_CHOICES } from '../verdict-choices';
+import { HeldOutCase } from './held-out-case-service';
+
+type RotationCase = Extract<HeldOutCase, { card: 'rotation' }>;
+type DefensiveCase = Extract<HeldOutCase, { card: 'defensive' }>;
+type GearCase = Extract<HeldOutCase, { card: 'gear' }>;
+
+const CHOICES = VERDICT_CHOICES.calibration;
+/** An entry id no talent tree uses, so the swapped build matches no top log's. */
+const SWAPPED_ENTRY = 'x';
+
+/** Puts one known mistake into a held-out top log's measures; the harness checks that the family claiming it flags the result. */
+@Injectable({ providedIn: 'root' })
+export class InjectedMistakeService {
+  private readonly castCadence = inject(CastCadenceService);
+
+  /** Each way the mistake fits this log; none when the log has nothing it applies to, or the bench bakes nothing it changes. */
+  variants(mistake: InjectedMistake, heldOut: HeldOutCase): HeldOutCase[] {
+    if (heldOut.card === 'rotation') return this.rotationVariants(mistake, heldOut);
+    if (heldOut.card === 'defensive') return mistake === 'strip-defensive' ? this.stripDefensive(heldOut) : [];
+    return this.gearVariants(mistake, heldOut);
+  }
+
+  private rotationVariants(mistake: InjectedMistake, heldOut: RotationCase): RotationCase[] {
+    switch (mistake) {
+      case 'drop-major-cooldown-cast': return this.onMajorCooldown(heldOut, casts => casts.length ? [casts.slice(0, -1)] : []);
+      case 'delay-cooldown-30s': return this.onMajorCooldown(heldOut, casts => [0, 1].flatMap(index => index < casts.length ? [this.delayed(casts, index)] : []));
+      case 'move-cooldown-out-of-lust': return this.outOfLust(heldOut);
+      case 'idle-5-gcds': return this.idle(heldOut);
+      case 'press-off-list': return this.offList(heldOut);
+      default: return [];
+    }
+  }
+
+  /** The first cooldown most of the other top logs use, the kind every cooldown family judges. */
+  private onMajorCooldown(heldOut: RotationCase, change: (casts: number[]) => number[][]): RotationCase[] {
+    const cooldown = heldOut.fold.major_cooldowns.find(entry => {
+      const cdBench = heldOut.fold.per_cd_benchmarks[entry.name];
+      return cdBench && this.castCadence.usedByMajority(cdBench) && (heldOut.log.measures.cd_casts_s[entry.name]?.length ?? 0) > 0;
+    });
+    if (!cooldown) return [];
+    return change([...heldOut.log.measures.cd_casts_s[cooldown.name] ?? []]).map(casts => this.withCasts(heldOut, cooldown.name, casts));
+  }
+
+  private delayed(casts: number[], index: number): number[] {
+    return casts.map((castS, at) => at === index ? castS + CHOICES.delayS : castS).sort((a, b) => a - b);
+  }
+
+  /** Every use inside the lust window moves past its end, as if pressed on cooldown instead. */
+  private outOfLust(heldOut: RotationCase): RotationCase[] {
+    const lustS = heldOut.log.measures.lust_s;
+    if (lustS === null) return [];
+    const { beforeS, afterS } = VERDICT_CHOICES.lustWindow;
+    const inWindow = (castS: number): boolean => lustS - beforeS <= castS && castS <= lustS + afterS;
+    return Object.entries(heldOut.log.measures.cd_casts_s)
+      .filter(([, casts]) => casts.some(inWindow))
+      .slice(0, 1)
+      .map(([name, casts]) => this.withCasts(heldOut, name, casts.map(castS => inWindow(castS) ? lustS + afterS + CHOICES.delayS : castS).sort((a, b) => a - b)));
+  }
+
+  /** Five global cooldowns of idle time off the whole pull's casting share. */
+  private idle(heldOut: RotationCase): RotationCase[] {
+    const pct = heldOut.log.measures.efficiency_pct;
+    const durationS = heldOut.log.model.fightDurationS;
+    if (pct === null || durationS <= 0) return [];
+    const idlePct = 100 * CHOICES.idleGcds * CHOICES.gcdS / durationS;
+    return [{ ...heldOut, log: { ...heldOut.log, measures: { ...heldOut.log.measures, efficiency_pct: Math.max(0, pct - idlePct) } } }];
+  }
+
+  /** A run of presses off the list turns that many right moments of the most-judged button into misses. */
+  private offList(heldOut: RotationCase): RotationCase[] {
+    const [action, counts] = Object.entries(heldOut.log.measures.buttons).sort((a, b) => b[1].moments - a[1].moments)[0] ?? [];
+    if (!action || !counts || counts.right <= 0) return [];
+    const buttons = { ...heldOut.log.measures.buttons, [action]: { ...counts, right: Math.max(0, counts.right - CHOICES.offListPresses) } };
+    return [{ ...heldOut, log: { ...heldOut.log, measures: { ...heldOut.log.measures, buttons } } }];
+  }
+
+  private withCasts(heldOut: RotationCase, name: string, casts: number[]): RotationCase {
+    const cd_casts_s = { ...heldOut.log.measures.cd_casts_s, [name]: casts };
+    return { ...heldOut, log: { ...heldOut.log, measures: { ...heldOut.log.measures, cd_casts_s } } };
+  }
+
+  /** The first defensive most of the other top logs use goes unpressed: no use, and none of its windows covered. */
+  private stripDefensive(heldOut: DefensiveCase): DefensiveCase[] {
+    const defensive = heldOut.fold.defensives.find(entry => {
+      const defBench = heldOut.fold.per_defensive_benchmarks[entry.name];
+      return defBench && this.castCadence.usedByMajority(defBench) && (heldOut.log.casts[entry.name]?.length ?? 0) > 0;
+    });
+    if (!defensive) return [];
+    const ownWindows = new Set(heldOut.fold.defensive_windows.filter(window => window.defensive_name === defensive.name).map(window => window.index));
+    const covered = new Map([...heldOut.log.covered].filter(([index]) => !ownWindows.has(index)));
+    return [{ ...heldOut, log: { ...heldOut.log, casts: { ...heldOut.log.casts, [defensive.name]: [] }, covered } }];
+  }
+
+  private gearVariants(mistake: InjectedMistake, heldOut: GearCase): GearCase[] {
+    const { picks } = heldOut;
+    if (mistake === 'swap-talent-node') {
+      return picks.talent_key ? [{ ...heldOut, picks: { ...picks, talent_key: `${picks.talent_key},${SWAPPED_ENTRY}.1` } }] : [];
+    }
+    if (mistake !== 'remove-enchant') return [];
+    const [slot] = Object.keys(picks.enchant_ids);
+    if (slot === undefined) return [];
+    const enchant_ids = Object.fromEntries(Object.entries(picks.enchant_ids).filter(([key]) => key !== slot));
+    return [{ ...heldOut, picks: { ...picks, enchant_ids } }];
+  }
+}

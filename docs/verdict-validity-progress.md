@@ -436,3 +436,62 @@ Branch `claude/verdict-validity-p4f-bloodlust`, PR against `claude/verdict-valid
 - Package 6's overlap construct replaces `measureOffset` in both Bloodlust families (bump their `version`); `per_parse[].lust_s` gives the lust start, the aura spans need a new baked field.
 - An on-plan finding is `FindingRowsService.onPlanFinding`; never set a severity word on a finding, the type no longer accepts one.
 - Fixtures build a tone with `tone(level)` from `src/testing/builders/tone.ts`.
+
+## Package 5: validity harness (done, with a deviation)
+
+Branch `claude/verdict-validity-p5-harness`, PR against `claude/verdict-validity-p4f-bloodlust`.
+
+### Deviation: the first report cannot run on the baked benches
+
+`npm run data:pull` fetches 396 encounters per bench kind, every one stamped `ingest_version` 43: no bench carries `sources`, `per_parse` or window `members` (rotation 349, defensive 395, gear 396, burst 396 files). Package 2's version 44 re-bench runs only once the stack is on main and the hourly ingest re-benches. Over these files the harness folds nothing: `npm run calibrate` reports 396 encounters, 0 held-out top pulls, every amber or red family a comparison for too few tests. The audit figures (1.07 red and 5.44 amber per pull, 0.26 and 0.98 for the cadence rules, the 94% soaker red, 60.6% rank-1 coverage, the chance rate of a critical Bloodlust miss) are neither reproduced nor refuted, and the paper keeps its numbers. The first measured report is the job summary of the first ingest run after the version 44 re-bench, or `npm run data:pull && npm run calibrate` once gh-pages carries version 44 benches.
+
+### Done
+
+All under `RA/data/verdict/calibration/` unless named:
+
+- **Leave-one-out folds** (`LeaveOneOutService`). `fold` drops index i from `sources` and `per_parse`. `foldRotation` rebuilds the plan gate (a cooldown stays when another top log has a use of it in `cd_casts_s`) and every `per_cd_benchmarks` entry from the other logs' baked casts and ranking `duration_s`, through `CastCadenceService.entry` and `buildCadenceBenchmark`, the same methods both transforms now call (`entry` is new; the baked values are unchanged). `foldDefensive` does the same for `per_defensive_benchmarks` and refolds `defensive_windows`: members with `parse === i` drop, later indices move down, a window keeps its full-bench `index` and stays only while half of the remaining logs (at least 2) still form it, centred on the median of its members.
+- **Held-out judging through the production judges.** `RotationHeldOutService`, `DefensiveHeldOutService` and `GearHeldOutService` judge one log's baked measures against its fold through `ButtonJudgeService`, `CooldownUseJudgeService`, `CadenceJudgeService`, `DowntimeJudgeService`, `BloodlustJudgeService`, `DefensiveJudgeService` and `GearJudgeService`, with the page's gates (talent taken, `usedByMajority`, expected uses over alive time, the lust band, `causeOf` folds). `HeldOutRowService.row` turns evidence into one test at `ToneService.tone` without caps; evidence under `minReferenceN` and a span a death or the pull's end explains are no test. `HeldOutCaseService` makes one case per log and bench, keys logs by `report_code:fight_id`, and reads each log's talents from the gear bench's `talent_key`.
+- **Injected mistakes** (`InjectedMistakeService`): drop the last use of the first majority cooldown; delay its first use and, separately, its second by 30 s; move every use inside the lust window past its end; take 5 GCDs of 1.5 s off `efficiency_pct`; turn 5 right moments of the most-judged button into misses (`press-off-list`); strip the first majority defensive of its uses and covered windows; swap a talent; remove an enchant. A trial counts for every family naming the mistake whose test the variant still makes; it detects when the family flags more rows than the plain log (blue for a blue family, else amber).
+- **Perturbations** (`PerturbationService`, seeded per log so a recompute reproduces them): truncate at a wipe point, death without and with a rez 30 s later (uses in the dead span dropped), lust at 120 s and 180 s, jitter of every use by up to 2 s, defensive window damage times 0.85. The same invariants run as Vitest specs over `src/testing/builders/events.ts` (`invariants.spec.ts`).
+- **Per encounter** (`EncounterCalibrationService`): family tallies (`tests`, `amber` counting amber and red, `red`), the page load (pulls, amber rows, red rows), detection per family, and per perturbation each family's tallies before and after; for the lust shifts, every Bloodlust row a cooldown gets while the shifted lust sits outside its band (key `outside-band`).
+- **Pooling and arming** (`ArmingService`, `CalibrationIndexService.build`): per family, a tone is decided on the first pool with its minimum tests among spec, role, every spec; red arms when the one-sided 95% Clopper-Pearson bound (`DistributionService.clopperPearsonUpper`) of the red rate is at most 2% on 1,500 tests and amber also arms, amber at most 8% on 500; both need detection at the floor (90% red, 70% amber) when the family names a mistake. Blue and neutral families are graded at their tier with no test. A spec's verdict never outranks its role's. A failed invariant demotes the family. A role whose armed page breaks 0.1 red or 1.0 amber per pull demotes the family adding the most to the breach, one tone at a time. A bench whose own amber rate has binomial upper tail under 0.01 at the pooled rate demotes that family on that bench alone (`demoted`).
+- **Invariant checks** (`CalibrationIndexService`): truncation and both deaths keep each family's smoothed flag rate, `(amber + 1) / (tests + 2)`, within 1.5 times the plain rate; the lust shifts give no `outside-band` row; jitter moves the burst rate by under 2 points; the damage scale leaves every rotation and defensive tally equal.
+- **Files.** Ingest (`IngestOrchestratorService.calibrate`, after the spec loop) runs `CalibrationRunService.run(false)`: each benched encounter's `data/specs/<Spec>/calibration/<encounterId>.json`, signed on the four benches' `source_signature` and `ingest_version` plus the registry hash (an unchanged signature reuses the file), then the pooled `data/specs/calibration.json`. Pruning a retired encounter removes its calibration file. The report goes to the console and, through `__INGEST_DONE__.report`, to `$GITHUB_STEP_SUMMARY` (`scripts/ingest-headless.mjs`). Zero WCL cost: only files on disk are read.
+- **Runtime cap.** `ToneService.tone(family, evidence, caps?)` takes `FamilyCaps` as its fourth cap; without caps it is the rules' tone (what the harness measures). `CalibrationCapsService.load(spec, encounterId)` reads `calibration.json` through the `CALIBRATION_SOURCE` token (root default: `DataFileApiService.getCalibrationIndex`) and fails closed to comparison (neutral) on a missing or malformed index, an index for another registry hash (`RegistryHashService`: every family's id, version, tier, cost class and rule plus `VERDICT_CHOICES`), a family or spec it does not name, or a demoted bench. The rotation, defensive, burst and gear feature services load the caps once per view and pass them to every producer. Opener, gap, downtime, Bloodlust timing rows and the burst "Aim for" sentence are now emitted on the calibrated tone (`ToneService.graded`), so a row calibration leaves as a comparison never carries an imperative.
+- **CI recompute.** `npm run calibrate` (the `calibrate` build and serve configuration, `src/environments/environment.calibrate.ts`, `CalibrationCheckService`) recomputes every encounter from the pulled benches, ignoring stored files, and fails on a page-budget breach, a failed invariant on a previously graded family, or a family graded before that is not now. `.github/workflows/calibration.yml` runs it on PRs touching `RA/data/**`. CLAUDE.md lists the command (package 3's marker).
+- **Chosen numbers** added to `VERDICT_CHOICES.calibration`: arming confidence 0.95, anomaly p 0.01, detection floors 0.9 and 0.7, rate ratio 1.5, jitter shift 0.02 and 2 s, lust shifts 120 and 180 s, damage scale 0.85, delay 30 s, 5 idle GCDs of 1.5 s, 5 off-list presses, perturbation share 0.2 to 0.9 of the pull, rez after 30 s.
+- `SpecRoleService.role(spec)` gives `dps`, `tank` or `healer` (new tank list).
+
+### Decisions and deviations
+
+- **Comparison is neutral.** A family that has not armed is capped at neutral, so its blue counts turn neutral too; blue and neutral families need no arming. `hidden` exists in the status type; no family is hidden yet.
+- **Burst windows cannot be folded.** The burst bench bakes a log's damage only for the windows it formed, so a held-out log's damage at a window it did not form is unknown and no test is made; `burst.window` stays a comparison until package 6 bakes damage on the common span for every log. The jitter invariant (burst only) has no test until then.
+- **Dead in window has no test**: no per-log deaths are baked, so `defensive.dead_in_window` stays a comparison (red today at stage 0) until deaths are baked.
+- **Defensive window damage is an upper bound.** An uncovered held-out log's damage is unknown, so it counts as above the median (the paired condition holds unless tank or immune): the measured flag rate is an upper bound.
+- **Leaks the fold cannot remove**: `efficiency_pct` is baked against the downtime threshold of all n logs; the plan gate reads `cd_casts_s` (casts under the bench's id) rather than each log's cast ids; defensive windows recluster only the baked members, so a cluster that would form only without the held-out log is missed; hold windows are rebuilt from casts rounded to 0.01 s; a log's fight length is its ranking's `duration_s`.
+- **Lost cast cannot pass its power floor as specified.** Dropping one cast is one use short, which the `count` rule always keeps neutral (package 3's effect floor), so `rotation.lost_cast` will measure about 0% detection and stay a comparison. Expect the first real report to demote it; package 6 (unused ready time) or a larger injected loss is the fix, not this harness.
+- **Page budget enforcement demotes families**, the one adding most to the breaching tone first; there is no per-family alpha to lower, and the discrimination order needs the contrast cohort (package 7a).
+- **Tests per check**: a judged cooldown is one test of `lost_cast` (uses above zero) or `never_used` (no use); every hold target is a test on a log that used the cooldown; every enchant leader slot of at least 5 logs is one test of each enchant family; a lust inside the band is an alignment test, and a timing test when pressed.
+- **One registry hash** covers every family and chosen number, so any family's version bump fails every family closed until the next ingest recalibrates.
+- Producers take `caps` as an optional last parameter; a page must pass it. The providers file (`src/testing/test-providers.ts`) swaps `CalibrationCapsService` for an uncapped stand-in, so producer specs read the rules alone; `calibration-index.spec.ts` provides the real service.
+- No `INGEST_VERSION` bump: `CastCadenceService.entry` reproduces both transforms' summaries (the transform specs pin them), and calibration files are their own signature.
+
+### Drift against 6882b59
+
+- 5.4.2's plan gate (`bench-pipeline-service.ts:79`) is at `:81` (`topLogPlan`, which calls `SpecPlanService.inTopLogs`).
+
+### Seams stubbed
+
+- The status reason ("Not graded: ...") is in `calibration.json` but no card renders it yet, nor a method page.
+- The contrast cohort and the lift and AUC gates (package 7a) are not built; arming uses held-out rates and power only.
+
+### Remaining
+
+- The first measured report and its comparison with the audit figures, after the version 44 re-bench (see the deviation above). Update the paper's figures and this file then.
+- Rendering the comparison reason on each card and the report on a method page.
+
+### For the next package
+
+- A new or rebuilt construct is calibrated by adding its test to the card's held-out service (same `judge*` method and gates the page uses) and a variant per injected mistake; bump the family `version`.
+- Package 6: bake per-log damage on every burst window's common span and per-log deaths, then give `burst.window` and `defensive.dead_in_window` held-out tests; drop the defensive window's upper-bound assumption once uncovered logs' damage is baked.
+- A page that adds a producer must load `CalibrationCapsService` and pass the caps; a producer called without them reads uncapped.

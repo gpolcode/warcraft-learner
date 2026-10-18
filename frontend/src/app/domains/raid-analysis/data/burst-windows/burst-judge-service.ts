@@ -5,7 +5,7 @@ import { TimedEvent } from '../analysis/wcl-projections-service';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { Evidence, Tone } from '../verdict/tone.models';
+import { Evidence, FamilyCaps, Tone } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
 export const BURST_WINDOW_FAMILY: FindingFamily = {
@@ -73,12 +73,12 @@ export class BurstJudgeService {
     return this.rules.interval({ observed: damage, reference, side: 'below', floor });
   }
 
-  verdict(window: BurstWindow, damage: number, ratePerS: number): BurstVerdict {
+  verdict(window: BurstWindow, damage: number, ratePerS: number, caps?: FamilyCaps): BurstVerdict {
     const evidence = this.judge(damage, this.reference(window), ratePerS);
-    const status = this.tones.tone(BURST_WINDOW_FAMILY, evidence);
+    const status = this.tones.tone(BURST_WINDOW_FAMILY, evidence, caps);
     const n = evidence.n;
     const base = { family: BURST_WINDOW_FAMILY.id, status, icon: VERDICT_ICON[status] ?? VERDICT_ICON['neutral'] ?? '', n };
-    if (evidence.level !== 'neutral' && evidence.target !== null) {
+    if (this.tones.graded(status) && evidence.target !== null) {
       const [dealt, target] = this.damageApart(damage, evidence.target);
       return { ...base, message: `You dealt ${dealt} here, less than the ${n} top logs that had this window. Aim for ${target} or more.` };
     }

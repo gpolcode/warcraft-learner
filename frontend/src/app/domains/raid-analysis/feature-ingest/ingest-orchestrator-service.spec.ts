@@ -1,3 +1,4 @@
+import { CALIBRATION_DIR } from '../data/verdict/calibration/calibration-run-service';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { NgHttpCachingService } from 'ng-http-caching';
@@ -163,7 +164,7 @@ describe('IngestOrchestratorService.run', () => {
     [benchPath(RETIRED_BOSS.id, 'positions')]: { encounter_id: RETIRED_BOSS.id, ingest_version: INGEST_VERSION },
   };
   const filesFor = (disk: FakeDisk, encId: number): string[] =>
-    [...disk.files.keys()].filter(path => path.endsWith(`/${encId}.json`));
+    [...disk.files.keys()].filter(path => path.endsWith(`/${encId}.json`) && !path.includes(`/${CALIBRATION_DIR}/`));
 
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -180,6 +181,15 @@ describe('IngestOrchestratorService.run', () => {
     await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), RAID);
 
     expect(filesFor(disk, RETIRED_BOSS.id)).toEqual([]);
+  });
+
+  it('calibrates every benched encounter and pools the result into the index', async () => {
+    const disk = fakeDisk(RETIRED_ON_DISK);
+
+    await ingest(disk, fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }), '');
+
+    expect(disk.files.has(`${SPEC}/${CALIBRATION_DIR}/${RETIRED_BOSS.id}.json`)).toBe(true);
+    expect(disk.files.has('calibration.json')).toBe(true);
   });
 
   it('prunes nothing when no current raid resolved, rather than reading that as "prune everything"', async () => {

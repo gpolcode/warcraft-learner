@@ -1,3 +1,5 @@
+import { CalibrationCapsService } from '../verdict/calibration/calibration-caps-service';
+import { FamilyCaps } from '../verdict/tone.models';
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { WclAbility } from '../wcl/wcl.models';
@@ -76,6 +78,7 @@ export interface DefensiveWindowsInput {
   abilities: AbilityIcons;
   /** The bench's accepted top logs, the count every window's coverage is out of. */
   topLogs: number;
+  caps?: FamilyCaps;
 }
 
 interface DefensiveScan { findings: AnalysisFinding[]; folded: FoldCounts; checked: number; }
@@ -96,6 +99,7 @@ export class DefensiveFeatureService {
   private readonly wclApi = inject(WclApiService);
   private readonly gearExtract = inject(GearExtractService);
   private readonly benchStrips = inject(BenchStripService);
+  private readonly calibration = inject(CalibrationCapsService);
 
   // A WCL fetch failure surfaces as an err, never a silent bench-only degrade.
   async loadAnalysisView(
@@ -109,6 +113,7 @@ export class DefensiveFeatureService {
     if (!bench.ok) return bench;
 
     const pull: PullRef = { reportCode, fightId, playerId };
+    const caps = await this.calibration.load(spec, encounterId);
     const strip = this.benchStrips.strip(bench.value);
     return this.pullContext.analyzePull(this.wclApi, pull, {
       logSource: 'DefensiveFeatureService.loadAnalysisView',
@@ -117,11 +122,11 @@ export class DefensiveFeatureService {
         findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null, bench: strip,
         findingsEmpty: this.findingsEmpty(0, bench.value), windowsEmpty: this.windowsEmpty(bench.value, []),
       }),
-      analyze: async context => ({ ...await this.analysisView(bench.value, pull, context), bench: strip }),
+      analyze: async context => ({ ...await this.analysisView(bench.value, pull, context, caps), bench: strip }),
     });
   }
 
-  private async analysisView(bench: DefensiveBench, pull: PullRef, context: PullContext): Promise<Omit<DefensiveView, 'bench'>> {
+  private async analysisView(bench: DefensiveBench, pull: PullRef, context: PullContext, caps?: FamilyCaps): Promise<Omit<DefensiveView, 'bench'>> {
     const { reportCode, fightId, playerId } = pull;
     const { fight, model } = context;
 
@@ -142,7 +147,7 @@ export class DefensiveFeatureService {
       this.gearExtract.pickedTalents(this.gearExtract.selectCombatantInfo(combatants, playerId)),
     );
     const { findings, folded, checked } = bench.defensives.length && playerDefensives.length
-      ? this.analyzeDefensiveFindings(playerDefensives, this.withPerParse(bench), model)
+      ? this.analyzeDefensiveFindings(playerDefensives, this.withPerParse(bench), model, caps)
       : { findings: [], folded: this.pullModel.noFolds(), checked: 0 };
 
     const playerWindows = this.computePlayerDefensiveWindows(bench.defensive_windows, dtEventsTimed);
@@ -153,7 +158,7 @@ export class DefensiveFeatureService {
       iconByName[name] = ability?.icon ?? '';
     }
     const { windows, anchors, clipAnchors, folded: windowsFolded } = this.buildDefensiveWindows({
-      topWindows: bench.defensive_windows, playerWindows, playerDefensives, model, abilities: bench.ability_icons, topLogs: this.topLogs(bench),
+      topWindows: bench.defensive_windows, playerWindows, playerDefensives, model, abilities: bench.ability_icons, topLogs: this.topLogs(bench), caps,
     });
     const entries = this.findingRows.bucketFindings(findings, {
       spellId: name => bench.cd_spell_ids[name] ?? null,
@@ -235,6 +240,7 @@ export class DefensiveFeatureService {
     defBench: PerDefensiveBenchmark | undefined,
     model: PullModel,
     perParse: DefensiveBench['per_parse'] = [],
+    caps?: FamilyCaps,
   ): DefensiveScan {
     const { name, uses } = defensive;
     const none = this.pullModel.noFolds();
@@ -247,9 +253,9 @@ export class DefensiveFeatureService {
     const casts = perParse.map(parse => parse.def_casts_s);
     const external = this.judge.isExternal(defensive.windows);
     const majority = this.castCadence.usedByMajority(defBench);
-    const counted = majority ? this.judge.usesFinding(name, useTimesS, defBench, model, casts, external) : null;
+    const counted = majority ? this.judge.usesFinding(name, useTimesS, defBench, model, casts, external, caps) : null;
     // Who receives an external and when is an assignment, so only its count is shown.
-    const timing = external ? { timed: [], holds: [] } : this.timingFindings(name, useTimesS, defBench, { model, casts, majority });
+    const timing = external ? { timed: [], holds: [] } : this.timingFindings(name, useTimesS, defBench, { model, casts, majority, caps });
     const { kept, folded } = this.pullModel.foldFindings(model, timing.timed);
     const { kept: holds, folded: foldedHolds } = this.pullModel.foldFindings(model, timing.holds);
 
@@ -261,25 +267,26 @@ export class DefensiveFeatureService {
   /** A defensive most top logs skip has a noisy first use, so only its gaps and holds are checked. */
   private timingFindings(
     name: string, useTimesS: readonly number[], defBench: PerDefensiveBenchmark,
-    pull: { model: PullModel; casts: DefensiveBench['per_parse'][number]['def_casts_s'][]; majority: boolean },
+    pull: { model: PullModel; casts: DefensiveBench['per_parse'][number]['def_casts_s'][]; majority: boolean; caps?: FamilyCaps },
   ): { timed: AnalysisFinding[]; holds: AnalysisFinding[] } {
     const timed = [
-      pull.majority ? this.judge.firstUseFinding(name, useTimesS, pull.casts) : null,
-      this.judge.gapFinding(name, useTimesS, pull.model.aliveSpans, pull.casts, defBench.hold_targets),
+      pull.majority ? this.judge.firstUseFinding(name, useTimesS, pull.casts, pull.caps) : null,
+      this.judge.gapFinding(name, useTimesS, pull.model.aliveSpans, pull.casts, defBench.hold_targets, pull.caps),
     ].filter(finding => finding !== null);
-    return { timed, holds: this.judge.holdFindings(name, useTimesS, defBench.hold_targets) };
+    return { timed, holds: this.judge.holdFindings(name, useTimesS, defBench.hold_targets, pull.caps) };
   }
 
   protected analyzeDefensiveFindings(
     playerDefensives: PlayerDefensive[],
     bench: Pick<DefensiveBench, 'per_defensive_benchmarks' | 'per_parse'>,
     model: PullModel,
+    caps?: FamilyCaps,
   ): DefensiveScan {
     const findings: AnalysisFinding[] = [];
     let folded = this.pullModel.noFolds();
     let checked = 0;
     for (const defensive of playerDefensives) {
-      const scan = this.analyzeOneDefensive(defensive, bench.per_defensive_benchmarks[defensive.name], model, bench.per_parse);
+      const scan = this.analyzeOneDefensive(defensive, bench.per_defensive_benchmarks[defensive.name], model, bench.per_parse, caps);
       findings.push(...scan.findings);
       folded = this.pullModel.addFolds(folded, scan.folded);
       checked += scan.checked;
@@ -316,17 +323,17 @@ export class DefensiveFeatureService {
   }
 
   private defensiveAdapter(
-    { topWindows, playerDefensives, model, topLogs }: Omit<DefensiveWindowsInput, 'playerWindows' | 'abilities'>,
+    { topWindows, playerDefensives, model, topLogs, caps }: Omit<DefensiveWindowsInput, 'playerWindows' | 'abilities'>,
   ): WindowViewAdapter<DefensiveMapAnchor> {
     const usesOf = (window: BurstWindow) => playerDefensives.find(entry => entry.name === (window.defensive_name ?? ''))?.windows ?? [];
     const deaths = this.judge.deathHomes(topWindows, model.deadSpans);
     return {
       status: (window, playerDamage) => this.judge.windowVerdict(window, {
         damage: playerDamage ?? 0, covered: this.judge.measureCovered(window, usesOf(window)), tank: model.role === 'tank',
-      }, topLogs),
+      }, topLogs, caps),
       claim: (_window, cause, index) => {
         const diedS = deaths.get(index);
-        return cause === 'dead' && diedS !== undefined ? this.judge.deathVerdict(diedS) : null;
+        return cause === 'dead' && diedS !== undefined ? this.judge.deathVerdict(diedS, caps) : null;
       },
       chips: window => ({
         spellIds: window.spell_id != null ? [window.spell_id] : [],
@@ -338,10 +345,10 @@ export class DefensiveFeatureService {
   }
 
   protected buildDefensiveWindows(
-    { topWindows, playerWindows, playerDefensives, model, abilities, topLogs }: DefensiveWindowsInput,
+    { topWindows, playerWindows, playerDefensives, model, abilities, topLogs, caps }: DefensiveWindowsInput,
   ): WindowView<DefensiveMapAnchor> {
     return this.windowView.buildWindowView({
-      topWindows, playerWindows, model, abilities, adapter: this.defensiveAdapter({ topWindows, playerDefensives, model, topLogs }),
+      topWindows, playerWindows, model, abilities, adapter: this.defensiveAdapter({ topWindows, playerDefensives, model, topLogs, caps }),
     });
   }
 

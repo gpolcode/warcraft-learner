@@ -22,7 +22,6 @@ import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { RotationBench, RotationParseMeasures } from './rotation-data-source';
 import type { ButtonCounts } from './priority-list/list-check-service';
-import { HoldTargetsService } from '../analysis/hold-targets-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { CooldownUseJudgeService } from './cooldown-use-judge-service';
 import { DowntimeJudgeService } from './downtime-judge-service';
@@ -55,7 +54,6 @@ interface ParseRotation {
 
 @Injectable({ providedIn: 'root' })
 export class RotationTransformService implements DataSource<RotationBench> {
-  private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly bloodlust = inject(RotationBloodlustService);
   private readonly auraWindows = inject(AuraWindowsService);
@@ -146,21 +144,13 @@ export class RotationTransformService implements DataSource<RotationBench> {
   ): CdSummary[] {
     return cooldowns.map(cooldown => {
       const castTimesS = this.cooldownUses.castTimesS(castEvents, cooldown.spell_id, upAtPull, fightDurS);
-
       const blOffsetS = this.lust.measureOffset(castTimesS, blTimeS);
-
-      const holdWindows = this.holdTargets.detectHoldWindows(castTimesS, cooldown.cooldown);
-
       return {
         name: cooldown.name,
         total_uses: castTimesS.length,
-        first_cast_s: castTimesS[0] != null ? round(castTimesS[0]) : null,
         bl_aligned: blOffsetS !== null,
         bl_offset_s: blOffsetS === null ? null : round(blOffsetS),
-        cast_times_s: castTimesS.map(timeS => round(timeS, 2)),
-        hold_windows: holdWindows,
-        cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
-        fight_duration_s: fightDurS,
+        ...this.castCadence.entry(castTimesS, fightDurS, cooldown.cooldown),
       };
     });
   }

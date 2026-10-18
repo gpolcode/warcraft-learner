@@ -3,7 +3,7 @@ import { CostClass, ToneLevel } from './tone.models';
 type DecisionRuleKind = 'interval' | 'excess-rate' | 'count' | 'mechanistic' | 'consensus' | 'fact';
 
 /** The mistakes the harness injects into a held-out top log; a family names the ones it must catch. */
-type InjectedMistake =
+export type InjectedMistake =
   | 'drop-major-cooldown-cast'
   | 'delay-cooldown-30s'
   | 'idle-5-gcds'

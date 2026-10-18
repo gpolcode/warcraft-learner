@@ -19,9 +19,19 @@ The contract lives in `frontend/src/app/domains/raid-analysis/data/verdict/`. Ev
 | Neutral | A measurement or comparison, no judgement | none | any |
 | Muted | Not judged, with the reason (dead, after the wipe, not reached) | none | none |
 
-- A tone is `min(family tier, evidence, cost-class cap)`. `ToneService.tone` is the only place that computes it, and `Tone` is a branded type only `ToneService` makes.
+- A tone is `min(family tier, evidence, cost-class cap, calibration cap)`. `ToneService.tone` is the only place that computes it, and `Tone` is a branded type only `ToneService` makes.
 - The page budget is the per-pull count of red and amber rows a held-out top log may show, per role. Below the average is a position (a marker, a sort key), never amber.
 - A bench under `minReferenceN` logs is context only: every rule returns neutral evidence.
+
+## Calibration
+
+Tone comes from calibration (`data/verdict/calibration/`). Every page loads the caps once (`CalibrationCapsService.load(spec, encounterId)`) and passes them to every producer, which hands them to `ToneService.tone`; a producer called without caps gives the rules' tone alone, which is what the harness measures.
+
+- **Harness.** For each top log of a bench with per-log measures, `LeaveOneOutService` rebuilds the bench from the others (plan gate, cadence benches, defensive windows), and the card's held-out service judges the log through the production `judge*` methods and the page's gates. Each row is one test at the rules' tone.
+- **Arming.** `ArmingService` pools tests per family over spec, then role, then every spec; a tone arms when the one-sided Clopper-Pearson bound of its pooled rate is inside `VERDICT_CHOICES.arming` on at least its minimum tests, and the family catches its share of its injected mistakes (`calibration.detectionFloor`). Blue and neutral families need no arming. A role over the page budget demotes the family adding the most to the breach; a bench whose own rate the pool would rarely give demotes the family there alone; a failed invariant demotes the family.
+- **Status.** `graded` (the armed tone), `comparison` (neutral, with the reason) or `hidden`. A missing index, or one written for another registry hash, fails closed to comparison.
+- **Files.** Ingest writes `data/specs/<Spec>/calibration/<encounterId>.json` (signed on the benches' stamps and the registry hash) and pools them into `data/specs/calibration.json`. `npm run calibrate` recomputes both from the files on disk and fails on a page-budget breach, a failed invariant or a lost grade.
+- A family whose construct a held-out log cannot be measured on (no per-log value baked) has no test, so it stays a comparison until its measure is baked.
 
 ## Decision rules
 
@@ -43,7 +53,8 @@ The contract lives in `frontend/src/app/domains/raid-analysis/data/verdict/`. Ev
 3. Feed the measure to the family's rule, and the rule's `Evidence` to `ToneService.tone`. Set `AnalysisFinding.family` to the entry's id. The producer emits evidence, never a severity: `local/no-severity-literal` fails a severity literal or a cast to `Tone` under `RA/data/**`; a family's `tier` is a ceiling, not a tone, and passes.
 4. Add the family's producing scenario to `PRODUCING_SCENARIOS` in `finding-registry.spec.ts`: a pull with the family's mistake in it, run through the producer, which must emit a finding with the family's id.
 5. Name the injected mistakes the family must catch and the availability masks that decide whether it runs.
-6. Bump the family's `version` on any change to its measure, rule or parameters.
-7. Copy follows the tier voice in **warcraft-writing**; the row prints its reference as a count.
+6. Bump the family's `version` on any change to its measure, rule or parameters; the registry hash changes with it, so calibration re-runs and the family renders as comparison until it arms again.
+7. Judge it in the card's held-out service under `data/verdict/calibration/`, through the same `judge*` method and gates the page uses, and give each named injected mistake a variant in `InjectedMistakeService`.
+8. Copy follows the tier voice in **warcraft-writing**; the row prints its reference as a count.
 
 `local/no-severity-literal` ignores only specs and `data/verdict/**`: `AnalysisFinding.severity` and `FindingRow.severity` are a `Tone`, and an on-plan finding is a neutral tone with `onPlan` set. Any new entry in its ignores carries a one-line justification in `frontend/eslint.config.js`.

@@ -1,5 +1,6 @@
 // All ingestion logic lives in the Angular app; this file must never grow any.
 import { spawn } from 'child_process';
+import { appendFileSync } from 'fs';
 import { once } from 'events';
 import { chromium } from 'playwright';
 import { baseEnvironment } from '../src/environments/base-environment.ts';
@@ -12,6 +13,8 @@ const DONE_POLL_MS = 1_000;
 // Room for the minute-long waits a run sits through each time WCL rate-limits it.
 const DONE_TIMEOUT_MS = 30 * 60_000;
 const KILL_GRACE_MS = 5_000;
+// `calibrate` boots the app that recomputes calibration from the files on disk; it reads no WCL.
+const CONFIGURATION = process.argv[2] === 'calibrate' ? 'calibrate' : 'ingest';
 const RESOURCE_FAILURE = 'Failed to load resource';
 const NOT_FOUND = /\b404\b/;
 
@@ -92,7 +95,7 @@ async function launchBrowser() {
 
 async function main() {
   startChild('server', 'node', ['scripts/ingest-server.js']);
-  startChild('serve', 'npx', ['ng', 'serve', '--configuration', 'ingest']);
+  startChild('serve', 'npx', ['ng', 'serve', '--configuration', CONFIGURATION]);
   await waitForHttp(SERVER_PROBE_URL, 'ingest file server');
   await waitForHttp(APP_URL, 'ng serve');
 
@@ -114,6 +117,7 @@ async function main() {
     await shutdown(1);
   }
   const summary = await page.evaluate(() => globalThis.__INGEST_DONE__);
+  if (summary.report && process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summary.report}\n`);
 
   if (summary.fatal) {
     console.error(`[harness] ingestion failed: ${summary.fatal}`);

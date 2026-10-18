@@ -13,6 +13,7 @@ import type { EncounterEntry, SpecEntry } from '../data/encounter/encounter.mode
 import type { TopParseSelection } from '../data/wcl/wcl.models';
 import { BenchRegistryService, LEAD_BENCH, type BenchDescriptor } from './bench-registry';
 import { CurrentRaidsService, BudgetExceededError } from '../data/ingest/current-raids-service';
+import { CalibrationRunService } from '../data/verdict/calibration/calibration-run-service';
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
 import { INGEST_POINTS_MARGIN } from '../data/ingest/ingest-points-margin';
 import { IngestOrderingService, type SpecOrderEntry } from '../data/ingest/ingest-ordering-service';
@@ -62,6 +63,8 @@ interface IngestRunSummary {
   failed: { spec: string; message: string }[];
   budgetStopped: boolean;
   fatal?: string;
+  /** The validity report, for the job summary. */
+  report?: string;
 }
 
 function nowS(): number {
@@ -97,6 +100,7 @@ export class IngestOrchestratorService {
   private readonly wclTransport = inject(WCL_TRANSPORT);
   private readonly wclCache = inject(NgHttpCachingService);
   private readonly benches = inject(BenchRegistryService).benches;
+  private readonly calibration = inject(CalibrationRunService);
 
   /** Never rejects: the fire-and-forget app initializer must not see an unhandled rejection. */
   async run(): Promise<void> {
@@ -130,7 +134,15 @@ export class IngestOrchestratorService {
 
     const summary = await this.ingestEachSpec(specs, encounters, version, meter);
     this.printRunSummary(summary, specs.length);
-    publishSummary(summary);
+    publishSummary({ ...summary, report: await this.calibrate() });
+  }
+
+  /** Reads only the files on disk, so it spends no WCL points; an encounter whose benches and rules are unchanged reuses its file. */
+  private async calibrate(): Promise<string> {
+    const { report, breaches } = await this.calibration.run(false);
+    console.log(`\n${report}`);
+    for (const breach of breaches) console.log(`[calibration] ${breach}`);
+    return report;
   }
 
   private async discover(): Promise<Discovery> {
@@ -439,6 +451,7 @@ export class IngestOrchestratorService {
           this.logger.logWarn(`pruneStaleEncounters ${spec}/${encId}/${bench}`, err);
         }
       }
+      await this.calibration.remove(spec, encId).catch((err: unknown) => { this.logger.logWarn(`pruneStaleEncounters ${spec}/${encId}/calibration`, err); });
       removed.push(encId);
     }
     return removed;

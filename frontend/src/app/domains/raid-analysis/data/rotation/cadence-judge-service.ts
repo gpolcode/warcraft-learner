@@ -5,7 +5,7 @@ import { CdHoldTargets } from '../encounter/encounter.models';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { Evidence } from '../verdict/tone.models';
+import { Evidence, FamilyCaps } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { RotationParseMeasures } from './rotation-data-source';
 
@@ -105,16 +105,17 @@ export class CadenceJudgeService {
   }
 
   /** Null when the evidence grades nothing. */
-  openerFinding(name: string, castTimesS: readonly number[], perParse: readonly RotationParseMeasures[]): AnalysisFinding | null {
+  openerFinding(name: string, castTimesS: readonly number[], perParse: readonly RotationParseMeasures[], caps?: FamilyCaps): AnalysisFinding | null {
     const firstS = this.measureOpener(castTimesS);
     if (firstS === null) return null;
     const reference = this.referenceOpeners(perParse.map(parse => parse.cd_casts_s), name);
     const evidence = this.judgeOpener(firstS, reference);
-    if (evidence.level === 'neutral' || evidence.target === null) return null;
+    const severity = this.tones.tone(LATE_OPENER_FAMILY, evidence, caps);
+    if (!this.tones.graded(severity) || evidence.target === null) return null;
     const avgS = reference.reduce((sum, value) => sum + value, 0) / reference.length;
     const [at, by] = this.clocksApart(firstS, evidence.target);
     return {
-      family: LATE_OPENER_FAMILY.id, severity: this.tones.tone(LATE_OPENER_FAMILY, evidence),
+      family: LATE_OPENER_FAMILY.id, severity,
       category: 'cooldown_delay', cd_name: name, timestamp_s: firstS, span: { fromS: 0, toS: firstS },
       measured: { value: `+${(firstS - avgS).toFixed(0)}s`, unit: `top ${fmtClock(avgS)}, ${evidence.n} top logs` },
       message: `You opened with ${name} at ${at}. ${evidence.n} top logs open with it by ${by}.`,
@@ -151,17 +152,18 @@ export class CadenceJudgeService {
   /** One row per cooldown, on its longest wait; null when the evidence grades nothing. */
   gapFinding(
     name: string, castTimesS: readonly number[], spans: readonly AliveSpan[],
-    perParse: readonly RotationParseMeasures[], holds: CdHoldTargets,
+    perParse: readonly RotationParseMeasures[], holds: CdHoldTargets, caps?: FamilyCaps,
   ): AnalysisFinding | null {
     const gap = this.measureGap(castTimesS, spans, holds);
     if (!gap) return null;
     const reference = this.referenceGaps(perParse.map(parse => parse.cd_casts_s), name, holds);
     const evidence = this.judgeGap(gap.gapS, reference);
-    if (evidence.level === 'neutral' || evidence.target === null) return null;
+    const severity = this.tones.tone(COOLDOWN_GAP_FAMILY, evidence, caps);
+    if (!this.tones.graded(severity) || evidence.target === null) return null;
     const avgS = reference.reduce((sum, value) => sum + value, 0) / reference.length;
     const [gapText, targetText] = fmtApart(gap.gapS, evidence.target);
     return {
-      family: COOLDOWN_GAP_FAMILY.id, severity: this.tones.tone(COOLDOWN_GAP_FAMILY, evidence),
+      family: COOLDOWN_GAP_FAMILY.id, severity,
       category: 'cooldown_delay', cd_name: name, timestamp_s: gap.toS, span: { fromS: gap.fromS, toS: gap.toS },
       measured: { value: `${gapText}s`, unit: `top ${avgS.toFixed(0)}s, ${evidence.n} top logs` },
       message: `${name} sat ${gapText}s before your cast at ${fmtClock(gap.toS)}, your longest wait. `
@@ -181,12 +183,12 @@ export class CadenceJudgeService {
   }
 
   /** A count of top raiders as a fact, never an order, so the rows carry no remedy. */
-  holdFindings(name: string, castTimesS: readonly number[], holds: CdHoldTargets): AnalysisFinding[] {
+  holdFindings(name: string, castTimesS: readonly number[], holds: CdHoldTargets, caps?: FamilyCaps): AnalysisFinding[] {
     return Object.values(holds).flatMap(target => {
       const castS = this.measureHold(castTimesS, target);
       if (castS === null) return [];
       return [{
-        family: COOLDOWN_HOLD_FAMILY.id, severity: this.tones.tone(COOLDOWN_HOLD_FAMILY, this.judgeHold(target)),
+        family: COOLDOWN_HOLD_FAMILY.id, severity: this.tones.tone(COOLDOWN_HOLD_FAMILY, this.judgeHold(target), caps),
         category: 'cooldown_hold', timestamp_s: castS, span: { fromS: castS, toS: target.target_s },
         measured: { value: fmtClock(castS), unit: `hold to ${fmtClock(target.target_s)}` },
         message: `${target.count} of ${target.total_samples} top raiders hold ${name} for ${fmtClock(target.target_s)}. You pressed it at ${fmtClock(castS)}, so it was not ready then.`,

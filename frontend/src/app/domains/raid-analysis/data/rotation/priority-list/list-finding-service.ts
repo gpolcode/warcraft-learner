@@ -4,7 +4,7 @@ import { round, severityRank } from '../../analysis/analysis-math';
 import type { ConditionCheck, FindingOccurrence } from '../../analysis/analysis.models';
 import { PullModel, PullModelService, UnjudgedCause } from '../../analysis/pull-model-service';
 import { ToneService } from '../../verdict/tone-service';
-import type { Tone } from '../../verdict/tone.models';
+import type { FamilyCaps, Tone } from '../../verdict/tone.models';
 import { VERDICT_CHOICES } from '../../verdict/verdict-choices';
 import type { PriorityList } from '../../plan/plan.models';
 import type { AplNode } from '../../simc/simc-apl-service';
@@ -63,16 +63,16 @@ export class ListFindingService {
   private readonly pullModel = inject(PullModelService);
 
   /** Graded rows lead, then the most moments times the shortfall under the top raiders' average; muted rows close. */
-  rows(bench: RotationBench, reading: LogReading, model: PullModel): ButtonRow[] {
+  rows(bench: RotationBench, reading: LogReading, model: PullModel, caps?: FamilyCaps): ButtonRow[] {
     const buttons = this.checks.buttons(bench.list);
     const judged = this.checks.within(reading, model.judgedEndS);
-    const rows = bench.buttons.flatMap(entry => this.row(bench, entry, buttons.get(entry.action) ?? [], { reading, judged, model }) ?? []);
+    const rows = bench.buttons.flatMap(entry => this.row(bench, entry, buttons.get(entry.action) ?? [], { reading, judged, model, caps }) ?? []);
     const weight = (row: ButtonRow): number => row.you === null ? 0 : row.moments * Math.max(0, row.top.avg - row.you);
     return rows.sort((a, b) => severityRank(a.status) - severityRank(b.status) || weight(b) - weight(a));
   }
 
   private row(
-    bench: RotationBench, entry: ButtonBench, lines: ReadLine[], pull: { reading: LogReading; judged: LogReading; model: PullModel },
+    bench: RotationBench, entry: ButtonBench, lines: ReadLine[], pull: { reading: LogReading; judged: LogReading; model: PullModel; caps?: FamilyCaps },
   ): ButtonRow | null {
     const { list } = bench;
     const { reading, judged, model } = pull;
@@ -85,7 +85,7 @@ export class ListFindingService {
     if (!counts) return this.unjudgedRow(base, reading, entry.action, model);
     const reference = this.judge.reference(bench.per_parse, entry.action);
     const evidence = this.judge.judge(counts, reference);
-    const status = this.tones.tone(ROTATION_BUTTON_FAMILY, evidence);
+    const status = this.tones.tone(ROTATION_BUTTON_FAMILY, evidence, pull.caps);
     return {
       ...base, you: round(counts.right / counts.moments, SHARE_DIGITS), right: counts.right, moments: counts.moments, n: reference.length,
       status, unjudged: null, message: `You got ${counts.right} of ${counts.moments} moments right.${this.against(reference)}${this.aim(status, counts, evidence.target)}`,
