@@ -145,7 +145,7 @@ export class BurstFeatureService {
 
   /** A null player is a bench-only view, which has no damage of the player's to judge. */
   private burstAdapter(bench: BurstBench, player: PlayerDamage | null): WindowViewAdapter<BurstMapAnchor> {
-    const references = bench.windows.map(window => this.judge.reference(window, bench.per_parse ?? [], bench.sources));
+    const references = bench.windows.map(window => this.judge.reference(window, bench.per_parse ?? [], bench.sources, player?.aliveSpans));
     const measures = bench.windows.map(window => player ? this.judge.measure(player.perS, window, player.aliveSpans) : null);
     return {
       status: (window, _playerDamage, index) => player === null

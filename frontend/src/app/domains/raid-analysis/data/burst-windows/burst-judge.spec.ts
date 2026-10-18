@@ -146,6 +146,16 @@ describe('BurstJudgeService reference', () => {
     expect(judges.reference(window(0), perParse, sources([FIGHT_S, FIGHT_S]))).toEqual([1, 1]);
   });
 
+  it('reads each top log\'s average over the player\'s alive time, so a pull cut short compares like with like', () => {
+    const CUT_S = WINDOW_AT_S + WINDOW_S;
+    const EXTRA = 30;
+    const perParse = [{ damage_per_s: steadyWithBurst(WINDOW_AT_S, EXTRA) }];
+    const cut = judges.reference(window(0), perParse, sources([FIGHT_S]), [[0, CUT_S]]);
+
+    expect(cut).toEqual([judges.measure(steadyWithBurst(WINDOW_AT_S, EXTRA, CUT_S), WINDOW, [[0, CUT_S]])?.amplification]);
+    expect(cut[0]).toBeLessThan(judges.reference(window(0), perParse, sources([FIGHT_S]))[0] ?? 0);
+  });
+
   it('leaves out a top log whose kill ends before the window does', () => {
     const SHORT_S = WINDOW_AT_S + WINDOW_S - 1;
     const perParse = [{ damage_per_s: steadyWithBurst(WINDOW_AT_S, 0) }, { damage_per_s: steadyWithBurst(WINDOW_AT_S, 0, SHORT_S) }];

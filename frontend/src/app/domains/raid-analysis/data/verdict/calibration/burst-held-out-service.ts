@@ -22,7 +22,7 @@ export class BurstHeldOutService {
     return fold.windows.flatMap(window => {
       const measured = this.judges.measure(log.damagePerS, window, log.model.aliveSpans);
       if (!measured) return [];
-      const evidence = this.judges.judge(measured.amplification, this.judges.reference(window, fold.per_parse, fold.sources), window);
+      const evidence = this.judges.judge(measured.amplification, this.judges.reference(window, fold.per_parse, fold.sources, log.model.aliveSpans), window);
       return this.rows.row(BURST_WINDOW_FAMILY, evidence, log.model, { fromS: window.time_s, toS: window.time_s + window.window_length_s });
     });
   }

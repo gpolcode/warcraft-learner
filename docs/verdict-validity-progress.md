@@ -573,3 +573,59 @@ Branch `claude/verdict-validity-p5b-calibration-data`, PR against `claude/verdic
 - The full report arrives with the first hourly ingest after the stack reaches main (version 44 re-bench); expect `defensive.uses` to arm amber, `gear.enchant_missing` to stay amber and every other amber or red family to stay a comparison until package 6 and the constructs raise detection (late opener 34%, gap 19%, downtime 3%, defensive first use 4%, defensive gap 7%, window 0%).
 - `rotation.never_used` needs an availability gate on the reference's first use before the judged end, or the truncation and death invariants keep it demoted.
 - A new page that judges a family must add the family to its card's `notGraded` call.
+
+## Package 6a: Burst windows as amplification on the common span (done)
+
+Branch `claude/verdict-validity-p6a-burst-amplification`, PR against `claude/verdict-validity-p5b-calibration-data`.
+
+### Done
+
+- **Baked measure.** `BurstBench.per_parse` (aligned with `sources`, optional for older benches): each accepted top log's `damage_per_s`, whole seconds from the pull, hits outside the fight clamped into the first or last second, rounded. `BurstJudgeService.series` builds it at ingest and for the player at runtime. `INGEST_VERSION` 45. Bench files grow from about 10 KB to about 30 KB.
+- **Construct.** `BurstJudgeService.measure(perS, window, aliveSpans)`: the window's span in whole seconds (start rounded, length rounded, at least 1 s), searched at every offset within `effectFloors.timingS` (5 s) for the most damage, over the log's damage per alive second (the seconds that start inside an alive span). Returns `{ damage, amplification, startS, lengthS }`; null when no searched span fits the series or no damage was dealt while alive. Raw damage is the context printed in the message; the headline and the range bar are the multiple.
+- **Reference.** `reference(window, per_parse, sources, aliveSpans?)`: every accepted top log whose kill (`duration_s`) reaches the window's end, measured with the same function, its average read over the player's own alive spans clipped to its kill (a pre-fight view passes none and reads each whole kill). Members no longer form the reference; `members` stay for the pre-fight count and the leave-one-out respan.
+- **Rule.** `judge(amplification, reference, window)`: `interval` below, floor `timingS / lengthS` (the timing floor's seconds of the log's own average, spread over the window). Amber at most, no remedy.
+- **Family** `burst.window` version 2, `pendingRebuild: null`, reference "every accepted top log whose kill reaches the window", new construct, claim, copy and limits.
+- **Copy.** Graded: "You dealt 1.5K here, 1.49x your pull average, less than the 5 top logs. Aim for 1.5x or more." Comparison: "You dealt 1.5K here, 1.5x your pull average. The 5 top logs average 2.0x here." Under 5: "Only 4 top logs reach this window, too few to judge." No per-log damage baked: "No top log carries its own damage for this window, so it is not judged." No damage while alive: "You dealt no damage while alive, so this window is not judged." The multiple prints one more digit while it reads as its own target.
+- **Card.** `WindowViewAdapter.overview` lets a card supply the headline figures in its own unit (the window's player figure is dropped when muted); the burst adapter gives the player's multiple and the top logs' mean, min and max multiple. `wl-window-comparison` gains `metricUnit` (`damage` or `multiple`, new `FormatMultiplePipe`), prints "Not measured" for a missing headline; burst labels are "Damage vs pull average" and "Damage vs pull average, top range". The "Nothing flagged" count reads the per-log reference. `findPlayerBurstWindows` no longer overwrites `window_damage` (only the ability rows read it).
+- **Legacy window words retired.** `WindowStatus` is `'muted' | Tone`; `LOOK`, `isOnContract`, the delta's `better` state and `wl-compact-ability-row`'s `toned`, `higherIsBetter` and colored gap and casts are gone: no rule grades one ability, so its row prints numbers only.
+- **Harness.** `LeaveOneOutService.foldBurst` drops the held-out log and respans each window on its remaining members (median start, mean length) at the transform's `CLUSTER_MIN_FRAC` (0.4, now exported). `BurstHeldOutService.judge` measures the held-out log on every folded window, whether or not its own burst formed it, through `measure`, `reference` and `judge`, with the page's gate (a window a death or the pull's end explains is no test). `HeldOutCaseService` makes burst cases for damage specs (none for healers) and names a burst bench without `per_parse` unfoldable. `InjectedMistakeService` makes `shift-burst-15s` (new `VERDICT_CHOICES.calibration.burstShiftS`): per folded window, the log's best span moves 15 s later and the 15 s it displaced come earlier, total kept; none when the shift would leave the pull. `PerturbationService` zeroes damage past a wipe and while dead, moves each second's damage up to the jitter away (total kept), scales damage, and leaves lust to rotation. `burst.window` joins the damage-scale invariant (a multiple is scale-free).
+- **E2E.** The burst cards read the new labels, a multiple or "Not measured" for the headline, the delta only when drawn (a gh-pages bench before version 45 has no top figure), and the message by shape.
+
+### Calibration test data and its cost
+
+- One re-run of the one-off data workflow on this branch (run 39166421640, removed in the PR's last commit), seeded from `calibration-testdata` and re-benching Assassination Rogue, Balance Druid and Protection Paladin on 3470, 3445 and 3455 at version 45. Holy Paladin keeps its version 44 benches (a healer has no burst card, and nothing else it bakes changed). It spent 347 points (5.75 startup plus nine encounters from 20 to 53 each); 637 of 3,600 were left after it, against E2E's 50. `calibration-testdata` was force-updated; gh-pages and main were not touched, and the response cache was not saved.
+
+### The measured report (rules' tone, before the caps)
+
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate`:
+
+| Family | Tests | Amber rate | Amber bound | Detection | Verdict |
+|---|---|---|---|---|---|
+| burst.window | 423 | 0.7% | 1.8% | 136 of 398 (34%) | comparison: detection under 70% (and under the 500 tests minimum on the subset) |
+
+- Page load: DPS 0.72 amber per held-out pull (0.68 before), tank 0.57 (0.53), healer unchanged; red 0.00. Inside the 1.0 budget.
+- Invariants: truncation, both deaths and jitter hold for `burst.window`; damage scale leaves it unchanged. Every other family's line is as in package 5b.
+- Why detection stays low: a top log with no burst at all (1.0x) is still inside the interval on 52% of the held-out windows (42% with no floor), because the other top logs spread a median 0.5x around a median 2.2x on windows of a median 11 s. The spread, not the floor, bounds detection; the offset search (5 s) also recovers part of a 15 s shift on windows longer than 10 s. The harness keeps the family a comparison, which is the intended fallback.
+
+### Decisions and deviations
+
+- **A per-second series, not a per-window value.** 5.4.1 names "window damage on the common span" as the baked measure. The leave-one-out fold respans each window on its remaining members, so a value baked on the full bench's span would leak the held-out log; the series lets the harness and the runtime measure any span through the one function. Not a deviation from the data shape's intent: it is the per-parse measure at a finer grain.
+- **The offset search radius is the timing floor (5 s)**, no new chosen number; the effect floor is the same 5 s spread over the window. The 15 s shift lies outside the search on a window of 10 s or less.
+- **Same span on both sides** includes time: each top log's average is read over the player's alive spans clipped to its kill. Reading top logs over their whole kill failed the truncation invariant (0.009 to 0.017), since a cut pull's average is opener-heavy.
+- **Every accepted top log whose kill reaches the window** is the reference, not the members that formed it; a log with a shorter kill is left out rather than measured on a fragment.
+- The detection result is the harness demoting the family, not a deviation.
+- Contrast lift (5.7's "must pass contrast lift") waits for package 7a.
+
+### Drift against 6882b59
+
+- `window-view-service.ts:98` (the fragment check) is at `:107` (`judgedAs`, `PullModelService.causeOf`). `burst-feature-service.ts:85-86` was already gone (4c).
+
+### Seams stubbed
+
+- None in this package. The pre-fight view reads each top log's whole kill, as it has no player.
+
+### For the next package
+
+- `BurstBench.per_parse[].damage_per_s` is on disk for the three re-benched specs and arrives with the full ingest at version 45; a gh-pages bench before 45 has none, so its windows render "No top log carries its own damage" and the harness names it unfoldable.
+- Detection for `burst.window` is bounded by the top logs' spread; a sharper construct (6b to 6f do not touch it) or the contrast cohort (7a) is where it can improve, not the floor.
+- `wl-window-comparison` colors only through a `Tone`; a new window card must return one from its adapter.

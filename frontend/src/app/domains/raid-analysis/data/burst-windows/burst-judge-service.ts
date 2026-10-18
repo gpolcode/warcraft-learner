@@ -99,13 +99,14 @@ export class BurstJudgeService {
     return { ...best, lengthS, amplification: best.damage / (lengthS * rate) };
   }
 
-  /** Every top log whose kill reaches the window's end, measured as a whole pull alive. */
-  reference(window: BurstWindow, perParse: readonly BurstParseMeasures[], sources: readonly ParseRanking[]): number[] {
+  /** Every top log whose kill reaches the window's end, its average read over the player's own alive time, so both sides share the span; a pre-fight view passes no spans and reads each whole kill. */
+  reference(window: BurstWindow, perParse: readonly BurstParseMeasures[], sources: readonly ParseRanking[], spans?: readonly AliveSpan[]): number[] {
     const { startS, lengthS } = this.wholeSpan(window);
     return perParse.flatMap((parse, index) => {
       const fightS = sources[index]?.duration_s ?? parse.damage_per_s.length;
       if (startS + lengthS > fightS) return [];
-      const measured = this.measure(parse.damage_per_s, window, [[0, fightS]]);
+      const clipped = (spans ?? [[0, fightS]]).flatMap(([fromS, toS]): AliveSpan[] => fromS < fightS ? [[fromS, Math.min(toS, fightS)]] : []);
+      const measured = this.measure(parse.damage_per_s, window, clipped);
       return measured ? [measured.amplification] : [];
     });
   }
