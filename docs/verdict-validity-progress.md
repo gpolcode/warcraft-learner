@@ -194,3 +194,51 @@ None for this package: `list-finding-service.ts:71-74` (the button status) and `
 - Mixed rows: a producer on the contract sets `severity` to the `Tone` and `family`; muted rows set `unjudged`. Row mapping goes through `FindingRowsService.rowSeverity`.
 - A judge takes a measure and a reference list aligned with `sources`; build both through the same method the transform uses.
 - `DecisionRuleService.count` needs `users`.
+
+## Package 4b: cadence checks (done)
+
+Branch `claude/verdict-validity-p4b-cadence`, PR against `claude/verdict-validity-p4a-rotation`.
+
+### Done
+
+- **Families** in `FINDING_REGISTRY`, each declared beside its judge:
+  - `rotation.late_opener` (`data/rotation/cadence-judge-service.ts`): tier amber, cost medium, `interval` above with the 2 s floor (`VERDICT_CHOICES.effectFloors.openerS`); pending unused ready time.
+  - `rotation.cooldown_gap` (same file): tier amber, cost medium, `interval` above with the 5 s floor (`effectFloors.timingS`); one row per cooldown; pending unused ready time.
+  - `rotation.hold` (same file): tier blue, cost medium, `consensus` alone (k = the hold target's `count`, n = its `total_samples`); construct final (`pendingRebuild: null`).
+  - `rotation.downtime` (`data/rotation/downtime-judge-service.ts`): tier amber, cost medium, `interval` below; pending idle time beyond the GCD or cast time.
+- **Judges, callable at ingest with a top log as the player.** Each has `measure*`, `reference*` (over `per_parse`, aligned with `sources`) and `judge*`:
+  - Opener: `measureOpener(castTimesS)` is the first use of `CooldownUseJudgeService.castTimesS`, the measure ingest bakes into `per_parse[].cd_casts_s`; the reference is each top log's first baked use.
+  - Gap: `measureGap(castTimesS, spans, holds)` is the longest stretch between two uses lying wholly inside the spans, leaving out a stretch that ends within a hold target's band of its `target_s`. Top logs pass one infinite span.
+  - Hold: `measureHold(castTimesS, target)` is the latest use before `target_s - band_s` whose cooldown still runs at `target_s` (strict), null when any use lands within the band.
+  - Downtime: `measure(castTimesS, thresholdS, spans)` returns idle seconds, alive seconds and the casting share; ingest's `computeEfficiencyThresholds` calls it with `[[0, duration]]` to bake `per_parse[].efficiency_pct`, the runtime with the alive spans. The baked values are unchanged.
+- **Rules and tone.** Every producer passes the rule's evidence to `ToneService.tone`. An opener, gap or downtime row is emitted only when the evidence is graded, so it is amber; under `minReferenceN` top logs (an old bench without `per_parse` included) nothing is emitted, never an unmeasured color. A hold row is blue from 5 top logs, a neutral comparison under that.
+- **Rows.** Opener, gap and downtime rows print `n` in the measured unit (`top 00:05, 10 top logs`) and in the message, with `Evidence.target` as the target; `fmtApart` (`analysis-math.ts`) and a seconds fallback keep the value and the target from printing as the same string. The downtime fix quotes only the idle seconds past the top logs' average share over the player's alive time. Hold rows name "k of n top raiders hold X for m:ss" and carry no remedy (blue voice). Hold findings use the category `cooldown_hold` (`hold until` chip); `hold_suggestion` stays the defensive card's.
+- **Timeline.** Opener and hold findings carry their spans and run through `foldFindings` as before. The gap measure skips any stretch the player was not alive for, so a death between two uses is never a gap row; the gap finding still carries its span and goes through `foldFindings`.
+- **Empty state.** The Downtime card always renders: "Nothing flagged. Your casting time was checked against N top logs.", "Nothing flagged. None of the N top logs carries a casting time to compare with." on a bench without per-log shares, "Nothing flagged. No casting time was judged in this pull." under two casts or on the empty view (`RotationPlayerView.downtimeEmpty`). E2E checks the card unconditionally.
+- Rotation no longer calls `CastCadenceService.checkFirstCastDelay`, `checkGaps` or `HoldTargetsService.holdSuggestionFindings`; `ROTATION_VOICE` is gone.
+
+### Decisions and deviations
+
+- **Holds on the plan clock.** The 5.7 holds row ("Copy and clock now") is implemented: the target is the bench's absolute `target_s`, matched by time, not the prior-relative band. This is the CON-8 / TIME-5 fix; the plan page already shows `target_s`.
+- **Gap test shape.** The 5.7 row gives no rule; "one cadence test per cooldown" is the `interval` rule on each log's longest unexplained wait. Holds explain a wait by time (within `band_s` of a target), the same on both sides.
+- **Gap over alive time.** A wait crossing a death is left out of the measure rather than folded, so a later real gap still counts; the Offensives caption no longer counts a folded gap under the death.
+- **Downtime floor.** The 5 s timing floor is converted to the construct's unit as `100 * 5 / aliveS` percentage points, so no new chosen number; the opener's 2 s floor is the new `effectFloors.openerS`.
+- **Cost class medium** for the opener, gap and downtime (amber cap); the hold family is medium too, since a low cost class would cap an all-agree consensus (amber evidence) to neutral.
+- **Graded rows only** for opener, gap and downtime: a neutral comparison row for every cooldown would flood the card, and the plan view already shows the top timings.
+- The opener keeps the use-share gate (`usedByMajority`), as in 4a.
+- No `INGEST_VERSION` bump: no bench field or baked value changed.
+
+### Drift against 6882b59
+
+- `cast-cadence-service.ts:81` (gap test) is at `:98`; `rotation-feature-service.ts:205-207` (efficiency) was at `:250-252` before this package. Both are now off the rotation path.
+
+### Seams stubbed
+
+- `CastCadenceService.checkUseCount`, `checkFirstCastDelay`, `checkGaps` and `HoldTargetsService.holdSuggestionFindings` stay for the defensive card (package 4d).
+- Lint ignores unchanged: `rotation-feature-service.ts` still grades Bloodlust (4f) and the success chip; `cast-cadence-service.ts` and `hold-targets-service.ts` still grade defensive rows (4d). The new judges sit outside the ignores.
+- Calibration does not cap the tone yet (package 5); the harness is not built.
+
+### For the next package
+
+- `CadenceJudgeService` takes cast times and `per_parse`, so the defensive card (4d) can reuse `measureOpener`, `measureGap` and `measureHold` once `per_parse.def_casts_s` feeds the references.
+- `fmtApart(value, edge)` prints a flagged value and its target apart.

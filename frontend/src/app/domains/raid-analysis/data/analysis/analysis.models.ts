@@ -107,4 +107,5 @@ export const CAT_LABEL: Record<string, string> = {
   cooldown_alignment: 'Bloodlust',
   cast_efficiency: 'downtime',
   hold_suggestion: 'hold until',
+  cooldown_hold: 'hold until',
 };

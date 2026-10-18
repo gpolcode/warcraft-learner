@@ -17,6 +17,8 @@ export const VERDICT_CHOICES = {
     lostUses: 1,
     lostUsesShare: 0.25,
     timingS: 5,
+    /** A first use top logs agree on to the second still tolerates this much. */
+    openerS: 2,
   },
   /** Paired consensus colors only when this share of the top logs agree; alone it needs all of them. */
   pairedConsensusShare: 0.8,
