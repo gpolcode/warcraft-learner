@@ -16,6 +16,7 @@ import {
 } from './calibration-harness';
 import { BurstHeldOutService } from './burst-held-out-service';
 import { DefensiveParseMeasures } from '../../defensive/defensive-data-source';
+import { RotationParseMeasures } from '../../rotation/rotation-data-source';
 
 const folds = TestBed.inject(LeaveOneOutService);
 const heldOutRows = TestBed.inject(HeldOutRowService);
@@ -74,6 +75,36 @@ describe('RotationHeldOutService', () => {
     const diedInTheWait = heldOutRows.withDeaths(FIGHT_S, FIGHT_S, [[100, 150]]);
 
     expect(levelsOf(judgeRotation(rotationLog({ cd_casts_s: { [SB]: SKIPPED } }), TOP_N, diedInTheWait), 'rotation.ready_time')).toEqual(['neutral']);
+  });
+});
+
+describe('RotationHeldOutService Bloodlust', () => {
+  /** Every top log lusted at 1:40, which the 95s press's 20s effect overlaps. */
+  const LUST_S = 100;
+  const lusting = (over: Partial<RotationParseMeasures> = {}): RotationParseMeasures => rotationLog({ lust_s: LUST_S, ...over });
+  const NOT_UP = { [SB]: [[5, 25], [185, 205], [275, 295]] as [number, number][] };
+  const judgeLust = (held: RotationParseMeasures, others = lusting(), model = heldOutRows.wholePull(FIGHT_S)) => {
+    const full = bench({ sources: benchSources(TOP_N), sample_count: TOP_N, per_parse: [held, ...Array.from({ length: TOP_N - 1 }, () => others)] });
+    return levelsOf(rotation.judge(folds.foldRotation(full, HELD_OUT), { measures: held, model, talents: null }), 'rotation.bloodlust');
+  };
+
+  it('makes one neutral test of a top log that had the cooldown up during its lust like the others', () => {
+    expect(judgeLust(lusting())).toEqual(['neutral']);
+  });
+
+  it('flags a top log whose cooldown was not up during its lust while every other one had it up', () => {
+    expect(judgeLust(lusting({ cd_up_s: NOT_UP }))).toEqual(['amber']);
+  });
+
+  it('counts no test on a log, or against a fold, without the effects baked', () => {
+    expect(judgeLust(lusting({ cd_up_s: undefined }))).toEqual([]);
+    expect(judgeLust(lusting({ cd_up_s: NOT_UP }), lusting({ cd_up_s: undefined }))).toEqual([]);
+  });
+
+  it('counts no test when the log died during its lust', () => {
+    const diedInLust = heldOutRows.withDeaths(FIGHT_S, FIGHT_S, [[LUST_S + 10, LUST_S + 60]]);
+
+    expect(judgeLust(lusting({ cd_up_s: NOT_UP }), lusting(), diedInLust)).toEqual([]);
   });
 });
 

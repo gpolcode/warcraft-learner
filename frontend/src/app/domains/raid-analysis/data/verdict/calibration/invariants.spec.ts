@@ -58,13 +58,13 @@ describe('A death inserted into a top pull', () => {
 });
 
 describe('A lust moved outside the top logs\' band', () => {
-  /** Every other top log lusted at 1:00 and pressed it 5s in. */
+  /** Every other top log lusted at 1:00 and had it up from 5s in. */
   const LUST_S = 60;
-  const perParse = Array.from({ length: TOP_N }, () => rotationLog({ lust_s: LUST_S, cd_casts_s: { [SB]: [LUST_S + 5] } }));
+  const perParse = Array.from({ length: TOP_N }, () => rotationLog({ lust_s: LUST_S, cd_up_s: { [SB]: [[LUST_S + 5, LUST_S + 25]] } }));
 
   for (const shiftedS of CHOICES.lustShiftsS) {
     it(`produces no judged row for a lust at ${shiftedS}s`, () => {
-      const rows = lust.findings(SB, [], shiftedS, perParse);
+      const rows = lust.findings(SB, [], lust.lustSpan(shiftedS, null), { perParse, killsS: [] });
 
       expect(rows.every(row => row.severity === 'neutral')).toBe(true);
     });

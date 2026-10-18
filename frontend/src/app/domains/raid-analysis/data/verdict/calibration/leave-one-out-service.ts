@@ -1,14 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { BurstWindow } from '../../analysis/analysis.models';
 import { CastCadenceService } from '../../analysis/cast-cadence-service';
-import { CadenceBenchmark, PerCdBenchmark } from '../../encounter/encounter.models';
-import { BloodlustJudgeService } from '../../rotation/bloodlust-judge-service';
+import { CadenceBenchmark } from '../../encounter/encounter.models';
 import { RotationBench } from '../../rotation/rotation-data-source';
 import { DefensiveBench } from '../../defensive/defensive-data-source';
 import { GearBench } from '../../gear/gear-data-source';
 import { BurstBench, BurstParseMeasures } from '../../burst-windows/burst-data-source';
 import { CLUSTER_MIN_FRAC } from '../../burst-windows/burst-transform-service';
-import { avgOr, medianOr, stddevOr } from '../../analysis/analysis-math';
+import { avgOr, medianOr } from '../../analysis/analysis-math';
 import type { ParseRanking } from '../../wcl/wcl.models';
 
 /** Share of the remaining top logs a defensive window needs to form, as the defensive transform clusters it. */
@@ -39,7 +38,6 @@ interface CadenceButton {
 @Injectable({ providedIn: 'root' })
 export class LeaveOneOutService {
   private readonly castCadence = inject(CastCadenceService);
-  private readonly lust = inject(BloodlustJudgeService);
 
   /** Drops index `i` from `sources` and `per_parse`; every later index moves down by one. */
   fold<P, B extends Folded<P>>(bench: B, i: number): B {
@@ -59,7 +57,7 @@ export class LeaveOneOutService {
     return {
       ...folded,
       major_cooldowns: cooldowns,
-      per_cd_benchmarks: Object.fromEntries(cooldowns.map(cooldown => [cooldown.name, this.cdBenchmark(cooldown, castsOf(cooldown.name), folded)])),
+      per_cd_benchmarks: Object.fromEntries(cooldowns.map(cooldown => [cooldown.name, this.cadenceBenchmark(cooldown, castsOf(cooldown.name), folded.sources)])),
     };
   }
 
@@ -102,18 +100,6 @@ export class LeaveOneOutService {
 
   private castByAny(perParse: readonly Readonly<Record<string, readonly number[]>>[], name: string): boolean {
     return perParse.some(casts => (casts[name]?.length ?? 0) > 0);
-  }
-
-  private cdBenchmark(cooldown: CadenceButton, casts: number[][], folded: Folded<RotationBench['per_parse'][number]>): PerCdBenchmark {
-    const offsets = folded.per_parse
-      .map((parse, index) => this.lust.measureOffset(casts[index] ?? [], parse.lust_s))
-      .filter(offset => offset !== null);
-    return {
-      ...this.cadenceBenchmark(cooldown, casts, folded.sources),
-      avg_bl_offset_s: avgOr(offsets, null),
-      stddev_bl_offset_s: stddevOr(offsets, null),
-      bl_pct: casts.length ? Math.round(offsets.length / casts.length * 100) : 0,
-    };
   }
 
   /** A log's fight length is its ranking's; a log without one is left out of the use rate, as the transform leaves out a zero-length fight. */

@@ -3,6 +3,7 @@ import { DataSource } from '../data-source/data-source';
 import { PerCdBenchmark } from '../encounter/encounter.models';
 import { PlanCooldown, PriorityList } from '../plan/plan.models';
 import { BenchHeader } from '../analysis/bench-pipeline-service';
+import { AuraSpan } from '../defensive/defensive-data-source';
 import type { ButtonCounts } from './priority-list/list-check-service';
 
 export interface ShareRange {
@@ -32,6 +33,8 @@ export interface RotationParseMeasures {
   phase_starts: { id: number; start_s: number }[];
   /** Per plan cooldown, every use, which carries its count and first cast. */
   cd_casts_s: Record<string, number[]>;
+  /** Per plan cooldown, `BloodlustJudgeService.effectSpans` over the whole pull; absent on a bench before they were baked. */
+  cd_up_s?: Record<string, AuraSpan[]>;
   buttons: Record<string, ButtonCounts>;
 }
 

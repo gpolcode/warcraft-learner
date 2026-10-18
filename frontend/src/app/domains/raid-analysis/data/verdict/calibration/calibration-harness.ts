@@ -13,9 +13,12 @@ export const FIGHT_S = 300;
 /** Ninety seconds apart, the cooldown's own cadence, from a 5s opener. */
 export const ON_CADENCE = [5, 95, 185, 275];
 
+/** Each use's effect, up for 20s from the press. */
+const ON_CADENCE_UP = ON_CADENCE.map((castS): [number, number] => [castS, castS + 20]);
+
 /** A top log's rotation measures: on cadence, idle 60s (a fifth) of the pull, no lust. */
 export function rotationLog(over: Partial<RotationParseMeasures> = {}): RotationParseMeasures {
-  return { idle_s: [[100, 160]], lust_s: null, phase_starts: [], cd_casts_s: { [SB]: ON_CADENCE }, buttons: {}, ...over };
+  return { idle_s: [[100, 160]], lust_s: null, phase_starts: [], cd_casts_s: { [SB]: ON_CADENCE }, cd_up_s: { [SB]: ON_CADENCE_UP }, buttons: {}, ...over };
 }
 
 /** Every fixture defensive window's start; it runs five seconds. */

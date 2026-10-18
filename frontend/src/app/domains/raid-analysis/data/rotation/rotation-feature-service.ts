@@ -6,7 +6,6 @@ import { NEVER_USED_FAMILY } from './cooldown-use-judge-service';
 import { COOLDOWN_HOLD_FAMILY } from './cadence-judge-service';
 import { READY_TIME_FAMILY, ReadyTimeJudgeService, ReadyVoice } from './ready-time-judge-service';
 import { DOWNTIME_FAMILY } from './downtime-judge-service';
-import { BLOODLUST_ALIGNMENT_FAMILY, BLOODLUST_TIMING_FAMILY } from './bloodlust-judge-service';
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { AnalysisFinding, CAT_LABEL } from '../analysis/analysis.models';
@@ -30,7 +29,9 @@ import { SpecRoleService } from '../analysis/spec-role-service';
 import { CooldownUseJudgeService } from './cooldown-use-judge-service';
 import { CadenceJudgeService, CastsByName } from './cadence-judge-service';
 import { DowntimeJudgeService } from './downtime-judge-service';
-import { BloodlustJudgeService } from './bloodlust-judge-service';
+import { BLOODLUST_FAMILY, BloodlustJudgeService } from './bloodlust-judge-service';
+import { AuraSpan } from '../defensive/defensive-data-source';
+import { WclAbility } from '../wcl/wcl.models';
 
 export interface CdPlanRow {
   name: string;
@@ -42,7 +43,7 @@ export interface CdPlanRow {
   usedSampleCount: number;
   sampleCount: number;
   usesPerMin: number | null;
-  /** Most top logs whose raid lusted mid-fight pressed it for their lust. */
+  /** At least half of the top logs whose raid lusted mid-fight had it up during their lust. */
   bloodlust: boolean;
   holds: { castIndex: number; targetS: number }[];
 }
@@ -76,7 +77,7 @@ interface RotationNotGraded {
 }
 
 const OFFENSIVE_FAMILIES = [
-  READY_TIME_FAMILY, NEVER_USED_FAMILY, COOLDOWN_HOLD_FAMILY, BLOODLUST_ALIGNMENT_FAMILY, BLOODLUST_TIMING_FAMILY,
+  READY_TIME_FAMILY, NEVER_USED_FAMILY, COOLDOWN_HOLD_FAMILY, BLOODLUST_FAMILY,
 ];
 
 export interface RotationPlanView {
@@ -87,6 +88,7 @@ export interface RotationScanInput {
   model: PullModel;
   castEvents: TimedEvent[];
   buffEvents: TimedEvent[];
+  abilities: readonly WclAbility[];
   cooldowns: PlanCooldown[];
   bench: RotationBench;
   talents: ReadonlyMap<number, number> | null;
@@ -218,7 +220,7 @@ export class RotationFeatureService {
     const { findings, folded, checked, downtimeEmpty } = this.analyzeRotationFindings({
       model,
       castEvents: this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime),
-      buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime),
+      buffEvents: this.wclProjections.withRelativeS(buffs, fight.startTime), abilities,
       cooldowns: bench.major_cooldowns, bench,
       talents: this.gearExtract.pickedTalents(this.gearExtract.selectCombatantInfo(combatants, playerId)), caps,
     });
@@ -234,8 +236,7 @@ export class RotationFeatureService {
   async loadPlanView(spec: string, encounterId: number): Promise<Result<RotationPlanView>> {
     const bench = await this.source.getBench(spec, encounterId);
     if (!bench.ok) return bench;
-    const stored: Partial<RotationBench> = bench.value;
-    return Results.ok({ rows: this.buildCdPlan(bench.value.major_cooldowns, bench.value.per_cd_benchmarks, bench.value.ability_icons, stored.per_parse ?? []) });
+    return Results.ok({ rows: this.buildCdPlan(bench.value.major_cooldowns, bench.value.per_cd_benchmarks, bench.value.ability_icons, this.topLogs(this.withList(bench.value))) });
   }
 
   /** `events` are the casts and begincasts inside the judged span; the empty state names how many top logs judged it. */
@@ -251,7 +252,7 @@ export class RotationFeatureService {
   /** `castTimesS` are fight-relative seconds, ascending, inside the judged span. Null when the cooldown went unused and the player's talents do not show it. */
   protected analyzeOneCooldown(
     cd: PlanCooldown, castTimesS: number[], cdBench: PerCdBenchmark | undefined,
-    model: PullModel, talents: ReadonlyMap<number, number> | null, top: TopLogs = NO_TOP_LOGS, caps?: FamilyCaps,
+    model: PullModel, talents: ReadonlyMap<number, number> | null, top: TopLogs = NO_TOP_LOGS, caps?: FamilyCaps, upS: readonly AuraSpan[] = [],
   ): { onPlan: AnalysisFinding | null; scan: CooldownScan } | null {
     const cdName = cd.name;
     const actual = castTimesS.length;
@@ -261,7 +262,7 @@ export class RotationFeatureService {
     if (!cdBench) return { onPlan, scan: { issues: [], holds: [], folded: this.pullModel.noFolds() } };
 
     const uses = this.majorityChecks(cd, castTimesS, cdBench, { model, talents, top, caps });
-    const checked = this.lust.findings(cdName, castTimesS, model.lust?.startS ?? null, top.perParse, caps);
+    const checked = this.lust.findings(cdName, upS, this.lust.lustOf(model.lust?.startS ?? null, model), top, caps);
     const checkedHolds = this.cadence.holdFindings(cdName, castTimesS, cdBench.hold_targets, caps);
     const { kept, folded } = this.pullModel.foldFindings(model, checked);
     // Ready time and never-used checks are measured on alive time, so they carry no span to fold.
@@ -297,17 +298,19 @@ export class RotationFeatureService {
   }
 
   protected analyzeRotationFindings(input: RotationScanInput): RotationScan {
-    const { model, castEvents, buffEvents, cooldowns, bench, talents, caps } = input;
+    const { model, castEvents, buffEvents, abilities, cooldowns, bench, talents, caps } = input;
     const findings: AnalysisFinding[] = [];
     let folded = this.pullModel.noFolds();
     let checked = 0;
 
     const upAtPull = this.auraWindows.upAtPull(buffEvents);
+    const auras = this.auraWindows.buildAuraWindows(buffEvents);
 
     const perCdBench = bench.per_cd_benchmarks;
     for (const cd of cooldowns) {
       const castTimesS = this.cooldownUses.castTimesS(castEvents, cd.spell_id, upAtPull, model.judgedEndS);
-      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], model, talents, this.topLogs(bench), caps);
+      const upS = this.lust.effectSpans(this.auraWindows.spansNamed(auras, cd, abilities), castTimesS, cd.duration ?? 0, model.fightDurationS);
+      const result = this.analyzeOneCooldown(cd, castTimesS, perCdBench[cd.name], model, talents, this.topLogs(bench), caps, upS);
       if (!result) continue;
       checked += 1;
       folded = this.pullModel.addFolds(folded, result.scan.folded);
@@ -413,36 +416,36 @@ export class RotationFeatureService {
     };
   }
 
-  private cdPlanUsageOf(name: string, cdBench: PerCdBenchmark | undefined, perParse: readonly RotationParseMeasures[]): CdPlanUsage {
+  private cdPlanUsageOf(name: string, cdBench: PerCdBenchmark | undefined, top: TopLogs): CdPlanUsage {
     const usage = this.castCadence.cadencePlanUsage(cdBench);
     if (!cdBench) return { ...usage, usesPerMin: null, bloodlust: false };
     return {
       ...usage,
       usesPerMin: this.castCadence.usedByMajority(cdBench) ? cdBench.uses_per_min.avg : null,
-      bloodlust: this.lust.wantsLust(this.lust.reference(perParse, name)),
+      bloodlust: this.lust.wantsLust(this.lust.reference(top.perParse, top.killsS, name)),
     };
   }
 
   private cdPlanRow(
-    cd: PlanCooldown, cdBench: PerCdBenchmark | undefined, abilities: AbilityIcons, perParse: readonly RotationParseMeasures[],
+    cd: PlanCooldown, cdBench: PerCdBenchmark | undefined, abilities: AbilityIcons, top: TopLogs,
   ): CdPlanRow {
     const ability = abilities[cd.spell_id];
     if (!ability) this.logger.logWarn('buildCdPlan: ability id missing from ability map', cd.spell_id);
     return {
-      name: cd.name, spellId: cd.spell_id, icon: ability?.icon ?? '', ...this.cdPlanUsageOf(cd.name, cdBench, perParse),
+      name: cd.name, spellId: cd.spell_id, icon: ability?.icon ?? '', ...this.cdPlanUsageOf(cd.name, cdBench, top),
       holds: this.castCadence.holdsOf(cdBench),
     };
   }
 
   protected buildCdPlan(
     cooldowns: PlanCooldown[], benchmarks: Record<string, PerCdBenchmark>, abilities: AbilityIcons,
-    perParse: readonly RotationParseMeasures[] = [],
+    top: TopLogs = NO_TOP_LOGS,
   ): CdPlanRow[] {
     const ordered = [...cooldowns].sort((a, b) => {
       const pa = a.opener_priority ?? 99;
       const pb = b.opener_priority ?? 99;
       return pa !== pb ? pa - pb : a.name.localeCompare(b.name);
     });
-    return ordered.map(cd => this.cdPlanRow(cd, benchmarks[cd.name], abilities, perParse));
+    return ordered.map(cd => this.cdPlanRow(cd, benchmarks[cd.name], abilities, top));
   }
 }

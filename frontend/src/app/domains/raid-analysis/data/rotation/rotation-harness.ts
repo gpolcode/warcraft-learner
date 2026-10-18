@@ -7,10 +7,9 @@ export function cdBench(over: Partial<PerCdBenchmark> = {}): PerCdBenchmark {
   return {
     avg_first_cast_s: 5, stddev_first_cast_s: 2,
     avg_gap_s: 90, stddev_gap_s: 5,
-    avg_bl_offset_s: 0, stddev_bl_offset_s: 2,
     median_uses: 2,
     uses_per_min: { avg: 1, stddev: 0.1 },
-    bl_pct: 100, majority_hold: false, hold_targets: {}, sample_count: 5, used_sample_count: 5,
+    majority_hold: false, hold_targets: {}, sample_count: 5, used_sample_count: 5,
     ...over,
   };
 }

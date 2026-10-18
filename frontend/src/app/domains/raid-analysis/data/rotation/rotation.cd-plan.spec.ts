@@ -36,18 +36,19 @@ describe('buildCdPlan', () => {
     const MID_LUST_S = 120;
     const PULL_LUST_S = 1;
     const IN_LUST_OFFSET_S = 5;
-    /** Past the window's 55s trail. */
+    /** Past the 40s lust's end. */
     const OUT_OF_LUST_OFFSET_S = 120;
+    const EFFECT_S = 20;
     const TOP_LOGS = 10;
-    /** `pressed` of ten top logs lusting at `lustS` pressed Shadow Blades for it; the rest pressed it a minute after the lust window. */
-    const lusting = (lustS: number, pressed: number): RotationParseMeasures[] => Array.from({ length: TOP_LOGS }, (_unused, index) => ({
-      idle_s: null, lust_s: lustS, phase_starts: [], buttons: {},
-      cd_casts_s: { 'Shadow Blades': [index < pressed ? lustS + IN_LUST_OFFSET_S : lustS + OUT_OF_LUST_OFFSET_S] },
-    }));
+    /** `up` of ten top logs lusting at `lustS` had Shadow Blades up during it; the rest pressed it a minute after the lust. */
+    const lusting = (lustS: number, up: number): RotationParseMeasures[] => Array.from({ length: TOP_LOGS }, (_unused, index) => {
+      const pressS = index < up ? lustS + IN_LUST_OFFSET_S : lustS + OUT_OF_LUST_OFFSET_S;
+      return { idle_s: null, lust_s: lustS, phase_starts: [], buttons: {}, cd_casts_s: { 'Shadow Blades': [pressS] }, cd_up_s: { 'Shadow Blades': [[pressS, pressS + EFFECT_S]] } };
+    });
     const badge = (perParse: RotationParseMeasures[]): boolean | undefined =>
-      svc['buildCdPlan']([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': cdBench({ bl_pct: 100 }) }, abilities, perParse)[0]?.bloodlust;
+      svc['buildCdPlan']([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': cdBench() }, abilities, { perParse, killsS: [] })[0]?.bloodlust;
 
-    it('shows once half of the top logs that lusted mid-fight pressed it for their lust', () => {
+    it('shows once half of the top logs that lusted mid-fight had it up during their lust', () => {
       expect(badge(lusting(MID_LUST_S, TOP_LOGS / 2))).toBe(true);
     });
 
@@ -55,7 +56,7 @@ describe('buildCdPlan', () => {
       expect(badge(lusting(MID_LUST_S, TOP_LOGS / 2 - 1))).toBe(false);
     });
 
-    it('learns nothing from top logs that lusted on the pull, whatever the baked share says', () => {
+    it('learns nothing from top logs that lusted on the pull', () => {
       expect(badge(lusting(PULL_LUST_S, TOP_LOGS))).toBe(false);
     });
   });

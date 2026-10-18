@@ -116,9 +116,9 @@ export class EncounterCalibrationService {
     const lustS = heldOut.log.measures.lust_s;
     if (lustS === null) return [];
     return heldOut.fold.major_cooldowns.flatMap(cooldown => {
-      const reference = this.lust.reference(heldOut.fold.per_parse, cooldown.name);
+      const reference = this.lust.reference(heldOut.fold.per_parse, heldOut.fold.sources.map(source => source.duration_s), cooldown.name);
       if (!this.lust.wantsLust(reference) || this.lust.judgeBand(lustS, reference).inside) return [];
-      const rows = this.rotation.lustRows(heldOut.fold, heldOut.log, cooldown.name, heldOut.log.measures.cd_casts_s[cooldown.name] ?? []);
+      const rows = this.rotation.lustRows(heldOut.fold, heldOut.log, cooldown.name);
       return [{ family: OUTSIDE_BAND, level: rows.length ? 'amber' : 'neutral' }];
     });
   }

@@ -826,3 +826,58 @@ Branch `claude/verdict-validity-p6d-defensive-coverage`, PR against `claude/verd
 - `dead_s` is the first baked top-log death. Downtime (6c) and ready time (6b) still treat every top log as alive for its whole kill; they can read `dead_s` from the defensive bench of the same encounter.
 - The registry hash changed (both window families at version 2), so every family renders as a comparison until the next ingest recalibrates.
 - Expect each version 47 re-bench to pay one Deaths read per top log that the response cache does not hold yet.
+
+## Package 6e: Bloodlust as overlap of the cooldown's aura with the raid's lust (done)
+
+Branch `claude/verdict-validity-p6e-bloodlust-overlap`, PR against `claude/verdict-validity-p6d-defensive-coverage`.
+
+### Done
+
+- **Construct** (`BloodlustJudgeService`, one set of functions for ingest, the harness and the page):
+  - `effectSpans(auraSpans, castTimesS, durationS, fightEndS)`: per use, the aura the press opened on the player (paired through `DefensiveUsesService.uses`, so a pre-pull aura counts from 0), else the plan cooldown's stated `duration` from the press, cut at the end of the pull; overlapping effects join, edges rounded to 0.1 s. Auras are read through `AuraWindowsService.spansNamed`, so an aura under another id of the cooldown's name counts.
+  - `lustSpan(lustS, killS)`: the raid's lust from its start for `LUST_DURATION_S` (40 s, the game length of every `BLOODLUST_IDS` aura), cut at a kill. `lustOf(lustS, model)` cuts the player's at the judged end only on a kill; a wipe or a death inside the lust folds the row (`PullModelService.foldFindings` on the lust span, the held-out `HeldOutRowService.row` on the same span).
+  - `measureOverlap(spans, lust)`: seconds up inside the lust and `up` (any effect touching it, so a zero-length press inside the lust is up).
+  - `reference(perParse, killsS, name)`: every top log whose lust is mid-fight (`isMidFight`: later than `VERDICT_CHOICES.midFightLustS`, 30 s) and that carries `cd_up_s`, each measured on its own lust cut at its own kill. `wantsLust`: at least `minReferenceN` such logs and at least `lustWantShare` (0.5) of them up.
+  - `judge(overlap, reference, band)`: `consensus({ differs: not up, k: logs up, n, paired: inside the lust band })`; the band is 4f's `judgeBand` (the `interval` rule on the top logs' mid-fight lusts, 5 s floor, the player's lust mid-fight). Amber from 8 of 10 inside the band, else blue, never red, no remedy.
+  - `findings(name, spans, lust, top, caps)`: nothing without a lust, when not wanted, or when the cooldown was up; inside the band the overlap row ("Shadow Blades was up for 0s of your raid's 40s Bloodlust at 02:00. 5 of 5 top raiders who lusted mid-fight had it up for theirs.", measured "0s of 40s" / "in Bloodlust, 5 of 5 top logs had it up"); outside it the neutral context row of 4f.
+- **One family.** `rotation.bloodlust` version 2, `pendingRebuild: null`, construct, claim, availability, copy and limits on the overlap; `rotation.bloodlust_timing` and its timing row are removed (`judgeAlignment`, `judgeTiming`, `measureOffset` gone). Mistake `move-cooldown-out-of-lust`.
+- **Baked measure.** `RotationParseMeasures.cd_up_s` (optional): `effectSpans` per plan cooldown over the whole pull, baked by `RotationTransformService.summarizeCooldownCasts` from the Buffs stream and the report's abilities it already reads (no new WCL read). `PerCdBenchmark` is `CadenceBenchmark`: `bl_pct`, `avg_bl_offset_s` and `stddev_bl_offset_s` are dropped from the bench, the transform and the fold. `INGEST_VERSION` 48.
+- **Page.** `RotationScanInput` carries the report's `abilities`; `analyzeRotationFindings` builds each cooldown's effect spans with the same call and passes them to `analyzeOneCooldown`. The plan view's Bloodlust badge reads the same reference (with kills), so a bench before 48 shows none. README line 11 names the check.
+- **Tolerance of an older bench.** A bench without `cd_up_s` gives no reference, so no row, no badge and no held-out test; the harness keeps the family a comparison (0 tests).
+- **Harness.** `RotationHeldOutService.lustRows(fold, log, name)` judges the held-out log's baked `cd_up_s` against the fold on its own lust (no test when either side lacks the field, outside the band, or when a death or the judged end falls inside the lust). `InjectedMistakeService.outOfLust`: the first cooldown up during the log's lust has every effect overlapping it, and the press that opened it, moved to start 30 s (`calibration.delayS`) after the lust ends. `PerturbationService` cuts `cd_up_s` at a death or a cut like the defensive auras and jitters each span with the casts. The lust-shift invariant reads the new family through the same `lustRows`.
+- **Tests.** `bloodlust-judge.spec.ts` pairs every boundary (an effect ending at the lust start against 0.1 s before it, mid-fight at 30 s, the 0.5 want share, the 0.8 paired share, the band edge, the kill cut); the transform spec bakes `up_s` from an aura, from the stated duration and from a pre-pull aura; the feature spec judges an aura up through the lust and folds the row on a death in it; held-out, mistake and perturbation specs cover the new field.
+
+### The measured report (rules' tone, before the caps)
+
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate`: `rotation.bloodlust` 0 tests (the version 47 benches carry no `cd_up_s`); every other family and the page load are as in 6d (DPS 0.38 amber and 0.02 red per held-out pull, tank 0.33, healer 0.37; armed red 0.00), and only `defensive.window`'s truncation invariant fails, as before.
+
+### What the first full ingest measures, and what thin mid-fight lust data means
+
+- The version 48 re-bench bakes `cd_up_s` on every rotation bench; it reads no new stream, so its cost is the version re-bench itself. The test-data budget was spent, so nothing was re-baked here.
+- Even with the field baked, the calibration subset would give the family no test: its most mid-fight lusters on one bench are 4 (Balance Druid 3470), under the 5 `wantsLust` needs; 105 of its 120 top logs lust within 30 s of the pull.
+- At the full ingest the tests come only from bosses whose top raids plan a mid-fight lust (3470 is the only such boss on the subset), at most one test per cooldown per such log. Expect far under the 500 pooled tests amber needs, so the family stays a comparison by the minimum alone, before detection is measured. Detection itself should be high where a test exists: the injected mistake leaves the cooldown with no effect in the lust, which `differs` reads exactly, and it colors amber when at least 8 of 10 mid-fight lusters had it up; a cooldown up for fewer of them stays a blue count.
+- What would raise the test count: more top logs per boss for mid-fight lust bosses (a second rankings page), or pooling the lust check across a spec's bosses before the per-spec arming; neither is in this package.
+
+### Decisions and deviations
+
+- **One new field.** The paper names "the per-parse aura spans"; the raid's lust end is not baked. The lust is read at its 40 s game length from the baked `lust_s` on both sides (cut at a kill), because the player's own aura ends at a death, which the fold already explains. Not a deviation: the data shape is the one the paper describes.
+- **The cooldown's aura.** A cooldown whose effect sits on the target (Deathmark, Kingsbane) logs no aura on the player, so its effect is the plan's stated duration from the press, the same rule on both sides; a limit names it.
+- **Up, not seconds.** The rule's `differs` is "no effect touching the lust"; the seconds up are measured and printed but not judged on, since the paper's row is a count of top raiders who had it up, and a seconds interval over mostly zero or 40 s values would be bimodal.
+- **`VERDICT_CHOICES.lustWindow` is `midFightLustS`** (30 s, the same number); the 55 s trail had no reader left.
+- **The timing family is folded away**, not kept at a new version: inside the overlap construct the timing question (pressed too early or late for the lust) is the same overlap.
+- Not a deviation: the family has no test on the subset and stays a comparison.
+
+### Drift against 6882b59
+
+- None beyond 4f's: RC3's window (`rotation-transform-service.ts:27-28,138`), gate (`rotation-feature-service.ts:237`) and critical miss (`:166-167`) were replaced in 4f; the window is gone now.
+
+### Seams stubbed
+
+- None.
+
+### For the next package
+
+- `per_parse[].cd_up_s` arrives with the full ingest at version 48; a bench before 48 renders no Bloodlust row or badge and gives the harness no test.
+- `BloodlustJudgeService.effectSpans` is the one effect measure for an offensive cooldown; a construct that needs a cooldown's effect window (5.8's buttons, cost) can read the baked `cd_up_s`.
+- The registry hash changed (`rotation.bloodlust` version 2, `rotation.bloodlust_timing` gone, `midFightLustS`), so every family renders as a comparison until the next ingest recalibrates.
+- `npm run calibrate` launches the system Chrome channel when Playwright's own Chromium does not match; in this container that needed `/opt/google/chrome/chrome` linked to `/opt/pw-browsers/chromium`.

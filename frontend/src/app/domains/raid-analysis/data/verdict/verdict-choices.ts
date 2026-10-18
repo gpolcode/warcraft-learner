@@ -22,9 +22,9 @@ export const VERDICT_CHOICES = {
   },
   /** A missing enchant is a loss only once this share of the top logs agree on the slot's enchant, which shows the slot takes one. */
   enchantLeaderShare: 0.5,
-  /** A cooldown pressed this far around a Bloodlust counts as pressed for it; a lust later than `beforeS` is mid-fight, so its window never reaches the opener. */
-  lustWindow: { beforeS: 30, afterS: 55 },
-  /** A cooldown wants Bloodlust once this share of the top logs that lusted mid-fight pressed it for their lust. */
+  /** A lust later than this is mid-fight: the opener's cooldowns, pressed at the pull, are not what overlaps it. */
+  midFightLustS: 30,
+  /** A cooldown wants Bloodlust once this share of the top logs that lusted mid-fight had it up during their lust. */
   lustWantShare: 0.5,
   /** Paired consensus colors only when this share of the top logs agree; alone it needs all of them. */
   pairedConsensusShare: 0.8,

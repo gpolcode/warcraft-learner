@@ -55,10 +55,11 @@ export class PerturbationService {
     if (heldOut.card === 'rotation') {
       const { measures } = heldOut.log;
       const idle = measures.idle_s ? this.idleWithModel(measures.idle_s, model) : measures.idle_s;
-      return { ...heldOut, log: { ...heldOut.log, model, measures: { ...measures, cd_casts_s: keep(measures.cd_casts_s), idle_s: idle } } };
+      const up = measures.cd_up_s ? this.living(measures.cd_up_s, model) : measures.cd_up_s;
+      return { ...heldOut, log: { ...heldOut.log, model, measures: { ...measures, cd_casts_s: keep(measures.cd_casts_s), idle_s: idle, cd_up_s: up } } };
     }
     const { up, takenPerS } = heldOut.log;
-    const living = up ? Object.fromEntries(Object.entries(up).map(([name, spans]) => [name, this.aliveParts(spans, model)])) : null;
+    const living = up ? this.living(up, model) : null;
     const taken = takenPerS?.map((value, second) => alive(second) && second < model.judgedEndS ? value : 0) ?? null;
     return { ...heldOut, log: { ...heldOut.log, model, casts: keep(heldOut.log.casts), up: living, takenPerS: taken } };
   }
@@ -73,6 +74,10 @@ export class PerturbationService {
       else merged.push([diedS, Math.min(backS, judgedEndS)]);
     }
     return merged;
+  }
+
+  private living(up: Readonly<Record<string, readonly AuraSpan[]>>, model: PullModel): Record<string, AuraSpan[]> {
+    return Object.fromEntries(Object.entries(up).map(([name, spans]) => [name, this.aliveParts(spans, model)]));
   }
 
   /** A dead player's auras drop at the death, and none is up past the judged end. */
@@ -107,7 +112,13 @@ export class PerturbationService {
       name, times.map(castS => Math.min(durationS, Math.max(0, castS + (draw() * 2 - 1) * CHOICES.jitterS))).sort((a, b) => a - b),
     ]));
     if (heldOut.card === 'rotation') {
-      return { ...heldOut, log: { ...heldOut.log, measures: { ...heldOut.log.measures, cd_casts_s: jitter(heldOut.log.measures.cd_casts_s) } } };
+      const { measures } = heldOut.log;
+      const shift = (): number => (draw() * 2 - 1) * CHOICES.jitterS;
+      const up = measures.cd_up_s && Object.fromEntries(Object.entries(measures.cd_up_s).map(([name, spans]) => [name, spans.map(([fromS, toS]): AuraSpan => {
+        const byS = shift();
+        return [Math.max(0, fromS + byS), Math.min(durationS, toS + byS)];
+      })]));
+      return { ...heldOut, log: { ...heldOut.log, measures: { ...measures, cd_casts_s: jitter(measures.cd_casts_s), cd_up_s: up } } };
     }
     return { ...heldOut, log: { ...heldOut.log, casts: jitter(heldOut.log.casts) } };
   }
