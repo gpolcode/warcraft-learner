@@ -192,9 +192,11 @@ test('burst windows compare the first window\'s damage and abilities against the
   await shows(burstWindows, JUDGED_SPAN);
   await showsBenchStrip(burstWindows);
   await showsNotGraded(burstWindows);
-  const judged = await showsFirstWindow(burstWindows, { metric: 'Damage', chips: 'Cooldowns top raiders use here', range: 'Damage vs top range', casts: true });
+  const judged = await showsFirstWindow(burstWindows, {
+    metric: 'Damage vs pull average', chips: 'Cooldowns top raiders use here', range: 'Damage vs pull average, top range', casts: true, multiple: true,
+  });
   // A judged window names its top logs as a count; the bench decides whether it has enough of them to judge.
-  if (judged) await expect(burstWindows.getByText(/^You dealt \S+ here[.,] /)).toBeVisible();
+  if (judged) await expect(burstWindows.getByText(/^You dealt \S+ here, \d+\.\d+x your pull average[.,] /)).toBeVisible();
   const nothingFlagged = burstWindows.getByText(/^Nothing flagged\./);
   if (await nothingFlagged.count()) await expect(nothingFlagged).toHaveText(/^Nothing flagged\. \d+ of \d+ windows? checked against the \d+ top logs?\.$/);
 });

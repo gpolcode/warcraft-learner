@@ -8,20 +8,18 @@ import { RangeBar } from '../ui-range-bar/range-bar';
 import { RangeLegend } from '../ui-range-bar/range-legend';
 import { FormatDurationPipe } from '../../shared/ui-format/format-duration-pipe';
 import { FormatDamagePipe } from '../../shared/ui-format/format-damage-pipe';
+import { FormatMultiplePipe } from '../../shared/ui-format/format-multiple-pipe';
 import { SignedPercentPipe } from '../../shared/ui-format/signed-percent-pipe';
 import type { RangeRow, ComparisonWindow } from '../data/analysis/window-comparison.models';
 import type { JudgedSpan } from '../data/analysis/pull-model-service';
 import { JudgedSpanCaption } from '../ui-judged-span/judged-span';
 import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
 import type { BenchStrip } from '../data/analysis/bench-strip-service';
-import { TONE_LEVELS } from '../data/verdict/tone.models';
 import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 import type { RangeLook } from '../ui-range-bar/range-bar';
 
-/** A legacy producer's word and a verdict tone read as one look; neutral and muted carry no color. */
-const LOOK: Record<string, RangeLook> = {
-  good: 'success', warn: 'warning', bad: 'critical', red: 'critical', amber: 'warning', blue: 'accent',
-};
+/** Neutral and muted carry no color. */
+const LOOK: Record<string, RangeLook> = { red: 'critical', amber: 'warning', blue: 'accent' };
 
 type TimelineCell =
   | { readonly kind: 'window'; readonly index: number; readonly window: ComparisonWindow }
@@ -40,7 +38,7 @@ import type { NotGradedNote } from '../data/verdict/calibration/calibration.mode
   imports: [
     BenchStripCaption, NotGraded,
     TuiCardLarge, TuiHeader, TuiTitle, TuiIcon, TuiButton, TuiChip, GameIcon, CompactAbilityRow, RangeBar, RangeLegend,
-    FormatDurationPipe, FormatDamagePipe, SignedPercentPipe, JudgedSpanCaption, EmptyState,
+    FormatDurationPipe, FormatDamagePipe, FormatMultiplePipe, SignedPercentPipe, JudgedSpanCaption, EmptyState,
   ],
   templateUrl: './window-comparison.html',
 })
@@ -57,6 +55,8 @@ export class WindowComparison {
   /** The pull time the windows were judged over; null on a bench-only view. */
   readonly judged = input<JudgedSpan | null>(null);
   readonly metricLabel = input.required<string>();
+  /** The unit of the headline figure and its range; the ability rows are always damage. */
+  readonly metricUnit = input<'damage' | 'multiple'>('damage');
   readonly chipsLabel = input.required<string>();
   readonly rangeLabel = input.required<string>();
   /** Why nothing is flagged, with counts: the card's empty state with no windows, a line above them otherwise; empty renders nothing. */
@@ -144,11 +144,6 @@ export class WindowComparison {
     return LOOK[window.status] ?? 'muted';
   }
 
-  /** A window judged through the verdict contract colors only through its tone, so its ability rows stay uncolored. */
-  protected isOnContract(window: ComparisonWindow): boolean {
-    return window.family !== undefined || TONE_LEVELS.some(level => level === window.status);
-  }
-
   // A bench-only (pre-fight) window has no player overlay, so it hides the absent player columns/delta like a muted window.
   protected readonly activeIsMuted = computed(() => {
     const window = this.activeWindow();
@@ -194,16 +189,12 @@ export class WindowComparison {
     return Number.isFinite(delta) ? delta : null;
   });
 
-  protected readonly overviewDeltaStatus = computed<'muted' | 'plain' | 'better' | 'differs' | 'worse'>(() => {
-    const delta = this.overviewDelta();
+  /** The delta colors only through the window's tone. */
+  protected readonly overviewDeltaStatus = computed<'muted' | 'plain' | 'differs' | 'worse'>(() => {
     const window = this.activeWindow();
-    if (delta == null || !window) return 'muted';
-    if (this.isOnContract(window)) {
-      const look = this.lookOf(window);
-      return look === 'critical' ? 'worse' : look === 'warning' ? 'differs' : 'plain';
-    }
-    const isBetter = this.higherIsBetter() ? delta >= 0 : delta <= 0;
-    return isBetter ? 'better' : 'worse';
+    if (this.overviewDelta() == null || !window) return 'muted';
+    const look = this.lookOf(window);
+    return look === 'critical' ? 'worse' : look === 'warning' ? 'differs' : 'plain';
   });
 
   protected readonly overviewPlayerWidthPct = computed<number | null>(() => {

@@ -2,6 +2,7 @@ import { BurstWindow } from '../../analysis/analysis.models';
 import { RotationParseMeasures } from '../../rotation/rotation-data-source';
 import { DefensiveParseMeasures } from '../../defensive/defensive-data-source';
 import { GearBench, GearParseMeasures } from '../../gear/gear-data-source';
+import { BurstBench, BurstParseMeasures } from '../../burst-windows/burst-data-source';
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
 
 export const SB = 'Shadow Blades';
@@ -39,5 +40,32 @@ export function defensiveWindow(parses: number[], damage = 1000, timeS = 30): Bu
     time_s: timeS, window_length_s: 5, dmg_avg: damage, dmg_min: damage, dmg_max: damage, dmg_stddev: 0,
     defensive_name: CLOAK, common_cds: [CLOAK], ability_breakdown: [],
     members: parses.map(parse => ({ parse, time_s: timeS, window_length_s: 5, damage })),
+  };
+}
+
+/** Every fixture burst window's start and length: ten seconds from 40s. */
+export const BURST_AT_S = 40;
+export const BURST_S = 10;
+const STEADY_PER_S = 10;
+const BURST_PER_S = 30;
+
+/** A top log dealing steady damage all pull and three times as much for the burst's ten seconds from `burstAtS`. */
+export function burstLog(burstAtS = BURST_AT_S): BurstParseMeasures {
+  return { damage_per_s: Array.from({ length: FIGHT_S }, (_unused, second) => second >= burstAtS && second < burstAtS + BURST_S ? BURST_PER_S : STEADY_PER_S) };
+}
+
+/** A burst window formed by `parses`, each at its own start. */
+export function burstWindow(parses: number[], memberStartsS: number[] = parses.map(() => BURST_AT_S)): BurstWindow {
+  return {
+    time_s: BURST_AT_S, window_length_s: BURST_S, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
+    members: parses.map((parse, index) => ({ parse, time_s: memberStartsS[index] ?? BURST_AT_S, window_length_s: BURST_S, damage: 0 })),
+  };
+}
+
+export function burstBench(perParse: BurstParseMeasures[], windows: BurstWindow[]): BurstBench & { per_parse: BurstParseMeasures[] } {
+  return {
+    spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', metric: 'dps',
+    sample_count: perParse.length, sources: benchSources(perParse.length), per_parse: perParse,
+    windows, cd_spell_ids: {}, ability_icons: {},
   };
 }

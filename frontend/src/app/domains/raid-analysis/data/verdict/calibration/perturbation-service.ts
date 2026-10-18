@@ -15,6 +15,7 @@ const HASH_PRIME = 16777619;
 const UINT32 = 2 ** 32;
 
 type TimedCase = Extract<HeldOutCase, { card: 'rotation' | 'defensive' }>;
+type BurstCase = Extract<HeldOutCase, { card: 'burst' }>;
 
 /** Each perturbation is drawn from a generator seeded on the log and the perturbation, so a recompute reproduces it. */
 @Injectable({ providedIn: 'root' })
@@ -27,6 +28,7 @@ export class PerturbationService {
     const draw = this.generator(`${heldOut.source}|${heldOut.card}|${name}`);
     const durationS = heldOut.log.model.fightDurationS;
     const atS = durationS * (CHOICES.perturbedShare.from + draw() * (CHOICES.perturbedShare.to - CHOICES.perturbedShare.from));
+    if (heldOut.card === 'burst') return this.burst(name, heldOut, atS, draw);
     switch (name) {
       case 'truncate': return this.withModel(heldOut, this.rows.withDeaths(durationS, atS, []));
       case 'death': return this.withModel(heldOut, this.rows.withDeaths(durationS, durationS, [[atS, durationS]]));
@@ -65,11 +67,45 @@ export class PerturbationService {
     return { ...heldOut, log: { ...heldOut.log, casts: jitter(heldOut.log.casts) } };
   }
 
-  /** Only the defensive windows read damage; every other check reads none. */
+  /** Only the defensive windows read damage among the timed checks; every other one reads none. */
   private scaled(heldOut: TimedCase): HeldOutCase {
     if (heldOut.card === 'rotation') return heldOut;
     const covered = new Map([...heldOut.log.covered].map(([index, damage]) => [index, damage * CHOICES.damageScale]));
     return { ...heldOut, log: { ...heldOut.log, covered } };
+  }
+
+  private burst(name: Perturbation, heldOut: BurstCase, atS: number, draw: () => number): HeldOutCase | null {
+    const durationS = heldOut.log.model.fightDurationS;
+    switch (name) {
+      case 'truncate': return this.burstWithModel(heldOut, this.rows.withDeaths(durationS, atS, []));
+      case 'death': return this.burstWithModel(heldOut, this.rows.withDeaths(durationS, durationS, [[atS, durationS]]));
+      case 'death-rez': return this.burstWithModel(heldOut, this.rows.withDeaths(durationS, durationS, [[atS, Math.min(durationS, atS + CHOICES.rezAfterS)]]));
+      case 'jitter': return this.burstJittered(heldOut, draw);
+      case 'damage-scale': return this.withDamage(heldOut, heldOut.log.damagePerS.map(value => value * CHOICES.damageScale));
+      default: return null;
+    }
+  }
+
+  /** A dead player, or one past the wipe, deals no damage. */
+  private burstWithModel(heldOut: BurstCase, model: PullModel): HeldOutCase {
+    const dealing = (second: number): boolean => second < model.judgedEndS && !model.deadSpans.some(([diedS, backS]) => diedS <= second && second < backS);
+    const damagePerS = heldOut.log.damagePerS.map((value, second) => dealing(second) ? value : 0);
+    return { ...heldOut, log: { ...heldOut.log, model, damagePerS } };
+  }
+
+  /** Each second's damage moves to a second up to the jitter away, so the pull's total stays. */
+  private burstJittered(heldOut: BurstCase, draw: () => number): HeldOutCase {
+    const perS = heldOut.log.damagePerS;
+    const damagePerS = new Array<number>(perS.length).fill(0);
+    perS.forEach((value, second) => {
+      const to = Math.min(perS.length - 1, Math.max(0, second + Math.round((draw() * 2 - 1) * CHOICES.jitterS)));
+      damagePerS[to] = (damagePerS[to] ?? 0) + value;
+    });
+    return this.withDamage(heldOut, damagePerS);
+  }
+
+  private withDamage(heldOut: BurstCase, damagePerS: number[]): HeldOutCase {
+    return { ...heldOut, log: { ...heldOut.log, damagePerS } };
   }
 
   /** FNV-1a over the key seeds a mulberry32 stream. */

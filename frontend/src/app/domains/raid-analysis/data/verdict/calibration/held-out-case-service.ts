@@ -7,7 +7,8 @@ import { BurstBench } from '../../burst-windows/burst-data-source';
 import { TalentKeyService } from '../../gear/talent-key-service';
 import type { ParseRanking } from '../../wcl/wcl.models';
 import { HeldOutRow } from './calibration.models';
-import { FoldedDefensiveBench, LeaveOneOutService } from './leave-one-out-service';
+import { FoldedBurstBench, FoldedDefensiveBench, LeaveOneOutService } from './leave-one-out-service';
+import { BurstHeldOut, BurstHeldOutService } from './burst-held-out-service';
 import { HeldOutRowService } from './held-out-row-service';
 import { RotationHeldOut, RotationHeldOutService } from './rotation-held-out-service';
 import { DefensiveHeldOut, DefensiveHeldOutService } from './defensive-held-out-service';
@@ -25,7 +26,8 @@ export interface EncounterBenches {
 export type HeldOutCase =
   | { card: 'rotation'; source: string; fold: RotationBench; log: RotationHeldOut }
   | { card: 'defensive'; source: string; fold: FoldedDefensiveBench; log: DefensiveHeldOut }
-  | { card: 'gear'; source: string; fold: GearBench; picks: GearParseMeasures };
+  | { card: 'gear'; source: string; fold: GearBench; picks: GearParseMeasures }
+  | { card: 'burst'; source: string; fold: FoldedBurstBench; log: BurstHeldOut };
 
 export type BenchName = keyof EncounterBenches;
 
@@ -37,6 +39,7 @@ export class HeldOutCaseService {
   private readonly rotation = inject(RotationHeldOutService);
   private readonly defensive = inject(DefensiveHeldOutService);
   private readonly gear = inject(GearHeldOutService);
+  private readonly burst = inject(BurstHeldOutService);
   private readonly talentKeys = inject(TalentKeyService);
   private readonly specRoles = inject(SpecRoleService);
 
@@ -45,10 +48,10 @@ export class HeldOutCaseService {
     return `${source.report_code}:${source.fight_id}`;
   }
 
-  /** Benches baked before per-log measures, or with no window members, cannot be folded; the burst bench bakes no damage for a log outside its own windows, so it never is. */
+  /** Benches baked before per-log measures cannot be folded. */
   unfoldable(benches: EncounterBenches): BenchName[] {
-    const names: BenchName[] = ['rotation', 'defensive', 'gear'];
-    return [...names.filter(name => benches[name] !== null && !this.hasMeasures(benches[name])), ...benches.burst ? ['burst' as const] : []];
+    const names: BenchName[] = ['rotation', 'defensive', 'gear', 'burst'];
+    return names.filter(name => benches[name] !== null && !this.hasMeasures(benches[name]));
   }
 
   cases(benches: EncounterBenches, spec: string): HeldOutCase[] {
@@ -57,12 +60,15 @@ export class HeldOutCaseService {
       ...this.rotationCases(benches.rotation, talents),
       ...this.defensiveCases(benches.defensive, talents, this.specRoles.role(spec) === 'tank'),
       ...this.gearCases(benches.gear),
+      // A healer's top logs are ranked on healing, so the page compares none of their damage.
+      ...this.specRoles.isHealer(spec) ? [] : this.burstCases(benches.burst),
     ];
   }
 
   judge(heldOut: HeldOutCase): HeldOutRow[] {
     if (heldOut.card === 'rotation') return this.rotation.judge(heldOut.fold, heldOut.log);
     if (heldOut.card === 'defensive') return this.defensive.judge(heldOut.fold, heldOut.log);
+    if (heldOut.card === 'burst') return this.burst.judge(heldOut.fold, heldOut.log);
     return this.gear.judge(heldOut.fold, heldOut.picks);
   }
 
@@ -90,6 +96,17 @@ export class HeldOutCaseService {
         covered: this.defensive.coveredBy(bench, i), tank,
       };
       return [{ card: 'defensive' as const, source: key, fold: this.folds.foldDefensive(bench, i), log }];
+    });
+  }
+
+  private burstCases(bench: BurstBench | null): HeldOutCase[] {
+    if (!bench?.per_parse || !this.hasMeasures(bench)) return [];
+    const measured = { ...bench, per_parse: bench.per_parse };
+    return measured.per_parse.flatMap((parse, i) => {
+      const source = bench.sources[i];
+      if (!source) return [];
+      const log = { damagePerS: parse.damage_per_s, model: this.rows.wholePull(source.duration_s ?? parse.damage_per_s.length) };
+      return [{ card: 'burst' as const, source: this.sourceKey(source), fold: this.folds.foldBurst(measured, i), log }];
     });
   }
 

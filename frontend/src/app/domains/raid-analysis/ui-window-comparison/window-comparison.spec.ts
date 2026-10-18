@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { WindowComparison } from './window-comparison';
 import type { ComparisonWindow, WindowStatus, RangeRow } from '../data/analysis/window-comparison.models';
-import { statusColor, mountDom, MountedDom } from '../../../../testing/component-harness';
+import { mountDom, MountedDom } from '../../../../testing/component-harness';
+import { tone } from '../../../../testing/builders/tone';
 
 const CHIP = 'button[role="option"]';
 const LISTBOX = '[role="listbox"]';
@@ -14,7 +15,7 @@ const DELTA_BADGE = 'div.flex-col.shrink-0:nth-of-type(3) > span.text-value';
 const CELL = '[role="listbox"] div.flex-col.shrink-0';
 const GAP_CELL = `${CELL}[aria-hidden="true"]`;
 
-function win(overview: Partial<RangeRow>, status: WindowStatus = 'good'): ComparisonWindow {
+function win(overview: Partial<RangeRow>, status: WindowStatus = tone('neutral')): ComparisonWindow {
   return {
     timeStartS: 0,
     timeEndS: 10,
@@ -252,16 +253,6 @@ describe('WindowComparison delta badge', () => {
     expect(dom.query(DELTA_BADGE)?.textContent.trim()).toBe('-10%');
   });
 
-  it('marks a player ahead of top average as better, and one behind as worse', () => {
-    expect(statusColor(render([win({ playerPct: 110, topAvg: 100 })]).query(DELTA_BADGE))).toBe('success');
-    expect(statusColor(render([win({ playerPct: 90, topAvg: 100 })]).query(DELTA_BADGE))).toBe('critical');
-  });
-
-  it('flips which direction counts as better for damage taken', () => {
-    expect(statusColor(render([win({ playerPct: 90, topAvg: 100 })], { higherIsBetter: false }).query(DELTA_BADGE)))
-      .toBe('success');
-  });
-
   it('hides the badge entirely rather than rendering a NaN percentage', () => {
     const dom = render([win({ playerPct: NaN, topAvg: 100 })]);
 
@@ -285,6 +276,14 @@ describe('WindowComparison delta badge', () => {
     expect(dom.text()).not.toContain('Not reached');
   });
 
+  it('prints the headline as a multiple when the card measures one', () => {
+    expect(render([win({ playerPct: 1.64, topAvg: 2 })], { metricUnit: 'multiple' }).text()).toContain('1.6x');
+  });
+
+  it('reads "Not measured" for a bench-only window whose top logs carry no figure', () => {
+    expect(render([benchWin({ topAvg: null })], { metricUnit: 'multiple' }).text()).toContain('Not measured');
+  });
+
   it('shows the top-parse damage, never the player\'s, for a bench-only window', () => {
     const PLAYER_DAMAGE = 2_000_000;
     const TOP_AVG_DAMAGE = 1_000_000;
@@ -301,7 +300,7 @@ describe('WindowComparison vocabulary', () => {
   const NOTE = 'no defensive used';
   const chipWindow = (over: Partial<ComparisonWindow> = {}): ComparisonWindow[] =>
     [{ ...win({ playerPct: 90, topAvg: 100 }), labels: [CHIP_TEXT], ...over }];
-  const detailWindows = (status: WindowStatus = 'good'): ComparisonWindow[] => [{
+  const detailWindows = (status: WindowStatus = tone('neutral')): ComparisonWindow[] => [{
     ...win({ playerPct: 90, topAvg: 100 }, status),
     detailRows: [{ label: 'Probe', icon: '', spellId: 1, playerPct: 90, topAvg: 100, topMin: null, topMax: null }],
   }];

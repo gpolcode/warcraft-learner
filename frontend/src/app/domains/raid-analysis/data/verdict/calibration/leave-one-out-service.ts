@@ -6,6 +6,8 @@ import { BloodlustJudgeService } from '../../rotation/bloodlust-judge-service';
 import { RotationBench } from '../../rotation/rotation-data-source';
 import { DefensiveBench } from '../../defensive/defensive-data-source';
 import { GearBench } from '../../gear/gear-data-source';
+import { BurstBench, BurstParseMeasures } from '../../burst-windows/burst-data-source';
+import { CLUSTER_MIN_FRAC } from '../../burst-windows/burst-transform-service';
 import { avgOr, medianOr, stddevOr } from '../../analysis/analysis-math';
 import type { ParseRanking } from '../../wcl/wcl.models';
 
@@ -21,6 +23,9 @@ interface Folded<P> {
 
 /** A window kept by a fold, with its index in the full bench. */
 export type FoldedWindow = BurstWindow & { index: number };
+
+/** A burst bench rebuilt without one top log; every window keeps its index in the full bench. */
+export type FoldedBurstBench = Omit<BurstBench, 'windows' | 'per_parse'> & { windows: FoldedWindow[]; per_parse: BurstParseMeasures[] };
 
 export type FoldedDefensiveBench = Omit<DefensiveBench, 'defensive_windows'> & { defensive_windows: FoldedWindow[] };
 
@@ -70,6 +75,14 @@ export class LeaveOneOutService {
       ])),
       defensive_windows: this.foldWindows(bench.defensive_windows, i, folded.per_parse.length, DEFENSIVE_WINDOW_SHARE),
     };
+  }
+
+  /** A window spans its remaining members, as the transform spans a cluster: the median start and the mean length. */
+  foldBurst(bench: BurstBench & { per_parse: BurstParseMeasures[] }, i: number): FoldedBurstBench {
+    const folded = this.fold(bench, i);
+    const windows = this.foldWindows(bench.windows, i, folded.per_parse.length, CLUSTER_MIN_FRAC)
+      .map(window => ({ ...window, window_length_s: avgOr(window.members.map(member => member.window_length_s), window.window_length_s) }));
+    return { ...folded, windows };
   }
 
   foldGear(bench: GearBench, i: number): GearBench {

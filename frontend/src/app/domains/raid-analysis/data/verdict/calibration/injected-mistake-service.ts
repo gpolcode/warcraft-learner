@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { CastCadenceService } from '../../analysis/cast-cadence-service';
+import { BurstJudgeService } from '../../burst-windows/burst-judge-service';
 import { InjectedMistake } from '../finding-family.models';
 import { VERDICT_CHOICES } from '../verdict-choices';
 import { HeldOutCase } from './held-out-case-service';
@@ -7,6 +8,7 @@ import { HeldOutCase } from './held-out-case-service';
 type RotationCase = Extract<HeldOutCase, { card: 'rotation' }>;
 type DefensiveCase = Extract<HeldOutCase, { card: 'defensive' }>;
 type GearCase = Extract<HeldOutCase, { card: 'gear' }>;
+type BurstCase = Extract<HeldOutCase, { card: 'burst' }>;
 
 const CHOICES = VERDICT_CHOICES.calibration;
 /** An entry id no talent tree uses, so the swapped build matches no top log's. */
@@ -16,11 +18,13 @@ const SWAPPED_ENTRY = 'x';
 @Injectable({ providedIn: 'root' })
 export class InjectedMistakeService {
   private readonly castCadence = inject(CastCadenceService);
+  private readonly bursts = inject(BurstJudgeService);
 
   /** Each way the mistake fits this log; none when the log has nothing it applies to, or the bench bakes nothing it changes. */
   variants(mistake: InjectedMistake, heldOut: HeldOutCase): HeldOutCase[] {
     if (heldOut.card === 'rotation') return this.rotationVariants(mistake, heldOut);
     if (heldOut.card === 'defensive') return this.defensiveVariants(mistake, heldOut);
+    if (heldOut.card === 'burst') return mistake === 'shift-burst-15s' ? this.shiftedBursts(heldOut) : [];
     return this.gearVariants(mistake, heldOut);
   }
 
@@ -103,6 +107,20 @@ export class InjectedMistakeService {
     const ownWindows = new Set(heldOut.fold.defensive_windows.filter(window => window.defensive_name === name).map(window => window.index));
     const covered = new Map([...heldOut.log.covered].filter(([index]) => !ownWindows.has(index)));
     return [{ ...heldOut, log: { ...heldOut.log, casts: { ...heldOut.log.casts, [name]: [] }, covered } }];
+  }
+
+  /** One variant per window: the log's own burst there lands later by the shift, and the damage it displaced comes earlier, so the pull's total stays. */
+  private shiftedBursts(heldOut: BurstCase): BurstCase[] {
+    const perS = heldOut.log.damagePerS;
+    return heldOut.fold.windows.flatMap(window => {
+      const measured = this.bursts.measure(perS, window, heldOut.log.model.aliveSpans);
+      if (!measured || measured.startS + measured.lengthS + CHOICES.burstShiftS > perS.length) return [];
+      const { startS: fromS, lengthS } = measured;
+      const burst = perS.slice(fromS, fromS + lengthS);
+      const displaced = perS.slice(fromS + lengthS, fromS + lengthS + CHOICES.burstShiftS);
+      const damagePerS = [...perS.slice(0, fromS), ...displaced, ...burst, ...perS.slice(fromS + lengthS + CHOICES.burstShiftS)];
+      return [{ ...heldOut, log: { ...heldOut.log, damagePerS } }];
+    });
   }
 
   private gearVariants(mistake: InjectedMistake, heldOut: GearCase): GearCase[] {

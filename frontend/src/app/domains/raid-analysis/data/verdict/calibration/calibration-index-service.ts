@@ -12,9 +12,11 @@ const CHOICES = VERDICT_CHOICES.calibration;
 const NONE: FlagTally = { tests: 0, amber: 0, red: 0 };
 /** Perturbations whose flag rate may grow by at most the chosen ratio. */
 const RATE_BOUND = new Set(['truncate', 'death', 'death-rez']);
-/** Damage is read by no cadence check and by no coverage verdict. */
-const DAMAGE_BLIND = new Set(FINDING_REGISTRY.filter(family => family.id.startsWith('rotation.') || family.id.startsWith('defensive.')).map(family => family.id));
 const BURST_FAMILY = 'burst.window';
+/** Damage is read by no cadence check and by no coverage verdict, and burst reads it only as a ratio to the log's own average. */
+const DAMAGE_BLIND = new Set(FINDING_REGISTRY
+  .filter(family => family.id.startsWith('rotation.') || family.id.startsWith('defensive.') || family.id === BURST_FAMILY)
+  .map(family => family.id));
 
 /** Pools the per-encounter calibration into the index the runtime reads, and answers the cap a family may reach on a page. */
 @Injectable({ providedIn: 'root' })

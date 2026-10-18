@@ -109,6 +109,11 @@ export class WindowViewService {
     return { unjudged: claimed ? null : cause, claimed };
   }
 
+  private overview<A>(window: BurstWindow, index: number, playerDamage: number | null, adapter: WindowViewAdapter<A>): OverviewFigures {
+    const figures = adapter.overview?.(window, index) ?? { playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max };
+    return playerDamage === null && adapter.overview ? { ...figures, playerPct: null } : figures;
+  }
+
   /** A window is judged only when it lies wholly in alive, pre-wipe time; a null model is a bench-only view with no pull to judge. */
   buildWindowView<A>(
     { topWindows, playerWindows, model, abilities, adapter }: WindowViewInput<A>,
@@ -125,7 +130,7 @@ export class WindowViewService {
       const playerDamage = playerWindow?.window_damage ?? null;
       const verdict: WindowVerdict = unjudged
         ? { status: 'muted' as const, icon: UNJUDGED_ICON[unjudged] }
-        : claimed ?? adapter.status(window, playerDamage);
+        : claimed ?? adapter.status(window, playerDamage, index);
       const { spellIds, labels } = adapter.chips(window);
       windows.push({
         timeStartS: window.time_s,
@@ -134,7 +139,7 @@ export class WindowViewService {
         labels,
         ...this.verdictFields(verdict),
         unjudged,
-        overview: { label: '', icon: '', playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max },
+        overview: { label: '', icon: '', ...this.overview(window, index, unjudged ? null : playerDamage, adapter) },
         detailRows: this.windowDetailRows(window.ability_breakdown, playerWindow, abilities, adapter.castColumns ?? false),
       });
       anchors.push(adapter.mapAnchor(window));
@@ -170,8 +175,13 @@ interface WindowChips {
   labels: string[];
 }
 
+/** The window's headline figure for the player and the top logs; the card's adapter may measure it in its own unit. */
+type OverviewFigures = Pick<RangeRow, 'playerPct' | 'topAvg' | 'topMin' | 'topMax'>;
+
 export interface WindowViewAdapter<A> {
-  status: (window: BurstWindow, playerDamage: number | null) => WindowVerdict;
+  status: (window: BurstWindow, playerDamage: number | null, index: number) => WindowVerdict;
+  /** The headline figures in the card's own measure; absent, they are the window's damage against the top logs' damage. */
+  overview?: (window: BurstWindow, index: number) => OverviewFigures;
   /** A verdict for a window the pull model would mute, such as the death it holds; null leaves it muted. */
   claim?: (window: BurstWindow, cause: UnjudgedCause, index: number) => WindowVerdict | null;
   chips: (window: BurstWindow) => WindowChips;

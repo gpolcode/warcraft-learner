@@ -49,6 +49,7 @@ export const VERDICT_CHOICES = {
     lustShiftsS: [120, 180],
     damageScale: 0.85,
     delayS: 30,
+    burstShiftS: 15,
     idleGcds: 5,
     gcdS: 1.5,
     offListPresses: 5,

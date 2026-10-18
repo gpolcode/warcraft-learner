@@ -10,7 +10,10 @@ import { HeldOutRow } from './calibration.models';
 import { bench } from '../../rotation/rotation-harness';
 import { benchWith, CLOAK_META, defBench } from '../../defensive/defensive-harness';
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
-import { CLOAK, defensiveLog, defensiveWindow, FIGHT_S, gearBench, gearLog, ON_CADENCE, rotationLog, SB } from './calibration-harness';
+import {
+  BURST_AT_S, BURST_S, burstBench, burstLog, burstWindow, CLOAK, defensiveLog, defensiveWindow, FIGHT_S, gearBench, gearLog, ON_CADENCE, rotationLog, SB,
+} from './calibration-harness';
+import { BurstHeldOutService } from './burst-held-out-service';
 
 const folds = TestBed.inject(LeaveOneOutService);
 const heldOutRows = TestBed.inject(HeldOutRowService);
@@ -18,6 +21,7 @@ const rotation = TestBed.inject(RotationHeldOutService);
 const defensive = TestBed.inject(DefensiveHeldOutService);
 const gear = TestBed.inject(GearHeldOutService);
 const cases = TestBed.inject(HeldOutCaseService);
+const burst = TestBed.inject(BurstHeldOutService);
 
 /** Five other top logs is the fewest a fold can grade against. */
 const TOP_N = 6;
@@ -125,6 +129,31 @@ describe('GearHeldOutService', () => {
   });
 });
 
+describe('BurstHeldOutService', () => {
+  const FAMILY = 'burst.window';
+  /** Every top log bursts on the window; a held-out log fifteen seconds late misses all of it but the timing floor's reach. */
+  const LATE_S = BURST_AT_S + 15;
+  const judgeBurst = (held = burstLog(), model = heldOutRows.wholePull(FIGHT_S)) => {
+    const logs = [held, ...Array.from({ length: TOP_N - 1 }, () => burstLog())];
+    const fold = folds.foldBurst(burstBench(logs, [burstWindow([1, 2, 3, 4, 5])]), HELD_OUT);
+    return burst.judge(fold, { damagePerS: held.damage_per_s, model });
+  };
+
+  it('flags nothing on a top log that bursts with the others', () => {
+    expect(levelsOf(judgeBurst(), FAMILY)).toEqual(['neutral']);
+  });
+
+  it('flags a top log whose burst comes fifteen seconds late, though its own burst did not form the window', () => {
+    expect(levelsOf(judgeBurst(burstLog(LATE_S)), FAMILY)).toEqual(['amber']);
+  });
+
+  it('makes no test on a window a death explains', () => {
+    const deadInIt = heldOutRows.withDeaths(FIGHT_S, FIGHT_S, [[BURST_AT_S + BURST_S / 2, FIGHT_S]]);
+
+    expect(judgeBurst(burstLog(), deadInIt)).toEqual([]);
+  });
+});
+
 describe('HeldOutCaseService', () => {
   const benches = { rotation: rotationBench(), defensive: null, gear: gearBench(Array.from({ length: TOP_N }, () => gearLog())), burst: null };
 
@@ -139,6 +168,19 @@ describe('HeldOutCaseService', () => {
     const { per_parse: _dropped, ...older } = rotationBench();
 
     expect(cases.unfoldable({ ...benches, rotation: older as never })).toEqual(['rotation']);
+  });
+
+  it('makes a burst case per top log of a damage spec, and none for a healer', () => {
+    const withBurst = { ...benches, burst: burstBench(Array.from({ length: TOP_N }, () => burstLog()), [burstWindow([0, 1, 2])]) };
+
+    expect(cases.cases(withBurst, 'SubtletyRogue').filter(entry => entry.card === 'burst')).toHaveLength(TOP_N);
+    expect(cases.cases(withBurst, 'HolyPaladin').filter(entry => entry.card === 'burst')).toEqual([]);
+  });
+
+  it('names a burst bench without per-log damage as one it cannot fold', () => {
+    const { per_parse: _dropped, ...older } = burstBench([burstLog()], []);
+
+    expect(cases.unfoldable({ ...benches, burst: older })).toEqual(['burst']);
   });
 
   it('keys a top log by its report and fight, the same across benches', () => {

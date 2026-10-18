@@ -24,7 +24,8 @@ const CLOCK_RANGE = cell(`${CLOCK.source} - ${CLOCK.source}`);
 export const AMOUNT = cell(FIGURE);
 const GAP = cell(`[+-]${FIGURE}|Not used`);
 const CASTS = cell('\\d+ / (\\d+|-)|Passive');
-const UNJUDGED = cell('Dead|After the wipe|Not reached');
+const UNJUDGED = cell('Dead|After the wipe|Not reached|Not measured');
+const MULTIPLE = cell('\\d+\\.\\dx');
 /** The caption every card that judges the pull states first, before any cause it names. */
 export const JUDGED_SPAN = new RegExp(`^Judged 0:00 to ${CLOCK.source}, alive ${CLOCK.source}\\.$`);
 const BENCH_STRIP = new RegExp(
@@ -146,6 +147,8 @@ interface WindowFields {
   /** A bench-only window has no player to bar, so it carries neither the bar nor the gap column. */
   range?: string;
   casts?: boolean;
+  /** The headline is a multiple of the pull's own average rather than an amount. */
+  multiple?: boolean;
 }
 
 /** The panel renders the active window alone, so once the first chip is picked every field on it belongs to the first window. Resolves whether that window was judged. */
@@ -157,10 +160,14 @@ export async function showsFirstWindow(card: Locator, fields: WindowFields): Pro
   await expect(valueOf(card, 'Window')).toHaveText(CLOCK_RANGE);
   // The log decides whether the first window lies in alive, pre-wipe time; one that does not names why in place of a number.
   const metric = valueOf(card, fields.metric);
-  const judged = AMOUNT.test(await metric.innerText());
-  await expect(metric).toHaveText(judged ? AMOUNT : UNJUDGED);
+  const figure = fields.multiple ? MULTIPLE : AMOUNT;
+  const judged = figure.test(await metric.innerText());
+  await expect(metric).toHaveText(judged ? figure : UNJUDGED);
   if (fields.range && judged) {
-    await expect(valueOf(card, 'Vs top raiders average')).toHaveText(PERCENT);
+    // A bench that bakes no top log figure for the window draws no delta against it.
+    if (await card.getByText('Vs top raiders average', { exact: true }).count()) {
+      await expect(valueOf(card, 'Vs top raiders average')).toHaveText(PERCENT);
+    }
     await expect(valueOf(card, fields.range)).toBeVisible();
     await shows(card, 'You');
     await shows(card, 'Top raiders, lowest to highest');
