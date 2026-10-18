@@ -5,6 +5,7 @@ import { DataFileApiService } from '../../data-files/data-file-api-service';
 import { IngestStateService } from '../../ingest/ingest-state-service';
 import { CalibrationIndex, EncounterCalibration } from './calibration.models';
 import { CalibrationIndexService } from './calibration-index-service';
+import { RegistryHashService } from './registry-hash-service';
 import { CalibrationReportService } from './calibration-report-service';
 import { EncounterCalibrationService } from './encounter-calibration-service';
 import { BenchName, EncounterBenches } from './held-out-case-service';
@@ -28,6 +29,7 @@ export class CalibrationRunService {
   private readonly files = inject(DataFileApiService);
   private readonly encounters = inject(EncounterCalibrationService);
   private readonly indices = inject(CalibrationIndexService);
+  private readonly hashes = inject(RegistryHashService);
   private readonly reports = inject(CalibrationReportService);
   private readonly ingestState = inject(IngestStateService);
 
@@ -82,6 +84,6 @@ export class CalibrationRunService {
       const bench = benches[name] as { source_signature?: string; ingest_version?: number } | null;
       return `${name}:${bench?.source_signature ?? ''}:${bench?.ingest_version ?? ''}`;
     });
-    return bytesToHex(sha256(utf8ToBytes([this.indices.registryHash(), ...stamps].join('\n')))).slice(0, HASH_LENGTH);
+    return bytesToHex(sha256(utf8ToBytes([this.hashes.registryHash(), ...stamps].join('\n')))).slice(0, HASH_LENGTH);
   }
 }

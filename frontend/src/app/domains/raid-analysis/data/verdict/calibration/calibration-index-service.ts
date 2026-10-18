@@ -1,35 +1,27 @@
 import { inject, Injectable } from '@angular/core';
-import { sha256 } from '@noble/hashes/sha2.js';
-import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 import { SpecRole, SpecRoleService } from '../../analysis/spec-role-service';
 import { FINDING_REGISTRY } from '../finding-registry';
 import { ToneLevel } from '../tone.models';
 import { VERDICT_CHOICES } from '../verdict-choices';
 import { ArmingService, NOT_GRADED } from './arming-service';
-import { CalibrationIndex, EncounterCalibration, FamilyVerdict, FlagTally, InvariantResult, PageLoad } from './calibration.models';
-import { OUTSIDE_BAND } from './encounter-calibration-service';
+import { CalibrationIndex, EncounterCalibration, FamilyVerdict, FlagTally, InvariantResult, OUTSIDE_BAND, PageLoad } from './calibration.models';
+import { COMPARISON } from './calibration-caps-service';
+import { RegistryHashService } from './registry-hash-service';
 
 const CHOICES = VERDICT_CHOICES.calibration;
 const NONE: FlagTally = { tests: 0, amber: 0, red: 0 };
-const HASH_LENGTH = 16;
 /** Perturbations whose flag rate may grow by at most the chosen ratio. */
 const RATE_BOUND = new Set(['truncate', 'death', 'death-rez']);
 /** Damage is read by no cadence check and by no coverage verdict. */
 const DAMAGE_BLIND = new Set(FINDING_REGISTRY.filter(family => family.id.startsWith('rotation.') || family.id.startsWith('defensive.')).map(family => family.id));
 const BURST_FAMILY = 'burst.window';
-const COMPARISON: FamilyVerdict = { status: 'comparison', cap: 'neutral', reason: 'Not graded: no calibration matches this version of the checks.' };
 
 /** Pools the per-encounter calibration into the index the runtime reads, and answers the cap a family may reach on a page. */
 @Injectable({ providedIn: 'root' })
 export class CalibrationIndexService {
   private readonly arming = inject(ArmingService);
   private readonly specRoles = inject(SpecRoleService);
-
-  /** Every id, version, tier, cost class and rule, and every chosen number: a change to any re-runs calibration and invalidates the index. */
-  registryHash(): string {
-    const families = FINDING_REGISTRY.map(family => [family.id, family.version, family.tier, family.costClass, family.rule]);
-    return bytesToHex(sha256(utf8ToBytes(JSON.stringify({ families, choices: VERDICT_CHOICES })))).slice(0, HASH_LENGTH);
-  }
+  private readonly hashes = inject(RegistryHashService);
 
   build(encounters: readonly EncounterCalibration[]): CalibrationIndex {
     const invariants = this.invariants(encounters);
@@ -38,7 +30,7 @@ export class CalibrationIndexService {
     const roles = Object.fromEntries(this.arming.roles().map(role => [role, this.roleVerdicts(encounters, role, failed)])) as Record<SpecRole, Record<string, FamilyVerdict>>;
     const specs = this.specVerdicts(encounters, roles, failed);
     return {
-      registry_hash: this.registryHash(),
+      registry_hash: this.hashes.registryHash(),
       encounters: encounters.length,
       pulls: encounters.reduce((sum, encounter) => sum + encounter.pulls, 0),
       families, specs, demoted: this.demoted(encounters, specs),
@@ -46,13 +38,6 @@ export class CalibrationIndexService {
       invariants,
       unfoldable: this.unfoldable(encounters),
     };
-  }
-
-  /** The tone a family may reach on this page: fail closed to comparison without an index for this registry, else the spec's verdict, lowered to comparison on a bench its own rate demotes. */
-  capOf(index: CalibrationIndex | null, page: { spec: string; encounterId: number }, familyId: string): ToneLevel {
-    if (index?.registry_hash !== this.registryHash()) return COMPARISON.cap;
-    if (index.demoted[page.spec]?.[String(page.encounterId)]?.includes(familyId)) return COMPARISON.cap;
-    return (index.specs[page.spec]?.[familyId] ?? COMPARISON).cap;
   }
 
   /** What fails a recompute: a page over budget, a failed invariant on a graded family, a family graded before and not now. */

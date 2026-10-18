@@ -4,14 +4,11 @@ import { FINDING_REGISTRY } from '../finding-registry';
 import { InjectedMistake } from '../finding-family.models';
 import { ToneLevel } from '../tone.models';
 import { BloodlustJudgeService } from '../../rotation/bloodlust-judge-service';
-import { DetectionTally, EncounterCalibration, FlagTally, HeldOutRow, InvariantTally, PageLoad } from './calibration.models';
+import { DetectionTally, EncounterCalibration, FlagTally, HeldOutRow, InvariantTally, OUTSIDE_BAND, PageLoad } from './calibration.models';
 import { EncounterBenches, HeldOutCase, HeldOutCaseService } from './held-out-case-service';
 import { InjectedMistakeService } from './injected-mistake-service';
 import { Perturbation, PERTURBATIONS, PerturbationService } from './perturbation-service';
 import { RotationHeldOutService } from './rotation-held-out-service';
-
-/** The invariant tally key for Bloodlust rows judged against a lust outside the bench's band, which must stay empty. */
-export const OUTSIDE_BAND = 'outside-band';
 
 const FAMILY_BY_ID = new Map(FINDING_REGISTRY.map(family => [family.id, family]));
 

@@ -3,8 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { CalibrationIndexService } from './calibration-index-service';
 import { CalibrationCapsService } from './calibration-caps-service';
 import { CALIBRATION_SOURCE } from './calibration-source';
-import { EncounterCalibrationService, OUTSIDE_BAND } from './encounter-calibration-service';
-import { CalibrationIndex, EncounterCalibration, FlagTally } from './calibration.models';
+import { RegistryHashService } from './registry-hash-service';
+import { EncounterCalibrationService } from './encounter-calibration-service';
+import { CalibrationIndex, EncounterCalibration, FlagTally, OUTSIDE_BAND } from './calibration.models';
 import { Results } from '../../../../shared/util-http/result';
 import { bench } from '../../rotation/rotation-harness';
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
@@ -12,6 +13,7 @@ import { rotationLog, SB } from './calibration-harness';
 
 const indices = TestBed.inject(CalibrationIndexService);
 const encounters = TestBed.inject(EncounterCalibrationService);
+const hashes = TestBed.inject(RegistryHashService);
 
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER = 7;
@@ -21,8 +23,15 @@ const TOP_N = 6;
 /** Thirty seconds past the shared 5s opener. */
 const LATE = [35, 125, 215];
 
+/** The real caps service over a fixed source; every other spec runs on the providers file's uncapped stand-in. */
+const capsWith = (load: () => Promise<unknown>) => {
+  TestBed.resetTestingModule();
+  TestBed.configureTestingModule({ providers: [CalibrationCapsService, { provide: CALIBRATION_SOURCE, useValue: { load } }] });
+  return TestBed.inject(CalibrationCapsService);
+};
+
 const index = (over: Partial<CalibrationIndex> = {}): CalibrationIndex => ({
-  registry_hash: indices.registryHash(), encounters: 1, pulls: 1, families: {},
+  registry_hash: hashes.registryHash(), encounters: 1, pulls: 1, families: {},
   specs: { [SPEC]: { [FAMILY]: { status: 'graded', cap: 'amber', reason: '' } } },
   demoted: {}, page: { measured: {} as CalibrationIndex['page']['measured'], armed: {} as CalibrationIndex['page']['armed'] }, invariants: [], unfoldable: {},
   ...over,
@@ -32,29 +41,31 @@ const encounterOf = (families: Record<string, FlagTally>, over: Partial<Encounte
   page: { pulls: 10, amber: 0, red: 0 }, detection: {}, invariants: {}, unfoldable: [], ...over,
 });
 
-describe('CalibrationIndexService capOf', () => {
+describe('CalibrationCapsService capOf', () => {
+  const capsService = capsWith(() => Promise.resolve(Results.missing('Not yet ingested.')));
+
   it('lets a family reach the tone its spec\'s calibration armed', () => {
-    expect(indices.capOf(index(), PAGE, FAMILY)).toBe('amber');
+    expect(capsService.capOf(index(), PAGE, FAMILY)).toBe('amber');
   });
 
   it('fails closed to comparison without an index', () => {
-    expect(indices.capOf(null, PAGE, FAMILY)).toBe('neutral');
+    expect(capsService.capOf(null, PAGE, FAMILY)).toBe('neutral');
   });
 
   it('fails closed to comparison on an index another registry wrote', () => {
-    expect(indices.capOf(index({ registry_hash: 'older' }), PAGE, FAMILY)).toBe('neutral');
+    expect(capsService.capOf(index({ registry_hash: 'older' }), PAGE, FAMILY)).toBe('neutral');
   });
 
   it('fails closed to comparison for a family or spec the index does not name', () => {
-    expect(indices.capOf(index(), PAGE, 'rotation.unknown')).toBe('neutral');
-    expect(indices.capOf(index(), { ...PAGE, spec: 'AssassinationRogue' }, FAMILY)).toBe('neutral');
+    expect(capsService.capOf(index(), PAGE, 'rotation.unknown')).toBe('neutral');
+    expect(capsService.capOf(index(), { ...PAGE, spec: 'AssassinationRogue' }, FAMILY)).toBe('neutral');
   });
 
   it('demotes a family to comparison on the one bench its own rate demoted', () => {
     const demoted = index({ demoted: { [SPEC]: { [String(ENCOUNTER)]: [FAMILY] } } });
 
-    expect(indices.capOf(demoted, PAGE, FAMILY)).toBe('neutral');
-    expect(indices.capOf(demoted, { ...PAGE, encounterId: ENCOUNTER + 1 }, FAMILY)).toBe('amber');
+    expect(capsService.capOf(demoted, PAGE, FAMILY)).toBe('neutral');
+    expect(capsService.capOf(demoted, { ...PAGE, encounterId: ENCOUNTER + 1 }, FAMILY)).toBe('amber');
   });
 });
 
@@ -137,11 +148,6 @@ describe('EncounterCalibrationService', () => {
 });
 
 describe('CalibrationCapsService', () => {
-  const capsWith = (load: () => Promise<unknown>) => {
-    TestBed.resetTestingModule();
-    TestBed.configureTestingModule({ providers: [CalibrationCapsService, { provide: CALIBRATION_SOURCE, useValue: { load } }] });
-    return TestBed.inject(CalibrationCapsService);
-  };
 
   it('caps a family at the tone the published index armed', async () => {
     const caps = await capsWith(() => Promise.resolve(Results.ok(index()))).load(SPEC, ENCOUNTER);

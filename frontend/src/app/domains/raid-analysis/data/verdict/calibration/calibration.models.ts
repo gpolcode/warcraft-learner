@@ -1,6 +1,9 @@
 import type { ToneLevel } from '../tone.models';
 import type { SpecRole } from '../../analysis/spec-role-service';
 
+/** The invariant tally key for Bloodlust rows judged against a lust outside the bench's band, which must stay empty. */
+export const OUTSIDE_BAND = 'outside-band';
+
 /** `graded` keeps the tone calibration armed, `comparison` keeps numbers and counts without a graded color, `hidden` is a construct known invalid. */
 type CalibrationStatus = 'graded' | 'comparison' | 'hidden';
 
