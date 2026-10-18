@@ -335,3 +335,52 @@ Branch `claude/verdict-validity-p4d-defensive`, PR against `claude/verdict-valid
 - `WindowViewAdapter.claim` is the seam for a card that judges a window the timeline would mute.
 - `CadenceJudgeService.reference*` take `CastsByName[]`; `clocksApart` is public for a card that prints its own opener copy.
 - `DecisionRuleService.consensus` takes `pairedOnly` for a claim that needs its second condition (the gear enchant gate may reuse it).
+
+## Package 4e: Gear judge split (done)
+
+Branch `claude/verdict-validity-p4e-gear`, PR against `claude/verdict-validity-p4d-defensive`.
+
+### Done
+
+- **Families** in `FINDING_REGISTRY`, all declared in `data/gear/gear-judge-service.ts`:
+  - `gear.talent_build`: tier blue, cost medium, `consensus` alone; pending per-node agreement with counts and a diff of the player's build (package 6). Injected mistake `swap-talent-node`.
+  - `gear.trinket_pair`: tier blue, cost medium, `consensus` alone; construct final.
+  - `gear.enchant_missing`: tier amber, cost low, `fact`; construct final. Injected mistake `remove-enchant`.
+  - `gear.enchant`: tier blue, cost medium, `consensus` alone; construct final.
+- **Judge, callable at ingest with a top log as the player.** `GearJudgeService`:
+  - Measures: `measureTalentKey(tree)` (the talent key parse), `measureTrinkets(trinkets)` (sorted ids; `trinketKey` joins them), `measureEnchants(enchants)` (enchant id per slot, id 0 dropped). Ingest's `GearTransformService` (`fetchParseGear`, `parseMeasures`, `aggregateTrinketSets`) and the runtime's `GearFeatureService` (`buildCharacterGear`, `buildGearView`) call the same methods. The baked values are unchanged.
+  - References over `per_parse`: `talentReference` and `trinketReference` count each key over the logs that carry one (n = logs with a readable tree, logs wearing trinkets); `enchantLeaders(enchants, perParse)` counts each slot's enchant over every accepted log (n = `per_parse.length`), ids sharing a name in the bench's `enchants` lists counted as one identity, a tie kept in the bench's order.
+  - Verdicts: `talentVerdict` and `trinketVerdict` take the bench's ranked list (its first entry is the leader) and return `GearVerdict { family, tone, onPlan, note, n }`, null where nothing compares (no player key, no bench list, a talent key of another version). `enchantRows(gear, enchants, perParse, slotName)` returns `EnchantRow { slotName, family, tone, onPlan, name, note, top, n }`; the two rings compare as a multiset of identities.
+- **Rules.** Talents and trinkets: `consensus({ differs, k: leader count, n })`; tier blue caps an all-agree consensus. A missing enchant: `fact({ holds: true, backing })` with `'game-rule'` when the leader reaches `VERDICT_CHOICES.enchantLeaderShare` (0.5, new) of at least `minReferenceN` logs, else the consensus evidence; so amber behind a leader of at least half, otherwise blue. A different enchant: `consensus`, blue. Under 5 logs every check is a neutral comparison, and a bench without `per_parse` reads n = 0.
+- **Tone.** Every gear verdict passes through `ToneService.tone`; on-plan rows carry `ToneService.neutral()` with `onPlan: true`.
+- **Copy and n.** Talent and trinket rows: "Most common build. 8 of 10 top raiders use it.", "2nd most common build. 3 of 10 top raiders use it. 6 of 10 use the most common one.", "Uncommon pair. 7 of 10 top raiders use the most common one."; enchant rows: "9 of 10 top raiders use it." plus "Apply it." on an amber row only. Bench-only enchant rows print their share ("9 of 10 top logs") and list a slot only once its leader reaches half of at least 5 logs.
+- **Empty states with counts** (`talentEmpty`, `trinketEmpty`, `enchantEmpty`, `enchantsClean` on `GearComparisonView`): "No talent data. None of the 10 top logs has a readable talent tree.", "No trinket data. None of the 10 top logs carries a trinket.", "No enchant data. None of the 10 top logs carries an enchant.", "No enchant data. No slot where at least half of the 10 top logs use one enchant." (bench view), "Nothing flagged. 4 enchants checked against 10 top logs." (replaces the "All enchants" chip). Without `per_parse` the count is left out.
+- **UI.** `wl-gear` maps a verdict's tone to one look: blue an accent `info` icon, neutral a muted `compare_arrows`, amber (enchants) `warning_amber`; no talent or trinket row is amber.
+- **Lint.** `gear-comparison-service.ts` left the `local/no-severity-literal` ignores; `GearStatus`, `talentStatusOf`, `trinketStatusOf`, `buildEnchantRows`, `enchantStatusOf` and `trinketSetKey` are gone from it. It keeps the build and pair lists, the talent diff, slot names and rank labels.
+- **E2E.** Post-raid matches the enchant note by its count shape and accepts the "Nothing flagged" line; pre-fight checks a listed slot's share and matches the enchant empty state by its first sentence.
+
+### Decisions and deviations
+
+- **"Information" is blue** for talents: the 5.7 row's claim is a count ("k of n top logs share") and section 6 de-tones the talent warning to information, which the page draws in the accent color. The construct stays today's full-key plurality; the per-node claim waits for package 6.
+- **Cost class medium** for the three blue families: a low cost class caps an all-agree consensus (amber evidence) to neutral, so a 10-of-10 leader would read weaker than 9 of 10 (the 4b hold decision). The missing enchant is low: its game-rule backing is red-level evidence, which a low cost class turns into amber.
+- **The 50% gate as a game-rule backing.** The closed `consensus` rule colors amber only from 0.8 paired or at k = n; the 5.7 row keeps the 50% gate. The fact "slot not enchanted" is backed by the game rule (an empty enchantable slot loses its stats) once at least half of the top logs agree on the slot's enchant, which shows the slot takes one. The share is `VERDICT_CHOICES.enchantLeaderShare`.
+- **A missing enchant under the gate is now a blue row** ("4 of 10 top raiders use it."), where it was silent; the 5.7 "otherwise blue" says so.
+- **Same-name merge** keys on the names in the bench's `enchants` lists (the item name where ingest resolved one), so an id outside a slot's top 3 counts under its own id. The player's enchant matches the leader through the same id-to-name map, so another quality rank of the leading enchant reads on plan.
+- **Leader** for talents and trinkets is the bench list's first entry, so the row and the list name the same build or pair; k comes from `per_parse`.
+- The talent and trinket checks keep the version-prefix and empty-key guards: those pulls show no verdict row.
+- No `INGEST_VERSION` bump: the measures reproduce `per_parse` exactly and no bench field changed.
+
+### Drift against 6882b59
+
+None: the paper cites no gear file:line. The RC4 Gear row ("Most common build", "Uncommon build" as the plurality of exact keys) still describes the talent construct; "Uncommon build" now reads as a blue count, never a warning. The CON-7 item ("Most top raiders use it" below 50%, ids sharing a name) is fixed.
+
+### Seams stubbed
+
+- `finding-rows-service.ts` and `rotation-feature-service.ts` stay in the lint ignores (legacy row words, Bloodlust in 4f).
+- Calibration does not cap the tone yet (package 5); the harness that calls the gear judges at ingest is not built.
+
+### For the next package
+
+- Package 6's per-node talent construct replaces `TALENT_BUILD_FAMILY`'s measure (`talent_nodes` and `per_parse[].talent_key` are already baked); bump its `version` then.
+- `GearJudgeService.enchantLeaders` and `agreedLeaders` give any later view the merged enchant consensus with k and n.
+- `FINDING_REGISTRY`'s producing scenarios accept `family: string | null` (rows that are on plan carry null).

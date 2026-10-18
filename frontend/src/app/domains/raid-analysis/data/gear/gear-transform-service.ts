@@ -14,6 +14,7 @@ import { DataSource } from '../data-source/data-source';
 import { GearBench, GearParseMeasures, TalentNodeCount } from './gear-data-source';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { GearComparisonService } from './gear-comparison-service';
+import { GearJudgeService } from './gear-judge-service';
 
 const MAX_TALENT_BUILDS = 3;
 const MAX_TRINKET_SETS = 3;
@@ -43,6 +44,7 @@ export class GearTransformService implements DataSource<GearBench> {
   private readonly logger = inject(LoggerService);
   private readonly gearComparison = inject(GearComparisonService);
   private readonly gearExtract = inject(GearExtractService);
+  private readonly judge = inject(GearJudgeService);
   private readonly benchPipeline = inject(BenchPipelineService);
   private readonly talentKey = inject(TalentKeyService);
   private readonly wclApi = inject(WclApiService);
@@ -79,7 +81,7 @@ export class GearTransformService implements DataSource<GearBench> {
     this.gearExtract.fillGameNames(enchants, 'e', names);
 
     const characterGear: CharacterGear = {
-      talent_key: this.talentKey.talentKeyFromTree(event.talentTree), trinkets, enchants,
+      talent_key: this.judge.measureTalentKey(event.talentTree), trinkets, enchants,
     };
     return this.toParseGear(characterGear, ranking, player.id);
   }
@@ -187,8 +189,8 @@ export class GearTransformService implements DataSource<GearBench> {
   protected parseMeasures(parse: ParseGear): GearParseMeasures {
     return {
       talent_key: parse.talent_key,
-      trinket_ids: parse.trinkets.map(trinket => trinket.id).sort((a, b) => a - b),
-      enchant_ids: Object.fromEntries(parse.enchants.filter(enchant => enchant.id).map(enchant => [enchant.slot, enchant.id])),
+      trinket_ids: this.judge.measureTrinkets(parse.trinkets),
+      enchant_ids: this.judge.measureEnchants(parse.enchants),
     };
   }
 
@@ -204,7 +206,7 @@ export class GearTransformService implements DataSource<GearBench> {
         .sort((a, b) => a.id - b.id);
       if (!worn.length) continue;
 
-      const key = this.gearComparison.trinketSetKey(worn);
+      const key = this.judge.trinketKey(this.judge.measureTrinkets(worn));
       const existing = sets.get(key);
       if (existing) {
         existing.count += 1;

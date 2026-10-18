@@ -69,8 +69,9 @@ test('gear shows the top-parse talent, trinket, and enchant consensus', async ()
     await expect(slot.locator('span.text-label')).toHaveText(ANY_TEXT);
     await expect(slot.locator('wl-game-icon')).toHaveText(ANY_TEXT);
     await expect(slot.getByRole('button', { name: 'Copy name' })).toBeVisible();
+    await expect(slot.getByText(/^\d+ of \d+ top logs$/)).toBeVisible();
   } else {
-    await shows(enchants, 'No enchant data.');
+    await expect(enchants.getByText(/^No enchant data\./)).toBeVisible();
   }
 });
 

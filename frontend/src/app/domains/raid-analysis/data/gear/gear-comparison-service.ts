@@ -1,76 +1,21 @@
 import { inject, Injectable } from '@angular/core';
-import { CharacterGear } from '../wcl/wcl.models';
 import { EncounterGearStats } from '../encounter/encounter.models';
 import { SpecTalents, TalentEntry, TalentDiff } from './talent.models';
 import { TalentPick } from './talent-key-service';
 import { TalentKeyService } from './talent-key-service';
-import { RING_SLOTS } from './gear-extract-service';
+import { EnchantItem, EnchantLeader, GearJudgeService } from './gear-judge-service';
 import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 @Injectable({ providedIn: 'root' })
 export class GearComparisonService {
   private readonly talentKeys = inject(TalentKeyService);
+  private readonly judge = inject(GearJudgeService);
   private readonly environment = inject(ENVIRONMENT);
 
-  private slotName(slot: number): string { return SLOT_NAMES[slot] ?? `Slot ${slot}`; }
+  slotName(slot: number): string { return SLOT_NAMES[slot] ?? `Slot ${slot}`; }
 
-  private rankLabel(index: number, noun: string): string {
+  rankLabel(index: number, noun: string): string {
     return `${RANK_PREFIXES[index] ?? `${index + 1}th most common`} ${noun}`;
-  }
-
-  private enchantLabel(enchant: { id: number; name: string } | undefined): string {
-    return enchant ? (enchant.name || `Enchant #${enchant.id}`) : '';
-  }
-
-  private enchantItem(top: TopEnchant): EnchantItem {
-    return { name: this.enchantLabel(top), itemId: top.item_id, icon: top.icon };
-  }
-
-  private enchantRowFor(name: string, player: PlayerEnchant | undefined, top: TopEnchant | undefined): EnchantRow | null {
-    if (!player) {
-      if (!top || top.pct < ENCHANT_CONSENSUS_PCT) return null;
-      return { slotName: name, status: 'warn', name: 'Not enchanted',
-        note: 'Most top raiders use it. Apply it.', top: this.enchantItem(top) };
-    }
-    const playerName = this.enchantLabel(player);
-    if (top && player.id !== top.id) {
-      return { slotName: name, status: 'info', name: playerName,
-        note: 'Most top raiders use it.', top: this.enchantItem(top) };
-    }
-    return { slotName: name, status: 'ok', name: playerName, note: null, top: null };
-  }
-
-  // Top raiders wear the two leading ring enchants in either order, so the pair compares as a multiset of ids.
-  private wearsTopRingPair(playerEnch: PlayerEnchant[], topEnch: EncounterGearStats['enchants']): boolean {
-    const worn = RING_SLOTS.map(slot => playerEnch.find(e => e.slot === slot)?.id).filter(id => id !== undefined);
-    const top = RING_SLOTS.map(slot => topEnch[slot]?.[0]?.id).filter(id => id !== undefined);
-    return worn.length === RING_SLOTS.length && this.sortedIdKey(worn) === this.sortedIdKey(top);
-  }
-
-  private sortedIdKey(ids: number[]): string {
-    return [...ids].sort((a, b) => a - b).join('-');
-  }
-
-  buildEnchantRows(gear: CharacterGear, stats: EncounterGearStats | null): EnchantRow[] {
-    const topEnch = stats?.enchants ?? {};
-    const playerEnch = gear.enchants ?? [];
-    if (!Object.keys(topEnch).length && !playerEnch.length) return [];
-    const slots = new Set<number>();
-    for (const k of Object.keys(topEnch)) slots.add(Number(k));
-    for (const e of playerEnch) slots.add(e.slot);
-    const ringPairOnPlan = this.wearsTopRingPair(playerEnch, topEnch);
-
-    return [...slots]
-      .sort((a, b) => a - b)
-      .map(slot => {
-        const top = ringPairOnPlan && (RING_SLOTS as readonly number[]).includes(slot) ? undefined : topEnch[slot]?.[0];
-        return this.enchantRowFor(this.slotName(slot), playerEnch.find(e => e.slot === slot), top);
-      })
-      .filter(row => row !== null);
-  }
-
-  enchantStatusOf(rows: EnchantRow[]): GearStatus {
-    return rows.some(r => r.status === 'warn') ? 'warn' : 'ok';
   }
 
   buildTalentBuilds(stats: EncounterGearStats | null, playerKey: string): TalentBuildRow[] {
@@ -141,71 +86,25 @@ export class GearComparisonService {
     return diffs;
   }
 
-  talentStatusOf(topStats: EncounterGearStats | null, playerKey: string): { status: GearStatus; note: string } {
-    const builds = topStats?.talent_builds ?? [];
-    const [topBuild] = builds;
-    if (!topBuild) return { status: 'unknown', note: 'No talent data.' };
-    if (playerKey.split(':')[0] !== topBuild.key.split(':')[0]) {
-      return { status: 'unknown', note: 'No talent data.' };
-    }
-    if (topBuild.key === playerKey) {
-      return { status: 'ok', note: `${this.rankLabel(0, 'build')}.` };
-    }
-    const rank = builds.findIndex(b => b.key === playerKey);
-    const ranked = rank > 0 ? builds[rank] : undefined;
-    if (ranked) {
-      return { status: 'info', note: `${this.rankLabel(rank, 'build')}. ${ranked.pct}% use this build.` };
-    }
-    return { status: 'warn', note: `Uncommon build. ${topBuild.pct}% use the most common one.` };
-  }
-
-  /** Sorted-id identity of a worn trinket combination, so two parses using the same trinkets in opposite slots share one key. */
-  trinketSetKey(trinkets: { id: number }[]): string {
-    return this.sortedIdKey(trinkets.map(trinket => trinket.id));
-  }
-
   buildTrinketSets(stats: EncounterGearStats | null, playerKey: string): TrinketSetRow[] {
     return (stats?.trinket_sets ?? []).map((set, i) => ({
       pct: set.pct,
-      isPlayer: !!playerKey && this.trinketSetKey(set.items) === playerKey,
+      isPlayer: !!playerKey && this.judge.trinketKey(this.judge.measureTrinkets(set.items)) === playerKey,
       label: this.rankLabel(i, 'pair'),
       items: set.items,
     }));
   }
 
-  trinketStatusOf(stats: EncounterGearStats | null, playerKey: string): { status: GearStatus; note: string } {
-    const sets = stats?.trinket_sets ?? [];
-    const [topSet] = sets;
-    if (!topSet || !playerKey) return { status: 'unknown', note: 'No trinket data.' };
-    if (this.trinketSetKey(topSet.items) === playerKey) {
-      return { status: 'ok', note: `${this.rankLabel(0, 'pair')}.` };
-    }
-    const rank = sets.findIndex(set => this.trinketSetKey(set.items) === playerKey);
-    const ranked = rank > 0 ? sets[rank] : undefined;
-    if (ranked) {
-      return { status: 'info', note: `${this.rankLabel(rank, 'pair')}. ${ranked.pct}% use this pair.` };
-    }
-    return { status: 'warn', note: `Uncommon pair. ${topSet.pct}% use the most common one.` };
+  buildBenchEnchantRows(leaders: readonly EnchantLeader[]): BenchEnchantRow[] {
+    return this.judge.agreedLeaders(leaders).map(leader =>
+      ({ slotName: this.slotName(leader.slot), enchant: leader.item, share: `${leader.k} of ${leader.n} top logs` }));
   }
 
-  buildBenchEnchantRows(stats: EncounterGearStats | null): BenchEnchantRow[] {
-    const topEnch = stats?.enchants ?? {};
-    return Object.keys(topEnch)
-      .map(Number)
-      .sort((a, b) => a - b)
-      .reduce<BenchEnchantRow[]>((acc, slot) => {
-        const top = topEnch[slot]?.[0];
-        if (top && top.pct >= ENCHANT_CONSENSUS_PCT) {
-          acc.push({ slotName: this.slotName(slot), enchant: this.enchantItem(top) });
-        }
-        return acc;
-      }, []);
+  /** The section's empty state, with the count of top logs behind it. */
+  emptyNote(noun: string, n: number, carried: string): string {
+    return n ? `No ${noun} data. None of the ${n} top logs ${carried}.` : `No ${noun} data.`;
   }
 }
-
-export type GearStatus = 'ok' | 'warn' | 'info' | 'unknown';
-
-const ENCHANT_CONSENSUS_PCT = 50;
 
 const RANK_PREFIXES = ['Most common', '2nd most common', '3rd most common'];
 
@@ -214,21 +113,6 @@ const SLOT_NAMES: Record<number, string> = {
   7:'Feet', 8:'Wrists', 9:'Hands', 10:'Ring 1', 11:'Ring 2',
   12:'Trinket 1', 13:'Trinket 2', 14:'Back', 15:'Main Hand', 16:'Off Hand',
 };
-
-/** The consensus enchant as the item that applies it; `itemId` is null where the bench resolved no item. */
-export interface EnchantItem {
-  name: string;
-  itemId: number | null;
-  icon: string;
-}
-
-export interface EnchantRow {
-  slotName: string;
-  status: GearStatus;
-  name: string;
-  note: string | null;
-  top: EnchantItem | null;
-}
 
 export interface TalentBuildRow {
   pct: number;
@@ -248,11 +132,6 @@ export interface TrinketSetRow {
   items: { id: number; name: string; icon: string }[];
 }
 
-// The comparison builders below take a real `CharacterGear` (never null); the bench-only view uses the dedicated `buildBench*` builders instead, so a not-yet-loaded player never renders "Not enchanted".
-
-type TopEnchant = EncounterGearStats['enchants'][number][number];
-type PlayerEnchant = NonNullable<CharacterGear['enchants']>[number];
-
 interface TalentSpend {
   talent: TalentEntry;
   points: number;
@@ -262,4 +141,5 @@ interface TalentSpend {
 export interface BenchEnchantRow {
   slotName: string;
   enchant: EnchantItem;
+  share: string;
 }

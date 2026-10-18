@@ -20,6 +20,8 @@ export const VERDICT_CHOICES = {
     /** A first use top logs agree on to the second still tolerates this much. */
     openerS: 2,
   },
+  /** A missing enchant is a loss only once this share of the top logs agree on the slot's enchant, which shows the slot takes one. */
+  enchantLeaderShare: 0.5,
   /** Paired consensus colors only when this share of the top logs agree; alone it needs all of them. */
   pairedConsensusShare: 0.8,
   /** SimC's own minimum reaction: a fact that changed this close before a press reads unknown. */
