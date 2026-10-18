@@ -188,7 +188,11 @@ test('burst windows compare the first window\'s damage and abilities against the
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
   await shows(burstWindows, JUDGED_SPAN);
   await showsBenchStrip(burstWindows);
-  await showsFirstWindow(burstWindows, { metric: 'Damage', chips: 'Cooldowns top raiders use here', range: 'Damage vs top range', casts: true });
+  const judged = await showsFirstWindow(burstWindows, { metric: 'Damage', chips: 'Cooldowns top raiders use here', range: 'Damage vs top range', casts: true });
+  // A judged window names its top logs as a count; the bench decides whether it has enough of them to judge.
+  if (judged) await expect(burstWindows.getByText(/^You dealt \S+ here[.,] /)).toBeVisible();
+  const nothingFlagged = burstWindows.getByText(/^Nothing flagged\./);
+  if (await nothingFlagged.count()) await expect(nothingFlagged).toHaveText(/^Nothing flagged\. \d+ of \d+ windows? checked against the \d+ top logs?\.$/);
 });
 
 test('defensives flag the mistimed cooldowns and benchmark the damage taken in the first window', async () => {

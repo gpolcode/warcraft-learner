@@ -92,6 +92,14 @@ export class WindowViewService {
     });
   }
 
+  private verdictFields(verdict: WindowVerdict): Pick<ComparisonWindow, 'note' | 'status' | 'statusIcon' | 'benchOnly' | 'message' | 'family'> {
+    return {
+      note: verdict.note ?? '', status: verdict.status, statusIcon: verdict.icon,
+      benchOnly: verdict.benchOnly ?? false, message: verdict.message ?? '',
+      ...verdict.family ? { family: verdict.family } : {},
+    };
+  }
+
   /** A window is judged only when it lies wholly in alive, pre-wipe time; a null model is a bench-only view with no pull to judge. */
   buildWindowView<A>(
     { topWindows, playerWindows, model, abilities, adapter }: WindowViewInput<A>,
@@ -106,8 +114,8 @@ export class WindowViewService {
       // playerWindows is the index-aligned aggregation over these same topWindows, so a time-based match would drift.
       const playerWindow = unjudged ? null : (playerWindows[index] ?? null);
       const playerDamage = playerWindow?.window_damage ?? null;
-      const { status, icon, note } = unjudged
-        ? { status: 'muted' as const, icon: UNJUDGED_ICON[unjudged], note: '' }
+      const verdict: WindowVerdict = unjudged
+        ? { status: 'muted' as const, icon: UNJUDGED_ICON[unjudged] }
         : adapter.status(window, playerDamage);
       const { spellIds, labels } = adapter.chips(window);
       windows.push({
@@ -115,9 +123,7 @@ export class WindowViewService {
         timeEndS: window.time_s + window.window_length_s,
         spells: this.projections.windowSpells(spellIds, abilities),
         labels,
-        note: note ?? '',
-        status,
-        statusIcon: icon,
+        ...this.verdictFields(verdict),
         unjudged,
         overview: { label: '', icon: '', playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max },
         detailRows: this.windowDetailRows(window.ability_breakdown, playerWindow, abilities, adapter.castColumns ?? false),
@@ -145,6 +151,9 @@ interface WindowVerdict {
   icon: string;
   /** The builder carries this as the window's own note; chips() must not carry it too. */
   note?: string;
+  benchOnly?: boolean;
+  message?: string;
+  family?: string;
 }
 
 interface WindowChips {
