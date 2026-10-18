@@ -2,18 +2,12 @@ import type { ToneLevel } from '../tone.models';
 import type { SpecRole } from '../../analysis/spec-role-service';
 
 /** `graded` keeps the tone calibration armed, `comparison` keeps numbers and counts without a graded color, `hidden` is a construct known invalid. */
-export type CalibrationStatus = 'graded' | 'comparison' | 'hidden';
+type CalibrationStatus = 'graded' | 'comparison' | 'hidden';
 
 /** One judged test of a family on a held-out top log, at the tone the rules gave before calibration. */
 export interface HeldOutRow {
   family: string;
   level: ToneLevel;
-}
-
-/** One held-out top log's rows across every bench of its encounter, keyed by its ranking. */
-export interface HeldOutPull {
-  source: string;
-  rows: HeldOutRow[];
 }
 
 /** `amber` counts tests flagged amber or red, `red` those flagged red. */
