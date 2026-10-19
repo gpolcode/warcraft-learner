@@ -39,6 +39,59 @@
               }
               <span>{{ verdict.note }}</span>
             </div>
+            @if (view().talentDiff; as diff) {
+              <div class="flex flex-col gap-2.5 mt-2.5">
+                @if (diff.missing.length) {
+                  <div>
+                    <span class="block text-label text-muted mb-1.5">Not taken</span>
+                    <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(diff.missing)">
+                      @for (node of diff.missing; track node.talent.name) {
+                        <span *tuiItem tuiChip appearance="neutral" size="xs" class="mr-2 mb-2">
+                          <wl-game-icon [id]="node.talent.spellId" [icon]="node.talent.icon" [name]="node.talent.name"></wl-game-icon>
+                          <span class="tabular-nums text-caption text-muted ml-1">{{ node.share }}</span>
+                        </span>
+                      }
+                      <ng-template tuiMore let-last>
+                        <button tuiLink type="button" class="mb-2 text-caption" (click)="showAllChips(diff.missing)">+{{ diff.missing.length - last - 1 }} more</button>
+                      </ng-template>
+                    </tui-items-with-more>
+                  </div>
+                }
+                @if (diff.ranks.length) {
+                  <div>
+                    <span class="block text-label text-muted mb-1.5">Points</span>
+                    <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(diff.ranks)">
+                      @for (node of diff.ranks; track node.talent.name) {
+                        <span *tuiItem tuiChip appearance="neutral" size="xs" class="mr-2 mb-2">
+                          <wl-game-icon [id]="node.talent.spellId" [icon]="node.talent.icon" [name]="node.talent.name"></wl-game-icon>
+                          <span class="tabular-nums text-body text-muted ml-1">{{ node.standardRank }}&#8594;{{ node.rank }}</span>
+                          <span class="tabular-nums text-caption text-muted ml-1">{{ node.share }}</span>
+                        </span>
+                      }
+                      <ng-template tuiMore let-last>
+                        <button tuiLink type="button" class="mb-2 text-caption" (click)="showAllChips(diff.ranks)">+{{ diff.ranks.length - last - 1 }} more</button>
+                      </ng-template>
+                    </tui-items-with-more>
+                  </div>
+                }
+                @if (diff.instead.length) {
+                  <div>
+                    <span class="block text-label text-muted mb-1.5">Taken instead</span>
+                    <tui-items-with-more class="-mb-2" [linesLimit]="chipLines(diff.instead)">
+                      @for (node of diff.instead; track node.talent.name) {
+                        <span *tuiItem tuiChip appearance="neutral" size="xs" class="mr-2 mb-2">
+                          <wl-game-icon [id]="node.talent.spellId" [icon]="node.talent.icon" [name]="node.talent.name"></wl-game-icon>
+                          <span class="tabular-nums text-caption text-muted ml-1">{{ node.share }}</span>
+                        </span>
+                      }
+                      <ng-template tuiMore let-last>
+                        <button tuiLink type="button" class="mb-2 text-caption" (click)="showAllChips(diff.instead)">+{{ diff.instead.length - last - 1 }} more</button>
+                      </ng-template>
+                    </tui-items-with-more>
+                  </div>
+                }
+              </div>
+            }
           </div>
         }
         @for (build of view().talentBuilds; track build.label) {

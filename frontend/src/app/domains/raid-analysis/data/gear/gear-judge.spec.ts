@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { CharacterGear } from '../wcl/wcl.models';
 import { EncounterGearStats } from '../encounter/encounter.models';
-import { GearParseMeasures } from './gear-data-source';
+import { GearBench, GearParseMeasures } from './gear-data-source';
 import { ENCHANT_CHOICE_FAMILY, ENCHANT_MISSING_FAMILY, GearJudgeService, TALENT_BUILD_FAMILY, TRINKET_PAIR_FAMILY } from './gear-judge-service';
 import { GearComparisonService } from './gear-comparison-service';
 import { TalentKeyService } from './talent-key-service';
@@ -22,13 +22,45 @@ const MASTERY = { id: 7969, name: "Enchant Ring - Zul'jin's Mastery" };
 const ALACRITY = { id: 8025, name: "Enchant Ring - Silvermoon's Alacrity" };
 const HASTE = { id: 8021, name: 'Enchant Ring - Thalassian Haste' };
 
-const MOST_COMMON = 'v3:11.1,22.2';
-const SECOND_BUILD = 'v3:12.1,22.2';
-const UNBENCHED_BUILD = 'v3:99.1,22.2';
-const RANKED_BUILDS = [
-  { key: MOST_COMMON, label: 'Most common build' },
-  { key: SECOND_BUILD, label: '2nd most common build' },
-];
+/** A real tree's shape: about 76 picks, of which 72 every top log takes and 4 vary. */
+const SHARED_TALENTS = 72;
+const CORE = Array.from({ length: SHARED_TALENTS - 1 }, (_, i) => 1000 + i);
+/** The one shared talent with two ranks, taken at rank 2. */
+const RANKED_TALENT = 1999;
+/** Flex talents: each top log takes four of these, so no flex node reaches the shared share. */
+const FLEX = [2001, 2002, 2003, 2004, 2005, 2006];
+/** Taken by 9 of 10 top logs: exactly the shared share. */
+const NINE_OF_TEN = 3001;
+/** Taken by 8 of 10 top logs: under the shared share. */
+const EIGHT_OF_TEN = 3002;
+/** Taken by no top log. */
+const OFF_TREE = 4001;
+
+function key(picks: readonly (readonly [number, number])[]): string {
+  return `v3:${[...picks].sort((a, b) => a[0] - b[0]).map(([entry, rank]) => `${entry}.${rank}`).join(',')}`;
+}
+
+/** Ten top logs on the core and the ranked talent, rotating through the flex talents; the first 9 add NINE_OF_TEN, the first 8 EIGHT_OF_TEN. */
+function topKeys(count = TOP_LOGS): string[] {
+  return Array.from({ length: count }, (_, i) => key([
+    ...CORE.map(entry => [entry, 1] as const),
+    [RANKED_TALENT, 2],
+    ...[0, 1, 2, 3].map(offset => [FLEX[(i + offset) % FLEX.length] ?? 0, 1] as const),
+    ...i < 9 ? [[NINE_OF_TEN, 1] as const] : [],
+    ...i < 8 ? [[EIGHT_OF_TEN, 1] as const] : [],
+  ]));
+}
+
+/** The reference the page and a fold read: the node counts ingest bakes, over the logs with a readable tree. */
+function nodeReference(keys: readonly string[]) {
+  return judge.talentReference({ talent_nodes: judge.talentNodes(keys), talent_sample_count: judge.readableTrees(keys) });
+}
+
+/** A player on the first top log's build with `change` applied to its picks. */
+function playerKey(change: (picks: [number, number][]) => [number, number][] = picks => picks): string {
+  const picks = (topKeys()[0] ?? '').split(':')[1]?.split(',').map(pick => pick.split('.').map(Number) as [number, number]) ?? [];
+  return key(change(picks));
+}
 
 const GAZE = 249343;
 const PUZZLE_BOX = 193701;
@@ -80,59 +112,102 @@ describe('GearJudgeService measures', () => {
   });
 });
 
+describe('GearJudgeService.talentNodes', () => {
+  const SHARED_ENTRY = 650;
+  const RANKED_ENTRY = 651;
+
+  it('counts each entry at each rank over the logs, splitting one entry taken at two ranks', () => {
+    expect(judge.talentNodes([`v3:${SHARED_ENTRY}.1,${RANKED_ENTRY}.1`, `v3:${SHARED_ENTRY}.1,${RANKED_ENTRY}.2`])).toEqual([
+      { entry_id: SHARED_ENTRY, rank: 1, count: 2 },
+      { entry_id: RANKED_ENTRY, rank: 1, count: 1 },
+      { entry_id: RANKED_ENTRY, rank: 2, count: 1 },
+    ]);
+  });
+
+  it('counts nothing for an unreadable tree or a key of another version, and leaves both out of the readable trees', () => {
+    expect(judge.talentNodes(['', 'v2:11,22'])).toEqual([]);
+    expect(judge.readableTrees(['', 'v2:11,22', `v3:${SHARED_ENTRY}.1`])).toBe(1);
+  });
+});
+
 describe('GearJudgeService.talentVerdict', () => {
-  /** Six top logs on the most common build, three on the second, one elsewhere. */
-  const reference = judge.talentReference([
-    ...logs(6, { talent_key: MOST_COMMON }), ...logs(3, { talent_key: SECOND_BUILD }), parse({ talent_key: UNBENCHED_BUILD.replace('99', '98') }),
-  ]);
+  const reference = nodeReference(topKeys());
+  /** The 71 core talents, the ranked talent and NINE_OF_TEN. */
+  const SHARED = SHARED_TALENTS + 1;
 
-  it('reads on plan with the count when the player uses the most common build', () => {
-    expect(judge.talentVerdict(MOST_COMMON, RANKED_BUILDS, reference)).toMatchObject({
-      family: TALENT_BUILD_FAMILY.id, tone: 'neutral', onPlan: true, n: TOP_LOGS,
-      note: 'Most common build. 6 of 10 top raiders use it.',
+  it('reads on plan with the shared count when the player takes every shared talent', () => {
+    expect(judge.talentVerdict(playerKey(), reference)).toMatchObject({
+      family: TALENT_BUILD_FAMILY.id, tone: 'neutral', onPlan: true, n: TOP_LOGS, shared: SHARED, missed: [],
+      note: `You take all ${SHARED} talents at least 9 of 10 top raiders share.`,
     });
   });
 
-  it('names a lower-ranked build with both counts, in blue', () => {
-    expect(judge.talentVerdict(SECOND_BUILD, RANKED_BUILDS, reference)).toMatchObject({
+  it('counts a skipped shared talent and one at another rank as differences, in blue, with each one\'s count', () => {
+    const verdict = judge.talentVerdict(playerKey(picks => [
+      ...picks.filter(([entry]) => entry !== CORE[0]).map(([entry, rank]): [number, number] => [entry, entry === RANKED_TALENT ? 1 : rank]),
+      [OFF_TREE, 1],
+    ]), reference);
+
+    expect(verdict).toMatchObject({
       tone: 'blue', onPlan: false,
-      note: '2nd most common build. 3 of 10 top raiders use it. 6 of 10 use the most common one.',
+      note: `You differ on 2 of the ${SHARED} talents at least 9 of 10 top raiders share.`,
+      missed: [
+        { entryId: CORE[0], rank: 1, k: TOP_LOGS, playerRank: null },
+        { entryId: RANKED_TALENT, rank: 2, k: TOP_LOGS, playerRank: 1 },
+      ],
     });
   });
 
-  it('calls a build outside the list uncommon, in blue', () => {
-    expect(judge.talentVerdict(UNBENCHED_BUILD, RANKED_BUILDS, reference)).toMatchObject({
-      tone: 'blue', note: 'Uncommon build. 6 of 10 top raiders use the most common one.',
-    });
+  it('treats a talent 9 of 10 top logs take as shared', () => {
+    expect(judge.talentVerdict(playerKey(picks => picks.filter(([entry]) => entry !== NINE_OF_TEN)), reference)?.missed)
+      .toEqual([{ entryId: NINE_OF_TEN, rank: 1, k: 9, playerRank: null }]);
   });
 
-  it('stays blue when every top log shares the most common build', () => {
-    expect(judge.talentVerdict(UNBENCHED_BUILD, RANKED_BUILDS, judge.talentReference(logs(TOP_LOGS, { talent_key: MOST_COMMON })))?.tone)
-      .toBe('blue');
+  it('leaves a talent 8 of 10 top logs take out of the shared set', () => {
+    expect(judge.talentVerdict(playerKey(picks => picks.filter(([entry]) => entry !== EIGHT_OF_TEN)), reference)?.onPlan).toBe(true);
+  });
+
+  it('lists the picks at most 1 of 10 top logs take instead, but not one 2 of 10 take', () => {
+    const takenBy = (takers: number) => nodeReference(topKeys().map((top, i) => i < takers ? `${top},${OFF_TREE}.1` : top));
+    const player = playerKey(picks => [...picks, [OFF_TREE, 1]]);
+
+    expect(judge.talentVerdict(player, takenBy(1))?.instead).toEqual([{ entryId: OFF_TREE, rank: 1, k: 1 }]);
+    expect(judge.talentVerdict(player, takenBy(2))?.instead).toEqual([]);
+  });
+
+  it('stays blue when every top log shares the talent the player skips', () => {
+    expect(judge.talentVerdict(playerKey(picks => picks.filter(([entry]) => entry !== CORE[0])), reference)?.tone).toBe('blue');
+  });
+
+  it('names the share as all of them when the shared share rounds up to every top log', () => {
+    const five = nodeReference(topKeys(5));
+    /** All five also take EIGHT_OF_TEN. */
+    const sharedByFive = SHARED + 1;
+
+    expect(judge.talentVerdict(playerKey(picks => picks.filter(([entry]) => entry !== CORE[0])), five)).toMatchObject({
+      tone: 'blue', note: `You differ on 1 of the ${sharedByFive} talents 5 of 5 top raiders share.`,
+    });
   });
 
   it('is a comparison under five top logs with a readable tree', () => {
-    const four = judge.talentReference([...logs(4, { talent_key: MOST_COMMON }), ...logs(6)]);
+    const four = nodeReference([...topKeys(4), '', '']);
 
-    expect(judge.talentVerdict(UNBENCHED_BUILD, RANKED_BUILDS, four)?.tone).toBe('neutral');
+    expect(judge.talentVerdict(playerKey(picks => picks.filter(([entry]) => entry !== CORE[0])), four)?.tone).toBe('neutral');
   });
 
-  it('is blue from five top logs with a readable tree', () => {
-    const five = judge.talentReference(logs(5, { talent_key: MOST_COMMON }));
-
-    expect(judge.talentVerdict(UNBENCHED_BUILD, RANKED_BUILDS, five)?.tone).toBe('blue');
+  it('judges nothing without a player tree, across key versions, or on a bench without node counts', () => {
+    expect(judge.talentVerdict('', reference)).toBeNull();
+    expect(judge.talentVerdict('v2:11,22', reference)).toBeNull();
+    expect(judge.talentVerdict(playerKey(), judge.talentReference({} as GearBench))).toBeNull();
   });
+});
 
-  it('prints no count on a bench without per-log builds', () => {
-    expect(judge.talentVerdict(UNBENCHED_BUILD, RANKED_BUILDS, judge.talentReference([]))).toMatchObject({
-      tone: 'neutral', note: 'Uncommon build.', n: 0,
-    });
-  });
+describe('GearJudgeService.nodeTones', () => {
+  it('gives one test per shared talent, blue only where the player differs', () => {
+    const tones = judge.nodeTones(playerKey(picks => picks.filter(([entry]) => entry !== CORE[0])), nodeReference(topKeys()));
 
-  it('judges nothing without a player key, without bench builds, or across key versions', () => {
-    expect(judge.talentVerdict('', RANKED_BUILDS, reference)).toBeNull();
-    expect(judge.talentVerdict(MOST_COMMON, [], reference)).toBeNull();
-    expect(judge.talentVerdict('v2:11,22', RANKED_BUILDS, reference)).toBeNull();
+    expect(tones).toHaveLength(SHARED_TALENTS + 1);
+    expect(tones.filter(entry => entry.tone === 'blue').map(entry => entry.node.entry_id)).toEqual([CORE[0]]);
   });
 });
 

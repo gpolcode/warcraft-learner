@@ -1,6 +1,7 @@
 import { assert, describe, it, expect } from 'vitest';
 import { GearComparisonService } from './gear-comparison-service';
 import { GearJudgeService } from './gear-judge-service';
+import { ToneService } from '../verdict/tone-service';
 import { SpecTalents } from './talent.models';
 import { EncounterGearStats } from '../encounter/encounter.models';
 import { TestBed } from '@angular/core/testing';
@@ -24,6 +25,31 @@ describe('buildBenchEnchantRows', () => {
 
   it('leaves out a leader under half the top logs', () => {
     expect(gearComparison.buildBenchEnchantRows([leader(15, 4, 10)])).toEqual([]);
+  });
+});
+
+describe('buildTalentNodeDiff', () => {
+  const SKIPPED = 10;
+  const RANKED = 20;
+  const INSTEAD = 30;
+  const talents: SpecTalents = { [SKIPPED]: { name: 'Skipped', icon: 's' }, [RANKED]: { name: 'Ranked', icon: 'r' }, [INSTEAD]: { name: 'Instead', icon: 'i' } };
+  const differing = {
+    family: 'gear.talent_build', tone: TestBed.inject(ToneService).neutral(), onPlan: false, note: '', n: 10, shared: 2,
+    missed: [{ entryId: SKIPPED, rank: 1, k: 10, playerRank: null }, { entryId: RANKED, rank: 2, k: 9, playerRank: 1 }],
+    instead: [{ entryId: INSTEAD, rank: 1, k: 1 }],
+  };
+
+  it('splits a skipped talent from one at another rank and lists the picks taken instead, each with its count', () => {
+    expect(gearComparison.buildTalentNodeDiff(differing, talents)).toEqual({
+      missing: [{ talent: talents[SKIPPED], share: '10 of 10 top logs' }],
+      ranks: [{ talent: talents[RANKED], share: '9 of 10 top logs', rank: 1, standardRank: 2 }],
+      instead: [{ talent: talents[INSTEAD], share: '1 of 10 top logs' }],
+    });
+  });
+
+  it('gives no diff on plan or without a verdict', () => {
+    expect(gearComparison.buildTalentNodeDiff({ ...differing, onPlan: true }, talents)).toBeNull();
+    expect(gearComparison.buildTalentNodeDiff(null, talents)).toBeNull();
   });
 });
 

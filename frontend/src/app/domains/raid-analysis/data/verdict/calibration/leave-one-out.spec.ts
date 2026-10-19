@@ -4,7 +4,7 @@ import { LeaveOneOutService } from './leave-one-out-service';
 import { bench } from '../../rotation/rotation-harness';
 import { benchWith, CLOAK_META, defBench } from '../../defensive/defensive-harness';
 import { benchSources } from '../../../../../../testing/builders/bench-sources';
-import { burstBench, burstLog, burstWindow, CLOAK, defensiveLog, defensiveWindow, ON_CADENCE, rotationLog, SB } from './calibration-harness';
+import { burstBench, burstLog, burstWindow, CLOAK, defensiveLog, defensiveWindow, gearBench, gearLog, ON_CADENCE, rotationLog, SB } from './calibration-harness';
 
 const folds = TestBed.inject(LeaveOneOutService);
 
@@ -44,6 +44,18 @@ describe('LeaveOneOutService foldRotation', () => {
     const logs = Array.from({ length: TOP_N }, (_unused, index) => rotationLog({ cd_casts_s: { [SB]: index <= 1 ? ON_CADENCE : [] } }));
 
     expect(folds.foldRotation(rotationBench(logs), 0).major_cooldowns.map(cooldown => cooldown.name)).toEqual([SB]);
+  });
+});
+
+describe('LeaveOneOutService foldGear', () => {
+  it('recounts the talent nodes over the other top logs, leaving out the held-out log\'s picks and an unreadable tree', () => {
+    const logs = Array.from({ length: TOP_N }, (_unused, index) =>
+      gearLog({ talent_key: index === HELD_OUT ? 'v3:9.1' : index === 0 ? '' : 'v3:1.1' }));
+
+    const folded = folds.foldGear(gearBench(logs), HELD_OUT);
+
+    expect(folded.talent_nodes).toEqual([{ entry_id: 1, rank: 1, count: TOP_N - 2 }]);
+    expect(folded.talent_sample_count).toBe(TOP_N - 2);
   });
 });
 

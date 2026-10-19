@@ -27,7 +27,7 @@ const HELM_ENCHANT = { name: 'Enchant Helm - Empowered Rune of Avoidance', itemI
 function benchView(over: Partial<GearComparisonView> = {}): GearComparisonView {
   return {
     comparison: false,
-    talentBuilds: [], talentVerdict: null, talentEmpty: 'No talent data.',
+    talentBuilds: [], talentVerdict: null, talentDiff: null, talentEmpty: 'No talent data.',
     trinketSets: [], trinketVerdict: null, trinketEmpty: 'No trinket data.',
     enchantRows: [], enchantEmpty: 'No enchant data.', enchantsClean: '',
     benchEnchantRows: [

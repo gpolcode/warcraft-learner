@@ -4,10 +4,11 @@ import { EncounterGearStats } from '../encounter/encounter.models';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { FamilyCaps, Tone } from '../verdict/tone.models';
+import { FamilyCaps, Tone, TONE_LEVELS } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
+import { getOrInsert } from '../analysis/analysis-math';
 import { RING_SLOTS } from './gear-extract-service';
-import { GearParseMeasures } from './gear-data-source';
+import { GearBench, GearParseMeasures, TalentNodeCount } from './gear-data-source';
 import { TalentKeyService } from './talent-key-service';
 
 const TOP_LOG_REFERENCE = { population: 'Top Mythic logs for the spec and boss, ranked on its metric', minN: VERDICT_CHOICES.minReferenceN };
@@ -16,21 +17,21 @@ const GEAR_LIMITS = ['Item level and what the player owns', 'Fight-specific swap
 export const TALENT_BUILD_FAMILY: FindingFamily = {
   id: 'gear.talent_build',
   label: 'Talent build',
-  version: 1,
+  version: 2,
   tier: 'blue',
-  claim: 'k of n top raiders use the most common talent build; yours differs from it.',
-  construct: 'The full talent build as one key of entry and rank per pick, against the most common key among the top logs with a readable tree.',
-  pendingRebuild: 'Per-node agreement with counts and a diff of the player\'s build',
+  claim: 'k of n top raiders take a talent at a rank; yours does not.',
+  construct: 'Each talent node, as entry and rank, that at least the shared share of the top logs with a readable tree take, against the player\'s picks; one test per shared node.',
+  pendingRebuild: null,
   reference: { population: 'Top Mythic logs for the spec and boss with a readable talent tree', minN: VERDICT_CHOICES.minReferenceN },
   alignment: 'The pull\'s combatant info',
-  availability: ['A readable talent tree in the pull', 'The same talent key version as the top logs'],
+  availability: ['A readable talent tree in the pull', 'The same talent key version as the top logs', 'At least one node the shared share of the top logs take'],
   raidDecisions: { relative: [], gated: [], excluded: [] },
   rule: 'consensus',
   costClass: 'medium',
-  uncertaintyShown: 'k of n top raiders who use the build',
-  copy: { message: '{label}. {j} of {n} top raiders use it. {k} of {n} use the most common one.', remedy: null },
+  uncertaintyShown: 'k of n top raiders who take each talent',
+  copy: { message: 'You differ on {d} of the {s} talents at least {k} of {n} top raiders share.', remedy: null },
   injectedMistakes: ['swap-talent-node'],
-  limits: [...GEAR_LIMITS, 'Talents chosen for a raid assignment'],
+  limits: [...GEAR_LIMITS, 'Talents chosen for a raid assignment', 'Talents that fill one slot under several entries'],
 };
 
 export const TRINKET_PAIR_FAMILY: FindingFamily = {
@@ -99,7 +100,28 @@ export interface PickReference {
   n: number;
 }
 
-/** One talent or trinket check; `onPlan` when the player uses the most common choice. */
+/** The top logs' talent nodes, each counted over the `n` logs with a readable tree. */
+export interface NodeReference {
+  nodes: readonly TalentNodeCount[];
+  n: number;
+}
+
+/** A shared node the player does not take at its rank: `k` of the reference's n take it; `playerRank` is null when the player skips the talent. */
+export interface MissedNode {
+  entryId: number;
+  rank: number;
+  k: number;
+  playerRank: number | null;
+}
+
+/** One of the player's picks that few top logs take: `k` of the reference's n. */
+export interface RarePick {
+  entryId: number;
+  rank: number;
+  k: number;
+}
+
+/** One trinket check, or the talent check's summary; `onPlan` when the player uses the most common choice or takes every shared talent. */
 export interface GearVerdict {
   family: string;
   tone: Tone;
@@ -136,6 +158,13 @@ export interface EnchantRow {
   n: number;
 }
 
+export interface TalentVerdict extends GearVerdict {
+  /** The nodes the top logs share, each one test of the family. */
+  shared: number;
+  missed: MissedNode[];
+  instead: RarePick[];
+}
+
 type TopEnchants = EncounterGearStats['enchants'];
 interface RankedChoice { key: string; label: string }
 
@@ -163,19 +192,64 @@ export class GearJudgeService {
     return ids.join('-');
   }
 
-  talentReference(perParse: readonly GearParseMeasures[]): PickReference {
-    return this.pickReference(perParse.map(parse => parse.talent_key));
+  /** Ingest bakes `talent_nodes` through this, and the harness recounts a fold through it, so the page and the fold count one way. */
+  talentNodes(keys: readonly string[]): TalentNodeCount[] {
+    const counts = new Map<string, TalentNodeCount>();
+    for (const pick of keys.flatMap(key => this.talentKeys.parseTalentKey(key))) {
+      const node = getOrInsert(counts, `${pick.entryId}.${pick.rank}`, () => ({ entry_id: pick.entryId, rank: pick.rank, count: 0 }));
+      node.count += 1;
+    }
+    return [...counts.values()].sort((a, b) => a.entry_id - b.entry_id || a.rank - b.rank);
+  }
+
+  readableTrees(keys: readonly string[]): number {
+    return keys.filter(key => this.talentKeys.parseTalentKey(key).length).length;
+  }
+
+  // A bench before the node counts were baked reads n = 0, so it compares nothing.
+  talentReference(bench: Pick<GearBench, 'talent_nodes' | 'talent_sample_count'>): NodeReference {
+    const stored: Partial<GearBench> = bench;
+    return { nodes: stored.talent_nodes ?? [], n: stored.talent_sample_count ?? 0 };
+  }
+
+  /** The nodes at least the shared share of the reference take; one entry holds at most one, since the share is over half. */
+  sharedNodes(reference: NodeReference): TalentNodeCount[] {
+    if (!reference.n) return [];
+    return reference.nodes.filter(node => node.count / reference.n >= VERDICT_CHOICES.talentNodeShare);
+  }
+
+  /** The tone of each shared node for the player's build, one test each; empty when the pull or the bench has nothing to compare. */
+  nodeTones(playerKey: string, reference: NodeReference, caps?: FamilyCaps): { node: TalentNodeCount; missed: boolean; tone: Tone }[] {
+    const picks = this.playerRanks(playerKey);
+    if (!picks.size) return [];
+    return this.sharedNodes(reference).map(node => {
+      const missed = picks.get(node.entry_id) !== node.rank;
+      const evidence = this.rules.consensus({ differs: missed, k: node.count, n: reference.n, paired: false });
+      return { node, missed, tone: missed ? this.tones.tone(TALENT_BUILD_FAMILY, evidence, caps) : this.tones.neutral() };
+    });
   }
 
   trinketReference(perParse: readonly GearParseMeasures[]): PickReference {
     return this.pickReference(perParse.map(parse => this.trinketKey(parse.trinket_ids)));
   }
 
-  /** `ranked` is the bench's list, most common first; null when the pull or the bench has nothing to compare. */
-  talentVerdict(playerKey: string, ranked: readonly RankedChoice[], reference: PickReference, caps?: FamilyCaps): GearVerdict | null {
-    const [leader] = ranked;
-    if (!leader || !playerKey || playerKey.split(':')[0] !== leader.key.split(':')[0]) return null;
-    return this.choiceVerdict(TALENT_BUILD_FAMILY, playerKey, ranked, reference, { noun: 'build', caps });
+  /** Null when the pull has no readable tree, its key is of another version, or no node reaches the shared share. */
+  talentVerdict(playerKey: string, reference: NodeReference, caps?: FamilyCaps): TalentVerdict | null {
+    const judged = this.nodeTones(playerKey, reference, caps);
+    if (!judged.length) return null;
+    const ranks = this.playerRanks(playerKey);
+    const missed = judged.filter(entry => entry.missed).map(({ node }) =>
+      ({ entryId: node.entry_id, rank: node.rank, k: node.count, playerRank: ranks.get(node.entry_id) ?? null }));
+    const tone = judged.map(entry => entry.tone).reduce((strongest, next) => this.stronger(next, strongest), this.tones.neutral());
+    const atLeast = Math.ceil(VERDICT_CHOICES.talentNodeShare * reference.n);
+    const share = atLeast === reference.n ? `${atLeast} of ${atLeast}` : `at least ${atLeast} of ${reference.n}`;
+    const note = missed.length
+      ? `You differ on ${missed.length} of the ${judged.length} talents ${share} top raiders share.`
+      : `You take all ${judged.length} talents ${share} top raiders share.`;
+    return {
+      family: TALENT_BUILD_FAMILY.id, tone, onPlan: !missed.length, note, n: reference.n,
+      shared: judged.length, missed, instead: this.rarePicks(playerKey, reference, atLeast, missed),
+    };
   }
 
   trinketVerdict(playerKey: string, ranked: readonly RankedChoice[], reference: PickReference, caps?: FamilyCaps): GearVerdict | null {
@@ -251,6 +325,23 @@ export class GearJudgeService {
 
   private passesGate(leader: EnchantLeader): boolean {
     return leader.k / leader.n >= VERDICT_CHOICES.enchantLeaderShare;
+  }
+
+  // The player's picks that the mirror of the shared share of the top logs take at most, leaving out the talents a missed node already names.
+  private rarePicks(playerKey: string, reference: NodeReference, atLeast: number, missed: readonly MissedNode[]): RarePick[] {
+    const counts = new Map(reference.nodes.map(node => [`${node.entry_id}.${node.rank}`, node.count]));
+    const named = new Set(missed.map(node => node.entryId));
+    return this.talentKeys.parseTalentKey(playerKey)
+      .map(pick => ({ ...pick, k: counts.get(`${pick.entryId}.${pick.rank}`) ?? 0 }))
+      .filter(pick => pick.k <= reference.n - atLeast && !named.has(pick.entryId));
+  }
+
+  private playerRanks(playerKey: string): Map<number, number> {
+    return new Map(this.talentKeys.parseTalentKey(playerKey).map(pick => [pick.entryId, pick.rank]));
+  }
+
+  private stronger(a: Tone, b: Tone): Tone {
+    return TONE_LEVELS.findIndex(level => level === a) > TONE_LEVELS.findIndex(level => level === b) ? a : b;
   }
 
   private choiceVerdict(

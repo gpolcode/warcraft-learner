@@ -881,3 +881,48 @@ Branch `claude/verdict-validity-p6e-bloodlust-overlap`, PR against `claude/verdi
 - `BloodlustJudgeService.effectSpans` is the one effect measure for an offensive cooldown; a construct that needs a cooldown's effect window (5.8's buttons, cost) can read the baked `cd_up_s`.
 - The registry hash changed (`rotation.bloodlust` version 2, `rotation.bloodlust_timing` gone, `midFightLustS`), so every family renders as a comparison until the next ingest recalibrates.
 - `npm run calibrate` launches the system Chrome channel when Playwright's own Chromium does not match; in this container that needed `/opt/google/chrome/chrome` linked to `/opt/pw-browsers/chromium`.
+
+## Package 6f: Talents as per-node agreement (done)
+
+Branch `claude/verdict-validity-p6f-talent-nodes`, PR against `claude/verdict-validity-p6e-bloodlust-overlap`.
+
+### Done
+
+- **Construct** (`GearJudgeService`, one set of functions for ingest, the harness and the page):
+  - `talentNodes(keys)`: each entry at each rank counted over the keys, through `TalentKeyService.parseTalentKey` (a key of another version or an unreadable tree counts nothing); `readableTrees(keys)` counts the keys that parse. Ingest's `GearTransformService` bakes `talent_nodes` and `talent_sample_count` through both; `LeaveOneOutService.foldGear` recounts the fold through both.
+  - `talentReference(bench)`: the baked `talent_nodes` over `talent_sample_count` (n = 0 on a bench without them). `sharedNodes(reference)`: the nodes at least `VERDICT_CHOICES.talentNodeShare` (0.9, new) of the logs take; on a fold of 9 that is 9 of 9.
+  - `nodeTones(playerKey, reference, caps?)`: one entry per shared node, `consensus({ differs: player's rank at the entry is not the node's, k: node count, n, paired: false })` through `ToneService.tone`; tier blue caps a 10 of 10 node, under 5 logs it is neutral.
+  - `talentVerdict(playerKey, reference, caps?)`: `TalentVerdict { family, tone, onPlan, note, n, shared, missed, instead }`, the strongest node tone; `missed` lists each shared node the player skips (`playerRank` null) or takes at another rank, with its k; `instead` lists the player's picks at most n minus the shared count take (1 of 10), leaving out talents a missed node names. Null without a readable player tree, on a key of another version or with no shared node.
+- **Copy.** "You differ on 2 of the 73 talents at least 9 of 10 top raiders share." / "You take all 73 talents at least 9 of 10 top raiders share."; where the share rounds up to every log: "... 5 of 5 top raiders share.". Blue (`info` icon) or neutral, never amber, no remedy.
+- **Diff.** `GearComparisonService.buildTalentNodeDiff(verdict, talents)` returns `TalentNodeDiff { missing, ranks, instead }`, each row a talent with "9 of 10 top logs"; a rank row carries the shared rank and the player's. `wl-gear` draws it under "Your build" as chip lists labelled "Not taken", "Points" (`2→1` and the share) and "Taken instead". The bench's build list and its build-to-build diff stay as they are.
+- **Baked names.** `GearBench.talent_names` (the spec's talents from the Raidbots dump, `{}` when it failed to load), so the page names the diff without reading the dump at runtime (warcraft-wcl-data: the dump is read only during ingest). A bench without it names each talent "Talent #id". `INGEST_VERSION` 49.
+- **Family.** `gear.talent_build` version 2, `pendingRebuild: null`, construct, claim, availability, copy and limits on the per-node agreement.
+- **Harness.** `GearHeldOutService.judge` gives one test per shared node of the fold (`nodeTones` on the fold's recount). `InjectedMistakeService.swappedTalent`: the held-out log's pick of the first node the fold shares is replaced by entry 0 at the same rank (`TalentKeyService.keyOf`), so the point count stays; no variant when the log takes no shared node.
+- **Tests.** `gear-judge.spec.ts` on a real tree's shape (76 picks, 72 every log takes, flex picks no log set shares): the 9 of 10 node shared against the 8 of 10 node not, a pick 1 of 10 take listed instead against one 2 of 10 take, the "5 of 5" share, under 5 logs neutral, rank differences, the null cases; `nodeTones` one test per node; fold, held-out, mistake, transform, comparison and feature specs; the producing scenario reads the node reference. E2E pins the verdict's sentence shape and, when drawn, a diff chip's share.
+
+### The measured report (rules' tone, before the caps)
+
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate`: `gear.talent_build` 7,760 tests (one per shared node per held-out log over 120 logs, 60 to 79 shared nodes per bench), 0 amber or red (tier blue), detection 120 of 120, graded blue. The per-node blue rate is 90 of 7,760 (1.2%); 45 of 120 held-out top logs differ on at least one shared talent (median 0, at most 20: one Balance Druid log on another hero tree). Every other family and the page load are as in 6e; only `defensive.window`'s truncation invariant fails, as before.
+
+### Decisions and deviations
+
+- **Shared share 0.9**, the 5.7 row's "9 of 10"; one entry can hold only one shared rank. Nodes under it are not judged: a talent 8 of 10 top logs take is a flex pick, and a player skipping it reads on plan.
+- **One test per node, one row per pull.** The 5.3 rate is per node, and a single per-pull test could not detect a second difference on a log that already differs; the page summarises the nodes in one row whose tone is the strongest node's (blue whenever any shared node differs).
+- **Rank counts as a difference**: a node is entry and rank, so a shared talent at another rank is one of the "differ on" count and appears under "Points".
+- **"Taken instead" uses the mirror of the share** (at most n minus the shared count), so it lists only picks almost no top log takes; picks between the two are left out of the diff.
+- **Names are baked**, not fetched at runtime; that is the one new bench field. Not a deviation: the paper's node counts and per-parse keys are baked and the names are presentation.
+- Not a deviation: the family is blue and needs no arming.
+
+### Drift against 6882b59
+
+- None: the paper cites no gear file:line. The RC4 Gear row's talent half and STAT-4 ("Uncommon build" for 59% of the benchmark's own players) are fixed; the trinket half (CON-6's pair plurality) is unchanged.
+
+### Seams stubbed
+
+- None.
+
+### For the next package
+
+- `GearBench.talent_names` arrives with the first full ingest at version 49; the version 47 calibration benches name the diff's talents by id on the page (the harness needs no names).
+- `GearJudgeService.sharedNodes` and `talentNodes` give any later view (pre-fight, coaching) the shared talents with their counts; the pre-fight card still shows the build list only.
+- The registry hash changed (`gear.talent_build` version 2, `talentNodeShare`), so every family renders as a comparison until the next ingest recalibrates.

@@ -46,7 +46,7 @@ export function gearBench(perParse: GearParseMeasures[]): GearBench {
   return {
     spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Boss', metric: 'dps',
     sample_count: perParse.length, sources: benchSources(perParse.length), per_parse: perParse,
-    talent_builds: [], talent_nodes: [], talent_sample_count: perParse.length, trinket_sets: [],
+    talent_builds: [], talent_nodes: [], talent_sample_count: perParse.length, talent_names: {}, trinket_sets: [],
     enchants: { 5: [{ id: 500, name: 'Chest Enchant', icon: '', item_id: null, pct: 100 }] },
   };
 }

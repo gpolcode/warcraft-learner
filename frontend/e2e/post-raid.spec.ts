@@ -237,7 +237,14 @@ test('gear sets the build, the trinkets and the enchants against the top logs', 
   await shows(gear, 'Gear vs top logs.');
   const talents = gearSection(gear, 'Talents');
   await shows(talents, 'Your build against the builds top raiders use.');
-  await expect(verdictOf(talents, 'Your build')).toHaveText(ANY_TEXT);
+  await expect(verdictOf(talents, 'Your build')).toHaveText(/^You (differ on \d+ of the|take all) \d+ talents (at least )?\d+ of \d+ top raiders share\.$/);
+  // The diff is drawn only when the build differs on a shared talent.
+  const change = talents.getByText('Not taken', { exact: true }).or(talents.getByText('Taken instead', { exact: true }));
+  if (await change.count()) {
+    const chip = change.first().locator('xpath=following-sibling::*[1]').locator('[tuiChip]').first();
+    await expect(chip.locator('wl-game-icon')).toHaveText(ANY_TEXT);
+    await expect(chip.getByText(/^\d+ of \d+ top logs$/)).toBeVisible();
+  }
   const trinkets = gearSection(gear, 'Trinkets');
   await shows(trinkets, 'Your pair against the pairs top raiders use.');
   await expect(verdictOf(trinkets, 'Your pair')).toHaveText(ANY_TEXT);

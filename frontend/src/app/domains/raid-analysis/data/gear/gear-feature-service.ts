@@ -5,14 +5,15 @@ import { WclApiService } from '../wcl/wcl-api-service';
 import { Result, Results } from '../../../shared/util-http/result';
 import { HttpLoadErrors } from '../http/http-load-error';
 import { GearExtractService, GameNames } from './gear-extract-service';
-import { TalentBuildRow, BenchEnchantRow, TrinketSetRow } from './gear-comparison-service';
+import { TalentBuildRow, BenchEnchantRow, TalentNodeDiff, TrinketSetRow } from './gear-comparison-service';
 import {
-  ENCHANT_CHOICE_FAMILY, ENCHANT_MISSING_FAMILY, EnchantRow, GearJudgeService, GearVerdict, TALENT_BUILD_FAMILY, TRINKET_PAIR_FAMILY,
+  ENCHANT_CHOICE_FAMILY, ENCHANT_MISSING_FAMILY, EnchantRow, GearJudgeService, GearVerdict, TALENT_BUILD_FAMILY, TalentVerdict, TRINKET_PAIR_FAMILY,
 } from './gear-judge-service';
 import { CalibrationCapsService } from '../verdict/calibration/calibration-caps-service';
 import { FamilyCaps } from '../verdict/tone.models';
 import { NotGradedNote } from '../verdict/calibration/calibration.models';
 import { GEAR_DATA_SOURCE, GearBench, GearParseMeasures } from './gear-data-source';
+import { SpecTalents } from './talent.models';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { GearComparisonService } from './gear-comparison-service';
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
@@ -21,8 +22,10 @@ export interface GearComparisonView {
   comparison: boolean;
 
   talentBuilds: TalentBuildRow[];
-  /** Null where the pull or the bench has no build to compare. */
-  talentVerdict: GearVerdict | null;
+  /** Null where the pull or the bench has no shared talent to compare. */
+  talentVerdict: TalentVerdict | null;
+  /** Null when the player takes every shared talent. */
+  talentDiff: TalentNodeDiff | null;
   talentEmpty: string;
 
   trinketSets: TrinketSetRow[];
@@ -104,7 +107,7 @@ export class GearFeatureService {
   emptyGearView(): GearComparisonView {
     return {
       comparison: false,
-      talentBuilds: [], talentVerdict: null, talentEmpty: 'No talent data.',
+      talentBuilds: [], talentVerdict: null, talentDiff: null, talentEmpty: 'No talent data.',
       trinketSets: [], trinketVerdict: null, trinketEmpty: 'No trinket data.',
       enchantRows: [], benchEnchantRows: [], enchantEmpty: 'No enchant data.', enchantsClean: '',
       bench: null, notGraded: [],
@@ -145,11 +148,13 @@ export class GearFeatureService {
     const playerKey = playerGear.talent_key ?? '';
     const trinketKey = this.judge.trinketKey(this.judge.measureTrinkets(playerGear.trinkets ?? []));
     const enchantRows = this.judge.enchantRows(playerGear, bench.enchants, perParse, slot => this.gearComparison.slotName(slot), caps);
+    const talentVerdict = this.judge.talentVerdict(playerKey, this.judge.talentReference(bench), caps);
     return {
       ...this.sections(perParse),
       comparison: true,
       talentBuilds: this.gearComparison.buildTalentBuilds(stats, playerKey),
-      talentVerdict: this.judge.talentVerdict(playerKey, this.rankedBuilds(bench), this.judge.talentReference(perParse), caps),
+      talentVerdict,
+      talentDiff: this.gearComparison.buildTalentNodeDiff(talentVerdict, this.talentNames(bench)),
       trinketSets: this.gearComparison.buildTrinketSets(stats, trinketKey),
       trinketVerdict: this.judge.trinketVerdict(trinketKey, this.rankedPairs(bench), this.judge.trinketReference(perParse), caps),
       enchantRows,
@@ -175,10 +180,16 @@ export class GearFeatureService {
     };
   }
 
+  // A bench before the names were baked names each talent of the diff by its id.
+  private talentNames(bench: GearBench): SpecTalents | null {
+    const stored: Partial<GearBench> = bench;
+    return stored.talent_names ?? null;
+  }
+
   private sections(perParse: readonly GearParseMeasures[]): GearRows {
     return {
       comparison: false,
-      talentBuilds: [], talentVerdict: null,
+      talentBuilds: [], talentVerdict: null, talentDiff: null,
       talentEmpty: this.gearComparison.emptyNote('talent', perParse.length, 'has a readable talent tree'),
       trinketSets: [], trinketVerdict: null,
       trinketEmpty: this.gearComparison.emptyNote('trinket', perParse.length, 'carries a trinket'),
@@ -188,10 +199,6 @@ export class GearFeatureService {
 
   private enchantsClean(checked: number, n: number): string {
     return `Nothing flagged. ${checked} ${checked === 1 ? 'enchant' : 'enchants'} checked against ${n} top logs.`;
-  }
-
-  private rankedBuilds(bench: GearBench): { key: string; label: string }[] {
-    return bench.talent_builds.map((build, i) => ({ key: build.key, label: this.gearComparison.rankLabel(i, 'build') }));
   }
 
   private rankedPairs(bench: GearBench): { key: string; label: string }[] {

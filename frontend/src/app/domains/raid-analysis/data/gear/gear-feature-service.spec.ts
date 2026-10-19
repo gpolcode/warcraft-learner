@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, assert } from 'vitest';
 import { CharacterGear, WclCombatantInfo, WclGearItem } from '../wcl/wcl.models';
 import { GEAR_DATA_SOURCE, GearBench, GearParseMeasures } from './gear-data-source';
 import { featureService } from '../../../../../testing/service-harness';
@@ -8,6 +8,7 @@ import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
 import { benchSources } from '../../../../../testing/builders/bench-sources';
+import { SpecTalents } from './talent.models';
 
 TestBed.configureTestingModule({ providers: [
   { provide: WCL_TRANSPORT, useValue: {} },
@@ -18,6 +19,7 @@ const svc = TestBed.inject(GearFeatureService);
 TestBed.resetTestingModule();
 
 const STANDARD_KEY = 'v3:11.1,22.1';
+const SPEC_TALENTS: SpecTalents = { 11: { name: 'Core', icon: 'core' }, 22: { name: 'Shared', icon: 'shared' }, 33: { name: 'Rare', icon: 'rare' } };
 const GAZE = { id: 100, name: 'A', icon: 'inv_a' };
 const PUZZLE_BOX = { id: 200, name: 'B', icon: 'inv_b' };
 const STANDARD_PAIR = [{ items: [GAZE, PUZZLE_BOX], pct: 70 }];
@@ -25,9 +27,10 @@ const STANDARD_TRINKETS = [{ slot: 12, id: GAZE.id, name: GAZE.name }, { slot: 1
 
 const SOPHIC_ON_MAIN_HAND: Record<number, number> = { 15: 8041 };
 const NO_ENCHANT: Record<number, number> = {};
-/** Ten top logs: eight on the standard build, seven on the standard pair, nine with Sophic on the main hand. */
+const OTHER_KEY = 'v3:11.1,33.1';
+/** Ten top logs: nine on the standard build, seven on the standard pair, nine with Sophic on the main hand. */
 const TOP_LOGS: GearParseMeasures[] = Array.from({ length: 10 }, (_unused, i) => ({
-  talent_key: i < 8 ? STANDARD_KEY : 'v3:11.1,33.1',
+  talent_key: i < 9 ? STANDARD_KEY : OTHER_KEY,
   trinket_ids: i < 7 ? [GAZE.id, PUZZLE_BOX.id] : [GAZE.id],
   enchant_ids: i < 9 ? SOPHIC_ON_MAIN_HAND : NO_ENCHANT,
 }));
@@ -38,7 +41,8 @@ function benchWith(overrides: Partial<GearBench> = {}): GearBench {
     talent_builds: [{ key: STANDARD_KEY, pct: 80, report_code: 'abc', fight_id: 2, player_name: 'Top', source_id: 5, diff: [] }],
     trinket_sets: STANDARD_PAIR,
     enchants: { 15: [{ id: 8041, name: 'Sophic', icon: '', item_id: null, pct: 90 }] },
-    talent_nodes: [], talent_sample_count: 10, per_parse: TOP_LOGS,
+    talent_nodes: [{ entry_id: 11, rank: 1, count: 10 }, { entry_id: 22, rank: 1, count: 9 }, { entry_id: 33, rank: 1, count: 1 }],
+    talent_sample_count: 10, talent_names: SPEC_TALENTS, per_parse: TOP_LOGS,
     ...overrides,
   };
 }
@@ -126,7 +130,8 @@ describe('buildGearView', () => {
 
   it('reads a player matching the bench on plan in talents, trinkets and enchants, with the counts', () => {
     const view = svc['buildGearView'](matchingPlayer, benchWith());
-    expect(view.talentVerdict).toMatchObject({ onPlan: true, note: 'Most common build. 8 of 10 top raiders use it.' });
+    expect(view.talentVerdict).toMatchObject({ onPlan: true, note: 'You take all 2 talents at least 9 of 10 top raiders share.' });
+    expect(view.talentDiff).toBeNull();
     expect(view.trinketVerdict).toMatchObject({ onPlan: true, note: 'Most common pair. 7 of 10 top raiders use it.' });
     expect(view.enchantRows.every(row => row.onPlan)).toBe(true);
     expect(view.enchantsClean).toBe('Nothing flagged. 1 enchant checked against 10 top logs.');
@@ -142,14 +147,30 @@ describe('buildGearView', () => {
     expect(view.trinketSets.some(row => row.isPlayer)).toBe(false);
   });
 
+  it('counts the shared talents the player skips in blue and names each one in the diff with its count', () => {
+    const view = svc['buildGearView']({ ...matchingPlayer, talent_key: OTHER_KEY }, benchWith());
+
+    expect(view.talentVerdict).toMatchObject({ tone: 'blue', note: 'You differ on 1 of the 2 talents at least 9 of 10 top raiders share.' });
+    expect(view.talentDiff).toEqual({
+      missing: [{ talent: SPEC_TALENTS[22], share: '9 of 10 top logs' }], ranks: [], instead: [{ talent: SPEC_TALENTS[33], share: '1 of 10 top logs' }],
+    });
+  });
+
+  it('names a talent by its id on a bench without baked talent names', () => {
+    const { talent_names: _names, ...older } = benchWith();
+    const view = svc['buildGearView']({ ...matchingPlayer, talent_key: OTHER_KEY }, older as GearBench);
+
+    expect(view.talentDiff?.missing[0]?.talent.name).toBe('Talent #22');
+  });
+
   it('flags a missing enchant most top logs use in amber', () => {
     const view = svc['buildGearView']({ ...matchingPlayer, enchants: [] }, benchWith());
     expect(view.enchantRows).toMatchObject([{ tone: 'amber', note: '9 of 10 top raiders use it. Apply it.' }]);
   });
 
   it('judges nothing in color on a bench without per-log picks', () => {
-    const view = svc['buildGearView']({ ...matchingPlayer, talent_key: 'v3:11.1,33.1', enchants: [] }, benchWith({ per_parse: [] }));
-    expect([view.talentVerdict?.tone, view.enchantRows.length]).toEqual(['neutral', 0]);
+    const view = svc['buildGearView']({ ...matchingPlayer, talent_key: OTHER_KEY, enchants: [] }, benchWith({ per_parse: [], talent_nodes: [], talent_sample_count: 0 }));
+    expect([view.talentVerdict, view.enchantRows.length]).toEqual([null, 0]);
   });
 });
 
@@ -157,7 +178,7 @@ describe('emptyGearView', () => {
   it('is a bench-off placeholder with no rows', () => {
     expect(svc.emptyGearView()).toEqual({
       comparison: false,
-      talentBuilds: [], talentVerdict: null, talentEmpty: 'No talent data.',
+      talentBuilds: [], talentVerdict: null, talentDiff: null, talentEmpty: 'No talent data.',
       trinketSets: [], trinketVerdict: null, trinketEmpty: 'No trinket data.',
       enchantRows: [], benchEnchantRows: [], enchantEmpty: 'No enchant data.', enchantsClean: '', bench: null, notGraded: [],
     });
@@ -197,6 +218,14 @@ describe('GearFeatureService', () => {
     if (!result.ok) return;
     expect(result.value.comparison).toBe(true);
     expect(result.value.talentVerdict?.onPlan).toBe(true);
+  });
+
+  it('loadComparisonView names the diff\'s talents from the bench', async () => {
+    const player: CharacterGear = { talent_key: OTHER_KEY, trinkets: STANDARD_TRINKETS, enchants: [{ slot: 15, id: 8041, name: 'Sophic' }] };
+    const result = await configure(Results.ok(benchWith()), player).loadComparisonView('SubtletyRogue', 1, 'r1', 3, 10);
+    assert(result.ok);
+
+    expect(result.value.talentDiff?.missing.map(row => row.talent.name)).toEqual([SPEC_TALENTS[22]?.name]);
   });
 
   it('loadComparisonView surfaces a permanent error when the player has no combatant info', async () => {

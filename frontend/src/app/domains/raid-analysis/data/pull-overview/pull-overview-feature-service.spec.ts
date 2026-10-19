@@ -153,7 +153,7 @@ function gearBench(metric: RankingMetric): Result<GearBench> {
   return Results.ok({
     spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: 'Boss', metric, sample_count: 2,
     sources: [parseRanking({ rank: 1, amount: TOP_HIGH }), parseRanking({ rank: 2, amount: TOP_LOW })],
-    talent_builds: [], talent_nodes: [], talent_sample_count: 0, trinket_sets: [], enchants: {}, per_parse: [],
+    talent_builds: [], talent_nodes: [], talent_sample_count: 0, talent_names: {}, trinket_sets: [], enchants: {}, per_parse: [],
   });
 }
 

@@ -145,12 +145,19 @@ describe('InjectedMistakeService', () => {
     expect(variants).toEqual([]);
   });
 
-  it('swaps a talent and removes an enchant from a gear log', () => {
+  it('swaps the first talent the other top logs share for one no tree has, and removes an enchant from a gear log', () => {
     const picks = gearLog();
-    const gearCase: HeldOutCase = { card: 'gear', source: 'r1:1', fold: gearBench([picks]), picks };
+    const gearCase: HeldOutCase = { card: 'gear', source: 'r1:1', fold: folds.foldGear(gearBench([picks, ...Array.from({ length: TOP_N }, () => gearLog())]), 0), picks };
 
-    expect(mistakes.variants('swap-talent-node', gearCase).map(variant => variant.card === 'gear' && variant.picks.talent_key)).not.toEqual([picks.talent_key]);
+    expect(mistakes.variants('swap-talent-node', gearCase).map(variant => variant.card === 'gear' && variant.picks.talent_key)).toEqual(['v3:0.1,2.1']);
     expect(mistakes.variants('remove-enchant', gearCase).map(variant => variant.card === 'gear' && variant.picks.enchant_ids)).toEqual([{}]);
+  });
+
+  it('has no talent to swap when the held-out log takes none the others share', () => {
+    const picks = gearLog({ talent_key: 'v3:3.1' });
+    const gearCase: HeldOutCase = { card: 'gear', source: 'r1:1', fold: folds.foldGear(gearBench([picks, ...Array.from({ length: TOP_N }, () => gearLog())]), 0), picks };
+
+    expect(mistakes.variants('swap-talent-node', gearCase)).toEqual([]);
   });
 });
 
