@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { applyBuff, beginCast, cast, damage, removeBuff } from '../../../../../../testing/builders/events';
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
-import { BACKSTAB, EVISCERATE, SHADOW_DANCE, WRATH } from '../../../../../../testing/spell-ids';
+import { BACKSTAB, EVISCERATE, SECRET_TECHNIQUE, SECRET_TECHNIQUE_TALENT_ENTRY, SHADOW_DANCE, WRATH } from '../../../../../../testing/spell-ids';
 import type { PlanLine } from '../../plan/plan.models';
 import type { WclEvent } from '../../wcl/wcl.models';
 import { VERDICT_CHOICES } from '../../verdict/verdict-choices';
@@ -207,18 +207,16 @@ describe('ListCheckService one verdict per decision', () => {
 });
 
 describe('ListCheckService ownership from talents', () => {
-  const SECRET_TECHNIQUE = 280719;
-  const SECRET_TECHNIQUE_ENTRY = 112644;
   const LINES: PlanLine[] = [{ action: 'secret_technique', terms: [] }, { action: 'backstab', terms: [] }];
   const owned = (talents: [number, number][] | undefined) => {
     const base = list(LINES);
     const talented = { ...base, spells: { ...base.spells, secret_technique: planSpell('Secret Technique', [SECRET_TECHNIQUE], { gcd: 1 }) },
-      talents: { 'talent.secret_technique': { name: 'Secret Technique', entries: [SECRET_TECHNIQUE_ENTRY] } } };
+      talents: { 'talent.secret_technique': { name: 'Secret Technique', entries: [SECRET_TECHNIQUE_TALENT_ENTRY] } } };
     return checks.read(factContext(talented, { casts: [cast(BACKSTAB, 10)], ...(talents ? { talents } : {}) })).casts.get('backstab')?.[0];
   };
 
   it('counts a never-pressed talent button as due once the player\'s talents pick it', () => {
-    expect(owned([[SECRET_TECHNIQUE_ENTRY, 1]])).toMatchObject({ verdict: 'off', due: { action: 'secret_technique' } });
+    expect(owned([[SECRET_TECHNIQUE_TALENT_ENTRY, 1]])).toMatchObject({ verdict: 'off', due: { action: 'secret_technique' } });
   });
 
   it('passes over it when the talents leave it out', () => {

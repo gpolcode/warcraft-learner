@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import type { FoldCounts } from '../analysis/pull-model-service';
 import { CostClass, DamageEstimate, RowRank, Tone, TONE_LEVELS } from './tone.models';
 
-/** One judged row as the page-wide strip and the damage card read it, whatever card drew it. */
 export interface RankedRow {
   /** The card's heading. */
   card: string;
@@ -16,13 +15,11 @@ export interface RankedRow {
   message: string;
 }
 
-/** What a card hands the page: its ranked rows and the checks it folded under a root cause. */
 export interface CardRanking {
   rows: RankedRow[];
   folded: FoldCounts;
 }
 
-/** What a row sorts on, whatever its own shape. */
 export interface OrderKey {
   tone: Tone;
   rank?: RowRank | null;
@@ -44,7 +41,6 @@ const SORT_KEYS: readonly ((key: OrderKey) => number)[] = [
   key => key.rank?.shortfall ?? 0,
 ];
 
-/** Orders rows across cards: tone, then cost class, evidence, damage and shortfall. */
 @Injectable({ providedIn: 'root' })
 export class RowOrderService {
   /** A colored row before an uncolored one, then the costlier class, the stronger evidence, a quantified damage over none and the larger, and the larger shortfall. */

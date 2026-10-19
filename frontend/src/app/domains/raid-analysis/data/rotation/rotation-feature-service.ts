@@ -61,19 +61,14 @@ export interface RotationPlayerView {
   offensiveSpan: JudgedSpan | null;
   /** The bench judges at least one button, so the Rotation rules card renders even when the pull settled none. */
   buttonsBenched: boolean;
-  /** The Rotation rules card's empty state, with how many buttons the list judges. */
   buttonsEmpty: string;
-  /** The Offensives card's empty state, with how many cooldowns were checked against how many top logs. */
   offensivesEmpty: string;
-  /** The Downtime card's empty state, with how many top logs the idle time was checked against. */
   downtimeEmpty: string;
   bench: BenchStrip | null;
   notGraded: RotationNotGraded;
-  /** The three cards' judged rows, for the page-wide order. */
   ranking: CardRanking;
 }
 
-/** Each rotation card's checks calibration leaves without a color. */
 interface RotationNotGraded {
   buttons: NotGradedNote[];
   downtime: NotGradedNote[];
@@ -175,7 +170,6 @@ export class RotationFeatureService {
     });
   }
 
-  /** The view's judged rows, or none on a failed load. */
   ranking(view: RotationPlayerView | null): CardRanking {
     return view?.ranking ?? this.cardRanking.ranking([]);
   }

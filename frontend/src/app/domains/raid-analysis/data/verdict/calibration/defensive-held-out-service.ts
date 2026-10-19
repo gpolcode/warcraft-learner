@@ -16,7 +16,6 @@ import { HeldOutRow } from './calibration.models';
 import { HeldOutRowService } from './held-out-row-service';
 import { FoldedDefensiveBench } from './leave-one-out-service';
 
-/** A top log judged as the player on the defensive cards. */
 export interface DefensiveHeldOut {
   casts: CastsByName;
   model: PullModel;

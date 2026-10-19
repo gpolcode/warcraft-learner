@@ -10,9 +10,7 @@ import { CalibrationReportService } from './calibration-report-service';
 import { EncounterCalibrationService } from './encounter-calibration-service';
 import { BenchName, EncounterBenches } from './held-out-case-service';
 
-/** The bench folder each encounter's calibration file sits in, beside its benches. */
 export const CALIBRATION_DIR = 'calibration';
-/** The bench folder each encounter's contrast cohort sits in. */
 export const CONTRAST_DIR = 'contrast';
 
 const BENCH_NAMES: readonly BenchName[] = ['rotation', 'defensive', 'gear', 'burst'];
@@ -50,7 +48,6 @@ export class CalibrationRunService {
     return { index, previous, breaches: this.indices.breaches(previous, index), report: this.reports.report(index) };
   }
 
-  /** Removes the calibration and contrast files of an encounter the ingest pruned. */
   async remove(spec: string, encounterId: number): Promise<void> {
     await this.files.removeBench(spec, encounterId, CALIBRATION_DIR);
     await this.files.removeBench(spec, encounterId, CONTRAST_DIR);

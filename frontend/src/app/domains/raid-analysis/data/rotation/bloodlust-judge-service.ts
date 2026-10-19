@@ -50,7 +50,6 @@ export interface LustOverlap {
 
 /** The top logs whose raid lusted mid-fight and that carry their cooldown auras, each measured on its own lust. */
 export interface LustReference {
-  /** Each such log's lust, in the order of the bench's sources. */
   lustsS: number[];
   overlaps: LustOverlap[];
 }

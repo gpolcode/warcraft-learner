@@ -182,7 +182,6 @@ export class DefensiveJudgeService {
     return uses.length > 0 && uses.every(use => use.end_s <= use.start_s);
   }
 
-  /** Each top log's uses, in the order of the bench's sources. */
   referenceUses(perParse: readonly CastsByName[], name: string): number[] {
     return perParse.map(casts => casts[name]?.length ?? 0);
   }
@@ -214,7 +213,6 @@ export class DefensiveJudgeService {
     };
   }
 
-  /** One row per defensive, when the rule flags its ready time. */
   readyTimeFinding(
     defensive: { name: string; cooldown: number; charges?: number }, useTimesS: readonly number[], model: PullModel,
     top: { perParse: readonly CastsByName[]; killsS: readonly (number | null)[] }, holds: CdHoldTargets, caps?: FamilyCaps,

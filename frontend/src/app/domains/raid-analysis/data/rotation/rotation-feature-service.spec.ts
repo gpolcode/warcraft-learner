@@ -64,7 +64,6 @@ function presses(timesS: number[], spellId = SHADOW_BLADES): TimedEvent[] {
   return wclProjections.withRelativeS(timesS.map(atS => cast(spellId, atS)), 0);
 }
 
-/** A killed pull of `fightS`, with a Bloodlust from `lustS` when given. */
 function killed(fightS: number, lustS: number | null = null): PullModel {
   return pullModel({ fightDurationS: fightS, lust: lustS === null ? null : { startS: lustS, endS: lustS + 40 } });
 }

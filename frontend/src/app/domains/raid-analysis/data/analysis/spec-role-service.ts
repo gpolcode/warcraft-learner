@@ -7,7 +7,6 @@ export class SpecRoleService {
     return HEALER_SPECS.has(spec);
   }
 
-  /** The page budget is per role, so every spec maps to one. */
   role(spec: string): SpecRole {
     if (HEALER_SPECS.has(spec)) return 'healer';
     return TANK_SPECS.has(spec) ? 'tank' : 'dps';

@@ -61,7 +61,6 @@ export class WindowComparison {
   readonly rangeLabel = input.required<string>();
   /** Why nothing is flagged, with counts: the card's empty state with no windows, a line above them otherwise; empty renders nothing. */
   readonly empty = input<string>('');
-  /** The card's checks calibration leaves without a color, listed under its rows. */
   readonly notGraded = input<readonly NotGradedNote[]>([]);
   readonly openMap = output<number>();
   readonly openClip = output<number>();

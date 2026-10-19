@@ -24,7 +24,6 @@ export interface Evidence {
   excess: number;
 }
 
-/** The tone calibration lets each family reach on one page. */
 export interface FamilyCaps {
   capOf(familyId: string): ToneLevel;
 }

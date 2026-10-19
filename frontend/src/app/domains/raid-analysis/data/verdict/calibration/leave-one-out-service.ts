@@ -29,7 +29,6 @@ export type FoldedBurstBench = Omit<BurstBench, 'windows' | 'per_parse'> & { win
 
 export type FoldedDefensiveBench = Omit<DefensiveBench, 'defensive_windows'> & { defensive_windows: FoldedWindow[] };
 
-/** A plan button with the cooldown its cadence bench is built on. */
 interface CadenceButton {
   name: string;
   cooldown: number;

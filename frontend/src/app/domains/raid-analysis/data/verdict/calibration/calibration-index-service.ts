@@ -18,7 +18,6 @@ const BURST_FAMILY = 'burst.window';
 /** An inserted death is the fact this family states, so a death perturbation raising its rate is the family catching it, not a confound. */
 const DEATH_FACT = DEAD_IN_WINDOW_FAMILY.id;
 const DEATH_INSERTIONS = new Set(['death', 'death-rez']);
-/** Damage is read by no cadence check and by no coverage verdict, and burst reads it only as a ratio to the log's own average. */
 type DiscriminationsByFamily = Readonly<Record<string, Discrimination | null>>;
 
 interface Separation {
@@ -30,11 +29,11 @@ interface Separation {
 /** A verdict lost because the contrast cohort has not filled in yet is a missing measurement, not a rule that got worse. */
 const PENDING_REASONS = new Set<string>([NOT_GRADED.contrastPending]);
 
+/** Damage is read by no cadence check and by no coverage verdict, and burst reads it only as a ratio to the log's own average. */
 const DAMAGE_BLIND = new Set(FINDING_REGISTRY
   .filter(family => family.id.startsWith('rotation.') || family.id.startsWith('defensive.') || family.id === BURST_FAMILY)
   .map(family => family.id));
 
-/** Pools the per-encounter calibration into the index the runtime reads, and answers the cap a family may reach on a page. */
 @Injectable({ providedIn: 'root' })
 export class CalibrationIndexService {
   private readonly arming = inject(ArmingService);

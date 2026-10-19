@@ -26,7 +26,6 @@ const START_S = 10;
 const END_S = 30;
 const HIT = 100;
 const FIGHT_S = 100;
-/** A whole-second window at 40s, ten seconds long. */
 const WINDOW_AT_S = 40;
 const WINDOW_S = 10;
 const STEADY = 10;
@@ -48,7 +47,6 @@ function steadyWithBurst(burstAtS: number, extra: number, fightS = FIGHT_S): num
   return Array.from({ length: fightS }, (_unused, second) => STEADY + (second >= burstAtS && second < burstAtS + WINDOW_S ? extra : 0));
 }
 
-/** A measure on the window at a given multiple of the log's own average. */
 const measured = (amplification: number, damage = 1000): BurstMeasure => ({ damage, amplification, startS: WINDOW_AT_S, lengthS: WINDOW_S });
 const FIVE_TOP_LOGS = Array.from({ length: VERDICT_CHOICES.minReferenceN }, () => TOP_AMPLIFICATION);
 

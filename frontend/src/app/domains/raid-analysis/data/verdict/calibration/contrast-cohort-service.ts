@@ -8,7 +8,6 @@ const CHOICES = VERDICT_CHOICES.discrimination;
 /** A cohort older than a week is fetched again, so the weaker logs follow the field as it gears up. */
 const REFRESH_AFTER_S = 7 * 24 * 60 * 60;
 
-/** One spec and boss the contrast cohort may be fetched for. */
 export interface ContrastPair {
   spec: string;
   encounterId: number;
@@ -17,7 +16,6 @@ export interface ContrastPair {
   signature: string;
 }
 
-/** Which weaker ranked logs make the contrast cohort, and when a stored cohort is due again. */
 @Injectable({ providedIn: 'root' })
 export class ContrastCohortService {
   /** The middle row of each of `cohortSize` equal slices of the page's readable rows; a page with fewer rows gives no cohort. */

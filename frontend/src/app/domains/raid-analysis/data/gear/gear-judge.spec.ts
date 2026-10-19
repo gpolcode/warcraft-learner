@@ -6,6 +6,7 @@ import { GearBench, GearParseMeasures } from './gear-data-source';
 import { ENCHANT_CHOICE_FAMILY, ENCHANT_MISSING_FAMILY, GearJudgeService, TALENT_BUILD_FAMILY, TRINKET_PAIR_FAMILY } from './gear-judge-service';
 import { GearComparisonService } from './gear-comparison-service';
 import { TalentKeyService } from './talent-key-service';
+import { ALGETHAR_PUZZLE_BOX, ARAKARA_SACBROOD, GAZE_OF_THE_ALNSEER } from '../../../../../testing/spell-ids';
 
 const judge = TestBed.inject(GearJudgeService);
 const slotName = (slot: number): string => TestBed.inject(GearComparisonService).slotName(slot);
@@ -62,18 +63,14 @@ function playerKey(change: (picks: [number, number][]) => [number, number][] = p
   return key(change(picks));
 }
 
-const GAZE = 249343;
-const PUZZLE_BOX = 193701;
-const VOLATILE = 999999;
-const TOP_PAIR = `${PUZZLE_BOX}-${GAZE}`;
-const SECOND_PAIR = `${PUZZLE_BOX}-${VOLATILE}`;
+const TOP_PAIR = `${ALGETHAR_PUZZLE_BOX}-${GAZE_OF_THE_ALNSEER}`;
+const SECOND_PAIR = `${ALGETHAR_PUZZLE_BOX}-${ARAKARA_SACBROOD}`;
 const RANKED_PAIRS = [{ key: TOP_PAIR, label: 'Most common pair' }, { key: SECOND_PAIR, label: '2nd most common pair' }];
 
 function parse(over: Partial<GearParseMeasures> = {}): GearParseMeasures {
   return { talent_key: '', trinket_ids: [], enchant_ids: {}, ...over };
 }
 
-/** `count` top logs each carrying the same picks. */
 function logs(count: number, over: Partial<GearParseMeasures> = {}): GearParseMeasures[] {
   return Array.from({ length: count }, () => parse(over));
 }
@@ -98,12 +95,12 @@ describe('GearJudgeService measures', () => {
   });
 
   it('keys a trinket pair the same whichever slot each trinket sits in', () => {
-    expect(judge.trinketKey(judge.measureTrinkets([{ id: GAZE }, { id: PUZZLE_BOX }]))).toBe(TOP_PAIR);
-    expect(judge.trinketKey(judge.measureTrinkets([{ id: PUZZLE_BOX }, { id: GAZE }]))).toBe(TOP_PAIR);
+    expect(judge.trinketKey(judge.measureTrinkets([{ id: GAZE_OF_THE_ALNSEER }, { id: ALGETHAR_PUZZLE_BOX }]))).toBe(TOP_PAIR);
+    expect(judge.trinketKey(judge.measureTrinkets([{ id: ALGETHAR_PUZZLE_BOX }, { id: GAZE_OF_THE_ALNSEER }]))).toBe(TOP_PAIR);
   });
 
   it('separates a pair from one trinket worn alone, and keys no trinket as empty', () => {
-    expect(judge.trinketKey(judge.measureTrinkets([{ id: GAZE }]))).not.toBe(TOP_PAIR);
+    expect(judge.trinketKey(judge.measureTrinkets([{ id: GAZE_OF_THE_ALNSEER }]))).not.toBe(TOP_PAIR);
     expect(judge.trinketKey(judge.measureTrinkets([]))).toBe('');
   });
 
@@ -213,7 +210,7 @@ describe('GearJudgeService.nodeTones', () => {
 
 describe('GearJudgeService.trinketVerdict', () => {
   const reference = judge.trinketReference([
-    ...logs(5, { trinket_ids: [PUZZLE_BOX, GAZE].sort((a, b) => a - b) }), ...logs(3, { trinket_ids: [PUZZLE_BOX, VOLATILE] }), ...logs(2),
+    ...logs(5, { trinket_ids: [ALGETHAR_PUZZLE_BOX, GAZE_OF_THE_ALNSEER].sort((a, b) => a - b) }), ...logs(3, { trinket_ids: [ALGETHAR_PUZZLE_BOX, ARAKARA_SACBROOD] }), ...logs(2),
   ]);
 
   it('counts only the top logs wearing trinkets', () => {
@@ -233,7 +230,7 @@ describe('GearJudgeService.trinketVerdict', () => {
   });
 
   it('calls a pair outside the list uncommon, in blue', () => {
-    expect(judge.trinketVerdict(`${GAZE}`, RANKED_PAIRS, reference)).toMatchObject({
+    expect(judge.trinketVerdict(`${GAZE_OF_THE_ALNSEER}`, RANKED_PAIRS, reference)).toMatchObject({
       tone: 'blue', note: 'Uncommon pair. 5 of 8 top raiders use the most common one.',
     });
   });

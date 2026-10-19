@@ -22,7 +22,6 @@ export interface EncounterBenches {
   burst: BurstBench | null;
 }
 
-/** One held-out top log on one card: the fold it is judged against and its own measures. */
 export type HeldOutCase =
   | { card: 'rotation'; source: string; fold: RotationBench; log: RotationHeldOut }
   | { card: 'defensive'; source: string; fold: FoldedDefensiveBench; log: DefensiveHeldOut }

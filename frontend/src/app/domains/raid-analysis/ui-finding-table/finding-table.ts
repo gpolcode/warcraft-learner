@@ -45,7 +45,6 @@ export class FindingTable {
   readonly onPlan = input<OnPlanChip[]>([]);
   /** Shown when nothing is flagged and nothing is on plan. */
   readonly empty = input<string>('Nothing flagged.');
-  /** The card's checks calibration leaves without a color, listed under its rows. */
   readonly notGraded = input<readonly NotGradedNote[]>([]);
   readonly showMap = input<boolean>(false);
   readonly showClip = input<boolean>(false);

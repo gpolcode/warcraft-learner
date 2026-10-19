@@ -25,7 +25,6 @@ export class DiscriminationService {
     return byFamily;
   }
 
-  /** The top and contrast pulls of every encounter, for one family. */
   pool(encounters: readonly EncounterCalibration[], familyId: string): DiscriminationSample {
     const samples = encounters.map(encounter => encounter.discrimination[familyId]);
     return {

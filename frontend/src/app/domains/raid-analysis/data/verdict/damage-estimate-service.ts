@@ -8,7 +8,6 @@ import { VERDICT_CHOICES } from './verdict-choices';
 /** One contrast log: the estimates the page would print for it, summed, and the gap its ranked figure shows to the top logs, both in seconds of its own average damage. */
 export type DamageSample = [estimateS: number, gapS: number];
 
-/** Whether damage estimates may appear in copy, measured on the contrast logs. */
 export interface DamageGate {
   logs: number;
   /** Share of the logs whose estimate is above the gap they show. */
@@ -50,7 +49,6 @@ export class DamageEstimateService {
     return { aboutS: median(reads) ?? lengthS, lowS: min(reads) ?? lengthS, highS: max(reads) ?? lengthS };
   }
 
-  /** Each death before the judged end, read on the top logs' damage. */
   deaths(deadSpans: readonly (readonly [number, number])[], judgedEndS: number, topDamagePerS: readonly (readonly number[])[]): DamageEstimate[] {
     return deadSpans.filter(([diedS]) => diedS < judgedEndS).map(([diedS, backS]) => this.dead(diedS, Math.min(backS, judgedEndS), topDamagePerS));
   }

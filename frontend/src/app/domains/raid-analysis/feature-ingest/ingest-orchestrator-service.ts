@@ -64,7 +64,6 @@ interface IngestRunSummary {
   failed: { spec: string; message: string }[];
   budgetStopped: boolean;
   fatal?: string;
-  /** The validity report, for the job summary. */
   report?: string;
 }
 

@@ -44,7 +44,6 @@ export class NorthernSkyFeatureService {
     return current;
   }
 
-  // An empty table also covers a boss the addon keeps on one clock, so the tag states what the note carries rather than calling it wrong.
   /** Null for a bench an older ingest wrote, which names no source until the next ingest re-benches it. */
   sourceOf(bench: NorthernSkyBench): ParseRanking | null {
     const stored: Partial<NorthernSkyBench> = bench;

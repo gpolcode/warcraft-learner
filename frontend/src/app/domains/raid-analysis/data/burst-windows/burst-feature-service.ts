@@ -55,7 +55,6 @@ export class BurstFeatureService {
   private readonly judge = inject(BurstJudgeService);
   private readonly cardRanking = inject(CardRankingService);
 
-  /** The card's judged windows and the ones it muted, for the page-wide order. */
   ranking(view: BurstView | null): CardRanking {
     return view ? this.cardRanking.ranking(this.cardRanking.windows('Burst windows', view.windows), view.folded) : this.cardRanking.ranking([]);
   }
@@ -171,7 +170,6 @@ export class BurstFeatureService {
     };
   }
 
-  /** A null model is a bench-only view; the player's damage comes with it. */
   protected buildBurstView(bench: BurstBench, player: PlayerDamage | null, model: PullModel | null): JudgedWindows {
     const judged = model ? player : null;
     const view = this.windowView.buildWindowView({
@@ -189,7 +187,6 @@ export class BurstFeatureService {
     return this.buildBurstView(bench, null, null);
   }
 
-  /** Empty where a window is flagged, or on a pre-fight view that has windows. */
   protected emptyState(bench: BurstBench, windows: readonly { status: string; message: string }[], judgesPull: boolean): string {
     const topLogs = `${bench.sample_count} top ${bench.sample_count === 1 ? 'log' : 'logs'}`;
     if (!windows.length) return `No burst window to compare. The biggest bursts of the ${topLogs} do not line up in time.`;

@@ -37,7 +37,6 @@ export class ButtonTable {
   readonly rows = input.required<ButtonRow[]>();
   /** Shown when no button had a judged moment. */
   readonly empty = input<string>('');
-  /** The card's checks calibration leaves without a color, listed under its rows. */
   readonly notGraded = input<readonly NotGradedNote[]>([]);
   readonly showMap = input<boolean>(false);
   readonly showClip = input<boolean>(false);

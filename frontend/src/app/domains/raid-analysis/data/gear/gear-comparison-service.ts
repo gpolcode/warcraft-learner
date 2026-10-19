@@ -111,7 +111,6 @@ export class GearComparisonService {
       ({ slotName: this.slotName(leader.slot), enchant: leader.item, share: `${leader.k} of ${leader.n} top logs` }));
   }
 
-  /** The section's empty state, with the count of top logs behind it. */
   emptyNote(noun: string, n: number, carried: string): string {
     return n ? `No ${noun} data. None of the ${n} top logs ${carried}.` : `No ${noun} data.`;
   }

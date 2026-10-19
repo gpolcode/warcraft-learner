@@ -53,13 +53,9 @@ export interface DefensiveView {
   findingsSpan: JudgedSpan | null;
   windowsSpan: JudgedSpan | null;
   bench: BenchStrip | null;
-  /** Each defensive card's checks calibration leaves without a color. */
   notGraded: { defensives: NotGradedNote[]; windows: NotGradedNote[] };
-  /** Both cards' judged rows, for the page-wide order. */
   ranking: CardRanking;
-  /** Why the Defensives card flags nothing, with counts. */
   findingsEmpty: string;
-  /** Why the Defensive windows card flags nothing, with counts; empty where a window is flagged. */
   windowsEmpty: string;
 }
 
@@ -90,7 +86,6 @@ export interface DefensiveWindowsInput {
   abilities: AbilityIcons;
   /** Damage the player took in each whole second, the measure every top log's is baked in. */
   takenPerS: number[];
-  /** The bench's top logs as the window checks read them. */
   top: Pick<DefensiveBench, 'per_parse' | 'sources'>;
   caps?: FamilyCaps;
 }
@@ -122,7 +117,6 @@ export class DefensiveFeatureService {
   private readonly cardRanking = inject(CardRankingService);
   private readonly rowOrder = inject(RowOrderService);
 
-  /** The view's judged rows, or none on a failed load. */
   ranking(view: DefensiveView | null): CardRanking {
     return view?.ranking ?? this.cardRanking.ranking([]);
   }
@@ -228,7 +222,6 @@ export class DefensiveFeatureService {
     return `Nothing flagged. ${checked} ${checked === 1 ? 'defensive' : 'defensives'} checked against ${this.topLogs(bench)} top logs.`;
   }
 
-  /** Empty where a window is flagged. */
   protected windowsEmpty(bench: DefensiveBench, windows: readonly ComparisonWindow[]): string {
     const n = this.topLogs(bench);
     const topLogs = `${n} top ${n === 1 ? 'log' : 'logs'}`;

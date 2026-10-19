@@ -33,7 +33,6 @@ export interface AnalysisFinding {
   damage?: DamageEstimate | null;
   /** Nothing is flagged for the cooldown, so it surfaces as an "On plan" chip rather than a row. */
   onPlan?: boolean;
-  /** Why a muted finding was not judged. */
   unjudged?: UnjudgedCause;
   category: string;
   cd_name?: string;
@@ -61,7 +60,6 @@ interface AbilityBreakdown {
   is_passive?: boolean;
 }
 
-/** One top log's own window inside a baked cluster. */
 interface WindowMember {
   /** Index of the log in the bench's `sources`. */
   parse: number;
@@ -98,7 +96,6 @@ export interface DefensiveWindow {
 
 export interface PlayerDefensive {
   name: string;
-  /** The plan's cooldown and charges, which the ready-time check runs on. */
   cooldown: number;
   charges?: number;
   uses: number;

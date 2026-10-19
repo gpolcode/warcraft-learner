@@ -15,7 +15,6 @@ export interface CalibrationCaps extends FamilyCaps {
 
 const DEMOTED_HERE: FamilyVerdict = { status: 'comparison', cap: 'neutral', reason: NOT_GRADED.bench };
 
-/** What a page hands every producer, so each tone it makes is capped by calibration. */
 @Injectable({ providedIn: 'root' })
 export class CalibrationCapsService {
   private readonly source = inject(CALIBRATION_SOURCE);

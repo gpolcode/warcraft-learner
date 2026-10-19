@@ -5,7 +5,6 @@ import { HeldOutRow } from './calibration.models';
 import { HeldOutRowService } from './held-out-row-service';
 import { FoldedBurstBench } from './leave-one-out-service';
 
-/** A top log judged as the player on the Burst windows card. */
 export interface BurstHeldOut {
   damagePerS: number[];
   model: PullModel;

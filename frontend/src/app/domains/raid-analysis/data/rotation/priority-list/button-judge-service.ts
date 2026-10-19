@@ -43,7 +43,6 @@ export class ButtonJudgeService {
     return this.checks.rightCounts(this.checks.within(reading, endS, alive), action);
   }
 
-  /** Each top log that had the button's moments, in the order of the bench's sources. */
   reference(perParse: readonly RotationParseMeasures[], action: string): ButtonCounts[] {
     return perParse.flatMap(parse => parse.buttons[action] ?? []);
   }

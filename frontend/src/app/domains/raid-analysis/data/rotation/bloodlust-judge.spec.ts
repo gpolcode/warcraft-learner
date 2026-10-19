@@ -127,7 +127,7 @@ describe('BloodlustJudgeService overlap check', () => {
     });
   });
 
-  it('never orders the raid decision: the row carries no remedy', () => {
+  it('never orders the raid decision, so the row carries no remedy', () => {
     expect(judge.findings(NAME, NOT_UP, lustAt(LUST_S), top(topLogs(TOP_N)))[0]?.details).toBeUndefined();
   });
 

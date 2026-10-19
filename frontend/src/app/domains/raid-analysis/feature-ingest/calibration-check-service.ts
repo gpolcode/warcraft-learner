@@ -14,7 +14,6 @@ function publishSummary(summary: CheckSummary): void {
   (globalThis as { __INGEST_DONE__?: CheckSummary }).__INGEST_DONE__ = summary;
 }
 
-/** Recomputes calibration from the baked benches and fails on a page-budget breach, a failed invariant or a lost grade. */
 @Injectable({ providedIn: 'root' })
 export class CalibrationCheckService {
   private readonly calibration = inject(CalibrationRunService);

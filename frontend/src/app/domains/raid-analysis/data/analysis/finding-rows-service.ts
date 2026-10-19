@@ -38,7 +38,6 @@ export class FindingRowsService {
     return rows;
   }
 
-  /** The fields the page-wide order reads, carried only where the finding has them. */
   ranked(finding: AnalysisFinding): Pick<FindingRow, 'family' | 'rank' | 'damage'> {
     return {
       ...finding.family ? { family: finding.family } : {},
@@ -107,7 +106,6 @@ export interface FindingRow {
   family?: string;
   rank?: RowRank;
   damage?: DamageEstimate;
-  /** Why a muted row was not judged. */
   unjudged?: UnjudgedCause;
   name?: string;
   spellId?: number | null;

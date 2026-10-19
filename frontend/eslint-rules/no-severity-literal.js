@@ -1,6 +1,5 @@
 // @ts-check
 
-// Every vocabulary a severity, row status or tone is spelled in under the data layer.
 const SEVERITY_WORDS = new Set([
   'critical', 'warning', 'info', 'success', 'hold_suggestion', 'good', 'warn', 'bad', 'red', 'amber', 'blue',
 ]);

@@ -4,7 +4,6 @@ import { EncounterGearStats } from '../encounter/encounter.models';
 import { BenchHeader } from '../analysis/bench-pipeline-service';
 import { SpecTalents } from './talent.models';
 
-/** How many top logs took one talent entry at one rank. */
 export interface TalentNodeCount {
   entry_id: number;
   rank: number;

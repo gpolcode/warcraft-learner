@@ -26,7 +26,6 @@ const CARDS = ['rotation', 'defensive', 'gear', 'burst'] as const;
 
 type Card = (typeof CARDS)[number];
 
-/** What one run fetched, for the log and the job summary. */
 export interface ContrastRun {
   due: number;
   fetched: number;

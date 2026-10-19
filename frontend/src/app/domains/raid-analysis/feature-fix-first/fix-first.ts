@@ -20,7 +20,6 @@ export class FixFirst {
   private readonly fixFirst = inject(FixFirstFeatureService);
 
   readonly spec = input.required<string>();
-  /** Every card's judged rows, as each card reported them. */
   readonly rankings = input.required<readonly CardRanking[]>();
   readonly busyChange = output<boolean>();
 

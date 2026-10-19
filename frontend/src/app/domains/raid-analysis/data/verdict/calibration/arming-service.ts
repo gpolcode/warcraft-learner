@@ -23,13 +23,11 @@ export const NOT_GRADED = {
   separates: 'It flags weaker logs barely more often than top raiders.',
 } as const;
 
-/** A tone-level tally: how many tests, and how many flagged at that tone. */
 interface ToneEvidence {
   upper: number;
   tests: number;
 }
 
-/** Pools held-out tallies and decides, per family, the tone calibration lets it reach. */
 @Injectable({ providedIn: 'root' })
 export class ArmingService {
   private readonly distribution = inject(DistributionService);
@@ -39,7 +37,6 @@ export class ArmingService {
     return b ? { tests: a.tests + b.tests, amber: a.amber + b.amber, red: a.red + b.red } : a;
   }
 
-  /** Sums each family's tallies over the encounters. */
   pool(encounters: readonly EncounterCalibration[]): Record<string, FlagTally> {
     const pooled: Record<string, FlagTally> = {};
     for (const encounter of encounters) {

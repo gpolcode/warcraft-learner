@@ -37,7 +37,6 @@ export interface GearComparisonView {
   enchantRows: EnchantRow[];
   benchEnchantRows: BenchEnchantRow[];
   enchantEmpty: string;
-  /** Shown when every enchant row matches the top logs. */
   enchantsClean: string;
   /** Null on the placeholder no bench backs. */
   bench: BenchStrip | null;
@@ -107,7 +106,6 @@ export class GearFeatureService {
     }
   }
 
-  /** The card's judged rows on a pull; a bench-only view judges none. */
   ranking(view: GearComparisonView | null): CardRanking {
     if (!view?.comparison) return this.cardRanking.ranking([]);
     return this.cardRanking.ranking(this.cardRanking.gear('Gear', [view.talentVerdict, view.trinketVerdict], view.enchantRows));

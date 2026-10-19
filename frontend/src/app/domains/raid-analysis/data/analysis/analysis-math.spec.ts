@@ -56,7 +56,6 @@ describe('closestToZero', () => {
   });
 });
 
-/** An alive player on a pull nothing cut short. */
 function wholePull(endS: number): AliveSpan[] {
   return [[0, endS]];
 }

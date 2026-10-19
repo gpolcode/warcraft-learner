@@ -14,7 +14,6 @@ import { RotationBench, RotationParseMeasures } from '../../rotation/rotation-da
 import { HeldOutRow } from './calibration.models';
 import { HeldOutRowService } from './held-out-row-service';
 
-/** A top log judged as the player: its measures, the pull it is judged over and its talents. */
 export interface RotationHeldOut {
   measures: RotationParseMeasures;
   model: PullModel;

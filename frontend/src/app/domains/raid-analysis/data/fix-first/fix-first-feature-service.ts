@@ -12,7 +12,6 @@ import { CLOSED_GATE, DamageEstimateService, DamageGate } from '../verdict/damag
 import { CardRanking, RankedRow, RowOrderService } from '../verdict/row-order-service';
 import { DamageEstimate } from '../verdict/tone.models';
 
-/** One death before the judged end and the damage it cost. */
 export interface DeathLoss {
   diedS: number;
   /** Null when the player stayed dead to the judged end. */
@@ -26,11 +25,9 @@ export interface FixFirstView {
   notJudged: number;
   /** The damage gate passed on the contrast logs, so estimates print. */
   damageShown: boolean;
-  /** What the strip says with no colored row, with how many checks were not judged. */
   empty: string;
 }
 
-/** What the damage card prices the pull with. */
 export interface DamagePricing {
   gate: DamageGate;
   deaths: DeathLoss[];
@@ -44,7 +41,6 @@ export interface DamageView {
   rows: RankedRow[];
 }
 
-/** The page-wide strip of the costliest colored rows, and the card of where the player's damage went. */
 @Injectable({ providedIn: 'root' })
 export class FixFirstFeatureService {
   private readonly order = inject(RowOrderService);

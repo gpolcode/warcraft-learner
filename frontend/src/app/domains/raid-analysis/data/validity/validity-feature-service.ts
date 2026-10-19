@@ -43,7 +43,6 @@ export interface ValidityMeasurement {
   current: boolean;
   roles: ValidityRoleRow[];
   families: ValidityFamilyRow[];
-  /** Whether damage estimates print, as measured on the weaker logs. */
   damage: DamageGate;
 }
 
@@ -51,11 +50,9 @@ export interface ValidityMeasurement {
 export interface ValidityView {
   measurement: ValidityMeasurement | null;
   budget: { red: number; amber: number };
-  /** What the damage gate needs before estimates print. */
   damageGate: typeof VERDICT_CHOICES.damage;
 }
 
-/** The validity report pages read: how often each check flags held-out top logs, and the page load each role draws. */
 @Injectable({ providedIn: 'root' })
 export class ValidityFeatureService {
   private readonly source = inject(CALIBRATION_SOURCE);

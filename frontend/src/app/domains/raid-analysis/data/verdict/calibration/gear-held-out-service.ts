@@ -8,7 +8,6 @@ import { VERDICT_CHOICES } from '../verdict-choices';
 import { HeldOutRow } from './calibration.models';
 import { HeldOutRowService } from './held-out-row-service';
 
-/** The Gear card's checks on a held-out top log's picks, against the picks of the other top logs. */
 @Injectable({ providedIn: 'root' })
 export class GearHeldOutService {
   private readonly rows = inject(HeldOutRowService);

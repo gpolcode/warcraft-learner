@@ -51,7 +51,6 @@ export function gearBench(perParse: GearParseMeasures[]): GearBench {
   };
 }
 
-/** A defensive window formed by `parses`, each taking `damage` there. */
 export function defensiveWindow(parses: number[], damage = WINDOW_DAMAGE, timeS = WINDOW_AT_S): BurstWindow {
   return {
     time_s: timeS, window_length_s: 5, dmg_avg: damage, dmg_min: damage, dmg_max: damage, dmg_stddev: 0,
@@ -71,7 +70,6 @@ export function burstLog(burstAtS = BURST_AT_S): BurstParseMeasures {
   return { damage_per_s: Array.from({ length: FIGHT_S }, (_unused, second) => second >= burstAtS && second < burstAtS + BURST_S ? BURST_PER_S : STEADY_PER_S) };
 }
 
-/** A burst window formed by `parses`, each at its own start. */
 export function burstWindow(parses: number[], memberStartsS: number[] = parses.map(() => BURST_AT_S)): BurstWindow {
   return {
     time_s: BURST_AT_S, window_length_s: BURST_S, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],

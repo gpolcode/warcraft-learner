@@ -74,7 +74,6 @@ export interface DiscriminationSample {
   contrast: PullFlags[];
 }
 
-/** How much more often a family flags contrast logs than held-out top logs. */
 export interface Discrimination {
   topPulls: number;
   contrastPulls: number;
@@ -87,7 +86,6 @@ export interface Discrimination {
   auc: number;
 }
 
-/** What the harness measured on one spec and encounter, written beside its benches. */
 export interface EncounterCalibration {
   spec: string;
   encounter_id: number;
@@ -109,14 +107,12 @@ export interface EncounterCalibration {
   damage: DamageSample[];
 }
 
-/** The tone a family may reach on one spec, and why. */
 export interface FamilyVerdict {
   status: CalibrationStatus;
   cap: ToneLevel;
   reason: string;
 }
 
-/** One check a card shows without a color, and why. */
 export interface NotGradedNote {
   label: string;
   reason: string;
@@ -158,6 +154,5 @@ export interface CalibrationIndex {
   invariants: InvariantResult[];
   /** Benches the harness could not fold, by bench name. */
   unfoldable: Record<string, number>;
-  /** Whether damage estimates may print, pooled over every contrast log. */
   damage: DamageGate;
 }

@@ -170,9 +170,7 @@ interface BenchIdentity {
   spec: string;
   encounter_id: number;
   encounter_name: string;
-  /** What the top logs were ranked on. */
   metric: RankingMetric;
-  /** Stamped by ingest when the file is written. */
   ingested_at_s?: number;
 }
 

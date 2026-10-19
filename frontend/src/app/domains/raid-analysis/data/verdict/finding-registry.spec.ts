@@ -27,7 +27,6 @@ const TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
 const MID_LUST_S = 120;
 const LUST_TOP_LOGS: RotationParseMeasures[] = Array.from({ length: 10 }, () =>
   ({ idle_s: null, lust_s: MID_LUST_S, phase_starts: [], cd_casts_s: { 'Shadow Blades': [MID_LUST_S + 5] }, cd_up_s: { 'Shadow Blades': [[MID_LUST_S + 5, MID_LUST_S + 25]] }, buttons: {} }));
-/** The plan's Shadow Blades: a 90s cooldown. */
 const SHADOW_BLADES = { name: 'Shadow Blades', cooldown: 90 };
 const HELD_TO_130 = { '2': { target_s: 130, delay_s: 30, band_s: 5, effective_cd_s: 90, count: 8, total_samples: 10 } };
 const PULL_S = 300;
@@ -37,7 +36,6 @@ const BURST: BurstWindow = {
   members: Array.from({ length: 5 }, (_unused, parse) => ({ parse, time_s: 10, window_length_s: 20, damage: 1000 })),
 };
 
-/** Ten top logs that each pressed the defensive at 5s and again at 95s. */
 const DEFENSIVE_TOP_LOGS = Array.from({ length: 10 }, () => ({ Cloak: [5, 95] }));
 /** Ten top logs that had Cloak up in a window they took 1000 in. */
 const DEFENSIVE_WINDOW: BurstWindow = { ...BURST, defensive_name: 'Cloak' };
