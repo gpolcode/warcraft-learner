@@ -34,6 +34,8 @@ import {
 import { NotGradedNote } from '../verdict/calibration/calibration.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
+import { CardRankingService } from '../analysis/card-ranking-service';
+import { CardRanking, RowOrderService } from '../verdict/row-order-service';
 
 export interface DefensiveMapAnchor {
   timeS: number;
@@ -53,6 +55,8 @@ export interface DefensiveView {
   bench: BenchStrip | null;
   /** Each defensive card's checks calibration leaves without a color. */
   notGraded: { defensives: NotGradedNote[]; windows: NotGradedNote[] };
+  /** Both cards' judged rows, for the page-wide order. */
+  ranking: CardRanking;
   /** Why the Defensives card flags nothing, with counts. */
   findingsEmpty: string;
   /** Why the Defensive windows card flags nothing, with counts; empty where a window is flagged. */
@@ -115,6 +119,13 @@ export class DefensiveFeatureService {
   private readonly gearExtract = inject(GearExtractService);
   private readonly benchStrips = inject(BenchStripService);
   private readonly calibration = inject(CalibrationCapsService);
+  private readonly cardRanking = inject(CardRankingService);
+  private readonly rowOrder = inject(RowOrderService);
+
+  /** The view's judged rows, or none on a failed load. */
+  ranking(view: DefensiveView | null): CardRanking {
+    return view?.ranking ?? this.cardRanking.ranking([]);
+  }
 
   // A WCL fetch failure surfaces as an err, never a silent bench-only degrade.
   async loadAnalysisView(
@@ -139,6 +150,7 @@ export class DefensiveFeatureService {
       errorId: 'defensive.player-view',
       emptyView: () => ({
         findingRows: [], onPlan: [], windows: [], anchors: [], clipAnchors: [], findingsSpan: null, windowsSpan: null, bench: strip, notGraded,
+        ranking: this.cardRanking.ranking([]),
         findingsEmpty: this.findingsEmpty(0, bench.value), windowsEmpty: this.windowsEmpty(bench.value, []),
       }),
       analyze: async context => ({ ...await this.analysisView(bench.value, pull, context, caps), bench: strip, notGraded }),
@@ -184,10 +196,15 @@ export class DefensiveFeatureService {
       spellId: name => bench.cd_spell_ids[name] ?? null,
       icon: name => iconByName[name] ?? '',
     });
+    const findingRows = this.rowOrder.order(this.findingRows.rowsFromEntries(entries), row => ({ ...row, tone: row.severity }));
     return {
-      findingRows: this.findingRows.rowsFromEntries(entries),
+      findingRows,
       onPlan: this.findingRows.onPlanFromEntries(entries),
       windows, anchors, clipAnchors,
+      ranking: this.cardRanking.ranking(
+        [...this.cardRanking.findings('Defensives', findingRows), ...this.cardRanking.windows('Defensive windows', windows)],
+        this.pullModel.addFolds(folded, windowsFolded),
+      ),
       findingsSpan: this.pullModel.judgedSpan(model, folded),
       windowsSpan: this.pullModel.judgedSpan(model, windowsFolded),
       findingsEmpty: this.findingsEmpty(checked, bench),

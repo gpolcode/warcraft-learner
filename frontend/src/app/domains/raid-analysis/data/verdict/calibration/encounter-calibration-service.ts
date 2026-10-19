@@ -10,6 +10,7 @@ import { EncounterBenches, HeldOutCase, HeldOutCaseService } from './held-out-ca
 import { InjectedMistakeService } from './injected-mistake-service';
 import { Perturbation, PERTURBATIONS, PerturbationService } from './perturbation-service';
 import { RotationHeldOutService } from './rotation-held-out-service';
+import { DamageCalibrationService } from './damage-calibration-service';
 
 const FAMILY_BY_ID = new Map(FINDING_REGISTRY.map(family => [family.id, family]));
 
@@ -23,6 +24,7 @@ export class EncounterCalibrationService {
   private readonly lust = inject(BloodlustJudgeService);
   private readonly specRoles = inject(SpecRoleService);
   private readonly discrimination = inject(DiscriminationService);
+  private readonly damage = inject(DamageCalibrationService);
 
   /** `contrast` is null until the ingest has fetched the encounter's weaker logs. */
   calibrate(spec: string, encounterId: number, benches: EncounterBenches, signature: string, contrast: ContrastBench | null): EncounterCalibration {
@@ -40,6 +42,7 @@ export class EncounterCalibrationService {
       unfoldable: this.cases.unfoldable(benches),
       contrast_pulls: new Set(contrastCases.map(entry => entry.source)).size,
       discrimination: this.samples(this.byPull(heldOut, base), this.byPull(contrastCases, contrastRows)),
+      damage: this.specRoles.isHealer(spec) ? [] : this.damage.samples(benches, contrast),
     };
   }
 

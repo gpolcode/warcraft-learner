@@ -95,7 +95,7 @@ export class CooldownUseJudgeService {
     const n = firstUses.length;
     const others = n ? `${evidence.observed} of ${n} top logs did.` : `Top raiders press it ${uses.expected} times in that time.`;
     return {
-      family: NEVER_USED_FAMILY.id, severity, category: 'never_used', cd_name: name,
+      family: NEVER_USED_FAMILY.id, severity, rank: this.tones.rank(NEVER_USED_FAMILY, evidence), category: 'never_used', cd_name: name,
       measured: { value: `0 / ${uses.expected}`, unit: n ? `cast(s), ${n} top logs` : 'cast(s)' },
       message: `You never pressed ${name} ${over}. ${others}`,
       ...this.tones.graded(severity) ? { details: { remedy: `Press ${name} ${uses.expected}x.` } } : {}, occurrences: [],

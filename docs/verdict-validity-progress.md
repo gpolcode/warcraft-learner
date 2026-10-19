@@ -984,3 +984,50 @@ Branch `claude/verdict-validity-p7a-contrast`, PR against `claude/verdict-validi
 - Stage 6 (cost and coaching) acceptance reads contrast logs: `ContrastBench` carries each weaker log's per-log measures and `sources` (rank, amount, duration, item level), and `HeldOutCaseService.contrastCases` judges them; the observed DPS gap is `sources[].amount` against the bench's.
 - A new construct gets contrast with no extra work: its held-out test runs on contrast cases through the same case constructors. A new card must add its transform to `ContrastIngestService`'s cards and its case to `contrastCases`.
 - The registry hash changed (`VERDICT_CHOICES.discrimination`), so every family renders as a comparison until the next ingest recalibrates.
+
+## Package 7b: cost classes, the "Fix first" strip and the damage ordering (done, with a deviation)
+
+Branch `claude/verdict-validity-p7b-cost`, PR against `claude/verdict-validity-p7a-contrast`.
+
+### Done
+
+- **Rank.** `RowRank` (`tone.models.ts`): the family's cost class, the rule's evidence level and its `excess` as the shortfall, made by `ToneService.rank(family, evidence)` beside every `ToneService.tone` call of a producer (ready time, never used, holds, Bloodlust, downtime, defensive uses, buttons, burst and defensive windows, dead in window, talents, trinkets, enchants). `AnalysisFinding`, `FindingRow`, `ButtonRow`, `ComparisonWindow`, `BurstVerdict`, `DefensiveWindowVerdict`, `GearVerdict` and `EnchantRow` carry it; a row no rule judged (on plan, muted, external, matching) carries none. The cost cap itself is package 3's (`ToneService.costCap`).
+- **Order.** `RowOrderService.compare`: tone (colored, then blue, neutral, muted), then cost class, evidence, damage estimate (a priced row before an unpriced one) and shortfall; stable on ties. The Offensives and Defensives tables sort their rows with it; buttons keep their own moments-times-shortfall order inside the one family.
+- **Per card.** `CardRankingService` turns each card's rows into `RankedRow`s (card heading, family label, subject, tone, rank, damage, message) and counts muted rows by cause; each feature service has `ranking(view)` and each post-raid card component emits a `CardRanking` (rows and folded checks) on `rankingChange`, through `LoadResourceConfig.valueChange` (new, called with every applied result). The post-raid shell keeps the latest ranking per card.
+- **"Fix first" strip** (`feature-fix-first/fix-first`, `FixFirstFeatureService.view`): the top three amber or red rows across the cards, each with its card, subject, check and message; with none, "Nothing flagged on any card." and, where cards folded checks, "N checks not judged.". It sits under the pull overview.
+- **Damage estimates** (`DamageEstimateService`, `ui-damage-estimate/damage-estimate-pipe`: "About 25s of your damage, between 18s and 31s."): idle time past the top logs' average share over the same alive time, on a flagged idle row only (`DowntimeJudgeService.damageOf` for the harness, the finding's `damage` at runtime, the same `idle` method), the range between the most and least idle top log; each death before the judged end, read on each top log's own damage per second over the span (the burst bench's `per_parse`) as a share of its average, median with the range between the extremes, the span's length without per-second damage.
+- **Gate.** `DamageCalibrationService.samples`: per contrast log of a damage-ranked bench (not healers), the summed estimate (flagged idle plus deaths from the contrast defensive card's `dead_s`) against the gap its ranked `amount` shows to the bench sources' median, in seconds of its own average over its own pull. `EncounterCalibration.damage` holds them; `CalibrationIndex.damage` pools every encounter (`DamageEstimateService.gate`): open when at least `minLogs` (20) logs, a share of at most `maxExceedShare` (0.1) priced above their gap (a log priced at nothing never exceeds) and Spearman (`DistributionService.spearman`, ties at average rank) at least `minSpearman` (0.3), all in `VERDICT_CHOICES.damage`. The runtime reads it from `calibration.json` and keeps it closed on a missing or foreign index and for healers.
+- **"Where your damage went"** (`feature-fix-first/damage-went`, `FixFirstFeatureService.damageView` and `loadPricing`): drawn only while the gate is open and the pull has a death or a priced row: deaths first, largest loss first, then the checks the cards folded under the deaths named once, then every priced row largest first whatever its tone. The deaths are read only once the gate is open, through `PullContextService` (reads the other cards already make).
+- **Report and Method page.** The job summary prints "Damage estimates: shown or hidden, over N contrast logs, above the gap on x, Spearman y." or "hidden, no contrast log measured."; `/method` has a "Damage estimates" section after the checks with the gate's numbers, a Shown or Hidden tag, and the measurement or "No weaker log is measured yet, so no estimate prints.".
+- **E2E**, all conditional: the strip's first row when one is drawn, else the empty sentence; the damage card's heading and an estimate only when it is drawn; the Method page's damage section in either state.
+- **Tests.** `row-order.spec.ts`, `damage-estimate.spec.ts` (each gate boundary pair: 20 against 19 logs, exactly 10% against 15%, unrelated ranks), `distribution.spec.ts` (Spearman), `tone.spec.ts` (rank), `card-ranking.spec.ts`, `fix-first-feature-service.spec.ts`, `damage-calibration.spec.ts`, `calibration-index.spec.ts` (pooled gate), `calibration-report.spec.ts`, `validity-feature-service.spec.ts`, `downtime-judge.spec.ts` (priced only when flagged), `damage-estimate-pipe.spec.ts`.
+
+### The measured report (rules' tone, before the caps)
+
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate`: 0 contrast pulls, so the gate measures 0 logs and stays closed; every rate, detection and invariant is as in 7a and the recompute passes (exit 0). In this container the headless runner needs Chromium at `/opt/pw-browsers/chromium` (`scripts/ingest-headless.mjs` looks for a Playwright-managed one, then the Chrome channel); it was run from a temporary copy with that `executablePath`, not committed.
+
+### Decisions and deviations
+
+- **DEVIATION: direct-damage cooldowns get no estimate.** No bench bakes damage per ability per log (the burst bench bakes each log's total damage per second), so a lost cast's damage is identifiable neither on a contrast log, which the gate needs, nor at runtime without a new per-ability read. Pricing it needs a bench change (an `INGEST_VERSION` bump and a re-bench, WCL points), which stage 6's "Data change: None" and this package's spent budget exclude. Deaths and idle time are priced.
+- **Tone leads the order**, then the paper's cost class, evidence and shortfall: a comparison never sorts above a colored row, and the strip lists colored rows only. The damage estimate sits between evidence and shortfall, as the paper orders "inside a class".
+- **Shortfall is `Evidence.excess`**, in each construct's own unit, so it is compared across families only after class, evidence and damage tie.
+- **Talent and trinket cost classes stay medium**, where 5.9 lists them low: the low cap gives amber evidence neutral, and the talent consensus at k = n is amber evidence, so low would turn its blue rows neutral. Both families are blue tier, so their class orders rows and moves no tone.
+- **The gate is pooled over every spec** (damage-ranked benches, tanks included), not per role or spec; the paper names one gate.
+- **The gap reads the ranked figure**: the bench's `metric` must be `dps`, and the gap is relative to the top logs' median `amount`, scaled by the contrast log's own `duration_s`.
+- **`VERDICT_CHOICES.damage` changed the registry hash**, so every family renders as a comparison until the next ingest recalibrates (zero WCL). The estimate methods are not in the hash: a change to `DamageEstimateService` should change a `VERDICT_CHOICES.damage` number or a family version so stored calibration files are recomputed.
+- No `INGEST_VERSION` bump and no family version bump: no bench, measure or rule changed.
+
+### Drift against 6882b59
+
+None: sections 5.2, 5.9 and the stage 6 row carry no file:line reference.
+
+### Seams stubbed
+
+- Direct-damage cooldown estimates (the deviation above).
+- Per-role or per-spec damage gates.
+
+### For the next package
+
+- A producer that tones a row must also set its `rank`; a new card must emit a `CardRanking` on `rankingChange` and be wired in `post-raid.html`, or its rows never reach the strip.
+- A new priced finding sets `damage` on its `AnalysisFinding` through a `DamageEstimateService` method and adds the same method's estimate to `DamageCalibrationService.samples`, so the gate measures what the page prints.
+- The strip, the damage card and the estimates show nothing colored or priced until the contrast cohort fills (package 7a's schedule) and the next ingest recalibrates.

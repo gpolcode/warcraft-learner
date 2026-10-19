@@ -32,6 +32,7 @@ export class ValidityReport {
 
   protected readonly measurement = computed(() => this.load.value()?.measurement ?? null);
   protected readonly budget = computed(() => this.load.value()?.budget ?? null);
+  protected readonly damageGate = computed(() => this.load.value()?.damageGate ?? null);
   protected readonly available = this.load.available;
   protected readonly error = this.load.error;
 }

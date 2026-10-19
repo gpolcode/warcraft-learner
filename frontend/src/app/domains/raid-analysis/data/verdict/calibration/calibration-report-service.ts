@@ -30,8 +30,18 @@ export class CalibrationReportService {
         `${family.verdict.status}, ${family.verdict.cap}: ${family.verdict.reason}`,
       ].join(' | ')).map(row => `| ${row} |`),
       '',
+      this.damage(index),
+      '',
       ...this.failedInvariants(index),
     ].join('\n');
+  }
+
+  /** An index written before the gate was measured reads as no contrast log. */
+  private damage(index: CalibrationIndex): string {
+    const stored: Partial<CalibrationIndex> = index;
+    const gate = stored.damage;
+    if (!gate?.logs) return 'Damage estimates: hidden, no contrast log measured.';
+    return `Damage estimates: ${gate.open ? 'shown' : 'hidden'}, over ${gate.logs} contrast logs, above the gap on ${gate.exceedShare.toFixed(RATE_DIGITS)}, Spearman ${gate.spearman.toFixed(LIFT_DIGITS)}.`;
   }
 
   private perPull(load: PageLoad | undefined, tone: 'red' | 'amber'): string {

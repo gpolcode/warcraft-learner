@@ -6,6 +6,7 @@ import { GameIcon } from '../ui-game-icon/game-icon';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { GearFeatureService } from '../data/gear/gear-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
+import type { CardRanking } from '../data/verdict/row-order-service';
 import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
 import { NotGraded } from '../ui-not-graded/not-graded';
@@ -32,6 +33,8 @@ export class Gear {
 
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
+  /** The rows this card judged, for the page's "Fix first" strip and damage card. */
+  readonly rankingChange = output<CardRanking>();
 
   private readonly load = this.loadRes.loadResource({
     params: () => ({
@@ -47,6 +50,7 @@ export class Gear {
     context: 'gear.load',
     busyChange: this.busyChange,
     availableChange: this.availableChange,
+    valueChange: view => { this.rankingChange.emit(this.gear.ranking(view)); },
   });
 
   protected readonly view = computed(() => this.load.value() ?? this.gear.emptyGearView());

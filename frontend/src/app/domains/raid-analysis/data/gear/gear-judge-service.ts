@@ -4,7 +4,7 @@ import { EncounterGearStats } from '../encounter/encounter.models';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { FamilyCaps, Tone, TONE_LEVELS } from '../verdict/tone.models';
+import { Evidence, FamilyCaps, RowRank, Tone, TONE_LEVELS } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { getOrInsert } from '../analysis/analysis-math';
 import { RING_SLOTS } from './gear-extract-service';
@@ -125,6 +125,8 @@ export interface RarePick {
 export interface GearVerdict {
   family: string;
   tone: Tone;
+  /** Absent where the player matches the top logs. */
+  rank?: RowRank;
   onPlan: boolean;
   note: string;
   n: number;
@@ -151,6 +153,8 @@ export interface EnchantRow {
   /** Null on a slot that matches the top logs. */
   family: string | null;
   tone: Tone;
+  /** Absent on a slot that matches the top logs. */
+  rank?: RowRank;
   onPlan: boolean;
   name: string;
   note: string | null;
@@ -219,13 +223,13 @@ export class GearJudgeService {
   }
 
   /** The tone of each shared node for the player's build, one test each; empty when the pull or the bench has nothing to compare. */
-  nodeTones(playerKey: string, reference: NodeReference, caps?: FamilyCaps): { node: TalentNodeCount; missed: boolean; tone: Tone }[] {
+  nodeTones(playerKey: string, reference: NodeReference, caps?: FamilyCaps): { node: TalentNodeCount; missed: boolean; tone: Tone; rank: RowRank }[] {
     const picks = this.playerRanks(playerKey);
     if (!picks.size) return [];
     return this.sharedNodes(reference).map(node => {
       const missed = picks.get(node.entry_id) !== node.rank;
       const evidence = this.rules.consensus({ differs: missed, k: node.count, n: reference.n, paired: false });
-      return { node, missed, tone: missed ? this.tones.tone(TALENT_BUILD_FAMILY, evidence, caps) : this.tones.neutral() };
+      return { node, missed, tone: missed ? this.tones.tone(TALENT_BUILD_FAMILY, evidence, caps) : this.tones.neutral(), rank: this.tones.rank(TALENT_BUILD_FAMILY, evidence) };
     });
   }
 
@@ -241,13 +245,14 @@ export class GearJudgeService {
     const missed = judged.filter(entry => entry.missed).map(({ node }) =>
       ({ entryId: node.entry_id, rank: node.rank, k: node.count, playerRank: ranks.get(node.entry_id) ?? null }));
     const tone = judged.map(entry => entry.tone).reduce((strongest, next) => this.stronger(next, strongest), this.tones.neutral());
+    const rank = judged.find(entry => entry.missed && entry.tone === tone)?.rank;
     const atLeast = Math.ceil(VERDICT_CHOICES.talentNodeShare * reference.n);
     const share = atLeast === reference.n ? `${atLeast} of ${atLeast}` : `at least ${atLeast} of ${reference.n}`;
     const note = missed.length
       ? `You differ on ${missed.length} of the ${judged.length} talents ${share} top raiders share.`
       : `You take all ${judged.length} talents ${share} top raiders share.`;
     return {
-      family: TALENT_BUILD_FAMILY.id, tone, onPlan: !missed.length, note, n: reference.n,
+      family: TALENT_BUILD_FAMILY.id, tone, ...rank ? { rank } : {}, onPlan: !missed.length, note, n: reference.n,
       shared: judged.length, missed, instead: this.rarePicks(playerKey, reference, atLeast, missed),
     };
   }
@@ -309,15 +314,19 @@ export class GearJudgeService {
     const agreement = this.rules.consensus({ differs: true, k: leader.k, n: leader.n, paired: false });
     if (worn === null) {
       const gated = leader.n >= VERDICT_CHOICES.minReferenceN && this.passesGate(leader);
-      const tone = this.tones.tone(ENCHANT_MISSING_FAMILY, this.rules.fact({ holds: true, backing: gated ? 'game-rule' : agreement }), caps);
-      return this.flaggedEnchant(slotName, 'Not enchanted', ENCHANT_MISSING_FAMILY, tone, leader);
+      const missing = this.rules.fact({ holds: true, backing: gated ? 'game-rule' : agreement });
+      return this.flaggedEnchant(slotName, 'Not enchanted', ENCHANT_MISSING_FAMILY, this.flagged(ENCHANT_MISSING_FAMILY, missing, caps), leader);
     }
-    return this.flaggedEnchant(slotName, name, ENCHANT_CHOICE_FAMILY, this.tones.tone(ENCHANT_CHOICE_FAMILY, agreement, caps), leader);
+    return this.flaggedEnchant(slotName, name, ENCHANT_CHOICE_FAMILY, this.flagged(ENCHANT_CHOICE_FAMILY, agreement, caps), leader);
   }
 
-  private flaggedEnchant(slotName: string, name: string, family: FindingFamily, tone: Tone, leader: EnchantLeader): EnchantRow {
+  private flagged(family: FindingFamily, evidence: Evidence, caps?: FamilyCaps): { tone: Tone; rank: RowRank } {
+    return { tone: this.tones.tone(family, evidence, caps), rank: this.tones.rank(family, evidence) };
+  }
+
+  private flaggedEnchant(slotName: string, name: string, family: FindingFamily, { tone, rank }: { tone: Tone; rank: RowRank }, leader: EnchantLeader): EnchantRow {
     return {
-      slotName, family: family.id, tone, onPlan: false, name,
+      slotName, family: family.id, tone, rank, onPlan: false, name,
       note: `${this.shareOf(leader.k, leader.n)} use it.${tone === 'amber' ? ' Apply it.' : ''}`,
       top: leader.item, n: leader.n,
     };
@@ -352,9 +361,10 @@ export class GearJudgeService {
     const differs = playerKey !== leader?.key;
     const evidence = this.rules.consensus({ differs, k, n: reference.n, paired: false });
     const tone = differs ? this.tones.tone(family, evidence, copy.caps) : this.tones.neutral();
+    const order = differs ? { rank: this.tones.rank(family, evidence) } : {};
     const rank = ranked.findIndex(choice => choice.key === playerKey);
     const label = rank >= 0 ? ranked[rank]?.label ?? '' : `Uncommon ${copy.noun}`;
-    return { family: family.id, tone, onPlan: !differs, note: `${label}.${this.choiceCounts(reference, playerKey, k, rank)}`, n: reference.n };
+    return { family: family.id, tone, ...order, onPlan: !differs, note: `${label}.${this.choiceCounts(reference, playerKey, k, rank)}`, n: reference.n };
   }
 
   private choiceCounts(reference: PickReference, playerKey: string, k: number, rank: number): string {

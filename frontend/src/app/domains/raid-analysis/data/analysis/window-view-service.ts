@@ -5,6 +5,7 @@ import { ComparisonWindow, RangeRow, WindowStatus } from './window-comparison.mo
 import { AbilityIcons, TimedEvent } from './wcl-projections-service';
 import { WclProjectionsService } from './wcl-projections-service';
 import { FoldCounts, PullModel, PullModelService, UnjudgedCause } from './pull-model-service';
+import type { RowRank } from '../verdict/tone.models';
 
 const UNJUDGED_ICON: Record<UnjudgedCause, string> = { dead: 'skull', after_wipe: 'flag', not_reached: 'schedule' };
 
@@ -92,11 +93,12 @@ export class WindowViewService {
     });
   }
 
-  private verdictFields(verdict: WindowVerdict): Pick<ComparisonWindow, 'note' | 'status' | 'statusIcon' | 'benchOnly' | 'message' | 'family'> {
+  private verdictFields(verdict: WindowVerdict): Pick<ComparisonWindow, 'note' | 'status' | 'statusIcon' | 'benchOnly' | 'message' | 'family' | 'rank'> {
     return {
       note: verdict.note ?? '', status: verdict.status, statusIcon: verdict.icon,
       benchOnly: verdict.benchOnly ?? false, message: verdict.message ?? '',
       ...verdict.family ? { family: verdict.family } : {},
+      ...verdict.rank ? { rank: verdict.rank } : {},
     };
   }
 
@@ -168,6 +170,7 @@ interface WindowVerdict {
   benchOnly?: boolean;
   message?: string;
   family?: string;
+  rank?: RowRank;
 }
 
 interface WindowChips {

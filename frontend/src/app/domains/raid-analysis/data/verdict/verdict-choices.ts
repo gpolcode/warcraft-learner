@@ -72,4 +72,10 @@ export const VERDICT_CHOICES = {
     /** A pool with fewer contrast pulls carrying a test of the family has no discrimination measured yet. */
     minContrastPulls: 20,
   },
+  /** A damage estimate prints only once, over at least `minLogs` contrast logs, it exceeds the observed gap to the top logs on at most `maxExceedShare` of them and ranks them alike. */
+  damage: {
+    minLogs: 20,
+    maxExceedShare: 0.1,
+    minSpearman: 0.3,
+  },
 } as const;

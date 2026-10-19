@@ -17,6 +17,8 @@ import { SpecTalents } from './talent.models';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
 import { GearComparisonService } from './gear-comparison-service';
 import { BenchStrip, BenchStripService } from '../analysis/bench-strip-service';
+import { CardRankingService } from '../analysis/card-ranking-service';
+import { CardRanking } from '../verdict/row-order-service';
 
 export interface GearComparisonView {
   comparison: boolean;
@@ -57,6 +59,7 @@ export class GearFeatureService {
   private readonly wclApi = inject(WclApiService);
   private readonly benchStrips = inject(BenchStripService);
   private readonly calibration = inject(CalibrationCapsService);
+  private readonly cardRanking = inject(CardRankingService);
 
   // Propagates a non-ok bench and the player's own no-combatant-info error unchanged, never degrading to bench-only.
   async loadComparisonView(
@@ -102,6 +105,12 @@ export class GearFeatureService {
       this.logger.logWarn(`GearFeatureService player gear ${reportCode}:${fightId}:${playerId}`, cause);
       return HttpLoadErrors.toLoadError(cause, 'gear.player-view');
     }
+  }
+
+  /** The card's judged rows on a pull; a bench-only view judges none. */
+  ranking(view: GearComparisonView | null): CardRanking {
+    if (!view?.comparison) return this.cardRanking.ranking([]);
+    return this.cardRanking.ranking(this.cardRanking.gear('Gear', [view.talentVerdict, view.trinketVerdict], view.enchantRows));
   }
 
   emptyGearView(): GearComparisonView {

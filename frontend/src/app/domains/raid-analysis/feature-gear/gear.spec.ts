@@ -9,6 +9,7 @@ import { TestBed } from '@angular/core/testing';
 import { ENCHANT_MISSING_FAMILY } from '../data/gear/gear-judge-service';
 import { ToneService } from '../data/verdict/tone-service';
 import { Evidence } from '../data/verdict/tone.models';
+import type { CardRanking } from '../data/verdict/row-order-service';
 
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER_ID = 3379;
@@ -53,8 +54,9 @@ function comparisonView(): GearComparisonView {
 
 function featureOf(view: GearComparisonView): GearFeatureService {
   const load = async (): Promise<Result<GearComparisonView>> => Results.ok(view);
-  // The prototype supplies the empty view; only the two IO loads are faked.
-  return Object.assign(Object.create(GearFeatureService.prototype) as GearFeatureService, { loadBenchView: load, loadComparisonView: load });
+  const ranking = (): CardRanking => ({ rows: [], folded: { dead: 0, after_wipe: 0, not_reached: 0 } });
+  // The prototype supplies the empty view; only the two IO loads and the page's ranking are faked.
+  return Object.assign(Object.create(GearFeatureService.prototype) as GearFeatureService, { loadBenchView: load, loadComparisonView: load, ranking });
 }
 
 interface Mounted {

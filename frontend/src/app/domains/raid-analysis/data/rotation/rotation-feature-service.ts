@@ -32,6 +32,8 @@ import { DowntimeJudgeService } from './downtime-judge-service';
 import { BLOODLUST_FAMILY, BloodlustJudgeService } from './bloodlust-judge-service';
 import { AuraSpan } from '../defensive/defensive-data-source';
 import { WclAbility } from '../wcl/wcl.models';
+import { CardRankingService } from '../analysis/card-ranking-service';
+import { CardRanking, RowOrderService } from '../verdict/row-order-service';
 
 export interface CdPlanRow {
   name: string;
@@ -67,6 +69,8 @@ export interface RotationPlayerView {
   downtimeEmpty: string;
   bench: BenchStrip | null;
   notGraded: RotationNotGraded;
+  /** The three cards' judged rows, for the page-wide order. */
+  ranking: CardRanking;
 }
 
 /** Each rotation card's checks calibration leaves without a color. */
@@ -142,6 +146,8 @@ export class RotationFeatureService {
   private readonly lust = inject(BloodlustJudgeService);
   private readonly findingRows = inject(FindingRowsService);
   private readonly calibration = inject(CalibrationCapsService);
+  private readonly cardRanking = inject(CardRankingService);
+  private readonly rowOrder = inject(RowOrderService);
 
   async loadPlayerView(
     spec: string, encounterId: number, reportCode: string, fightId: number, playerId: number,
@@ -163,10 +169,15 @@ export class RotationFeatureService {
       emptyView: () => ({
         buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null,
         buttonsBenched: false, buttonsEmpty: this.buttonsEmpty(bench.value), offensivesEmpty: this.offensivesEmpty(0, bench.value),
-        downtimeEmpty: this.downtimeEmpty(null, bench.value), bench: strip, notGraded,
+        downtimeEmpty: this.downtimeEmpty(null, bench.value), bench: strip, notGraded, ranking: this.cardRanking.ranking([]),
       }),
       analyze: async context => ({ ...await this.playerView(this.withList(bench.value), pull, context, caps), bench: strip, notGraded }),
     });
+  }
+
+  /** The view's judged rows, or none on a failed load. */
+  ranking(view: RotationPlayerView | null): CardRanking {
+    return view?.ranking ?? this.cardRanking.ranking([]);
   }
 
   /** A healer's top logs heal, so no damage priority list describes how they press their buttons. */
@@ -224,9 +235,15 @@ export class RotationFeatureService {
       cooldowns: bench.major_cooldowns, bench,
       talents: this.gearExtract.pickedTalents(this.gearExtract.selectCombatantInfo(combatants, playerId)), caps,
     });
-    const { downtimeRows, offensiveRows, onPlan } = this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
+    const { downtimeRows, offensiveRows: bucketed, onPlan } = this.bucketRotationFindings(findings, bench.cd_spell_ids, bench.ability_icons);
+    const offensiveRows = this.rowOrder.order(bucketed, row => ({ ...row, tone: row.severity }));
+    const buttonRows = this.listFindings.rows(bench, reading, model, caps);
+    const ranking = this.cardRanking.ranking(
+      [...this.cardRanking.buttons('Rotation rules', buttonRows), ...this.cardRanking.findings('Downtime', downtimeRows), ...this.cardRanking.findings('Offensives', offensiveRows)],
+      this.pullModel.addFolds(folded, this.cardRanking.mutedFolds(buttonRows)),
+    );
     return {
-      buttonRows: this.listFindings.rows(bench, reading, model, caps), downtimeRows, offensiveRows, onPlan,
+      buttonRows, downtimeRows, offensiveRows, onPlan, ranking,
       downtimeSpan: this.pullModel.judgedSpan(model), offensiveSpan: this.pullModel.judgedSpan(model, folded),
       buttonsBenched: bench.buttons.length > 0, buttonsEmpty: this.buttonsEmpty(bench), offensivesEmpty: this.offensivesEmpty(checked, bench),
       downtimeEmpty,
@@ -353,6 +370,7 @@ export class RotationFeatureService {
   protected buildDowntimeRows(downtimeFindings: AnalysisFinding[]): FindingRow[] {
     return downtimeFindings.map(finding => ({
       severity: finding.severity,
+      ...this.findingRows.ranked(finding),
       name: '',
       icon: '',
       what: finding.label,
@@ -375,6 +393,7 @@ export class RotationFeatureService {
       for (const finding of [...bucket.issues, ...bucket.holds]) {
         offensiveRows.push({
           severity: finding.severity,
+          ...this.findingRows.ranked(finding),
           name: rowName,
           spellId,
           icon,

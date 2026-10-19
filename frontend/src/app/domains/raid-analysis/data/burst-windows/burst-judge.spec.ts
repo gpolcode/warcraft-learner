@@ -166,17 +166,21 @@ describe('BurstJudgeService reference', () => {
 
 describe('BurstJudgeService verdict', () => {
   it('flags amber just under the edge, naming the top logs and the target', () => {
-    expect(judges.verdict(WINDOW, measured(EDGE - 0.01, 1490), FIVE_TOP_LOGS)).toEqual({
+    expect(judges.verdict(WINDOW, measured(EDGE - 0.01, 1490), FIVE_TOP_LOGS)).toMatchObject({
       family: 'burst.window', status: 'amber', icon: 'warning_amber', n: 5,
       message: 'You dealt 1.5K here, 1.49x your pull average, less than the 5 top logs. Aim for 1.5x or more.',
     });
   });
 
   it('does not flag a multiple exactly at the edge', () => {
-    expect(judges.verdict(WINDOW, measured(EDGE, 1500), FIVE_TOP_LOGS)).toEqual({
+    expect(judges.verdict(WINDOW, measured(EDGE, 1500), FIVE_TOP_LOGS)).toMatchObject({
       family: 'burst.window', status: 'neutral', icon: 'compare_arrows', n: 5,
       message: 'You dealt 1.5K here, 1.5x your pull average. The 5 top logs average 2.0x here.',
     });
+  });
+
+  it('ranks a flagged window on its medium cost class and the rule\'s own evidence, above the amber its tier allows', () => {
+    expect(judges.verdict(WINDOW, measured(EDGE - 0.01, 1490), FIVE_TOP_LOGS).rank).toMatchObject({ costClass: 'medium', evidence: 'red' });
   });
 
   it('compares without color against fewer top logs than the minimum', () => {

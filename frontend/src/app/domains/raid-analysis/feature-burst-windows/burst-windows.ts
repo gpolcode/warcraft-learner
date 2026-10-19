@@ -4,6 +4,7 @@ import { LoadState } from '../../shared/ui-load-state/load-state';
 import { ClipAnchor } from '../data/capture/capture.models';
 import { BurstFeatureService, BurstMapAnchor } from '../data/burst-windows/burst-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
+import type { CardRanking } from '../data/verdict/row-order-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +28,8 @@ export class BurstWindows {
   readonly openClip = output<ClipAnchor>();
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
+  /** The rows this card judged, for the page's "Fix first" strip and damage card. */
+  readonly rankingChange = output<CardRanking>();
 
   private readonly load = this.loadRes.loadResource({
     params: () => ({
@@ -43,6 +46,7 @@ export class BurstWindows {
     initialAvailable: true,
     busyChange: this.busyChange,
     availableChange: this.availableChange,
+    valueChange: view => { this.rankingChange.emit(this.burst.ranking(view)); },
   });
 
   protected readonly available = this.load.available;

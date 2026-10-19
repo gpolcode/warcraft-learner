@@ -123,6 +123,25 @@ describe('DowntimeJudgeService', () => {
     expect(finding?.details).toBeUndefined();
   });
 
+  it('prices a flagged idle time at the idle seconds past the top logs\' average, the range closed by a reference with no spread', () => {
+    const casting = judges.measure([[0, EDGE_IDLE_S + 1]], WHOLE_PULL);
+    assert.exists(casting);
+    // 16s idle against the top logs' 10s.
+    const PAST_AVERAGE_S = 6;
+
+    expect(judges.finding(casting, REFERENCE, FIGHT_S)?.damage).toEqual({ aboutS: PAST_AVERAGE_S, lowS: PAST_AVERAGE_S, highS: PAST_AVERAGE_S });
+  });
+
+  it('prices idle time only where the rule flags it', () => {
+    const atEdge = judges.measure([[0, EDGE_IDLE_S]], WHOLE_PULL);
+    const pastEdge = judges.measure([[0, EDGE_IDLE_S + 1]], WHOLE_PULL);
+    assert.exists(atEdge);
+    assert.exists(pastEdge);
+
+    expect(judges.damageOf(atEdge, REFERENCE)).toBeNull();
+    expect(judges.damageOf(pastEdge, REFERENCE)).not.toBeNull();
+  });
+
   it('flags nothing against fewer top logs than the minimum', () => {
     const casting = judges.measure([[0, FIGHT_S]], WHOLE_PULL);
     assert.exists(casting);

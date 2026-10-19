@@ -129,7 +129,7 @@ export class ReadyTimeJudgeService {
     const longest = ready.longest ? `, the longest from ${fmtClock(ready.longest.fromS)} to ${fmtClock(ready.longest.toS)}` : '';
     const [readyText, targetText] = this.clocksApart(ready.readyS, (evidence.target ?? 0) * ready.aliveS);
     return {
-      family: family.id, severity, category: 'lost_cooldown', cd_name: name,
+      family: family.id, severity, rank: this.tones.rank(family, evidence), category: 'lost_cooldown', cd_name: name,
       ...ready.longest ? { timestamp_s: ready.longest.fromS } : {},
       measured: { value: readyText, unit: `ready, top ${fmtClock(avgS)}, ${evidence.n} top logs` },
       message: `${name} sat ready and unpressed for ${readyText} ${over}${longest}. `

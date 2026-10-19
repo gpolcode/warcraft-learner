@@ -155,7 +155,7 @@ export class BloodlustJudgeService {
     const k = this.upCount(reference);
     const lengthS = Math.round(lust.toS - lust.fromS);
     return {
-      family: BLOODLUST_FAMILY.id, severity: this.tones.tone(BLOODLUST_FAMILY, evidence, caps),
+      family: BLOODLUST_FAMILY.id, severity: this.tones.tone(BLOODLUST_FAMILY, evidence, caps), rank: this.tones.rank(BLOODLUST_FAMILY, evidence),
       category: 'cooldown_alignment', cd_name: name, timestamp_s: lust.fromS,
       span: { fromS: lust.fromS, toS: lust.toS },
       measured: { value: `0s of ${lengthS}s`, unit: `in Bloodlust, ${k} of ${evidence.n} top logs had it up` },

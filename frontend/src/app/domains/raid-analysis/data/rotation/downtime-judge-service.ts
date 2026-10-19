@@ -7,7 +7,8 @@ import { PlanSpell } from '../plan/plan.models';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { Evidence, FamilyCaps } from '../verdict/tone.models';
+import { DamageEstimateService } from '../verdict/damage-estimate-service';
+import { DamageEstimate, Evidence, FamilyCaps } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { IdleStretch, RotationParseMeasures } from './rotation-data-source';
 
@@ -58,6 +59,7 @@ export interface CastingTime {
 export class DowntimeJudgeService {
   private readonly rules = inject(DecisionRuleService);
   private readonly tones = inject(ToneService);
+  private readonly damage = inject(DamageEstimateService);
 
   /** Null under two casts. Time before the first cast and after the last never counts; ingest bakes the result as `per_parse[].idle_s`. */
   idleStretches(events: readonly TimedEvent[], spells: Readonly<Record<string, PlanSpell>>): IdleStretch[] | null {
@@ -95,6 +97,12 @@ export class DowntimeJudgeService {
     return this.rules.interval({ observed: casting.pct, reference, side: 'above', floor });
   }
 
+  /** The damage the idle time cost, only where the rule flags it, as the page prints it. */
+  damageOf(casting: CastingTime, reference: readonly number[]): DamageEstimate | null {
+    const level = this.judge(casting, reference).level;
+    return level === 'amber' || level === 'red' ? this.damage.idle(casting, reference) : null;
+  }
+
   /** Null unless the rule flags; the tone comes from calibration, so an ungraded row is a comparison with no target or fix. */
   finding(casting: CastingTime, reference: readonly number[], fightDurationS: number, caps?: FamilyCaps): AnalysisFinding | null {
     const evidence = this.judge(casting, reference);
@@ -106,7 +114,8 @@ export class DowntimeJudgeService {
     const over = casting.aliveS < fightDurationS ? 'your alive time' : 'the fight';
     const [pct, target] = fmtApart(casting.pct, evidence.target ?? casting.pct);
     return {
-      family: DOWNTIME_FAMILY.id, severity, category: 'cast_efficiency',
+      family: DOWNTIME_FAMILY.id, severity, rank: this.tones.rank(DOWNTIME_FAMILY, evidence), damage: this.damage.idle(casting, reference),
+      category: 'cast_efficiency',
       label: 'Idle time',
       measured: { value: `${pct}%`, unit: `idle, top ${topPct.toFixed(0)}%, ${evidence.n} top logs` },
       message: `You were idle ${pct}% of ${over} past each cast's global cooldown and cast time, ${excessS}s more than the average of ${evidence.n} top logs.`

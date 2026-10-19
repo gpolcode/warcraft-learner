@@ -5,6 +5,7 @@ import type { RotationParseMeasures } from '../../rotation/rotation-data-source'
 import type { DefensiveParseMeasures } from '../../defensive/defensive-data-source';
 import type { GearParseMeasures } from '../../gear/gear-data-source';
 import type { BurstParseMeasures } from '../../burst-windows/burst-data-source';
+import type { DamageGate, DamageSample } from '../damage-estimate-service';
 
 /** The invariant tally key for Bloodlust rows judged against a lust outside the bench's band, which must stay empty. */
 export const OUTSIDE_BAND = 'outside-band';
@@ -104,6 +105,8 @@ export interface EncounterCalibration {
   /** Contrast logs judged against the full benches; zero until the cohort is fetched. */
   contrast_pulls: number;
   discrimination: Record<string, DiscriminationSample>;
+  /** Each contrast log's summed damage estimate and observed gap; empty off a damage-ranked bench. */
+  damage: DamageSample[];
 }
 
 /** The tone a family may reach on one spec, and why. */
@@ -155,4 +158,6 @@ export interface CalibrationIndex {
   invariants: InvariantResult[];
   /** Benches the harness could not fold, by bench name. */
   unfoldable: Record<string, number>;
+  /** Whether damage estimates may print, pooled over every contrast log. */
+  damage: DamageGate;
 }

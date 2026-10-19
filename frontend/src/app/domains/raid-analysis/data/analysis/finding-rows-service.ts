@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { type AnalysisFinding, type FindingOccurrence, CAT_LABEL } from './analysis.models';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
-import type { Tone } from '../verdict/tone.models';
+import type { DamageEstimate, RowRank, Tone } from '../verdict/tone.models';
 import { ToneService } from '../verdict/tone-service';
 import type { UnjudgedCause } from './pull-model-service';
 
@@ -22,6 +22,7 @@ export class FindingRowsService {
       for (const f of entry.findings) {
         rows.push({
           severity: f.severity,
+          ...this.ranked(f),
           name: entry.name,
           spellId: entry.spellId,
           icon: entry.icon,
@@ -35,6 +36,15 @@ export class FindingRowsService {
       }
     }
     return rows;
+  }
+
+  /** The fields the page-wide order reads, carried only where the finding has them. */
+  ranked(finding: AnalysisFinding): Pick<FindingRow, 'family' | 'rank' | 'damage'> {
+    return {
+      ...finding.family ? { family: finding.family } : {},
+      ...finding.rank ? { rank: finding.rank } : {},
+      ...finding.damage ? { damage: finding.damage } : {},
+    };
   }
 
   onPlanFromEntries(entries: FindingEntry[]): OnPlanChip[] {
@@ -94,6 +104,9 @@ interface FindingMeasure {
 
 export interface FindingRow {
   severity: Tone;
+  family?: string;
+  rank?: RowRank;
+  damage?: DamageEstimate;
   /** Why a muted row was not judged. */
   unjudged?: UnjudgedCause;
   name?: string;

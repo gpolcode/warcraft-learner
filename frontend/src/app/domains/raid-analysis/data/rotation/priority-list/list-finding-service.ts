@@ -4,7 +4,7 @@ import { round, severityRank } from '../../analysis/analysis-math';
 import type { ConditionCheck, FindingOccurrence } from '../../analysis/analysis.models';
 import { PullModel, PullModelService, UnjudgedCause } from '../../analysis/pull-model-service';
 import { ToneService } from '../../verdict/tone-service';
-import type { FamilyCaps, Tone } from '../../verdict/tone.models';
+import type { FamilyCaps, RowRank, Tone } from '../../verdict/tone.models';
 import { VERDICT_CHOICES } from '../../verdict/verdict-choices';
 import type { PriorityList } from '../../plan/plan.models';
 import type { AplNode } from '../../simc/simc-apl-service';
@@ -48,6 +48,8 @@ export interface ButtonRow {
   n: number;
   top: ShareRange;
   status: Tone;
+  /** Absent on a muted row. */
+  rank?: RowRank;
   unjudged: UnjudgedCause | null;
   message: string;
   occurrences: FindingOccurrence[];
@@ -88,7 +90,7 @@ export class ListFindingService {
     const status = this.tones.tone(ROTATION_BUTTON_FAMILY, evidence, pull.caps);
     return {
       ...base, you: round(counts.right / counts.moments, SHARE_DIGITS), right: counts.right, moments: counts.moments, n: reference.length,
-      status, unjudged: null, message: `You got ${counts.right} of ${counts.moments} moments right.${this.against(reference)}${this.aim(status, counts, evidence.target)}`,
+      status, rank: this.tones.rank(ROTATION_BUTTON_FAMILY, evidence), unjudged: null, message: `You got ${counts.right} of ${counts.moments} moments right.${this.against(reference)}${this.aim(status, counts, evidence.target)}`,
       occurrences: this.occurrences(list, lines, judged, entry.action, name),
     };
   }

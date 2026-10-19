@@ -1,4 +1,4 @@
-import type { Tone } from '../verdict/tone.models';
+import type { DamageEstimate, RowRank, Tone } from '../verdict/tone.models';
 import type { UnjudgedCause } from './pull-model-service';
 
 export interface FindingOccurrence {
@@ -27,6 +27,10 @@ export interface AnalysisFinding {
   /** The `FindingFamily.id` of a family on the verdict contract. */
   family?: string;
   severity: Tone;
+  /** Absent on a row no rule judged, such as an on-plan or muted one. */
+  rank?: RowRank;
+  /** Set only where one pull identifies the damage the finding cost. */
+  damage?: DamageEstimate | null;
   /** Nothing is flagged for the cooldown, so it surfaces as an "On plan" chip rather than a row. */
   onPlan?: boolean;
   /** Why a muted finding was not judged. */

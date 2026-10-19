@@ -8,6 +8,7 @@ import { CalibrationIndex, Discrimination, EncounterCalibration, FamilyVerdict, 
 import { COMPARISON } from './calibration-caps-service';
 import { RegistryHashService } from './registry-hash-service';
 import { DEAD_IN_WINDOW_FAMILY } from '../../defensive/defensive-judge-service';
+import { DamageEstimateService } from '../damage-estimate-service';
 
 const CHOICES = VERDICT_CHOICES.calibration;
 const NONE: FlagTally = { tests: 0, amber: 0, red: 0 };
@@ -39,6 +40,7 @@ export class CalibrationIndexService {
   private readonly arming = inject(ArmingService);
   private readonly specRoles = inject(SpecRoleService);
   private readonly hashes = inject(RegistryHashService);
+  private readonly damage = inject(DamageEstimateService);
 
   build(encounters: readonly EncounterCalibration[]): CalibrationIndex {
     const invariants = this.invariants(encounters);
@@ -58,6 +60,7 @@ export class CalibrationIndexService {
       page: { measured: this.measuredPage(encounters), armed: this.armedPage(encounters, specs) },
       invariants,
       unfoldable: this.unfoldable(encounters),
+      damage: this.damage.gate(encounters.flatMap(encounter => encounter.damage)),
     };
   }
 

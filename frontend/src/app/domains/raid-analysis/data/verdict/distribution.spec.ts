@@ -63,4 +63,23 @@ describe('DistributionService', () => {
     expect(distribution.clopperPearsonUpper(0, 0, ARMING_CONFIDENCE)).toBe(1);
     expect(distribution.clopperPearsonUpper(10, 10, ARMING_CONFIDENCE)).toBe(1);
   });
+
+  it('reads a rank correlation of 1 for values that rise together, however unevenly', () => {
+    expect(distribution.spearman([1, 2, 3, 4], [10, 11, 50, 900])).toBe(1);
+  });
+
+  it('reads a rank correlation of -1 for values that move apart', () => {
+    expect(distribution.spearman([1, 2, 3, 4], [4, 3, 2, 1])).toBe(-1);
+  });
+
+  it('ranks ties at their average rank', () => {
+    // Ranks [1.5, 1.5, 3] against [1, 2, 3]: covariance 1.5 over the square root of 1.5 times 2.
+    const TIED = 1.5 / Math.sqrt(1.5 * 2);
+
+    expect(distribution.spearman([0, 0, 5], [1, 2, 3])).toBeCloseTo(TIED, SIX_PLACES);
+  });
+
+  it('reads no correlation when one side has no spread', () => {
+    expect(distribution.spearman([0, 0, 0], [1, 2, 3])).toBe(0);
+  });
 });

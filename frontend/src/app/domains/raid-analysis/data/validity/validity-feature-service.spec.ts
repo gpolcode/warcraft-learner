@@ -1,3 +1,4 @@
+import { CLOSED_GATE } from '../verdict/damage-estimate-service';
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { Results, type Result } from '../../../shared/util-http/result';
@@ -29,7 +30,7 @@ const ENCHANTS: FamilyCalibration = {
 const index = (over: Partial<CalibrationIndex> = {}): CalibrationIndex => ({
   registry_hash: hash, encounters: 6, pulls: 60, contrast_pulls: 30,
   families: { [DOWNTIME_FAMILY.id]: OPENER, [ENCHANT_MISSING_FAMILY.id]: ENCHANTS },
-  specs: {}, demoted: {}, invariants: [], unfoldable: {},
+  specs: {}, demoted: {}, invariants: [], unfoldable: {}, damage: CLOSED_GATE,
   page: {
     measured: { dps: DPS_LOAD, tank: { pulls: 0, amber: 0, red: 0 }, healer: { pulls: 0, amber: 0, red: 0 } },
     armed: { dps: DPS_LOAD, tank: { pulls: 0, amber: 0, red: 0 }, healer: { pulls: 0, amber: 0, red: 0 } },
@@ -87,6 +88,18 @@ describe('ValidityFeatureService.loadView', () => {
 
   it('marks a measurement of this version of the checks as current', async () => {
     expect((await measurementOf(Results.ok(index())))?.current).toBe(true);
+  });
+
+  it('reports the damage gate measured on the weaker logs', async () => {
+    const OPEN = { logs: 40, exceedShare: 0.05, spearman: 0.5, open: true };
+
+    expect((await measurementOf(Results.ok(index({ damage: OPEN }))))?.damage).toEqual(OPEN);
+  });
+
+  it('keeps the damage gate closed on a measurement of another version of the checks', async () => {
+    const OPEN = { logs: 40, exceedShare: 0.05, spearman: 0.5, open: true };
+
+    expect((await measurementOf(Results.ok(index({ registry_hash: 'older', damage: OPEN }))))?.damage).toEqual(CLOSED_GATE);
   });
 
   it('has no measurement when none is published', async () => {

@@ -69,6 +69,36 @@ export class DistributionService {
     return Math.min(1, sum);
   }
 
+  /** Spearman's rank correlation, ties ranked at their average; 0 when either side has no spread. */
+  spearman(xs: readonly number[], ys: readonly number[]): number {
+    const rx = this.ranks(xs);
+    const ry = this.ranks(ys);
+    const mean = (rx.length + 1) / 2;
+    let cov = 0;
+    let vx = 0;
+    let vy = 0;
+    rx.forEach((r, i) => {
+      const dx = r - mean;
+      const dy = (ry[i] ?? mean) - mean;
+      cov += dx * dy;
+      vx += dx * dx;
+      vy += dy * dy;
+    });
+    return vx > 0 && vy > 0 ? cov / Math.sqrt(vx * vy) : 0;
+  }
+
+  private ranks(values: readonly number[]): number[] {
+    const order = values.map((value, index) => ({ value, index })).sort((a, b) => a.value - b.value);
+    const ranks: number[] = new Array<number>(values.length).fill(0);
+    for (let from = 0; from < order.length;) {
+      let to = from;
+      while (to + 1 < order.length && order[to + 1]?.value === order[from]?.value) to++;
+      for (let k = from; k <= to; k++) ranks[order[k]?.index ?? 0] = (from + to) / 2 + 1;
+      from = to + 1;
+    }
+    return ranks;
+  }
+
   private logBinomialPmf(i: number, m: number, p: number): number {
     if (p <= 0) return i === 0 ? 0 : -Infinity;
     if (p >= 1) return i === m ? 0 : -Infinity;
