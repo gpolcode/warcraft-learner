@@ -15,7 +15,10 @@ const SLACK_MS = 30_000;
 /** Mirrors MAX_OCCURRENCES in src/app/domains/raid-analysis/data/rotation/priority-list/list-finding-service.ts. */
 const MAX_INSTANCES = 24;
 const FIGHT_LABEL = new RegExp(` - (Kill|Wipe #\\d+) - ${CLOCK.source}$`);
-const JUDGED_CAST = new RegExp(`is only right when these conditions hold\\. At ${CLOCK.source} ${ANY_TEXT.source}`);
+/** A moment's rule names what its conditions decide: the press itself, a button due above it, or one left unpressed while due. */
+const JUDGED_CAST = new RegExp(`(is only right|comes first|is due) when these conditions hold\\. At ${CLOCK.source} ${ANY_TEXT.source}`);
+/** A moment whose line the list text cannot phrase reads its verdict alone, with no conditions to open. */
+const BARE_MOMENT = new RegExp(`${CLOCK.source}\\s+(Right time|Wrong time|Missed while idle|Held when due|The log does not show every condition)`);
 const STATE_AT = new RegExp(`State at ${CLOCK.source}`);
 const VERDICT = /Right time|Wrong time|Not judged|Missed while idle|Held when due/;
 const CONDITION_STATE = /^(Met|Not met|Not in the log)$/;
@@ -145,7 +148,7 @@ test('fix first lists the costliest colored rows across the cards, and the damag
 test('rotation rules bar the first button against the top logs and open its moments into a judged cast with its conditions', async () => {
   const rotationRules = page.locator('wl-rotation').locator('wl-button-table');
   await shows(rotationRules, 'Rotation rules');
-  await shows(rotationRules, 'How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press at the wrong time and a skip when it was due both count as a miss.');
+  await shows(rotationRules, 'How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press while another button was due, a press off its conditions, and a button left unpressed while it was due each count as a miss.');
   await shows(rotationRules, 'You');
   await shows(rotationRules, 'Top raiders, lowest to highest');
   await shows(rotationRules, 'Top raiders average');
@@ -176,9 +179,15 @@ test('rotation rules bar the first button against the top logs and open its mome
   expect(count).toBeLessThanOrEqual(MAX_INSTANCES);
   await expect(moments.first()).toHaveText(CLOCK);
   await expect(strip.locator('[aria-selected="true"]')).toHaveText(CLOCK);
+  const checklist = strip.locator('wl-condition-checklist');
+  if (!await checklist.count()) {
+    await expect(strip.getByText(BARE_MOMENT).first()).toBeVisible();
+    await button.getByRole('button', { name: 'Hide instances' }).click();
+    await expect(strip).not.toBeVisible();
+    return;
+  }
   await expect(strip.getByText(JUDGED_CAST)).toBeVisible();
 
-  const checklist = strip.locator('wl-condition-checklist');
   await shows(checklist, 'Condition');
   await shows(checklist, STATE_AT);
   await expect(checklist.getByText(VERDICT)).toBeVisible();

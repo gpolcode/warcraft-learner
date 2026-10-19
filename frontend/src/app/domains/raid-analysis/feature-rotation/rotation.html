@@ -5,7 +5,7 @@
     @if (judgesButtons() && (buttonRows().length || buttonsBenched())) {
       <wl-button-table
         heading="Rotation rules"
-        subtitle="How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press at the wrong time and a skip when it was due both count as a miss."
+        subtitle="How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press while another button was due, a press off its conditions, and a button left unpressed while it was due each count as a miss."
         [bench]="bench()"
         [rows]="buttonRows()"
         [empty]="buttonsEmpty()"
