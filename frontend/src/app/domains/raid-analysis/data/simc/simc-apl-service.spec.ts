@@ -110,7 +110,15 @@ describe('SimcAplService.readApl', () => {
   });
 
   it('skips actions that press no spell of the spec', () => {
-    expect(lines('actions=auto_attack', 'actions+=/potion', 'actions+=/use_item,name=trinket').map(line => line.action)).toEqual([]);
+    expect(lines('actions=auto_attack', 'actions+=/potion', 'actions+=/pool_resource').map(line => line.action)).toEqual([]);
+  });
+
+  it('keeps a trinket line with the item or slot it names, for the log to resolve to the trinket worn', () => {
+    expect(lines('actions=use_item,name=spymasters_web,if=buff.shadow_dance.up', 'actions+=/use_item,slot=trinket2', 'actions+=/use_items')).toEqual([
+      { action: 'use_item', terms: ['buff.shadow_dance.up'], item: 'spymasters_web' },
+      { action: 'use_item', terms: [], item: 'trinket2' },
+      { action: 'use_items', terms: [] },
+    ]);
   });
 
   it('keeps a line under a condition jsep cannot read, with no terms to read', () => {

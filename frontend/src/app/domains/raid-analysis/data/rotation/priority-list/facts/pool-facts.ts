@@ -41,7 +41,8 @@ export class PoolFacts implements FactReader {
     if (own) return { amount: [own.before, own.before], max: own.max };
     const rows = ctx.resourcePool(type);
     const last = rows.filter(row => row[4] < moment.index).pop();
-    const next = rows.find(row => row[4] > moment.index);
+    // An idle point shares its index with the cast after it, whose pool bounds the point from above.
+    const next = rows.find(row => row[4] >= moment.index);
     const max = (last ?? next)?.[3];
     if (max === undefined) return null;
     const changed = (fromS: number, toS: number): number => ctx.resourceChanges(type)

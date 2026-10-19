@@ -1,13 +1,20 @@
 import { Injectable, inject } from '@angular/core';
 import { greatest, rollup } from 'd3-array';
 import { getOrInsert } from '../../analysis/analysis-math';
-import type { PriorityList } from '../../plan/plan.models';
+import type { PlanLine, PriorityList } from '../../plan/plan.models';
+import { TRINKET_SLOTS } from '../../gear/gear-extract-service';
+import { DowntimeJudgeService } from '../downtime-judge-service';
 import type { WclAbility, WclEvent } from '../../wcl/wcl.models';
 import { SpellDumpService } from '../../simc/spell-dump-service';
 import { WclProjectionsService, TimedEvent } from '../../analysis/wcl-projections-service';
 import { AuraWindowsService } from '../../analysis/aura-windows-service';
 import { BLOODLUST_IDS } from '../rotation-bloodlust-service';
-import type { AddSpan, DamageRow, FactContext, GearPiece, HealthRow, ResourceChange, ResourceRow } from './priority-list.models';
+import type { AddSpan, DamageRow, EnemyTimeline, FactContext, GearPiece, HealthRow, ResourceChange, ResourceRow } from './priority-list.models';
+
+/** SimC's trinket lines, which `SimcAplService` keeps with the item they name and the fact context resolves to the trinket the player wore. */
+export const USE_ITEM = 'use_item';
+export const USE_ITEMS = 'use_items';
+const TRINKET_NAMES = ['trinket1', 'trinket2'];
 
 /** WCL flattens one actor's pools onto the event; 1 means they belong to the caster, 2 to whoever was hit. */
 const RESOURCE_ACTOR_SOURCE = 1;
@@ -37,6 +44,7 @@ export interface FactInputs {
   gear: GearPiece[];
   fightDurationS: number;
   kill: boolean;
+  enemyTimeline?: EnemyTimeline | null;
 }
 
 export interface Pool {
@@ -50,9 +58,11 @@ export class FactContextService {
   private readonly auraWindows = inject(AuraWindowsService);
   private readonly projections = inject(WclProjectionsService);
   private readonly dumps = inject(SpellDumpService);
+  private readonly downtime = inject(DowntimeJudgeService);
 
   build(input: FactInputs): FactContext {
-    const { list, buffs, debuffs, damage } = input;
+    const { buffs, debuffs, damage } = input;
+    const list = this.withTrinkets(input.list, input.gear);
     const casts = input.casts.filter(event => event.type === 'cast').sort((a, b) => a.atS - b.atS);
     const logged = this.lazy(() => rollup(input.abilities, same => same.map(ability => ability.gameID), ability => this.dumps.tokenize(ability.name)));
     const ids = (token: string): number[] => list.spells[token]?.ids ?? logged().get(token) ?? [];
@@ -83,7 +93,31 @@ export class FactContextService {
       gcd: id => gcds().get(id) ?? null,
       castStartsS: this.lazy(() => this.castStartsS(input.casts, casts, id => gcds().get(id))),
       hasteFactors: this.lazy(() => this.hasteFactors(list, input.casts)),
+      idleSpans: this.lazy(() => this.downtime.idleStretches(input.casts, list.spells) ?? []),
+      enemyTimeline: input.enemyTimeline ?? null,
     };
+  }
+
+  /** Each trinket line becomes a line of the use spell of the trinket worn there, so it reads as a button; a trinket the list has no use spell for is not the player's to press. */
+  withTrinkets(list: PriorityList, gear: readonly GearPiece[]): PriorityList {
+    if (!list.lines.some(line => line.action === USE_ITEM || line.action === USE_ITEMS)) return list;
+    const worn = TRINKET_SLOTS.map(slot => gear.find(piece => piece.slot === slot));
+    const items = Object.entries(list.items ?? {});
+    const useOf = (piece: GearPiece | undefined): string[] => {
+      const use = piece && items.find(([, item]) => item.id === piece.id)?.[1].use;
+      return use && list.spells[use] ? [use] : [];
+    };
+    const pieceOf = (item: string | undefined): GearPiece | undefined => {
+      const slot = TRINKET_NAMES.indexOf(item ?? '');
+      return slot >= 0 ? worn[slot] : worn.find(piece => piece && list.items?.[item ?? '']?.id === piece.id);
+    };
+    const lines = list.lines.flatMap((line): PlanLine[] => {
+      if (line.action !== USE_ITEM && line.action !== USE_ITEMS) return [line];
+      const { item, ...rest } = line;
+      const uses = line.action === USE_ITEMS ? worn.flatMap(useOf) : useOf(pieceOf(item));
+      return uses.map(action => ({ ...rest, action }));
+    });
+    return { ...list, lines };
   }
 
   /** A cast's own pool in the game's units; null when the cast does not touch it. */

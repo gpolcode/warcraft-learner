@@ -4,6 +4,8 @@ import { applyBuff, beginCast, cast, damage, removeBuff } from '../../../../../.
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
 import { BACKSTAB, BLADESTORM, BLADESTORM_HERO, BLOODLUST, SHADOW_DANCE, STARFIRE, VANISH } from '../../../../../../testing/spell-ids';
 import { FactContextService } from './fact-context-service';
+import { TRINKET_SLOTS } from '../../gear/gear-extract-service';
+import type { PlanLine } from '../../plan/plan.models';
 import { factContext, priorityList } from './priority-list-harness';
 
 const DANCE_PASSIVE = 185314;
@@ -81,5 +83,47 @@ describe('FactContextService', () => {
   it('starts a cast at itself once a press on the global cooldown ended the begincast before it', () => {
     const ctx = factContext(list, { casts: [beginCast(STARFIRE, BEGUN_S), cast(BACKSTAB, BEGUN_S + 1), cast(STARFIRE, DONE_S)] });
     expect(ctx.castStartsS()).toEqual([BEGUN_S + 1, DONE_S]);
+  });
+});
+
+describe('FactContextService trinket lines', () => {
+  const WEB = 220202;
+  const WEB_USE = 444959;
+  const SIGNET = 219308;
+  const items = {
+    spymasters_web: { id: WEB, name: "Spymaster's Web", use: `item_${WEB}`, use_buff: true, use_damage: null },
+    signet: { id: SIGNET, name: 'Signet', use: null, use_buff: null, use_damage: null },
+  };
+  const trinketList = (lines: PlanLine[]) => priorityList({ lines, items, spells: { [`item_${WEB}`]: planSpell("Spymaster's Web", [WEB_USE], { gcd: 0 }) } });
+  const worn = (first: number, second: number) => [{ slot: TRINKET_SLOTS[0], id: first, name: '', itemLevel: 0 }, { slot: TRINKET_SLOTS[1], id: second, name: '', itemLevel: 0 }];
+  const actions = (lines: PlanLine[], gear = worn(WEB, SIGNET)) => contexts.withTrinkets(trinketList(lines), gear).lines.map(line => line.action);
+
+  it('reads a line naming a trinket as its use spell when the player wears it', () => {
+    expect(actions([{ action: 'use_item', terms: [], item: 'spymasters_web' }])).toEqual([`item_${WEB}`]);
+  });
+
+  it('drops a line naming a trinket the player does not wear', () => {
+    expect(actions([{ action: 'use_item', terms: [], item: 'spymasters_web' }], worn(SIGNET, SIGNET))).toEqual([]);
+  });
+
+  it('reads a slot line as the trinket worn in that slot, and drops one whose trinket has no use', () => {
+    expect(actions([{ action: 'use_item', terms: [], item: 'trinket1' }])).toEqual([`item_${WEB}`]);
+    expect(actions([{ action: 'use_item', terms: [], item: 'trinket2' }])).toEqual([]);
+  });
+
+  it('reads a line for every trinket as one line per worn trinket with a use', () => {
+    expect(actions([{ action: 'use_items', terms: ['buff.shadow_dance.up'] }], worn(WEB, WEB))).toEqual([`item_${WEB}`, `item_${WEB}`]);
+  });
+});
+
+describe('FactContextService idle spans', () => {
+  it('reads the stretches past each cast\'s global cooldown as idle', () => {
+    const IDLE_FROM_S = 11;
+    const IDLE_TO_S = 20;
+    expect(factContext(list, { casts: [cast(BACKSTAB, 10), cast(BACKSTAB, IDLE_TO_S)] }).idleSpans()).toEqual([[IDLE_FROM_S, IDLE_TO_S]]);
+  });
+
+  it('reads none under two casts', () => {
+    expect(factContext(list, { casts: [cast(BACKSTAB, 10)] }).idleSpans()).toEqual([]);
   });
 });

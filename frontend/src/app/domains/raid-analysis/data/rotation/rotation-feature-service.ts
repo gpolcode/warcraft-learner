@@ -225,7 +225,7 @@ export class RotationFeatureService {
     const [casts, buffs, reading, combatants] = await Promise.all([
       this.wclApi.getAllEvents(reportCode, fightId, 'Casts', fight.startTime, fight.endTime, playerId, true),
       this.wclApi.getAllEvents(reportCode, fightId, 'Buffs', fight.startTime, fight.endTime, playerId),
-      this.listLogs.read(bench.list, { reportCode, fight, playerId, abilities, folds }),
+      this.listLogs.read(bench.list, { reportCode, fight, playerId, abilities, folds, enemyTimeline: bench.enemy_timeline ?? null }),
       this.wclApi.getCombatantInfo(reportCode, fightId, playerId),
     ]);
     const { findings, folded, checked, downtimeEmpty } = this.analyzeRotationFindings({

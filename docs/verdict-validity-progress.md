@@ -1077,3 +1077,63 @@ Branch `claude/verdict-validity-p7c1-engine-early`, PR against `claude/verdict-v
 - A moment's `atS` is when SimC chose the press (the begincast for a hardcast); `event.atS` is when the log stamped the cast. A reader that compares against other casts must use `atS`, and one that reads the cast event's own fields (pools) must time them at `event.atS`.
 - `CastMoment.reactS` is the switch for the allowance; slice 2's single decision verdict should take the reacted reading for "wrong" and the reading as it stands for "right", as `castCheck` does.
 - `rotation.button` is version 2; a slice 2 change bumps it again with `INGEST_VERSION`.
+
+## Package 7c2: rotation engine, later slice (done)
+
+Branch `claude/verdict-validity-p7c2-engine-later`, PR against `claude/verdict-validity-p7c1-engine-early`. Slice 2 of section 5.8, all six parts, each through the one engine (`ListCheckService.read`) that ingest's `ListBenchService` and the runtime's `ListFindingService` share.
+
+### Done
+
+- **One verdict per decision, charged to the pressed button.** `ListCheckService.due` walks the list at each decision with the reacted reading (7c1) and returns the first button whose line certainly held while it was ready. At a press on the global cooldown that ranked below it, the press itself is `off` with `CastCheck.due` naming that button; the due button is charged nothing. With no certain higher button the press keeps its own line verdict (`castCheck`). `OrderCheck` and `LogReading.order` are gone; `LogReading.missed` holds the decisions with no press of their own.
+- **Idle decision points.** `FactContext.idleSpans` is `DowntimeJudgeService.idleStretches` over the same casts; an idle stretch longer than `VERDICT_CHOICES.reactionS` passes one decision point, the allowance after it opened. Its moment is a synthetic `idle` event whose `index` is the next cast's, so every reader slices the casts before it as at a press. A certain due button there is a `MissCheck` of kind `idle` charged to that button. `PoolFacts.poolAt` takes the next pool row at `>= index`, identical for a press (a cast with a row reads its own pool first) and correct for an idle point.
+- **Off-GCD and never-pressed buttons.** `pressable` is on the global cooldown and owned (`owned`: pressed this pull, or not a talent, or a talent the log's tree picks; with no tree, only pressed), so a never-pressed button competes for each press with readiness from its cooldown rebuild. An off-GCD button never ranks above a press; it is its own decision: at each decision point (presses on the global cooldown and idle points) where its line certainly held and it was ready, and no press of it followed by the reaction allowance after the next decision point, it gets one `held` miss per stretch between its presses.
+- **Trinket lines.** `SimcAplService` keeps `use_item` (with `PlanLine.item`, the token or `trinket1`/`trinket2`) and `use_items`; `FactContextService.withTrinkets` resolves each to the use spell (`item_<id>`) of the trinket the log's player wore, dropping a trinket not worn or with no use. A list with a trinket line asks for the `gear` stream, so ingest looks up the worn trinkets' item data. `LogReading.buttons` carries the resolved buttons; `ListBenchService` benches the resolved actions and `ListFindingService` reads occurrences against them. Item spells are off-GCD, so they take the `held` path.
+- **Enemy count against an encounter timeline.** `EnemyTimelineService.series` counts the enemies a log's player hit per `ENEMY_STEP_S` (3 s) step; `timeline` takes the 10th and 90th percentile over the top logs per step (at least 3 logs, else null). `FightFacts.enemies` reads the hull of the steps the 3 s window spans, unknown where a step is null, past the timeline, or the player's own hit count falls outside it; with no timeline (an older bench) it reads the player's own hits as before. Ingest builds the timeline after every top log is fetched (`ListLogService.context` returns the `FactContext`, `RotationTransformService` reads each log against the timeline of the other logs) and bakes the full one as `RotationBench.enemy_timeline`; the runtime passes it into `ListLogService.read`.
+- **Judged and unknown counts per stratum.** Every press and miss carries `stratum` (`single`: the count's top is 1; `multi`: its bottom is 2 or more; else `unknown`). `ButtonCounts` gains `unjudged` and `strata` (`right`, `moments`, `unjudged` per stratum), baked in `per_parse[].buttons`. `ButtonJudgeService.expectedRate` weights the top logs' per-stratum miss rate by the player's moments per stratum (pooled where a top log carries no strata or a stratum has no top moments), and `judge` feeds that rate to `excess-rate`. The row prints the unjudged presses ("1 more press was not judged.") and the odds at the weighted rate.
+- **Alive time.** `ListCheckService.within(reading, endS, alive)` drops misses while dead; the runtime passes `PullModel.aliveSpans`, ingest an infinite end and no spans (top log deaths are not baked).
+- **Copy.** Occurrences: "Wrong time. X was due instead." (or the due button's conditions under "X comes first when these conditions hold."), "Missed while idle" and "Held when due" (under "X is due when these conditions hold."). The Rotation rules subtitle names the three kinds of miss. E2E accepts all three rule sentences and the new results, and checks the condition tree only when the first moment draws one, else its bare verdict; every assertion stays conditional on what is drawn.
+- **Versions.** `INGEST_VERSION` 51; `rotation.button` version 3, `pendingRebuild: null`, `raidDecisions.relative` names the enemy count. The registry hash changes, so every family renders as a comparison until the next ingest recalibrates.
+- **Tests.** `list-check-service.spec.ts` (due charged to the press and not to the due button, never-pressed and talent ownership with and without a tree, off-GCD never above a press, idle points over and under the allowance, the idle pool, held misses once per stretch with the answer window exactly at and one tick past the allowance, strata); `fight-facts.spec.ts` (the timeline range, the player's hits exactly at its top and bottom and one past each, a null step, the window's hull, past the timeline); `enemy-timeline.spec.ts` (steps, the 3-log minimum and 2 below it); `fact-context-service.spec.ts` (trinket lines by name, slot, every trinket, not worn, no use; idle spans); `button-judge.spec.ts` (misses while dead, stratified rate graded neutral where the pooled one is red, pooled fallback); `simc-apl-service.spec.ts` (trinket lines kept).
+
+### The measured report (rules' tone, before the caps)
+
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate` (headless runner pointed at `/opt/pw-browsers/chromium` from a temporary edit, not committed): exit 0. `rotation.button` reads 368 tests, amber rate 1.6%, detection 35 of 89, as in 5b and 7c1: the baked `per_parse[].buttons` there come from the old engine and carry no strata, so the judge takes the pooled rate. Only `defensive.window`'s truncation invariant fails, as before.
+
+### What the first full ingest measures
+
+- The version 51 re-bench rebuilds every rotation bench with the new engine and bakes `enemy_timeline`; nothing on WCL ran in this package.
+- Acceptance (section 5.8): against the last report on version 49 or 50 benches (`rotation.button` version 1 or 2), per pool (spec, role, every spec) in the job summary's validity table: the leave-one-out amber rate and its bound must not rise, and the contrast lift and its lower bound must not fall; also read Tests (moments now include idle and held misses and exclude decisions charged elsewhere) and Detection of `press-off-list`.
+- Expect per log: more moments on filler buttons (presses charged for a due button), fewer moments on the buttons skipped (charged nothing), new `held` moments on off-GCD cooldowns and trinkets, and fewer judged moments on lists heavy in `active_enemies` terms where the timeline is wide.
+- If the rate or lift worsens, the family stays or falls to a comparison through the harness; no code change is needed for that fallback.
+
+### Decisions and deviations
+
+- **Charged to whom.** A press below a due on-GCD button is the press's miss. An idle decision has no press, so its miss goes to the due button; an off-GCD button does not compete for the global cooldown, so holding it is its own miss.
+- **"Judged by ready time"** reads as readiness from the cooldown rebuild (`cooldown_react`) plus one miss per stretch between presses, so a cooldown held for a minute is one miss, not one per decision. `ReadyTimeJudgeService`'s seconds-ready measure stays the Offensives construct (6b); a second ready-seconds row per list button would double-count the same cooldowns.
+- **One idle point per stretch**, at the allowance after it opened: the idle seconds themselves are the Downtime card's.
+- **Timeline percentiles.** 10th to 90th over at least 3 logs: the full range let one log's add assignment widen every step. Steps are pull-relative, not phase-relative.
+- **Ingest leaves the log out of its own timeline**, as the runtime player is never in the bench.
+- **Contrast cohort.** `ContrastIngestService` runs the same transform over the contrast rankings, so each contrast log is read against the other contrast logs' timeline rather than the top logs'. Same boss, same steps; feeding the top bench's timeline into the contrast transform needs a new parameter on `getBench` and is left out.
+- **Stratified rate, not a stratified test.** The `excess-rate` rule is unchanged; only its reference rate is weighted, so no new rule or choice enters the registry.
+- No deviation from the paper.
+
+### Drift against 6882b59
+
+- RC5's references, at the stack base (7c1's head) and now: the cast verdict `ListCheckService.castCheck` (base `list-check-service.ts:231`, now `:333`), the pressable gate `pressable` (base `:268`, now `:370`; the order check `orderCheck` at base `:252` is now `due` at `:355`), the decision points `decisions` (now `:192`) and held misses `held` (`:222`), the enemy count `FightFacts.enemies` (base `fight-facts.ts:74`, now `:75`), the dropped actions `NON_SPELL` (`simc-apl-service.ts:42`, without `use_item` and `use_items`).
+
+### Seams stubbed
+
+- `potion`, `pool_resource`, `wait` and `target_if` ranking stay dropped (APL-8 beyond `use_item`).
+- Channels read as idle (a limit on the family), as Downtime's do.
+- Cooldown resets inside the allowance (`cooldown_react`) read as the log stands (7c1).
+
+### Remaining
+
+- Nothing of slice 2.
+
+### Final state of the stack (packages 0 to 7c2)
+
+- PRs #579 to #599 and this one stack on `claude/cool-franklin-an2ldu` (the paper); none targets `main`. Merge them in order; intermediate states are never deployed.
+- Data: `INGEST_VERSION` 51. The live `gh-pages` benches are version 43, so the first ingest after merge re-benches every spec and boss (the version re-bench plus the healer pools over several hourly runs inside the budget stop), then the contrast cohort fills over about four days of hourly runs.
+- Calibration: the registry hash changed in this package, so every family renders as a comparison until that ingest writes a calibration index for the new hash; the method page and each card's "not graded" list say why.
+- After the first full ingest, compare the validity table against the last report per section 5.8 (above, and 7c1's list); a family that fails its gates stays a comparison with no code change.

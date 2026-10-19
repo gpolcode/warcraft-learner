@@ -257,7 +257,8 @@ describe('RotationTransformService (live, in-browser)', () => {
       cd_casts_s: { 'Shadow Blades': [COOLDOWN_S] },
       /** The plan states no duration and the press opens no aura, so its effect is the press alone. */
       cd_up_s: { 'Shadow Blades': [[COOLDOWN_S, COOLDOWN_S]] },
-      buttons: { shadow_blades: { right: 1, moments: 1 } },
+      /** The log fetches no damage, so the press's enemy count is unknown. */
+      buttons: { shadow_blades: { right: 1, moments: 1, unjudged: 0, strata: { unknown: { right: 1, moments: 1, unjudged: 0 } } } },
     });
   });
 

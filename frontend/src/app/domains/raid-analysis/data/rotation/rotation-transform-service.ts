@@ -14,8 +14,10 @@ import { DataSource } from '../data-source/data-source';
 import { Result } from '../../../shared/util-http/result';
 import { SpecPlan } from '../simc/spec-plan-service';
 import { ListBenchService } from './priority-list/list-bench-service';
-import { LogReading } from './priority-list/list-check-service';
-import { ListLogService } from './priority-list/list-log-service';
+import { ListCheckService, LogReading } from './priority-list/list-check-service';
+import { ListContext, ListLogService } from './priority-list/list-log-service';
+import { EnemyTimelineService } from './priority-list/enemy-timeline-service';
+import type { EnemyTimeline } from './priority-list/priority-list.models';
 import { ItemDataService } from '../simc/item-data-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
@@ -40,7 +42,8 @@ export interface CdSummary {
 interface ParseRotation {
   summaries: CdSummary[];
   idleS: IdleStretch[] | null;
-  reading: LogReading;
+  /** Read only once every top log is in, against the others' encounter timeline. */
+  list: ListContext | null;
   lustS: number | null;
   phaseStarts: PhaseStart[];
 }
@@ -60,6 +63,8 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly cooldownUses = inject(CooldownUseJudgeService);
   private readonly downtime = inject(DowntimeJudgeService);
   private readonly lust = inject(BloodlustJudgeService);
+  private readonly checks = inject(ListCheckService);
+  private readonly enemyTimeline = inject(EnemyTimelineService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<RotationBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
@@ -74,17 +79,25 @@ export class RotationTransformService implements DataSource<RotationBench> {
       iconSpellIds: bench => [...Object.values(bench.cd_spell_ids), ...bench.buttons.map(button => button.spell_id)],
       parse: (parse, plan) => this.parseRotation(parse, plan),
       bench: ({ parses }, plan) => {
-        const buttonCounts = this.listBench.counts(plan, parses.map(parse => parse.reading));
+        const series = parses.map(parse => (parse.list ? this.enemyTimeline.series(parse.list.ctx) : []));
+        // Each top log is read as the runtime reads a player: against a timeline it is not part of.
+        const readings = parses.map((parse, index) => this.reading(parse.list, this.enemyTimeline.timeline(series.filter((_, other) => other !== index))));
+        const buttonCounts = this.listBench.counts(plan, readings);
         return {
           per_cd_benchmarks: this.aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
-          list: this.listWithItems(plan, parses.map(parse => parse.reading)),
-          buttons: this.listBench.bench(plan, parses.map(parse => parse.reading)),
+          list: this.listWithItems(plan, readings),
+          buttons: this.listBench.bench(plan, readings),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
           per_parse: parses.map((parse, index) => this.parseMeasures(parse, buttonCounts[index] ?? {})),
+          enemy_timeline: this.enemyTimeline.timeline(series),
         };
       },
     });
+  }
+
+  private reading(list: ListContext | null, enemyTimeline: EnemyTimeline | null): LogReading {
+    return list ? { ...this.checks.read({ ...list.ctx, enemyTimeline }), items: list.items } : { casts: new Map(), missed: [], ids: new Map() };
   }
 
   /** A trinket's use spell joins `spells` under its item's token, so the bench reads it like any button. */
@@ -97,10 +110,10 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private async parseRotation({ ranking, report, fight, player }: BenchParse, plan: SpecPlan): Promise<ParseRotation> {
     const abilities = report.masterData?.abilities ?? [];
     const folds = this.wclProjections.pressFolds(plan.cooldowns);
-    const [casts, buffs, reading] = await Promise.all([
+    const [casts, buffs, list] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
-      this.listLogs.read(plan, { reportCode: ranking.report_code, fight, playerId: player.id, abilities, folds, items: trinkets => this.itemData.items(trinkets) }),
+      this.listLogs.context(plan, { reportCode: ranking.report_code, fight, playerId: player.id, abilities, folds, items: trinkets => this.itemData.items(trinkets) }),
     ]);
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
     const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime);
@@ -109,8 +122,8 @@ export class RotationTransformService implements DataSource<RotationBench> {
       lustS: this.bloodlust.detectBloodlust(buffsTimed),
       phaseStarts: this.wclProjections.phaseStarts(fight),
       summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, { buffs: buffsTimed, abilities }),
-      idleS: this.downtime.idleStretches(castsTimed, { ...plan.spells, ...reading.items?.spells }),
-      reading,
+      idleS: this.downtime.idleStretches(castsTimed, { ...plan.spells, ...list?.items.spells }),
+      list,
     };
   }
 
