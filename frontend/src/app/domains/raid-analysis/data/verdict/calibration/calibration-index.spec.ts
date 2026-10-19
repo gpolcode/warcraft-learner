@@ -1,3 +1,4 @@
+import { CLOSED_GATE } from '../damage-estimate-service';
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { CalibrationIndexService } from './calibration-index-service';
@@ -41,12 +42,12 @@ const capsWith = (load: () => Promise<unknown>) => {
 const index = (over: Partial<CalibrationIndex> = {}): CalibrationIndex => ({
   registry_hash: hashes.registryHash(), encounters: 1, pulls: 1, contrast_pulls: 0, families: {},
   specs: { [SPEC]: { [FAMILY]: { status: 'graded', cap: 'amber', reason: '' } } },
-  demoted: {}, page: { measured: {} as CalibrationIndex['page']['measured'], armed: {} as CalibrationIndex['page']['armed'] }, invariants: [], unfoldable: {},
+  demoted: {}, page: { measured: {} as CalibrationIndex['page']['measured'], armed: {} as CalibrationIndex['page']['armed'] }, invariants: [], unfoldable: {}, damage: CLOSED_GATE,
   ...over,
 });
 const encounterOf = (families: Record<string, FlagTally>, over: Partial<EncounterCalibration> = {}): EncounterCalibration => ({
   spec: SPEC, encounter_id: ENCOUNTER, role: 'dps', signature: '', pulls: 10, families,
-  page: { pulls: 10, amber: 0, red: 0 }, detection: {}, invariants: {}, unfoldable: [], contrast_pulls: 0, discrimination: {}, ...over,
+  page: { pulls: 10, amber: 0, red: 0 }, detection: {}, invariants: {}, unfoldable: [], contrast_pulls: 0, discrimination: {}, damage: [], ...over,
 });
 
 /** Ten tests a pull: top pulls flag none, and contrast pulls flag `contrastFlags` of theirs. */
@@ -87,6 +88,14 @@ describe('CalibrationCapsService capOf', () => {
 });
 
 describe('CalibrationIndexService build', () => {
+  it('pools every encounter\'s contrast logs into the damage gate', () => {
+    /** Ten logs per encounter, each priced under its gap and ranked as the gaps rank them. */
+    const tracking = (from: number): EncounterCalibration['damage'] => Array.from({ length: 10 }, (_, i) => [from + i, from + i + 1]);
+    const built = indices.build([encounterOf({}, { damage: tracking(0) }), encounterOf({}, { damage: tracking(10) })]);
+
+    expect(built.damage).toMatchObject({ logs: 20, exceedShare: 0, spearman: 1, open: true });
+  });
+
   it('grades an amber family whose pooled rate, power and separation from contrast logs arm it', () => {
     const built = indices.build([encounterOf({ [FAMILY]: { tests: 1000, amber: 10, red: 0 } }, { ...POWERED, ...SEPARATES })]);
 

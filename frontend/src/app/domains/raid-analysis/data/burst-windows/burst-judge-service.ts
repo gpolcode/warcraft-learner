@@ -8,7 +8,7 @@ import { mean } from 'd3-array';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { Evidence, FamilyCaps, Tone } from '../verdict/tone.models';
+import { Evidence, FamilyCaps, RowRank, Tone } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
 export const BURST_WINDOW_FAMILY: FindingFamily = {
@@ -38,6 +38,8 @@ const BENCH_ICON = 'insights';
 export interface BurstVerdict {
   family: string;
   status: Tone;
+  /** Absent where no rule judged it. */
+  rank?: RowRank;
   icon: string;
   message: string;
   n: number;
@@ -124,7 +126,7 @@ export class BurstJudgeService {
     const evidence = this.judge(measured.amplification, reference, window);
     const status = this.tones.tone(BURST_WINDOW_FAMILY, evidence, caps);
     const n = evidence.n;
-    const base = { family: BURST_WINDOW_FAMILY.id, status, icon: VERDICT_ICON[status] ?? VERDICT_ICON['neutral'] ?? '', n };
+    const base = { family: BURST_WINDOW_FAMILY.id, status, rank: this.tones.rank(BURST_WINDOW_FAMILY, evidence), icon: VERDICT_ICON[status] ?? VERDICT_ICON['neutral'] ?? '', n };
     const dealt = this.damageText(measured.damage);
     if (this.tones.graded(status) && evidence.target !== null) {
       const [multiple, target] = this.multiplesApart(measured.amplification, evidence.target);

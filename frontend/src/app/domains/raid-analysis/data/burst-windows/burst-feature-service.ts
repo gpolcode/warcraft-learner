@@ -18,6 +18,8 @@ import { SpecRoleService } from '../analysis/spec-role-service';
 import { BURST_WINDOW_FAMILY, BurstJudgeService } from './burst-judge-service';
 import { NotGradedNote } from '../verdict/calibration/calibration.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
+import { CardRankingService } from '../analysis/card-ranking-service';
+import { CardRanking } from '../verdict/row-order-service';
 
 const HEALER_REASON = 'Top raiders on your spec are ranked on healing, so there are no burst windows to compare your damage with.';
 
@@ -51,6 +53,12 @@ export class BurstFeatureService {
   private readonly benchStrips = inject(BenchStripService);
   private readonly specRoles = inject(SpecRoleService);
   private readonly judge = inject(BurstJudgeService);
+  private readonly cardRanking = inject(CardRankingService);
+
+  /** The card's judged windows and the ones it muted, for the page-wide order. */
+  ranking(view: BurstView | null): CardRanking {
+    return view ? this.cardRanking.ranking(this.cardRanking.windows('Burst windows', view.windows), view.folded) : this.cardRanking.ranking([]);
+  }
 
   /** Null where the card compares the spec's damage; a healer's top logs are ranked on healing, so none of their damage is a reference. */
   notComparedReason(spec: string): string | null {

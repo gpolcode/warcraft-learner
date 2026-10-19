@@ -297,8 +297,8 @@ describe('GearJudgeService.enchantRows', () => {
 
   it('flags a missing enchant amber, with an order, behind a leader exactly half the top logs use', () => {
     expect(rows(wearing(), [...using(5, SOPHIC), ...logs(5)])).toEqual([{
-      slotName: 'Main Hand', family: ENCHANT_MISSING_FAMILY.id, tone: 'amber', onPlan: false, name: 'Not enchanted',
-      note: '5 of 10 top raiders use it. Apply it.', top: item(SOPHIC), n: TOP_LOGS,
+      slotName: 'Main Hand', family: ENCHANT_MISSING_FAMILY.id, tone: 'amber', rank: { costClass: 'low', evidence: 'red', shortfall: 0 },
+      onPlan: false, name: 'Not enchanted', note: '5 of 10 top raiders use it. Apply it.', top: item(SOPHIC), n: TOP_LOGS,
     }]);
   });
 

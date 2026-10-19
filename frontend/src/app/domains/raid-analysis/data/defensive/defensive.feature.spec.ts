@@ -183,6 +183,7 @@ describe('DefensiveFeatureService.loadAnalysisView (post-raid)', () => {
       findingsEmpty: 'Nothing flagged. No defensive on the plan was checked in this pull.',
       windowsEmpty: 'No defensive window to compare. The defensives of the 5 top logs do not line up in time.',
       notGraded: { defensives: [], windows: [] },
+      ranking: { rows: [], folded: { dead: 0, after_wipe: 0, not_reached: 0 } },
     }));
 
     const onFailure = await service.loadAnalysisView('SubtletyRogue', 1, FAILING_CODE, 1, 10);

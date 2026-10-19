@@ -6,6 +6,7 @@ import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 import { CALIBRATION_SOURCE } from '../verdict/calibration/calibration-source';
 import { RegistryHashService } from '../verdict/calibration/registry-hash-service';
 import { CalibrationIndex, FamilyCalibration, PageLoad } from '../verdict/calibration/calibration.models';
+import { CLOSED_GATE, DamageGate } from '../verdict/damage-estimate-service';
 
 const ROLE_LABEL: Record<SpecRole, string> = { dps: 'DPS', tank: 'Tank', healer: 'Healer' };
 
@@ -42,12 +43,16 @@ export interface ValidityMeasurement {
   current: boolean;
   roles: ValidityRoleRow[];
   families: ValidityFamilyRow[];
+  /** Whether damage estimates print, as measured on the weaker logs. */
+  damage: DamageGate;
 }
 
 /** Null `measurement` when no measurement is published. */
 export interface ValidityView {
   measurement: ValidityMeasurement | null;
   budget: { red: number; amber: number };
+  /** What the damage gate needs before estimates print. */
+  damageGate: typeof VERDICT_CHOICES.damage;
 }
 
 /** The validity report pages read: how often each check flags held-out top logs, and the page load each role draws. */
@@ -60,7 +65,7 @@ export class ValidityFeatureService {
     const loaded = await this.source.load();
     if (!loaded.ok && loaded.error.kind !== 'missing') return loaded;
     const index = loaded.ok ? loaded.value : null;
-    return Results.ok({ measurement: this.isIndex(index) ? this.measurement(index) : null, budget: VERDICT_CHOICES.pageBudget });
+    return Results.ok({ measurement: this.isIndex(index) ? this.measurement(index) : null, budget: VERDICT_CHOICES.pageBudget, damageGate: VERDICT_CHOICES.damage });
   }
 
   protected measurement(index: CalibrationIndex): ValidityMeasurement {
@@ -76,7 +81,14 @@ export class ValidityFeatureService {
         const measured = index.families[family.id];
         return measured ? [this.familyRow(family.label, measured)] : [];
       }),
+      damage: this.damageOf(index),
     };
+  }
+
+  /** An index written before the gate was measured, or for other checks, keeps it closed. */
+  private damageOf(index: CalibrationIndex): DamageGate {
+    const stored: Partial<CalibrationIndex> = index;
+    return index.registry_hash === this.hashes.registryHash() && stored.damage ? stored.damage : CLOSED_GATE;
   }
 
   private familyRow(label: string, family: FamilyCalibration): ValidityFamilyRow {

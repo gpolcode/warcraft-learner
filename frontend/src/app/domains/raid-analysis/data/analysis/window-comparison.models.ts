@@ -1,5 +1,5 @@
 import type { UnjudgedCause } from './pull-model-service';
-import type { Tone } from '../verdict/tone.models';
+import type { RowRank, Tone } from '../verdict/tone.models';
 
 export interface RangeRow {
   spellId?: number;
@@ -39,6 +39,8 @@ export interface ComparisonWindow {
   /** The window's verdict in one or two sentences, naming its top logs as a count; empty renders nothing. */
   message: string;
   family?: string;
+  /** Absent on a muted or bench-only window. */
+  rank?: RowRank;
   /** Why a muted window is not judged; null on a judged or bench-only window. */
   unjudged: UnjudgedCause | null;
   overview: RangeRow;

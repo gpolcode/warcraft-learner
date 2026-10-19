@@ -7,6 +7,7 @@ import { WindowComparison } from '../ui-window-comparison/window-comparison';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { DefensiveFeatureService, DefensiveMapAnchor } from '../data/defensive/defensive-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
+import type { CardRanking } from '../data/verdict/row-order-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +31,8 @@ export class Defensive {
   readonly openClip = output<ClipAnchor>();
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
+  /** The rows this card judged, for the page's "Fix first" strip and damage card. */
+  readonly rankingChange = output<CardRanking>();
 
   private readonly load = this.loadRes.loadResource({
     params: () => ({
@@ -44,6 +47,7 @@ export class Defensive {
     initialAvailable: true,
     busyChange: this.busyChange,
     availableChange: this.availableChange,
+    valueChange: view => { this.rankingChange.emit(this.defensive.ranking(view)); },
   });
 
   protected readonly available = this.load.available;

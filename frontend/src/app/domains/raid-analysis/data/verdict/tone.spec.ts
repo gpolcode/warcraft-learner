@@ -49,6 +49,12 @@ describe('ToneService', () => {
     expect(tones.tone({ id: 'family', tier: 'amber', costClass: 'medium' }, evidence('amber'), capped('neutral'))).toBe('neutral');
   });
 
+  it('ranks a row on its family\'s cost class and the rule\'s own evidence, not on the tone the caps leave', () => {
+    const shortfall: Evidence = { ...evidence('red'), excess: 3 };
+
+    expect(tones.rank({ costClass: 'medium' }, shortfall)).toEqual({ costClass: 'medium', evidence: 'red', shortfall: 3 });
+  });
+
   it('marks an unjudged check muted', () => {
     expect(tones.muted()).toBe('muted');
   });

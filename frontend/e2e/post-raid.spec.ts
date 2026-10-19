@@ -22,6 +22,9 @@ const CONDITION_STATE = /^(Met|Not met|Not in the log)$/;
 const BUTTON_MESSAGE = /^(You got \d+ of \d+ moments right\.( .+)?|Every moment came .+, so none is judged\.)$/;
 const BUTTONS_EMPTY = /^Your log shows no judged moment for any of the \d+ buttons the list judges\.$/;
 const UNJUDGED = /^(Dead|After the wipe|Not reached)$/;
+const FIX_FIRST_EMPTY = /^Nothing flagged on any card\.( \d+ checks? not judged\.)?$/;
+const CARD_NAME = /^(Rotation rules|Downtime|Offensives|Burst windows|Defensives|Defensive windows|Gear)$/;
+const DAMAGE_ESTIMATE = /^About \d+s of your damage(, between \d+s and \d+s)?\.$/;
 
 // One shared page: the report is analyzed once, so a run costs one WCL analysis.
 test.describe.configure({ mode: 'serial' });
@@ -115,6 +118,28 @@ test('pull overview reports the result, the deaths, the DPS and the duration', a
   await expect(valueOf(pullOverview, 'Duration')).toHaveText(CLOCK);
   if (kill) await expect(valueOf(pullOverview, 'Result')).toHaveText('Kill');
   else await expect(valueOf(pullOverview, 'Boss health')).toHaveText(PERCENT);
+});
+
+test('fix first lists the costliest colored rows across the cards, and the damage card prices the losses', async () => {
+  const fixFirst = page.locator('wl-fix-first');
+  await shows(fixFirst, 'Fix first');
+  await shows(fixFirst, 'The costliest colored rows across the cards below.');
+  // A row is colored only once calibration grades its check, so the strip may hold none.
+  const first = fixFirst.locator('div.border-t').filter({ has: page.locator('tui-icon') }).first();
+  if (await first.count()) {
+    await expect(first.locator('span.text-label')).toHaveText(CARD_NAME);
+    await expect(first.locator('span.text-name')).toHaveText(ANY_TEXT);
+    await expect(first.locator('span.text-body').first()).toHaveText(ANY_TEXT);
+  } else {
+    await shows(fixFirst, FIX_FIRST_EMPTY);
+  }
+
+  // Drawn only once the damage estimates pass their gate on the weaker logs and the pull has a loss to price.
+  const damage = page.locator('wl-damage-went');
+  if (await damage.getByText('Where your damage went').count()) {
+    await shows(damage, 'What each loss cost in seconds of your own average damage, deaths first.');
+    await expect(damage.getByText(DAMAGE_ESTIMATE).first()).toBeVisible();
+  }
 });
 
 test('rotation rules bar the first button against the top logs and open its moments into a judged cast with its conditions', async () => {

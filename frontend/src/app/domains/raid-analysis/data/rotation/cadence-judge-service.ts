@@ -55,8 +55,9 @@ export class CadenceJudgeService {
     return Object.values(holds).flatMap(target => {
       const castS = this.measureHold(castTimesS, target);
       if (castS === null) return [];
+      const evidence = this.judgeHold(target);
       return [{
-        family: COOLDOWN_HOLD_FAMILY.id, severity: this.tones.tone(COOLDOWN_HOLD_FAMILY, this.judgeHold(target), caps),
+        family: COOLDOWN_HOLD_FAMILY.id, severity: this.tones.tone(COOLDOWN_HOLD_FAMILY, evidence, caps), rank: this.tones.rank(COOLDOWN_HOLD_FAMILY, evidence),
         category: 'cooldown_hold', timestamp_s: castS, span: { fromS: castS, toS: target.target_s },
         measured: { value: fmtClock(castS), unit: `hold to ${fmtClock(target.target_s)}` },
         message: `${target.count} of ${target.total_samples} top raiders hold ${name} for ${fmtClock(target.target_s)}. You pressed it at ${fmtClock(castS)}, so it was not ready then.`,

@@ -69,6 +69,7 @@ describe('RotationFeatureService', () => {
       offensivesEmpty: 'Nothing flagged. No cooldown on the plan was checked in this pull.',
       downtimeEmpty: 'Nothing flagged. No idle time was judged in this pull.',
       bench: TestBed.inject(BenchStripService).strip(bench()), notGraded: { buttons: [], downtime: [], offensives: [] },
+      ranking: { rows: [], folded: { dead: 0, after_wipe: 0, not_reached: 0 } },
     }));
 
     const onFailure = await service.loadPlayerView('SubtletyRogue', 1, FAILING_CODE, 1, 10);

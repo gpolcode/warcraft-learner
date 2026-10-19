@@ -28,3 +28,17 @@ export interface Evidence {
 export interface FamilyCaps {
   capOf(familyId: string): ToneLevel;
 }
+
+/** Where a row sorts across cards: its family's cost class, then the rule's evidence, then how far past the amber edge it lies in the construct's unit. */
+export interface RowRank {
+  costClass: CostClass;
+  evidence: ToneLevel;
+  shortfall: number;
+}
+
+/** Seconds of the player's own average damage a finding cost, with the span the reference allows. */
+export interface DamageEstimate {
+  aboutS: number;
+  lowS: number;
+  highS: number;
+}

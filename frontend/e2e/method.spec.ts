@@ -4,6 +4,7 @@ import { shows, ANY_TEXT } from './support';
 const MEASURED_ON = /^Measured on \d+ top logs over \d+ spec and boss pairs\.$/;
 const ROLE_LOAD = /^\d+\.\d{2} red and \d+\.\d{2} amber rows per pull over \d+ top logs\.$/;
 const CONTRAST = /^(Compared with \d+ weaker logs from the tenth page of the rankings\.|No weaker logs are compared, so no check is graded on a mistake\.)$/;
+const DAMAGE_GATE = /^(Measured on \d+ weaker logs\. The estimate claims more than the gap on \d+% of them, at a rank correlation of -?[\d.]+\.|No weaker log is measured yet, so no estimate prints\.)$/;
 const CHECKED = /^(Checked \d+ times on top logs\. Amber on (none|1 in \d+), red on (none|1 in \d+)\.|Not checked on any top log\.)$/;
 
 test('the method page reports how often each check flags top raiders', async ({ page }) => {
@@ -29,4 +30,8 @@ test('the method page reports how often each check flags top raiders', async ({ 
   await expect(check.locator('span.text-name')).toHaveText(ANY_TEXT);
   await expect(check.locator('[tuiBadge]')).toHaveText(/^(Red|Amber|Count|Measurement|Not graded|Hidden)$/);
   await expect(check.getByText(CHECKED)).toBeVisible();
+
+  await shows(report, 'Damage estimates');
+  await shows(report, /^An estimate prints only once, over at least \d+ weaker logs, it claims more than the damage gap to top logs on at most \d+% of them and ranks them as their gaps do, at a rank correlation of at least [\d.]+\.$/);
+  await shows(report, DAMAGE_GATE);
 });

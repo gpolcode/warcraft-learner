@@ -20,6 +20,9 @@ import { BurstWindows } from '../domains/raid-analysis/feature-burst-windows/bur
 import { Defensive } from '../domains/raid-analysis/feature-defensive/defensive';
 import { DefensiveMapAnchor } from '../domains/raid-analysis/data/defensive/defensive-feature-service';
 import { Gear } from '../domains/raid-analysis/feature-gear/gear';
+import { FixFirst } from '../domains/raid-analysis/feature-fix-first/fix-first';
+import { DamageWent } from '../domains/raid-analysis/feature-fix-first/damage-went';
+import type { CardRanking } from '../domains/raid-analysis/data/verdict/row-order-service';
 import { MapPanel } from '../domains/raid-analysis/feature-map/map-panel';
 import { MapFeatureService, MapAnchor } from '../domains/raid-analysis/data/map/map-feature-service';
 import { LiveCaptureFeatureService } from '../domains/raid-analysis/data/live/live-capture-feature-service';
@@ -60,7 +63,7 @@ const INVALID_REPORT_CODE_MESSAGE = 'Paste a Warcraft Logs report URL or a 16-ch
     ReactiveFormsModule, TuiCardLarge, TuiTextfield, TuiInput, TuiError, TuiSelect, TuiChevron,
     TuiDataList, EmptyState,
     LoadingSpinner, BenchEmptyBanner, LoadState, ArtIcon, PullOverview, Rotation, BurstWindows,
-    Defensive, Gear, MapPanel, LiveControls, ClipPanel,
+    Defensive, Gear, FixFirst, DamageWent, MapPanel, LiveControls, ClipPanel,
     FormatDurationPipe, FormatSpecPipe, SpecIconPipe, ClassIconPipe, BossIconPipe,
   ],
   providers: [
@@ -104,6 +107,13 @@ export class PostRaid {
   // Cards start busy, and the spinner stays up until every one emits busyChange(false), so they never flash empty content between mount and first data.
   protected readonly cards = new CardDeck(POST_RAID_CARDS, { availableUntilReported: false });
   protected readonly cardsBusy = this.cards.anyBusy;
+  // Each card reports the rows it judged, so the strip and the damage card rank across all of them.
+  private readonly cardRankings = signal<Partial<Record<PostRaidCardId, CardRanking>>>({});
+  protected readonly rankings = computed(() => Object.values(this.cardRankings()));
+
+  protected onRanking(card: PostRaidCardId, ranking: CardRanking): void {
+    this.cardRankings.update(current => ({ ...current, [card]: ranking }));
+  }
   protected readonly benchAvailable = this.cards.benchAvailable;
 
   // `notice` carries the non-failure states the taxonomy does not cover (invalid code, zero-pull report).

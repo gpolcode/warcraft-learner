@@ -14,7 +14,7 @@ import { ReadyTimeJudgeService, ReadyVoice } from '../rotation/ready-time-judge-
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
 import { ToneService } from '../verdict/tone-service';
-import { Evidence, FamilyCaps, Tone } from '../verdict/tone.models';
+import { Evidence, FamilyCaps, RowRank, Tone } from '../verdict/tone.models';
 import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
 const TOP_LOG_REFERENCE = { population: 'Top Mythic logs for the spec and boss, ranked on its metric', minN: VERDICT_CHOICES.minReferenceN };
@@ -136,6 +136,8 @@ export const DEAD_IN_WINDOW_FAMILY: FindingFamily = {
 export interface DefensiveWindowVerdict {
   family: string;
   status: Tone;
+  /** Absent where no rule judged it. */
+  rank?: RowRank;
   icon: string;
   message: string;
   n: number;
@@ -197,14 +199,15 @@ export class DefensiveJudgeService {
     const { uses, expected } = this.cooldownUses.measure(useTimesS, model.aliveSpans, bench);
     if (uses >= expected) return null;
     const reference = this.referenceUses(perParse, name);
-    const severity = external ? this.tones.neutral() : this.tones.tone(DEFENSIVE_USES_FAMILY, this.judgeUses(uses, expected, reference), caps);
+    const evidence = this.judgeUses(uses, expected, reference);
+    const severity = external ? this.tones.neutral() : this.tones.tone(DEFENSIVE_USES_FAMILY, evidence, caps);
     const n = reference.length;
     const aliveS = spansS(model.aliveSpans);
     const over = aliveS < model.fightDurationS ? `in ${fmtClock(aliveS)} of alive time` : `on a ${fmtClock(model.fightDurationS)} fight`;
     const topLogs = n ? `${n} top logs` : 'Top raiders';
     const onOthers = external ? ', each on another raider' : '';
     return {
-      family: DEFENSIVE_USES_FAMILY.id, severity, category: 'lost_cooldown', cd_name: name,
+      family: DEFENSIVE_USES_FAMILY.id, severity, ...external ? {} : { rank: this.tones.rank(DEFENSIVE_USES_FAMILY, evidence) }, category: 'lost_cooldown', cd_name: name,
       measured: { value: `${uses} / ${expected}`, unit: n ? `use(s), ${n} top logs` : 'use(s)' },
       message: `You pressed ${name} ${uses} ${uses === 1 ? 'time' : 'times'} ${over}${onOthers}. ${topLogs} average ${expected} in that time.`,
       ...this.graded(severity) ? { details: { remedy: `Use ${name} ${expected - uses}x more.` } } : {}, occurrences: [],
@@ -228,8 +231,9 @@ export class DefensiveJudgeService {
     return Object.values(holds).flatMap(target => {
       const castS = this.cadence.measureHold(useTimesS, target);
       if (castS === null) return [];
+      const evidence = this.cadence.judgeHold(target);
       return [{
-        family: DEFENSIVE_HOLD_FAMILY.id, severity: this.tones.tone(DEFENSIVE_HOLD_FAMILY, this.cadence.judgeHold(target), caps),
+        family: DEFENSIVE_HOLD_FAMILY.id, severity: this.tones.tone(DEFENSIVE_HOLD_FAMILY, evidence, caps), rank: this.tones.rank(DEFENSIVE_HOLD_FAMILY, evidence),
         category: 'cooldown_hold', timestamp_s: castS, span: { fromS: castS, toS: target.target_s },
         measured: { value: fmtClock(castS), unit: `hold to ${fmtClock(target.target_s)}` },
         message: `${target.count} of ${target.total_samples} top raiders hold ${name} for ${fmtClock(target.target_s)}. You pressed it at ${fmtClock(castS)}, so it was not ready then.`,
@@ -304,7 +308,7 @@ export class DefensiveJudgeService {
   windowVerdict(window: BurstWindow, pull: { damage: number; cover: readonly string[]; tank: boolean }, reference: WindowReference, caps?: FamilyCaps): DefensiveWindowVerdict {
     const evidence = this.judgeWindow({ damage: pull.damage, covered: pull.cover.length > 0, tank: pull.tank }, reference);
     const status = this.tones.tone(DEFENSIVE_WINDOW_FAMILY, evidence, caps);
-    const base = { family: DEFENSIVE_WINDOW_FAMILY.id, status, icon: WINDOW_ICON[status] ?? WINDOW_ICON['neutral'] ?? '', n: reference.n };
+    const base = { family: DEFENSIVE_WINDOW_FAMILY.id, status, rank: this.tones.rank(DEFENSIVE_WINDOW_FAMILY, evidence), icon: WINDOW_ICON[status] ?? WINDOW_ICON['neutral'] ?? '', n: reference.n };
     const tooFew = this.tooFew(reference);
     if (tooFew) return { ...base, message: tooFew };
     const at = fmtClock(window.time_s);
@@ -328,7 +332,8 @@ export class DefensiveJudgeService {
   deathVerdict(diedS: number, caps?: FamilyCaps): DefensiveWindowVerdict {
     const evidence = this.rules.fact({ holds: true, backing: 'game-rule' });
     return {
-      family: DEAD_IN_WINDOW_FAMILY.id, status: this.tones.tone(DEAD_IN_WINDOW_FAMILY, evidence, caps), icon: 'skull', n: evidence.n,
+      family: DEAD_IN_WINDOW_FAMILY.id, status: this.tones.tone(DEAD_IN_WINDOW_FAMILY, evidence, caps), rank: this.tones.rank(DEAD_IN_WINDOW_FAMILY, evidence),
+      icon: 'skull', n: evidence.n,
       message: `You died at ${fmtClock(diedS)} in this window.`,
     };
   }
