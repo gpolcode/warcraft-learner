@@ -1,5 +1,10 @@
 import type { ToneLevel } from '../tone.models';
 import type { SpecRole } from '../../analysis/spec-role-service';
+import type { ParseRanking } from '../../wcl/wcl.models';
+import type { RotationParseMeasures } from '../../rotation/rotation-data-source';
+import type { DefensiveParseMeasures } from '../../defensive/defensive-data-source';
+import type { GearParseMeasures } from '../../gear/gear-data-source';
+import type { BurstParseMeasures } from '../../burst-windows/burst-data-source';
 
 /** The invariant tally key for Bloodlust rows judged against a lust outside the bench's band, which must stay empty. */
 export const OUTSIDE_BAND = 'outside-band';
@@ -38,6 +43,49 @@ export interface InvariantTally {
   perturbed: FlagTally;
 }
 
+/** One card's measures of the contrast logs it could read, in the order of its own `sources`. */
+export interface ContrastCard<T> {
+  sources: ParseRanking[];
+  per_parse: T[];
+}
+
+/** Weaker ranked logs of one spec and encounter, measured by the benches' own transforms; a card none of them could be read for is null. */
+export interface ContrastBench {
+  spec: string;
+  encounter_id: number;
+  /** The ingest version and plan key the measures were baked under; another one fetches the cohort again. */
+  signature: string;
+  fetched_at_s: number;
+  /** The cohort as picked from the rankings page, before a card dropped an unreadable log. */
+  sources: ParseRanking[];
+  rotation: ContrastCard<RotationParseMeasures> | null;
+  defensive: ContrastCard<DefensiveParseMeasures> | null;
+  gear: ContrastCard<GearParseMeasures> | null;
+  burst: ContrastCard<BurstParseMeasures> | null;
+}
+
+/** One pull's tests of a family and how many of them it flagged amber or red. */
+export type PullFlags = [tests: number, flagged: number];
+
+/** A family's flags per pull on held-out top logs and on contrast logs, the unit the bootstrap resamples. */
+export interface DiscriminationSample {
+  top: PullFlags[];
+  contrast: PullFlags[];
+}
+
+/** How much more often a family flags contrast logs than held-out top logs. */
+export interface Discrimination {
+  topPulls: number;
+  contrastPulls: number;
+  /** Flags per test, smoothed by the rule of succession, so a family that never flags a top log still has a finite lift. */
+  topRate: number;
+  contrastRate: number;
+  lift: number;
+  liftLower: number;
+  /** The chance a contrast pull's flag share is above a top pull's, ties counting half. */
+  auc: number;
+}
+
 /** What the harness measured on one spec and encounter, written beside its benches. */
 export interface EncounterCalibration {
   spec: string;
@@ -53,6 +101,9 @@ export interface EncounterCalibration {
   invariants: Record<string, Record<string, InvariantTally>>;
   /** Benches without per-log measures, which the harness cannot fold. */
   unfoldable: string[];
+  /** Contrast logs judged against the full benches; zero until the cohort is fetched. */
+  contrast_pulls: number;
+  discrimination: Record<string, DiscriminationSample>;
 }
 
 /** The tone a family may reach on one spec, and why. */
@@ -74,6 +125,8 @@ export interface FamilyCalibration {
   /** One-sided Clopper-Pearson upper bounds of the pooled red and amber rates. */
   upper: { red: number; amber: number };
   detection: DetectionTally;
+  /** Over every spec; null for a family no tone arms on, or before enough contrast pulls. */
+  discrimination: Discrimination | null;
   verdict: FamilyVerdict;
 }
 
@@ -90,6 +143,7 @@ export interface CalibrationIndex {
   registry_hash: string;
   encounters: number;
   pulls: number;
+  contrast_pulls: number;
   /** Pooled over every spec. */
   families: Record<string, FamilyCalibration>;
   /** Spec to family to its verdict, from the most specific pool with enough tests. */

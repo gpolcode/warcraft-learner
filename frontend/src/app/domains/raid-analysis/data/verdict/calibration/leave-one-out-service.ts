@@ -92,6 +92,15 @@ export class LeaveOneOutService {
     return { ...folded, talent_nodes: this.gearJudge.talentNodes(keys), talent_sample_count: this.gearJudge.readableTrees(keys) };
   }
 
+  /** The full bench in the folded shape, for a log that is not one of its top logs. */
+  wholeDefensive(bench: DefensiveBench): FoldedDefensiveBench {
+    return { ...bench, defensive_windows: bench.defensive_windows.map((window, index) => ({ ...window, index })) };
+  }
+
+  wholeBurst(bench: BurstBench & { per_parse: BurstParseMeasures[] }): FoldedBurstBench {
+    return { ...bench, windows: bench.windows.map((window, index) => ({ ...window, index })) };
+  }
+
   /** Drops the held-out log's members; a window the rest no longer form is gone, the rest centre on their own members. Original indices are kept in `index`. */
   foldWindows(windows: readonly BurstWindow[], i: number, remaining: number, share: number): FoldedWindow[] {
     return windows.flatMap((window, index) => {

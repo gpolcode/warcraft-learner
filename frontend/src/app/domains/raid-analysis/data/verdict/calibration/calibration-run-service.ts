@@ -3,7 +3,7 @@ import { sha256 } from '@noble/hashes/sha2.js';
 import { bytesToHex, utf8ToBytes } from '@noble/hashes/utils.js';
 import { DataFileApiService } from '../../data-files/data-file-api-service';
 import { IngestStateService } from '../../ingest/ingest-state-service';
-import { CalibrationIndex, EncounterCalibration } from './calibration.models';
+import { CalibrationIndex, ContrastBench, EncounterCalibration } from './calibration.models';
 import { CalibrationIndexService } from './calibration-index-service';
 import { RegistryHashService } from './registry-hash-service';
 import { CalibrationReportService } from './calibration-report-service';
@@ -12,6 +12,8 @@ import { BenchName, EncounterBenches } from './held-out-case-service';
 
 /** The bench folder each encounter's calibration file sits in, beside its benches. */
 export const CALIBRATION_DIR = 'calibration';
+/** The bench folder each encounter's contrast cohort sits in. */
+export const CONTRAST_DIR = 'contrast';
 
 const BENCH_NAMES: readonly BenchName[] = ['rotation', 'defensive', 'gear', 'burst'];
 const HASH_LENGTH = 16;
@@ -48,19 +50,22 @@ export class CalibrationRunService {
     return { index, previous, breaches: this.indices.breaches(previous, index), report: this.reports.report(index) };
   }
 
-  /** Removes the calibration file of an encounter the ingest pruned. */
-  remove(spec: string, encounterId: number): Promise<void> {
-    return this.files.removeBench(spec, encounterId, CALIBRATION_DIR);
+  /** Removes the calibration and contrast files of an encounter the ingest pruned. */
+  async remove(spec: string, encounterId: number): Promise<void> {
+    await this.files.removeBench(spec, encounterId, CALIBRATION_DIR);
+    await this.files.removeBench(spec, encounterId, CONTRAST_DIR);
   }
 
   private async encounter(spec: string, encounterId: number, recompute: boolean): Promise<EncounterCalibration> {
     const benches = await this.benches(spec, encounterId);
-    const signature = this.signature(benches);
+    const contrast = await this.files.getBench<ContrastBench>(spec, encounterId, CONTRAST_DIR);
+    const cohort = contrast.ok ? contrast.value : null;
+    const signature = this.signature(benches, cohort);
     if (!recompute) {
       const stored = await this.files.getBench<EncounterCalibration>(spec, encounterId, CALIBRATION_DIR);
       if (stored.ok && stored.value.signature === signature) return stored.value;
     }
-    const calibration = this.encounters.calibrate(spec, encounterId, benches, signature);
+    const calibration = this.encounters.calibrate(spec, encounterId, benches, signature, cohort);
     await this.files.writeBench(spec, encounterId, CALIBRATION_DIR, calibration);
     return calibration;
   }
@@ -78,12 +83,13 @@ export class CalibrationRunService {
     return { rotation: await read('rotation'), defensive: await read('defensive'), gear: await read('gear'), burst: await read('burst') };
   }
 
-  /** The benches' own stamps and the registry hash: new top logs or a changed rule re-run calibration, nothing else does. */
-  private signature(benches: EncounterBenches): string {
+  /** The benches' own stamps, the contrast cohort's and the registry hash: new top logs, a new cohort or a changed rule re-run calibration, nothing else does. */
+  private signature(benches: EncounterBenches, contrast: ContrastBench | null): string {
     const stamps = BENCH_NAMES.map(name => {
       const bench = benches[name] as { source_signature?: string; ingest_version?: number } | null;
       return `${name}:${bench?.source_signature ?? ''}:${bench?.ingest_version ?? ''}`;
     });
-    return bytesToHex(sha256(utf8ToBytes([this.hashes.registryHash(), ...stamps].join('\n')))).slice(0, HASH_LENGTH);
+    const cohort = `contrast:${contrast?.signature ?? ''}:${contrast?.fetched_at_s ?? ''}`;
+    return bytesToHex(sha256(utf8ToBytes([this.hashes.registryHash(), ...stamps, cohort].join('\n')))).slice(0, HASH_LENGTH);
   }
 }

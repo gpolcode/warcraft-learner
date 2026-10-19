@@ -3,6 +3,7 @@ import { shows, ANY_TEXT } from './support';
 
 const MEASURED_ON = /^Measured on \d+ top logs over \d+ spec and boss pairs\.$/;
 const ROLE_LOAD = /^\d+\.\d{2} red and \d+\.\d{2} amber rows per pull over \d+ top logs\.$/;
+const CONTRAST = /^(Compared with \d+ weaker logs from the tenth page of the rankings\.|No weaker logs are compared, so no check is graded on a mistake\.)$/;
 const CHECKED = /^(Checked \d+ times on top logs\. Amber on (none|1 in \d+), red on (none|1 in \d+)\.|Not checked on any top log\.)$/;
 
 test('the method page reports how often each check flags top raiders', async ({ page }) => {
@@ -16,6 +17,7 @@ test('the method page reports how often each check flags top raiders', async ({ 
     await shows(report, 'No validity measurement is published.');
     return;
   }
+  await shows(report, CONTRAST);
   await shows(report, 'Colored rows per pull');
   await shows(report, /^What one top log draws on the page, by role\. A role may draw at most [\d.]+ red and [\d.]+ amber rows per pull\.$/);
   const role = report.locator('div.border-t').filter({ hasText: ROLE_LOAD }).first();

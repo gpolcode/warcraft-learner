@@ -4,8 +4,9 @@ import { TestBed } from '@angular/core/testing';
 import { NgHttpCachingService } from 'ng-http-caching';
 import { IngestOrchestratorService } from './ingest-orchestrator-service';
 import { LEAD_BENCH } from './bench-registry';
+import { ContrastIngestService, type ContrastRun } from './contrast-ingest-service';
 import { DATA_FILE_TRANSPORT, type DataFileTransport } from '../data/data-files/data-file-transport';
-import { WclApiService } from '../data/wcl/wcl-api-service';
+import { WclApiService, type WclPointsBudget } from '../data/wcl/wcl-api-service';
 import { WCL_TRANSPORT, type FetchOutcomes, type WclTransport } from '../data/wcl/wcl-transport';
 import { type Result, Results } from '../../shared/util-http/result';
 import { BurstTransformService } from '../data/burst-windows/burst-transform-service';
@@ -127,6 +128,17 @@ const stubTransform: StubTransform = {
 
 const benchReturning = (result: Result<object>): StubTransform => ({ getBench: async () => result });
 
+const CONTRAST_SUMMARY = 'Contrast cohort: 0 of 0 due spec and boss pairs fetched for 0 WCL points; every due pair fetched.';
+
+/** Its own spec drives the cohort fetch; here it records the reading it was handed. */
+function contrastRecorder(): { service: Pick<ContrastIngestService, 'run'>; readings: (WclPointsBudget | null)[] } {
+  const readings: (WclPointsBudget | null)[] = [];
+  return {
+    readings,
+    service: { run: async (_encounters, reading): Promise<ContrastRun> => { readings.push(reading); return { due: 0, fetched: 0, spent: 0, summary: CONTRAST_SUMMARY }; } },
+  };
+}
+
 const transportReporting = (outcomes: FetchOutcomes): Pick<WclTransport, 'withFetchOutcomes'> => ({
   withFetchOutcomes: async run => ({ result: await run(), outcomes }),
 });
@@ -137,6 +149,7 @@ const cleanTransport = transportFailing();
 function ingest(
   disk: FakeDisk, wcl: WclApiService, currentRaids: string, plans = planLoader(specPlan()),
   benches = new Map<BenchTransform, StubTransform>(), transport = cleanTransport, ingestSubset: IngestSubset | null = null,
+  contrast = contrastRecorder().service,
 ): Promise<void> {
   TestBed.configureTestingModule({
     providers: [
@@ -149,6 +162,7 @@ function ingest(
       { provide: WCL_TRANSPORT, useValue: transport },
       { provide: NgHttpCachingService, useValue: { clearCache: () => undefined } },
       { provide: SpecPlanLoaderService, useValue: plans },
+      { provide: ContrastIngestService, useValue: contrast },
       ...TRANSFORMS.map(transform => ({ provide: transform, useValue: benches.get(transform) ?? stubTransform })),
     ],
   });
@@ -308,6 +322,17 @@ describe('IngestOrchestratorService.run', () => {
     await ingest(fakeDisk({}), fakeWcl(ENCOUNTERS, { [CURRENT_BOSS.id]: RANKED, [NEW_BOSS.id]: RANKED }, getPointsBudget), RAID);
 
     expect(getPointsBudget).toHaveBeenCalledTimes(READS_AROUND_STARTUP + ENCOUNTERS.length);
+  });
+
+  it('fetches the contrast cohort after benching, with the reading the last encounter left, and reports it with the calibration', async () => {
+    const contrast = contrastRecorder();
+    const spentAfterBenching = 1_000;
+
+    await ingest(fakeDisk({}), fakeWcl([CURRENT_BOSS], { [CURRENT_BOSS.id]: RANKED }, pointsSpent(NOTHING_SPENT, NOTHING_SPENT, spentAfterBenching)), RAID,
+      undefined, undefined, undefined, null, contrast.service);
+
+    expect(contrast.readings).toEqual([{ limitPerHour: HOURLY_POINT_LIMIT, pointsSpentThisHour: spentAfterBenching }]);
+    expect((globalThis as { __INGEST_DONE__?: { report?: string } }).__INGEST_DONE__?.report?.startsWith(CONTRAST_SUMMARY)).toBe(true);
   });
 
   describe('checking the budget against the reading taken after the previous encounter', () => {

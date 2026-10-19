@@ -4,6 +4,7 @@ import { DeadSpan } from '../../analysis/death-timeline-service';
 import { AuraSpan } from '../../defensive/defensive-data-source';
 import { IdleStretch } from '../../rotation/rotation-data-source';
 import { VERDICT_CHOICES } from '../verdict-choices';
+import { DistributionService } from '../distribution-service';
 import { HeldOutCase } from './held-out-case-service';
 import { HeldOutRowService } from './held-out-row-service';
 
@@ -13,9 +14,6 @@ export const PERTURBATIONS = ['truncate', 'death', 'death-rez', 'lust-120', 'lus
 export type Perturbation = (typeof PERTURBATIONS)[number];
 
 const CHOICES = VERDICT_CHOICES.calibration;
-const HASH_SEED = 2166136261;
-const HASH_PRIME = 16777619;
-const UINT32 = 2 ** 32;
 
 type TimedCase = Extract<HeldOutCase, { card: 'rotation' | 'defensive' }>;
 type BurstCase = Extract<HeldOutCase, { card: 'burst' }>;
@@ -24,11 +22,12 @@ type BurstCase = Extract<HeldOutCase, { card: 'burst' }>;
 @Injectable({ providedIn: 'root' })
 export class PerturbationService {
   private readonly rows = inject(HeldOutRowService);
+  private readonly distribution = inject(DistributionService);
 
   /** Null where the perturbation changes nothing the card reads. */
   perturb(name: Perturbation, heldOut: HeldOutCase): HeldOutCase | null {
     if (heldOut.card === 'gear') return null;
-    const draw = this.generator(`${heldOut.source}|${heldOut.card}|${name}`);
+    const draw = this.distribution.seededStream(`${heldOut.source}|${heldOut.card}|${name}`);
     const durationS = heldOut.log.model.fightDurationS;
     const atS = durationS * (CHOICES.perturbedShare.from + draw() * (CHOICES.perturbedShare.to - CHOICES.perturbedShare.from));
     if (heldOut.card === 'burst') return this.burst(name, heldOut, atS, draw);
@@ -161,18 +160,5 @@ export class PerturbationService {
 
   private withDamage(heldOut: BurstCase, damagePerS: number[]): HeldOutCase {
     return { ...heldOut, log: { ...heldOut.log, damagePerS } };
-  }
-
-  /** FNV-1a over the key seeds a mulberry32 stream. */
-  private generator(key: string): () => number {
-    let state = HASH_SEED;
-    for (const char of key) state = Math.imul(state ^ char.charCodeAt(0), HASH_PRIME) >>> 0;
-    return () => {
-      state = (state + 0x6d2b79f5) >>> 0;
-      let t = state;
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / UINT32;
-    };
   }
 }

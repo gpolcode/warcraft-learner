@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { SpecRoleService } from '../../analysis/spec-role-service';
-import { RotationBench } from '../../rotation/rotation-data-source';
-import { DefensiveBench } from '../../defensive/defensive-data-source';
+import { RotationBench, RotationParseMeasures } from '../../rotation/rotation-data-source';
+import { DefensiveBench, DefensiveParseMeasures } from '../../defensive/defensive-data-source';
 import { GearBench, GearParseMeasures } from '../../gear/gear-data-source';
-import { BurstBench } from '../../burst-windows/burst-data-source';
+import { BurstBench, BurstParseMeasures } from '../../burst-windows/burst-data-source';
 import { TalentKeyService } from '../../gear/talent-key-service';
 import type { ParseRanking } from '../../wcl/wcl.models';
-import { HeldOutRow } from './calibration.models';
+import { ContrastBench, ContrastCard, HeldOutRow } from './calibration.models';
 import { FoldedBurstBench, FoldedDefensiveBench, LeaveOneOutService } from './leave-one-out-service';
 import { BurstHeldOut, BurstHeldOutService } from './burst-held-out-service';
 import { HeldOutRowService } from './held-out-row-service';
@@ -72,14 +72,40 @@ export class HeldOutCaseService {
     return this.gear.judge(heldOut.fold, heldOut.picks);
   }
 
+  /** Each contrast log on every card it was read for, judged against the full bench as the page judges a player. */
+  contrastCases(benches: EncounterBenches, contrast: ContrastBench, spec: string): HeldOutCase[] {
+    const talents = this.talentsBySource(contrast.gear);
+    const { rotation, defensive, gear } = benches;
+    const tank = this.specRoles.role(spec) === 'tank';
+    return [
+      ...this.hasMeasures(rotation) && rotation ? this.each(contrast.rotation, (source, measures) => this.rotationCase(source, measures, rotation, talents)) : [],
+      ...this.hasMeasures(defensive) && defensive
+        ? this.each(contrast.defensive, (source, measures) => this.defensiveCase(source, measures, this.folds.wholeDefensive(defensive), { talents, tank }))
+        : [],
+      ...this.hasMeasures(gear) && gear ? this.each(contrast.gear, (source, picks) => this.gearCase(source, picks, gear)) : [],
+      ...this.specRoles.isHealer(spec) ? [] : this.contrastBurstCases(benches.burst, contrast.burst),
+    ];
+  }
+
+  private contrastBurstCases(bench: BurstBench | null, card: ContrastCard<BurstParseMeasures> | null): HeldOutCase[] {
+    if (!bench?.per_parse || !this.hasMeasures(bench)) return [];
+    const whole = this.folds.wholeBurst({ ...bench, per_parse: bench.per_parse });
+    return this.each(card, (source, measures) => this.burstCase(source, measures, whole));
+  }
+
+  private each<T>(card: ContrastCard<T> | null, make: (source: ParseRanking, measures: T) => HeldOutCase): HeldOutCase[] {
+    if (!card) return [];
+    return card.per_parse.flatMap((measures, i) => {
+      const source = card.sources[i];
+      return source ? [make(source, measures)] : [];
+    });
+  }
+
   private rotationCases(bench: RotationBench | null, talents: ReadonlyMap<string, ReadonlyMap<number, number>>): HeldOutCase[] {
     if (!bench || !this.hasMeasures(bench)) return [];
     return bench.per_parse.flatMap((measures, i) => {
       const source = bench.sources[i];
-      if (!source) return [];
-      const key = this.sourceKey(source);
-      const log = { measures, model: this.rows.wholePull(source.duration_s ?? 0), talents: talents.get(key) ?? null };
-      return [{ card: 'rotation' as const, source: key, fold: this.folds.foldRotation(bench, i), log }];
+      return source ? [this.rotationCase(source, measures, this.folds.foldRotation(bench, i), talents)] : [];
     });
   }
 
@@ -89,14 +115,7 @@ export class HeldOutCaseService {
     if (!bench || !this.hasMeasures(bench)) return [];
     return bench.per_parse.flatMap((measures, i) => {
       const source = bench.sources[i];
-      if (!source) return [];
-      const key = this.sourceKey(source);
-      const durationS = source.duration_s ?? 0;
-      const log = {
-        casts: measures.def_casts_s, model: this.rows.withDeaths(durationS, durationS, measures.dead_s ?? []), talents: talents.get(key) ?? null,
-        up: measures.def_up_s ?? null, takenPerS: measures.taken_per_s ?? null, tank,
-      };
-      return [{ card: 'defensive' as const, source: key, fold: this.folds.foldDefensive(bench, i), log }];
+      return source ? [this.defensiveCase(source, measures, this.folds.foldDefensive(bench, i), { talents, tank })] : [];
     });
   }
 
@@ -105,9 +124,7 @@ export class HeldOutCaseService {
     const measured = { ...bench, per_parse: bench.per_parse };
     return measured.per_parse.flatMap((parse, i) => {
       const source = bench.sources[i];
-      if (!source) return [];
-      const log = { damagePerS: parse.damage_per_s, model: this.rows.wholePull(source.duration_s ?? parse.damage_per_s.length) };
-      return [{ card: 'burst' as const, source: this.sourceKey(source), fold: this.folds.foldBurst(measured, i), log }];
+      return source ? [this.burstCase(source, parse, this.folds.foldBurst(measured, i))] : [];
     });
   }
 
@@ -115,12 +132,42 @@ export class HeldOutCaseService {
     if (!bench || !this.hasMeasures(bench)) return [];
     return bench.per_parse.flatMap((picks, i) => {
       const source = bench.sources[i];
-      return source ? [{ card: 'gear' as const, source: this.sourceKey(source), fold: this.folds.foldGear(bench, i), picks }] : [];
+      return source ? [this.gearCase(source, picks, this.folds.foldGear(bench, i))] : [];
     });
   }
 
+  private rotationCase(
+    source: ParseRanking, measures: RotationParseMeasures, fold: RotationBench, talents: ReadonlyMap<string, ReadonlyMap<number, number>>,
+  ): HeldOutCase {
+    const key = this.sourceKey(source);
+    const log = { measures, model: this.rows.wholePull(source.duration_s ?? 0), talents: talents.get(key) ?? null };
+    return { card: 'rotation', source: key, fold, log };
+  }
+
+  private defensiveCase(
+    source: ParseRanking, measures: DefensiveParseMeasures, fold: FoldedDefensiveBench,
+    pull: { talents: ReadonlyMap<string, ReadonlyMap<number, number>>; tank: boolean },
+  ): HeldOutCase {
+    const key = this.sourceKey(source);
+    const durationS = source.duration_s ?? 0;
+    const log = {
+      casts: measures.def_casts_s, model: this.rows.withDeaths(durationS, durationS, measures.dead_s ?? []), talents: pull.talents.get(key) ?? null,
+      up: measures.def_up_s ?? null, takenPerS: measures.taken_per_s ?? null, tank: pull.tank,
+    };
+    return { card: 'defensive', source: key, fold, log };
+  }
+
+  private burstCase(source: ParseRanking, parse: BurstParseMeasures, fold: FoldedBurstBench): HeldOutCase {
+    const log = { damagePerS: parse.damage_per_s, model: this.rows.wholePull(source.duration_s ?? parse.damage_per_s.length) };
+    return { card: 'burst', source: this.sourceKey(source), fold, log };
+  }
+
+  private gearCase(source: ParseRanking, picks: GearParseMeasures, fold: GearBench): HeldOutCase {
+    return { card: 'gear', source: this.sourceKey(source), fold, picks };
+  }
+
   /** The gear bench carries each top log's talents, which the cooldown checks need to know whether a talent button was taken. */
-  private talentsBySource(gear: GearBench | null): Map<string, ReadonlyMap<number, number>> {
+  private talentsBySource(gear: Pick<GearBench, 'per_parse' | 'sources'> | null): Map<string, ReadonlyMap<number, number>> {
     const bySource = new Map<string, ReadonlyMap<number, number>>();
     if (!gear || !this.hasMeasures(gear)) return bySource;
     gear.per_parse.forEach((picks, i) => {

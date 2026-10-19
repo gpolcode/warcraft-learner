@@ -6,10 +6,10 @@ import { RotationHeldOutService } from './rotation-held-out-service';
 import { DefensiveHeldOutService } from './defensive-held-out-service';
 import { GearHeldOutService } from './gear-held-out-service';
 import { HeldOutCaseService } from './held-out-case-service';
-import { HeldOutRow } from './calibration.models';
+import { ContrastBench, HeldOutRow } from './calibration.models';
 import { bench } from '../../rotation/rotation-harness';
 import { benchWith, CLOAK_META, defBench } from '../../defensive/defensive-harness';
-import { benchSources } from '../../../../../../testing/builders/bench-sources';
+import { benchSources, parseRanking } from '../../../../../../testing/builders/bench-sources';
 import {
   BURST_AT_S, BURST_S, burstBench, burstLog, burstWindow, CLOAK, defensiveLog, defensiveWindow, FIGHT_S, gearBench, gearLog, rotationLog, SB,
   WINDOW_AT_S, WINDOW_DAMAGE,
@@ -238,5 +238,49 @@ describe('HeldOutCaseService', () => {
     const [first] = cases.cases(benches, 'SubtletyRogue');
 
     expect(first?.source).toBe('r1:1');
+  });
+});
+
+describe('HeldOutCaseService contrastCases', () => {
+  /** Two weaker logs from the tenth rankings page. */
+  const WEAKER = [parseRanking({ rank: 910 }), parseRanking({ rank: 990 })];
+  const burstBenches = { rotation: rotationBench(), defensive: null, gear: gearBench(Array.from({ length: TOP_N }, () => gearLog())), burst: burstBench(Array.from({ length: TOP_N }, () => burstLog()), [burstWindow([0, 1, 2])]) };
+  const weaker = (over: Partial<ContrastBench> = {}): ContrastBench => ({
+    spec: 'SubtletyRogue', encounter_id: 1, signature: '', fetched_at_s: 0, sources: WEAKER,
+    rotation: { sources: WEAKER, per_parse: [rotationLog(), rotationLog()] },
+    defensive: null,
+    gear: { sources: WEAKER, per_parse: [gearLog(), gearLog()] },
+    burst: { sources: WEAKER, per_parse: [burstLog(), burstLog()] },
+    ...over,
+  });
+
+  it('makes one case per contrast log on every card it was read for, judged against the full bench', () => {
+    const made = cases.contrastCases(burstBenches, weaker(), 'SubtletyRogue');
+    const rotationCase = made.find(entry => entry.card === 'rotation');
+
+    expect(made.map(entry => entry.card)).toEqual(['rotation', 'rotation', 'gear', 'gear', 'burst', 'burst']);
+    expect(rotationCase?.fold.per_parse).toHaveLength(TOP_N);
+    expect(rotationCase?.source).toBe('r910:910');
+  });
+
+  it('makes no damage case for a healer', () => {
+    expect(cases.contrastCases(burstBenches, weaker(), 'HolyPaladin').filter(entry => entry.card === 'burst')).toEqual([]);
+  });
+
+  it('makes no case on a card its top-log bench carries no per-log measures for', () => {
+    const { per_parse: _dropped, ...older } = rotationBench();
+
+    expect(cases.contrastCases({ ...burstBenches, rotation: older as never }, weaker(), 'SubtletyRogue').filter(entry => entry.card === 'rotation')).toEqual([]);
+  });
+
+  it('judges a contrast log on the defensive card against every window of the full bench', () => {
+    const full = benchWith({
+      sources: benchSources(TOP_N), sample_count: TOP_N, per_parse: Array.from({ length: TOP_N }, () => defensiveLog()),
+      defensives: [CLOAK_META], per_defensive_benchmarks: { [CLOAK]: defBench() }, defensive_windows: [defensiveWindow([0, 1, 2, 3, 4, 5])],
+    });
+    const [made] = cases.contrastCases({ ...burstBenches, defensive: full }, weaker({ defensive: { sources: WEAKER.slice(0, 1), per_parse: [defensiveLog()] } }), 'SubtletyRogue')
+      .filter(entry => entry.card === 'defensive');
+
+    expect(made?.card === 'defensive' ? made.fold.defensive_windows.map(window => window.index) : null).toEqual([0]);
   });
 });

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, PercentPipe } from '@angular/common';
 import { TuiTitle } from '@taiga-ui/core';
 import { TuiBadge } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
@@ -12,7 +12,7 @@ import { ValidityFeatureService } from '../data/validity/validity-feature-servic
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-validity-report',
-  imports: [DecimalPipe, TuiTitle, TuiBadge, TuiCardLarge, TuiHeader, LoadState, EmptyState, OddsPipe],
+  imports: [DecimalPipe, PercentPipe, TuiTitle, TuiBadge, TuiCardLarge, TuiHeader, LoadState, EmptyState, OddsPipe],
   templateUrl: './validity-report.html',
 })
 export class ValidityReport {

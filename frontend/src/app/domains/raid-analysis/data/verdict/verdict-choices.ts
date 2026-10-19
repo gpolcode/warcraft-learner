@@ -59,6 +59,17 @@ export const VERDICT_CHOICES = {
     perturbedShare: { from: 0.2, to: 0.9 },
     rezAfterS: 30,
   },
-  /** Discrimination gates against the contrast cohort. */
-  discrimination: { minLift: 2, minLiftLowerBound: 1.3, minAuc: 0.6 },
+  /** The contrast cohort: logs at evenly spaced ranks on one rankings page, and the gates a graded family must pass against them. */
+  discrimination: {
+    rankingsPage: 10,
+    cohortSize: 5,
+    minLift: 2,
+    minLiftLowerBound: 1.3,
+    minAuc: 0.6,
+    /** The lift's lower bound is this quantile of its pull-clustered bootstrap: the low end of a 90% interval. */
+    liftBoundQuantile: 0.05,
+    bootstrapResamples: 1000,
+    /** A pool with fewer contrast pulls carrying a test of the family has no discrimination measured yet. */
+    minContrastPulls: 20,
+  },
 } as const;
