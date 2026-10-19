@@ -9,6 +9,7 @@ import { ConditionEvalService } from './condition-eval-service';
 import { VariableReplayService } from './variable-replay-service';
 import { FactContextService } from './fact-context-service';
 import { FactPaths } from './fact-path';
+import { VERDICT_CHOICES } from '../../verdict/verdict-choices';
 import type { CastMoment, FactContext, FactStream, Range, Truth } from './priority-list.models';
 
 const COMPARISONS = new Set(['=', '==', '!=', '<', '<=', '>', '>=']);
@@ -109,20 +110,26 @@ export class ListCheckService {
   read(ctx: FactContext): LogReading {
     const buttons = this.buttons(ctx.list);
     const lines = [...buttons.values()].flat().sort((a, b) => a.index - b.index);
-    const moments = this.replay.withVariables(ctx.list, this.moments(ctx), ctx);
+    const seen = this.moments(ctx);
+    const moments = this.replay.withVariables(ctx.list, seen, ctx);
+    const reacted = this.replay.withVariables(ctx.list, seen.map(moment => ({ ...moment, reactS: VERDICT_CHOICES.reactionS })), ctx);
     const cache = new Map<string, LineReading>();
     const readLine = (line: ReadLine, moment: CastMoment): LineReading =>
-      getOrInsert(cache, `${moment.index}:${line.index}`, () => this.readLine(line, moment, ctx));
+      getOrInsert(cache, `${moment.index}:${line.index}:${moment.reactS ?? 0}`, () => this.readLine(line, moment, ctx));
     const pressedOf = this.pressedOf(ctx, [...buttons.keys()]);
     const casts = new Map<string, CastCheck[]>();
     const order: OrderCheck[] = [];
-    for (const moment of moments) {
+    moments.forEach((moment, at) => {
+      const late = reacted[at] ?? moment;
       const pressed = pressedOf.get(moment.event.abilityGameID);
       const own = pressed ? buttons.get(pressed) : undefined;
-      if (pressed && own) getOrInsert(casts, pressed, (): CastCheck[] => []).push(this.castCheck(own.map(line => readLine(line, moment)), moment.atS, own));
-      const decided = pressed && ctx.gcd(moment.event.abilityGameID) ? this.orderCheck(lines, pressed, moment, ctx, readLine) : null;
+      if (pressed && own) {
+        const check = this.castCheck(own.map(line => readLine(line, moment)), own.map(line => readLine(line, late)), moment.atS, own);
+        getOrInsert(casts, pressed, (): CastCheck[] => []).push(check);
+      }
+      const decided = pressed && ctx.gcd(moment.event.abilityGameID) ? this.orderCheck(lines, pressed, late, ctx, readLine) : null;
       if (decided) order.push({ ...decided, line: buttons.get(decided.expected)?.findIndex(line => line.index === decided.line) ?? -1 });
-    }
+    });
     return { casts, order, ids: this.castIds(ctx, [...casts.keys()]) };
   }
 
@@ -141,13 +148,15 @@ export class ListCheckService {
   }
 
   /** A cast at no enemy keeps the last enemy the player aimed at, which is what SimC's own target would still be. */
+  /** A hardcast is SimC's choice at its begincast, so its moment is there. */
   private moments(ctx: FactContext): CastMoment[] {
     const enemies = new Set(ctx.damageIndex().map(([, target]) => target));
+    const startsS = ctx.castStartsS();
     let target: string | null = null;
     return ctx.casts.map((event, index) => {
       const key = this.projections.targetKey(event);
       if (enemies.has(key)) target = key;
-      return { atS: event.atS, event, index, target };
+      return { atS: startsS[index] ?? event.atS, event, index, target };
     });
   }
 
@@ -218,10 +227,12 @@ export class ListCheckService {
     return term.type === 'BinaryExpression' && COMPARISONS.has(operator) ? left : null;
   }
 
-  private castCheck(readings: LineReading[], atS: number, lines: ReadLine[]): CastCheck {
-    const allowed = readings.findIndex(reading => reading.truth === 'true');
-    const verdict: CastVerdict = allowed >= 0 ? 'on' : readings.every(reading => reading.truth === 'false') ? 'off' : 'unjudged';
-    return { atS, verdict, line: allowed >= 0 ? allowed : this.closest(readings, lines), lines: readings };
+  /** On when a line holds as the log stands; off only when every line still fails with the facts that changed inside the reaction allowance unknown, since a player cannot answer what they had no time to see. */
+  private castCheck(seen: LineReading[], reacted: LineReading[], atS: number, lines: ReadLine[]): CastCheck {
+    const allowed = seen.findIndex(reading => reading.truth === 'true');
+    if (allowed >= 0) return { atS, verdict: 'on', line: allowed, lines: seen };
+    const verdict: CastVerdict = reacted.every(reading => reading.truth === 'false') ? 'off' : 'unjudged';
+    return { atS, verdict, line: this.closest(reacted, lines), lines: reacted };
   }
 
   /** A tie goes to the line more of whose terms hold, as it matches more of the moment, then to the earlier line. */

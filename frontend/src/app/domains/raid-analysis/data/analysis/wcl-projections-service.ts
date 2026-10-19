@@ -32,6 +32,23 @@ export class WclProjectionsService {
     });
   }
 
+  /** When each cast of the time-ordered casts and begincasts began: its begincast for a hardcast, else itself. A press on the global cooldown (`gcdOf` not 0) ends any cast still pending, so an interrupted one never pairs with a later instant press. */
+  castStarts(ordered: readonly TimedEvent[], gcdOf: (spellId: number) => number | null | undefined): { cast: TimedEvent; startS: number }[] {
+    const begun = new Map<number, number>();
+    return ordered.flatMap(event => {
+      if (event.type === 'begincast') {
+        begun.clear();
+        begun.set(event.abilityGameID, event.atS);
+        return [];
+      }
+      if (event.type !== 'cast') return [];
+      const startS = begun.get(event.abilityGameID) ?? event.atS;
+      if (gcdOf(event.abilityGameID) !== 0) begun.clear();
+      else begun.delete(event.abilityGameID);
+      return [{ cast: event, startS }];
+    });
+  }
+
   /** WCL logs one press of some buttons as several casts: Power Infusion once per target, Deep Breath's recast, Alter Time's return, each Divine Hymn tick. */
   presses(casts: WclEvent[], folds: readonly PressFold[], { buffs, abilities }: PressLog): WclEvent[] {
     const foldOf = this.foldsById(folds, abilities);

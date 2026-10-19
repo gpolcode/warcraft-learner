@@ -9,10 +9,10 @@ import { ButtonCounts, ListCheckService, LogReading } from './list-check-service
 export const ROTATION_BUTTON_FAMILY: FindingFamily = {
   id: 'rotation.button',
   label: 'Button choices',
-  version: 1,
+  version: 2,
   tier: 'amber',
   claim: 'You missed more of a button\'s moments than top raiders miss of theirs.',
-  construct: 'Presses on a held line and skips when due, over the button\'s judged presses plus skips, before the judged end; unjudged presses left out.',
+  construct: 'Presses on a held line and skips when due, over the button\'s judged presses plus skips, before the judged end; unjudged presses left out. A hardcast is read at its begincast, and an aura that changed within the reaction allowance before a moment leaves it unjudged unless a line holds anyway.',
   pendingRebuild: 'Decision points read by the SimulationCraft reaction model',
   reference: { population: 'Top Mythic logs for the spec and boss, ranked on damage', minN: VERDICT_CHOICES.minReferenceN },
   alignment: 'Every press and skip before the judged end',

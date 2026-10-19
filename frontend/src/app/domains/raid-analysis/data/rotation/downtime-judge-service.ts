@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { mode } from 'd3-array';
 import { AnalysisFinding } from '../analysis/analysis.models';
 import { AliveSpan, fmtApart, overlapS, round, spansS } from '../analysis/analysis-math';
-import { TimedEvent } from '../analysis/wcl-projections-service';
+import { TimedEvent, WclProjectionsService } from '../analysis/wcl-projections-service';
 import { PlanSpell } from '../plan/plan.models';
 import { DecisionRuleService } from '../verdict/decision-rule-service';
 import { FindingFamily } from '../verdict/finding-family.models';
@@ -60,6 +60,7 @@ export class DowntimeJudgeService {
   private readonly rules = inject(DecisionRuleService);
   private readonly tones = inject(ToneService);
   private readonly damage = inject(DamageEstimateService);
+  private readonly projections = inject(WclProjectionsService);
 
   /** Null under two casts. Time before the first cast and after the last never counts; ingest bakes the result as `per_parse[].idle_s`. */
   idleStretches(events: readonly TimedEvent[], spells: Readonly<Record<string, PlanSpell>>): IdleStretch[] | null {
@@ -124,21 +125,9 @@ export class DowntimeJudgeService {
     };
   }
 
-  /** A hardcast's global cooldown starts at its begincast; a press on the global cooldown ends any cast still pending, so an interrupted one never pairs with a later instant press. */
   private castsWithStarts(ordered: readonly TimedEvent[], byId: ReadonlyMap<number, PlanSpell>): { startS: number; endS: number; spell: PlanSpell | undefined }[] {
-    const begun = new Map<number, number>();
-    return ordered.flatMap(event => {
-      if (event.type === 'begincast') {
-        begun.clear();
-        begun.set(event.abilityGameID, event.atS);
-        return [];
-      }
-      const spell = byId.get(event.abilityGameID);
-      const startS = begun.get(event.abilityGameID) ?? event.atS;
-      if (spell?.gcd !== 0) begun.clear();
-      else begun.delete(event.abilityGameID);
-      return [{ startS, endS: event.atS, spell }];
-    });
+    return this.projections.castStarts(ordered, id => byId.get(id)?.gcd)
+      .map(({ cast, startS }) => ({ startS, endS: cast.atS, spell: byId.get(cast.abilityGameID) }));
   }
 
   private nearestFactor(factors: readonly (readonly [number, number])[], atS: number): number {

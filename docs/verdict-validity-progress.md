@@ -1031,3 +1031,49 @@ None: sections 5.2, 5.9 and the stage 6 row carry no file:line reference.
 - A producer that tones a row must also set its `rank`; a new card must emit a `CardRanking` on `rankingChange` and be wired in `post-raid.html`, or its rows never reach the strip.
 - A new priced finding sets `damage` on its `AnalysisFinding` through a `DamageEstimateService` method and adds the same method's estimate to `DamageCalibrationService.samples`, so the gate measures what the page prints.
 - The strip, the damage card and the estimates show nothing colored or priced until the contrast cohort fills (package 7a's schedule) and the next ingest recalibrates.
+
+## Package 7c1: rotation engine, early slice (done)
+
+Branch `claude/verdict-validity-p7c1-engine-early`, PR against `claude/verdict-validity-p7b-cost`. Slice 1 of section 5.8 only.
+
+### Done
+
+- **Hardcasts at their begincast.** `WclProjectionsService.castStarts(ordered, gcdOf)` pairs each cast with its begincast: a press on the global cooldown ends any cast still pending, so an interrupted begincast never pairs with a later instant cast; a press off the global cooldown keeps it pending. `DowntimeJudgeService` (idle stretches) and `FactContextService` (`FactContext.castStartsS`, aligned with `casts`) both call it, so idle time and the rotation engine share one pairing. `ListCheckService.moments` puts each moment at its cast's start, so every fact, the order check and `CastCheck.atS` read the begincast. Two readers follow the moment rather than the cast's index: `PressFacts.before` (`prev`, `prev_gcd`, `prev_off_gcd`, `last_used`) leaves out presses made while the cast bar filled, and `PoolFacts.regen` divides by the time to the cast event that reports the pool.
+- **Reaction allowance.** `CastMoment.reactS` set, `AuraFacts` reads unknown for an aura with a change (span start or end, and a stack change for `stack` and so `react`) after `atS - reactS` and at or before the read instant; counted in whole log milliseconds, so a change exactly `VERDICT_CHOICES.reactionS` (0.35 s) before the moment is seen. `active_dots` reads unknown when any target's span changed inside the allowance. An effect the press itself applies stays after the read instant and does not count.
+- **Two readings per moment.** `ListCheckService.read` replays variables twice (as the log stands, and with `reactS`). A press is `on` when a line holds as the log stands; `off` only when every line still fails with the allowance applied; else `unjudged`, with the reacted readings shown. The order check uses the reacted reading only, so a skip is charged only when it is certain with the recent changes unknown. Both only remove "Wrong time" and "Skipped" chips; an `on` press stays `on`.
+- **Versions.** `INGEST_VERSION` 50 (the baked `per_parse[].buttons` change because `ListBenchService` uses the same engine). `rotation.button` version 2 and its `construct` names both rules; the registry hash changes, so every family renders as a comparison until the next ingest recalibrates.
+- **Tests.** `aura-facts.spec.ts` (applied, dropped, a stack under `react`, `active_dots`, each inside the allowance and exactly at it, the press's own effect, the log as it stands without `reactS`); `list-check-service.spec.ts` (a failing line on a fresh change is not judged, off exactly at the allowance, a holding line stays on, a skip not charged inside and charged exactly at the allowance; a hardcast judged at its begincast, an instant cast at itself, `prev` ignoring an off-GCD press during the cast bar); `fact-context-service.spec.ts` (`castStartsS` pairing, an off-GCD press keeps the cast pending, a GCD press ends it); `pool-facts.spec.ts` (regen at a hardcast moment).
+
+### The measured report (rules' tone, before the caps)
+
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate` (headless runner pointed at `/opt/pw-browsers/chromium` from a temporary edit, not committed): exit 0. `rotation.button` reads 368 tests, amber rate 1.6%, detection 35 of 89, exactly as in 5b, because the baked `per_parse[].buttons` there come from the old engine and the harness cannot re-run the engine over raw logs. Every family is a comparison under the new registry hash until recalibration.
+
+### What the first full ingest measures
+
+- The version 50 re-bench rebuilds every rotation bench with the new engine; nothing on WCL ran in this package.
+- Acceptance (section 5.8): against the last report before this package (version 49 benches, `rotation.button` version 1), the leave-one-out amber rate of `rotation.button` must not rise and its contrast lift and lower bound must not fall. Compare per pool (spec, role, every spec) in the job summary's validity table: Tests, Amber rate, Amber bound, Detection, Lift (lower bound), AUC. Also expect fewer judged moments per button (Tests may fall), and `press-off-list` detection may move, since injected presses off the list near a fresh proc now read unjudged.
+- If the lift or rate worsens, the family stays or falls to a comparison through the harness on its own; no code change is needed for that fallback.
+
+### Decisions and deviations
+
+- **"Facts that changed" are aura facts.** Auras are the discrete facts a proc moves (and the 10.9% of buttons reading `.react`). Pools, cooldowns, the enemy count and the fight clock change continuously or predictably, and reading them unknown inside 0.35 s would leave most GCD presses unjudged; cooldown resets by procs (SimC's `cooldown_react`) are left for slice 2.
+- **Any change counts**, the player's own earlier press included (an off-GCD press macroed with the GCD one): SimC's `stack_react` delays every stack gain whatever triggered it.
+- **"On" reads the log as it stands** so the slice only converts chips into "Not judged", as 5.8 states; reading the allowance for every press would also turn right presses on fresh procs into "Not judged".
+- **Hardcast resources**: `PoolFacts` still reads a hardcast's own pool from its cast event (the pool at completion, before the cost). The log reports no pool at the begincast; the difference is the regen during the cast bar.
+- No `VERDICT_CHOICES` change: `reactionS` was already chosen there; this package is its first reader.
+- Not a deviation: acceptance cannot be measured until the version 50 re-bench and the contrast cohort exist.
+
+### Drift against 6882b59
+
+- RC5's references are in the same files under `frontend/src/app/domains/raid-analysis/data/rotation/priority-list/`: the cast verdict is `ListCheckService.castCheck` (was `list-check-service.ts:204-208`, at the stack base `:221`), the pressable gate `pressable` (was `:239-242`, base `:257`), `react` at `fact-table.ts:14` (unchanged), the read instant `AuraFacts.readS` (was `aura-facts.ts:92-96`, base `:92`), the enemy count `FightFacts.enemies` (was `fight-facts.ts:74-81`, base `:74`, unchanged here).
+
+### Seams stubbed
+
+- Slice 2 (package 7c2): one verdict per decision charged to the pressed button, idle decision points, off-GCD and never-pressed buttons by ready time, `use_item` lines, the enemy count as a range, strata.
+- Cooldown resets inside the allowance (`cooldown_react`) read as the log stands.
+
+### For the next package
+
+- A moment's `atS` is when SimC chose the press (the begincast for a hardcast); `event.atS` is when the log stamped the cast. A reader that compares against other casts must use `atS`, and one that reads the cast event's own fields (pools) must time them at `event.atS`.
+- `CastMoment.reactS` is the switch for the allowance; slice 2's single decision verdict should take the reacted reading for "wrong" and the reading as it stands for "right", as `castCheck` does.
+- `rotation.button` is version 2; a slice 2 change bumps it again with `INGEST_VERSION`.
