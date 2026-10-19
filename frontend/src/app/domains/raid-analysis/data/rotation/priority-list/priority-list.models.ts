@@ -25,6 +25,14 @@ export type ResourceChange = readonly [atS: number, amount: number];
 
 export type AddSpan = readonly [startS: number, endS: number];
 
+/** Per `ENEMY_STEP_S` from the pull, the range of enemies the top logs hit; null where too few top logs hit anything to say. */
+export type EnemyTimeline = readonly (Range | null)[];
+
+export const ENEMY_STEP_S = 3;
+
+/** `[startS, endS)` in which the player was neither casting nor on the global cooldown. */
+type IdleSpan = readonly [startS: number, endS: number];
+
 /** `slot` is the index in WCL's gear array, which is positional. */
 export interface GearPiece {
   slot: number;
@@ -76,6 +84,10 @@ export interface FactContext {
   castStartsS: () => readonly number[];
   /** Observed cast time over the base one, from every hardcast the list's spell data times. */
   hasteFactors: () => readonly (readonly [atS: number, factor: number])[];
+  /** Empty under two casts. */
+  idleSpans: () => readonly IdleSpan[];
+  /** Null on a bench that bakes none, where the enemy count reads the player's own hits alone. */
+  enemyTimeline: EnemyTimeline | null;
 }
 
 /** The button that summons a pet is named for the pet itself or with one of these. */

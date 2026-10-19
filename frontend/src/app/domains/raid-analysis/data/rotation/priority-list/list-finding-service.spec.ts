@@ -6,7 +6,7 @@ import type { ConditionCheck } from '../../analysis/analysis.models';
 import type { ButtonBench, RotationBench, RotationParseMeasures } from '../rotation-data-source';
 import { pullModel } from '../../../../../../testing/builders/pull-model';
 import { bench } from '../rotation-harness';
-import type { ButtonCounts, CastCheck, CastVerdict, LogReading, OrderCheck, TermReading } from './list-check-service';
+import type { ButtonCounts, CastCheck, CastVerdict, LogReading, MissCheck, MissKind, TermReading } from './list-check-service';
 import { ConditionEvalService } from './condition-eval-service';
 import { ListFindingService } from './list-finding-service';
 import { priorityList } from './priority-list-harness';
@@ -17,7 +17,7 @@ import type { PriorityList } from '../../plan/plan.models';
 const MAX_OCCURRENCES = 24;
 /** Three right casts of four. */
 const THREE_QUARTERS = 0.75;
-/** Two right casts of three moments, the third a skip when due. */
+/** Two right casts of three moments, the third missed while due. */
 const TWO_THIRDS = 0.667;
 const FIELD = { lo: 0.8, avg: 0.9, hi: 1 };
 const list = priorityList({
@@ -41,9 +41,9 @@ const cast = (verdict: CastVerdict, atS: number, cp = 5): CastCheck => ({
   atS, verdict, line: 0,
   lines: [{ truth: verdict === 'on' ? 'true' : verdict === 'off' ? 'false' : 'unknown', terms: [{ truth: cp >= 5 ? 'true' : 'false', value: [cp, cp] }] }],
 });
-const skipped = (atS: number): OrderCheck => ({ atS, expected: 'eviscerate', pressed: 'backstab', line: 0, terms: [{ truth: 'true', value: [5, 5] }] });
-const reading = (casts: CastCheck[], order: OrderCheck[] = [], backstabs: CastCheck[] = []): LogReading => ({
-  casts: new Map([['eviscerate', casts], ['backstab', backstabs]]), order,
+const missedAt = (atS: number, kind: MissKind = 'idle'): MissCheck => ({ atS, action: 'eviscerate', kind, line: 0, terms: [{ truth: 'true', value: [5, 5] }] });
+const reading = (casts: CastCheck[], missed: MissCheck[] = [], backstabs: CastCheck[] = []): LogReading => ({
+  casts: new Map([['eviscerate', casts], ['backstab', backstabs]]), missed,
   ids: new Map([['eviscerate', EVISCERATE]]),
 });
 const quarterOff = [cast('off', 10, 3), cast('on', 20), cast('on', 30), cast('on', 40)];
@@ -72,12 +72,32 @@ describe('ListFindingService rows', () => {
     expect(rowOf(reading(quarterOff))).toMatchObject({ name: 'Eviscerate', spellId: EVISCERATE, icon: 'evis', you: THREE_QUARTERS, top: FIELD });
   });
 
-  it('counts a skip when due as a miss, and lists it among the casts in time order', () => {
-    const row = rowOf(reading([cast('on', 20), cast('on', 40)], [skipped(30)]));
+  it('counts a decision missed while idle as a miss, and lists it among the casts in time order', () => {
+    const row = rowOf(reading([cast('on', 20), cast('on', 40)], [missedAt(30)]));
     expect(row?.you).toBe(TWO_THIRDS);
     expect(row?.occurrences.map(occ => [occ.atS, occ.ok])).toEqual([[20, true], [30, false], [40, true]]);
-    expect(row?.occurrences[1]).toMatchObject({ result: 'Skipped when due', detail: 'they all held, but you pressed Backstab instead.' });
+    expect(row?.occurrences[1]).toMatchObject({ result: 'Missed while idle', detail: 'they all held, and you pressed nothing.' });
     expect(row?.occurrences[1]?.checks).toEqual([{ text: 'With 5+ combo points', truth: 'true', value: '5 combo points', role: 'decisive' }]);
+  });
+
+  it('says an off-GCD button was held from one decision to the next while due', () => {
+    const row = rowOf(reading([cast('on', 20)], [missedAt(30, 'held')]));
+    expect(row?.occurrences[1]).toMatchObject({ result: 'Held when due', detail: 'they all held, and you did not press it before your next button.' });
+  });
+
+  it('charges a press made while a higher button was due to the press, naming the button that was due', () => {
+    const due = { action: 'backstab', line: 0, terms: [] };
+    const row = rowOf(reading([cast('on', 20), { ...cast('off', 30), due }]));
+    expect(row?.occurrences[1]).toMatchObject({ ok: false, detail: 'Wrong time. Backstab was due instead.' });
+  });
+
+  it('says how many presses the log could not settle', () => {
+    expect(rowOf(reading([cast('unjudged', 10), cast('on', 20)]))?.message).toContain('You got 1 of 1 moments right. 1 more press was not judged.');
+  });
+
+  it('drops a miss that came while the player was dead', () => {
+    const deadAt30 = pullModel({ deadSpans: [[25, 35]] });
+    expect(findings.rows(withButtons(), reading([cast('on', 20)], [missedAt(30)]), deadAt30)[0]?.moments).toBe(1);
   });
 
   it('marks each cast right, wrong or not judged, its line read term by term', () => {

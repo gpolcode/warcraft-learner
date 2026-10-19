@@ -60,7 +60,7 @@ const gearRows = (enchants: { slot: number; id: number; name: string }[]) =>
 const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: string | null }[]>> = {
   'rotation.button': async () => TestBed.inject(ListFindingService).rows(
     bench({ buttons: [{ action: 'eviscerate', spell_id: EVISCERATE, right: { lo: 1, avg: 1, hi: 1 } }] }),
-    { casts: new Map([['eviscerate', [{ atS: 10, verdict: 'off', line: 0, lines: [] }]]]), order: [], ids: new Map() },
+    { casts: new Map([['eviscerate', [{ atS: 10, verdict: 'off', line: 0, lines: [] }]]]), missed: [], ids: new Map() },
     pullModel(),
   ),
   'rotation.ready_time': async () => {

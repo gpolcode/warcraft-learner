@@ -157,41 +157,146 @@ describe('ListCheckService cast check', () => {
   });
 });
 
-describe('ListCheckService order check', () => {
+describe('ListCheckService one verdict per decision', () => {
   const ORDER: PlanLine[] = [{ action: 'eviscerate', terms: ['combo_points>=5'] }, { action: 'backstab', terms: [] }];
   const EVISCERATE_PRESSED = pooled(EVISCERATE, 30, 5);
-  const orderAt = (reading: LogReading, atS: number) => reading.order.find(check => check.atS === atS);
+  const pressAt = (reading: LogReading, action: string, atS: number) => reading.casts.get(action)?.find(check => check.atS === atS);
 
-  it('names the higher button whose line held while it was ready as skipped for the one pressed', () => {
-    expect(orderAt(read(ORDER, [pooled(BACKSTAB, 10, 5), EVISCERATE_PRESSED]), 10)).toMatchObject({ expected: 'eviscerate', pressed: 'backstab', line: 0 });
+  it('charges a press to the pressed button when a higher button\'s line held while it was ready, naming that button', () => {
+    expect(pressAt(read(ORDER, [pooled(BACKSTAB, 10, 5), EVISCERATE_PRESSED]), 'backstab', 10)).toMatchObject({ verdict: 'off', due: { action: 'eviscerate', line: 0 } });
   });
 
-  it('reads the pressed button as kept when its line led the list', () => {
-    expect(orderAt(read(ORDER, [pooled(BACKSTAB, 10, 3), EVISCERATE_PRESSED]), 30)).toMatchObject({ expected: 'eviscerate', pressed: 'eviscerate' });
+  it('charges nothing to the button that was due', () => {
+    expect(checks.rightCounts(read(ORDER, [pooled(BACKSTAB, 10, 5), pooled(BACKSTAB, 11, 3)]), 'eviscerate')).toBeNull();
+  });
+
+  it('keeps the pressed button right when its line led the list', () => {
+    const press = pressAt(read(ORDER, [pooled(BACKSTAB, 10, 3), EVISCERATE_PRESSED]), 'eviscerate', 30);
+    expect(press?.verdict).toBe('on');
+    expect(press?.due).toBeUndefined();
   });
 
   it('passes over a button still on cooldown', () => {
     const casts = [pooled(EVISCERATE, 5, 5), pooled(BACKSTAB, 10, 5), EVISCERATE_PRESSED];
-    expect(orderAt(read(ORDER, casts, {}, { eviscerateCooldown: 30 }), 10)).toMatchObject({ expected: 'backstab', pressed: 'backstab' });
+    expect(pressAt(read(ORDER, casts, {}, { eviscerateCooldown: 30 }), 'backstab', 10)).toMatchObject({ verdict: 'on' });
   });
 
   it('decides nothing while a line above may or may not hold', () => {
     const lines: PlanLine[] = [{ action: 'shadowstrike', terms: ['raid_event.movement.in>20'] }, ...ORDER];
     const casts = [cast(SHADOWSTRIKE, 1), pooled(BACKSTAB, 10, 5), EVISCERATE_PRESSED];
-    expect(orderAt(read(lines, casts), 10)).toBeUndefined();
+    expect(pressAt(read(lines, casts), 'backstab', 10)?.due).toBeUndefined();
   });
 
   it('decides nothing when the pool may not cover the higher button\'s cost', () => {
-    expect(orderAt(read(ORDER, [pooled(BACKSTAB, 10, 5, EVISCERATE_COST - 1), EVISCERATE_PRESSED]), 10)).toBeUndefined();
+    expect(pressAt(read(ORDER, [pooled(BACKSTAB, 10, 5, EVISCERATE_COST - 1), EVISCERATE_PRESSED]), 'backstab', 10)?.due).toBeUndefined();
   });
 
-  it('passes over a button the player never pressed this pull', () => {
-    expect(orderAt(read(ORDER, [pooled(BACKSTAB, 10, 5)]), 10)).toMatchObject({ expected: 'backstab' });
+  it('counts a button the player never pressed this pull as due, its cooldown saying it was ready', () => {
+    expect(pressAt(read(ORDER, [pooled(BACKSTAB, 10, 5)]), 'backstab', 10)).toMatchObject({ verdict: 'off', due: { action: 'eviscerate' } });
   });
 
-  it('reads no order at a cast off the global cooldown', () => {
+  it('reads no higher button at a cast off the global cooldown', () => {
+    const lines: PlanLine[] = [{ action: 'eviscerate', terms: [] }, { action: 'shadow_dance', terms: [] }];
+    expect(pressAt(read(lines, [cast(SHADOW_DANCE, 10), EVISCERATE_PRESSED]), 'shadow_dance', 10)?.due).toBeUndefined();
+  });
+
+  it('never ranks an off-GCD button above the press, since it does not take the global cooldown', () => {
     const lines: PlanLine[] = [{ action: 'shadow_dance', terms: [] }, ...ORDER];
-    expect(orderAt(read(lines, [cast(SHADOW_DANCE, 10), EVISCERATE_PRESSED]), 10)).toBeUndefined();
+    expect(pressAt(read(lines, [pooled(BACKSTAB, 10, 3)]), 'backstab', 10)).toMatchObject({ verdict: 'on' });
+  });
+});
+
+describe('ListCheckService ownership from talents', () => {
+  const SECRET_TECHNIQUE = 280719;
+  const SECRET_TECHNIQUE_ENTRY = 112644;
+  const LINES: PlanLine[] = [{ action: 'secret_technique', terms: [] }, { action: 'backstab', terms: [] }];
+  const owned = (talents: [number, number][] | undefined) => {
+    const base = list(LINES);
+    const talented = { ...base, spells: { ...base.spells, secret_technique: planSpell('Secret Technique', [SECRET_TECHNIQUE], { gcd: 1 }) },
+      talents: { 'talent.secret_technique': { name: 'Secret Technique', entries: [SECRET_TECHNIQUE_ENTRY] } } };
+    return checks.read(factContext(talented, { casts: [cast(BACKSTAB, 10)], ...(talents ? { talents } : {}) })).casts.get('backstab')?.[0];
+  };
+
+  it('counts a never-pressed talent button as due once the player\'s talents pick it', () => {
+    expect(owned([[SECRET_TECHNIQUE_ENTRY, 1]])).toMatchObject({ verdict: 'off', due: { action: 'secret_technique' } });
+  });
+
+  it('passes over it when the talents leave it out', () => {
+    expect(owned([])).toMatchObject({ verdict: 'on' });
+  });
+
+  it('passes over it when the log shows no talent tree', () => {
+    expect(owned(undefined)).toMatchObject({ verdict: 'on' });
+  });
+});
+
+describe('ListCheckService idle decision points', () => {
+  const ORDER: PlanLine[] = [{ action: 'eviscerate', terms: ['combo_points>=5'] }, { action: 'backstab', terms: [] }];
+  /** Backstab spends its one-second global cooldown from 10 s; idle stretches are measured to a tenth of a second. */
+  const GCD_END_S = 11;
+  const backstabs = (nextS: number, cp = 5) => [pooled(BACKSTAB, 10, cp), pooled(BACKSTAB, nextS, cp)];
+  const missed = (casts: WclEvent[]) => read(ORDER, casts).missed;
+
+  it('charges a miss to the button that was due when an idle stretch outlasts the reaction allowance', () => {
+    const OVER_S = GCD_END_S + 0.4;
+    expect(missed(backstabs(OVER_S))).toEqual([expect.objectContaining({ action: 'eviscerate', kind: 'idle', atS: GCD_END_S + VERDICT_CHOICES.reactionS, line: 0 })]);
+  });
+
+  it('passes no decision in an idle stretch inside the reaction allowance', () => {
+    const UNDER_S = GCD_END_S + 0.3;
+    expect(missed(backstabs(UNDER_S))).toEqual([]);
+  });
+
+  it('charges nothing when no button was certainly due', () => {
+    expect(missed(backstabs(20, 3)).filter(check => check.action === 'eviscerate')).toEqual([]);
+  });
+
+  it('reads the pool at an idle point between the casts either side, so a lower button can be the one due', () => {
+    expect(missed(backstabs(20, 3))).toEqual([expect.objectContaining({ action: 'backstab', kind: 'idle' })]);
+  });
+
+  it('counts the miss among the due button\'s moments', () => {
+    expect(checks.rightCounts(read(ORDER, backstabs(20)), 'eviscerate')).toMatchObject({ right: 0, moments: 1 });
+  });
+});
+
+describe('ListCheckService off-GCD buttons held while due', () => {
+  const DANCE_CD_S = 60;
+  const LINES: PlanLine[] = [{ action: 'shadow_dance', terms: [] }, { action: 'backstab', terms: [] }];
+  const presses = [cast(BACKSTAB, 10), cast(BACKSTAB, 11), cast(BACKSTAB, 12)];
+  const readDance = (casts: WclEvent[]) => {
+    const base = list(LINES);
+    const danced = { ...base, spells: { ...base.spells, shadow_dance: planSpell('Shadow Dance', [SHADOW_DANCE], { gcd: 0, cooldown: DANCE_CD_S }) } };
+    return checks.read(factContext(danced, { casts, talents: [] })).missed.filter(check => check.action === 'shadow_dance');
+  };
+  /** The next decision after 10 s is the press at 11 s; a dance up to the reaction allowance after it still answers the first. */
+  const ANSWER_BY_S = 11 + VERDICT_CHOICES.reactionS;
+
+  it('charges one miss per stretch between presses, however many decisions it sat ready for', () => {
+    expect(readDance(presses)).toEqual([expect.objectContaining({ kind: 'held', atS: 10, line: 0 })]);
+  });
+
+  it('charges nothing when it was pressed by the reaction allowance after the next decision', () => {
+    expect(readDance([...presses, cast(SHADOW_DANCE, ANSWER_BY_S)]).filter(check => check.atS === 10)).toEqual([]);
+  });
+
+  it('charges the decision when the press came one log tick later', () => {
+    expect(readDance([...presses, cast(SHADOW_DANCE, ANSWER_BY_S + LOG_TICK_S)]).filter(check => check.atS === 10)).toHaveLength(1);
+  });
+});
+
+describe('ListCheckService enemy-count strata', () => {
+  const LINES: PlanLine[] = [{ action: 'eviscerate', terms: [] }];
+  const hits = (targets: number) => Array.from({ length: targets }, (_, target) => damage(EVISCERATE, PRESS_S + 1, 1, { target }));
+  const strataOf = (targets: number) => checks.rightCounts(read(LINES, [pooled(EVISCERATE, PRESS_S, 5)], { damage: hits(targets) }), 'eviscerate')?.strata;
+
+  it('counts a moment on one enemy apart from one on several', () => {
+    expect(strataOf(1)).toEqual({ single: { right: 1, moments: 1, unjudged: 0 } });
+    expect(strataOf(2)).toEqual({ multi: { right: 1, moments: 1, unjudged: 0 } });
+  });
+
+  it('counts a moment the log shows no enemy for as unknown', () => {
+    expect(strataOf(0)).toEqual({ unknown: { right: 1, moments: 1, unjudged: 0 } });
   });
 });
 
@@ -201,7 +306,7 @@ describe('ListCheckService reaction allowance', () => {
   const droppedAt = (atS: number) => ({ buffs: [applyBuff(SHADOW_DANCE, 1), removeBuff(SHADOW_DANCE, atS)] });
   const appliedAt = (atS: number) => ({ buffs: [applyBuff(SHADOW_DANCE, atS)] });
   const castOf = (reading: LogReading) => reading.casts.get('eviscerate')?.[0];
-  const skipAt = (reading: LogReading) => reading.order.find(check => check.atS === PRESS_S);
+  const skipAt = (reading: LogReading) => reading.casts.get('backstab')?.find(check => check.atS === PRESS_S)?.due;
 
   it('leaves a press not judged when its line fails only on an aura that changed inside the allowance', () => {
     expect(castOf(read(ON_DANCE, [pooled(EVISCERATE, PRESS_S, 5)], droppedAt(UNSEEN_S)))).toMatchObject({ verdict: 'unjudged' });
@@ -215,14 +320,14 @@ describe('ListCheckService reaction allowance', () => {
     expect(castOf(read(ON_DANCE, [pooled(EVISCERATE, PRESS_S, 5)], appliedAt(UNSEEN_S)))).toMatchObject({ verdict: 'on' });
   });
 
-  it('charges no skip when the higher line holds only on an aura that changed inside the allowance', () => {
+  it('names no higher button due when its line holds only on an aura that changed inside the allowance', () => {
     const casts = [pooled(BACKSTAB, PRESS_S, 5), pooled(EVISCERATE, 30, 5)];
     expect(skipAt(read(ORDER, casts, appliedAt(UNSEEN_S)))).toBeUndefined();
   });
 
-  it('charges the skip when that aura changed exactly the allowance before the press', () => {
+  it('names it due when that aura changed exactly the allowance before the press', () => {
     const casts = [pooled(BACKSTAB, PRESS_S, 5), pooled(EVISCERATE, 30, 5)];
-    expect(skipAt(read(ORDER, casts, appliedAt(SEEN_S)))).toMatchObject({ expected: 'eviscerate', pressed: 'backstab' });
+    expect(skipAt(read(ORDER, casts, appliedAt(SEEN_S)))).toMatchObject({ action: 'eviscerate' });
   });
 });
 
@@ -254,6 +359,10 @@ describe('ListCheckService.streams', () => {
     const streams = (terms: string[]) => [...checks.streams(list([{ action: 'eviscerate', terms }]))];
     expect(streams(['active_enemies>=2'])).toEqual(['damage']);
     expect(streams(['buff.shadow_dance.up'])).toEqual([]);
+  });
+
+  it('asks for the gear when the list has a trinket line, to resolve it to the trinket worn', () => {
+    expect([...checks.streams(priorityList({ lines: [{ action: 'use_item', terms: [], item: 'trinket1' }] }))]).toEqual(['gear']);
   });
 
   it('asks for what a replayed variable reads', () => {

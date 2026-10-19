@@ -5,6 +5,7 @@ import { PlanCooldown, PriorityList } from '../plan/plan.models';
 import { BenchHeader } from '../analysis/bench-pipeline-service';
 import { AuraSpan } from '../defensive/defensive-data-source';
 import type { ButtonCounts } from './priority-list/list-check-service';
+import type { EnemyTimeline } from './priority-list/priority-list.models';
 
 export interface ShareRange {
   lo: number;
@@ -46,6 +47,8 @@ export interface RotationBench extends BenchHeader {
   buttons: ButtonBench[];
   cd_spell_ids: Record<string, number>;
   per_parse: RotationParseMeasures[];
+  /** `EnemyTimelineService.timeline` over every top log; absent on a bench before it was baked, where the enemy count reads the player's own hits. */
+  enemy_timeline?: EnemyTimeline | null;
   ability_icons: Record<number, { icon: string; name: string }>;
 }
 
