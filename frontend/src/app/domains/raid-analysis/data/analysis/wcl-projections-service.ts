@@ -97,9 +97,10 @@ export class WclProjectionsService {
     return icons;
   }
 
-  toParseRankings(raw: WclRawRanking[], count: number): ParseRanking[] {
+  /** `ranksBefore` counts the rows of the pages before this one. */
+  toParseRankings(raw: WclRawRanking[], count: number, ranksBefore = 0): ParseRanking[] {
     return raw
-      .map((ranking, index) => ({ ranking, rank: index + 1 }))
+      .map((ranking, index) => ({ ranking, rank: ranksBefore + index + 1 }))
       .filter(({ ranking }) => ranking.report?.code && !ANONYMIZED_NAME.test(ranking.name ?? ''))
       .slice(0, count)
       .map(({ ranking, rank }) => ({

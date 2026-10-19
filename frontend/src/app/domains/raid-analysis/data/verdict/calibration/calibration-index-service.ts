@@ -4,7 +4,7 @@ import { FINDING_REGISTRY } from '../finding-registry';
 import { ToneLevel } from '../tone.models';
 import { VERDICT_CHOICES } from '../verdict-choices';
 import { ArmingService, NOT_GRADED } from './arming-service';
-import { CalibrationIndex, EncounterCalibration, FamilyVerdict, FlagTally, InvariantResult, OUTSIDE_BAND, PageLoad } from './calibration.models';
+import { CalibrationIndex, Discrimination, EncounterCalibration, FamilyVerdict, FlagTally, InvariantResult, OUTSIDE_BAND, PageLoad } from './calibration.models';
 import { COMPARISON } from './calibration-caps-service';
 import { RegistryHashService } from './registry-hash-service';
 import { DEAD_IN_WINDOW_FAMILY } from '../../defensive/defensive-judge-service';
@@ -18,6 +18,17 @@ const BURST_FAMILY = 'burst.window';
 const DEATH_FACT = DEAD_IN_WINDOW_FAMILY.id;
 const DEATH_INSERTIONS = new Set(['death', 'death-rez']);
 /** Damage is read by no cadence check and by no coverage verdict, and burst reads it only as a ratio to the log's own average. */
+type DiscriminationsByFamily = Readonly<Record<string, Discrimination | null>>;
+
+interface Separation {
+  all: DiscriminationsByFamily;
+  roles: Partial<Record<SpecRole, DiscriminationsByFamily>>;
+  specs: Record<string, DiscriminationsByFamily>;
+}
+
+/** A verdict lost because the contrast cohort has not filled in yet is a missing measurement, not a rule that got worse. */
+const PENDING_REASONS = new Set<string>([NOT_GRADED.contrastPending]);
+
 const DAMAGE_BLIND = new Set(FINDING_REGISTRY
   .filter(family => family.id.startsWith('rotation.') || family.id.startsWith('defensive.') || family.id === BURST_FAMILY)
   .map(family => family.id));
@@ -32,13 +43,17 @@ export class CalibrationIndexService {
   build(encounters: readonly EncounterCalibration[]): CalibrationIndex {
     const invariants = this.invariants(encounters);
     const failed = new Set(invariants.filter(result => !result.passed).map(result => result.family));
-    const families = this.arming.families(encounters);
-    const roles = Object.fromEntries(this.arming.roles().map(role => [role, this.roleVerdicts(encounters, role, failed)])) as Record<SpecRole, Record<string, FamilyVerdict>>;
-    const specs = this.specVerdicts(encounters, roles, failed);
+    const separation = this.separation(encounters);
+    const families = this.arming.families(encounters, separation.all);
+    const roles = Object.fromEntries(this.arming.roles().map(role => [
+      role, this.roleVerdicts(encounters, role, failed, [separation.roles[role] ?? {}, separation.all]),
+    ])) as Record<SpecRole, Record<string, FamilyVerdict>>;
+    const specs = this.specVerdicts(encounters, roles, failed, separation);
     return {
       registry_hash: this.hashes.registryHash(),
       encounters: encounters.length,
       pulls: encounters.reduce((sum, encounter) => sum + encounter.pulls, 0),
+      contrast_pulls: encounters.reduce((sum, encounter) => sum + encounter.contrast_pulls, 0),
       families, specs, demoted: this.demoted(encounters, specs),
       page: { measured: this.measuredPage(encounters), armed: this.armedPage(encounters, specs) },
       invariants,
@@ -53,6 +68,7 @@ export class CalibrationIndexService {
       .map(result => `Invariant ${result.name} fails for ${result.family}: ${result.baseRate.toFixed(3)} before, ${result.perturbedRate.toFixed(3)} after.`);
     const lost = previous ? Object.entries(previous.specs).flatMap(([spec, verdicts]) => Object.entries(verdicts)
       .filter(([family, verdict]) => verdict.status === 'graded' && this.rank(next.specs[spec]?.[family]?.cap) < this.rank(verdict.cap))
+      .filter(([family]) => !PENDING_REASONS.has(next.specs[spec]?.[family]?.reason ?? ''))
       .map(([family, verdict]) => `${family} on ${spec} lost its ${verdict.cap} grade: ${next.specs[spec]?.[family]?.reason ?? COMPARISON.reason}`)) : [];
     return [...page, ...invariants, ...lost];
   }
@@ -74,14 +90,33 @@ export class CalibrationIndexService {
     return encounters.filter(encounter => encounter.role === role);
   }
 
+  /** Discrimination on every pool a verdict may read, each measured once: every spec, every role, and every spec together. */
+  private separation(encounters: readonly EncounterCalibration[]): Separation {
+    const specs = [...new Set(encounters.map(encounter => encounter.spec))];
+    return {
+      all: this.arming.discriminations(encounters, 'all'),
+      roles: Object.fromEntries(this.arming.roles().map(role => [role, this.arming.discriminations(this.ofRole(encounters, role), role)])),
+      specs: Object.fromEntries(specs.map(spec => [spec, this.arming.discriminations(encounters.filter(encounter => encounter.spec === spec), spec)])),
+    };
+  }
+
+  /** The most specific pool's measurement, as a tone is decided on the most specific pool with its minimum tests. */
+  private firstMeasured(pools: readonly DiscriminationsByFamily[], familyId: string): Discrimination | null {
+    return pools.map(pool => pool[familyId] ?? null).find(measured => measured !== null) ?? null;
+  }
+
   /** Role verdicts pool role then global, fit the role's page budget, and drop a family whose invariant failed. */
-  private roleVerdicts(encounters: readonly EncounterCalibration[], role: SpecRole, failed: ReadonlySet<string>): Record<string, FamilyVerdict> {
+  private roleVerdicts(
+    encounters: readonly EncounterCalibration[], role: SpecRole, failed: ReadonlySet<string>, separation: readonly DiscriminationsByFamily[],
+  ): Record<string, FamilyVerdict> {
     const mine = this.ofRole(encounters, role);
     const rolePool = this.arming.pool(mine);
     const globalPool = this.arming.pool(encounters);
     const detection = this.arming.poolDetection(encounters);
     const verdicts = Object.fromEntries(FINDING_REGISTRY.map(family => {
-      const verdict = this.arming.verdict(family, [rolePool[family.id] ?? NONE, globalPool[family.id] ?? NONE], detection[family.id] ?? { trials: 0, detected: 0 });
+      const verdict = this.arming.verdict(
+        family, [rolePool[family.id] ?? NONE, globalPool[family.id] ?? NONE], detection[family.id] ?? { trials: 0, detected: 0 }, this.firstMeasured(separation, family.id),
+      );
       return [family.id, failed.has(family.id) && verdict.status === 'graded' && this.rank(verdict.cap) >= this.rank('amber')
         ? { status: 'comparison' as const, cap: COMPARISON.cap, reason: NOT_GRADED.invariant } : verdict];
     }));
@@ -91,6 +126,7 @@ export class CalibrationIndexService {
   /** A spec pools its own tests first; its verdict never outranks its role's, which carries the page budget. */
   private specVerdicts(
     encounters: readonly EncounterCalibration[], roles: Record<SpecRole, Record<string, FamilyVerdict>>, failed: ReadonlySet<string>,
+    separation: Separation,
   ): Record<string, Record<string, FamilyVerdict>> {
     const specs = [...new Set(encounters.map(encounter => encounter.spec))].sort();
     const globalPool = this.arming.pool(encounters);
@@ -99,8 +135,12 @@ export class CalibrationIndexService {
       const role = this.specRoles.role(spec);
       const specPool = this.arming.pool(encounters.filter(encounter => encounter.spec === spec));
       const rolePool = this.arming.pool(this.ofRole(encounters, role));
+      const pools = [separation.specs[spec] ?? {}, separation.roles[role] ?? {}, separation.all];
       return [spec, Object.fromEntries(FINDING_REGISTRY.map(family => {
-        const own = this.arming.verdict(family, [specPool[family.id] ?? NONE, rolePool[family.id] ?? NONE, globalPool[family.id] ?? NONE], detection[family.id] ?? { trials: 0, detected: 0 });
+        const own = this.arming.verdict(
+          family, [specPool[family.id] ?? NONE, rolePool[family.id] ?? NONE, globalPool[family.id] ?? NONE], detection[family.id] ?? { trials: 0, detected: 0 },
+          this.firstMeasured(pools, family.id),
+        );
         const ceiling = roles[role][family.id] ?? COMPARISON;
         const lower = this.rank(own.cap) <= this.rank(ceiling.cap) ? own : ceiling;
         return [family.id, failed.has(family.id) ? ceiling : lower];

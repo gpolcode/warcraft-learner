@@ -121,3 +121,21 @@ describe('LeaveOneOutService foldBurst', () => {
     expect(folds.foldBurst(burstBench(logs, [burstWindow([0, 1, 3])]), HELD_OUT).per_parse).toHaveLength(TOP_N - 1);
   });
 });
+
+describe('LeaveOneOutService whole benches', () => {
+  it('keeps every defensive window of the full bench with its own index', () => {
+    const full = benchWith({
+      sources: benchSources(TOP_N), sample_count: TOP_N, per_parse: Array.from({ length: TOP_N }, () => defensiveLog()),
+      defensives: [CLOAK_META], per_defensive_benchmarks: { [CLOAK]: defBench() }, defensive_windows: [defensiveWindow([0, 1]), defensiveWindow([2, 3], 1000, 90)],
+    });
+
+    expect(folds.wholeDefensive(full).defensive_windows.map(window => [window.index, window.members.length])).toEqual([[0, 2], [1, 2]]);
+  });
+
+  it('keeps every burst window and every top log of the full bench', () => {
+    const whole = folds.wholeBurst(burstBench(Array.from({ length: TOP_N }, () => burstLog()), [burstWindow([0, 1, 2])]));
+
+    expect(whole.windows.map(window => window.index)).toEqual([0]);
+    expect(whole.per_parse).toHaveLength(TOP_N);
+  });
+});

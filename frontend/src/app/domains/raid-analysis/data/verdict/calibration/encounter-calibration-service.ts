@@ -4,7 +4,8 @@ import { FINDING_REGISTRY } from '../finding-registry';
 import { InjectedMistake } from '../finding-family.models';
 import { ToneLevel } from '../tone.models';
 import { BloodlustJudgeService } from '../../rotation/bloodlust-judge-service';
-import { DetectionTally, EncounterCalibration, FlagTally, HeldOutRow, InvariantTally, OUTSIDE_BAND, PageLoad } from './calibration.models';
+import { ContrastBench, DetectionTally, DiscriminationSample, EncounterCalibration, FlagTally, HeldOutRow, InvariantTally, OUTSIDE_BAND, PageLoad } from './calibration.models';
+import { DiscriminationService } from './discrimination-service';
 import { EncounterBenches, HeldOutCase, HeldOutCaseService } from './held-out-case-service';
 import { InjectedMistakeService } from './injected-mistake-service';
 import { Perturbation, PERTURBATIONS, PerturbationService } from './perturbation-service';
@@ -21,10 +22,14 @@ export class EncounterCalibrationService {
   private readonly rotation = inject(RotationHeldOutService);
   private readonly lust = inject(BloodlustJudgeService);
   private readonly specRoles = inject(SpecRoleService);
+  private readonly discrimination = inject(DiscriminationService);
 
-  calibrate(spec: string, encounterId: number, benches: EncounterBenches, signature: string): EncounterCalibration {
+  /** `contrast` is null until the ingest has fetched the encounter's weaker logs. */
+  calibrate(spec: string, encounterId: number, benches: EncounterBenches, signature: string, contrast: ContrastBench | null): EncounterCalibration {
     const heldOut = this.cases.cases(benches, spec);
     const base = heldOut.map(entry => this.cases.judge(entry));
+    const contrastCases = contrast ? this.cases.contrastCases(benches, contrast, spec) : [];
+    const contrastRows = contrastCases.map(entry => this.cases.judge(entry));
     return {
       spec, encounter_id: encounterId, role: this.specRoles.role(spec), signature,
       pulls: new Set(heldOut.map(entry => entry.source)).size,
@@ -33,7 +38,23 @@ export class EncounterCalibrationService {
       detection: this.detection(heldOut, base),
       invariants: Object.fromEntries(PERTURBATIONS.map(name => [name, this.invariant(name, heldOut, base)])),
       unfoldable: this.cases.unfoldable(benches),
+      contrast_pulls: new Set(contrastCases.map(entry => entry.source)).size,
+      discrimination: this.samples(this.byPull(heldOut, base), this.byPull(contrastCases, contrastRows)),
     };
+  }
+
+  /** A pull's rows across its cards, since the bootstrap resamples whole pulls. */
+  private byPull(cases: readonly HeldOutCase[], rows: readonly HeldOutRow[][]): HeldOutRow[][] {
+    const pulls = new Map<string, HeldOutRow[]>();
+    cases.forEach((entry, index) => pulls.set(entry.source, [...pulls.get(entry.source) ?? [], ...rows[index] ?? []]));
+    return [...pulls.values()];
+  }
+
+  private samples(top: readonly HeldOutRow[][], contrast: readonly HeldOutRow[][]): Record<string, DiscriminationSample> {
+    const topFlags = this.discrimination.flagsByPull(top);
+    const contrastFlags = this.discrimination.flagsByPull(contrast);
+    const families = new Set([...Object.keys(topFlags), ...Object.keys(contrastFlags)]);
+    return Object.fromEntries([...families].map(family => [family, { top: topFlags[family] ?? [], contrast: contrastFlags[family] ?? [] }]));
   }
 
   /** `amber` counts every row flagged amber or red, `red` the red ones. */

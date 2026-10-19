@@ -16,15 +16,18 @@ TestBed.resetTestingModule();
 const DPS_LOAD = { pulls: 60, amber: 3, red: 0 };
 const OPENER: FamilyCalibration = {
   tier: 'amber', pooled: { tests: 200, amber: 10, red: 0 }, upper: { red: 0.02, amber: 0.08 },
-  detection: { trials: 20, detected: 7 }, verdict: { status: 'comparison', cap: 'neutral', reason: NOT_GRADED.tooFew },
+  detection: { trials: 20, detected: 7 }, discrimination: null, verdict: { status: 'comparison', cap: 'neutral', reason: NOT_GRADED.tooFew },
 };
+/** Weaker logs flagged four times as often as top logs. */
+const SEPARATION = { lift: 4, liftLower: 2.5, auc: 0.7 };
 const ENCHANTS: FamilyCalibration = {
   tier: 'amber', pooled: { tests: 1000, amber: 10, red: 0 }, upper: { red: 0.003, amber: 0.018 },
   detection: { trials: 100, detected: 95 }, verdict: { status: 'graded', cap: 'amber', reason: 'Graded amber.' },
+  discrimination: { topPulls: 60, contrastPulls: 30, topRate: 0.01, contrastRate: 0.04, ...SEPARATION },
 };
 
 const index = (over: Partial<CalibrationIndex> = {}): CalibrationIndex => ({
-  registry_hash: hash, encounters: 6, pulls: 60,
+  registry_hash: hash, encounters: 6, pulls: 60, contrast_pulls: 30,
   families: { [DOWNTIME_FAMILY.id]: OPENER, [ENCHANT_MISSING_FAMILY.id]: ENCHANTS },
   specs: {}, demoted: {}, invariants: [], unfoldable: {},
   page: {
@@ -52,13 +55,17 @@ describe('ValidityFeatureService.loadView', () => {
     expect(measurement?.families).toEqual([
       {
         label: DOWNTIME_FAMILY.label, tag: 'Not graded', graded: false, tests: 200, redRate: 0, amberRate: 10 / 200,
-        detection: OPENER.detection, reason: NOT_GRADED.tooFew,
+        detection: OPENER.detection, separation: null, reason: NOT_GRADED.tooFew,
       },
       {
         label: ENCHANT_MISSING_FAMILY.label, tag: 'Amber', graded: true, tests: 1000, redRate: 0, amberRate: 10 / 1000,
-        detection: ENCHANTS.detection, reason: 'Graded amber.',
+        detection: ENCHANTS.detection, separation: SEPARATION, reason: 'Graded amber.',
       },
     ]);
+  });
+
+  it('counts the weaker logs the checks were compared with', async () => {
+    expect((await measurementOf(Results.ok(index())))?.contrastPulls).toBe(30);
   });
 
   it('gives a check no top log was judged on no rate', async () => {

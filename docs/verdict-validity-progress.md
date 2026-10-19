@@ -926,3 +926,61 @@ Branch `claude/verdict-validity-p6f-talent-nodes`, PR against `claude/verdict-va
 - `GearBench.talent_names` arrives with the first full ingest at version 49; the version 47 calibration benches name the diff's talents by id on the page (the harness needs no names).
 - `GearJudgeService.sharedNodes` and `talentNodes` give any later view (pre-fight, coaching) the shared talents with their counts; the pre-fight card still shows the build list only.
 - The registry hash changed (`gear.talent_build` version 2, `talentNodeShare`), so every family renders as a comparison until the next ingest recalibrates.
+
+## Package 7a: contrast cohort for discrimination (done)
+
+Branch `claude/verdict-validity-p7a-contrast`, PR against `claude/verdict-validity-p6f-talent-nodes`.
+
+### Done
+
+- **Cohort file.** `data/specs/<Spec>/contrast/<encounterId>.json` (`ContrastBench`, `CONTRAST_DIR`): the five picked `sources`, `signature` (`INGEST_VERSION:<plan key>`, `ContrastCohortService.signature`), `fetched_at_s`, and per card (`rotation`, `defensive`, `gear`, `burst`) a `ContrastCard { sources, per_parse }` or null. Pruning a retired encounter removes it with the calibration file (`CalibrationRunService.remove`).
+- **Pick** (`ContrastCohortService.pick`): `characterRankings(page: 10)` (`VERDICT_CHOICES.discrimination.rankingsPage`), the middle row of each of five equal slices of the page's readable rows (ranks 911, 931, 951, 971, 991 on a full page); a page under five readable rows gives no cohort. `RANKINGS_Q` takes `$page`, `WclApiService.getRankings` a `page`, `WclProjectionsService.toParseRankings` a `ranksBefore` so a row's `rank` is its place in WCL's whole list. Partitions are tried newest first, as for the top logs.
+- **Same measures.** `ContrastIngestService` (`feature-ingest/`) hands the cohort as the selection to the benches' own transforms through `BenchRegistryService` and keeps each result's `sources` and `per_parse`; healers skip burst. Every per-log value a judge reads is computed per log in the transforms (the plan gate filters cooldowns only, button counts read the plan's lines), so a contrast log carries exactly what a top log carries. A card under five readable logs is null; a transient or permanent card failure writes nothing, so the pair stays due.
+- **Schedule and budget.** After the spec loop and before calibration (`IngestOrchestratorService`), with the meter's last reading. Due: no file, another signature, or fetched 7 days ago or more (`ContrastCohortService.due`), missing first then oldest (`order`), over every spec with a lead bench of a current encounter. The run skips on an unknown budget; each pair needs `spent + estimate <= 300` and `remaining - estimate >= INGEST_POINTS_MARGIN`, the estimate 75 points (five logs at about 14, plus the rankings read) raised to the costliest pair measured this run (one `rateLimitData` read after each pair). A thin page is stored empty and waits its week.
+- **Judging.** `HeldOutCaseService.contrastCases` builds each contrast log's case against the full bench (`LeaveOneOutService.wholeDefensive` / `wholeBurst` keep every window with its index) through the same per-card case constructors and production judges as the held-out logs; talents come from the cohort's own gear card. `EncounterCalibration` gains `contrast_pulls` and `discrimination` (per family, `[tests, flagged]` per pull for held-out top pulls and contrast pulls, a pull's rows summed across its cards; flagged is amber or red). The calibration file's signature now carries the cohort's signature and fetch time.
+- **Measure** (`DiscriminationService.measure`): lift of smoothed flag rates per test, `(flagged + 1) / (tests + 2)`; lower bound the 5th percentile of 1,000 pull-clustered bootstrap resamples (each group resampled on its own, seeded per family and pool through `DistributionService.seededStream`, which the perturbations now share); AUC the Mann-Whitney statistic over each pull's flag share, ties half. Null under 20 contrast pulls with a test of the family (`minContrastPulls`) or with no top pull.
+- **Gate** (`ArmingService.verdict`, fourth argument): after a tone arms on rate and power, null discrimination gives comparison with `NOT_GRADED.contrastPending`, and lift under 2, lower bound under 1.3 or AUC under 0.60 gives comparison with `NOT_GRADED.separates`. Measured on the most specific pool reaching the minimum: spec, then role, then every spec (`CalibrationIndexService.separation`, each pool once). Blue and neutral families are not gated. `FamilyCalibration.discrimination` (every-spec pool) and `CalibrationIndex.contrast_pulls` are in `calibration.json`.
+- **Report.** The job summary starts with the fetch line ("Contrast cohort: k of n due spec and boss pairs fetched for p WCL points; ...") before the validity report, which counts contrast pulls and adds "Lift (lower bound)" and "AUC" columns. The Method page prints "Compared with N weaker logs from the tenth page of the rankings." or "No weaker logs are compared, so no check is graded on a mistake.", and per measured family "Flags weaker logs x times as often as top logs, at least y times. A weaker log is flagged on more of its checks than a top log z% of the time."; the not-graded list and the Method page print the pending or separation reason. E2E checks the caption when a measurement is drawn and knows both reasons.
+- **CI recompute.** `breaches` does not count a grade lost to `contrastPending` as a lost grade: the measurement is missing, the rule did not get worse.
+- **Tests.** `discrimination.spec.ts` (flags per pull, lift and AUC values, seeded bound, the minimum and its boundary), `contrast-cohort.spec.ts` (pick, the 7-day boundary pair, signature, order), `arming.spec.ts` (exactly at every gate grades, just under each sends to comparison, pending, a family that does not arm keeps its own reason), `calibration-index.spec.ts` (graded with separation, pending, one pull short, inseparable, a pending grade is no breach, contrast logs judged against the full bench), `held-out.spec.ts` and `leave-one-out.spec.ts` (contrast cases per card, whole benches), `calibration-report.spec.ts`, `contrast-ingest-service.spec.ts` (with a fake `WclApiService`: page 10 and the picked ranks, the margin boundary pair, null budget, the 300-point cap at four pairs, a fresh pair left alone, a failed card writes nothing, healer without burst, a thin page, a retired encounter; and one composition run through the production `RotationTransformService` over event-builder casts whose weaker logs calibration flags), and the orchestrator spec (contrast after benching with the last reading, its line first in the report).
+
+### The measured report (rules' tone, before the caps)
+
+`DATA_REF=calibration-testdata npm run data:pull && npm run calibrate`: no contrast file is on that branch, so 0 contrast pulls; every rate, detection and invariant is as in 6f. `gear.enchant_missing`, the one family that armed amber, is now a comparison with the pending reason; the armed page reads 0.00 red and 0.00 amber per pull for every role. The recompute passes (exit 0).
+
+### What the first ingest runs do
+
+- Nothing on WCL in this package: no ingest, data workflow or WCL read ran. The cohort is fetched only by the hourly ingest after the stack reaches main.
+- The version 49 re-bench drains each hour to the margin, so no contrast is fetched while it runs. Once the benches are current, each run that ends benching with at least 575 points left fetches about 4 spec and boss pairs (300 / 75); the 360 pairs fill over about 90 such runs, about four days of hourly runs. The weekly refresh then needs about 51 pairs a day, about 13 of the 24 hourly runs.
+- WCL serves each contrast log's report and events through the response store like any other read, so a weekly refresh of an unchanged cohort is mostly store hits.
+- **Consequence for colors (for the user to decide):** every amber or red family stays a comparison as "contrast pending" until its pool reaches 20 contrast pulls with a test of it. The every-spec pool can reach that after one run's four pairs, so the first measurement of a family is global and moves to its role and spec pools as they fill; colors appear only after the benches are current and the cohort has started, and each family keeps or loses them as its own measurement says. Until then no row on the page is amber or red.
+
+### Decisions and deviations
+
+- **Signature is the ingest version and the plan key**, not the registry hash: the cohort's measures depend only on what ingest bakes and on the plan's names. A rule change re-judges the stored cohort at zero WCL cost through the calibration signature (which carries the registry hash), so results follow every rule version without a refetch; the paper's "refreshed on a rule-version change" is met by re-judging rather than refetching.
+- **Lower bound is the 5th percentile** (the low end of a 90% interval), seeded, 1,000 resamples; the top and contrast pulls are resampled separately.
+- **Smoothed rates** keep the lift finite when a family never flags a top log; they pull small samples toward a lift of 1, which errs toward comparison.
+- **AUC on each pull's flag share** among its tests of the family; a pull with no test of the family is in neither group.
+- **Only amber and red families are gated**; blue counts and neutral measurements claim no mistake, so they need no separation, as they need no arming.
+- **Minimum of 20 contrast pulls** per pool (four pairs), a chosen number in `VERDICT_CHOICES.discrimination` with the page, cohort size, resamples and quantile; the registry hash changed with them.
+- **Five logs, no backfill**: the cohort is the five picked rows; an unreadable log costs the card one log, and a card under five readable logs is null for the week.
+- **The page budget still demotes the family adding the most** to a breach; ordering by lowest discrimination is left as it was.
+- `$page` was added to `RANKINGS_Q` and the generated `RankingsQueryVariables` by hand, exactly as codegen emits a trailing nullable `Int`, because `npm run schema:pull` introspects WCL; `characterRankings` takes `page` (WCL's documented argument). The next `schema:pull` regenerates it identically.
+- No `INGEST_VERSION` bump: no top-log bench changed.
+- Not a deviation: the cohort fits the paper's 300-point cap at four pairs per run, it is judged by the production judges against the full bench, and the data shape is the paper's "contrast results" beside the calibration files.
+
+### Drift against 6882b59
+
+- 5.4.8's `refreshIndices` does not pool calibration: `CalibrationRunService.run` does, called by `IngestOrchestratorService.calibrate` after the spec loop (package 5).
+- 5.4.8 calls the calibration file the seventh bench file; the contrast file is an eighth per encounter.
+- 5.4.7's "one analysis costs about 14 points" stands in the comment of `frontend/e2e/wcl-points-needed.ts`.
+
+### Seams stubbed
+
+- Page 2 as a gradient check and the item-level `bracket` probe (5.4.7, reported, not gating) are not built.
+
+### For the next package
+
+- Stage 6 (cost and coaching) acceptance reads contrast logs: `ContrastBench` carries each weaker log's per-log measures and `sources` (rank, amount, duration, item level), and `HeldOutCaseService.contrastCases` judges them; the observed DPS gap is `sources[].amount` against the bench's.
+- A new construct gets contrast with no extra work: its held-out test runs on contrast cases through the same case constructors. A new card must add its transform to `ContrastIngestService`'s cards and its case to `contrastCases`.
+- The registry hash changed (`VERDICT_CHOICES.discrimination`), so every family renders as a comparison until the next ingest recalibrates.

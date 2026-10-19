@@ -45,6 +45,8 @@ const NOT_GRADED_REASON = new RegExp(`^(${[
   'With it, the page would flag top raiders too often',
   'It flags more often when the pull is cut short, the player dies or the lust moves',
   'On this boss it flags top raiders far more often than on the others',
+  'Its check against weaker logs is pending, so it is not known whether it flags them more often than top raiders',
+  'It flags weaker logs barely more often than top raiders',
   'No measurement of how often it flags top raiders matches this version of the check',
 ].join('|')})\\.$`);
 

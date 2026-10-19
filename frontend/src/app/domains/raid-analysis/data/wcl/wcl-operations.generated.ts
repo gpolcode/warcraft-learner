@@ -129,6 +129,7 @@ export type RankingsQueryVariables = Exact<{
   metric: CharacterRankingMetricType;
   partition?: number | null | undefined;
   difficulty: number;
+  page?: number | null | undefined;
 }>;
 
 export type RankingsQuery = { worldData: { encounter: { characterRankings: WclRankingsBlob | null } | null } | null };

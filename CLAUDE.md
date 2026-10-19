@@ -40,7 +40,7 @@ Configuration lives under `frontend/src/environments/`: one `Environment` schema
 | `npm run e2e` | Playwright suite over both pages, run by the E2E workflow on every PR push; never locally, as each run spends one WCL analysis |
 | `npm run lint` | `ng lint` over `src/**` then `eslint` over `scripts/**`, `e2e/**`, and the Playwright config |
 | `npm run knip` | Dead-code check: unused files, exports, and dependencies (`knip.json`) |
-| `npm run calibrate` | Validity harness: recompute calibration from the benches on disk (run `npm run data:pull` first), zero WCL cost; fails on a page-budget breach, a failed invariant or a lost grade. The Calibration workflow runs it on PRs touching the data layer |
+| `npm run calibrate` | Validity harness: recompute calibration from the benches and contrast cohorts on disk (run `npm run data:pull` first), zero WCL cost; fails on a page-budget breach, a failed invariant or a lost grade. The Calibration workflow runs it on PRs touching the data layer |
 | `npm run schema:pull` | Re-introspect the WCL v2 schema and regenerate `wcl-operations.generated.ts` in one run; commit only the regenerated types |
 | `npm run data:pull` | Fetch the shared dataset from `origin/gh-pages` into the ignored working tree; `DATA_REF=calibration-testdata` fetches the calibration subset instead (four specs over three bosses: three at the current ingest version, the healer at version 44, so its benches carry no per-log burst, idle or coverage measures and give those checks no test), for `npm run calibrate` at zero WCL cost |
 | `node scripts/ingest-server.js` | Ingest file server on :3000; interactive ingestion is this plus `ng serve --configuration ingest` in a second terminal |

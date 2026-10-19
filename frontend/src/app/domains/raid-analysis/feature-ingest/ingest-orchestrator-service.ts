@@ -12,6 +12,7 @@ import { TopParseSelectionService } from '../data/analysis/top-parse-selection-s
 import type { EncounterEntry, SpecEntry } from '../data/encounter/encounter.models';
 import type { TopParseSelection } from '../data/wcl/wcl.models';
 import { BenchRegistryService, LEAD_BENCH, type BenchDescriptor } from './bench-registry';
+import { ContrastIngestService } from './contrast-ingest-service';
 import { CurrentRaidsService, BudgetExceededError } from '../data/ingest/current-raids-service';
 import { CalibrationRunService } from '../data/verdict/calibration/calibration-run-service';
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
@@ -101,6 +102,7 @@ export class IngestOrchestratorService {
   private readonly wclCache = inject(NgHttpCachingService);
   private readonly benches = inject(BenchRegistryService).benches;
   private readonly calibration = inject(CalibrationRunService);
+  private readonly contrast = inject(ContrastIngestService);
 
   /** Never rejects: the fire-and-forget app initializer must not see an unhandled rejection. */
   async run(): Promise<void> {
@@ -134,7 +136,10 @@ export class IngestOrchestratorService {
 
     const summary = await this.ingestEachSpec(specs, encounters, version, meter);
     this.printRunSummary(summary, specs.length);
-    publishSummary({ ...summary, report: await this.calibrate() });
+    // After benching, so the cohort spends only what the benches left above the margin.
+    const contrast = await this.contrast.run(encounters, meter.reading, nowS());
+    console.log(`\n${contrast.summary}`);
+    publishSummary({ ...summary, report: `${contrast.summary}\n\n${await this.calibrate()}` });
   }
 
   /** Reads only the files on disk, so it spends no WCL points; an encounter whose benches and rules are unchanged reuses its file. */

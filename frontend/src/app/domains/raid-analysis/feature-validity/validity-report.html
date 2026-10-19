@@ -14,6 +14,11 @@
 
     @if (measurement(); as m) {
       <div class="text-caption text-muted">Measured on {{ m.pulls }} top logs over {{ m.encounters }} spec and boss pairs.</div>
+      @if (m.contrastPulls) {
+        <div class="text-caption text-muted">Compared with {{ m.contrastPulls }} weaker logs from the tenth page of the rankings.</div>
+      } @else {
+        <div class="text-caption text-muted">No weaker logs are compared, so no check is graded on a mistake.</div>
+      }
       @if (!m.current) {
         <p class="text-body mt-2">This measurement covers another version of the checks, so every check shows its numbers without a color.</p>
       }
@@ -53,6 +58,9 @@
             }
             @if (family.detection.trials) {
               <div class="text-body">Caught {{ family.detection.detected }} of {{ family.detection.trials }} planted mistakes.</div>
+            }
+            @if (family.separation; as sep) {
+              <div class="text-body">Flags weaker logs {{ sep.lift | number: '1.1-1' }} times as often as top logs, at least {{ sep.liftLower | number: '1.1-1' }} times. A weaker log is flagged on more of its checks than a top log {{ sep.auc | percent }} of the time.</div>
             }
             <div class="text-body text-muted">{{ family.reason }}</div>
           </div>

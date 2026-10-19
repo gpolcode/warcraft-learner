@@ -11,6 +11,9 @@ const CF_EPSILON = 3e-14;
 const CF_TINY = 1e-300;
 const BISECTION_STEPS = 100;
 const T_SEARCH_MAX = 1e4;
+const HASH_SEED = 2166136261;
+const HASH_PRIME = 16777619;
+const UINT32 = 2 ** 32;
 
 /** The few tail probabilities the decision rules need; d3-array has none. */
 @Injectable({ providedIn: 'root' })
@@ -112,5 +115,18 @@ export class DistributionService {
 
   private nonZero(value: number): number {
     return Math.abs(value) < CF_TINY ? CF_TINY : value;
+  }
+
+  /** Uniform draws in [0, 1) from a mulberry32 stream seeded by FNV-1a over the key, so a recompute draws the same values. */
+  seededStream(key: string): () => number {
+    let state = HASH_SEED;
+    for (const char of key) state = Math.imul(state ^ char.charCodeAt(0), HASH_PRIME) >>> 0;
+    return () => {
+      state = (state + 0x6d2b79f5) >>> 0;
+      let t = state;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / UINT32;
+    };
   }
 }

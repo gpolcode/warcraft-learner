@@ -5,7 +5,7 @@ import { FindingFamily } from '../finding-family.models';
 import { READY_TIME_FAMILY } from '../../rotation/ready-time-judge-service';
 import { COOLDOWN_HOLD_FAMILY } from '../../rotation/cadence-judge-service';
 import { DOWNTIME_FAMILY } from '../../rotation/downtime-judge-service';
-import { FamilyVerdict, FlagTally } from './calibration.models';
+import { Discrimination, FamilyVerdict, FlagTally } from './calibration.models';
 
 const arming = TestBed.inject(ArmingService);
 
@@ -21,48 +21,77 @@ const POWERED = { trials: 10, detected: 10 };
 const WEAK = { trials: 10, detected: 6 };
 const NO_TRIAL = { trials: 0, detected: 0 };
 
+/** Exactly at every discrimination gate: lift 2, its lower bound 1.3, AUC 0.6. */
+const AT_GATES: Discrimination = { topPulls: 100, contrastPulls: 20, topRate: 0.05, contrastRate: 0.1, lift: 2, liftLower: 1.3, auc: 0.6 };
+/** Just under each gate in turn. */
+const UNDER_LIFT = { ...AT_GATES, lift: 1.99 };
+const UNDER_LOWER = { ...AT_GATES, liftLower: 1.29 };
+const UNDER_AUC = { ...AT_GATES, auc: 0.59 };
+
 const tally = (tests: number, amber: number, red = 0): FlagTally => ({ tests, amber, red });
 const graded = (cap: 'red' | 'amber'): FamilyVerdict => ({ status: 'graded', cap, reason: '' });
 
 describe('ArmingService verdict', () => {
   it('arms red on a pool of the red minimum at the red design rate', () => {
-    expect(arming.verdict(READY_TIME_FAMILY, [tally(RED_POOL, AT_RED_DESIGN, AT_RED_DESIGN)], POWERED).cap).toBe('red');
+    expect(arming.verdict(READY_TIME_FAMILY, [tally(RED_POOL, AT_RED_DESIGN, AT_RED_DESIGN)], POWERED, AT_GATES).cap).toBe('red');
   });
 
   it('arms only amber once the red rate is past its bound', () => {
-    expect(arming.verdict(READY_TIME_FAMILY, [tally(RED_POOL, PAST_RED_BOUND, PAST_RED_BOUND)], POWERED).cap).toBe('amber');
+    expect(arming.verdict(READY_TIME_FAMILY, [tally(RED_POOL, PAST_RED_BOUND, PAST_RED_BOUND)], POWERED, AT_GATES).cap).toBe('amber');
   });
 
   it('never arms red on an amber-tier family', () => {
-    expect(arming.verdict(DOWNTIME_FAMILY, [tally(RED_POOL, AT_RED_DESIGN, AT_RED_DESIGN)], POWERED).cap).toBe('amber');
+    expect(arming.verdict(DOWNTIME_FAMILY, [tally(RED_POOL, AT_RED_DESIGN, AT_RED_DESIGN)], POWERED, AT_GATES).cap).toBe('amber');
   });
 
   it('leaves a family a comparison under the amber pool\'s minimum', () => {
-    expect(arming.verdict(DOWNTIME_FAMILY, [tally(UNDER_AMBER_POOL, 0)], POWERED)).toEqual({ status: 'comparison', cap: 'neutral', reason: NOT_GRADED.tooFew });
+    expect(arming.verdict(DOWNTIME_FAMILY, [tally(UNDER_AMBER_POOL, 0)], POWERED, AT_GATES)).toEqual({ status: 'comparison', cap: 'neutral', reason: NOT_GRADED.tooFew });
   });
 
   it('decides on the first pool with enough tests, from the most specific', () => {
     const smallSpecPool = tally(UNDER_AMBER_POOL, UNDER_AMBER_POOL);
 
-    expect(arming.verdict(DOWNTIME_FAMILY, [smallSpecPool, tally(RED_POOL, 0)], POWERED).cap).toBe('amber');
+    expect(arming.verdict(DOWNTIME_FAMILY, [smallSpecPool, tally(RED_POOL, 0)], POWERED, AT_GATES).cap).toBe('amber');
   });
 
   it('withholds a grade from a family that misses the mistakes it claims', () => {
-    expect(arming.verdict(DOWNTIME_FAMILY, [tally(RED_POOL, 0)], WEAK).reason).toBe(NOT_GRADED.weak);
+    expect(arming.verdict(DOWNTIME_FAMILY, [tally(RED_POOL, 0)], WEAK, AT_GATES).reason).toBe(NOT_GRADED.weak);
   });
 
   it('withholds a grade from a family that names mistakes and was never tried on one', () => {
-    expect(arming.verdict(DOWNTIME_FAMILY, [tally(RED_POOL, 0)], NO_TRIAL).status).toBe('comparison');
+    expect(arming.verdict(DOWNTIME_FAMILY, [tally(RED_POOL, 0)], NO_TRIAL, AT_GATES).status).toBe('comparison');
   });
 
-  it('grades a blue family at its tier with no test at all', () => {
-    expect(arming.verdict(COOLDOWN_HOLD_FAMILY, [], NO_TRIAL)).toEqual({ status: 'graded', cap: 'blue', reason: expect.any(String) as string });
+  it('grades a blue family at its tier with no test and no contrast at all', () => {
+    expect(arming.verdict(COOLDOWN_HOLD_FAMILY, [], NO_TRIAL, null)).toEqual({ status: 'graded', cap: 'blue', reason: expect.any(String) as string });
   });
 
   it('arms a family that names no mistake on its rate alone', () => {
     const quiet: FindingFamily = { ...DOWNTIME_FAMILY, injectedMistakes: [] };
 
-    expect(arming.verdict(quiet, [tally(RED_POOL, 0)], NO_TRIAL).cap).toBe('amber');
+    expect(arming.verdict(quiet, [tally(RED_POOL, 0)], NO_TRIAL, AT_GATES).cap).toBe('amber');
+  });
+});
+
+describe('ArmingService discrimination gate', () => {
+  const ARMED = [tally(RED_POOL, 0)];
+
+  it('grades a family exactly at every discrimination gate', () => {
+    expect(arming.verdict(DOWNTIME_FAMILY, ARMED, POWERED, AT_GATES).cap).toBe('amber');
+  });
+
+  it('withholds the grade just under the lift, its lower bound or the AUC', () => {
+    for (const under of [UNDER_LIFT, UNDER_LOWER, UNDER_AUC]) {
+      expect(arming.verdict(DOWNTIME_FAMILY, ARMED, POWERED, under)).toEqual({ status: 'comparison', cap: 'neutral', reason: NOT_GRADED.separates });
+    }
+  });
+
+  it('keeps an armed family a comparison until its contrast is measured', () => {
+    expect(arming.verdict(DOWNTIME_FAMILY, ARMED, POWERED, null)).toEqual({ status: 'comparison', cap: 'neutral', reason: NOT_GRADED.contrastPending });
+  });
+
+  it('gives a family that does not arm its own reason before the contrast is asked', () => {
+    expect(arming.verdict(DOWNTIME_FAMILY, [tally(UNDER_AMBER_POOL, 0)], POWERED, null).reason).toBe(NOT_GRADED.tooFew);
   });
 });
 

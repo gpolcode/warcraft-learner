@@ -5,7 +5,8 @@ import { FindingFamily } from '../finding-family.models';
 import { FINDING_REGISTRY } from '../finding-registry';
 import { ToneLevel } from '../tone.models';
 import { VERDICT_CHOICES } from '../verdict-choices';
-import { DetectionTally, EncounterCalibration, FamilyCalibration, FamilyVerdict, FlagTally, PageLoad } from './calibration.models';
+import { DetectionTally, Discrimination, EncounterCalibration, FamilyCalibration, FamilyVerdict, FlagTally, PageLoad } from './calibration.models';
+import { DiscriminationService } from './discrimination-service';
 
 const ROLES: readonly SpecRole[] = ['dps', 'tank', 'healer'];
 const CHOICES = VERDICT_CHOICES.calibration;
@@ -18,6 +19,8 @@ export const NOT_GRADED = {
   page: 'With it, the page would flag top raiders too often.',
   invariant: 'It flags more often when the pull is cut short, the player dies or the lust moves.',
   bench: 'On this boss it flags top raiders far more often than on the others.',
+  contrastPending: 'Its check against weaker logs is pending, so it is not known whether it flags them more often than top raiders.',
+  separates: 'It flags weaker logs barely more often than top raiders.',
 } as const;
 
 /** A tone-level tally: how many tests, and how many flagged at that tone. */
@@ -30,6 +33,7 @@ interface ToneEvidence {
 @Injectable({ providedIn: 'root' })
 export class ArmingService {
   private readonly distribution = inject(DistributionService);
+  private readonly discrimination = inject(DiscriminationService);
 
   add(a: FlagTally, b: FlagTally | undefined): FlagTally {
     return b ? { tests: a.tests + b.tests, amber: a.amber + b.amber, red: a.red + b.red } : a;
@@ -56,28 +60,38 @@ export class ArmingService {
     return pooled;
   }
 
-  /** The pooled figures of every family over every spec. */
-  families(encounters: readonly EncounterCalibration[]): Record<string, FamilyCalibration> {
+  /** The pooled figures of every family over every spec; `discriminations` are the same pool's. */
+  families(encounters: readonly EncounterCalibration[], discriminations: Readonly<Record<string, Discrimination | null>>): Record<string, FamilyCalibration> {
     const pooled = this.pool(encounters);
     const detection = this.poolDetection(encounters);
     return Object.fromEntries(FINDING_REGISTRY.map(family => {
       const tally = pooled[family.id] ?? NONE;
       const found = detection[family.id] ?? { trials: 0, detected: 0 };
+      const discrimination = discriminations[family.id] ?? null;
       return [family.id, {
-        tier: family.tier, pooled: tally, detection: found,
+        tier: family.tier, pooled: tally, detection: found, discrimination,
         upper: { red: this.upper(tally.red, tally.tests), amber: this.upper(tally.amber, tally.tests) },
-        verdict: this.verdict(family, [tally], found),
+        verdict: this.verdict(family, [tally], found, discrimination),
       }];
     }));
   }
 
-  /** `pools` run from the most specific to the global one; each tone is decided on the first pool with its minimum tests. */
-  verdict(family: FindingFamily, pools: readonly FlagTally[], detection: DetectionTally): FamilyVerdict {
+  /** Per family on one pool of encounters; null for a family no tone arms on, since only a mistake claim needs to separate. `seed` names the pool. */
+  discriminations(encounters: readonly EncounterCalibration[], seed: string): Record<string, Discrimination | null> {
+    return Object.fromEntries(FINDING_REGISTRY.map(family => [family.id, family.tier === 'blue' || family.tier === 'neutral'
+      ? null
+      : this.discrimination.measure(this.discrimination.pool(encounters, family.id), `${family.id}|${seed}`)]));
+  }
+
+  /** `pools` run from the most specific to the global one; each tone is decided on the first pool with its minimum tests. A tone that arms still needs the family to separate contrast logs from top logs. */
+  verdict(family: FindingFamily, pools: readonly FlagTally[], detection: DetectionTally, discrimination: Discrimination | null): FamilyVerdict {
     if (family.tier === 'blue' || family.tier === 'neutral') return { status: 'graded', cap: family.tier, reason: 'Claims a count of top raiders, not a mistake.' };
     const amber = this.evidence(pools, 'amber');
     const red = this.evidence(pools, 'red');
     const amberArms = this.arms(amber, 'amber') && this.powered(family, detection, 'amber');
     if (!amberArms) return { status: 'comparison', cap: 'neutral', reason: this.whyNot(family, amber, 'amber', detection) };
+    const inseparable = this.inseparable(discrimination);
+    if (inseparable) return { status: 'comparison', cap: 'neutral', reason: inseparable };
     const redArms = family.tier === 'red' && this.arms(red, 'red') && this.powered(family, detection, 'red');
     return { status: 'graded', cap: redArms ? 'red' : 'amber', reason: redArms ? 'Graded red.' : 'Graded amber.' };
   }
@@ -156,6 +170,12 @@ export class ArmingService {
   private powered(family: FindingFamily, detection: DetectionTally, tone: 'red' | 'amber'): boolean {
     if (!family.injectedMistakes.length) return true;
     return detection.trials > 0 && detection.detected / detection.trials >= CHOICES.detectionFloor[tone];
+  }
+
+  /** Why a family that arms still may not color, or null once it separates contrast logs from top logs. */
+  private inseparable(discrimination: Discrimination | null): string | null {
+    if (!discrimination) return NOT_GRADED.contrastPending;
+    return this.discrimination.separates(discrimination) ? null : NOT_GRADED.separates;
   }
 
   private whyNot(family: FindingFamily, amber: ToneEvidence | null, tone: 'amber', detection: DetectionTally): string {

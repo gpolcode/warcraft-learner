@@ -28,12 +28,16 @@ export interface ValidityFamilyRow {
   redRate: number | null;
   amberRate: number | null;
   detection: { trials: number; detected: number };
+  /** How much more often it flags weaker logs; null before enough of them are compared, or for a count. */
+  separation: { lift: number; liftLower: number; auc: number } | null;
   reason: string;
 }
 
 export interface ValidityMeasurement {
   encounters: number;
   pulls: number;
+  /** Weaker logs judged against the full top-log benches. */
+  contrastPulls: number;
   /** False when the checks changed after the measurement, which leaves every check without a color. */
   current: boolean;
   roles: ValidityRoleRow[];
@@ -63,6 +67,7 @@ export class ValidityFeatureService {
     return {
       encounters: index.encounters,
       pulls: index.pulls,
+      contrastPulls: index.contrast_pulls,
       current: index.registry_hash === this.hashes.registryHash(),
       roles: (Object.entries(index.page.armed) as [SpecRole, PageLoad][])
         .filter(([, load]) => load.pulls > 0)
@@ -75,7 +80,7 @@ export class ValidityFeatureService {
   }
 
   private familyRow(label: string, family: FamilyCalibration): ValidityFamilyRow {
-    const { pooled, verdict } = family;
+    const { pooled, verdict, discrimination } = family;
     const graded = verdict.status === 'graded';
     return {
       label, graded,
@@ -84,6 +89,7 @@ export class ValidityFeatureService {
       redRate: pooled.tests ? pooled.red / pooled.tests : null,
       amberRate: pooled.tests ? pooled.amber / pooled.tests : null,
       detection: family.detection,
+      separation: discrimination ? { lift: discrimination.lift, liftLower: discrimination.liftLower, auc: discrimination.auc } : null,
       reason: verdict.reason,
     };
   }

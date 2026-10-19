@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CalibrationIndex, FlagTally, PageLoad } from './calibration.models';
+import { CalibrationIndex, Discrimination, FlagTally, PageLoad } from './calibration.models';
 
 const RATE_DIGITS = 3;
+const LIFT_DIGITS = 2;
 
 /** The validity report: the per-role page load and each family's measured rates and verdict, as Markdown for a job summary. */
 @Injectable({ providedIn: 'root' })
@@ -10,7 +11,7 @@ export class CalibrationReportService {
     return [
       '## Verdict validity',
       '',
-      `${index.encounters} encounters, ${index.pulls} held-out top pulls.${this.unfoldable(index)}`,
+      `${index.encounters} encounters, ${index.pulls} held-out top pulls, ${index.contrast_pulls} contrast pulls.${this.unfoldable(index)}`,
       '',
       '| Role | Held-out pulls | Red per pull, rules | Amber per pull, rules | Red per pull, armed | Amber per pull, armed |',
       '|---|---|---|---|---|---|',
@@ -19,12 +20,13 @@ export class CalibrationReportService {
         return `| ${role} | ${measured.pulls} | ${this.perPull(measured, 'red')} | ${this.perPull(measured, 'amber')} | ${this.perPull(armed, 'red')} | ${this.perPull(armed, 'amber')} |`;
       }),
       '',
-      '| Family | Tests | Red rate | Amber rate | Red bound | Amber bound | Detection | Verdict |',
-      '|---|---|---|---|---|---|---|---|',
+      '| Family | Tests | Red rate | Amber rate | Red bound | Amber bound | Detection | Lift (lower bound) | AUC | Verdict |',
+      '|---|---|---|---|---|---|---|---|---|---|',
       ...Object.entries(index.families).map(([id, family]) => [
         id, family.pooled.tests, this.rate(family.pooled, 'red'), this.rate(family.pooled, 'amber'),
         family.upper.red.toFixed(RATE_DIGITS), family.upper.amber.toFixed(RATE_DIGITS),
         family.detection.trials ? `${family.detection.detected} of ${family.detection.trials}` : 'none',
+        ...this.separation(family.discrimination ?? null),
         `${family.verdict.status}, ${family.verdict.cap}: ${family.verdict.reason}`,
       ].join(' | ')).map(row => `| ${row} |`),
       '',
@@ -38,6 +40,12 @@ export class CalibrationReportService {
 
   private rate(tally: FlagTally, tone: 'red' | 'amber'): string {
     return tally.tests ? (tally[tone] / tally.tests).toFixed(RATE_DIGITS) : 'none';
+  }
+
+  private separation(discrimination: Discrimination | null): [string, string] {
+    if (!discrimination) return ['none', 'none'];
+    const { lift, liftLower, auc, contrastPulls } = discrimination;
+    return [`${lift.toFixed(LIFT_DIGITS)} (${liftLower.toFixed(LIFT_DIGITS)}) over ${contrastPulls} pulls`, auc.toFixed(LIFT_DIGITS)];
   }
 
   private unfoldable(index: CalibrationIndex): string {
