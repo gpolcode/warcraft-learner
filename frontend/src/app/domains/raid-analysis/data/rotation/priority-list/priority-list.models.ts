@@ -40,6 +40,8 @@ export interface CastMoment {
   index: number;
   target: string | null;
   variables?: ReadonlyMap<string, Range>;
+  /** Set, an aura that changed this long or less before the moment reads unknown: the player could not yet have reacted to it. */
+  reactS?: number;
 }
 
 export interface FactContext {
@@ -70,6 +72,8 @@ export interface FactContext {
   resourceChanges: (resourceType: number) => readonly ResourceChange[];
   /** The global cooldown a cast id spends by the list's spell data, null for an id the list never names. */
   gcd: (spellId: number) => number | null;
+  /** Aligned with `casts`: a hardcast's begincast, where SimC chose it, else the cast itself. */
+  castStartsS: () => readonly number[];
   /** Observed cast time over the base one, from every hardcast the list's spell data times. */
   hasteFactors: () => readonly (readonly [atS: number, factor: number])[];
 }

@@ -1,10 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { applyBuff, cast, damage, removeBuff } from '../../../../../../testing/builders/events';
+import { applyBuff, beginCast, cast, damage, removeBuff } from '../../../../../../testing/builders/events';
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
-import { BACKSTAB, EVISCERATE, SHADOW_DANCE } from '../../../../../../testing/spell-ids';
+import { BACKSTAB, EVISCERATE, SHADOW_DANCE, WRATH } from '../../../../../../testing/spell-ids';
 import type { PlanLine } from '../../plan/plan.models';
 import type { WclEvent } from '../../wcl/wcl.models';
+import { VERDICT_CHOICES } from '../../verdict/verdict-choices';
 import { ListCheckService, LogReading } from './list-check-service';
 import { LogEvents, factContext, priorityList } from './priority-list-harness';
 
@@ -13,6 +14,13 @@ const COMBO_POINTS = 4;
 const EVISCERATE_COST = 35;
 const UNSEEN_BLADE_ENTRY = 117100;
 const SHADOWSTRIKE = 185438;
+const WRATH_CAST_S = 1.5;
+const LOG_TICK_S = 0.001;
+const PRESS_S = 10;
+/** One log tick inside the reaction allowance before the press. */
+const UNSEEN_S = PRESS_S - VERDICT_CHOICES.reactionS + LOG_TICK_S;
+/** Exactly the allowance before the press. */
+const SEEN_S = PRESS_S - VERDICT_CHOICES.reactionS;
 const checks = TestBed.inject(ListCheckService);
 
 const list = (lines: PlanLine[], over: { eviscerateCooldown?: number } = {}) => priorityList({
@@ -22,6 +30,7 @@ const list = (lines: PlanLine[], over: { eviscerateCooldown?: number } = {}) => 
     backstab: planSpell('Backstab', [BACKSTAB], { gcd: 1 }),
     shadowstrike: planSpell('Shadowstrike', [SHADOWSTRIKE], { gcd: 1 }),
     shadow_dance: planSpell('Shadow Dance', [SHADOW_DANCE], { gcd: 0 }),
+    wrath: planSpell('Wrath', [WRATH], { cast_time: WRATH_CAST_S }),
   },
   talents: { 'talent.unseen_blade': { name: 'Unseen Blade', entries: [UNSEEN_BLADE_ENTRY] } },
 });
@@ -183,6 +192,60 @@ describe('ListCheckService order check', () => {
   it('reads no order at a cast off the global cooldown', () => {
     const lines: PlanLine[] = [{ action: 'shadow_dance', terms: [] }, ...ORDER];
     expect(orderAt(read(lines, [cast(SHADOW_DANCE, 10), EVISCERATE_PRESSED]), 10)).toBeUndefined();
+  });
+});
+
+describe('ListCheckService reaction allowance', () => {
+  const ON_DANCE: PlanLine[] = [{ action: 'eviscerate', terms: ['buff.shadow_dance.up'] }];
+  const ORDER: PlanLine[] = [...ON_DANCE, { action: 'backstab', terms: [] }];
+  const droppedAt = (atS: number) => ({ buffs: [applyBuff(SHADOW_DANCE, 1), removeBuff(SHADOW_DANCE, atS)] });
+  const appliedAt = (atS: number) => ({ buffs: [applyBuff(SHADOW_DANCE, atS)] });
+  const castOf = (reading: LogReading) => reading.casts.get('eviscerate')?.[0];
+  const skipAt = (reading: LogReading) => reading.order.find(check => check.atS === PRESS_S);
+
+  it('leaves a press not judged when its line fails only on an aura that changed inside the allowance', () => {
+    expect(castOf(read(ON_DANCE, [pooled(EVISCERATE, PRESS_S, 5)], droppedAt(UNSEEN_S)))).toMatchObject({ verdict: 'unjudged' });
+  });
+
+  it('puts that press off the list when the aura changed exactly the allowance before it', () => {
+    expect(castOf(read(ON_DANCE, [pooled(EVISCERATE, PRESS_S, 5)], droppedAt(SEEN_S)))).toMatchObject({ verdict: 'off' });
+  });
+
+  it('keeps a press on the list when its line holds on an aura that changed inside the allowance', () => {
+    expect(castOf(read(ON_DANCE, [pooled(EVISCERATE, PRESS_S, 5)], appliedAt(UNSEEN_S)))).toMatchObject({ verdict: 'on' });
+  });
+
+  it('charges no skip when the higher line holds only on an aura that changed inside the allowance', () => {
+    const casts = [pooled(BACKSTAB, PRESS_S, 5), pooled(EVISCERATE, 30, 5)];
+    expect(skipAt(read(ORDER, casts, appliedAt(UNSEEN_S)))).toBeUndefined();
+  });
+
+  it('charges the skip when that aura changed exactly the allowance before the press', () => {
+    const casts = [pooled(BACKSTAB, PRESS_S, 5), pooled(EVISCERATE, 30, 5)];
+    expect(skipAt(read(ORDER, casts, appliedAt(SEEN_S)))).toMatchObject({ expected: 'eviscerate', pressed: 'backstab' });
+  });
+});
+
+describe('ListCheckService hardcasts', () => {
+  const ON_DANCE: PlanLine[] = [{ action: 'wrath', terms: ['buff.shadow_dance.up'] }];
+  const BEGUN_S = 10;
+  const DONE_S = BEGUN_S + WRATH_CAST_S;
+  /** Dance drops while the cast bar fills. */
+  const dance = { buffs: [applyBuff(SHADOW_DANCE, 1), removeBuff(SHADOW_DANCE, BEGUN_S + WRATH_CAST_S / 2)] };
+  const wrathOf = (reading: LogReading) => reading.casts.get('wrath')?.[0];
+
+  it('judges a hardcast at its begincast, where the list chose it', () => {
+    expect(wrathOf(read(ON_DANCE, [beginCast(WRATH, BEGUN_S), cast(WRATH, DONE_S)], dance))).toMatchObject({ atS: BEGUN_S, verdict: 'on' });
+  });
+
+  it('reads the last press as the one before the begincast, not one pressed while the cast bar filled', () => {
+    const lines: PlanLine[] = [{ action: 'wrath', terms: ['!prev.shadow_dance'] }];
+    const casts = [beginCast(WRATH, BEGUN_S), cast(SHADOW_DANCE, BEGUN_S + WRATH_CAST_S / 2), cast(WRATH, DONE_S)];
+    expect(wrathOf(read(lines, casts))).toMatchObject({ verdict: 'on' });
+  });
+
+  it('judges an instant cast of the same spell at the cast itself', () => {
+    expect(wrathOf(read(ON_DANCE, [cast(WRATH, DONE_S)], dance))).toMatchObject({ atS: DONE_S, verdict: 'off' });
   });
 });
 

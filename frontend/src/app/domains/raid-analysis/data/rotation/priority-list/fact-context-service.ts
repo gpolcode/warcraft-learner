@@ -81,6 +81,7 @@ export class FactContextService {
       resourcePool: this.perKey((type: number) => this.resourceIndex(casts, type)),
       resourceChanges: this.perKey((type: number) => this.changeIndex(input.resources, type)),
       gcd: id => gcds().get(id) ?? null,
+      castStartsS: this.lazy(() => this.castStartsS(input.casts, casts, id => gcds().get(id))),
       hasteFactors: this.lazy(() => this.hasteFactors(list, input.casts)),
     };
   }
@@ -163,6 +164,11 @@ export class FactContextService {
       span[1] = atS;
     }
     return [...spans.values()];
+  }
+
+  private castStartsS(events: readonly TimedEvent[], casts: readonly TimedEvent[], gcdOf: (id: number) => number | undefined): number[] {
+    const starts = new Map(this.projections.castStarts([...events].sort((a, b) => a.atS - b.atS), gcdOf).map(({ cast, startS }) => [cast, startS]));
+    return casts.map(event => starts.get(event) ?? event.atS);
   }
 
   private hasteFactors(list: PriorityList, events: TimedEvent[]): [number, number][] {

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { applyBuff, beginCast, cast, damage, removeBuff } from '../../../../../../testing/builders/events';
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
-import { BLADESTORM, BLADESTORM_HERO, BLOODLUST, SHADOW_DANCE, STARFIRE } from '../../../../../../testing/spell-ids';
+import { BACKSTAB, BLADESTORM, BLADESTORM_HERO, BLOODLUST, SHADOW_DANCE, STARFIRE, VANISH } from '../../../../../../testing/spell-ids';
 import { FactContextService } from './fact-context-service';
 import { factContext, priorityList } from './priority-list-harness';
 
@@ -12,11 +12,15 @@ const BERSERKING = 26297;
 const RAGE = 1;
 const COMBO_POINTS = 4;
 const STARFIRE_S = 2;
+const BEGUN_S = 10;
+const DONE_S = BEGUN_S + STARFIRE_S;
 const list = priorityList({
   spells: {
     bladestorm: planSpell('Bladestorm', [BLADESTORM, BLADESTORM_HERO]),
     shadow_dance: planSpell('Shadow Dance', [DANCE_PASSIVE, SHADOW_DANCE]),
     starfire: planSpell('Starfire', [STARFIRE], { cast_time: STARFIRE_S }),
+    backstab: planSpell('Backstab', [BACKSTAB], { gcd: 1 }),
+    vanish: planSpell('Vanish', [VANISH], { gcd: 0 }),
   },
 });
 const contexts = TestBed.inject(FactContextService);
@@ -62,5 +66,20 @@ describe('FactContextService', () => {
   it('reads haste off each hardcast as its logged time over its base time', () => {
     const ctx = factContext(list, { casts: [beginCast(STARFIRE, 10), cast(STARFIRE, 11.5)] });
     expect(ctx.hasteFactors()).toEqual([[11.5, 1.5 / STARFIRE_S]]);
+  });
+
+  it('starts a hardcast at its begincast and an instant cast at itself', () => {
+    const ctx = factContext(list, { casts: [cast(BACKSTAB, 5), beginCast(STARFIRE, BEGUN_S), cast(STARFIRE, DONE_S)] });
+    expect(ctx.castStartsS()).toEqual([5, BEGUN_S]);
+  });
+
+  it('keeps a cast pending through a press off the global cooldown', () => {
+    const ctx = factContext(list, { casts: [beginCast(STARFIRE, BEGUN_S), cast(VANISH, BEGUN_S + 1), cast(STARFIRE, DONE_S)] });
+    expect(ctx.castStartsS()).toEqual([BEGUN_S + 1, BEGUN_S]);
+  });
+
+  it('starts a cast at itself once a press on the global cooldown ended the begincast before it', () => {
+    const ctx = factContext(list, { casts: [beginCast(STARFIRE, BEGUN_S), cast(BACKSTAB, BEGUN_S + 1), cast(STARFIRE, DONE_S)] });
+    expect(ctx.castStartsS()).toEqual([BEGUN_S + 1, DONE_S]);
   });
 });

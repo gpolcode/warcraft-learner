@@ -51,12 +51,12 @@ export class PoolFacts implements FactReader {
     return { amount: [Math.max(0, Math.min(lo, hi)), Math.min(max, Math.max(lo, hi))], max };
   }
 
-  /** Measured from what the last cast left to what this one found, so procs count and only a cast that reports the pool reads it. */
+  /** Measured from what the last cast left to what this one found at its own event, which for a hardcast is after the moment, so procs count and only a cast that reports the pool reads it. */
   private regen(moment: CastMoment, type: number, ctx: FactContext): Range {
     const own = this.contexts.pool(moment.event, type);
     const previous = ctx.resourcePool(type).filter(row => row[4] < moment.index).pop();
     if (!own || !previous) return UNKNOWN;
-    const perS = (own.before - previous[2]) / (moment.atS - previous[0]);
+    const perS = (own.before - previous[2]) / (moment.event.atS - previous[0]);
     return [perS, perS];
   }
 }
