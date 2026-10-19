@@ -2,6 +2,7 @@ import { InjectionToken } from '@angular/core';
 import { DataSource } from '../data-source/data-source';
 import { EncounterGearStats } from '../encounter/encounter.models';
 import { BenchHeader } from '../analysis/bench-pipeline-service';
+import { SpecTalents } from './talent.models';
 
 /** How many top logs took one talent entry at one rank. */
 export interface TalentNodeCount {
@@ -24,6 +25,8 @@ export interface GearBench extends BenchHeader {
   /** Counted over the `talent_sample_count` logs with a readable talent tree. */
   talent_nodes: TalentNodeCount[];
   talent_sample_count: number;
+  /** The spec's talents by entry id, so the page names a talent diff without reading the talent dump; empty when the dump failed to load. */
+  talent_names: SpecTalents;
   per_parse: GearParseMeasures[];
   trinket_sets: EncounterGearStats['trinket_sets'];
   enchants: EncounterGearStats['enchants'];

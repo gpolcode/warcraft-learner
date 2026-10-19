@@ -3,7 +3,7 @@ import { EncounterGearStats } from '../encounter/encounter.models';
 import { SpecTalents, TalentEntry, TalentDiff } from './talent.models';
 import { TalentPick } from './talent-key-service';
 import { TalentKeyService } from './talent-key-service';
-import { EnchantItem, EnchantLeader, GearJudgeService } from './gear-judge-service';
+import { EnchantItem, EnchantLeader, GearJudgeService, TalentVerdict } from './gear-judge-service';
 import { ENVIRONMENT } from '../../../../../environments/environment-token';
 
 @Injectable({ providedIn: 'root' })
@@ -32,6 +32,17 @@ export class GearComparisonService {
       dropped: (b.diff ?? []).filter(d => d.kind === 'dropped').map(d => d.talent),
       ranks: (b.diff ?? []).filter(d => d.kind === 'rank'),
     }));
+  }
+
+  /** The player's differences from the shared talents, each with how many top logs take it; null when nothing differs. */
+  buildTalentNodeDiff(verdict: TalentVerdict | null, talents: SpecTalents | null): TalentNodeDiff | null {
+    if (!verdict || verdict.onPlan) return null;
+    const named = (entryId: number, k: number): TalentNodeRow => ({ talent: this.talentOf(talents ?? {}, entryId), share: `${k} of ${verdict.n} top logs` });
+    return {
+      missing: verdict.missed.filter(node => node.playerRank === null).map(node => named(node.entryId, node.k)),
+      ranks: verdict.missed.flatMap(node => node.playerRank === null ? [] : [{ ...named(node.entryId, node.k), rank: node.playerRank, standardRank: node.rank }]),
+      instead: verdict.instead.map(pick => named(pick.entryId, pick.k)),
+    };
   }
 
   private talentOf(talents: SpecTalents, entryId: number): TalentEntry {
@@ -130,6 +141,20 @@ export interface TrinketSetRow {
   isPlayer: boolean;
   label: string;
   items: { id: number; name: string; icon: string }[];
+}
+
+/** A talent with how many of the top logs take it at the shared rank, or at the player's own rank for a pick taken instead. */
+interface TalentNodeRow {
+  talent: TalentEntry;
+  share: string;
+  rank?: number;
+  standardRank?: number;
+}
+
+export interface TalentNodeDiff {
+  missing: TalentNodeRow[];
+  ranks: TalentNodeRow[];
+  instead: TalentNodeRow[];
 }
 
 interface TalentSpend {

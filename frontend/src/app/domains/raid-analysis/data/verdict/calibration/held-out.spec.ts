@@ -172,11 +172,11 @@ describe('GearHeldOutService', () => {
     const rows = judgeGear(gearLog());
 
     expect(rows.every(row => row.level === 'neutral')).toBe(true);
-    expect(levelsOf(rows, 'gear.talent_build')).toEqual(['neutral']);
+    expect(levelsOf(rows, 'gear.talent_build')).toEqual(['neutral', 'neutral']);
   });
 
-  it('counts another build as a blue count of top raiders', () => {
-    expect(levelsOf(judgeGear(gearLog({ talent_key: 'v3:3.1' })), 'gear.talent_build')).toEqual(['blue']);
+  it('makes each talent the others share one test, blue where the log takes another', () => {
+    expect(levelsOf(judgeGear(gearLog({ talent_key: 'v3:1.1,3.1' })), 'gear.talent_build')).toEqual(['neutral', 'blue']);
   });
 });
 

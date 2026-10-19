@@ -22,6 +22,8 @@ export const VERDICT_CHOICES = {
   },
   /** A missing enchant is a loss only once this share of the top logs agree on the slot's enchant, which shows the slot takes one. */
   enchantLeaderShare: 0.5,
+  /** A talent node is shared once this share of the top logs with a readable tree take it at one rank; each such node flags a held-out top log at most 1 - share of the time. */
+  talentNodeShare: 0.9,
   /** A lust later than this is mid-fight: the opener's cooldowns, pressed at the pull, are not what overlaps it. */
   midFightLustS: 30,
   /** A cooldown wants Bloodlust once this share of the top logs that lusted mid-fight had it up during their lust. */

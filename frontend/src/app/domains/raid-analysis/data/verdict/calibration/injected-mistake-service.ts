@@ -11,6 +11,8 @@ import { PullModelService } from '../../analysis/pull-model-service';
 import { DeadSpan } from '../../analysis/death-timeline-service';
 import { BloodlustJudgeService } from '../../rotation/bloodlust-judge-service';
 import { AuraSpan } from '../../defensive/defensive-data-source';
+import { GearJudgeService } from '../../gear/gear-judge-service';
+import { TalentKeyService } from '../../gear/talent-key-service';
 
 type RotationCase = Extract<HeldOutCase, { card: 'rotation' }>;
 type DefensiveCase = Extract<HeldOutCase, { card: 'defensive' }>;
@@ -18,8 +20,8 @@ type GearCase = Extract<HeldOutCase, { card: 'gear' }>;
 type BurstCase = Extract<HeldOutCase, { card: 'burst' }>;
 
 const CHOICES = VERDICT_CHOICES.calibration;
-/** An entry id no talent tree uses, so the swapped build matches no top log's. */
-const SWAPPED_ENTRY = 'x';
+/** An entry id no talent tree uses, so the swapped-in pick matches no top log's. */
+const SWAPPED_ENTRY = 0;
 /** A press opens its aura within a second either way, as the effect spans pair them. */
 const OPENED_WITHIN_S = 1;
 
@@ -32,6 +34,8 @@ export class InjectedMistakeService {
   private readonly pullModel = inject(PullModelService);
   private readonly rows = inject(HeldOutRowService);
   private readonly lust = inject(BloodlustJudgeService);
+  private readonly gear = inject(GearJudgeService);
+  private readonly talentKeys = inject(TalentKeyService);
 
   /** Each way the mistake fits this log; none when the log has nothing it applies to, or the bench bakes nothing it changes. */
   variants(mistake: InjectedMistake, heldOut: HeldOutCase): HeldOutCase[] {
@@ -181,11 +185,20 @@ export class InjectedMistakeService {
     });
   }
 
+  /** The log's pick of the first talent the other top logs share is swapped for a pick no tree has, keeping its point count. */
+  private swappedTalent(heldOut: GearCase): GearCase[] {
+    const { picks } = heldOut;
+    const taken = this.talentKeys.parseTalentKey(picks.talent_key);
+    const shared = this.gear.sharedNodes(this.gear.talentReference(heldOut.fold))
+      .find(node => taken.some(pick => pick.entryId === node.entry_id && pick.rank === node.rank));
+    if (!shared) return [];
+    const swapped = taken.map(pick => pick.entryId === shared.entry_id ? { entryId: SWAPPED_ENTRY, rank: pick.rank } : pick);
+    return [{ ...heldOut, picks: { ...picks, talent_key: this.talentKeys.keyOf(swapped) } }];
+  }
+
   private gearVariants(mistake: InjectedMistake, heldOut: GearCase): GearCase[] {
     const { picks } = heldOut;
-    if (mistake === 'swap-talent-node') {
-      return picks.talent_key ? [{ ...heldOut, picks: { ...picks, talent_key: `${picks.talent_key},${SWAPPED_ENTRY}.1` } }] : [];
-    }
+    if (mistake === 'swap-talent-node') return this.swappedTalent(heldOut);
     if (mistake !== 'remove-enchant') return [];
     const [slot] = Object.keys(picks.enchant_ids);
     if (slot === undefined) return [];

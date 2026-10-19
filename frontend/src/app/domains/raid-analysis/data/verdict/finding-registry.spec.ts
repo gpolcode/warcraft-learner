@@ -101,7 +101,8 @@ const PRODUCING_SCENARIOS: Record<string, () => Promise<readonly { family?: stri
   'defensive.dead_in_window': async () => [TestBed.inject(DefensiveJudgeService).deathVerdict(15)],
   'gear.talent_build': async () => {
     const judge = TestBed.inject(GearJudgeService);
-    return [judge.talentVerdict('v3:12.1', [{ key: 'v3:11.1', label: 'Most common build' }], judge.talentReference(GEAR_TOP_LOGS)) ?? {}];
+    const keys = GEAR_TOP_LOGS.map(log => log.talent_key);
+    return [judge.talentVerdict('v3:12.1', judge.talentReference({ talent_nodes: judge.talentNodes(keys), talent_sample_count: judge.readableTrees(keys) })) ?? {}];
   },
   'gear.trinket_pair': async () => {
     const judge = TestBed.inject(GearJudgeService);

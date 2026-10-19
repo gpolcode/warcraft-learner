@@ -278,29 +278,6 @@ describe('nameEnchantsByItem', () => {
   });
 });
 
-describe('talentNodeCounts', () => {
-  const SHARED_ENTRY = 650;
-  const RANKED_ENTRY = 651;
-  const gearWith = (talentKey: string): ParseGear => ({ ...svc['toParseGear']({ talent_key: talentKey }, parseRanking(), 1) });
-
-  it('counts each entry at each rank over the logs, splitting one entry taken at two ranks', () => {
-    const counts = svc['talentNodeCounts']([
-      gearWith(`v3:${SHARED_ENTRY}.1,${RANKED_ENTRY}.1`),
-      gearWith(`v3:${SHARED_ENTRY}.1,${RANKED_ENTRY}.2`),
-    ]);
-
-    expect(counts).toEqual([
-      { entry_id: SHARED_ENTRY, rank: 1, count: 2 },
-      { entry_id: RANKED_ENTRY, rank: 1, count: 1 },
-      { entry_id: RANKED_ENTRY, rank: 2, count: 1 },
-    ]);
-  });
-
-  it('counts nothing for a log whose talent tree was unreadable', () => {
-    expect(svc['talentNodeCounts']([gearWith('')])).toEqual([]);
-  });
-});
-
 describe('GearTransformService (live, in-browser)', () => {
   it('bakes each log\'s picks in source order and the talent counts over the logs with a talent tree', async () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, talents: talentDataFake, enchantItems: enchantItemsFake }) });
@@ -311,6 +288,7 @@ describe('GearTransformService (live, in-browser)', () => {
     expect(bench.value.per_parse[0]).toEqual({ talent_key: 'v3:650.1', trinket_ids: [100], enchant_ids: { 15: SOPHIC_ENCHANT } });
     expect(bench.value.talent_sample_count).toBe(MIN_SAMPLE_COUNT);
     expect(bench.value.talent_nodes).toEqual([{ entry_id: 650, rank: 1, count: MIN_SAMPLE_COUNT }]);
+    expect(bench.value.talent_names).toEqual({});
   });
 
   it('computes a gear bench aggregated from the top parses', async () => {
@@ -360,6 +338,7 @@ describe('GearTransformService (live, in-browser)', () => {
       { kind: 'added', talent: talents[ALT_ENTRY] },
       { kind: 'dropped', talent: talents[BASELINE_ENTRY] },
     ]);
+    expect(bench.value.talent_names).toEqual(talents);
   });
 
   it('leaves the bench talent builds diff-free when the dump carries no entry for the spec', async () => {

@@ -15,14 +15,13 @@ export class GearHeldOutService {
   private readonly judges = inject(GearJudgeService);
   private readonly tones = inject(ToneService);
 
-  /** `fold` is the bench rebuilt without the held-out log; its ranked lists come from the fold's own counts, since the baked ones count the held-out log too. */
+  /** `fold` is the bench rebuilt without the held-out log; its ranked lists and node counts come from the fold's own logs, since the baked ones count the held-out log too. */
   judge(fold: GearBench, picks: GearParseMeasures): HeldOutRow[] {
-    const talents = this.judges.talentReference(fold.per_parse);
+    const talents = this.judges.talentReference(fold);
     const trinkets = this.judges.trinketReference(fold.per_parse);
-    const talent = this.judges.talentVerdict(picks.talent_key, this.ranked(talents), talents);
     const trinket = this.judges.trinketVerdict(this.judges.trinketKey(picks.trinket_ids), this.ranked(trinkets), trinkets);
     return [
-      ...talent ? this.rows.toneRow(TALENT_BUILD_FAMILY.id, talent.tone, talent.n) : [],
+      ...this.judges.nodeTones(picks.talent_key, talents).flatMap(node => this.rows.toneRow(TALENT_BUILD_FAMILY.id, node.tone, talents.n)),
       ...trinket ? this.rows.toneRow(TRINKET_PAIR_FAMILY.id, trinket.tone, trinket.n) : [],
       ...this.enchantRows(fold, picks),
     ];

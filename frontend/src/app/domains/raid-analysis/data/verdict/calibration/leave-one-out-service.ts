@@ -5,6 +5,7 @@ import { CadenceBenchmark } from '../../encounter/encounter.models';
 import { RotationBench } from '../../rotation/rotation-data-source';
 import { DefensiveBench } from '../../defensive/defensive-data-source';
 import { GearBench } from '../../gear/gear-data-source';
+import { GearJudgeService } from '../../gear/gear-judge-service';
 import { BurstBench, BurstParseMeasures } from '../../burst-windows/burst-data-source';
 import { CLUSTER_MIN_FRAC } from '../../burst-windows/burst-transform-service';
 import { avgOr, medianOr } from '../../analysis/analysis-math';
@@ -38,6 +39,7 @@ interface CadenceButton {
 @Injectable({ providedIn: 'root' })
 export class LeaveOneOutService {
   private readonly castCadence = inject(CastCadenceService);
+  private readonly gearJudge = inject(GearJudgeService);
 
   /** Drops index `i` from `sources` and `per_parse`; every later index moves down by one. */
   fold<P, B extends Folded<P>>(bench: B, i: number): B {
@@ -83,8 +85,11 @@ export class LeaveOneOutService {
     return { ...folded, windows };
   }
 
+  /** The node counts are recounted the way ingest bakes them, since the baked ones count the held-out log too. */
   foldGear(bench: GearBench, i: number): GearBench {
-    return this.fold(bench, i);
+    const folded = this.fold(bench, i);
+    const keys = folded.per_parse.map(parse => parse.talent_key);
+    return { ...folded, talent_nodes: this.gearJudge.talentNodes(keys), talent_sample_count: this.gearJudge.readableTrees(keys) };
   }
 
   /** Drops the held-out log's members; a window the rest no longer form is gone, the rest centre on their own members. Original indices are kept in `index`. */
