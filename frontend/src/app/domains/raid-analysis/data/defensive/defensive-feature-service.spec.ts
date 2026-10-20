@@ -5,8 +5,8 @@ import { DefensiveFeatureService } from './defensive-feature-service';
 import { applyBuff, removeBuff, cast } from '../../../../../testing/builders/events';
 import { BLUR, BLUR_BUFF, CLOAK_OF_SHADOWS } from '../../../../../testing/spell-ids';
 import { CLOAK_META, defBench, timed } from './defensive-harness';
-import { HOLD_BAND_MIN_S } from '../analysis/hold-targets-service';
 import { TestBed } from '@angular/core/testing';
+import { pullModel } from '../../../../../testing/builders/pull-model';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
 import { DEFENSIVE_DATA_SOURCE } from './defensive-data-source';
@@ -73,78 +73,87 @@ describe('analyzeDefensives talent gate', () => {
 });
 
 describe('analyzeOneDefensive', () => {
-  // Full use-share bench (10/10 top parses used it), so no check is use-share gated.
+  // Composition only: each check is specced on DefensiveJudgeService.
   const bench = defBench({ sample_count: 10, used_sample_count: 10 });
+  /** Ten top logs press it at 10s and again a 60s cooldown later. */
+  const COOLDOWN_S = 60;
+  const TOP_LOGS = { perParse: Array.from({ length: 10 }, () => ({ 'Cloak of Shadows': [10, 70] })), killsS: Array.from({ length: 10 }, () => 300) };
   const player = (overrides: Partial<PlayerDefensive>): PlayerDefensive =>
-    ({ name: 'Cloak of Shadows', uses: 0, cast_times_s: [], windows: [], ...overrides });
+    ({ name: 'Cloak of Shadows', cooldown: COOLDOWN_S, uses: 0, cast_times_s: [], windows: [], ...overrides });
   const FIGHT_DUR_S = 300;
+  const WHOLE = pullModel({ fightDurationS: FIGHT_DUR_S });
 
-  it('flags a never-used defensive as a critical lost cooldown', () => {
-    const out = svc['analyzeOneDefensive'](player({ uses: 0, cast_times_s: [] }), bench, 300);
-    expect(out[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown' });
+  it('judges the use count on the contract, naming the family', () => {
+    const out = svc['analyzeOneDefensive'](player({}), bench, WHOLE, TOP_LOGS).findings;
+    expect(out[0]).toMatchObject({ family: 'defensive.uses', category: 'lost_cooldown' });
   });
 
-  it('flags a late first use as a warning', () => {
-    // First use is well past avg 10 + 2*stddev 2 = 14s -> a first-cast delay warning.
+  it('flags ready time past the top logs\' on the contract', () => {
+    const out = svc['analyzeOneDefensive'](player({ uses: 1, cast_times_s: [10], windows: [{ start_s: 10, end_s: 15 }] }), bench, WHOLE, TOP_LOGS).findings;
+    expect(out.some(finding => finding.family === 'defensive.ready_time' && finding.severity === 'amber')).toBe(true);
+  });
+
+  // used_sample_count / sample_count below the 0.5 use share: a situational defensive.
+  const minorityUse: PerDefensiveBenchmark = { ...bench, used_sample_count: 3 };
+
+  it('does not judge the count or the ready time of a defensive only a minority of top logs use', () => {
+    expect(svc['analyzeOneDefensive'](player({}), minorityUse, WHOLE, TOP_LOGS).findings).toEqual([]);
+    const once = svc['analyzeOneDefensive'](player({ uses: 1, cast_times_s: [10], windows: [{ start_s: 10, end_s: 15 }] }), minorityUse, WHOLE, TOP_LOGS).findings;
+    expect(once.some(finding => finding.family === 'defensive.ready_time')).toBe(false);
+  });
+
+  it('shows only the count of an external, since its timing is an assignment', () => {
     const LATE_FIRST_S = 40;
-    const out = svc['analyzeOneDefensive'](player({ uses: 1, cast_times_s: [LATE_FIRST_S] }), bench, FIGHT_DUR_S);
-    expect(out.some(finding => finding.severity === 'warning' && finding.category === 'cooldown_delay')).toBe(true);
+    const external = player({ uses: 1, cast_times_s: [LATE_FIRST_S], windows: [{ start_s: LATE_FIRST_S, end_s: LATE_FIRST_S }] });
+    const out = svc['analyzeOneDefensive'](external, bench, WHOLE, TOP_LOGS).findings;
+    expect(out.map(finding => [finding.family, finding.severity])).toEqual([['defensive.uses', 'neutral']]);
   });
 
-  // used_sample_count / sample_count below MIN_USE_SHARE_FRAC (0.5) -> a situational defensive.
-  const TOTAL_SAMPLED = 10;
-  const MINORITY_USERS = 3;       // 3/10 = 30% < 50%
-  const minorityUse: PerDefensiveBenchmark = { ...bench, sample_count: TOTAL_SAMPLED, used_sample_count: MINORITY_USERS };
-
-  it('does not flag an unused defensive that only a minority of top parses use (use-share gate)', () => {
-    // The player matching the top parses by not pressing it is not a lost cast.
-    expect(svc['analyzeOneDefensive'](player({ uses: 0, cast_times_s: [] }), minorityUse, FIGHT_DUR_S)).toEqual([]);
+  it('puts a defensive used as often as the top logs on plan', () => {
+    const out = svc['analyzeOneDefensive'](player({ uses: 2, cast_times_s: [10, 70] }), bench, WHOLE, TOP_LOGS).findings;
+    expect(out).toEqual([expect.objectContaining({ onPlan: true, cd_name: 'Cloak of Shadows' })]);
   });
 
-  it('does not flag a late first use of a minority-use defensive (use-share gate)', () => {
-    // First use is well past avg 10 + 2*stddev 2 = 14s, but the first-cast check is gated off.
-    const LATE_FIRST_S = 40;
-    const out = svc['analyzeOneDefensive'](player({ uses: 1, cast_times_s: [LATE_FIRST_S] }), minorityUse, FIGHT_DUR_S);
-    expect(out.some(finding => finding.category === 'cooldown_delay')).toBe(false);
+  it('skips a talent-gated defensive that was never used, and counts it unchecked', () => {
+    expect(svc['analyzeOneDefensive'](player({ uses: 0, talent_gated: true }), bench, WHOLE, TOP_LOGS)).toMatchObject({ findings: [], checked: 0 });
   });
 
-  it('returns a success (no issues) when usage matches', () => {
-    const out = svc['analyzeOneDefensive'](player({ uses: 2, cast_times_s: [10, 70] }), bench, 300);
-    expect(out.some(finding => finding.severity === 'success')).toBe(true);
+  it('puts a used defensive with no bench on plan, and counts it unchecked', () => {
+    expect(svc['analyzeOneDefensive'](player({ uses: 1, cast_times_s: [10] }), undefined, WHOLE)).toMatchObject({
+      findings: [expect.objectContaining({ onPlan: true })], checked: 0,
+    });
+    expect(svc['analyzeOneDefensive'](player({ uses: 0 }), undefined, WHOLE).findings).toEqual([]);
+  });
+});
+
+describe('analyzeOneDefensive across a death', () => {
+  const bench = defBench({ sample_count: 10, used_sample_count: 10 });
+  const TOP_LOGS = { perParse: Array.from({ length: 10 }, () => ({ 'Cloak of Shadows': [10, 70, 130] })), killsS: Array.from({ length: 10 }, () => 300) };
+  const used = (castTimesS: number[]): PlayerDefensive =>
+    ({ name: 'Cloak of Shadows', cooldown: 60, uses: castTimesS.length, cast_times_s: castTimesS, windows: [] });
+  const DIED_S = 20;
+
+  it('leaves out the wait a death crosses, so a first use after the rez is not flagged as ready time', () => {
+    const scan = svc['analyzeOneDefensive'](used([200]), bench, pullModel({ deadSpans: [[DIED_S, 190]] }), TOP_LOGS);
+    expect(scan.findings.some(finding => finding.family === 'defensive.ready_time')).toBe(false);
   });
 
-  // Composition only: the band and the blocked slot are specced on holdSuggestionFindings.
-  it('suggests a hold on a used defensive pressed before the top raiders\' wait', () => {
-    const TOP_WAIT_S = 30;
-    const FIRST_S = 10;
-    const ON_COOLDOWN_S = FIRST_S + CLOAK_META.cooldown;  // back at 250, past the 10 + 120 + 30 = 160 slot
-    const heldSecond: PerDefensiveBenchmark = { ...bench, hold_targets: { '2': {
-      target_s: ON_COOLDOWN_S + TOP_WAIT_S, delay_s: TOP_WAIT_S, band_s: HOLD_BAND_MIN_S, effective_cd_s: CLOAK_META.cooldown,
-      count: bench.sample_count, total_samples: bench.sample_count,
-    } } };
-    const out = svc['analyzeOneDefensive'](player({ uses: 2, cast_times_s: [FIRST_S, ON_COOLDOWN_S] }), heldSecond, FIGHT_DUR_S);
-    expect(out.some(finding => finding.category === 'hold_suggestion')).toBe(true);
-  });
-
-  it('skips a talent-gated defensive that was never used', () => {
-    expect(svc['analyzeOneDefensive'](player({ uses: 0, talent_gated: true }), bench, 300)).toEqual([]);
-  });
-
-  it('records a no-bench success only when used', () => {
-    expect(svc['analyzeOneDefensive'](player({ uses: 1, cast_times_s: [10] }), undefined, 300)[0]).toMatchObject({ severity: 'success' });
-    expect(svc['analyzeOneDefensive'](player({ uses: 0 }), undefined, 300)).toEqual([]);
+  it('counts the expected uses over the alive time only, so a death costs no lost use', () => {
+    // Alive 0..20 and 280..300: 40s at 0.4 a minute rounds to 0 uses expected.
+    const scan = svc['analyzeOneDefensive'](used([]), bench, pullModel({ deadSpans: [[DIED_S, 280]] }), TOP_LOGS);
+    expect(scan.findings.some(finding => finding.category === 'lost_cooldown')).toBe(false);
   });
 });
 
 describe('analyzeDefensiveFindings', () => {
   // Composition only: per-defensive checks are specced on analyzeOneDefensive.
-  const bench: Record<string, PerDefensiveBenchmark> = { 'Cloak of Shadows': defBench({ sample_count: 10, used_sample_count: 10 }) };
-
-  it('flags a never-used defensive as a critical lost cooldown', () => {
-    const findings = svc['analyzeDefensiveFindings'](
-      [{ name: 'Cloak of Shadows', uses: 0, cast_times_s: [], windows: [] }],
-      bench, 300,
+  it('judges every defensive against the bench\'s per-log uses and counts the ones checked', () => {
+    const scan = svc['analyzeDefensiveFindings'](
+      [{ name: 'Cloak of Shadows', cooldown: 60, uses: 0, cast_times_s: [], windows: [] }],
+      { per_defensive_benchmarks: { 'Cloak of Shadows': defBench({ sample_count: 10, used_sample_count: 10 }) }, per_parse: [] },
+      pullModel(),
     );
-    expect(findings[0]).toMatchObject({ severity: 'critical', category: 'lost_cooldown', cd_name: 'Cloak of Shadows' });
+    expect(scan.findings[0]).toMatchObject({ family: 'defensive.uses', cd_name: 'Cloak of Shadows' });
+    expect(scan.checked).toBe(1);
   });
 });

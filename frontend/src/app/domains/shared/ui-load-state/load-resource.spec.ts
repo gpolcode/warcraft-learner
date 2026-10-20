@@ -111,7 +111,7 @@ describe('loadResource error states', () => {
     h.settle(FIRST_PARAMS, Results.permanent(UNUSABLE_MESSAGE, UNUSABLE_ID, UNUSABLE_CONTEXT));
     await whenStable();
 
-    expect(h.card.error()).toEqual({ kind: 'permanent', message: UNUSABLE_MESSAGE, id: UNUSABLE_ID, context: UNUSABLE_CONTEXT });
+    expect(h.card.error()).toEqual({ kind: 'permanent', message: UNUSABLE_MESSAGE, id: UNUSABLE_ID, context: UNUSABLE_CONTEXT, source: 'app' });
     expect(h.card.value()).toBeNull();
     expect(h.card.available()).toBe(false);
   });

@@ -13,7 +13,7 @@ export const PERCENT = /[+-]?\d+(\.\d+)?%/;
 export const OPENED_AT = new RegExp(`Opened at ${CLOCK.source}`);
 const TIMES = /\b\d+(\.\d+)?x\b/;
 /** formatDamage leaves a figure under a thousand bare, so an amount reads as a plain number as often as a K or M figure. */
-const FIGURE = '\\d+(\\.\\d+)?[KMB]?';
+export const FIGURE = '\\d+(\\.\\d+)?[KMB]?';
 
 /** Playwright runs a regex over the raw text, the template's padding included, so a whole-cell shape allows that padding. */
 function cell(shape: string): RegExp {
@@ -24,9 +24,45 @@ const CLOCK_RANGE = cell(`${CLOCK.source} - ${CLOCK.source}`);
 export const AMOUNT = cell(FIGURE);
 const GAP = cell(`[+-]${FIGURE}|Not used`);
 const CASTS = cell('\\d+ / (\\d+|-)|Passive');
+const UNJUDGED = cell('Dead|After the wipe|Not reached|Not measured');
+const MULTIPLE = cell('\\d+\\.\\dx');
+/** The caption every card that judges the pull states first, before any cause it names. */
+export const JUDGED_SPAN = new RegExp(`^Judged 0:00 to ${CLOCK.source}, alive ${CLOCK.source}\\.$`);
+const BENCH_STRIP = new RegExp(
+  `^Compared with \\d+ top logs?( ranked on healing)?(, ranks? \\d+( to \\d+)?)?(, item level \\d+( to \\d+)?)?(, kill times? ${CLOCK.source}( to ${CLOCK.source})?)?\\.$`);
+
+/** A bench ingest wrote before it named its sources draws no strip, so the strip is checked when drawn. */
+export async function showsBenchStrip(card: Locator): Promise<void> {
+  const strip = card.locator('wl-bench-strip').first();
+  if (await strip.count()) await shows(strip, BENCH_STRIP);
+}
+
+/** Mirrors NOT_GRADED in src/app/domains/raid-analysis/data/verdict/calibration/arming-service.ts and COMPARISON beside CalibrationCapsService. */
+const NOT_GRADED_REASON = new RegExp(`^(${[
+  'It flags top raiders too often',
+  'Too few top logs to measure how often it flags them',
+  'It misses the mistakes it claims to catch',
+  'With it, the page would flag top raiders too often',
+  'It flags more often when the pull is cut short, the player dies or the lust moves',
+  'On this boss it flags top raiders far more often than on the others',
+  'Its check against weaker logs is pending, so it is not known whether it flags them more often than top raiders',
+  'It flags weaker logs barely more often than top raiders',
+  'No measurement of how often it flags top raiders matches this version of the check',
+].join('|')})\\.$`);
+
+/** A card whose every check is graded draws no not-graded list, so the list is checked when drawn. */
+export async function showsNotGraded(card: Locator): Promise<void> {
+  const block = card.locator('wl-not-graded');
+  if (!await block.count()) return;
+  await shows(block, 'Not graded');
+  await shows(block, 'These checks show their numbers without a color.');
+  const note = block.locator('div').first();
+  await expect(note.locator('span.text-label')).toHaveText(ANY_TEXT);
+  await expect(note.locator('span.text-body')).toHaveText(NOT_GRADED_REASON);
+}
 
 /** Mirrors CAT_LABEL in src/app/domains/raid-analysis/data/analysis/analysis.models.ts. */
-export const CD_CHIP = /\b(lost cast|late|Bloodlust|downtime|hold until)\b/;
+export const CD_CHIP = /\b(lost cast|never used|Bloodlust|downtime|hold until)\b/;
 
 /** A label sits directly above its value, so a field reads as the label's next sibling. */
 export function valueOf(scope: Locator, label: string): Locator {
@@ -93,7 +129,7 @@ export async function showsFindingTable(table: Locator, chip: RegExp): Promise<v
     await shows(table, 'On plan');
     await expect(onPlan.first().locator('wl-game-icon')).toHaveText(ANY_TEXT);
   }
-  if (!flagged && !planned) await shows(table, 'Nothing flagged.');
+  if (!flagged && !planned) await shows(table, /^Nothing flagged\./);
 }
 
 async function showsFindingRow(row: Locator, chip: RegExp): Promise<void> {
@@ -113,18 +149,27 @@ interface WindowFields {
   /** A bench-only window has no player to bar, so it carries neither the bar nor the gap column. */
   range?: string;
   casts?: boolean;
+  /** The headline is a multiple of the pull's own average rather than an amount. */
+  multiple?: boolean;
 }
 
-/** The panel renders the active window alone, so once the first chip is picked every field on it belongs to the first window. */
-export async function showsFirstWindow(card: Locator, fields: WindowFields): Promise<void> {
+/** The panel renders the active window alone, so once the first chip is picked every field on it belongs to the first window. Resolves whether that window was judged. */
+export async function showsFirstWindow(card: Locator, fields: WindowFields): Promise<boolean> {
   const first = card.getByRole('option').first();
   await first.click();
   await expect(first).toHaveAttribute('aria-selected', 'true');
   await expect(first).toHaveAccessibleName(CLOCK);
   await expect(valueOf(card, 'Window')).toHaveText(CLOCK_RANGE);
-  await expect(valueOf(card, fields.metric)).toHaveText(AMOUNT);
-  if (fields.range) {
-    await expect(valueOf(card, 'Vs top raiders average')).toHaveText(PERCENT);
+  // The log decides whether the first window lies in alive, pre-wipe time; one that does not names why in place of a number.
+  const metric = valueOf(card, fields.metric);
+  const figure = fields.multiple ? MULTIPLE : AMOUNT;
+  const judged = figure.test(await metric.innerText());
+  await expect(metric).toHaveText(judged ? figure : UNJUDGED);
+  if (fields.range && judged) {
+    // A bench that bakes no top log figure for the window draws no delta against it.
+    if (await card.getByText('Vs top raiders average', { exact: true }).count()) {
+      await expect(valueOf(card, 'Vs top raiders average')).toHaveText(PERCENT);
+    }
     await expect(valueOf(card, fields.range)).toBeVisible();
     await shows(card, 'You');
     await shows(card, 'Top raiders, lowest to highest');
@@ -138,14 +183,15 @@ export async function showsFirstWindow(card: Locator, fields: WindowFields): Pro
   const ability = card.locator('wl-compact-ability-row').first();
   await expect(ability.locator('wl-game-icon')).toHaveText(ANY_TEXT);
   await expect(ability.locator('span.text-body')).toHaveText(AMOUNT);
-  if (fields.range) {
+  if (fields.range && judged) {
     await shows(card, 'Gap');
     await expect(ability.locator('span.text-value')).toHaveText(GAP);
   }
-  if (fields.casts) {
+  if (fields.casts && judged) {
     await shows(card, 'Casts');
     await expect(ability.locator('[tuiBadge]')).toHaveText(CASTS);
   }
+  return judged;
 }
 
 /** The rows put the cooldowns top logs used first, so the first row carries a measured plan rather than dashes. */

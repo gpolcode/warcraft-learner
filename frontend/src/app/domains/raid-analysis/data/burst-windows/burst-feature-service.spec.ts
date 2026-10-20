@@ -1,5 +1,5 @@
 import { assert, describe, it, expect } from 'vitest';
-import { BurstWindow, PlayerBurstWindow } from '../analysis/analysis.models';
+import { BurstWindow } from '../analysis/analysis.models';
 import { Result, Results } from '../../../shared/util-http/result';
 import { BURST_DATA_SOURCE, BurstBench } from './burst-data-source';
 import { featureService } from '../../../../../testing/service-harness';
@@ -9,8 +9,11 @@ import { SHADOW_BLADES, SHADOW_BLADES_DAMAGE, THE_HUNT, THE_HUNT_LANDING } from 
 import { cast, damage } from '../../../../../testing/builders/events';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { TestBed } from '@angular/core/testing';
+import { pullModel } from '../../../../../testing/builders/pull-model';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { benchSources } from '../../../../../testing/builders/bench-sources';
+import { VERDICT_CHOICES } from '../verdict/verdict-choices';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -35,33 +38,6 @@ function okValue<T>(result: Result<T>): T {
   if (!result.ok) assert.fail(`expected an ok result, got a ${result.error.kind} error`);
   return result.value;
 }
-
-describe('burstWindowStatus', () => {
-  const TOP_AVG = 1000;
-  const TOP_MIN = 800;
-  const STDDEV = 100;
-  const BAD_EDGE = TOP_MIN - STDDEV;               // 700 - damage strictly below this is bad
-  const WARN_EDGE = TOP_AVG - STDDEV;              // 900 - damage strictly below this, down to the bad edge, is warn
-  const BELOW_BAD_EDGE = BAD_EDGE - STDDEV / 2;
-  const BELOW_WARN_EDGE = WARN_EDGE - STDDEV / 2;
-
-  it.each([
-    { name: 'is muted when the window was not reached', player: TOP_AVG, notReached: true, status: 'muted', icon: 'schedule' },
-    { name: 'is muted when the player has no damage in the window', player: null, notReached: false, status: 'muted', icon: 'help_outline' },
-    { name: 'is bad when the damage falls below the bad-band edge', player: BELOW_BAD_EDGE, notReached: false, status: 'bad', icon: 'error' },
-    { name: 'is warn when the damage falls below the warn-band edge', player: BELOW_WARN_EDGE, notReached: false, status: 'warn', icon: 'warning_amber' },
-    { name: 'is good when the damage matches the top average', player: TOP_AVG, notReached: false, status: 'good', icon: 'check_circle' },
-    { name: 'is warn, not bad, at the exact bad-band edge', player: BAD_EDGE, notReached: false, status: 'warn', icon: 'warning_amber' },
-    { name: 'is good, not warn, at the exact warn-band edge', player: WARN_EDGE, notReached: false, status: 'good', icon: 'check_circle' },
-  ])('$name', ({ player, notReached, status, icon }) => {
-    expect(svc['burstWindowStatus'](player, TOP_AVG, TOP_MIN, STDDEV, notReached)).toEqual({ status, icon });
-  });
-
-  it('is neutral info on a bench-only window, whatever the player damage and the window reach', () => {
-    expect(svc['burstWindowStatus'](null, TOP_AVG, TOP_MIN, STDDEV, true, true)).toEqual({ status: 'info', icon: 'insights' });
-    expect(svc['burstWindowStatus'](BELOW_BAD_EDGE, TOP_AVG, TOP_MIN, STDDEV, false, true)).toEqual({ status: 'info', icon: 'insights' });
-  });
-});
 
 describe('splitCommonCds', () => {
   it('routes known names to spell ids and unknown names to labels', () => {
@@ -89,27 +65,80 @@ describe('burstClipAnchor', () => {
 });
 
 describe('buildBurstView', () => {
+  const FIGHT_S = 100;
+  const STEADY = 10;
+  const TOP_BURST = 30;
+  const members = Array.from({ length: VERDICT_CHOICES.minReferenceN }, (_unused, parse) =>
+    ({ parse, time_s: 10, window_length_s: 20, damage: 1000 }));
   const window: BurstWindow = {
     time_s: 10, window_length_s: 20, dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
-    common_cds: ['Shadow Blades'],
+    members, common_cds: ['Shadow Blades'],
     ability_breakdown: [
       { spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 2 },
     ],
   };
+  /** Steady damage all pull, `burst` a second inside the window from 10s to 30s. */
+  const pull = (burst: number): number[] => Array.from({ length: FIGHT_S }, (_unused, second) => second >= 10 && second < 30 ? burst : STEADY);
+  /** Twenty seconds at 30 over a pull that averages 14 a second. */
+  const TOP_AMPLIFICATION = 20 * TOP_BURST / (20 * (STEADY * (FIGHT_S - 20) + TOP_BURST * 20) / FIGHT_S);
   const abilities = { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' }, [SHADOW_BLADES_DAMAGE]: { icon: 'evis', name: 'Eviscerate' } };
+  const sources = benchSources(5).map(source => ({ ...source, duration_s: FIGHT_S }));
+  const bench = (windows: BurstWindow[], over: Partial<BurstBench> = {}): BurstBench => ({
+    spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Test', metric: 'dps', sample_count: 5, sources,
+    cd_spell_ids: { 'Shadow Blades': SHADOW_BLADES }, ability_icons: abilities, windows,
+    per_parse: sources.map(() => ({ damage_per_s: pull(TOP_BURST) })), ...over,
+  });
+  const dealt = (burst: number, windowCount = 1) => ({
+    windows: Array.from({ length: windowCount }, () => ({ window_damage: 20 * burst, ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, damage: 550, casts: 2 }] })),
+    perS: pull(burst), aliveSpans: [[0, FIGHT_S]] as const,
+  });
 
-  it('pairs each window with the player damage at the same index', () => {
-    const player: PlayerBurstWindow[] = [
-      { window_damage: 950, ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, damage: 550, casts: 2 }] },
-    ];
-    const view = svc['buildBurstView']([window], player, 300, { 'Shadow Blades': SHADOW_BLADES }, abilities);
+  it('pairs each window with the player\'s multiple and the top logs\' multiples at the same index', () => {
+    const view = svc['buildBurstView'](bench([window]), dealt(TOP_BURST), pullModel({ fightDurationS: FIGHT_S }));
     expect(view.windows).toHaveLength(1);
     const burstWindow = first(view.windows);
-    expect(burstWindow.overview.playerPct).toBe(950);
+    expect(burstWindow.overview).toMatchObject({ playerPct: TOP_AMPLIFICATION, topAvg: TOP_AMPLIFICATION, topMin: TOP_AMPLIFICATION, topMax: TOP_AMPLIFICATION });
     expect(burstWindow.spells).toEqual([{ id: SHADOW_BLADES, icon: 'sb', name: 'Shadow Blades' }]);
     expect(burstWindow.detailRows[0]).toMatchObject({ spellId: SHADOW_BLADES_DAMAGE, label: 'Eviscerate', icon: 'evis', playerPct: 550, topAvg: 600 });
     expect(view.anchors[0]).toEqual({ timeS: 10, windowLengthS: 20 });
     expect(view.clipAnchors[0]).toEqual({ timeS: 10, windowLengthS: 20, key: 'burst-0' });
+  });
+
+  it('flags amber a window the player did not raise their damage in, with the burst family and the top log count', () => {
+    const burstWindow = first(svc['buildBurstView'](bench([window]), dealt(STEADY), pullModel({ fightDurationS: FIGHT_S })).windows);
+
+    expect(burstWindow).toMatchObject({ family: 'burst.window', status: 'amber', statusIcon: 'warning_amber', benchOnly: false });
+    expect(burstWindow.message).toBe('You dealt 200 here, 1.0x your pull average, less than the 5 top logs. Aim for 1.9x or more.');
+  });
+
+  it('compares without color a window the player raised as the top logs did', () => {
+    expect(first(svc['buildBurstView'](bench([window]), dealt(TOP_BURST), pullModel({ fightDurationS: FIGHT_S })).windows))
+      .toMatchObject({ family: 'burst.window', status: 'neutral', statusIcon: 'compare_arrows' });
+  });
+
+  it('compares without color every window of a bench that bakes no top log damage', () => {
+    const burstWindow = first(svc['buildBurstView'](bench([window], { per_parse: [] }), dealt(STEADY), pullModel({ fightDurationS: FIGHT_S })).windows);
+
+    expect(burstWindow).toMatchObject({ status: 'neutral', message: 'You dealt 200 here, 1.0x your pull average. No top log carries its own damage for this window, so it is not judged.' });
+    expect(burstWindow.overview.topAvg).toBeNull();
+  });
+
+  it('says nothing is flagged, with counts, when no window is amber', () => {
+    const SHORT_S = 50;
+    const lateWindow = { ...window, time_s: 60 };
+    const shortKill = bench([window, lateWindow], { sources: sources.map((source, index) => index ? source : { ...source, duration_s: SHORT_S }) });
+    const view = svc['buildBurstView'](shortKill, dealt(TOP_BURST, 2), pullModel({ fightDurationS: FIGHT_S }));
+
+    expect(view.empty).toBe('Nothing flagged. 1 of 2 windows checked against the 5 top logs.');
+  });
+
+  it('gives no empty state when a window is amber', () => {
+    expect(svc['buildBurstView'](bench([window]), dealt(STEADY), pullModel({ fightDurationS: FIGHT_S })).empty).toBe('');
+  });
+
+  it('says why there is nothing to compare when the top logs share no window', () => {
+    expect(svc['buildBurstView'](bench([]), null, null).empty)
+      .toBe('No burst window to compare. The biggest bursts of the 5 top logs do not line up in time.');
   });
 
   it('flags a detail row passive when the bench ability is passive', () => {
@@ -119,24 +148,37 @@ describe('buildBurstView', () => {
         { spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 0, is_passive: true },
       ],
     };
-    const view = svc['buildBurstView']([passiveWindow], [], 300, {}, abilities, true);
+    const view = svc['buildBurstView'](bench([passiveWindow]), null, null);
     expect(first(first(view.windows).detailRows).passive).toBe(true);
     // The default (non-passive) bench ability stays passive=false.
-    const benchWindow = first(svc['buildBurstView']([window], [], 300, {}, abilities, true).windows);
+    const benchWindow = first(svc['buildBurstView'](bench([window]), null, null).windows);
     expect(first(benchWindow.detailRows).passive).toBe(false);
   });
 
-  it('bench-only marks windows neutral info (no player overlay) instead of muted', () => {
-    const burstWindow = first(svc['buildBurstView']([window], [], Number.POSITIVE_INFINITY, {}, abilities, true).windows);
-    expect(burstWindow.status).toBe('info');
-    expect(burstWindow.statusIcon).toBe('insights');
+  it('marks a bench-only window as a neutral comparison with no player overlay, naming its top logs', () => {
+    const view = svc['buildBurstView'](bench([window]), null, null);
+    const burstWindow = first(view.windows);
+    expect(burstWindow).toMatchObject({ status: 'neutral', statusIcon: 'insights', benchOnly: true, message: '5 top logs had this window.' });
     expect(burstWindow.overview.playerPct).toBeNull();
+    expect(view.judged).toBeNull();
+    expect(view.empty).toBe('');
+  });
+
+  it('mutes a window the player was dead for instead of reading the death as zero damage, and names the death in the caption', () => {
+    // Dead from 15s, inside the 10..30 window, and back at 40s.
+    const DIED_S = 15;
+    const BACK_S = 40;
+    const deadInIt = pullModel({ deadSpans: [[DIED_S, BACK_S]] });
+    const view = svc['buildBurstView'](bench([window]), dealt(0), deadInIt);
+    expect(first(view.windows)).toMatchObject({ status: 'muted', unjudged: 'dead', message: '' });
+    expect(view.judged?.folded.dead).toBe(1);
+    expect(view.judged?.deadSpans).toEqual([{ fromS: DIED_S, toS: BACK_S }]);
   });
 });
 
 describe('findPlayerBurstWindows', () => {
   const window: BurstWindow = {
-    time_s: 10, window_length_s: 20, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, common_cds: [], ability_breakdown: [],
+    time_s: 10, window_length_s: 20, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, members: [], common_cds: [], ability_breakdown: [],
   };
   const HIT_S = 12, CAST_S = 11, HIT_DAMAGE = 400, CAST_COUNT = 1;
 
@@ -171,6 +213,10 @@ const BENCH_WINDOW_LENGTH_S = 20;
 const PLAYER_WINDOW_DAMAGE = 950;
 const PLAYER_CAST_S = BENCH_WINDOW_START_S + 1;
 const PLAYER_HIT_S = BENCH_WINDOW_START_S + 2;
+/** The fixture report's default kill. */
+const PULL_S = 300;
+/** The pull's one hit lands in the window, so the window holds the whole pull's damage: 300s of it over the window's 20s. */
+const ONE_HIT_AMPLIFICATION = PULL_S / BENCH_WINDOW_LENGTH_S;
 
 const wclFake = {
   getReport: async () => wclReport({
@@ -187,13 +233,13 @@ function withBench(bench: Result<BurstBench>, wcl: unknown = wclFake): BurstFeat
 }
 
 const benchFixture: BurstBench = {
-  spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Test', sample_count: 5,
+  spec: 'SubtletyRogue', encounter_id: 1, encounter_name: 'Test', metric: 'dps', sample_count: 5, sources: benchSources(5),
   cd_spell_ids: { 'Shadow Blades': SHADOW_BLADES },
   ability_icons: { [SHADOW_BLADES]: { icon: 'sb', name: 'Shadow Blades' }, [SHADOW_BLADES_DAMAGE]: { icon: 'evis', name: 'Eviscerate' } },
   windows: [{
     time_s: BENCH_WINDOW_START_S, window_length_s: BENCH_WINDOW_LENGTH_S,
     dmg_avg: 1000, dmg_min: 800, dmg_max: 1200, dmg_stddev: 100,
-    common_cds: ['Shadow Blades'],
+    members: [], common_cds: ['Shadow Blades'],
     ability_breakdown: [{ spell_id: SHADOW_BLADES_DAMAGE, avg_damage: 600, min_damage: 400, max_damage: 800, avg_casts: 2 }],
   }],
 };
@@ -203,6 +249,30 @@ describe('BurstFeatureService', () => {
 
   const benchOnlyView = async () => okValue(await withBench(Results.ok(benchFixture)).loadBenchView('SubtletyRogue', 1));
   const playerView = async () => okValue(await withBench(Results.ok(benchFixture)).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10));
+
+  it('names who the bench windows were compared with', async () => {
+    expect((await benchOnlyView()).bench?.count).toBe(benchFixture.sample_count);
+  });
+
+  it('names who the player\'s windows were compared with', async () => {
+    expect((await playerView()).bench?.count).toBe(benchFixture.sample_count);
+  });
+
+  it('compares nothing for a healer, reads neither the bench nor the log, and says why', async () => {
+    const HEALER_SPEC = 'HolyPaladin';
+    const untouched = withBench(Results.missing('Not yet ingested.'), {});
+
+    const view = okValue(await untouched.loadPlayerView(HEALER_SPEC, 1, 'rep', 1, 10));
+
+    expect(view.windows).toEqual([]);
+    expect(untouched.notComparedReason(HEALER_SPEC)).toBe(
+      'Top raiders on your spec are ranked on healing, so there are no burst windows to compare your damage with.');
+    expect(okValue(await untouched.loadBenchView(HEALER_SPEC, 1)).windows).toEqual([]);
+  });
+
+  it('compares a damage spec\'s windows, giving no reason', () => {
+    expect(withBench(Results.ok(benchFixture)).notComparedReason('SubtletyRogue')).toBeNull();
+  });
 
   it('propagates the data-source error when the bench read fails', async () => {
     const result = await withBench(Results.missing('Not yet ingested.')).loadBenchView('SubtletyRogue', 1);
@@ -220,20 +290,31 @@ describe('BurstFeatureService', () => {
     expect(first(view.windows).overview.playerPct).toBeNull();
   });
 
-  it('marks a bench-only window neutral info', async () => {
-    const burstWindow = first((await benchOnlyView()).windows);
-    expect(burstWindow.status).toBe('info');
-    expect(burstWindow.statusIcon).toBe('insights');
+  it('marks a bench-only window as a comparison with no color', async () => {
+    expect(first((await benchOnlyView()).windows)).toMatchObject({ status: 'neutral', benchOnly: true });
   });
 
   it('anchors the bench view on each window start and length', async () => {
     expect((await benchOnlyView()).anchors[0]).toEqual(BENCH_ANCHOR);
   });
 
-  it('overlays the player damage read from the log on the bench window', async () => {
+  it('overlays the player\'s multiple read from the log on the bench window', async () => {
     const view = await playerView();
     expect(view.windows).toHaveLength(1);
-    expect(first(view.windows).overview.playerPct).toBe(PLAYER_WINDOW_DAMAGE);
+    expect(first(view.windows).overview.playerPct).toBeCloseTo(ONE_HIT_AMPLIFICATION);
+  });
+
+  it('compares a window from a bench without per-log damage, never coloring it', async () => {
+    expect(first((await playerView()).windows)).toMatchObject({ status: 'neutral', family: 'burst.window' });
+  });
+
+  it('reads a bench an older ingest wrote, with no members on its windows, as comparisons', async () => {
+    const { members: _dropped, ...unbaked } = first(benchFixture.windows);
+    const older = { ...benchFixture, windows: [unbaked] } as unknown as BurstBench;
+    const view = okValue(await withBench(Results.ok(older)).loadPlayerView('SubtletyRogue', 1, 'rep', 1, 10));
+
+    expect(first(view.windows).status).toBe('neutral');
+    expect(first(view.windows).message).toContain('No top log carries its own damage');
   });
 
   it('labels a player detail row with the bench ability name', async () => {

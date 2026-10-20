@@ -172,7 +172,7 @@ export class MapFeatureService {
 
   // The overlay loaded with no position samples for the player: surface as permanent, not a still-loading map.
   private _reportMissingPlayerPositions(): void {
-    const failure = Results.permanent('No position data for you in this pull.', 'map.no-player-positions');
+    const failure = Results.unusableLog('No position data for you in this pull.', 'map.no-player-positions');
     if (!failure.ok && failure.error.kind === 'permanent') {
       this.logger.logWarn(failure.error.id, failure.error.context);
       this.error.set(failure.error);

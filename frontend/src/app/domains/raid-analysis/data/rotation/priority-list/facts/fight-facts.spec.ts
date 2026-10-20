@@ -4,7 +4,7 @@ import { cast, damage } from '../../../../../../../testing/builders/events';
 import type { WclEvent } from '../../../wcl/wcl.models';
 import { ConditionEvalService } from '../condition-eval-service';
 import { castAt, factContext, priorityList } from '../priority-list-harness';
-import { Range, UNKNOWN } from '../priority-list.models';
+import { ENEMY_STEP_S, EnemyTimeline, Range, UNKNOWN } from '../priority-list.models';
 
 const FIGHT_S = 300;
 const CAST_S = 100;
@@ -28,6 +28,7 @@ interface Log {
   casts?: WclEvent[];
   damage?: WclEvent[];
   kill?: boolean;
+  enemyTimeline?: EnemyTimeline;
 }
 
 interface Read {
@@ -40,7 +41,7 @@ interface Read {
 }
 
 const read = ({ name, log, atS = CAST_S, target = null }: Read): Range => {
-  const ctx = factContext(priorityList(), { casts: log.casts ?? [cast(1, atS)], damage: log.damage ?? [], fightDurationS: FIGHT_S, kill: log.kill ?? true });
+  const ctx = factContext(priorityList(), { casts: log.casts ?? [cast(1, atS)], damage: log.damage ?? [], fightDurationS: FIGHT_S, kill: log.kill ?? true, ...(log.enemyTimeline ? { enemyTimeline: log.enemyTimeline } : {}) });
   return evaluator.read(name, castAt(ctx, atS, target), 'x', ctx);
 };
 const hit = (target: number, atS: number, maxHp: number): WclEvent => damage(1, atS, 1, { target, targetHealthPct: 50, targetMaxHp: maxHp });
@@ -81,6 +82,31 @@ describe('FightFacts enemies', () => {
     { reads: 'the target\'s health at its last reading before the cast', name: 'target.health.pct', log: health, target: BOSS_KEY, expected: [HEALTH_PCT, HEALTH_PCT] },
     { reads: 'the player\'s own health off the cast', name: 'health.pct', log: health, expected: [OWN_PCT, OWN_PCT] },
     { reads: 'a target\'s health as unknown when the cast aims at no known enemy', name: 'target.health.pct', log: health, expected: UNKNOWN },
+  ])('reads $reads', row => {
+    expect(read(row)).toEqual(row.expected);
+  });
+});
+
+describe('FightFacts enemies against the encounter timeline', () => {
+  /** The top logs hit two or three enemies all pull long. */
+  const WAVE: Range = [2, 3];
+  const timeline = (over: Record<number, Range | null> = {}): EnemyTimeline =>
+    Array.from({ length: FIGHT_S / ENEMY_STEP_S }, (_, step) => (step in over ? over[step] ?? null : WAVE));
+  const onTargets = (count: number, enemyTimeline = timeline()): Log =>
+    ({ damage: Array.from({ length: count }, (_, target) => damage(1, CAST_S + 1, 1, { target })), enemyTimeline });
+  /** The cast's window spans these two steps. */
+  const CAST_STEP = Math.floor(CAST_S / ENEMY_STEP_S);
+  const PAST_FIGHT_S = FIGHT_S + 1;
+
+  it.each<Read>([
+    { reads: 'the top logs\' range when the player\'s hits fall inside it', name: 'active_enemies', log: onTargets(2), expected: WAVE },
+    { reads: 'the range when the player hit exactly its top', name: 'active_enemies', log: onTargets(3), expected: WAVE },
+    { reads: 'unknown when the player hit one more than its top', name: 'active_enemies', log: onTargets(4), expected: UNKNOWN },
+    { reads: 'unknown when the player hit one fewer than its bottom', name: 'active_enemies', log: onTargets(1), expected: UNKNOWN },
+    { reads: 'the range when the player hit nothing in the window', name: 'active_enemies', log: onTargets(0), expected: WAVE },
+    { reads: 'unknown where too few top logs hit anything to say', name: 'active_enemies', log: onTargets(2, timeline({ [CAST_STEP]: null })), expected: UNKNOWN },
+    { reads: 'the widest range over the steps the window spans', name: 'active_enemies', log: onTargets(2, timeline({ [CAST_STEP + 1]: [1, 4] })), expected: [1, 4] },
+    { reads: 'unknown past the top logs\' longest kill', name: 'active_enemies', log: { ...onTargets(0), casts: [cast(1, PAST_FIGHT_S)] }, atS: PAST_FIGHT_S, expected: UNKNOWN },
   ])('reads $reads', row => {
     expect(read(row)).toEqual(row.expected);
   });

@@ -8,13 +8,13 @@ Live site: https://warcraft-learner.com/
 
 Before the pull, pick a class, spec and boss to see the plan top raiders run there: when they press each offensive and defensive cooldown, the talent builds, trinket pairs and enchants they bring, and the burst windows they hold for. Those timings export as a note for the Northern Sky raid addon.
 
-After the pull, paste a Warcraft Logs report and pick a fight and a player. Every press of a button on your spec's SimulationCraft action priority list is judged against that button's own lines, and a button skipped while its line was due counts against it too. Each button gets a bar of how often you got it right beside the top raiders' range, and opening one lists every moment with the conditions that held and the ones that did not. On top of that it finds lost casts, poor Bloodlust alignment, slow openers and downtime, and flags the cooldowns you spend early where top raiders hold them.
+After the pull, paste a Warcraft Logs report and pick a fight and a player. Every press of a button on your spec's SimulationCraft action priority list is judged against that button's own lines, and a button skipped while its line was due counts against it too. Each button gets a bar of how often you got it right beside the top raiders' range, and opening one lists every moment with the conditions that held and the ones that did not. On top of that it finds cooldowns left ready and unpressed longer than top raiders leave them, cooldowns never pressed, idle time past each cast's global cooldown and cast time, and cooldowns you spend early where top raiders hold them. When your raid lusts mid-fight, it also shows the cooldowns you did not have up during that Bloodlust where top raiders whose raids lusted mid-fight had them up.
 
-Your damage in each burst window and the damage you took in each defensive window go against the range top raiders manage there, and your talents, trinkets and enchants against their consensus for that boss. The pull itself gets read back to you as well: every death and the ability that landed it, your DPS, the duration, and the boss health you ended on.
+Your damage in each burst window goes against the range top raiders manage there, each defensive window checks whether you had any defensive up where top raiders had one, with the damage you took beside it, and your talents, trinkets and enchants against their consensus for that boss. The pull itself gets read back to you as well: every death and the ability that landed it, your DPS, the duration, and the boss health you ended on.
 
 Any finding, death, window or judged press opens a scrubbable map of where you and the top raiders stood at that moment. During a live raid the page re-analyzes as new pulls upload, and an opt-in screen recording cuts a clip of each window without ever leaving the browser.
 
-Every threshold is derived from the top 10 Mythic parses for the same encounter and spec, not from arbitrary constants.
+Every reference is measured from the top Mythic logs for the same encounter and spec, one value per log. The numbers that are chosen rather than measured, such as how often a color may flag a top raider and the smallest group worth comparing against, live in one file, `frontend/src/app/domains/raid-analysis/data/verdict/verdict-choices.ts`.
 
 ## Run locally
 

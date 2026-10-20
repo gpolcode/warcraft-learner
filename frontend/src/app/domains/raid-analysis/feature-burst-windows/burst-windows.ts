@@ -4,6 +4,7 @@ import { LoadState } from '../../shared/ui-load-state/load-state';
 import { ClipAnchor } from '../data/capture/capture.models';
 import { BurstFeatureService, BurstMapAnchor } from '../data/burst-windows/burst-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
+import type { CardRanking } from '../data/verdict/row-order-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +28,8 @@ export class BurstWindows {
   readonly openClip = output<ClipAnchor>();
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
+  /** The rows this card judged, for the page's "Fix first" strip and damage card. */
+  readonly rankingChange = output<CardRanking>();
 
   private readonly load = this.loadRes.loadResource({
     params: () => ({
@@ -43,11 +46,17 @@ export class BurstWindows {
     initialAvailable: true,
     busyChange: this.busyChange,
     availableChange: this.availableChange,
+    valueChange: view => { this.rankingChange.emit(this.burst.ranking(view)); },
   });
 
   protected readonly available = this.load.available;
   protected readonly error = this.load.error;
   protected readonly windows = computed(() => this.load.value()?.windows ?? []);
+  protected readonly judged = computed(() => this.load.value()?.judged ?? null);
+  protected readonly bench = computed(() => this.load.value()?.bench ?? null);
+  protected readonly notGraded = computed(() => this.load.value()?.notGraded ?? []);
+  protected readonly empty = computed(() => this.load.value()?.empty ?? '');
+  protected readonly reason = computed(() => this.burst.notComparedReason(this.spec()));
   private readonly anchors = computed<BurstMapAnchor[]>(() => this.load.value()?.anchors ?? []);
   private readonly clipAnchors = computed<ClipAnchor[]>(() => this.load.value()?.clipAnchors ?? []);
 

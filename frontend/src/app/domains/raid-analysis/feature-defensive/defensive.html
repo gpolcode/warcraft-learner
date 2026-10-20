@@ -7,27 +7,33 @@
       subtitle="How you used your survival cooldowns compared with the top logs."
       [rows]="findingRows()"
       [onPlan]="onPlan()"
+      [bench]="bench()"
+      [judged]="findingsSpan()"
+      [empty]="findingsEmpty()"
+      [notGraded]="notGraded().defensives"
       [showMap]="showMap()"
       [showClip]="showClip()"
       (openMap)="onFindingMap($event)"
       (openClip)="onFindingClip($event)">
     </wl-finding-table>
 
-    @if (windows().length > 0) {
-      <wl-window-comparison
-        [windows]="windows()"
-        [higherIsBetter]="false"
-        [showCasts]="false"
-        [showMap]="showMap()"
-        [showClip]="showClip()"
-        heading="Defensive windows"
-        subtitle="Damage taken in each defensive window vs top logs."
-        metricLabel="Damage taken"
-        chipsLabel="Defensives top raiders use here"
-        rangeLabel="Damage taken vs top range"
-        (openMap)="onOpenMap($event)"
-        (openClip)="onOpenClip($event)">
-      </wl-window-comparison>
-    }
+    <wl-window-comparison
+      [windows]="windows()"
+      [bench]="bench()"
+      [judged]="windowsSpan()"
+      [empty]="windowsEmpty()"
+      [notGraded]="notGraded().windows"
+      [higherIsBetter]="false"
+      [showCasts]="false"
+      [showMap]="showMap()"
+      [showClip]="showClip()"
+      heading="Defensive windows"
+      subtitle="Each moment top logs press a defensive, and whether you had any defensive up."
+      metricLabel="Damage taken"
+      chipsLabel="Defensives top raiders use here"
+      rangeLabel="Damage taken vs top range"
+      (openMap)="onOpenMap($event)"
+      (openClip)="onOpenClip($event)">
+    </wl-window-comparison>
   }
 </div>

@@ -1,5 +1,6 @@
 import { deviation, least, mean, median, pairs } from 'd3-array';
 import { AnalysisFinding } from './analysis.models';
+import type { Tone } from '../verdict/tone.models';
 import { CadenceBenchmark } from '../encounter/encounter.models';
 
 /** d3-array has no rounding helper. */
@@ -50,23 +51,6 @@ export function groupByTime<T extends { time_s: number }>(windows: T[], mergeS: 
   return clusters;
 }
 
-export const OUTLIER_SIGMAS = 2;
-
-/** Floor on a timing band's half-width, so top logs that agree to the second do not flag a cast a second off theirs. */
-export const TIMING_BAND_MIN_S = 2;
-
-export function isOutlierAbove(value: number, mean: number, stddev: number, sigmas = OUTLIER_SIGMAS, minBand = 0): boolean {
-  return value > mean + Math.max(sigmas * stddev, minBand);
-}
-
-export function isOutlierBeyond(value: number, mean: number, stddev: number, sigmas = OUTLIER_SIGMAS, minBand = 0): boolean {
-  return Math.abs(value - mean) > Math.max(sigmas * stddev, minBand);
-}
-
-export function isOutlierBelow(value: number, mean: number, stddev: number, sigmas = 2): boolean {
-  return value < mean - sigmas * stddev;
-}
-
 /** A talent-gated button counts as taken only when the pull's talents show one of its entries; with no entries or no talents to read, the pull cannot tell, so an unpressed one stays unjudged. */
 export function buttonTaken(
   button: { talent_gated?: boolean; talent_entries?: number[] }, talents: ReadonlyMap<number, number> | null,
@@ -76,8 +60,15 @@ export function buttonTaken(
   return button.talent_entries.some(entry => (talents.get(entry) ?? 0) > 0);
 }
 
-export function castEfficiencyPct(totalDowntimeS: number, fightDurS: number): number {
-  return Math.max(0, (1 - totalDowntimeS / fightDurS) * 100);
+/** `[startS, endS)` of pull time in which the player was alive and the encounter still live. */
+export type AliveSpan = readonly [number, number];
+
+export function spansS(spans: readonly AliveSpan[]): number {
+  return spans.reduce((sum, [startS, endS]) => sum + Math.max(0, endS - startS), 0);
+}
+
+export function overlapS(spans: readonly AliveSpan[], fromS: number, toS: number): number {
+  return spans.reduce((sum, [startS, endS]) => sum + Math.max(0, Math.min(endS, toS) - Math.max(startS, fromS)), 0);
 }
 
 export function closestToZero(values: number[]): number {
@@ -94,15 +85,22 @@ function castsCadenceFits(fightDurS: number, avgFirstCastS: number, avgGapS: num
   return 1 + Math.floor((fightDurS - avgFirstCastS) / avgGapS + WHOLE_CAST_TOLERANCE);
 }
 
+/** A span that resumes after a resurrect has no opener, and only a whole gap of it buys a cast, so a short life never adds one. */
+function resumedCadenceFits(spanS: number, avgGapS: number | null): number {
+  return avgGapS ? Math.floor(spanS / avgGapS + WHOLE_CAST_TOLERANCE) : 0;
+}
+
 export function benchExpectedUses(
-  fightDurS: number, bench: Pick<CadenceBenchmark, 'uses_per_min' | 'avg_first_cast_s' | 'avg_gap_s'>,
+  spans: readonly AliveSpan[], bench: Pick<CadenceBenchmark, 'uses_per_min' | 'avg_first_cast_s' | 'avg_gap_s'>,
 ): { expected: number; floor: number } {
-  const fightMin = fightDurS / 60;
+  const aliveMin = spansS(spans) / 60;
   const upm = bench.uses_per_min;
+  const fits = spans.reduce((sum, [startS, endS]) => sum + (startS === 0
+    ? castsCadenceFits(endS, bench.avg_first_cast_s, bench.avg_gap_s)
+    : resumedCadenceFits(endS - startS, bench.avg_gap_s)), 0);
   // The rate alone rounds 12.6 up to a 13th cast that would land after the pull ends.
-  const expected = Math.min(
-    Math.round(upm.avg * fightMin), castsCadenceFits(fightDurS, bench.avg_first_cast_s, bench.avg_gap_s));
-  const floor = Math.max(0, Math.round(expected - upm.stddev * fightMin));
+  const expected = Math.min(Math.round(upm.avg * aliveMin), fits);
+  const floor = Math.max(0, Math.round(expected - upm.stddev * aliveMin));
   return { expected, floor };
 }
 
@@ -110,9 +108,18 @@ export function fmtClock(seconds: number): string {
   return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 }
 
-const SEVERITY_ORDER: Record<AnalysisFinding['severity'], number> = {
-  critical: 0, warning: 1, info: 2, hold_suggestion: 2, success: 3,
-};
+/** A flagged value never prints as its own target: one more decimal while the two round to the same string. */
+export function fmtApart(value: number, edge: number): [string, string] {
+  let decimals = 0;
+  while (decimals < 2 && value.toFixed(decimals) === edge.toFixed(decimals)) decimals++;
+  return [value.toFixed(decimals), edge.toFixed(decimals)];
+}
+
+const SEVERITY_ORDER: Record<string, number> = { red: 0, amber: 1, blue: 2, neutral: 3, muted: 4 };
+export function severityRank(severity: Tone): number {
+  return SEVERITY_ORDER[severity] ?? 0;
+}
+
 export function sortBySeverity(findings: AnalysisFinding[]): void {
-  findings.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
+  findings.sort((a, b) => severityRank(a.severity) - severityRank(b.severity));
 }

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import type { WindowStatus } from '../data/analysis/window-comparison.models';
+import type { RangeLook } from './range-bar';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -9,5 +9,5 @@ import type { WindowStatus } from '../data/analysis/window-comparison.models';
 })
 export class RangeLegend {
   /** The tone of the bar it explains; a legend over bars of several tones stays muted. */
-  readonly status = input<WindowStatus>('muted');
+  readonly status = input<RangeLook>('muted');
 }

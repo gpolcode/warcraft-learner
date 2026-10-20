@@ -6,11 +6,7 @@
     </div>
 
     @if (!hidePlayer()) {
-      <span class="tabular-nums shrink-0 md:col-start-4 md:row-start-1 text-right text-value"
-            [class.text-success]="gapStatus() === 'success'"
-            [class.text-warning]="gapStatus() === 'warning'"
-            [class.text-critical]="gapStatus() === 'critical'"
-            [class.text-muted]="gapStatus() === 'muted'">
+      <span class="tabular-nums shrink-0 md:col-start-4 md:row-start-1 text-right text-value">
         @if (row().playerPct == null) {
           Not used
         } @else {
@@ -30,13 +26,9 @@
       @if (isPassive()) {
         <span tuiBadge appearance="neutral" size="m" class="text-label md:col-start-2 md:row-start-1 md:justify-self-end">Passive</span>
       } @else {
-        @let casts =
-          castsStatus() === 'success' ? 'positive' :
-          castsStatus() === 'warning' ? 'warning' :
-          castsStatus() === 'critical' ? 'negative' : 'neutral';
         <div class="flex flex-col items-start md:contents">
           <span class="md:hidden block text-label text-muted mb-1">Casts</span>
-          <span tuiBadge size="m" class="md:col-start-2 md:row-start-1 md:justify-self-end" [appearance]="casts">
+          <span tuiBadge size="m" class="md:col-start-2 md:row-start-1 md:justify-self-end" appearance="neutral">
             <span class="tabular-nums">{{ row().playerCasts ?? 0 }} / {{ row().topCasts ?? '-' }}</span>
           </span>
         </div>

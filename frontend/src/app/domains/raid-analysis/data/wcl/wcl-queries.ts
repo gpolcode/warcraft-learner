@@ -5,7 +5,7 @@ export const REPORT_Q = gql`
 query Report($code:String!){reportData{report(code:$code){
   title
   startTime
-  fights(killType:All){id name startTime endTime kill encounterID difficulty friendlyPlayers fightPercentage}
+  fights(killType:All){id name startTime endTime kill encounterID difficulty friendlyPlayers fightPercentage phaseTransitions{id startTime} wipeCalledTime}
   masterData{
     actors(type:"Player"){id name subType server}
     enemies:actors(type:"NPC"){id name gameID}
@@ -45,11 +45,11 @@ query Resurrects($code:String!,$fightIDs:[Int]!,$filter:String,$startTime:Float,
   }}
 }`;
 
-// `$partition` is nullable: absent selects WCL's current partition (what the runtime always wants); the ingest liveness probe passes explicit partitions newest-first. An absent `$difficulty` would make WCL substitute the zone's top difficulty.
+// `$partition` is nullable: absent selects WCL's current partition (what the runtime always wants); the ingest liveness probe passes explicit partitions newest-first. An absent `$difficulty` would make WCL substitute the zone's top difficulty. An absent `$page` is the first page of 100.
 export const RANKINGS_Q = gql`
-query Rankings($encounterID:Int!,$className:String!,$specName:String!,$partition:Int,$difficulty:Int!){
+query Rankings($encounterID:Int!,$className:String!,$specName:String!,$metric:CharacterRankingMetricType!,$partition:Int,$difficulty:Int!,$page:Int){
   worldData{encounter(id:$encounterID){
-    characterRankings(className:$className,specName:$specName,metric:dps,partition:$partition,difficulty:$difficulty)
+    characterRankings(className:$className,specName:$specName,metric:$metric,partition:$partition,difficulty:$difficulty,page:$page)
   }}
 }`;
 

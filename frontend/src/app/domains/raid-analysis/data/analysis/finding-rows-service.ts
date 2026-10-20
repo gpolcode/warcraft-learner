@@ -1,10 +1,19 @@
 import { inject, Injectable } from '@angular/core';
 import { type AnalysisFinding, type FindingOccurrence, CAT_LABEL } from './analysis.models';
 import { LoggerService } from '../../../shared/util-logging/logger-service';
+import type { DamageEstimate, RowRank, Tone } from '../verdict/tone.models';
+import { ToneService } from '../verdict/tone-service';
+import type { UnjudgedCause } from './pull-model-service';
 
 @Injectable({ providedIn: 'root' })
 export class FindingRowsService {
   private readonly logger = inject(LoggerService);
+  private readonly tones = inject(ToneService);
+
+  /** Surfaces the button as an "On plan" chip when nothing else is flagged for it. */
+  onPlanFinding(name: string): AnalysisFinding {
+    return { severity: this.tones.neutral(), onPlan: true, category: 'cooldown_usage', cd_name: name, message: `${name} is on plan.`, occurrences: [] };
+  }
 
   rowsFromEntries(entries: FindingEntry[]): FindingRow[] {
     const rows: FindingRow[] = [];
@@ -12,19 +21,29 @@ export class FindingRowsService {
       if (!entry.hasIssue) continue;
       for (const f of entry.findings) {
         rows.push({
-          severity: f.severity === 'critical' ? 'critical' : f.severity === 'info' ? 'info' : 'warning',
+          severity: f.severity,
+          ...this.ranked(f),
           name: entry.name,
           spellId: entry.spellId,
           icon: entry.icon,
           timestampS: f.timestamp_s ?? null,
           chip: CAT_LABEL[f.category],
           measured: f.measured ?? { value: '-' },
+          message: f.message,
           fix: f.details?.remedy,
           occurrences: f.occurrences,
         });
       }
     }
     return rows;
+  }
+
+  ranked(finding: AnalysisFinding): Pick<FindingRow, 'family' | 'rank' | 'damage'> {
+    return {
+      ...finding.family ? { family: finding.family } : {},
+      ...finding.rank ? { rank: finding.rank } : {},
+      ...finding.damage ? { damage: finding.damage } : {},
+    };
   }
 
   onPlanFromEntries(entries: FindingEntry[]): OnPlanChip[] {
@@ -36,7 +55,7 @@ export class FindingRowsService {
   }
 
   private bucketIssue(byName: FindingBuckets, finding: AnalysisFinding): void {
-    if (finding.category === 'hold_suggestion' && finding.details?.cd_name) {
+    if (finding.category === 'cooldown_hold' && finding.details?.cd_name) {
       this.bucketOf(byName, finding.details.cd_name).holds.push(finding);
     } else if (finding.cd_name) {
       this.bucketOf(byName, finding.cd_name).issues.push(finding);
@@ -54,10 +73,10 @@ export class FindingRowsService {
     const byName: FindingBuckets = {};
 
     for (const finding of findings) {
-      if (finding.severity !== 'success') this.bucketIssue(byName, finding);
+      if (!finding.onPlan) this.bucketIssue(byName, finding);
     }
     for (const finding of findings) {
-      if (finding.severity !== 'success') continue;
+      if (!finding.onPlan) continue;
       const name = finding.cd_name;
       // The empty bucket is what surfaces the cooldown as an "On plan" chip.
       if (name) this.bucketOf(byName, name);
@@ -83,7 +102,11 @@ interface FindingMeasure {
 }
 
 export interface FindingRow {
-  severity: 'critical' | 'warning' | 'info';
+  severity: Tone;
+  family?: string;
+  rank?: RowRank;
+  damage?: DamageEstimate;
+  unjudged?: UnjudgedCause;
   name?: string;
   spellId?: number | null;
   icon: string;
@@ -91,6 +114,7 @@ export interface FindingRow {
   chip?: string;
   what?: string;
   measured: FindingMeasure;
+  message: string;
   fix?: string;
   occurrences: FindingOccurrence[];
 }

@@ -6,11 +6,13 @@ export class TalentKeyService {
 
   // Keyed by entry, not node: WCL can report the same talent under a different nodeID, which would split one build.
   talentKeyFromTree(tree: WclTalentNode[] | undefined): string {
-    const picks = (tree ?? [])
-      .flatMap(node => (node.id == null ? [] : [{ entryId: node.id, rank: node.rank ?? 1 }]))
-      .sort((a, b) => a.entryId - b.entryId);
+    return this.keyOf((tree ?? []).flatMap(node => (node.id == null ? [] : [{ entryId: node.id, rank: node.rank ?? 1 }])));
+  }
+
+  keyOf(picks: readonly TalentPick[]): string {
     if (!picks.length) return '';
-    const body = picks
+    const body = [...picks]
+      .sort((a, b) => a.entryId - b.entryId)
       .map(pick => [pick.entryId, pick.rank].join(FIELD_SEPARATOR))
       .join(PICK_SEPARATOR);
     return `${KEY_PREFIX}:${body}`;

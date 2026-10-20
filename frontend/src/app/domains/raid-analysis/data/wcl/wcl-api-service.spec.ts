@@ -5,7 +5,7 @@ import { WclAuthService } from '../http/wcl-auth-service';
 import { DataFileApiService } from '../data-files/data-file-api-service';
 import { Results } from '../../../shared/util-http/result';
 import { WclCombatantInfo, MYTHIC_DIFFICULTY } from './wcl.models';
-import { FetchOutcomes, WCL_TRANSPORT, WclTransport, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
+import { FetchOutcomes, WCL_TRANSPORT, WclReportUnavailableError, WclTransport, WclTransportError } from './wcl-transport';
 import { WclCaching } from './wcl-caching';
 import { ENEMY_DEBUFFS_Q } from './wcl-queries';
 import { HttpRequest } from '@angular/common/http';
@@ -146,10 +146,17 @@ describe('WclApiService', () => {
     it('pins the rankings query to Mythic difficulty', async () => {
       const { api, transport } = setup();
       transport.response = { worldData: { encounter: { characterRankings: { rankings: [] } } } };
-      await api.getRankings(SPEC_META.spec, ENCOUNTER_ID, null);
+      await api.getRankings(SPEC_META.spec, ENCOUNTER_ID, null, 'dps');
       expect(transport.variables[0]).toMatchObject({
         className: SPEC_META.className, specName: SPEC_META.specName, difficulty: MYTHIC_DIFFICULTY,
       });
+    });
+
+    it('ranks on the metric it is asked for', async () => {
+      const { api, transport } = setup();
+      transport.response = { worldData: { encounter: { characterRankings: { rankings: [] } } } };
+      await api.getRankings(SPEC_META.spec, ENCOUNTER_ID, null, 'hps');
+      expect(transport.variables[0]).toMatchObject({ metric: 'hps' });
     });
   });
 
@@ -170,11 +177,11 @@ describe('WclApiService', () => {
       expect(await api.getCombatantInfo('code', FIGHT_ID, PLAYER_ID)).toEqual([]);
     });
 
-    it('throws the permanent unavailable error when WCL serves a null report', async () => {
+    it('throws the report-unavailable error when WCL serves a null report', async () => {
       const { api, transport } = setup();
       transport.response = { reportData: { report: null } };
       await expect(api.getCombatantInfo('code', FIGHT_ID, PLAYER_ID))
-        .rejects.toMatchObject({ name: 'WclTransportError', status: WCL_UNUSABLE_STATUS });
+        .rejects.toBeInstanceOf(WclReportUnavailableError);
     });
   });
 

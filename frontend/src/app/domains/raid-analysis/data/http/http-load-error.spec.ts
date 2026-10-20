@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HttpLoadErrors } from './http-load-error';
 import { Results } from '../../../shared/util-http/result';
-import { WclTransportError } from '../wcl/wcl-transport';
+import { WCL_UNUSABLE_STATUS, WclReportUnavailableError, WclTransportError } from '../wcl/wcl-transport';
 
 const REPRO_ID = 'gear.load';
 
@@ -17,6 +17,8 @@ const HTTP_BAD_REQUEST = 400;
 
 const TRANSIENT = Results.transient('WCL is unreachable right now.');
 const PERMANENT_MESSAGE = 'Analysis data could not be loaded.';
+const REPORT_UNAVAILABLE_MESSAGE = 'This report is private, expired or does not exist.';
+const REPORT_CODE = 'aBcDeFgHiJkLmNoP';
 
 function httpError(status: number): HttpErrorResponse {
   return new HttpErrorResponse({ status });
@@ -58,6 +60,21 @@ describe('toLoadError', () => {
 
   it('maps a 400 to permanent', () => {
     const cause = httpError(HTTP_BAD_REQUEST);
+    expect(HttpLoadErrors.toLoadError(cause, REPRO_ID)).toEqual(Results.permanent(PERMANENT_MESSAGE, REPRO_ID, cause));
+  });
+
+  it('names a report WCL will not serve as the log\'s fault, not the app\'s', () => {
+    const cause = new WclReportUnavailableError(REPORT_CODE);
+    expect(HttpLoadErrors.toLoadError(cause, REPRO_ID)).toEqual(Results.unusableLog(REPORT_UNAVAILABLE_MESSAGE, REPRO_ID, cause));
+  });
+
+  it('names a report WCL will not serve even when another error wraps it', () => {
+    const cause = new Error('bench failed', { cause: new WclReportUnavailableError(REPORT_CODE) });
+    expect(HttpLoadErrors.toLoadError(cause, REPRO_ID)).toEqual(Results.unusableLog(REPORT_UNAVAILABLE_MESSAGE, REPRO_ID, cause));
+  });
+
+  it('keeps any other unusable WCL answer the app\'s fault', () => {
+    const cause = new WclTransportError('WCL response had no data', WCL_UNUSABLE_STATUS);
     expect(HttpLoadErrors.toLoadError(cause, REPRO_ID)).toEqual(Results.permanent(PERMANENT_MESSAGE, REPRO_ID, cause));
   });
 

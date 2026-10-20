@@ -12,7 +12,7 @@ import { PullOverviewFeatureService } from '../data/pull-overview/pull-overview-
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
 import { EmptyState } from '../../shared/ui-empty-state/empty-state';
 
-// Needs no bench, so it is always available (no availableChange, unlike the other post-raid cards).
+// A missing bench costs only the reference range, so it is always available (no availableChange, unlike the other post-raid cards).
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-pull-overview',
@@ -24,6 +24,8 @@ export class PullOverview {
   private readonly loadRes = inject(LoadResourceService);
   private readonly service = inject(PullOverviewFeatureService);
 
+  readonly spec = input.required<string>();
+  readonly encounterId = input.required<number>();
   readonly report = input.required<string>();
   readonly player = input.required<number>();
   readonly fight = input.required<WclFight>();
@@ -35,8 +37,8 @@ export class PullOverview {
   readonly busyChange = output<boolean>();
 
   private readonly load = this.loadRes.loadResource({
-    params: () => ({ report: this.report(), player: this.player(), fight: this.fight() }),
-    load: ({ report, player, fight }) => this.service.loadView(report, player, fight),
+    params: () => ({ spec: this.spec(), encounterId: this.encounterId(), report: this.report(), player: this.player(), fight: this.fight() }),
+    load: ({ spec, encounterId, report, player, fight }) => this.service.loadView({ spec, encounterId, reportCode: report, playerId: player }, fight),
     context: 'pull-overview.loadView',
     busyChange: this.busyChange,
   });

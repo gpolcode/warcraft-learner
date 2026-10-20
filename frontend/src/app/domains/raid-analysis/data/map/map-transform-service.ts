@@ -66,7 +66,6 @@ export class MapTransformService implements DataSource<MapData> {
       logSource: 'MapTransformService',
       errorId: 'map.bench',
       noRankingsMessage: 'No top logs for this encounter.',
-      tooFewParsesMessage: () => 'No fetchable top logs for this encounter.',
       parse: parse => this.parsePositions(parse),
       bench: ({ parses }) => ({ interval_s: POSITIONS_INTERVAL_S, parses }),
     });

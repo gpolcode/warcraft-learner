@@ -24,38 +24,16 @@ const clean = (el: HTMLElement | null): string => (el?.textContent ?? '').replac
 const appearance = (el: HTMLElement | null): string | undefined => el?.dataset['appearance'];
 
 describe('CompactAbilityRow gap', () => {
-  it('shows a positive gap with a + sign and the success colour when the player exceeds top avg', () => {
-    const { gap } = render(row({ playerPct: 150, topAvg: 100 }));
-    expect(clean(gap)).toBe('+50');
-    expect(statusColor(gap)).toBe('success');
+  it('shows a positive gap with a + sign when the player exceeds top avg', () => {
+    expect(clean(render(row({ playerPct: 150, topAvg: 100 })).gap)).toBe('+50');
   });
 
-  it('shows a negative gap with a - sign and the critical colour when the player falls short', () => {
-    const { gap } = render(row({ playerPct: 60, topAvg: 100 }));
-    expect(clean(gap)).toBe('-40');
-    expect(statusColor(gap)).toBe('critical');
-  });
-
-  it('shows the warning colour when the gap is within 10% of top avg', () => {
-    expect(statusColor(render(row({ playerPct: 92, topAvg: 100 })).gap)).toBe('warning');
-  });
-
-  it('treats less damage taken as good for defensives (lower is better)', () => {
-    expect(statusColor(render(row({ playerPct: 60, topAvg: 100 }), { higherIsBetter: false }).gap)).toBe('success');
-  });
-
-  it('treats more damage taken as critical for defensives', () => {
-    expect(statusColor(render(row({ playerPct: 150, topAvg: 100 }), { higherIsBetter: false }).gap)).toBe('critical');
+  it('shows a negative gap with a - sign when the player falls short', () => {
+    expect(clean(render(row({ playerPct: 60, topAvg: 100 })).gap)).toBe('-40');
   });
 
   it('reads "Not used" rather than a number for an ability the player never used', () => {
-    const { gap } = render(row({ playerPct: null, topAvg: 100 }));
-    expect(clean(gap)).toBe('Not used');
-    expect(statusColor(gap)).toBe('critical');
-  });
-
-  it('falls back to the muted colour when top avg is unknown', () => {
-    expect(statusColor(render(row({ playerPct: 100, topAvg: null })).gap)).toBe('muted');
+    expect(clean(render(row({ playerPct: null, topAvg: 100 })).gap)).toBe('Not used');
   });
 
   it('renders no player cell at all when the player column is hidden', () => {
@@ -65,28 +43,12 @@ describe('CompactAbilityRow gap', () => {
 });
 
 describe('CompactAbilityRow casts badge', () => {
-  it('shows the player and top counts on a positive badge when the player meets top', () => {
-    const { casts } = render(row({ playerCasts: 3, topCasts: 3 }));
-    expect(clean(casts)).toBe('3 / 3');
-    expect(appearance(casts)).toBe('positive');
+  it('shows the player and top counts', () => {
+    expect(clean(render(row({ playerCasts: 3, topCasts: 3 })).casts)).toBe('3 / 3');
   });
 
-  it('stays positive when the player exceeds top', () => {
-    expect(appearance(render(row({ playerCasts: 4, topCasts: 3 })).casts)).toBe('positive');
-  });
-
-  it('warns when the player is within 1 cast of top', () => {
-    expect(appearance(render(row({ playerCasts: 2, topCasts: 3 })).casts)).toBe('warning');
-  });
-
-  it('goes negative when the player is 2 or more casts below top', () => {
-    expect(appearance(render(row({ playerCasts: 1, topCasts: 3 })).casts)).toBe('negative');
-  });
-
-  it('falls back to neutral, with a dash for top, when top casts are unknown', () => {
-    const { casts } = render(row({ playerCasts: 2, topCasts: null }));
-    expect(clean(casts)).toBe('2 / -');
-    expect(appearance(casts)).toBe('neutral');
+  it('shows a dash for top when top casts are unknown', () => {
+    expect(clean(render(row({ playerCasts: 2, topCasts: null })).casts)).toBe('2 / -');
   });
 
   it('reads "Passive" instead of a count for an ability that is never cast', () => {
@@ -111,5 +73,14 @@ describe('CompactAbilityRow label', () => {
     const LABEL = 'Shadow Blades';
     expect(render(row({ label: LABEL, spellId: SHADOW_BLADES })).dom.text()).toContain(LABEL);
     expect(render(row({ label: LABEL })).dom.text()).toContain(LABEL);
+  });
+});
+
+describe('CompactAbilityRow color', () => {
+  it('prints the gap and the casts with no color, since no rule grades one ability', () => {
+    const { gap, casts } = render(row({ playerPct: 60, topAvg: 100, playerCasts: 0, topCasts: 3 }));
+
+    expect(statusColor(gap)).toBeNull();
+    expect(appearance(casts)).toBe('neutral');
   });
 });

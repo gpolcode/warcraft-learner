@@ -4,10 +4,15 @@ import { ClipAnchor } from '../capture/capture.models';
 import { ComparisonWindow, RangeRow, WindowStatus } from './window-comparison.models';
 import { AbilityIcons, TimedEvent } from './wcl-projections-service';
 import { WclProjectionsService } from './wcl-projections-service';
+import { FoldCounts, PullModel, PullModelService, UnjudgedCause } from './pull-model-service';
+import type { RowRank } from '../verdict/tone.models';
+
+const UNJUDGED_ICON: Record<UnjudgedCause, string> = { dead: 'skull', after_wipe: 'flag', not_reached: 'schedule' };
 
 @Injectable({ providedIn: 'root' })
 export class WindowViewService {
   private readonly projections = inject(WclProjectionsService);
+  private readonly pullModel = inject(PullModelService);
 
   private eventDamage(event: TimedEvent): number {
     return (event.amount ?? 0) + (event.absorbed ?? 0);
@@ -88,34 +93,61 @@ export class WindowViewService {
     });
   }
 
+  private verdictFields(verdict: WindowVerdict): Pick<ComparisonWindow, 'note' | 'status' | 'statusIcon' | 'benchOnly' | 'message' | 'family' | 'rank'> {
+    return {
+      note: verdict.note ?? '', status: verdict.status, statusIcon: verdict.icon,
+      benchOnly: verdict.benchOnly ?? false, message: verdict.message ?? '',
+      ...verdict.family ? { family: verdict.family } : {},
+      ...verdict.rank ? { rank: verdict.rank } : {},
+    };
+  }
+
+  /** A cause the adapter claims, such as the death a window holds, judges the window instead of muting it. */
+  private judgedAs<A>(
+    window: BurstWindow, index: number, model: PullModel | null, adapter: WindowViewAdapter<A>,
+  ): { unjudged: UnjudgedCause | null; claimed: WindowVerdict | null } {
+    const cause = model ? this.pullModel.causeOf(model, window.time_s, window.time_s + window.window_length_s) : null;
+    const claimed = cause ? adapter.claim?.(window, cause, index) ?? null : null;
+    return { unjudged: claimed ? null : cause, claimed };
+  }
+
+  private overview<A>(window: BurstWindow, index: number, playerDamage: number | null, adapter: WindowViewAdapter<A>): OverviewFigures {
+    const figures = adapter.overview?.(window, index) ?? { playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max };
+    return playerDamage === null && adapter.overview ? { ...figures, playerPct: null } : figures;
+  }
+
+  /** A window is judged only when it lies wholly in alive, pre-wipe time; a null model is a bench-only view with no pull to judge. */
   buildWindowView<A>(
-    { topWindows, playerWindows, fightDurationS, abilities, adapter }: WindowViewInput<A>,
+    { topWindows, playerWindows, model, abilities, adapter }: WindowViewInput<A>,
   ): WindowView<A> {
     const windows: ComparisonWindow[] = [];
     const anchors: A[] = [];
     const clipAnchors: ClipAnchor[] = [];
+    const folded = this.pullModel.noFolds();
     topWindows.forEach((window, index) => {
-      const notReached = window.time_s > fightDurationS;
+      const { unjudged, claimed } = this.judgedAs(window, index, model, adapter);
+      if (unjudged) folded[unjudged] += 1;
       // playerWindows is the index-aligned aggregation over these same topWindows, so a time-based match would drift.
-      const playerWindow = notReached ? null : (playerWindows[index] ?? null);
+      const playerWindow = unjudged ? null : (playerWindows[index] ?? null);
       const playerDamage = playerWindow?.window_damage ?? null;
-      const { status, icon, note } = adapter.status(window, playerDamage, notReached);
+      const verdict: WindowVerdict = unjudged
+        ? { status: 'muted' as const, icon: UNJUDGED_ICON[unjudged] }
+        : claimed ?? adapter.status(window, playerDamage, index);
       const { spellIds, labels } = adapter.chips(window);
       windows.push({
         timeStartS: window.time_s,
         timeEndS: window.time_s + window.window_length_s,
         spells: this.projections.windowSpells(spellIds, abilities),
         labels,
-        note: note ?? '',
-        status,
-        statusIcon: icon,
-        overview: { label: '', icon: '', playerPct: playerDamage, topAvg: window.dmg_avg, topMin: window.dmg_min, topMax: window.dmg_max },
+        ...this.verdictFields(verdict),
+        unjudged,
+        overview: { label: '', icon: '', ...this.overview(window, index, unjudged ? null : playerDamage, adapter) },
         detailRows: this.windowDetailRows(window.ability_breakdown, playerWindow, abilities, adapter.castColumns ?? false),
       });
       anchors.push(adapter.mapAnchor(window));
       clipAnchors.push(adapter.clipAnchor(window, index));
     });
-    return { windows, anchors, clipAnchors };
+    return { windows, anchors, clipAnchors, folded };
   }
 }
 
@@ -135,6 +167,10 @@ interface WindowVerdict {
   icon: string;
   /** The builder carries this as the window's own note; chips() must not carry it too. */
   note?: string;
+  benchOnly?: boolean;
+  message?: string;
+  family?: string;
+  rank?: RowRank;
 }
 
 interface WindowChips {
@@ -142,8 +178,15 @@ interface WindowChips {
   labels: string[];
 }
 
+/** The window's headline figure for the player and the top logs; the card's adapter may measure it in its own unit. */
+type OverviewFigures = Pick<RangeRow, 'playerPct' | 'topAvg' | 'topMin' | 'topMax'>;
+
 export interface WindowViewAdapter<A> {
-  status: (window: BurstWindow, playerDamage: number | null, notReached: boolean) => WindowVerdict;
+  status: (window: BurstWindow, playerDamage: number | null, index: number) => WindowVerdict;
+  /** The headline figures in the card's own measure; absent, they are the window's damage against the top logs' damage. */
+  overview?: (window: BurstWindow, index: number) => OverviewFigures;
+  /** A verdict for a window the pull model would mute, such as the death it holds; null leaves it muted. */
+  claim?: (window: BurstWindow, cause: UnjudgedCause, index: number) => WindowVerdict | null;
   chips: (window: BurstWindow) => WindowChips;
   mapAnchor: (window: BurstWindow) => A;
   clipAnchor: (window: BurstWindow, index: number) => ClipAnchor;
@@ -153,7 +196,7 @@ export interface WindowViewAdapter<A> {
 interface WindowViewInput<A> {
   topWindows: BurstWindow[];
   playerWindows: PlayerBurstWindow[];
-  fightDurationS: number;
+  model: PullModel | null;
   abilities: AbilityIcons;
   adapter: WindowViewAdapter<A>;
 }
@@ -162,4 +205,5 @@ export interface WindowView<A> {
   windows: ComparisonWindow[];
   anchors: A[];
   clipAnchors: ClipAnchor[];
+  folded: FoldCounts;
 }

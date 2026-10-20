@@ -3,7 +3,9 @@ import { max, mean, min, mode } from 'd3-array';
 import { round } from '../../analysis/analysis-math';
 import type { PriorityList } from '../../plan/plan.models';
 import type { ButtonBench } from '../rotation-data-source';
-import { ListCheckService, LogReading } from './list-check-service';
+import { ButtonCounts, ListCheckService, LogReading } from './list-check-service';
+import { ButtonJudgeService } from './button-judge-service';
+import { USE_ITEM, USE_ITEMS } from './fact-context-service';
 
 /** Below this many top logs a share is one log's habit rather than the field's. */
 export const MIN_MEASURED_PARSES = 5;
@@ -14,9 +16,10 @@ const SHARE_DIGITS = 3;
 @Injectable({ providedIn: 'root' })
 export class ListBenchService {
   private readonly checks = inject(ListCheckService);
+  private readonly judge = inject(ButtonJudgeService);
 
   bench(list: PriorityList, readings: LogReading[]): ButtonBench[] {
-    return [...this.checks.buttons(list).keys()].flatMap(action => {
+    return this.actions(list, readings).flatMap(action => {
       const shares = readings.flatMap(reading => this.checks.rightShare(reading, action) ?? []);
       const avg = mean(shares) ?? 0;
       const ids = readings.flatMap(reading => reading.ids.get(action) ?? []);
@@ -26,5 +29,20 @@ export class ListBenchService {
         right: { lo: round(min(shares) ?? 0, SHARE_DIGITS), avg: round(avg, SHARE_DIGITS), hi: round(max(shares) ?? 0, SHARE_DIGITS) },
       }];
     });
+  }
+
+  /** Per log, every list button it had moments for, so a bench can be rebuilt without any one log; a top log is judged over its whole pull. */
+  counts(list: PriorityList, readings: LogReading[]): Record<string, ButtonCounts>[] {
+    const actions = this.actions(list, readings);
+    return readings.map(reading => Object.fromEntries(actions.flatMap(action => {
+      const counts = this.judge.measure(reading, action, Number.POSITIVE_INFINITY);
+      return counts ? [[action, counts]] : [];
+    })));
+  }
+
+  /** Each trinket line reads as the use spell of whatever trinket a log wore, so the buttons are the ones the logs resolved. */
+  private actions(list: PriorityList, readings: LogReading[]): string[] {
+    const resolved = readings.flatMap(reading => [...(reading.buttons ?? this.checks.buttons(list)).keys()]);
+    return [...new Set([...this.checks.buttons(list).keys(), ...resolved])].filter(action => action !== USE_ITEM && action !== USE_ITEMS);
   }
 }

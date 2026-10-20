@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { provideEventPlugins } from '@taiga-ui/event-plugins';
 import { TUI_DARK_MODE, TUI_OPTIONS } from '@taiga-ui/core';
+import { CalibrationCapsService } from '../app/domains/raid-analysis/data/verdict/calibration/calibration-caps-service';
 
 // The parts of provideTaiga the components read, without its boot hook, which writes to a DOCUMENT some specs fake. The app's TAIGA_PROVIDERS cannot be imported here: an app module in this file leaves @angular/common unlinked in the test bundle.
 export default [
@@ -9,4 +10,12 @@ export default [
   { provide: TUI_OPTIONS, useValue: { apis: 'stable', fontScaling: false, scrollbars: 'custom' } },
   // The default signal reads localStorage on first inject, which a spec that makes storage throw must not trip.
   { provide: TUI_DARK_MODE, useValue: Object.assign(signal(true), { reset: () => undefined }) },
+  // Producers are specified on their rules alone; the calibration specs provide the real caps.
+  {
+    provide: CalibrationCapsService,
+    useValue: {
+      load: () => Promise.resolve({ capOf: () => 'red', verdictOf: () => ({ status: 'graded', cap: 'red', reason: '' }) }),
+      notGraded: () => [],
+    },
+  },
 ];
