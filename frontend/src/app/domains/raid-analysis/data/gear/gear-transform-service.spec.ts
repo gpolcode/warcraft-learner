@@ -9,6 +9,8 @@ import { parseRankings, wclReport, rankingRow, reportsByCode } from '../../../..
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { parseRanking } from '../../../../../testing/builders/bench-sources';
+import { MIN_SAMPLE_COUNT } from '../analysis/top-parse-selection-service';
 
 const talentKeys = TestBed.inject(TalentKeyService);
 TestBed.resetTestingModule();
@@ -62,7 +64,7 @@ describe('talentKeyFromTree', () => {
 });
 
 describe('toParseGear', () => {
-  const ranking = { player: 'Ann', server: 'Area 52', report_code: 'rep1', fight_id: 3 };
+  const ranking = parseRanking({ player: 'Ann', server: 'Area 52', report_code: 'rep1', fight_id: 3 });
 
   it('reduces a found CharacterGear to its fingerprint tagged with the parse identity', () => {
     const gear: CharacterGear = {
@@ -243,7 +245,7 @@ const combatantInfo = (playerId: number): WclCombatantInfo => {
 
 const wclFake = {
   // getRankings returns the raw WCL envelope ({ rankings }); the transform unwraps it.
-  getRankings: async () => ({ rankings: parseRankings(2) }),
+  getRankings: async () => ({ rankings: parseRankings(MIN_SAMPLE_COUNT) }),
   getReport: reportsByCode(),
   // getCombatantInfo returns the raw events array; the transform selects the player's event.
   getCombatantInfo: async (code: string) => [combatantInfo(code === 'r1' ? 10 : 20)],
@@ -277,12 +279,24 @@ describe('nameEnchantsByItem', () => {
 });
 
 describe('GearTransformService (live, in-browser)', () => {
+  it('bakes each log\'s picks in source order and the talent counts over the logs with a talent tree', async () => {
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, talents: talentDataFake, enchantItems: enchantItemsFake }) });
+
+    const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
+
+    assert(bench.ok);
+    expect(bench.value.per_parse[0]).toEqual({ talent_key: 'v3:650.1', trinket_ids: [100], enchant_ids: { 15: SOPHIC_ENCHANT } });
+    expect(bench.value.talent_sample_count).toBe(MIN_SAMPLE_COUNT);
+    expect(bench.value.talent_nodes).toEqual([{ entry_id: 650, rank: 1, count: MIN_SAMPLE_COUNT }]);
+    expect(bench.value.talent_names).toEqual({});
+  });
+
   it('computes a gear bench aggregated from the top parses', async () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, talents: talentDataFake, enchantItems: enchantItemsFake }) });
     const bench = await TestBed.inject(GearTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
-    expect(bench.value.sample_count).toBe(2);
+    expect(bench.value.sample_count).toBe(MIN_SAMPLE_COUNT);
     expect(bench.value.encounter_name).toBe('Boss');
     expect(bench.value.talent_builds[0]).toMatchObject({
       key: 'v3:650.1', pct: 100, report_code: 'r1', fight_id: 1, player_name: 'P1', source_id: 10,
@@ -305,11 +319,12 @@ describe('GearTransformService (live, in-browser)', () => {
       [BASELINE_ENTRY]: { name: 'A', icon: 'a' },
       [ALT_ENTRY]: { name: 'B', icon: 'b' },
     };
+    const ALT_CODES = new Set(['r4', 'r5']);
     const splitBuildWcl = {
       ...wclFake,
       getCombatantInfo: async (code: string) => [{
         ...combatantInfo(code === 'r1' ? 10 : 20),
-        talentTree: [{ nodeID: 65, id: code === 'r1' ? BASELINE_ENTRY : ALT_ENTRY, rank: 1 }],
+        talentTree: [{ nodeID: 65, id: ALT_CODES.has(code) ? ALT_ENTRY : BASELINE_ENTRY, rank: 1 }],
       }],
     };
     TestBed.configureTestingModule({
@@ -323,6 +338,7 @@ describe('GearTransformService (live, in-browser)', () => {
       { kind: 'added', talent: talents[ALT_ENTRY] },
       { kind: 'dropped', talent: talents[BASELINE_ENTRY] },
     ]);
+    expect(bench.value.talent_names).toEqual(talents);
   });
 
   it('leaves the bench talent builds diff-free when the dump carries no entry for the spec', async () => {
@@ -345,7 +361,8 @@ describe('GearTransformService (live, in-browser)', () => {
     });
     const twinWcl = {
       ...wclFake,
-      getRankings: async () => ({ rankings: [rankingRow(1, { name: TWIN_NAME, server: 'Area-52' })] }),
+      // One report serves every code, so each ranking names its one fight.
+      getRankings: async () => ({ rankings: Array.from({ length: MIN_SAMPLE_COUNT }, () => rankingRow(1, { name: TWIN_NAME, server: 'Area-52' })) }),
       getReport: async () => twinReport,
       getCombatantInfo: async () => [
         combatantInfo(DECOY_ID),

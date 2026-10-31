@@ -1,0 +1,95 @@
+@if (error() || !available()) {
+  <wl-load-state heading="Validity" subtitle="How often each check flags top raiders." [error]="error()"></wl-load-state>
+} @else {
+<section tuiCardLarge appearance="outline-grayscale">
+  <div>
+    <header class="pb-2">
+      <div tuiHeader="body-l">
+        <hgroup tuiTitle>
+          <h2>Validity</h2>
+          <p tuiSubtitle>How often each check flags top raiders when one of their logs is judged against the other top logs.</p>
+        </hgroup>
+      </div>
+    </header>
+
+    @if (measurement(); as m) {
+      <div class="text-caption text-muted">Measured on {{ m.pulls }} top logs over {{ m.encounters }} spec and boss pairs.</div>
+      @if (m.contrastPulls) {
+        <div class="text-caption text-muted">Compared with {{ m.contrastPulls }} weaker logs from the tenth page of the rankings.</div>
+      } @else {
+        <div class="text-caption text-muted">No weaker logs are compared, so no check is graded on a mistake.</div>
+      }
+      @if (!m.current) {
+        <p class="text-body mt-2">This measurement covers another version of the checks, so every check shows its numbers without a color.</p>
+      }
+
+      <div class="card-section [&>:first-child+*]:border-t-0">
+        <div class="pt-5 pb-2">
+          <h3 class="text-heading">Colored rows per pull</h3>
+          @if (budget(); as b) {
+            <div class="text-body text-muted mt-0.5">What one top log draws on the page, by role. A role may draw at most {{ b.red }} red and {{ b.amber }} amber rows per pull.</div>
+          }
+        </div>
+        @for (role of m.roles; track role.label) {
+          <div class="border-t border-line py-2.5">
+            <span class="block text-label text-muted mb-1">{{ role.label }}</span>
+            <span>{{ role.redPerPull | number: '1.2-2' }} red and {{ role.amberPerPull | number: '1.2-2' }} amber rows per pull over {{ role.pulls }} top logs.</span>
+          </div>
+        } @empty {
+          <wl-empty-state class="border-t border-line">No top log was judged.</wl-empty-state>
+        }
+      </div>
+
+      <div class="card-section [&>:first-child+*]:border-t-0">
+        <div class="pt-5 pb-2">
+          <h3 class="text-heading">Checks</h3>
+          <div class="text-body text-muted mt-0.5">Each check, how often it flags top logs, and how many planted mistakes it catches.</div>
+        </div>
+        @for (family of m.families; track family.label) {
+          <div class="border-t border-line py-2.5">
+            <div class="flex items-center gap-2">
+              <span class="text-name">{{ family.label }}</span>
+              <span tuiBadge appearance="neutral" size="m" class="text-label">{{ family.tag }}</span>
+            </div>
+            @if (family.tests) {
+              <div class="text-body mt-1">Checked {{ family.tests }} times on top logs. Amber on {{ family.amberRate | odds }}, red on {{ family.redRate | odds }}.</div>
+            } @else {
+              <div class="text-body mt-1">Not checked on any top log.</div>
+            }
+            @if (family.detection.trials) {
+              <div class="text-body">Caught {{ family.detection.detected }} of {{ family.detection.trials }} planted mistakes.</div>
+            }
+            @if (family.separation; as sep) {
+              <div class="text-body">Flags weaker logs {{ sep.lift | number: '1.1-1' }} times as often as top logs, at least {{ sep.liftLower | number: '1.1-1' }} times. A weaker log is flagged on more of its checks than a top log {{ sep.auc | percent }} of the time.</div>
+            }
+            <div class="text-body text-muted">{{ family.reason }}</div>
+          </div>
+        }
+      </div>
+
+      <div class="card-section [&>:first-child+*]:border-t-0">
+        <div class="pt-5 pb-2">
+          <h3 class="text-heading">Damage estimates</h3>
+          @if (damageGate(); as g) {
+            <div class="text-body text-muted mt-0.5">An estimate prints only once, over at least {{ g.minLogs }} weaker logs, it claims more than the damage gap to top logs on at most {{ g.maxExceedShare | percent }} of them and ranks them as their gaps do, at a rank correlation of at least {{ g.minSpearman | number: '1.1-1' }}.</div>
+          }
+        </div>
+        <div class="border-t border-line py-2.5">
+          @if (m.damage.open) {
+            <span tuiBadge appearance="neutral" size="m" class="text-label">Shown</span>
+          } @else {
+            <span tuiBadge appearance="neutral" size="m" class="text-label">Hidden</span>
+          }
+          @if (m.damage.logs) {
+            <div class="text-body mt-1">Measured on {{ m.damage.logs }} weaker logs. The estimate claims more than the gap on {{ m.damage.exceedShare | percent }} of them, at a rank correlation of {{ m.damage.spearman | number: '1.2-2' }}.</div>
+          } @else {
+            <div class="text-body mt-1">No weaker log is measured yet, so no estimate prints.</div>
+          }
+        </div>
+      </div>
+    } @else {
+      <wl-empty-state class="border-t border-line">No validity measurement is published.</wl-empty-state>
+    }
+  </div>
+</section>
+}

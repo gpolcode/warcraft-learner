@@ -7,6 +7,7 @@ import type { MapAnchor } from '../data/map/map-feature-service';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { RotationFeatureService } from '../data/rotation/rotation-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
+import type { CardRanking } from '../data/verdict/row-order-service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +31,8 @@ export class Rotation {
   readonly openClip = output<ClipAnchor>();
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
+  /** The rows this card judged, for the page's "Fix first" strip and damage card. */
+  readonly rankingChange = output<CardRanking>();
 
   private readonly load = this.loadRes.loadResource({
     params: () => ({
@@ -44,6 +47,7 @@ export class Rotation {
     initialAvailable: true,
     busyChange: this.busyChange,
     availableChange: this.availableChange,
+    valueChange: view => { this.rankingChange.emit(this.rotation.ranking(view)); },
   });
 
   protected readonly available = this.load.available;
@@ -52,6 +56,15 @@ export class Rotation {
   protected readonly downtimeRows = computed<FindingRow[]>(() => this.load.value()?.downtimeRows ?? []);
   protected readonly offensiveRows = computed<FindingRow[]>(() => this.load.value()?.offensiveRows ?? []);
   protected readonly onPlan = computed<OnPlanChip[]>(() => this.load.value()?.onPlan ?? []);
+  protected readonly downtimeSpan = computed(() => this.load.value()?.downtimeSpan ?? null);
+  protected readonly offensiveSpan = computed(() => this.load.value()?.offensiveSpan ?? null);
+  protected readonly bench = computed(() => this.load.value()?.bench ?? null);
+  protected readonly notGraded = computed(() => this.load.value()?.notGraded ?? { buttons: [], downtime: [], offensives: [] });
+  protected readonly buttonsEmpty = computed(() => this.load.value()?.buttonsEmpty ?? '');
+  protected readonly buttonsBenched = computed(() => this.load.value()?.buttonsBenched ?? false);
+  protected readonly offensivesEmpty = computed(() => this.load.value()?.offensivesEmpty ?? 'Nothing flagged.');
+  protected readonly downtimeEmpty = computed(() => this.load.value()?.downtimeEmpty ?? 'Nothing flagged.');
+  protected readonly judgesButtons = computed(() => this.rotation.judgesButtons(this.spec()));
 
   protected onOpenMap(timeS: number): void {
     this.openMap.emit({ timeS, windowLengthS: 0 });

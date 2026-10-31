@@ -1,0 +1,60 @@
+name: Calibration
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'frontend/src/app/domains/raid-analysis/data/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: calibration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  recompute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      # The recompute reads only the baked benches, so the blank example stands in for a real pair.
+      - name: Stand in for the WCL client file
+        run: cp src/environments/wcl-client.example.ts src/environments/wcl-client.ts
+        working-directory: frontend
+
+      - name: Pull the ingested bench data
+        run: npm run data:pull
+        working-directory: frontend
+
+      - name: Read the Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+        working-directory: frontend
+
+      - name: Restore the Playwright browser
+        id: playwright-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install Playwright Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps --only-shell chromium
+        working-directory: frontend
+
+      - name: Recompute calibration
+        run: npm run calibrate
+        working-directory: frontend

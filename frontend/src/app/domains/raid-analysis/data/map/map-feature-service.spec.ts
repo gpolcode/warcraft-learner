@@ -12,6 +12,7 @@ import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { whenStable } from '../../../../../testing/when-stable';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { benchSources } from '../../../../../testing/builders/bench-sources';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -69,7 +70,7 @@ describe('buildActorTimelines', () => {
 
 describe('listReferenceEnemies', () => {
   const positions: EncounterPositions = {
-    spec: 'X', encounter_id: 1, encounter_name: 'E', interval_s: 1.5, sample_count: 2,
+    spec: 'X', encounter_id: 1, encounter_name: 'E', interval_s: 1.5, metric: 'dps', sample_count: 2, sources: benchSources(2),
     parses: [
       { report_code: 'a', fight_id: 1, player_name: 'P', duration_s: 10, interval_s: 1.5, player: [],
         // Add listed before Boss so insertion order is not already boss-first: the sort must do real work.
@@ -105,7 +106,7 @@ describe('listReferenceEnemies', () => {
 
 describe('buildLiveOverlay', () => {
   const positions: EncounterPositions = {
-    spec: 'X', encounter_id: 1, encounter_name: 'E', interval_s: 1.5, sample_count: 1,
+    spec: 'X', encounter_id: 1, encounter_name: 'E', interval_s: 1.5, metric: 'dps', sample_count: 1, sources: benchSources(1),
     parses: [{ report_code: 'a', fight_id: 1, player_name: 'P', duration_s: 10, interval_s: 1.5, player: [],
       enemies: [{ game_id: 100, name: 'Boss', is_boss: true, samples: [] }] }],
   };
@@ -130,7 +131,7 @@ describe('buildLiveOverlay', () => {
 
 describe('resolveLiveReference', () => {
   const positions: EncounterPositions = {
-    spec: 'X', encounter_id: 1, encounter_name: 'E', interval_s: 1.5, sample_count: 1,
+    spec: 'X', encounter_id: 1, encounter_name: 'E', interval_s: 1.5, metric: 'dps', sample_count: 1, sources: benchSources(1),
     parses: [{ report_code: 'a', fight_id: 1, player_name: 'P', duration_s: 10, interval_s: 1.5, player: [],
       enemies: [
         { game_id: 100, name: 'Boss', is_boss: true, samples: [] },
@@ -273,7 +274,7 @@ function withResult(result: Result<MapData>): { service: MapFeatureService; call
 }
 
 const sampleData: EncounterPositions = {
-  spec: 'SubtletyRogue', encounter_id: 3144, encounter_name: 'Test', interval_s: 1.5, sample_count: 1,
+  spec: 'SubtletyRogue', encounter_id: 3144, encounter_name: 'Test', interval_s: 1.5, metric: 'dps', sample_count: 1, sources: benchSources(1),
   parses: [{ report_code: 'a', fight_id: 1, player_name: 'P', duration_s: 10, interval_s: 1.5, player: [],
     enemies: [{ game_id: 100, name: 'Boss', is_boss: true, samples: [] }] }],
 };
@@ -428,7 +429,7 @@ describe('MapFeatureService deferred overlay', () => {
     expect(api.calls.some(call => call.dataType === 'DamageDone')).toBe(false);
   });
 
-  it('surfaces a permanent error when the loaded overlay has no player position samples', async () => {
+  it('surfaces a permanent error the log causes when the loaded overlay has no player position samples', async () => {
     const NO_POSITIONS_ID = 'map.no-player-positions'; // repro id the no-samples permanent carries
     const { service } = setup(); // RecordingWclApi returns [] events, so the player has no samples
     await service.prepare('code', sampleFight, PLAYER_ACTOR_ID, 'SubtletyRogue', []);
@@ -441,6 +442,7 @@ describe('MapFeatureService deferred overlay', () => {
     const error = service.error();
     expect(error?.kind).toBe('permanent');
     if (error?.kind === 'permanent') expect(error.id).toBe(NO_POSITIONS_ID);
+    if (error?.kind === 'permanent') expect(error.source).toBe('log');
   });
 
   it('drops a stale bench load so a rapid selection switch keeps the latest positions', async () => {

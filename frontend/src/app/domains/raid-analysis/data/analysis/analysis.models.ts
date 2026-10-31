@@ -1,3 +1,6 @@
+import type { DamageEstimate, RowRank, Tone } from '../verdict/tone.models';
+import type { UnjudgedCause } from './pull-model-service';
+
 export interface FindingOccurrence {
   atS: number;
   ok: boolean;
@@ -21,7 +24,16 @@ export interface ConditionCheck {
 }
 
 export interface AnalysisFinding {
-  severity: 'critical' | 'warning' | 'info' | 'hold_suggestion' | 'success';
+  /** The `FindingFamily.id` of a family on the verdict contract. */
+  family?: string;
+  severity: Tone;
+  /** Absent on a row no rule judged, such as an on-plan or muted one. */
+  rank?: RowRank;
+  /** Set only where one pull identifies the damage the finding cost. */
+  damage?: DamageEstimate | null;
+  /** Nothing is flagged for the cooldown, so it surfaces as an "On plan" chip rather than a row. */
+  onPlan?: boolean;
+  unjudged?: UnjudgedCause;
   category: string;
   cd_name?: string;
   message: string;
@@ -29,6 +41,8 @@ export interface AnalysisFinding {
   measured?: { value: string; unit?: string };
   label?: string;
   timestamp_s?: number;
+  /** The pull time the finding rests on; a death or the wipe inside it is the root cause, so the finding folds under that cause instead of rendering. */
+  span?: { fromS: number; toS: number };
   details?: {
     cd_name?: string;
     remedy?: string;
@@ -46,6 +60,14 @@ interface AbilityBreakdown {
   is_passive?: boolean;
 }
 
+interface WindowMember {
+  /** Index of the log in the bench's `sources`. */
+  parse: number;
+  time_s: number;
+  window_length_s: number;
+  damage: number;
+}
+
 export interface BurstWindow {
   time_s: number;
   dmg_avg: number;
@@ -58,6 +80,8 @@ export interface BurstWindow {
   defensive_name?: string;
   spell_id?: number;
   ref_game_id?: number | null;
+  /** Every top log whose window formed this one; a log the window lacks had no window there. */
+  members: WindowMember[];
 }
 
 export interface PlayerBurstWindow {
@@ -72,6 +96,8 @@ export interface DefensiveWindow {
 
 export interface PlayerDefensive {
   name: string;
+  cooldown: number;
+  charges?: number;
   uses: number;
   cast_times_s?: number[];
   windows: DefensiveWindow[];
@@ -81,8 +107,8 @@ export interface PlayerDefensive {
 
 export const CAT_LABEL: Record<string, string> = {
   lost_cooldown: 'lost cast',
-  cooldown_delay: 'late',
+  never_used: 'never used',
   cooldown_alignment: 'Bloodlust',
   cast_efficiency: 'downtime',
-  hold_suggestion: 'hold until',
+  cooldown_hold: 'hold until',
 };

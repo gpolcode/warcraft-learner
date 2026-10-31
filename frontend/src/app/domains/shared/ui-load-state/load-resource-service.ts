@@ -26,6 +26,7 @@ export class LoadResourceService {
         if (abortSignal.aborted) return undefined;
         if (!result.ok && result.error.kind === 'permanent') this.logger.logWarn(result.error.id, result.error.context);
         config.availableChange?.emit(availableOf(result));
+        config.valueChange?.(result.ok ? result.value : null);
         config.busyChange.emit(false);
         return result;
       },
@@ -63,6 +64,8 @@ export interface LoadResourceConfig<P, T> {
   initialAvailable?: boolean;
   busyChange: OutputEmitterRef<boolean>;
   availableChange?: OutputEmitterRef<boolean>;
+  /** Each applied result's value, null on a failed load, for a card that reports what it drew to its page. */
+  valueChange?: (value: T | null) => void;
 }
 
 export interface LoadResource<T> {

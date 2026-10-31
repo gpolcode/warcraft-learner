@@ -25,6 +25,7 @@
     <aside class="h-[calc(100dvh-3rem)]" [tuiNavigationAside]="expanded()">
       <a tuiAsideItem iconStart="lightbulb" routerLink="/pre">Pre-fight</a>
       <a tuiAsideItem iconStart="analytics" routerLink="/" [routerLinkActiveOptions]="{ exact: true }">Analyze</a>
+      <a tuiAsideItem iconStart="fact_check" routerLink="/method">Method</a>
       <footer>
         <a tuiAsideItem iconStart="github" [href]="githubUrl" target="_blank" rel="noopener noreferrer">View on GitHub</a>
         <a tuiAsideItem iconStart="bug_report" [href]="newIssueUrl" target="_blank" rel="noopener noreferrer">Report an issue</a>
@@ -45,6 +46,7 @@
     <nav tuiTabBar class="pb-[env(safe-area-inset-bottom)]">
       <a tuiTabBarItem icon="lightbulb" routerLink="/pre" routerLinkActive>Pre-fight</a>
       <a tuiTabBarItem icon="analytics" routerLink="/" routerLinkActive [routerLinkActiveOptions]="{ exact: true }">Analyze</a>
+      <a tuiTabBarItem icon="fact_check" routerLink="/method" routerLinkActive>Method</a>
     </nav>
   </div>
 }

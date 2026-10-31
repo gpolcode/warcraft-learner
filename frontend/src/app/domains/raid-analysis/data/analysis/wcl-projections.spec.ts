@@ -8,10 +8,15 @@ import { applyBuff, cast, fakeCast, removeBuff } from '../../../../../testing/bu
 import { ParseRanking, WclEvent } from '../wcl/wcl.models';
 import type { PlanCooldown } from '../plan/plan.models';
 import { TestBed } from '@angular/core/testing';
+import { parseRanking } from '../../../../../testing/builders/bench-sources';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 
 const rankingRow = (name: string, code: string, fightID: number) => ({ name, report: { code, fightID } });
+/** What a row carrying no rankings facts projects to, ranked at `rank`. */
+const fetchable = (player: string, code: string, fightId: number, rank: number): ParseRanking => ({
+  player, server: '', report_code: code, fight_id: fightId, rank, amount: null, duration_s: null, item_level: null, started_at_s: null,
+});
 
 const TWISTING_NETHER = 'Twisting Nether';
 const AREA_52 = 'Area 52';
@@ -43,17 +48,14 @@ describe('unwrapRankings', () => {
 
   it('composes with toParseRankings to yield fetchable parses', () => {
     const blob = JSON.stringify({ rankings: [rankingRow('Keep', 'r1', 3)] });
-    expect(wclProjections.toParseRankings(wclProjections.unwrapRankings(blob), 10)).toEqual([{ player: 'Keep', server: '', report_code: 'r1', fight_id: 3 }]);
+    expect(wclProjections.toParseRankings(wclProjections.unwrapRankings(blob), 10)).toEqual([fetchable('Keep', 'r1', 3, 1)]);
   });
 });
 
 describe('toParseRankings', () => {
   it('maps raw rankings to fetchable parses and caps at count', () => {
     const raw = [rankingRow('P1', 'r1', 1), rankingRow('P2', 'r2', 2), rankingRow('P3', 'r3', 3)];
-    expect(wclProjections.toParseRankings(raw, 2)).toEqual([
-      { player: 'P1', server: '', report_code: 'r1', fight_id: 1 },
-      { player: 'P2', server: '', report_code: 'r2', fight_id: 2 },
-    ]);
+    expect(wclProjections.toParseRankings(raw, 2)).toEqual([fetchable('P1', 'r1', 1, 1), fetchable('P2', 'r2', 2, 2)]);
   });
 
   it('carries the ranked character\'s realm, and an empty realm when the row omits it', () => {
@@ -67,7 +69,27 @@ describe('toParseRankings', () => {
       { name: 'NoReport', report: { fightID: 2 } }, // report code missing -> unfetchable
       rankingRow('Keep', 'r3', 3),
     ];
-    expect(wclProjections.toParseRankings(raw, 10)).toEqual([{ player: 'Keep', server: '', report_code: 'r3', fight_id: 3 }]);
+    expect(wclProjections.toParseRankings(raw, 10)).toEqual([fetchable('Keep', 'r3', 3, 3)]);
+  });
+
+  it('keeps the ranked figure, item level and pull start, with the kill length in seconds', () => {
+    const AMOUNT = 251_234.5;
+    const DURATION_MS = 312_340;
+    const DURATION_S = 312.3;
+    const ITEM_LEVEL = 721.4;
+    const START_MS = 1_790_000_123_456;
+    const START_S = 1_790_000_123;
+    const raw = [{ ...rankingRow('P1', 'r1', 1), amount: AMOUNT, duration: DURATION_MS, bracketData: ITEM_LEVEL, startTime: START_MS }];
+
+    expect(wclProjections.toParseRankings(raw, 10)).toEqual([
+      { ...fetchable('P1', 'r1', 1, 1), amount: AMOUNT, duration_s: DURATION_S, item_level: ITEM_LEVEL, started_at_s: START_S },
+    ]);
+  });
+
+  it('nulls a rankings fact WCL sends in the wrong type, keeping the row', () => {
+    const blob = JSON.stringify({ rankings: [{ ...rankingRow('P1', 'r1', 1), amount: 'lots' }] });
+
+    expect(wclProjections.toParseRankings(wclProjections.unwrapRankings(blob), 10)).toEqual([fetchable('P1', 'r1', 1, 1)]);
   });
 });
 
@@ -75,7 +97,7 @@ describe('findParseActor', () => {
   const RANKED_NAME = 'Keep';
   const TWIN_ID = 20;
   const actor = (id: number, name: string, server: string) => ({ id, name, subType: 'Rogue', server });
-  const ranked = (server: string): ParseRanking => ({ player: RANKED_NAME, server, report_code: 'r1', fight_id: 1 });
+  const ranked = (server: string): ParseRanking => parseRanking({ player: RANKED_NAME, server });
 
   it('binds the one actor carrying the ranked name', () => {
     const actors = [actor(10, 'Other', AREA_52), actor(TWIN_ID, RANKED_NAME, TWISTING_NETHER)];

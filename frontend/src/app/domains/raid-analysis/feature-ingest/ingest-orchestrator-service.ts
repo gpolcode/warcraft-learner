@@ -12,7 +12,9 @@ import { TopParseSelectionService } from '../data/analysis/top-parse-selection-s
 import type { EncounterEntry, SpecEntry } from '../data/encounter/encounter.models';
 import type { TopParseSelection } from '../data/wcl/wcl.models';
 import { BenchRegistryService, LEAD_BENCH, type BenchDescriptor } from './bench-registry';
+import { ContrastIngestService } from './contrast-ingest-service';
 import { CurrentRaidsService, BudgetExceededError } from '../data/ingest/current-raids-service';
+import { CalibrationRunService } from '../data/verdict/calibration/calibration-run-service';
 import { INGEST_VERSION } from '../data/ingest/ingest-version';
 import { INGEST_POINTS_MARGIN } from '../data/ingest/ingest-points-margin';
 import { IngestOrderingService, type SpecOrderEntry } from '../data/ingest/ingest-ordering-service';
@@ -62,6 +64,7 @@ interface IngestRunSummary {
   failed: { spec: string; message: string }[];
   budgetStopped: boolean;
   fatal?: string;
+  report?: string;
 }
 
 function nowS(): number {
@@ -97,6 +100,8 @@ export class IngestOrchestratorService {
   private readonly wclTransport = inject(WCL_TRANSPORT);
   private readonly wclCache = inject(NgHttpCachingService);
   private readonly benches = inject(BenchRegistryService).benches;
+  private readonly calibration = inject(CalibrationRunService);
+  private readonly contrast = inject(ContrastIngestService);
 
   /** Never rejects: the fire-and-forget app initializer must not see an unhandled rejection. */
   async run(): Promise<void> {
@@ -130,7 +135,18 @@ export class IngestOrchestratorService {
 
     const summary = await this.ingestEachSpec(specs, encounters, version, meter);
     this.printRunSummary(summary, specs.length);
-    publishSummary(summary);
+    // After benching, so the cohort spends only what the benches left above the margin.
+    const contrast = await this.contrast.run(encounters, meter.reading, nowS());
+    console.log(`\n${contrast.summary}`);
+    publishSummary({ ...summary, report: `${contrast.summary}\n\n${await this.calibrate()}` });
+  }
+
+  /** Reads only the files on disk, so it spends no WCL points; an encounter whose benches and rules are unchanged reuses its file. */
+  private async calibrate(): Promise<string> {
+    const { report, breaches } = await this.calibration.run(false);
+    console.log(`\n${report}`);
+    for (const breach of breaches) console.log(`[calibration] ${breach}`);
+    return report;
   }
 
   private async discover(): Promise<Discovery> {
@@ -257,7 +273,9 @@ export class IngestOrchestratorService {
       const displayIngestedAtS = storedTimes.length ? Math.max(...storedTimes) : null;
       return { entry, displayVersion, displayIngestedAtS, emptyCount: emptyIds.length };
     }));
-    const { ordered, selected } = this.ordering.specsForRun(orderInputs.map(input => input.entry), this.environment.prioritySpecs);
+    const { ordered, selected: bySchedule } = this.ordering.specsForRun(orderInputs.map(input => input.entry), this.environment.prioritySpecs);
+    const subset = this.environment.ingestSubset;
+    const selected = subset ? subset.specs.filter(spec => knownSpecs.includes(spec)) : bySchedule;
     const displayBySpec = new Map(orderInputs.map(input => [input.entry.spec, input] as const));
     const selectedSpecs = new Set(selected);
     const rows: SpecReportRow[] = ordered.map(spec => ({
@@ -286,7 +304,7 @@ export class IngestOrchestratorService {
     const emptyThisPass: number[] = [];
 
     try {
-      for (const encounter of this.ordering.orderEncountersByMissingFirst(encounters, checkedIds)) {
+      for (const encounter of this.ordering.orderEncountersByMissingFirst(this.inSubset(encounters), checkedIds)) {
         this.currentRaids.assertPointsBudget(meter.reading, INGEST_POINTS_MARGIN);
         const run = await this.runEncounter(spec, encounter, version);
         if (EMPTY_OUTCOMES.has(run.outcome)) emptyThisPass.push(encounter.id);
@@ -304,6 +322,11 @@ export class IngestOrchestratorService {
     await this.finishSpec(spec, encounters, previousState, emptyThisPass);
     console.log(`Ingestion complete for ${spec}.`);
     return false;
+  }
+
+  private inSubset(encounters: IngestEncounter[]): IngestEncounter[] {
+    const ids = this.environment.ingestSubset?.encounterIds;
+    return ids ? encounters.filter(encounter => ids.includes(encounter.id)) : encounters;
   }
 
   private async runEncounter(spec: string, encounter: IngestEncounter, version: string): Promise<EncounterRun> {
@@ -439,6 +462,7 @@ export class IngestOrchestratorService {
           this.logger.logWarn(`pruneStaleEncounters ${spec}/${encId}/${bench}`, err);
         }
       }
+      await this.calibration.remove(spec, encId).catch((err: unknown) => { this.logger.logWarn(`pruneStaleEncounters ${spec}/${encId}/calibration`, err); });
       removed.push(encId);
     }
     return removed;

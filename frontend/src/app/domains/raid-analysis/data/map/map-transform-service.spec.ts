@@ -4,10 +4,11 @@ import { WclEvent } from '../wcl/wcl.models';
 import { MapTransformService, RawPosSample, EnemyMeta } from './map-transform-service';
 import { MapDrawService } from './map-draw-service';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
-import { parseRankings, wclReport } from '../../../../../testing/builders/wcl-fixtures';
+import { rankingRow, wclReport } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { MIN_SAMPLE_COUNT } from '../analysis/top-parse-selection-service';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -305,7 +306,7 @@ describe('MapTransformService.getBench', () => {
   const PLAYER_ACTOR_ID = 5;
   const BOSS_ACTOR_ID = 10;
   const BOSS_GAME_ID = 100;
-  const EXPECTED_FETCH_COUNT = 2;          // player casts + enemy casts, nothing else
+  const FETCHES_PER_PARSE = 2;             // player casts + enemy casts, nothing else
 
   const report = wclReport({
     playerId: PLAYER_ACTOR_ID, fightId: FIGHT_ID, endTimeMs: SIX_SEC_MS, encounterId: ENCOUNTER_ID,
@@ -315,7 +316,8 @@ describe('MapTransformService.getBench', () => {
   /** `onFetch` records each position-event fetch so the fetch-shape assertion still sees every call. */
   function serviceWith(over: { onFetch?: (call: RecordedFetch) => void } = {}): MapTransformService {
     const wclFake = {
-      getRankings: async () => ({ rankings: parseRankings(1) }),
+      // One report serves every code, so each ranking names its one fight.
+      getRankings: async () => ({ rankings: Array.from({ length: MIN_SAMPLE_COUNT }, () => rankingRow(FIGHT_ID)) }),
       getReport: async () => report,
       getAllEvents: async (
         _code: string, _fightId: number, dataType: string, _start: number, _end: number,
@@ -333,7 +335,7 @@ describe('MapTransformService.getBench', () => {
     const calls: RecordedFetch[] = [];
     const result = await serviceWith({ onFetch: call => calls.push(call) }).getBench(SPEC, ENCOUNTER_ID);
     expect(result.ok).toBe(true);
-    expect(calls).toHaveLength(EXPECTED_FETCH_COUNT);
+    expect(calls).toHaveLength(FETCHES_PER_PARSE * MIN_SAMPLE_COUNT);
     expect(calls).toContainEqual({ dataType: 'Casts', sourceId: PLAYER_ACTOR_ID, includeResources: true, hostilityType: undefined });
     expect(calls).toContainEqual({ dataType: 'Casts', sourceId: undefined, includeResources: true, hostilityType: 'Enemies' });
     expect(calls.some(call => call.dataType === 'DamageDone')).toBe(false);

@@ -8,6 +8,8 @@ import { ButtonBench, ROTATION_DATA_SOURCE, RotationBench } from './rotation-dat
 import { featureService } from '../../../../../testing/service-harness';
 import { RotationFeatureService } from './rotation-feature-service';
 import { bench, cdBench } from './rotation-harness';
+import { BenchStripService } from '../analysis/bench-strip-service';
+import { TestBed } from '@angular/core/testing';
 
 // Subtlety's Secret Technique inside Shadow Dance, which the top logs never press outside it.
 const LIST = {
@@ -45,6 +47,12 @@ describe('RotationFeatureService', () => {
     expect(result).toEqual(Results.missing('Not yet ingested.'));
   });
 
+  it('names who the pull was compared with, from the bench\'s sources', async () => {
+    const result = await withSource(Results.ok(bench())).loadPlayerView('SubtletyRogue', 1, 'rX', 1, 10);
+    assert(result.ok);
+    expect(result.value.bench?.count).toBe(bench().sample_count);
+  });
+
   it('wires the shared pull context with the empty offensives view and the rotation repro id', async () => {
     const UNLOGGED_FIGHT_ID = 99;
     const FAILING_CODE = 'boom';
@@ -55,7 +63,14 @@ describe('RotationFeatureService', () => {
     });
 
     const onMissingFight = await service.loadPlayerView('SubtletyRogue', 1, 'rX', UNLOGGED_FIGHT_ID, 10);
-    expect(onMissingFight).toEqual(Results.ok({ buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [] }));
+    expect(onMissingFight).toEqual(Results.ok({
+      buttonRows: [], downtimeRows: [], offensiveRows: [], onPlan: [], downtimeSpan: null, offensiveSpan: null,
+      buttonsBenched: false, buttonsEmpty: 'Your log shows no judged moment for any of the 0 buttons the list judges.',
+      offensivesEmpty: 'Nothing flagged. No cooldown on the plan was checked in this pull.',
+      downtimeEmpty: 'Nothing flagged. No idle time was judged in this pull.',
+      bench: TestBed.inject(BenchStripService).strip(bench()), notGraded: { buttons: [], downtime: [], offensives: [] },
+      ranking: { rows: [], folded: { dead: 0, after_wipe: 0, not_reached: 0 } },
+    }));
 
     const onFailure = await service.loadPlayerView('SubtletyRogue', 1, FAILING_CODE, 1, 10);
     expect(onFailure.ok).toBe(false);
@@ -129,14 +144,14 @@ describe('RotationFeatureService', () => {
         : []),
     };
     const SHADOW_BLADES_S = 16;
-    // 1 use per minute over the 2-minute pull: 2 expected, and 2 is also the floor.
     const twoExpected = bench({
       major_cooldowns: [{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90, duration: SHADOW_BLADES_S, charges: 1 }],
       per_cd_benchmarks: { 'Shadow Blades': cdBench({ uses_per_min: { avg: 1, stddev: 0.1 } }) },
     });
     const result = await withSource(Results.ok(twoExpected), wcl).loadPlayerView('SubtletyRogue', 1, 'rX', 1, PLAYER_ID);
     assert(result.ok);
-    expect(result.value.offensiveRows[0]?.measured).toMatchObject({ value: '1 / 2' });
+    // Two casts would leave idle time to judge; one press leaves none.
+    expect(result.value.downtimeEmpty).toBe('Nothing flagged. No idle time was judged in this pull.');
   });
 
   it('returns bench-only plan rows for the pre-fight view', async () => {

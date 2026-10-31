@@ -16,7 +16,7 @@ description: warcraft-learner writing and branding - the plain-spoken coaching v
 
 ## UI copy voice (plain-spoken coach)
 
-All user-facing copy - finding messages, remedies, card subtitles, empty states, microcopy - is written so a raider reads it once and knows what to change. Plain words over jargon, and never a number whose meaning the reader has to infer. The reference implementations, under `frontend/src/app/domains/raid-analysis/`, are the list texts in `data/rotation/priority-list/list-text-service.ts` and `list-finding-service.ts`, `data/rotation/rotation-feature-service.ts` / `data/defensive/defensive-feature-service.ts`, and the gear notes in `data/gear/gear-comparison-service.ts`.
+All user-facing copy - finding messages, remedies, card subtitles, empty states, microcopy - is written so a raider reads it once and knows what to change. Plain words over jargon, and never a number whose meaning the reader has to infer. The reference implementations, under `frontend/src/app/domains/raid-analysis/`, are the list texts in `data/rotation/priority-list/list-text-service.ts` and `list-finding-service.ts`, `data/rotation/rotation-feature-service.ts` / `data/defensive/defensive-feature-service.ts`, and the gear notes in `data/gear/gear-judge-service.ts`.
 
 - **Count first, target second, in one sentence each.** A finding reads `<what happened>. <what to hit>.` `"4 of 12 Black Powders hit fewer than 3 targets. Wait for 3 or more."` Never staple two fragments together with a colon or a trailing label.
 - **Name the comparison group `top raiders` in prose, `top logs` in data labels.** `"Top raiders average 12s."`, `"of top logs"`. `parse` names a Warcraft Logs ranking, so it appears only where the benchmark itself is defined.
@@ -35,3 +35,15 @@ All user-facing copy - finding messages, remedies, card subtitles, empty states,
 - **Sentence case everywhere a human reads it.** Card titles, section headings, nav items, buttons, form labels and options capitalize only the first word and proper nouns: `Burst windows`, `Pre-fight`, `Warcraft Logs report URL or code`. Strings rendered uppercase through `text-label` are still written in sentence case (`Top raiders average`, `Your build`) so a screen reader reads them the same.
 - **A status word is a tag, never lowercase running text.** `Passive`, `Not used`, `Waiting`, `Your build`, `Bloodlust` render through `text-label` or as a sentence-cased value; no all-lowercase words and no italics.
 - **"On plan" success states are quiet.** Use a neutral `tuiChip`, not a green pill with a `check_circle`. A correct result should read as calm, not celebrated.
+
+## Tier voice
+
+A row's tone decides what its sentence may claim (tones and their evidence: **warcraft-verdict**).
+
+- **Red and amber are graded rows about the player's own actions, and only they take an imperative.** `"You pressed Deathmark 2 times. Top raiders press it 4 times."` with `"Press Deathmark on cooldown."`
+- **Red claims a loss, amber a difference.** Red: something top raiders keep and you lost. Amber: you differ from top raiders more than they differ from each other. Neither claims an intent.
+- **Blue states a count as a fact, never an order.** `"8 of 10 top raiders use this pair."`, never `"Use this pair."`
+- **Neutral reports the measurement and nothing else.** No target, no verb aimed at the player.
+- **Muted names why the check did not run.** `"You were dead from 2:10."`
+- **A raid decision is never an order.** Bloodlust timing, assignments and phase pushes read as what happened and what top raids did, never as an imperative.
+- **Every colored row names its reference as a count.** `"10 top logs"`, `"8 of 10 top raiders"`.

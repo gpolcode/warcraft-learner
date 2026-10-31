@@ -10,9 +10,11 @@ import { round, groupByTime, getOrInsert } from '../analysis/analysis-math';
 import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
-import { BurstBench } from './burst-data-source';
+import { BurstBench, BurstParseMeasures } from './burst-data-source';
+import { BurstJudgeService } from './burst-judge-service';
 
-const CLUSTER_MIN_FRAC = 0.4;
+/** Share of the accepted top logs a burst window needs to form; a leave-one-out fold reclusters with the same share. */
+export const CLUSTER_MIN_FRAC = 0.4;
 const MEMBER_MAJORITY_FRAC = 0.5;
 const CLUSTER_MERGE_S = 15;
 
@@ -67,6 +69,7 @@ export interface ParseWindowScan {
 }
 
 interface RunWindowContext {
+  damage: readonly TimedEvent[];
   hits: DamageHit[];
   total: number;
   binCount: number;
@@ -76,6 +79,11 @@ interface RunWindowContext {
   nameOf: (spellId: number) => string;
   castNamesInParse: Set<string>;
   tuning: BurstDetectorTuning;
+}
+
+interface ParsedBurst {
+  windows: ParseWindow[];
+  measures: BurstParseMeasures;
 }
 
 interface BurstPlan {
@@ -89,6 +97,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
   private readonly specPlanLoader = inject(SpecPlanLoaderService);
+  private readonly judge = inject(BurstJudgeService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<BurstBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
@@ -108,9 +117,10 @@ export class BurstTransformService implements DataSource<BurstBench> {
       parse: (parse, plan) => this.parseWindows(parse, plan),
       bench: ({ parses }, plan) => {
         const allWindows = parses.flatMap(
-          (windows, parseIndex) => windows.map(window => ({ ...window, parse_index: parseIndex })));
+          ({ windows }, parseIndex) => windows.map(window => ({ ...window, parse_index: parseIndex })));
         return {
           windows: this.clusterParseWindows(allWindows, parses.length),
+          per_parse: parses.map(({ measures }) => measures),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
           press_folds: this.wclProjections.pressFolds([...plan.cooldowns, ...plan.defensives]),
         };
@@ -118,7 +128,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
     });
   }
 
-  private async parseWindows({ ranking, report, fight, player }: BenchParse, plan: BurstPlan): Promise<ParseWindow[]> {
+  private async parseWindows({ ranking, report, fight, player }: BenchParse, plan: BurstPlan): Promise<ParsedBurst> {
     const abilities = report.masterData?.abilities ?? [];
     // Names only, to attribute casts by ability name inside a parse window.
     const abilityNames = new Map<number, string>(abilities.map(ability => [ability.gameID, ability.name]));
@@ -131,10 +141,12 @@ export class BurstTransformService implements DataSource<BurstBench> {
 
     const folds = this.wclProjections.pressFolds([...plan.cooldowns, ...plan.defensives]);
     const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime);
-    return this.findParseWindows({
-      damage: this.wclProjections.withRelativeS(damage, fight.startTime), fightLenS: this.wclProjections.relativeS(fight.endTime, fight.startTime),
-      timings: this.cdTimings(castsTimed, plan.cooldowns), casts: castsTimed, abilityNames,
-    });
+    const damageS = this.wclProjections.withRelativeS(damage, fight.startTime);
+    const fightLenS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
+    return {
+      windows: this.findParseWindows({ damage: damageS, fightLenS, timings: this.cdTimings(castsTimed, plan.cooldowns), casts: castsTimed, abilityNames }),
+      measures: { damage_per_s: this.judge.series(damageS, fightLenS) },
+    };
   }
 
   protected cdTimings(casts: TimedEvent[], cooldowns: PlanCooldown[]): CdTiming[] {
@@ -259,7 +271,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
 
     const windows: ParseWindow[] = [];
     const context: RunWindowContext = {
-      hits, total, binCount, damagePerBin, timings, castRows, nameOf, castNamesInParse, tuning,
+      damage, hits, total, binCount, damagePerBin, timings, castRows, nameOf, castNamesInParse, tuning,
     };
     for (const run of denseRuns) {
       const window = this.windowFromRun(run, context);
@@ -269,7 +281,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
   }
 
   private windowFromRun(run: BinRun, context: RunWindowContext): ParseWindow | null {
-    const { hits, total, binCount, damagePerBin, timings, castRows, nameOf, castNamesInParse, tuning } = context;
+    const { damage, hits, total, binCount, damagePerBin, timings, castRows, nameOf, castNamesInParse, tuning } = context;
     const trimmed = this.trimRunToDamage(run, damagePerBin);
     if (!trimmed) return null;
     const windowStartS = trimmed.startBin * tuning.binS;
@@ -277,7 +289,7 @@ export class BurstTransformService implements DataSource<BurstBench> {
     // The fight-closing window counts the fight-end hit bucketDamagePerBin clamps into the last bin; interior windows stay half-open.
     const closesFight = trimmed.endBin === binCount - 1;
     const windowHits = hits.filter(hit => hit[0] >= windowStartS && (closesFight ? hit[0] <= windowEndS : hit[0] < windowEndS));
-    const windowDmg = windowHits.reduce((sum, hit) => sum + hit[1], 0);
+    const windowDmg = this.judge.spanDamage(damage, windowStartS, windowEndS, closesFight);
     if (!windowDmg || windowDmg / total < tuning.significancePct) return null;
     return {
       time_s: round(windowStartS),
@@ -351,6 +363,9 @@ export class BurstTransformService implements DataSource<BurstBench> {
         common_cds: this.clusterCommonCds(members),
         window_length_s: round(mean(members.map(member => member.window_length_s)) ?? 0),
         ability_breakdown: this.clusterAbilityBreakdown(members),
+        members: members.map(member => ({
+          parse: member.parse_index, time_s: member.time_s, window_length_s: member.window_length_s, damage: member.window_damage,
+        })),
       });
     }
     return result.sort((a, b) => a.time_s - b.time_s);

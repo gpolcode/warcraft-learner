@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { WclAuthService } from '../http/wcl-auth-service';
-import { WCL_TRANSPORT, WclTransportError, WCL_UNUSABLE_STATUS } from './wcl-transport';
+import { WCL_TRANSPORT, WclReportUnavailableError, WclTransportError } from './wcl-transport';
 import {
   WclReport, WclEvent,
   PlayerDetailGroups, WclRankingsBlob, WclRawAbility, WclCombatantInfo, WclTableBlob,
-  WclClass, WclExpansion,
+  WclClass, WclExpansion, RankingMetric,
   MYTHIC_DIFFICULTY,
 } from './wcl.models';
 import {
@@ -58,8 +58,7 @@ export class WclApiService {
     const vars: ReportQueryVariables = { code };
     const result = await this.query<ReportQuery>(REPORT_Q, vars);
     const report = result.reportData?.report;
-    // WCL returns report: null for a code it won't serve (missing, private, expired) with no GraphQL error.
-    if (!report) throw this.reportUnavailable(code);
+    if (!report) throw new WclReportUnavailableError(code);
     return report as WclReport;
   }
 
@@ -67,7 +66,7 @@ export class WclApiService {
     const vars: ReportQueryVariables = { code };
     const result = await this.query<ReportFightsQuery>(REPORT_FIGHTS_Q, vars);
     const report = result.reportData?.report;
-    if (!report) throw this.reportUnavailable(code);
+    if (!report) throw new WclReportUnavailableError(code);
     return (report.fights ?? []) as WclReport['fights'];
   }
 
@@ -75,15 +74,8 @@ export class WclApiService {
     const vars: PlayerDetailsQueryVariables = { code, fightIDs: [fightId] };
     const result = await this.query<PlayerDetailsQuery>(PLAYER_DETAILS_Q, vars);
     const playerDetails = result.reportData?.report?.playerDetails?.data?.playerDetails;
-    if (!playerDetails) throw this.reportUnavailable(code);
+    if (!playerDetails) throw new WclReportUnavailableError(code);
     return playerDetails;
-  }
-
-  /** A report WCL won't serve (missing, private, expired): permanent, since a retry can't help. */
-  private reportUnavailable(code: string): WclTransportError {
-    return new WclTransportError(
-      `WCL report ${code} is unavailable (not found, private, or expired).`, WCL_UNUSABLE_STATUS,
-    );
   }
 
   private async fetchEventPages(
@@ -94,7 +86,7 @@ export class WclApiService {
     for (;;) {
       const result = await this.query<EventsQuery | ResurrectsQuery | EnemyDebuffsQuery>(gqlString, { ...vars, startTime: currentStart });
       const page = result.reportData?.report?.events;
-      if (!page) throw this.reportUnavailable(code);
+      if (!page) throw new WclReportUnavailableError(code);
       // Element by element: WCL overshoots the requested limit (22k rows in one page on a 34-minute pull), and spreading that many arguments into push overflows the call stack.
       for (const event of page.data ?? []) events.push(event);
       if (!page.nextPageTimestamp) break;
@@ -124,12 +116,12 @@ export class WclApiService {
     const vars: CombatantInfoQueryVariables = { code, fightIDs: [fightId], sourceID: playerId };
     const result = await this.query<CombatantInfoQuery>(COMBATANT_INFO_Q, vars);
     const report = result.reportData?.report;
-    if (!report) throw this.reportUnavailable(code);
+    if (!report) throw new WclReportUnavailableError(code);
     return report.events?.data ?? [];
   }
 
-  async getDamageDoneTable(code: string, fightId: number): Promise<WclTableBlob | null> {
-    const vars: TableQueryVariables = { code, fightIDs: [fightId], dataType: 'DamageDone' };
+  async getTable(code: string, fightId: number, dataType: 'DamageDone' | 'Healing'): Promise<WclTableBlob | null> {
+    const vars: TableQueryVariables = { code, fightIDs: [fightId], dataType };
     const result = await this.query<TableQuery>(TABLE_Q, vars);
     return result.reportData?.report?.table ?? null;
   }
@@ -160,11 +152,12 @@ export class WclApiService {
   }
 
   // Returned as-is (`null` for an unknown spec, since no query can be built); consumers unwrap both forms (see `unwrapRankings` / `toParseRankings`), and a null `partition` leaves the variable unset, which is what makes WCL fall back to the zone's current one.
-  async getRankings(spec: string, encounterId: number, partition: number | null): Promise<WclRankingsBlob | null> {
+  async getRankings(spec: string, encounterId: number, partition: number | null, metric: RankingMetric, page?: number): Promise<WclRankingsBlob | null> {
     const meta = await this.specMeta.resolve(spec);
     if (!meta) return null;
-    const vars: RankingsQueryVariables = { encounterID: encounterId, className: meta.className, specName: meta.specName, difficulty: MYTHIC_DIFFICULTY };
+    const vars: RankingsQueryVariables = { encounterID: encounterId, className: meta.className, specName: meta.specName, metric, difficulty: MYTHIC_DIFFICULTY };
     if (partition != null) vars.partition = partition;
+    if (page != null) vars.page = page;
     const result = await this.query<RankingsQuery>(RANKINGS_Q, vars);
     return result.worldData?.encounter?.characterRankings ?? null;
   }

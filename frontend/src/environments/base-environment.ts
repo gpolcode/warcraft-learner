@@ -21,10 +21,17 @@ export interface Environment {
   /** The WCL zone names ingestion benches. */
   currentRaids: readonly string[];
   prioritySpecs: readonly string[];
+  /** Null ingests every spec the ordering selects over every current-raid encounter; a subset run benches only the named pairs. */
+  ingestSubset: IngestSubset | null;
   /** Relative to `frontend/`; the file server reads only this default, so a build override can only empty it, which turns the store off. */
   wclResponseCacheDir: string;
   /** The e2e suite picks this report's first pull and first raider blind, so it holds exactly one boss pull, a Mythic kill, whose first-listed raider plays a spec with a benched priority list. */
   e2eReportCode: string;
+}
+
+export interface IngestSubset {
+  specs: readonly string[];
+  encounterIds: readonly number[];
 }
 
 /** URL roots carry no trailing slash. No imports, so plain Node can load this module without Angular. */
@@ -49,6 +56,7 @@ export const baseEnvironment: Environment = {
   dataBaseHref: '',
   currentRaids: ['The Venomous Abyss'],
   prioritySpecs: ['AssassinationRogue'],
+  ingestSubset: null,
   wclResponseCacheDir: '.wcl-cache',
   e2eReportCode: 'd9DFngCafqmLyQvN',
 };

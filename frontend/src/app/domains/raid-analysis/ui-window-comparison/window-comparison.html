@@ -10,6 +10,18 @@
           }
         </hgroup>
       </header>
+      @if (bench(); as b) {
+        <wl-bench-strip class="pb-2" [strip]="b"></wl-bench-strip>
+      }
+      @if (judged(); as span) {
+        <wl-judged-span class="pb-2" noun="window" [span]="span"></wl-judged-span>
+      }
+    }
+
+    @if (!windows().length && empty()) {
+      <wl-empty-state class="border-t border-line">{{ empty() }}</wl-empty-state>
+    } @else if (empty()) {
+      <p class="text-body text-muted pb-1">{{ empty() }}</p>
     }
 
     <!-- Chip size is decoupled from fight time, so windows never overlap however tightly they fire. -->
@@ -29,16 +41,17 @@
             @if (cell.kind === 'window') {
               @let w = cell.window;
               @let active = activeIndex() === cell.index;
+              @let look = lookOf(w);
               @let iconTone =
-                w.status === 'good' ? 'text-success' :
-                w.status === 'warn' ? 'text-warning' :
-                w.status === 'bad' ? 'text-critical' :
-                w.status === 'info' ? 'text-accent' : 'text-muted';
+                look === 'success' ? 'text-success' :
+                look === 'warning' ? 'text-warning' :
+                look === 'critical' ? 'text-critical' :
+                look === 'accent' ? 'text-accent' : 'text-muted';
               @let barTone =
-                w.status === 'good' ? 'bg-success' :
-                w.status === 'warn' ? 'bg-warning' :
-                w.status === 'bad' ? 'bg-critical' :
-                w.status === 'info' ? 'bg-accent' : 'bg-muted';
+                look === 'success' ? 'bg-success' :
+                look === 'warning' ? 'bg-warning' :
+                look === 'critical' ? 'bg-critical' :
+                look === 'accent' ? 'bg-accent' : 'bg-muted';
               <div class="flex flex-col items-center gap-1.5 shrink-0">
                 <button
                   tuiIconButton
@@ -81,12 +94,17 @@
           </div>
           <div class="flex flex-col shrink-0">
             <span class="text-label text-muted">{{ metricLabel() }}</span>
-            @if (!activeIsMuted()) {
-              <span class="tabular-nums text-value">{{ w.overview.playerPct | formatDamage }}</span>
-            } @else if (activeIsBenchOnly()) {
-              <span class="tabular-nums text-value">{{ w.overview.topAvg | formatDamage }}</span>
+            @let headline = activeIsBenchOnly() ? w.overview.topAvg : w.overview.playerPct;
+            @if (!activeIsMuted() || activeIsBenchOnly()) {
+              @if (headline == null) {
+                <span class="text-value text-muted">Not measured</span>
+              } @else if (metricUnit() === 'multiple') {
+                <span class="tabular-nums text-value">{{ headline | formatMultiple }}</span>
+              } @else {
+                <span class="tabular-nums text-value">{{ headline | formatDamage }}</span>
+              }
             } @else {
-              <span class="text-value text-muted">Not reached</span>
+              <span class="text-value text-muted">@switch (w.unjudged) {@case ('dead') {Dead}@case ('after_wipe') {After the wipe}@default {Not reached}}</span>
             }
           </div>
           @if (!activeIsMuted() && overviewDelta() !== null) {
@@ -94,7 +112,7 @@
               <span class="text-label text-muted">Vs top raiders average</span>
               <span class="tabular-nums text-value"
                 [class.text-muted]="overviewDeltaStatus() === 'muted'"
-                [class.text-success]="overviewDeltaStatus() === 'better'"
+                [class.text-warning]="overviewDeltaStatus() === 'differs'"
                 [class.text-critical]="overviewDeltaStatus() === 'worse'">{{ overviewDelta() | signedPercent }}</span>
             </div>
           }
@@ -122,6 +140,9 @@
             </div>
           </div>
         }
+        @if (w.message) {
+          <p class="mt-2.5 text-body" [class.text-warning]="lookOf(w) === 'warning'" [class.text-critical]="lookOf(w) === 'critical'">{{ w.message }}</p>
+        }
         @if (w.note) {
           <div class="mt-2.5">
             <span class="block text-label text-muted mb-1.5">What you did</span>
@@ -135,9 +156,9 @@
           <span class="block text-label text-muted mb-1.5">{{ rangeLabel() }}</span>
           <wl-range-bar class="h-5"
             [you]="overviewPlayerWidthPct()" [rangeLeft]="overviewRangeLeftPct()" [rangeWidth]="overviewRangeWidthPct()" [avg]="overviewAvgLeftPct()"
-            [status]="w.status">
+            [status]="lookOf(w)">
           </wl-range-bar>
-          <wl-range-legend class="mt-1.5" [status]="w.status"></wl-range-legend>
+          <wl-range-legend class="mt-1.5" [status]="lookOf(w)"></wl-range-legend>
         </div>
       }
 
@@ -157,7 +178,6 @@
           @for (row of activeDetailRows(); track row.spellId) {
             <wl-compact-ability-row
               [row]="row"
-              [higherIsBetter]="higherIsBetter()"
               [showCasts]="showCasts()"
               [hidePlayer]="activeIsMuted()">
             </wl-compact-ability-row>
@@ -165,6 +185,10 @@
         </div>
       }
 
+    }
+
+    @if (notGraded().length) {
+      <wl-not-graded [notes]="notGraded()"></wl-not-graded>
     }
 
   </div>

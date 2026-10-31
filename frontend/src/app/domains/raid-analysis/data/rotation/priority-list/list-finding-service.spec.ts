@@ -3,9 +3,10 @@ import { TestBed } from '@angular/core/testing';
 import { planSpell } from '../../../../../../testing/builders/spec-plan';
 import { BACKSTAB, DARKEST_NIGHT, EVISCERATE, SHADOW_DANCE } from '../../../../../../testing/spell-ids';
 import type { ConditionCheck } from '../../analysis/analysis.models';
-import type { ButtonBench, RotationBench } from '../rotation-data-source';
+import type { ButtonBench, RotationBench, RotationParseMeasures } from '../rotation-data-source';
+import { pullModel } from '../../../../../../testing/builders/pull-model';
 import { bench } from '../rotation-harness';
-import type { CastCheck, CastVerdict, LogReading, OrderCheck, TermReading } from './list-check-service';
+import type { ButtonCounts, CastCheck, CastVerdict, LogReading, MissCheck, MissKind, TermReading } from './list-check-service';
 import { ConditionEvalService } from './condition-eval-service';
 import { ListFindingService } from './list-finding-service';
 import { priorityList } from './priority-list-harness';
@@ -16,7 +17,7 @@ import type { PriorityList } from '../../plan/plan.models';
 const MAX_OCCURRENCES = 24;
 /** Three right casts of four. */
 const THREE_QUARTERS = 0.75;
-/** Two right casts of three moments, the third a skip when due. */
+/** Two right casts of three moments, the third missed while due. */
 const TWO_THIRDS = 0.667;
 const FIELD = { lo: 0.8, avg: 0.9, hi: 1 };
 const list = priorityList({
@@ -40,13 +41,26 @@ const cast = (verdict: CastVerdict, atS: number, cp = 5): CastCheck => ({
   atS, verdict, line: 0,
   lines: [{ truth: verdict === 'on' ? 'true' : verdict === 'off' ? 'false' : 'unknown', terms: [{ truth: cp >= 5 ? 'true' : 'false', value: [cp, cp] }] }],
 });
-const skipped = (atS: number): OrderCheck => ({ atS, expected: 'eviscerate', pressed: 'backstab', line: 0, terms: [{ truth: 'true', value: [5, 5] }] });
-const reading = (casts: CastCheck[], order: OrderCheck[] = [], backstabs: CastCheck[] = []): LogReading => ({
-  casts: new Map([['eviscerate', casts], ['backstab', backstabs]]), order,
+const missedAt = (atS: number, kind: MissKind = 'idle'): MissCheck => ({ atS, action: 'eviscerate', kind, line: 0, terms: [{ truth: 'true', value: [5, 5] }] });
+const reading = (casts: CastCheck[], missed: MissCheck[] = [], backstabs: CastCheck[] = []): LogReading => ({
+  casts: new Map([['eviscerate', casts], ['backstab', backstabs]]), missed,
   ids: new Map([['eviscerate', EVISCERATE]]),
 });
 const quarterOff = [cast('off', 10, 3), cast('on', 20), cast('on', 30), cast('on', 40)];
-const rowOf = (judged: LogReading, benched = withButtons()) => findings.rows(benched, judged)[0];
+const WHOLE_PULL = pullModel();
+const rowOf = (judged: LogReading, benched = withButtons()) => findings.rows(benched, judged, WHOLE_PULL)[0];
+/** Top logs that each got `right` of `moments` Eviscerate moments right. */
+const topLogs = (count: number, counts: ButtonCounts): RotationParseMeasures[] => Array.from({ length: count }, () => ({
+  idle_s: null, lust_s: null, phase_starts: [], cd_casts_s: {}, buttons: { eviscerate: counts },
+}));
+/** 10 top logs missing 1 in 20, a 5% reference miss rate. */
+const MISS_ONE_IN_TWENTY = topLogs(10, { right: 19, moments: 20 });
+const MOMENTS = 20;
+/** At a 5% rate over 20 moments, P(X >= 5) is 0.26%, inside the 1% red budget; P(X >= 4) is 1.6%, outside it. */
+const RED_EVIDENCE_MISSES = 5;
+/** P(X >= 4) is 1.6%, inside the 5% amber budget, while P(X >= 3) is 7.5%, so 3 misses are tolerated. */
+const TOLERATED_MISSES = 3;
+const judgedAgainst = (perParse: RotationParseMeasures[]) => withButtons([button()], { per_parse: perParse });
 /** `right` casts on the list, then `wrong` off it, so the share is right over both. */
 const share = (right: number, wrong: number): CastCheck[] => [
   ...Array.from({ length: right }, (_, at) => cast('on', at)),
@@ -58,12 +72,32 @@ describe('ListFindingService rows', () => {
     expect(rowOf(reading(quarterOff))).toMatchObject({ name: 'Eviscerate', spellId: EVISCERATE, icon: 'evis', you: THREE_QUARTERS, top: FIELD });
   });
 
-  it('counts a skip when due as a miss, and lists it among the casts in time order', () => {
-    const row = rowOf(reading([cast('on', 20), cast('on', 40)], [skipped(30)]));
+  it('counts a decision missed while idle as a miss, and lists it among the casts in time order', () => {
+    const row = rowOf(reading([cast('on', 20), cast('on', 40)], [missedAt(30)]));
     expect(row?.you).toBe(TWO_THIRDS);
     expect(row?.occurrences.map(occ => [occ.atS, occ.ok])).toEqual([[20, true], [30, false], [40, true]]);
-    expect(row?.occurrences[1]).toMatchObject({ result: 'Skipped when due', detail: 'they all held, but you pressed Backstab instead.' });
+    expect(row?.occurrences[1]).toMatchObject({ result: 'Missed while idle', detail: 'they all held, and you pressed nothing.' });
     expect(row?.occurrences[1]?.checks).toEqual([{ text: 'With 5+ combo points', truth: 'true', value: '5 combo points', role: 'decisive' }]);
+  });
+
+  it('says an off-GCD button was held from one decision to the next while due', () => {
+    const row = rowOf(reading([cast('on', 20)], [missedAt(30, 'held')]));
+    expect(row?.occurrences[1]).toMatchObject({ result: 'Held when due', detail: 'they all held, and you did not press it before your next button.' });
+  });
+
+  it('charges a press made while a higher button was due to the press, naming the button that was due', () => {
+    const due = { action: 'backstab', line: 0, terms: [] };
+    const row = rowOf(reading([cast('on', 20), { ...cast('off', 30), due }]));
+    expect(row?.occurrences[1]).toMatchObject({ ok: false, detail: 'Wrong time. Backstab was due instead.' });
+  });
+
+  it('says how many presses the log could not settle', () => {
+    expect(rowOf(reading([cast('unjudged', 10), cast('on', 20)]))?.message).toContain('You got 1 of 1 moments right. 1 more press was not judged.');
+  });
+
+  it('drops a miss that came while the player was dead', () => {
+    const deadAt30 = pullModel({ deadSpans: [[25, 35]] });
+    expect(findings.rows(withButtons(), reading([cast('on', 20)], [missedAt(30)]), deadAt30)[0]?.moments).toBe(1);
   });
 
   it('marks each cast right, wrong or not judged, its line read term by term', () => {
@@ -77,26 +111,68 @@ describe('ListFindingService rows', () => {
   });
 
   it('shows no row for a button whose moments the log settled none of', () => {
-    expect(findings.rows(withButtons(), reading([cast('unjudged', 10)]))).toEqual([]);
+    expect(findings.rows(withButtons(), reading([cast('unjudged', 10)]), WHOLE_PULL)).toEqual([]);
   });
 
-  it('tones a row under every top log as bad, and one at the lowest top log as only under their average', () => {
-    expect(rowOf(reading(share(3, 1)))?.status).toBe('bad');
-    expect(rowOf(reading(share(4, 1)))?.status).toBe('warn');
+  it('tones a row amber once its misses reach red-level evidence against the top logs\' miss rate', () => {
+    const row = rowOf(reading(share(MOMENTS - RED_EVIDENCE_MISSES, RED_EVIDENCE_MISSES)), judgedAgainst(MISS_ONE_IN_TWENTY));
+    expect(row?.status).toBe('amber');
+    expect(row?.family).toBe('rotation.button');
   });
 
-  it('tones a row under the top raiders\' average as a warning, and one at the average as good', () => {
-    expect(rowOf(reading(share(8, 1)))?.status).toBe('warn');
-    expect(rowOf(reading(share(9, 1)))?.status).toBe('good');
+  it('leaves a row one miss under red-level evidence as a comparison, since a button costs little', () => {
+    const row = rowOf(reading(share(MOMENTS - RED_EVIDENCE_MISSES + 1, RED_EVIDENCE_MISSES - 1)), judgedAgainst(MISS_ONE_IN_TWENTY));
+    expect(row?.status).toBe('neutral');
+  });
+
+  it('leaves a row a comparison when fewer than five top logs had the button', () => {
+    const row = rowOf(reading(share(0, MOMENTS)), judgedAgainst(topLogs(4, { right: 20, moments: 20 })));
+    expect(row?.status).toBe('neutral');
+    expect(row?.message).toBe('You got 0 of 20 moments right. Only 4 top logs had it, too few to judge.');
+  });
+
+  it('leaves a row a comparison on a bench with no per-log counts', () => {
+    expect(rowOf(reading(share(0, MOMENTS)))?.status).toBe('neutral');
+  });
+
+  it('prints the counts, the top logs\' miss rate as odds, and on a graded row the target', () => {
+    const row = rowOf(reading(share(MOMENTS - RED_EVIDENCE_MISSES, RED_EVIDENCE_MISSES)), judgedAgainst(MISS_ONE_IN_TWENTY));
+    expect(row).toMatchObject({ right: MOMENTS - RED_EVIDENCE_MISSES, moments: MOMENTS, n: 10 });
+    expect(row?.message).toBe(`You got 15 of 20 moments right. 10 top logs miss about 1 in 20. Aim for ${MOMENTS - TOLERATED_MISSES} or more.`);
+  });
+
+  it('names no target on a comparison row', () => {
+    const row = rowOf(reading(share(MOMENTS - 1, 1)), judgedAgainst(topLogs(10, { right: 20, moments: 20 })));
+    expect(row?.message).toBe('You got 19 of 20 moments right. 10 top logs missed none of their 200.');
+  });
+
+  it('judges only the moments at or before the judged end', () => {
+    const wiped = pullModel({ judgedEndS: 20, judgedEndCause: 'wipe_called' });
+    const row = findings.rows(withButtons(), reading([cast('on', 20), cast('off', 21, 3)]), wiped)[0];
+    expect(row).toMatchObject({ right: 1, moments: 1 });
+  });
+
+  it('mutes a button whose moments all came after the called wipe', () => {
+    const wiped = pullModel({ judgedEndS: 5, judgedEndCause: 'wipe_called' });
+    const row = findings.rows(withButtons(), reading([cast('on', 10)]), wiped)[0];
+    expect(row).toMatchObject({ status: 'muted', unjudged: 'after_wipe', you: null, occurrences: [] });
+    expect(row?.message).toBe('Every moment came after the wipe, so none is judged.');
+  });
+
+  it('leads with a graded row over a comparison row further under the average', () => {
+    const benched = withButtons([button(), button({ action: 'backstab', spell_id: BACKSTAB })], { per_parse: MISS_ONE_IN_TWENTY });
+    const backstabs = Array.from({ length: MOMENTS }, (_, at) => ({ ...cast('off', at + 100), verdict: 'off' as const }));
+    const rows = findings.rows(benched, reading(share(MOMENTS - RED_EVIDENCE_MISSES, RED_EVIDENCE_MISSES), [], backstabs), WHOLE_PULL);
+    expect(rows.map(row => row.name)).toEqual(['Eviscerate', 'Backstab']);
   });
 
   it('shows no row for a button the pull never pressed and never had due', () => {
-    expect(findings.rows(withButtons(), reading([]))).toEqual([]);
+    expect(findings.rows(withButtons(), reading([]), WHOLE_PULL)).toEqual([]);
   });
 
   it('leads with the button furthest under the top raiders\' average', () => {
     const benched = withButtons([button(), button({ action: 'backstab', spell_id: BACKSTAB })]);
-    const rows = findings.rows(benched, reading([cast('on', 10)], [], [{ ...cast('on', 20), verdict: 'off' }]));
+    const rows = findings.rows(benched, reading([cast('on', 10)], [], [{ ...cast('on', 20), verdict: 'off' }]), WHOLE_PULL);
     expect(rows.map(row => row.name)).toEqual(['Backstab', 'Eviscerate']);
   });
 
@@ -127,7 +203,7 @@ describe('ListFindingService cast reads', () => {
 
   it('keeps the bare verdict for a cast whose line has no conditions to show', () => {
     const backstab = withButtons([button({ action: 'backstab', spell_id: BACKSTAB })]);
-    const occurrence = findings.rows(backstab, reading([], [], [cast('on', 10)]))[0]?.occurrences[0];
+    const occurrence = findings.rows(backstab, reading([], [], [cast('on', 10)]), WHOLE_PULL)[0]?.occurrences[0];
     expect(occurrence).toEqual({ atS: 10, ok: true, detail: 'Right time.', checks: [] });
   });
 });

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { CadenceBenchmark } from '../encounter/encounter.models';
-import { CadenceEntry, CadenceVoice, CastCadenceService } from './cast-cadence-service';
+import { CadenceEntry, CastCadenceService } from './cast-cadence-service';
 import { TestBed } from '@angular/core/testing';
 
 const castCadence = TestBed.inject(CastCadenceService);
@@ -19,16 +19,6 @@ function bench(over: Partial<CadenceBenchmark> = {}): CadenceBenchmark {
     ...over,
   };
 }
-
-// A voice with distinct wording, so every assertion proves the words came from the voice, not a hardcoded feature string.
-const VOICE: CadenceVoice = {
-  unit: 'press(es)',
-  firstCastPhrase: 'opened at',
-  gapNoun: 'presses',
-  underuseRemedy: (name, missing) => `${name} +${missing}`,
-  firstCastRemedy: name => `${name} earlier`,
-  gapRemedy: (name, avgGapS) => `${name} every ${avgGapS}s`,
-};
 
 describe('buildCadenceBenchmark', () => {
   it('derives first-cast / gap / uses-per-min and the total/used sample split', () => {
@@ -99,76 +89,6 @@ describe('usedByMajority', () => {
 
   it('fails one user below half', () => {
     expect(castCadence.usedByMajority(bench({ sample_count: 10, used_sample_count: 4 }))).toBe(false);
-  });
-});
-
-describe('checkLostUses', () => {
-  it('flags a critical when the ability is never used but expected', () => {
-    const finding = castCadence.checkLostUses(VOICE, 'Cloak', 0, 2, 2, FIGHT_DUR_S);
-    expect(finding).toMatchObject({ severity: 'critical', category: 'lost_cooldown', measured: { value: '0 / 2', unit: 'press(es)' } });
-  });
-
-  it('flags a critical below the floor, with the voice remedy', () => {
-    // 1 use, floor 3 -> 2 missing.
-    const finding = castCadence.checkLostUses(VOICE, 'Cloak', 1, 3, 3, FIGHT_DUR_S);
-    expect(finding?.category).toBe('lost_cooldown');
-    expect(finding?.details?.remedy).toBe('Cloak +2');
-  });
-
-  it('asks for the uses up to the top count it shows, not up to the floor', () => {
-    const ACTUAL = 23, EXPECTED = 25, FLOOR = 24;
-    const finding = castCadence.checkLostUses(VOICE, 'Cloak', ACTUAL, EXPECTED, FLOOR, FIGHT_DUR_S);
-    expect(finding?.measured).toEqual({ value: `${ACTUAL} / ${EXPECTED}`, unit: 'press(es)' });
-    expect(finding?.details?.remedy).toBe(`Cloak +${EXPECTED - ACTUAL}`);
-  });
-
-  it('does not flag a use count exactly at the floor (strict)', () => {
-    expect(castCadence.checkLostUses(VOICE, 'Cloak', 2, 2, 2, FIGHT_DUR_S)).toBeNull();
-  });
-});
-
-describe('checkFirstCastDelay', () => {
-  // bench: avg_first_cast_s 5, stddev 2 -> outlier above 5 + 2*2 = 9s.
-
-  it('flags a first cast more than 2 sigma past the top open, voicing the remedy', () => {
-    const finding = castCadence.checkFirstCastDelay(VOICE, 'Cloak', [10], bench());
-    expect(finding?.category).toBe('cooldown_delay');
-    expect(finding?.message).toContain('opened at');
-    expect(finding?.details?.remedy).toBe('Cloak earlier');
-  });
-
-  it('does not flag a first cast exactly at the 2-sigma boundary (strict)', () => {
-    expect(castCadence.checkFirstCastDelay(VOICE, 'Cloak', [9], bench())).toBeNull();
-  });
-
-  it('returns null with no casts', () => {
-    expect(castCadence.checkFirstCastDelay(VOICE, 'Cloak', [], bench())).toBeNull();
-  });
-
-  it('gives top logs that open within a second of each other a 2s band, flagging only past it', () => {
-    const TOP_OPEN_S = 5;
-    const tight = bench({ avg_first_cast_s: TOP_OPEN_S, stddev_first_cast_s: 0.3 });
-    expect(castCadence.checkFirstCastDelay(VOICE, 'Cloak', [TOP_OPEN_S + 2], tight)).toBeNull();
-    expect(castCadence.checkFirstCastDelay(VOICE, 'Cloak', [TOP_OPEN_S + 2.1], tight)?.category).toBe('cooldown_delay');
-  });
-});
-
-describe('checkGaps', () => {
-  // bench: avg_gap_s 90, stddev 5 -> outlier above 90 + 2*5 = 100s.
-
-  it('flags a gap more than 2 sigma above the top gap, voicing noun and remedy', () => {
-    const out = castCadence.checkGaps(VOICE, 'Cloak', [0, 110], bench());
-    expect(out).toHaveLength(1);
-    expect(out[0]?.message).toContain('between presses');
-    expect(out[0]?.details?.remedy).toBe('Cloak every 90s');
-  });
-
-  it('does not flag a gap exactly at the 2-sigma boundary (strict)', () => {
-    expect(castCadence.checkGaps(VOICE, 'Cloak', [0, 100], bench())).toEqual([]);
-  });
-
-  it('returns nothing when the bench has no gap stats', () => {
-    expect(castCadence.checkGaps(VOICE, 'Cloak', [0, 200], bench({ avg_gap_s: null, stddev_gap_s: null }))).toEqual([]);
   });
 });
 
