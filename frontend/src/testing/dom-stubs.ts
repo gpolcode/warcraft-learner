@@ -3,16 +3,17 @@ const win: Partial<Window> = window;
 const element: Partial<Element> = Element.prototype;
 const scope: Partial<typeof globalThis> = globalThis;
 
-win.matchMedia ??= (query: string): MediaQueryList => ({
-  matches: false,
-  media: query,
-  onchange: null,
-  addListener: () => undefined,
-  removeListener: () => undefined,
-  addEventListener: () => undefined,
-  removeEventListener: () => undefined,
-  dispatchEvent: () => false,
-});
+win.matchMedia ??= (query: string): MediaQueryList => {
+  const list: Omit<MediaQueryList, 'addListener' | 'removeListener'> = {
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener: () => undefined,
+    removeEventListener: () => undefined,
+    dispatchEvent: () => false,
+  };
+  return list as MediaQueryList;
+};
 
 element.scrollIntoView ??= () => undefined;
 
