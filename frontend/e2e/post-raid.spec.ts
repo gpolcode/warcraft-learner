@@ -2,7 +2,7 @@ import { expect, test, Locator, Page } from '@playwright/test';
 import { baseEnvironment } from '../src/environments/base-environment';
 import {
   shows, showsFindingTable, showsFirstOption, showsFirstWindow, showsGearConsensus, picksFirst, holdsPullResolve, gearSection, valueOf,
-  AMOUNT, ANY_TEXT, CD_CHIP, CLOCK, OPENED_AT, PERCENT,
+  AMOUNT, ANY_TEXT, CD_CHIP, CLOCK, FIGURE, JUDGED_SPAN, OPENED_AT, PERCENT, showsBenchStrip, showsNotGraded,
 } from './support';
 
 const { e2eReportCode: REPORT_CODE, wclApiUrl: WCL_API_URL } = baseEnvironment;
@@ -15,10 +15,19 @@ const SLACK_MS = 30_000;
 /** Mirrors MAX_OCCURRENCES in src/app/domains/raid-analysis/data/rotation/priority-list/list-finding-service.ts. */
 const MAX_INSTANCES = 24;
 const FIGHT_LABEL = new RegExp(` - (Kill|Wipe #\\d+) - ${CLOCK.source}$`);
-const JUDGED_CAST = new RegExp(`is only right when these conditions hold\\. At ${CLOCK.source} ${ANY_TEXT.source}`);
+/** A moment's rule names what its conditions decide: the press itself, a button due above it, or one left unpressed while due. */
+const JUDGED_CAST = new RegExp(`(is only right|comes first|is due) when these conditions hold\\. At ${CLOCK.source} ${ANY_TEXT.source}`);
+/** A moment whose line the list text cannot phrase reads its verdict alone, with no conditions to open. */
+const BARE_MOMENT = new RegExp(`${CLOCK.source}\\s+(Right time|Wrong time|Missed while idle|Held when due|The log does not show every condition)`);
 const STATE_AT = new RegExp(`State at ${CLOCK.source}`);
-const VERDICT = /Right time|Wrong time|Not judged|Skipped when due/;
+const VERDICT = /Right time|Wrong time|Not judged|Missed while idle|Held when due/;
 const CONDITION_STATE = /^(Met|Not met|Not in the log)$/;
+const BUTTON_MESSAGE = /^(You got \d+ of \d+ moments right\.( .+)?|Every moment came .+, so none is judged\.)$/;
+const BUTTONS_EMPTY = /^Your log shows no judged moment for any of the \d+ buttons the list judges\.$/;
+const UNJUDGED = /^(Dead|After the wipe|Not reached)$/;
+const FIX_FIRST_EMPTY = /^Nothing flagged on any card\.( \d+ checks? not judged\.)?$/;
+const CARD_NAME = /^(Rotation rules|Downtime|Offensives|Burst windows|Defensives|Defensive windows|Gear)$/;
+const DAMAGE_ESTIMATE = /^About \d+s of your damage(, between \d+s and \d+s)?\.$/;
 
 // One shared page: the report is analyzed once, so a run costs one WCL analysis.
 test.describe.configure({ mode: 'serial' });
@@ -105,21 +114,59 @@ test('pull overview reports the result, the deaths, the DPS and the duration', a
   await expect(outcome.locator('span.text-accent')).toHaveText(CLOCK);
 
   await expect(valueOf(pullOverview, 'Your DPS')).toHaveText(AMOUNT);
+  const alive = pullOverview.getByText(/over your alive time$/);
+  if (await alive.count()) await expect(alive).toHaveText(new RegExp(`^\\s*${FIGURE} over your alive time$`));
+  const reference = pullOverview.getByText(/^Top logs .* on kills$/);
+  if (await reference.count()) await expect(reference).toHaveText(new RegExp(`^Top logs ${FIGURE} to ${FIGURE} on kills$`));
   await expect(valueOf(pullOverview, 'Duration')).toHaveText(CLOCK);
   if (kill) await expect(valueOf(pullOverview, 'Result')).toHaveText('Kill');
   else await expect(valueOf(pullOverview, 'Boss health')).toHaveText(PERCENT);
 });
 
+test('fix first lists the costliest colored rows across the cards, and the damage card prices the losses', async () => {
+  const fixFirst = page.locator('wl-fix-first');
+  await shows(fixFirst, 'Fix first');
+  await shows(fixFirst, 'The costliest colored rows across the cards below.');
+  // A row is colored only once calibration grades its check, so the strip may hold none.
+  const first = fixFirst.locator('div.border-t').filter({ has: page.locator('tui-icon') }).first();
+  if (await first.count()) {
+    await expect(first.locator('span.text-label')).toHaveText(CARD_NAME);
+    await expect(first.locator('span.text-name')).toHaveText(ANY_TEXT);
+    await expect(first.locator('span.text-body').first()).toHaveText(ANY_TEXT);
+  } else {
+    await shows(fixFirst, FIX_FIRST_EMPTY);
+  }
+
+  // Drawn only once the damage estimates pass their gate on the weaker logs and the pull has a loss to price.
+  const damage = page.locator('wl-damage-went');
+  if (await damage.getByText('Where your damage went').count()) {
+    await shows(damage, 'What each loss cost in seconds of your own average damage, deaths first.');
+    await expect(damage.getByText(DAMAGE_ESTIMATE).first()).toBeVisible();
+  }
+});
+
 test('rotation rules bar the first button against the top logs and open its moments into a judged cast with its conditions', async () => {
   const rotationRules = page.locator('wl-rotation').locator('wl-button-table');
   await shows(rotationRules, 'Rotation rules');
-  await shows(rotationRules, 'How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press at the wrong time and a skip when it was due both count as a miss.');
+  await shows(rotationRules, 'How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press while another button was due, a press off its conditions, and a button left unpressed while it was due each count as a miss.');
   await shows(rotationRules, 'You');
   await shows(rotationRules, 'Top raiders, lowest to highest');
   await shows(rotationRules, 'Top raiders average');
+  await showsNotGraded(rotationRules);
 
-  const button = rotationRules.locator('div[tuiCardLarge]').first();
+  const buttons = rotationRules.locator('div[tuiCardLarge]');
+  if (!await buttons.count()) {
+    await shows(rotationRules, BUTTONS_EMPTY);
+    return;
+  }
+  const button = buttons.first();
   await expect(button.locator('wl-game-icon')).toHaveText(ANY_TEXT);
+  await expect(button.locator('p.text-body')).toHaveText(BUTTON_MESSAGE);
+  // Muted rows sort last, so a muted first row means the pull judged no button at all.
+  if (!await button.locator('wl-range-bar').count()) {
+    await expect(button.locator('span.text-value')).toHaveText(UNJUDGED);
+    return;
+  }
   await expect(button.locator('wl-range-bar')).toBeVisible();
   await expect(button.locator('span.sr-only')).toHaveText(/You \d+%\.\s+Top raiders \d+% to \d+%, \d+% on average\./);
 
@@ -132,9 +179,15 @@ test('rotation rules bar the first button against the top logs and open its mome
   expect(count).toBeLessThanOrEqual(MAX_INSTANCES);
   await expect(moments.first()).toHaveText(CLOCK);
   await expect(strip.locator('[aria-selected="true"]')).toHaveText(CLOCK);
+  const checklist = strip.locator('wl-condition-checklist');
+  if (!await checklist.count()) {
+    await expect(strip.getByText(BARE_MOMENT).first()).toBeVisible();
+    await button.getByRole('button', { name: 'Hide instances' }).click();
+    await expect(strip).not.toBeVisible();
+    return;
+  }
   await expect(strip.getByText(JUDGED_CAST)).toBeVisible();
 
-  const checklist = strip.locator('wl-condition-checklist');
   await shows(checklist, 'Condition');
   await shows(checklist, STATE_AT);
   await expect(checklist.getByText(VERDICT)).toBeVisible();
@@ -155,20 +208,31 @@ test('offensives flag the cooldown casts that missed the top-parse plan, and dow
   const rotation = page.locator('wl-rotation');
   const offensives = rotation.locator('wl-finding-table').filter({ hasText: 'How you used your damage cooldowns compared with the top logs.' });
   await shows(offensives, 'Offensives');
+  await shows(offensives, JUDGED_SPAN);
+  await showsBenchStrip(offensives);
   await showsFindingTable(offensives, CD_CHIP);
-  // A pull that never idles past the bench's threshold draws no downtime table at all.
-  const downtime = rotation.locator('wl-finding-table').filter({ hasText: 'Time you spent not casting, compared with the top logs.' });
-  if (await downtime.count()) {
-    await shows(downtime, 'Downtime');
-    await showsFindingTable(downtime, /downtime/);
-  }
+  await showsNotGraded(offensives);
+  const downtime = rotation.locator('wl-finding-table').filter({ hasText: 'Time you spent idle past each cast\'s global cooldown and cast time, compared with the top logs.' });
+  await shows(downtime, 'Downtime');
+  await shows(downtime, JUDGED_SPAN);
+  await showsFindingTable(downtime, /downtime/);
+  await showsNotGraded(downtime);
 });
 
 test('burst windows compare the first window\'s damage and abilities against the top logs', async () => {
   const burstWindows = page.locator('wl-burst-windows');
   await shows(burstWindows, 'Burst windows');
   await shows(burstWindows, 'The short stretches where top logs deal their biggest damage, compared with your log.');
-  await showsFirstWindow(burstWindows, { metric: 'Damage', chips: 'Cooldowns top raiders use here', range: 'Damage vs top range', casts: true });
+  await shows(burstWindows, JUDGED_SPAN);
+  await showsBenchStrip(burstWindows);
+  await showsNotGraded(burstWindows);
+  const judged = await showsFirstWindow(burstWindows, {
+    metric: 'Damage vs pull average', chips: 'Cooldowns top raiders use here', range: 'Damage vs pull average, top range', casts: true, multiple: true,
+  });
+  // A judged window names its top logs as a count; the bench decides whether it has enough of them to judge.
+  if (judged) await expect(burstWindows.getByText(/^You dealt \S+ here, \d+\.\d+x your pull average[.,] /)).toBeVisible();
+  const nothingFlagged = burstWindows.getByText(/^Nothing flagged\./);
+  if (await nothingFlagged.count()) await expect(nothingFlagged).toHaveText(/^Nothing flagged\. \d+ of \d+ windows? checked against the \d+ top logs?\.$/);
 });
 
 test('defensives flag the mistimed cooldowns and benchmark the damage taken in the first window', async () => {
@@ -176,14 +240,23 @@ test('defensives flag the mistimed cooldowns and benchmark the damage taken in t
   const table = defensives.locator('wl-finding-table');
   await shows(table, 'Defensives');
   await shows(table, 'How you used your survival cooldowns compared with the top logs.');
+  await shows(table, JUDGED_SPAN);
+  await showsBenchStrip(table);
   await showsFindingTable(table, CD_CHIP);
-  // A bench keeps only the windows its top logs share, so a re-ingest can leave an encounter with none and the section hidden.
+  await showsNotGraded(table);
   const windows = defensives.locator('wl-window-comparison');
-  if (await windows.count()) {
-    await shows(windows, 'Defensive windows');
-    await shows(windows, 'Damage taken in each defensive window vs top logs.');
-    await showsFirstWindow(windows, { metric: 'Damage taken', chips: 'Defensives top raiders use here', range: 'Damage taken vs top range' });
-    await expect(valueOf(windows, 'What you did')).toHaveText(ANY_TEXT);
+  await shows(windows, 'Defensive windows');
+  await shows(windows, 'Each moment top logs press a defensive, and whether you had any defensive up.');
+  await shows(windows, JUDGED_SPAN);
+  await showsNotGraded(windows);
+  // A bench keeps only the windows its top logs share, so a re-ingest can leave an encounter with none.
+  if (await windows.getByRole('option').count()) {
+    const judged = await showsFirstWindow(windows, { metric: 'Damage taken', chips: 'Defensives top raiders use here', range: 'Damage taken vs top range' });
+    if (judged) await expect(windows.getByText(/^(You had|No defensive was up|You died at|Only \d+ top logs? (is|are) alive|None of the \d+ top raiders|No top log carries) /)).toBeVisible();
+    const nothingFlagged = windows.getByText(/^Nothing flagged\./);
+    if (await nothingFlagged.count()) await expect(nothingFlagged).toHaveText(/^Nothing flagged\. \d+ of \d+ windows? checked against the \d+ top logs?\.$/);
+  } else {
+    await expect(windows.getByText(/^No defensive window to compare\./)).toHaveText(/^No defensive window to compare\. The defensives of the \d+ top logs? do not line up in time\.$/);
   }
 });
 
@@ -198,11 +271,21 @@ test('gear sets the build, the trinkets and the enchants against the top logs', 
   await shows(gear, 'Gear vs top logs.');
   const talents = gearSection(gear, 'Talents');
   await shows(talents, 'Your build against the builds top raiders use.');
-  await expect(verdictOf(talents, 'Your build')).toHaveText(ANY_TEXT);
+  // The verdict needs the bench's talent node counts, and its diff a build that differs on a shared talent, so each is checked when drawn.
+  if (await talents.locator('span.block.text-label', { hasText: /^Your build$/ }).count()) {
+    await expect(verdictOf(talents, 'Your build')).toHaveText(/^You (differ on \d+ of the|take all) \d+ talents (at least )?\d+ of \d+ top raiders share\.$/);
+    const change = talents.getByText('Not taken', { exact: true }).or(talents.getByText('Taken instead', { exact: true }));
+    if (await change.count()) {
+      const chip = change.first().locator('xpath=following-sibling::*[1]').locator('[tuiChip]').first();
+      await expect(chip.locator('wl-game-icon')).toHaveText(ANY_TEXT);
+      await expect(chip.getByText(/^\d+ of \d+ top logs$/)).toBeVisible();
+    }
+  }
   const trinkets = gearSection(gear, 'Trinkets');
   await shows(trinkets, 'Your pair against the pairs top raiders use.');
   await expect(verdictOf(trinkets, 'Your pair')).toHaveText(ANY_TEXT);
   await showsGearConsensus(gear);
+  await showsNotGraded(gear);
 
   const enchants = gearSection(gear, 'Enchants');
   const issues = enchants.locator('div.grid');
@@ -215,10 +298,10 @@ test('gear sets the build, the trinkets and the enchants against the top logs', 
     await expect(issue.locator('span.text-name').first()).toHaveText(ANY_TEXT);
     await expect(issue.locator('wl-game-icon')).toHaveText(ANY_TEXT);
     await expect(issue.getByRole('button', { name: 'Copy name' })).toBeVisible();
-    await expect(issue.getByText(/Most top raiders use it\./)).toBeVisible();
+    await expect(issue.getByText(/^\d+ of \d+ top raiders use it\./)).toBeVisible();
     if (await enchants.getByText(/\d+ enchants/).count()) await shows(enchants, 'On plan');
   } else {
-    await expect(enchants.getByText('All enchants').or(enchants.getByText('No enchant data.'))).toBeVisible();
+    await expect(enchants.getByText(/^Nothing flagged\. \d+ enchants? checked against \d+ top logs\.$/).or(enchants.getByText(/^No enchant data\./))).toBeVisible();
   }
 });
 
@@ -232,6 +315,7 @@ test('the positioning map opens anchored on the pull overview\'s first moment', 
   await expect(panel.locator('wl-map-canvas canvas')).toBeVisible();
   await shows(panel, OPENED_AT);
   await shows(panel, '● Top logs');
+  await shows(panel, '◯ Average of top-log positions');
   // The gold marker renders only once the player's own trail has loaded.
   await expect(panel.getByText('◆ You')).toBeVisible({ timeout: MAP_READY_TIMEOUT_MS });
   await panel.getByRole('button', { name: 'Close map' }).click();

@@ -1,5 +1,6 @@
 // All ingestion logic lives in the Angular app; this file must never grow any.
 import { spawn } from 'child_process';
+import { appendFileSync } from 'fs';
 import { once } from 'events';
 import { chromium } from 'playwright';
 import { baseEnvironment } from '../src/environments/base-environment.ts';
@@ -12,13 +13,27 @@ const DONE_POLL_MS = 1_000;
 // Room for the minute-long waits a run sits through each time WCL rate-limits it.
 const DONE_TIMEOUT_MS = 30 * 60_000;
 const KILL_GRACE_MS = 5_000;
+// `calibrate` boots the app that recomputes calibration from the files on disk; it reads no WCL.
+const CONFIGURATION = process.argv[2] === 'calibrate' ? 'calibrate' : 'ingest';
 const RESOURCE_FAILURE = 'Failed to load resource';
 const NOT_FOUND = /\b404\b/;
 
+const GROUP_KILL = process.platform !== 'win32';
+
 const children = [];
 
+function signal(child, name) {
+  try {
+    if (GROUP_KILL) process.kill(-child.pid, name);
+    else child.kill(name);
+  } catch {
+    // The group is already gone, which is what the signal was for.
+  }
+}
+
 function startChild(name, command, args) {
-  const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'] });
+  // Its own process group, so shutdown reaches the server npx starts and not only npx, which leaves port 4200 bound.
+  const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'], detached: GROUP_KILL });
   const forward = chunk => {
     for (const line of chunk.toString().split('\n')) {
       if (line.trim()) console.log(`[${name}] ${line}`);
@@ -44,8 +59,8 @@ let browser = null;
 async function endChild(child) {
   if (child.exitCode !== null || child.signalCode !== null) return;
   const exited = once(child, 'exit');
-  child.kill('SIGTERM');
-  const escalation = setTimeout(() => child.kill('SIGKILL'), KILL_GRACE_MS);
+  signal(child, 'SIGTERM');
+  const escalation = setTimeout(() => signal(child, 'SIGKILL'), KILL_GRACE_MS);
   try {
     await exited;
   } finally {
@@ -92,7 +107,7 @@ async function launchBrowser() {
 
 async function main() {
   startChild('server', 'node', ['scripts/ingest-server.js']);
-  startChild('serve', 'npx', ['ng', 'serve', '--configuration', 'ingest']);
+  startChild('serve', 'npx', ['ng', 'serve', '--configuration', CONFIGURATION]);
   await waitForHttp(SERVER_PROBE_URL, 'ingest file server');
   await waitForHttp(APP_URL, 'ng serve');
 
@@ -114,6 +129,7 @@ async function main() {
     await shutdown(1);
   }
   const summary = await page.evaluate(() => globalThis.__INGEST_DONE__);
+  if (summary.report && process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summary.report}\n`);
 
   if (summary.fatal) {
     console.error(`[harness] ingestion failed: ${summary.fatal}`);

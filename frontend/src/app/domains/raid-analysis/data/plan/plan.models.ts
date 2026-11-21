@@ -27,6 +27,8 @@ export interface PlanLine {
   /** The `&` terms of the line's `if`, of a `target_if` that skips the line when no target satisfies it, and of every list call above it, as SimC text; null when no parser reads the condition. */
   terms: string[] | null;
   line_cd?: number;
+  /** On a `use_item` line, the item token or trinket slot (`trinket1`) it names. */
+  item?: string;
 }
 
 /** A variable SimC sets during the fight, replayed at each cast in list order; one set once is inlined into the lines instead, unless its chain of variables nests too deep. */

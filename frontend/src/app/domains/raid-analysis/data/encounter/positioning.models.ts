@@ -1,3 +1,5 @@
+import type { BenchHeader } from '../analysis/bench-pipeline-service';
+
 // Coordinates are raw WCL units: x/y in hundredths of a yard, facing in milliradians.
 
 /** A resampled enemy position row: [t_s, x, y, facing | null, mapID | null]. */
@@ -23,12 +25,8 @@ export interface ParsePositions {
   enemies: ParseEnemyTimeline[];
 }
 
-export interface EncounterPositions {
-  spec: string;
-  encounter_id: number;
-  encounter_name: string;
+export interface EncounterPositions extends BenchHeader {
   interval_s: number;
-  sample_count: number;
   parses: ParsePositions[];
 }
 

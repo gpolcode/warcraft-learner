@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { max, min } from 'd3-array';
-import { UNKNOWN, AddSpan, CastMoment, FactContext, FactPath, FactReader, FactStream, HealthRow, Range } from '../priority-list.models';
+import { UNKNOWN, ENEMY_STEP_S, AddSpan, CastMoment, FactContext, FactPath, FactReader, FactStream, HealthRow, Range } from '../priority-list.models';
 
 /** An AoE ability lands well inside a GCD or two of its cast. */
 const TARGET_COUNT_WINDOW_S = 3;
@@ -71,13 +71,27 @@ export class FightFacts implements FactReader {
     return share === 0 ? [seenS - atS, seenS - atS] : [Math.max(0, seenS - atS), Infinity];
   }
 
+  /** The encounter's count as the top logs hit it, since the player's own hits follow from the choice being judged; unknown where the player's hits fall outside it or no timeline covers the moment. */
   private enemies(atS: number, ctx: FactContext): Range {
+    const hit = this.hitCount(atS, ctx);
+    const own: Range = hit ? point(hit) : [1, Infinity];
+    const timeline = ctx.enemyTimeline;
+    if (!timeline) return own;
+    const steps = timeline.slice(Math.floor(atS / ENEMY_STEP_S), Math.floor((atS + TARGET_COUNT_WINDOW_S) / ENEMY_STEP_S) + 1);
+    const known = steps.flatMap(step => (step ? [step] : []));
+    if (!known.length || known.length < steps.length) return UNKNOWN;
+    const lo = min(known, ([low]) => low) ?? 1;
+    const hi = max(known, ([, high]) => high) ?? Infinity;
+    return hit && (hit < lo || hit > hi) ? UNKNOWN : [lo, hi];
+  }
+
+  private hitCount(atS: number, ctx: FactContext): number {
     const targets = new Set<string>();
     for (const [hitS, target] of ctx.damageIndex()) {
       if (hitS > atS + TARGET_COUNT_WINDOW_S) break;
       if (hitS >= atS) targets.add(target);
     }
-    return targets.size ? point(targets.size) : [1, Infinity];
+    return targets.size;
   }
 
   private adds(spans: readonly AddSpan[], atS: number): Adds {

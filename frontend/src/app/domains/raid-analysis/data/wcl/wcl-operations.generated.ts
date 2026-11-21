@@ -3,6 +3,39 @@ type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 import { WclEventData, PlayerDetailsBlob, WclRankingsBlob, WclTableBlob } from './wcl.models';
+export type CharacterRankingMetricType =
+  | 'bosscdps'
+  | 'bossdps'
+  | 'bossndps'
+  | 'bossrdps'
+  | 'cdps'
+  | 'default'
+  | 'dps'
+  | 'healercombinedbosscdps'
+  | 'healercombinedbossdps'
+  | 'healercombinedbossndps'
+  | 'healercombinedbossrdps'
+  | 'healercombinedcdps'
+  | 'healercombineddps'
+  | 'healercombinedndps'
+  | 'healercombinedrdps'
+  | 'hps'
+  | 'krsi'
+  | 'ndps'
+  | 'playerscore'
+  | 'playerspeed'
+  | 'rdps'
+  | 'tankcombinedbosscdps'
+  | 'tankcombinedbossdps'
+  | 'tankcombinedbossndps'
+  | 'tankcombinedbossrdps'
+  | 'tankcombinedcdps'
+  | 'tankcombineddps'
+  | 'tankcombinedndps'
+  | 'tankcombinedrdps'
+  | 'tankhps'
+  | 'wdps';
+
 export type EventDataType =
   | 'All'
   | 'Buffs'
@@ -43,7 +76,7 @@ export type ReportQueryVariables = Exact<{
   code: string;
 }>;
 
-export type ReportQuery = { reportData: { report: { title: string, startTime: number, fights: Array<{ id: number, name: string, startTime: number, endTime: number, kill: boolean | null, encounterID: number, difficulty: number | null, friendlyPlayers: Array<number | null> | null, fightPercentage: number | null } | null> | null, masterData: { actors: Array<{ id: number | null, name: string | null, subType: string | null, server: string | null } | null> | null, enemies: Array<{ id: number | null, name: string | null, gameID: number | null } | null> | null, abilities: Array<{ gameID: number | null, name: string | null, icon: string | null } | null> | null } | null } | null } | null };
+export type ReportQuery = { reportData: { report: { title: string, startTime: number, fights: Array<{ id: number, name: string, startTime: number, endTime: number, kill: boolean | null, encounterID: number, difficulty: number | null, friendlyPlayers: Array<number | null> | null, fightPercentage: number | null, wipeCalledTime: number | null, phaseTransitions: Array<{ id: number, startTime: number }> | null } | null> | null, masterData: { actors: Array<{ id: number | null, name: string | null, subType: string | null, server: string | null } | null> | null, enemies: Array<{ id: number | null, name: string | null, gameID: number | null } | null> | null, abilities: Array<{ gameID: number | null, name: string | null, icon: string | null } | null> | null } | null } | null } | null };
 
 export type ReportFightsQueryVariables = Exact<{
   code: string;
@@ -93,8 +126,10 @@ export type RankingsQueryVariables = Exact<{
   encounterID: number;
   className: string;
   specName: string;
+  metric: CharacterRankingMetricType;
   partition?: number | null | undefined;
   difficulty: number;
+  page?: number | null | undefined;
 }>;
 
 export type RankingsQuery = { worldData: { encounter: { characterRankings: WclRankingsBlob | null } | null } | null };

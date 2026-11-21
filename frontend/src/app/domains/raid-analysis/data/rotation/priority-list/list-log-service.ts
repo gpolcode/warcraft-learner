@@ -7,7 +7,7 @@ import { PressFold, WclProjectionsService } from '../../analysis/wcl-projections
 import { GearExtractService, TRINKET_SLOTS } from '../../gear/gear-extract-service';
 import { FactContextService } from './fact-context-service';
 import { ListCheckService, LogReading } from './list-check-service';
-import type { FactStream, GearPiece } from './priority-list.models';
+import type { EnemyTimeline, FactContext, FactStream, GearPiece } from './priority-list.models';
 
 const NO_ITEMS: ItemTable = { items: {}, spells: {} };
 
@@ -20,6 +20,14 @@ export interface ListPull {
   folds: readonly PressFold[];
   /** Ingest's read of SimC's item data for the trinkets the list has no entry for; production passes none, so the bench's entries stand. */
   items?: (trinkets: readonly GearPiece[]) => Promise<ItemTable>;
+  /** The bench's; ingest reads each top log against the others' after all are fetched, through `context`. */
+  enemyTimeline?: EnemyTimeline | null;
+}
+
+/** A log's facts before any are read, so ingest can bake the encounter timeline from every top log first. */
+export interface ListContext {
+  ctx: FactContext;
+  items: ItemTable;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -31,8 +39,14 @@ export class ListLogService {
   private readonly contexts = inject(FactContextService);
   private readonly checks = inject(ListCheckService);
 
-  async read(plan: PriorityList, { reportCode, fight, playerId, abilities, folds, items: lookup }: ListPull): Promise<LogReading> {
-    if (!plan.lines.length) return { casts: new Map(), order: [], ids: new Map() };
+  async read(plan: PriorityList, pull: ListPull): Promise<LogReading> {
+    const loaded = await this.context(plan, pull);
+    return loaded ? { ...this.checks.read(loaded.ctx), items: loaded.items } : { casts: new Map(), missed: [], ids: new Map() };
+  }
+
+  /** Null for a list with no lines. */
+  async context(plan: PriorityList, { reportCode, fight, playerId, abilities, folds, items: lookup, enemyTimeline }: ListPull): Promise<ListContext | null> {
+    if (!plan.lines.length) return null;
     const streams = this.checks.streams(plan);
     const { startTime, endTime, id } = fight;
     const combatant = this.wclApi.getCombatantInfo(reportCode, id, playerId).then(all => this.gearExtract.selectCombatantInfo(all, playerId));
@@ -49,7 +63,7 @@ export class ListLogService {
     const unlisted = streams.has('gear') ? this.unlisted(plan, gear) : [];
     const items = lookup && unlisted.length ? await lookup(unlisted) : NO_ITEMS;
     const list = { ...plan, items: { ...plan.items, ...items.items }, spells: { ...plan.spells, ...items.spells } };
-    const reading = this.checks.read(this.contexts.build({
+    const ctx = this.contexts.build({
       list, abilities,
       casts: this.projections.withRelativeS(this.projections.presses(casts, folds, { buffs, abilities }), startTime),
       buffs: this.projections.withRelativeS([...this.upAtPull(info?.auras ?? [], startTime), ...buffs], startTime),
@@ -60,8 +74,9 @@ export class ListLogService {
       gear,
       fightDurationS: this.projections.relativeS(endTime, startTime),
       kill: fight.kill,
-    }));
-    return { ...reading, items };
+      enemyTimeline,
+    });
+    return { ctx, items };
   }
 
   /** The gear array is positional, its index the slot; a name WCL left blank is asked for only when a fact reads gear, and stays blank when that lookup fails. */

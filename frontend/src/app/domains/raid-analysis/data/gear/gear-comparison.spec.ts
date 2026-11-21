@@ -1,78 +1,65 @@
 import { assert, describe, it, expect } from 'vitest';
 import { GearComparisonService } from './gear-comparison-service';
+import { GearJudgeService } from './gear-judge-service';
+import { ToneService } from '../verdict/tone-service';
 import { SpecTalents } from './talent.models';
 import { EncounterGearStats } from '../encounter/encounter.models';
-import { CharacterGear } from '../wcl/wcl.models';
 import { TestBed } from '@angular/core/testing';
 
 const gearComparison = TestBed.inject(GearComparisonService);
+const judge = TestBed.inject(GearJudgeService);
 
 function stats(partial: Partial<EncounterGearStats> = {}): EncounterGearStats {
   return { talent_builds: [], trinket_sets: [], enchants: {}, ...partial };
 }
 
-function gear(partial: Partial<CharacterGear> = {}): CharacterGear {
-  return { ...partial };
-}
-
 const SOPHIC_ITEM = { name: 'Sophic Devotion', itemId: null, icon: '' };
-const ARMOR_KIT_ITEM_ID = 244641;
 
 describe('buildBenchEnchantRows', () => {
-  it('shows the consensus enchant as an item with no link when the bench resolved no item', () => {
-    const rows = gearComparison.buildBenchEnchantRows(stats({
-      enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 80 }] },
-    }));
-    expect(rows).toEqual([{ slotName: 'Main Hand', enchant: SOPHIC_ITEM }]);
+  const leader = (slot: number, k: number, n: number) => ({ slot, identity: SOPHIC_ITEM.name, item: SOPHIC_ITEM, k, n });
+
+  it('lists a leader at least half the top logs use, with its share', () => {
+    expect(gearComparison.buildBenchEnchantRows([leader(15, 5, 10)]))
+      .toEqual([{ slotName: 'Main Hand', enchant: SOPHIC_ITEM, share: '5 of 10 top logs' }]);
   });
 
-  it('links the item and shows its icon when the bench carries them', () => {
-    const rows = gearComparison.buildBenchEnchantRows(stats({
-      enchants: { 6: [{ id: 8159, name: "Forest Hunter's Armor Kit", icon: 'inv_kit', item_id: ARMOR_KIT_ITEM_ID, pct: 100 }] },
-    }));
-    expect(rows).toEqual([{ slotName: 'Legs', enchant: { name: "Forest Hunter's Armor Kit", itemId: ARMOR_KIT_ITEM_ID, icon: 'inv_kit' } }]);
+  it('leaves out a leader under half the top logs', () => {
+    expect(gearComparison.buildBenchEnchantRows([leader(15, 4, 10)])).toEqual([]);
+  });
+});
+
+describe('buildTalentNodeDiff', () => {
+  const SKIPPED = 10;
+  const RANKED = 20;
+  const INSTEAD = 30;
+  const talents: SpecTalents = { [SKIPPED]: { name: 'Skipped', icon: 's' }, [RANKED]: { name: 'Ranked', icon: 'r' }, [INSTEAD]: { name: 'Instead', icon: 'i' } };
+  const differing = {
+    family: 'gear.talent_build', tone: TestBed.inject(ToneService).neutral(), onPlan: false, note: '', n: 10, shared: 2,
+    missed: [{ entryId: SKIPPED, rank: 1, k: 10, playerRank: null }, { entryId: RANKED, rank: 2, k: 9, playerRank: 1 }],
+    instead: [{ entryId: INSTEAD, rank: 1, k: 1 }],
+  };
+
+  it('splits a skipped talent from one at another rank and lists the picks taken instead, each with its count', () => {
+    expect(gearComparison.buildTalentNodeDiff(differing, talents)).toEqual({
+      missing: [{ talent: talents[SKIPPED], share: '10 of 10 top logs' }],
+      ranks: [{ talent: talents[RANKED], share: '9 of 10 top logs', rank: 1, standardRank: 2 }],
+      instead: [{ talent: talents[INSTEAD], share: '1 of 10 top logs' }],
+    });
   });
 
-  it('falls back to Enchant #id when the bench enchant name is empty', () => {
-    // WCL does not populate permanentEnchantName; ingest writes empty strings until gameData.enchant(id) resolves them on the next ingest run.
-    const rows = gearComparison.buildBenchEnchantRows(stats({
-      enchants: { 15: [{ id: 8041, name: '', icon: '', item_id: null, pct: 90 }] },
-    }));
-    expect(rows).toEqual([{ slotName: 'Main Hand', enchant: { name: 'Enchant #8041', itemId: null, icon: '' } }]);
+  it('gives no diff on plan or without a verdict', () => {
+    expect(gearComparison.buildTalentNodeDiff({ ...differing, onPlan: true }, talents)).toBeNull();
+    expect(gearComparison.buildTalentNodeDiff(null, talents)).toBeNull();
+  });
+});
+
+describe('emptyNote', () => {
+  it('names the count of top logs that carry none', () => {
+    expect(gearComparison.emptyNote('trinket', 10, 'carries a trinket')).toBe('No trinket data. None of the 10 top logs carries a trinket.');
   });
 
-  it('skips slots below the consensus share of top parsers', () => {
-    const rows = gearComparison.buildBenchEnchantRows(stats({
-      enchants: { 15: [{ id: 8041, name: 'Rune', icon: '', item_id: null, pct: 49 }] },
-    }));
-    expect(rows).toHaveLength(0);
-  });
-
-  it('includes slots at or above the consensus share of top parsers', () => {
-    const rows = gearComparison.buildBenchEnchantRows(stats({
-      enchants: {
-        15: [{ id: 8041, name: 'Rune A', icon: '', item_id: null, pct: 50 }],
-        16: [{ id: 8039, name: 'Rune B', icon: '', item_id: null, pct: 60 }],
-      },
-    }));
-    expect(rows).toHaveLength(2);
-    expect(rows.map(r => r.slotName)).toEqual(['Main Hand', 'Off Hand']);
-  });
-
-  it('returns an empty array when stats or enchants are absent', () => {
-    expect(gearComparison.buildBenchEnchantRows(null)).toEqual([]);
-    expect(gearComparison.buildBenchEnchantRows(stats({ enchants: {} }))).toEqual([]);
-  });
-
-  it('sorts slots by slot number', () => {
-    const rows = gearComparison.buildBenchEnchantRows(stats({
-      enchants: {
-        16: [{ id: 8039, name: 'B', icon: '', item_id: null, pct: 60 }],
-        0:  [{ id: 8017, name: 'A', icon: '', item_id: null, pct: 70 }],
-        4:  [{ id: 7987, name: 'C', icon: '', item_id: null, pct: 100 }],
-      },
-    }));
-    expect(rows.map(r => r.slotName)).toEqual(['Head', 'Chest', 'Off Hand']);
+  it('names no count on a bench without per-log picks', () => {
+    expect(gearComparison.emptyNote('trinket', 0, 'carries a trinket')).toBe('No trinket data.');
   });
 });
 
@@ -80,25 +67,14 @@ const GAZE = { id: 249343, name: 'Gaze of the Alnseer', icon: 'gaze' };
 const PUZZLE_BOX = { id: 193701, name: "Algeth'ar Puzzle Box", icon: 'box' };
 const VOLATILE = { id: 999999, name: 'Volatile Phoenix Fire', icon: 'phoenix' };
 
+const key = (trinkets: { id: number }[]): string => judge.trinketKey(judge.measureTrinkets(trinkets));
+
 const TRINKET_STATS = stats({
   trinket_sets: [
     { items: [PUZZLE_BOX, GAZE], pct: 50 },
     { items: [PUZZLE_BOX, VOLATILE], pct: 30 },
     { items: [GAZE, VOLATILE], pct: 15 },
   ],
-});
-
-describe('trinketSetKey', () => {
-  it('is the same key whichever slot each trinket of a pair sits in', () => {
-    expect(gearComparison.trinketSetKey([{ id: GAZE.id }, { id: PUZZLE_BOX.id }]))
-      .toBe(gearComparison.trinketSetKey([{ id: PUZZLE_BOX.id }, { id: GAZE.id }]));
-  });
-
-  it('separates a pair from either trinket worn alone, and is empty for no trinkets', () => {
-    const pair = gearComparison.trinketSetKey([{ id: GAZE.id }, { id: PUZZLE_BOX.id }]);
-    expect(gearComparison.trinketSetKey([{ id: GAZE.id }])).not.toBe(pair);
-    expect(gearComparison.trinketSetKey([])).toBe('');
-  });
 });
 
 describe('buildTrinketSets', () => {
@@ -112,13 +88,13 @@ describe('buildTrinketSets', () => {
   });
 
   it('marks the row the player uses, whichever slot order they wear it in', () => {
-    const playerKey = gearComparison.trinketSetKey([{ id: GAZE.id }, { id: PUZZLE_BOX.id }]);
+    const playerKey = key([{ id: GAZE.id }, { id: PUZZLE_BOX.id }]);
     expect(gearComparison.buildTrinketSets(TRINKET_STATS, playerKey).map(row => row.isPlayer))
       .toEqual([true, false, false]);
   });
 
   it('marks no row when the player key is empty or matches no bench pair', () => {
-    const unbenchedKey = gearComparison.trinketSetKey([{ id: VOLATILE.id }]);
+    const unbenchedKey = key([{ id: VOLATILE.id }]);
     expect(gearComparison.buildTrinketSets(TRINKET_STATS, '').some(row => row.isPlayer)).toBe(false);
     expect(gearComparison.buildTrinketSets(TRINKET_STATS, unbenchedKey).some(row => row.isPlayer)).toBe(false);
   });
@@ -126,169 +102,6 @@ describe('buildTrinketSets', () => {
   it('returns an empty array when stats or trinket sets are absent', () => {
     expect(gearComparison.buildTrinketSets(null, '')).toEqual([]);
     expect(gearComparison.buildTrinketSets(stats({ trinket_sets: [] }), '')).toEqual([]);
-  });
-});
-
-describe('trinketStatusOf (a player pair matched against the top pairs)', () => {
-  it('notes a match to the most common pair', () => {
-    const playerKey = gearComparison.trinketSetKey([{ id: PUZZLE_BOX.id }, { id: GAZE.id }]);
-    expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
-      .toEqual({ status: 'ok', note: 'Most common pair.' });
-  });
-
-  it('notes a match to a lower-ranked top pair by its rank', () => {
-    const playerKey = gearComparison.trinketSetKey([{ id: PUZZLE_BOX.id }, { id: VOLATILE.id }]);
-    expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
-      .toEqual({ status: 'info', note: '2nd most common pair. 30% use this pair.' });
-  });
-
-  it('marks a pair matching none of the top pairs as uncommon', () => {
-    const playerKey = gearComparison.trinketSetKey([{ id: VOLATILE.id }]);
-    expect(gearComparison.trinketStatusOf(TRINKET_STATS, playerKey))
-      .toEqual({ status: 'warn', note: 'Uncommon pair. 50% use the most common one.' });
-  });
-
-  it('is unknown without a player pair or without bench pairs', () => {
-    const playerKey = gearComparison.trinketSetKey([{ id: GAZE.id }]);
-    expect(gearComparison.trinketStatusOf(TRINKET_STATS, '')).toEqual({ status: 'unknown', note: 'No trinket data.' });
-    expect(gearComparison.trinketStatusOf(stats({ trinket_sets: [] }), playerKey))
-      .toEqual({ status: 'unknown', note: 'No trinket data.' });
-  });
-});
-
-describe('buildEnchantRows (comparison, real player gear)', () => {
-  // The comparison builder is only ever called with a real player's gear; the bench-only /pre plan uses buildBenchEnchantRows instead, so a not-yet-loaded player never renders "Not enchanted".
-
-  it('flags a high-consensus slot the real player left un-enchanted', () => {
-    const rows = gearComparison.buildEnchantRows(
-      gear({ enchants: [] }),
-      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 90 }] } }),
-    );
-    expect(rows).toHaveLength(1);
-    expect(rows[0]).toEqual({
-      slotName: 'Main Hand', status: 'warn', name: 'Not enchanted',
-      note: 'Most top raiders use it. Apply it.', top: SOPHIC_ITEM,
-    });
-  });
-
-  it('stays silent on an un-enchanted slot below the consensus share', () => {
-    const rows = gearComparison.buildEnchantRows(
-      gear({ enchants: [] }),
-      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 49 }] } }),
-    );
-    expect(rows).toEqual([]);
-  });
-
-  it('marks a slot on-plan when the player uses the consensus enchant', () => {
-    const rows = gearComparison.buildEnchantRows(
-      gear({ enchants: [{ slot: 15, id: 8041, name: 'Sophic Devotion' }] }),
-      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 90 }] } }),
-    );
-    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Sophic Devotion', note: null, top: null });
-  });
-
-  it('carries the consensus enchant when the player uses a different one', () => {
-    const rows = gearComparison.buildEnchantRows(
-      gear({ enchants: [{ slot: 15, id: 8039, name: 'Burning Devotion' }] }),
-      stats({ enchants: { 15: [{ id: 8041, name: 'Sophic Devotion', icon: '', item_id: null, pct: 90 }] } }),
-    );
-    expect(rows[0]).toMatchObject({
-      status: 'info', name: 'Burning Devotion', note: 'Most top raiders use it.', top: SOPHIC_ITEM,
-    });
-  });
-
-  it('returns an empty array when the player has no enchants and there is no bench data', () => {
-    expect(gearComparison.buildEnchantRows(gear({ enchants: [] }), stats({ enchants: {} }))).toEqual([]);
-  });
-
-  it('returns a row for a player enchant on a slot with no bench data', () => {
-    const rows = gearComparison.buildEnchantRows(
-      gear({ enchants: [{ slot: 9, id: 7, name: 'Handguard' }] }),
-      stats({ enchants: {} }),
-    );
-    expect(rows[0]).toMatchObject({ status: 'ok', name: 'Handguard', note: null, top: null });
-  });
-});
-
-const RING_1_SLOT = 10;
-const RING_2_SLOT = 11;
-const MASTERY = { id: 7969, name: "Enchant Ring - Zul'jin's Mastery" };
-const ALACRITY = { id: 8025, name: "Enchant Ring - Silvermoon's Alacrity" };
-const HASTE = { id: 8021, name: 'Enchant Ring - Thalassian Haste' };
-// At or above the consensus share, so an un-enchanted ring warns; the pair match reads only which enchant ranks first.
-const RING_SHARE_PCT = 60;
-
-function ranked(enchant: { id: number; name: string }) {
-  return { ...enchant, icon: '', item_id: null, pct: RING_SHARE_PCT };
-}
-
-function asItem(enchant: { name: string }) {
-  return { name: enchant.name, itemId: null, icon: '' };
-}
-
-function rings(ring1: { id: number; name: string } | null, ring2: { id: number; name: string } | null): CharacterGear {
-  return gear({ enchants: [
-    ...(ring1 ? [{ slot: RING_1_SLOT, ...ring1 }] : []),
-    ...(ring2 ? [{ slot: RING_2_SLOT, ...ring2 }] : []),
-  ] });
-}
-
-// Mastery leads Ring 1 and Alacrity leads Ring 2, each also ranked second in the other slot.
-const TOP_RING_PAIR = stats({ enchants: {
-  [RING_1_SLOT]: [ranked(MASTERY), ranked(ALACRITY)],
-  [RING_2_SLOT]: [ranked(ALACRITY), ranked(MASTERY)],
-} });
-
-describe('buildEnchantRows (a ring pair matched against the top ring enchants)', () => {
-  it('marks both rings on plan with no top enchant when the player wears the top pair swapped', () => {
-    const rows = gearComparison.buildEnchantRows(rings(ALACRITY, MASTERY), TOP_RING_PAIR);
-    expect(rows).toEqual([
-      { slotName: 'Ring 1', status: 'ok', name: ALACRITY.name, note: null, top: null },
-      { slotName: 'Ring 2', status: 'ok', name: MASTERY.name, note: null, top: null },
-    ]);
-  });
-
-  it('marks both rings on plan when the player wears the top pair in the bench order', () => {
-    const rows = gearComparison.buildEnchantRows(rings(MASTERY, ALACRITY), TOP_RING_PAIR);
-    expect(rows).toEqual([
-      { slotName: 'Ring 1', status: 'ok', name: MASTERY.name, note: null, top: null },
-      { slotName: 'Ring 2', status: 'ok', name: ALACRITY.name, note: null, top: null },
-    ]);
-  });
-
-  it('reads each ring against its own slot when only one ring wears a top enchant', () => {
-    const rows = gearComparison.buildEnchantRows(rings(MASTERY, HASTE), TOP_RING_PAIR);
-    expect(rows).toEqual([
-      { slotName: 'Ring 1', status: 'ok', name: MASTERY.name, note: null, top: null },
-      { slotName: 'Ring 2', status: 'info', name: HASTE.name, note: 'Most top raiders use it.', top: asItem(ALACRITY) },
-    ]);
-  });
-
-  it('reads each ring against its own slot when both rings wear the same one of the top pair', () => {
-    const rows = gearComparison.buildEnchantRows(rings(MASTERY, MASTERY), TOP_RING_PAIR);
-    expect(rows).toEqual([
-      { slotName: 'Ring 1', status: 'ok', name: MASTERY.name, note: null, top: null },
-      { slotName: 'Ring 2', status: 'info', name: MASTERY.name, note: 'Most top raiders use it.', top: asItem(ALACRITY) },
-    ]);
-  });
-
-  it('reads each ring against its own slot when one ring is not enchanted', () => {
-    const rows = gearComparison.buildEnchantRows(rings(null, MASTERY), TOP_RING_PAIR);
-    expect(rows).toEqual([
-      { slotName: 'Ring 1', status: 'warn', name: 'Not enchanted', note: 'Most top raiders use it. Apply it.', top: asItem(MASTERY) },
-      { slotName: 'Ring 2', status: 'info', name: MASTERY.name, note: 'Most top raiders use it.', top: asItem(ALACRITY) },
-    ]);
-  });
-
-  it('reads each ring against its own slot when one ring slot has no top enchant', () => {
-    const rows = gearComparison.buildEnchantRows(
-      rings(ALACRITY, MASTERY),
-      stats({ enchants: { [RING_1_SLOT]: [ranked(MASTERY)] } }),
-    );
-    expect(rows).toEqual([
-      { slotName: 'Ring 1', status: 'info', name: ALACRITY.name, note: 'Most top raiders use it.', top: asItem(MASTERY) },
-      { slotName: 'Ring 2', status: 'ok', name: MASTERY.name, note: null, top: null },
-    ]);
   });
 });
 
@@ -381,81 +194,5 @@ describe('buildTalentDiff (a lower-ranked build vs the most common build)', () =
     expect(gearComparison.buildTalentDiff('v3:12.1', BASELINE, null)).toEqual([]);
     expect(gearComparison.buildTalentDiff('', BASELINE, TALENTS)).toEqual([]);
     expect(gearComparison.buildTalentDiff('v2:1,2', BASELINE, TALENTS)).toEqual([]);
-  });
-});
-
-describe('talentStatusOf', () => {
-  const topBuilds = stats({
-    talent_builds: [
-      { key: BASELINE, pct: 62, report_code: 'abc', fight_id: 1, player_name: 'Top', source_id: 1, diff: [] },
-    ],
-  });
-
-  it('is unknown when the player has no talent key', () => {
-    expect(gearComparison.talentStatusOf(topBuilds, '')).toEqual({ status: 'unknown', note: 'No talent data.' });
-  });
-
-  it('is ok when the player key matches the most common build', () => {
-    expect(gearComparison.talentStatusOf(topBuilds, BASELINE)).toEqual({ status: 'ok', note: 'Most common build.' });
-  });
-
-  it('is unknown when the player key version prefix does not match the bench build key format', () => {
-    expect(gearComparison.talentStatusOf(topBuilds, 'v2:11,22')).toEqual({ status: 'unknown', note: 'No talent data.' });
-  });
-
-  it('is warn when the player key is a comparable version but off the most common build', () => {
-    expect(gearComparison.talentStatusOf(topBuilds, 'v3:11.1,33.1')).toEqual({
-      status: 'warn', note: 'Uncommon build. 62% use the most common one.',
-    });
-  });
-});
-
-describe('talentStatusOf (a player build matched against the top builds)', () => {
-  const MOST_COMMON = 'v3:11.1,22.2';
-  const SECOND_BUILD = 'v3:12.1,22.2';
-  const THIRD_BUILD = 'v3:11.1,22.1';
-  const FOURTH_BUILD = 'v3:12.1,22.1';
-  const UNBENCHED_BUILD = 'v3:99.1,22.2';
-
-  function talentBuild(
-    partial: Partial<EncounterGearStats['talent_builds'][number]> = {},
-  ): EncounterGearStats['talent_builds'][number] {
-    return { key: MOST_COMMON, pct: 50, report_code: 'ABC123', fight_id: 1, player_name: 'Player', source_id: 1, diff: [], ...partial };
-  }
-
-  const topStats = stats({
-    talent_builds: [
-      talentBuild({ key: MOST_COMMON, pct: 50 }),
-      talentBuild({ key: SECOND_BUILD, pct: 30 }),
-      talentBuild({ key: THIRD_BUILD, pct: 15 }),
-    ],
-  });
-
-  it('notes a match to the most common build', () => {
-    expect(gearComparison.talentStatusOf(topStats, MOST_COMMON)).toEqual({ status: 'ok', note: 'Most common build.' });
-  });
-
-  it('notes a match to a lower-ranked top build by its rank', () => {
-    expect(gearComparison.talentStatusOf(topStats, SECOND_BUILD)).toEqual({
-      status: 'info',
-      note: '2nd most common build. 30% use this build.',
-    });
-  });
-
-  it('ranks a build past the named ordinals by its position', () => {
-    const deepStats = stats({
-      talent_builds: [...topStats.talent_builds, talentBuild({ key: FOURTH_BUILD, pct: 5 })],
-    });
-    expect(gearComparison.talentStatusOf(deepStats, FOURTH_BUILD)).toEqual({
-      status: 'info',
-      note: '4th most common build. 5% use this build.',
-    });
-  });
-
-  it('marks a build matching none of the top builds as uncommon', () => {
-    expect(gearComparison.talentStatusOf(topStats, UNBENCHED_BUILD)).toEqual({
-      status: 'warn',
-      note: 'Uncommon build. 50% use the most common one.',
-    });
   });
 });

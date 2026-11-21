@@ -1,14 +1,15 @@
 import { assert, describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { DefensiveTransformService, ParseDefWindow, ParseDefensiveSummary } from './defensive-transform-service';
-import { applyBuff, removeBuff, damageTaken, cast } from '../../../../../testing/builders/events';
+import { applyBuff, removeBuff, damageTaken, cast, death, resurrect } from '../../../../../testing/builders/events';
 import { planLoader, specPlan } from '../../../../../testing/builders/spec-plan';
-import { abilityLookup, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
+import { abilityLookup, ACTOR_ID_PER_PARSE, parseRankings, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { BLUR, BLUR_BUFF, CLOAK_OF_SHADOWS, EVASION, WCL_SYNTHETIC_SOURCE_FALLBACK_ID } from '../../../../../testing/spell-ids';
 import { WclProjectionsService } from '../analysis/wcl-projections-service';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { MIN_SAMPLE_COUNT } from '../analysis/top-parse-selection-service';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -242,11 +243,12 @@ const reportShape = {
 
 const wclFake = {
   // getRankings returns the raw WCL envelope ({ rankings }); the transform unwraps it.
-  getRankings: async () => ({ rankings: parseRankings(2) }),
+  getRankings: async () => ({ rankings: parseRankings(MIN_SAMPLE_COUNT) }),
   getReport: reportsByCode(reportShape),
   getAllEvents: async (_code: string, _fightId: number, dataType: string) => {
     if (dataType === 'Buffs') return [applyBuff(CLOAK_OF_SHADOWS, 30), removeBuff(CLOAK_OF_SHADOWS, 35)];
     if (dataType === 'Casts') return [cast(CLOAK_OF_SHADOWS, 30)];
+    if (dataType === 'Deaths') return [];
     return [damageTaken(700, 32, 1000, { source: 9 })]; // DamageTaken
   },
   getAbilities: abilityLookup({ 700: { icon: 'hit', name: 'Boss Hit' }, [CLOAK_OF_SHADOWS]: { icon: 'cloak', name: 'Cloak of Shadows' } }),
@@ -259,13 +261,61 @@ describe('DefensiveTransformService (live, in-browser)', () => {
     const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
-    expect(bench.value.sample_count).toBe(2);
+    expect(bench.value.sample_count).toBe(MIN_SAMPLE_COUNT);
     expect(bench.value.encounter_name).toBe('Boss');
     expect(bench.value.cd_spell_ids).toEqual({ 'Cloak of Shadows': CLOAK_OF_SHADOWS });
     expect(bench.value.defensives[0]).toMatchObject({ name: 'Cloak of Shadows', spell_id: CLOAK_OF_SHADOWS });
     expect(bench.value.defensive_windows).toHaveLength(1);
     expect(bench.value.defensive_windows[0]).toMatchObject({ defensive_name: 'Cloak of Shadows', dmg_avg: 1000, ref_game_id: 6666 });
     expect(bench.value.ability_icons[700]).toEqual({ icon: 'hit', name: 'Boss Hit' });
+  });
+
+  it('names each top log in a window it covered, and bakes each log\'s uses, empty for the log that never pressed it', async () => {
+    const CLOAK_S = 30;
+    const CLOAK_LENGTH_S = 5;
+    const HIT_DAMAGE = 1000;
+    const SKIPPING_CODE = `r${MIN_SAMPLE_COUNT}`;
+    const SKIPPING_PARSE = MIN_SAMPLE_COUNT - 1;
+    const oneSkips = {
+      ...wclFake,
+      getAllEvents: async (code: string, fightId: number, dataType: string) => (code === SKIPPING_CODE ? [] : wclFake.getAllEvents(code, fightId, dataType)),
+    };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: oneSkips, plans: plansFake }) });
+
+    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
+
+    assert(bench.ok);
+    expect(bench.value.defensive_windows[0]?.members).toEqual(Array.from({ length: SKIPPING_PARSE }, (_unused, parse) => ({
+      parse, time_s: CLOAK_S, window_length_s: CLOAK_LENGTH_S, damage: HIT_DAMAGE,
+    })));
+    expect(bench.value.per_parse[0]).toMatchObject({
+      def_casts_s: { 'Cloak of Shadows': [CLOAK_S] }, def_up_s: { 'Cloak of Shadows': [[CLOAK_S, CLOAK_S + CLOAK_LENGTH_S]] }, dead_s: [],
+    });
+    expect(bench.value.per_parse[SKIPPING_PARSE]).toMatchObject({ def_casts_s: { 'Cloak of Shadows': [] }, def_up_s: { 'Cloak of Shadows': [] } });
+  });
+
+  it('bakes each top log\'s damage taken per second and its dead spans, read raid-wide with the resurrect that ends one', async () => {
+    const HIT_S = 32, HIT_DAMAGE = 1000;
+    /** The first ranking's player, one block of actor ids per parse. */
+    const FIRST_PLAYER_ID = ACTOR_ID_PER_PARSE;
+    const DIED_S = 100, BACK_S = 130, OTHER_RAIDER_ID = 999;
+    const dying = {
+      ...wclFake,
+      getAllEvents: async (code: string, fightId: number, dataType: string) => (dataType === 'Deaths'
+        ? [death(FIRST_PLAYER_ID, DIED_S), death(OTHER_RAIDER_ID, DIED_S)]
+        : wclFake.getAllEvents(code, fightId, dataType)),
+      getResurrects: async () => [resurrect(FIRST_PLAYER_ID, BACK_S)],
+    };
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: dying, plans: plansFake }) });
+
+    const bench = await TestBed.inject(DefensiveTransformService).getBench('SubtletyRogue', 1);
+
+    assert(bench.ok);
+    const [first, second] = bench.value.per_parse;
+    expect(first?.taken_per_s).toHaveLength(FIGHT_DUR_S);
+    expect(first?.taken_per_s?.[HIT_S]).toBe(HIT_DAMAGE);
+    expect(first?.dead_s).toEqual([[DIED_S, BACK_S]]);
+    expect(second?.dead_s).toEqual([]);
   });
 
   it('finds the window of a defensive whose buff the log carries under another id of its name', async () => {
@@ -276,6 +326,7 @@ describe('DefensiveTransformService (live, in-browser)', () => {
       getAllEvents: async (_code: string, _fightId: number, dataType: string) => {
         if (dataType === 'Buffs') return [applyBuff(BLUR_BUFF, 30), removeBuff(BLUR_BUFF, 40)];
         if (dataType === 'Casts') return [cast(BLUR, 30)];
+        if (dataType === 'Deaths') return [];
         return [damageTaken(700, 32, 1000, { source: 9 })];
       },
     };

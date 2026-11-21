@@ -71,3 +71,14 @@ describe('PoolFacts', () => {
     expect(read(row)).toEqual(row.expected);
   });
 });
+
+describe('PoolFacts at a hardcast', () => {
+  /** The cast bar began a second before the cast that reports the pool. */
+  const BEGUN_S = 9;
+  const ENERGY_PER_S = 2;
+
+  it('reads regen over the time to the cast that reports the pool, not to the moment the cast began', () => {
+    const ctx = factContext(list, { casts: [energy(0, 50), energy(10, 50 + 10 * ENERGY_PER_S)] });
+    expect(evaluator.read('energy.regen', { ...castAt(ctx, 10), atS: BEGUN_S }, 'x', ctx)).toEqual([ENERGY_PER_S, ENERGY_PER_S]);
+  });
+});

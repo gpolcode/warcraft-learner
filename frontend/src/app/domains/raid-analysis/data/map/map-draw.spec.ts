@@ -3,6 +3,7 @@ import { EncounterPositions } from '../encounter/positioning.models';
 import { ActorTimeline } from './map-feature-service';
 import { MapDrawService } from './map-draw-service';
 import { TestBed } from '@angular/core/testing';
+import { benchSources } from '../../../../../testing/builders/bench-sources';
 
 const mapDraw = TestBed.inject(MapDrawService);
 
@@ -96,7 +97,7 @@ describe('playerRowsToTimeline', () => {
 
 describe('buildParseTimelines / parsePointsAt / parseTrailsOf', () => {
   const positions: EncounterPositions = {
-    spec: 'X', encounter_id: 1, encounter_name: 'E', interval_s: 1.5, sample_count: 2,
+    spec: 'X', encounter_id: 1, encounter_name: 'E', interval_s: 1.5, metric: 'dps', sample_count: 2, sources: benchSources(2),
     parses: [
       { report_code: 'a', fight_id: 1, player_name: 'P', duration_s: 6, interval_s: 1.5,
         player: [[0, 500, 0, null], [6, 500, 0, null]],

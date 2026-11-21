@@ -4,6 +4,7 @@ export const BLOODLUST = 2825;
 export const SHADOW_BLADES = 121471;
 export const SHADOW_DANCE = 185313;
 export const SECRET_TECHNIQUE = 280719;
+export const SECRET_TECHNIQUE_TALENT_ENTRY = 112644;
 export const VANISH = 1856;
 
 export const CLOAK_OF_SHADOWS = 31224;
@@ -67,6 +68,7 @@ export const SIGNET_OF_THE_PRIORY = 219308;
 export const BOLSTERING_LIGHT = 443531;
 export const SIGNET_EQUIP = 450877;
 export const ALGETHAR_PUZZLE_BOX = 193701;
+export const GAZE_OF_THE_ALNSEER = 249343;
 export const ALGETHAR_PUZZLE = 383781;
 export const ARAKARA_SACBROOD = 219314;
 export const ARAKARA_SACBROOD_EQUIP = 443541;

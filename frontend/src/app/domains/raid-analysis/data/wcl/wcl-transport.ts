@@ -8,6 +8,14 @@ export class WclTransportError extends Error {
   }
 }
 
+// WCL answers a code it will not serve (private, expired, deleted or mistyped) with an empty report, never a status, so the type is the only signal.
+export class WclReportUnavailableError extends WclTransportError {
+  constructor(code: string) {
+    super(`WCL report ${code} is unavailable (not found, private, or expired).`, WCL_UNUSABLE_STATUS);
+    this.name = 'WclReportUnavailableError';
+  }
+}
+
 // 422 because a client-error status is never in the retryable set, so `toLoadError` classifies it `permanent`.
 export const WCL_UNUSABLE_STATUS = 422;
 

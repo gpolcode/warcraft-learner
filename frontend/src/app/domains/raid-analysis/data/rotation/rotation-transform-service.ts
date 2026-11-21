@@ -1,56 +1,55 @@
 import { Injectable, inject } from '@angular/core';
 import { WclApiService } from '../wcl/wcl-api-service';
 import { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
-import { TopParseSelection } from '../wcl/wcl.models';
+import { TopParseSelection, WclAbility } from '../wcl/wcl.models';
+import { AuraSpan } from '../defensive/defensive-data-source';
 import { PlanCooldown, PlanItem, PriorityList } from '../plan/plan.models';
 import { PerCdBenchmark } from '../encounter/encounter.models';
-import { group, quantile } from 'd3-array';
-import {
-  round, avgOr, stddevOr, castEfficiencyPct, closestToZero,
-} from '../analysis/analysis-math';
+import { group } from 'd3-array';
+import { round } from '../analysis/analysis-math';
 import { HoldWindow } from '../analysis/hold-targets-service';
-import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
+import { WclProjectionsService, TimedEvent, PhaseStart } from '../analysis/wcl-projections-service';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
 import { Result } from '../../../shared/util-http/result';
 import { SpecPlan } from '../simc/spec-plan-service';
-import { ListBenchService, MIN_MEASURED_PARSES } from './priority-list/list-bench-service';
-import { LogReading } from './priority-list/list-check-service';
-import { ListLogService } from './priority-list/list-log-service';
+import { ListBenchService } from './priority-list/list-bench-service';
+import { ListCheckService, LogReading } from './priority-list/list-check-service';
+import { ListContext, ListLogService } from './priority-list/list-log-service';
+import { EnemyTimelineService } from './priority-list/enemy-timeline-service';
+import type { EnemyTimeline } from './priority-list/priority-list.models';
 import { ItemDataService } from '../simc/item-data-service';
 import { RotationBloodlustService } from './rotation-bloodlust-service';
 import { AuraWindowsService } from '../analysis/aura-windows-service';
-import { RotationBench } from './rotation-data-source';
-import { HoldTargetsService } from '../analysis/hold-targets-service';
+import { IdleStretch, RotationBench, RotationParseMeasures } from './rotation-data-source';
+import type { ButtonCounts } from './priority-list/list-check-service';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
-
-const BL_WINDOW_BEFORE_S = 30;
-const BL_WINDOW_AFTER_S = 55;
-const DOWNTIME_PERCENTILE = 0.9;
-const DEFAULT_DOWNTIME_THRESHOLD_S = 1.5;
+import { CooldownUseJudgeService } from './cooldown-use-judge-service';
+import { DowntimeJudgeService } from './downtime-judge-service';
+import { BloodlustJudgeService } from './bloodlust-judge-service';
 
 export interface CdSummary {
   name: string;
   total_uses: number;
   first_cast_s: number | null;
-  bl_aligned: boolean;
-  bl_offset_s: number | null;
   cast_times_s: number[];
   hold_windows: HoldWindow[];
   cast_pattern: 'hold' | 'on_cooldown';
   fight_duration_s: number;
+  up_s: AuraSpan[];
 }
 
 interface ParseRotation {
   summaries: CdSummary[];
-  gapListS: number[];
-  durationS: number;
-  reading: LogReading;
+  idleS: IdleStretch[] | null;
+  /** Read only once every top log is in, against the others' encounter timeline. */
+  list: ListContext | null;
+  lustS: number | null;
+  phaseStarts: PhaseStart[];
 }
 
 @Injectable({ providedIn: 'root' })
 export class RotationTransformService implements DataSource<RotationBench> {
-  private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly bloodlust = inject(RotationBloodlustService);
   private readonly auraWindows = inject(AuraWindowsService);
@@ -61,15 +60,17 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private readonly listLogs = inject(ListLogService);
   private readonly itemData = inject(ItemDataService);
   private readonly listBench = inject(ListBenchService);
+  private readonly cooldownUses = inject(CooldownUseJudgeService);
+  private readonly downtime = inject(DowntimeJudgeService);
+  private readonly lust = inject(BloodlustJudgeService);
+  private readonly checks = inject(ListCheckService);
+  private readonly enemyTimeline = inject(EnemyTimelineService);
 
   async getBench(spec: string, encounterId: number, selection?: TopParseSelection): Promise<Result<RotationBench>> {
     return this.benchPipeline.benchFromTopParses(this.wclApi, { spec, encounterId, selection }, {
       logSource: 'RotationTransformService',
       errorId: 'rotation.bench',
-      minSamples: MIN_MEASURED_PARSES,
       noRankingsMessage: 'No top logs for this encounter.',
-      tooFewParsesMessage: usable =>
-        `Only ${usable} usable top log(s) for this encounter; ${MIN_MEASURED_PARSES} are needed to bench it.`,
       plan: {
         plans: this.specPlanLoader,
         pick: plan => (plan.cooldowns.length || plan.lines.length ? plan : null),
@@ -78,19 +79,25 @@ export class RotationTransformService implements DataSource<RotationBench> {
       iconSpellIds: bench => [...Object.values(bench.cd_spell_ids), ...bench.buttons.map(button => button.spell_id)],
       parse: (parse, plan) => this.parseRotation(parse, plan),
       bench: ({ parses }, plan) => {
-        const { downtimeThresholdS, topAvgEfficiency, topEfficiencyStddev } = this.computeEfficiencyThresholds(parses);
+        const series = parses.map(parse => (parse.list ? this.enemyTimeline.series(parse.list.ctx) : []));
+        // Each top log is read as the runtime reads a player: against a timeline it is not part of.
+        const readings = parses.map((parse, index) => this.reading(parse.list, this.enemyTimeline.timeline(series.filter((_, other) => other !== index))));
+        const buttonCounts = this.listBench.counts(plan, readings);
         return {
-          downtime_threshold_s: downtimeThresholdS,
-          top_avg_efficiency: topAvgEfficiency,
-          top_efficiency_stddev: topEfficiencyStddev,
           per_cd_benchmarks: this.aggregateCdBenchmarks(parses.map(parse => parse.summaries), plan.cooldowns),
           major_cooldowns: plan.cooldowns,
-          list: this.listWithItems(plan, parses.map(parse => parse.reading)),
-          buttons: this.listBench.bench(plan, parses.map(parse => parse.reading)),
+          list: this.listWithItems(plan, readings),
+          buttons: this.listBench.bench(plan, readings),
           cd_spell_ids: this.benchPipeline.spellIdsByName([...plan.cooldowns, ...plan.defensives]),
+          per_parse: parses.map((parse, index) => this.parseMeasures(parse, buttonCounts[index] ?? {})),
+          enemy_timeline: this.enemyTimeline.timeline(series),
         };
       },
     });
+  }
+
+  private reading(list: ListContext | null, enemyTimeline: EnemyTimeline | null): LogReading {
+    return list ? { ...this.checks.read({ ...list.ctx, enemyTimeline }), items: list.items } : { casts: new Map(), missed: [], ids: new Map() };
   }
 
   /** A trinket's use spell joins `spells` under its item's token, so the bench reads it like any button. */
@@ -103,104 +110,53 @@ export class RotationTransformService implements DataSource<RotationBench> {
   private async parseRotation({ ranking, report, fight, player }: BenchParse, plan: SpecPlan): Promise<ParseRotation> {
     const abilities = report.masterData?.abilities ?? [];
     const folds = this.wclProjections.pressFolds(plan.cooldowns);
-    const [casts, buffs, reading] = await Promise.all([
+    const [casts, buffs, list] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id, true),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
-      this.listLogs.read(plan, { reportCode: ranking.report_code, fight, playerId: player.id, abilities, folds, items: trinkets => this.itemData.items(trinkets) }),
+      this.listLogs.context(plan, { reportCode: ranking.report_code, fight, playerId: player.id, abilities, folds, items: trinkets => this.itemData.items(trinkets) }),
     ]);
     const fightDurS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
     const castsTimed = this.wclProjections.withRelativeS(this.wclProjections.presses(casts, folds, { buffs, abilities }), fight.startTime);
     const buffsTimed = this.wclProjections.withRelativeS(buffs, fight.startTime);
-    const blTimeS = this.bloodlust.detectBloodlust(buffsTimed);
     return {
-      summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, blTimeS, this.auraWindows.upAtPull(buffsTimed)),
-      gapListS: this.castGapListS(castsTimed),
-      durationS: fightDurS,
-      reading,
+      lustS: this.bloodlust.detectBloodlust(buffsTimed),
+      phaseStarts: this.wclProjections.phaseStarts(fight),
+      summaries: this.summarizeCooldownCasts(castsTimed, plan.cooldowns, fightDurS, { buffs: buffsTimed, abilities }),
+      idleS: this.downtime.idleStretches(castsTimed, { ...plan.spells, ...list?.items.spells }),
+      list,
+    };
+  }
+
+  protected parseMeasures(parse: ParseRotation, buttons: Record<string, ButtonCounts>): RotationParseMeasures {
+    return {
+      idle_s: parse.idleS,
+      lust_s: parse.lustS == null ? null : round(parse.lustS, 2),
+      phase_starts: parse.phaseStarts.map(phase => ({ id: phase.id, start_s: round(phase.startS, 2) })),
+      cd_casts_s: Object.fromEntries(parse.summaries.map(summary => [summary.name, summary.cast_times_s])),
+      cd_up_s: Object.fromEntries(parse.summaries.map(summary => [summary.name, summary.up_s])),
+      buttons,
     };
   }
 
   protected summarizeCooldownCasts(
-    castEvents: TimedEvent[], cooldowns: PlanCooldown[],
-    fightDurS: number, blTimeS: number | null, upAtPull: ReadonlySet<number>,
+    castEvents: TimedEvent[], cooldowns: PlanCooldown[], fightDurS: number, auras: { buffs: TimedEvent[]; abilities: readonly WclAbility[] },
   ): CdSummary[] {
+    const upAtPull = this.auraWindows.upAtPull(auras.buffs);
+    const windows = this.auraWindows.buildAuraWindows(auras.buffs);
     return cooldowns.map(cooldown => {
-      const castTimesS = [
-        // A use before the pull logs no cast, only its aura still up when the pull starts.
-        ...(upAtPull.has(cooldown.spell_id) ? [0] : []),
-        ...castEvents.filter(cast => cast.type === 'cast' && cast.abilityGameID === cooldown.spell_id).map(cast => cast.atS),
-      ].sort((a, b) => a - b);
-
-      let blAligned = false;
-      let blOffsetS: number | null = null;
-      if (blTimeS != null && castTimesS.length) {
-        const windowOffsets = castTimesS
-          .filter(timeS => blTimeS - BL_WINDOW_BEFORE_S <= timeS && timeS <= blTimeS + BL_WINDOW_AFTER_S)
-          .map(timeS => timeS - blTimeS);
-        blAligned = windowOffsets.length > 0;
-        if (windowOffsets.length) blOffsetS = round(closestToZero(windowOffsets));
-      }
-
-      const holdWindows = this.holdTargets.detectHoldWindows(castTimesS, cooldown.cooldown);
-
+      const castTimesS = this.cooldownUses.castTimesS(castEvents, cooldown.spell_id, upAtPull, fightDurS);
+      const spans = this.auraWindows.spansNamed(windows, cooldown, auras.abilities);
       return {
         name: cooldown.name,
         total_uses: castTimesS.length,
-        first_cast_s: castTimesS[0] != null ? round(castTimesS[0]) : null,
-        bl_aligned: blAligned,
-        bl_offset_s: blOffsetS,
-        cast_times_s: castTimesS.map(timeS => round(timeS, 2)),
-        hold_windows: holdWindows,
-        cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
-        fight_duration_s: fightDurS,
+        up_s: this.lust.effectSpans(spans, castTimesS, cooldown.duration ?? 0, fightDurS),
+        ...this.castCadence.entry(castTimesS, fightDurS, cooldown.cooldown),
       };
     });
   }
 
-  protected castGapListS(castEvents: TimedEvent[]): number[] {
-    const completed = castEvents.filter(event => event.type === 'cast').sort((a, b) => a.atS - b.atS);
-    const gaps: number[] = [];
-    let prev: TimedEvent | undefined;
-    for (const event of completed) {
-      if (prev) gaps.push(round(event.atS - prev.atS, 3));
-      prev = event;
-    }
-    return gaps.sort((a, b) => a - b);
-  }
-
   protected buildCdBenchmark(entries: CdSummary[], effectiveCd: number): PerCdBenchmark {
-    const users = entries.filter(entry => entry.total_uses > 0);
-    const blOffsets = entries.map(entry => entry.bl_offset_s).filter((value): value is number => value != null);
-    const blCount = entries.filter(entry => entry.bl_aligned).length;
-
-    return {
-      ...this.castCadence.buildCadenceBenchmark(users, effectiveCd, entries.length),
-      avg_bl_offset_s: avgOr(blOffsets, null),
-      stddev_bl_offset_s: stddevOr(blOffsets, null),
-      bl_pct: entries.length ? Math.round((blCount / entries.length) * 100) : 0,
-    };
-  }
-
-  protected computeEfficiencyThresholds(
-    parses: { gapListS: number[]; durationS: number }[],
-  ): { downtimeThresholdS: number; topAvgEfficiency: number; topEfficiencyStddev: number } {
-    const allGaps = parses.flatMap(parse => parse.gapListS).sort((a, b) => a - b);
-    let downtimeThresholdS = DEFAULT_DOWNTIME_THRESHOLD_S;
-    if (allGaps.length) {
-      downtimeThresholdS = quantile(allGaps, DOWNTIME_PERCENTILE) ?? DEFAULT_DOWNTIME_THRESHOLD_S;
-    }
-    const efficiencies: number[] = [];
-    for (const { gapListS, durationS } of parses) {
-      if (gapListS.length && durationS > 0) {
-        const downtimeS = gapListS.filter(gap => gap > downtimeThresholdS).reduce((sum, gap) => sum + gap, 0);
-        efficiencies.push(round(castEfficiencyPct(downtimeS, durationS)));
-      }
-    }
-    return {
-      downtimeThresholdS: round(downtimeThresholdS, 3),
-      topAvgEfficiency: avgOr(efficiencies, 0),
-      topEfficiencyStddev: stddevOr(efficiencies, 0),
-    };
+    return this.castCadence.buildCadenceBenchmark(entries.filter(entry => entry.total_uses > 0), effectiveCd, entries.length);
   }
 
   protected aggregateCdBenchmarks(

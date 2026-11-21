@@ -53,9 +53,9 @@ export class PressFacts implements FactReader {
     return this.fields[path.field]?.(path, moment, ctx) ?? UNKNOWN;
   }
 
-  /** A cast the list never names is a utility press, which SimC's `prev` does not count. */
+  /** A cast the list never names is a utility press, which SimC's `prev` does not count; one pressed during a hardcast's cast came after its moment. */
   private before(moment: CastMoment, ctx: FactContext): TimedEvent[] {
-    return ctx.casts.slice(0, moment.index).filter(event => ctx.gcd(event.abilityGameID) !== null).reverse();
+    return ctx.casts.slice(0, moment.index).filter(event => event.atS <= moment.atS && ctx.gcd(event.abilityGameID) !== null).reverse();
   }
 
   private cast(event: TimedEvent | undefined, ids: ReadonlySet<number>): boolean {

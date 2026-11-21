@@ -39,7 +39,7 @@ jsep.addIdentifierChar('.');
 const LINE = /^actions(?:\.(\w+))?\+?=\/?(.*)$/;
 const LIST_CALLS = new Set(['call_action_list', 'run_action_list']);
 const NON_SPELL = new Set([
-  'auto_attack', 'snapshot_stats', 'potion', 'use_items', 'use_item', 'invoke_external_buff', 'pool_resource', 'wait',
+  'auto_attack', 'snapshot_stats', 'potion', 'invoke_external_buff', 'pool_resource', 'wait',
   'cancel_buff', 'retarget_auto_attack', 'flask', 'food', 'augmentation', 'summon_pet', 'cancel_action',
 ]);
 /** `min:` and `max:` only rank the targets; any other `target_if` skips the line when no target satisfies it. */
@@ -214,7 +214,7 @@ export class SimcAplService {
   private visit(context: AplWalk, { action, options }: AplEntry, terms: AplNode[] | null, seen: Set<string>): void {
     if (LIST_CALLS.has(action)) this.walk(context, options['name'] ?? '', terms, seen);
     else if (action === 'variable' || action === 'cycling_variable') this.variable(context, options, terms);
-    else if (!NON_SPELL.has(action) && !context.precombat) context.lines.push(this.line(action, terms, options['line_cd']));
+    else if (!NON_SPELL.has(action) && !context.precombat) context.lines.push(this.line(action, terms, options['line_cd'], options['name'] ?? options['slot']));
   }
 
   private variable(context: AplWalk, options: Record<string, string>, terms: AplNode[] | null): void {
@@ -243,8 +243,8 @@ export class SimcAplService {
     return negated;
   }
 
-  private line(action: string, terms: AplNode[] | null, lineCd: string | undefined): PlanLine {
-    return { action, terms: terms && this.printed(terms), ...(lineCd ? { line_cd: Number(lineCd) } : {}) };
+  private line(action: string, terms: AplNode[] | null, lineCd: string | undefined, item: string | undefined): PlanLine {
+    return { action, terms: terms && this.printed(terms), ...(lineCd ? { line_cd: Number(lineCd) } : {}), ...(action === 'use_item' && item ? { item } : {}) };
   }
 
   /** A tree with a node SimC text has no form for leaves the line unread rather than half-printed. */

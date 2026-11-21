@@ -2,35 +2,47 @@
   @if (error() || !available()) {
     <wl-load-state heading="Offensives" subtitle="How you used your damage cooldowns compared with the top logs." [error]="error()"></wl-load-state>
   } @else {
-    @if (buttonRows().length) {
+    @if (judgesButtons() && (buttonRows().length || buttonsBenched())) {
       <wl-button-table
         heading="Rotation rules"
-        subtitle="How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press at the wrong time and a skip when it was due both count as a miss."
+        subtitle="How often you pressed each button at the right time, compared with the top Mythic logs for your spec. A press while another button was due, a press off its conditions, and a button left unpressed while it was due each count as a miss."
+        [bench]="bench()"
         [rows]="buttonRows()"
+        [empty]="buttonsEmpty()"
+        [notGraded]="notGraded().buttons"
         [showMap]="showMap()"
         [showClip]="showClip()"
         (openMap)="onOpenMap($event)"
         (openClip)="onOpenClip($event)">
       </wl-button-table>
+    } @else if (!judgesButtons()) {
+      <wl-load-state heading="Rotation rules" subtitle="How often you pressed each button at the right time, compared with the top Mythic logs for your spec."
+        reason="Top raiders on your spec heal rather than follow one damage priority list, so no button is judged."></wl-load-state>
     }
 
-    @if (downtimeRows().length) {
-      <wl-finding-table
-        heading="Downtime"
-        subtitle="Time you spent not casting, compared with the top logs."
-        [rows]="downtimeRows()"
-        [showMap]="showMap()"
-        [showClip]="showClip()"
-        (openMap)="onFindingMap($event)"
-        (openClip)="onFindingClip($event)">
-      </wl-finding-table>
-    }
+    <wl-finding-table
+      heading="Downtime"
+      subtitle="Time you spent idle past each cast's global cooldown and cast time, compared with the top logs."
+      [rows]="downtimeRows()"
+      [bench]="bench()"
+      [empty]="downtimeEmpty()"
+      [notGraded]="notGraded().downtime"
+      [judged]="downtimeSpan()"
+      [showMap]="showMap()"
+      [showClip]="showClip()"
+      (openMap)="onFindingMap($event)"
+      (openClip)="onFindingClip($event)">
+    </wl-finding-table>
 
     <wl-finding-table
       heading="Offensives"
       subtitle="How you used your damage cooldowns compared with the top logs."
       [rows]="offensiveRows()"
+      [bench]="bench()"
       [onPlan]="onPlan()"
+      [empty]="offensivesEmpty()"
+      [notGraded]="notGraded().offensives"
+      [judged]="offensiveSpan()"
       [showMap]="showMap()"
       [showClip]="showClip()"
       (openMap)="onFindingMap($event)"

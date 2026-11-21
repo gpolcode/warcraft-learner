@@ -9,6 +9,7 @@ import bannedCharacters from './eslint-rules/banned-characters.js';
 import pathConventions from './eslint-rules/path-conventions.js';
 import noFunctionAliasMembers from './eslint-rules/no-function-alias-members.js';
 import themeUtilitiesOnly from './eslint-rules/theme-utilities-only.js';
+import noSeverityLiteral from './eslint-rules/no-severity-literal.js';
 
 const local = {
   rules: {
@@ -17,6 +18,7 @@ const local = {
     'path-conventions': pathConventions,
     'no-function-alias-members': noFunctionAliasMembers,
     'theme-utilities-only': themeUtilitiesOnly,
+    'no-severity-literal': noSeverityLiteral,
   },
 };
 
@@ -197,6 +199,15 @@ export default defineConfig([
     files: ['src/app/**/*.ts'],
     ignores: ['src/**/*.spec.ts'],
     rules: { 'local/theme-utilities-only': 'error' },
+  },
+  {
+    // The verdict folder is the contract itself, so it alone writes a tone.
+    files: ['src/app/domains/raid-analysis/data/**/*.ts'],
+    ignores: [
+      'src/**/*.spec.ts',
+      'src/app/domains/raid-analysis/data/verdict/**',
+    ],
+    rules: { 'local/no-severity-literal': 'error' },
   },
   {
     files: ['src/**/*.ts'],

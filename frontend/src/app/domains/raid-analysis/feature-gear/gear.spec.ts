@@ -5,6 +5,11 @@ import { whenStable } from '../../../../testing/when-stable';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Gear } from './gear';
 import { GearComparisonView, GearFeatureService } from '../data/gear/gear-feature-service';
+import { TestBed } from '@angular/core/testing';
+import { ENCHANT_MISSING_FAMILY } from '../data/gear/gear-judge-service';
+import { ToneService } from '../data/verdict/tone-service';
+import { Evidence } from '../data/verdict/tone.models';
+import type { CardRanking } from '../data/verdict/row-order-service';
 
 const SPEC = 'SubtletyRogue';
 const ENCOUNTER_ID = 3379;
@@ -16,18 +21,21 @@ const COPIED_LABEL = 'Copied';
 const CHIP_ROWS = 2;
 const ARMOR_KIT_ITEM_ID = 244641;
 const ARMOR_KIT = { name: "Forest Hunter's Armor Kit", itemId: ARMOR_KIT_ITEM_ID, icon: 'inv_kit' };
+/** What the game rule behind an empty enchantable slot gives the fact rule. */
+const GAME_RULE: Evidence = { level: 'red', observed: 1, n: 0, target: null, excess: 0 };
 const HELM_ENCHANT = { name: 'Enchant Helm - Empowered Rune of Avoidance', itemId: null, icon: '' };
 
 function benchView(over: Partial<GearComparisonView> = {}): GearComparisonView {
   return {
     comparison: false,
-    talentBuilds: [], talentStatus: { status: 'unknown', note: 'No talent data.' },
-    trinketSets: [], trinketStatus: { status: 'unknown', note: 'No trinket data.' },
-    enchantRows: [], enchantStatus: 'ok',
+    talentBuilds: [], talentVerdict: null, talentDiff: null, talentEmpty: 'No talent data.',
+    trinketSets: [], trinketVerdict: null, trinketEmpty: 'No trinket data.',
+    enchantRows: [], enchantEmpty: 'No enchant data.', enchantsClean: '',
     benchEnchantRows: [
-      { slotName: 'Head', enchant: HELM_ENCHANT },
-      { slotName: 'Legs', enchant: ARMOR_KIT },
+      { slotName: 'Head', enchant: HELM_ENCHANT, share: '9 of 10 top logs' },
+      { slotName: 'Legs', enchant: ARMOR_KIT, share: '8 of 10 top logs' },
     ],
+    bench: null, notGraded: [],
     ...over,
   };
 }
@@ -37,16 +45,18 @@ function comparisonView(): GearComparisonView {
     comparison: true,
     benchEnchantRows: [],
     enchantRows: [
-      { slotName: 'Legs', status: 'warn', name: 'Not enchanted', note: 'Most top raiders use it. Apply it.', top: ARMOR_KIT },
-      { slotName: 'Head', status: 'ok', name: HELM_ENCHANT.name, note: null, top: null },
+      { slotName: 'Legs', family: ENCHANT_MISSING_FAMILY.id, tone: TestBed.inject(ToneService).tone(ENCHANT_MISSING_FAMILY, GAME_RULE), onPlan: false,
+        name: 'Not enchanted', note: '8 of 10 top raiders use it. Apply it.', top: ARMOR_KIT, n: 10 },
+      { slotName: 'Head', family: null, tone: TestBed.inject(ToneService).neutral(), onPlan: true, name: HELM_ENCHANT.name, note: null, top: null, n: 10 },
     ],
   });
 }
 
 function featureOf(view: GearComparisonView): GearFeatureService {
   const load = async (): Promise<Result<GearComparisonView>> => Results.ok(view);
-  // The prototype supplies the empty view; only the two IO loads are faked.
-  return Object.assign(Object.create(GearFeatureService.prototype) as GearFeatureService, { loadBenchView: load, loadComparisonView: load });
+  const ranking = (): CardRanking => ({ rows: [], folded: { dead: 0, after_wipe: 0, not_reached: 0 } });
+  // The prototype supplies the empty view; only the two IO loads and the page's ranking are faked.
+  return Object.assign(Object.create(GearFeatureService.prototype) as GearFeatureService, { loadBenchView: load, loadComparisonView: load, ranking });
 }
 
 interface Mounted {

@@ -7,7 +7,10 @@ export type Result<T, E = LoadError> =
 export type LoadError =
   | { readonly kind: 'missing'; readonly message: string }
   | { readonly kind: 'transient'; readonly message: string }
-  | { readonly kind: 'permanent'; readonly message: string; readonly id: string; readonly context?: unknown };
+  | { readonly kind: 'permanent'; readonly message: string; readonly id: string; readonly context?: unknown; readonly source: PermanentSource };
+
+/** `log` is a report or pull that lacks what the analysis reads, so the user fixes it by picking another; `app` is a fault in the analysis itself. */
+type PermanentSource = 'app' | 'log';
 
 export class Results {
   private constructor() {}
@@ -29,6 +32,10 @@ export class Results {
   }
 
   static permanent(message: string, id: string, context?: unknown): Result<never> {
-    return Results.err({ kind: 'permanent', message, id, context });
+    return Results.err({ kind: 'permanent', message, id, context, source: 'app' });
+  }
+
+  static unusableLog(message: string, id: string, context?: unknown): Result<never> {
+    return Results.err({ kind: 'permanent', message, id, context, source: 'log' });
   }
 }

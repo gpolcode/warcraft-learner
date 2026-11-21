@@ -12,14 +12,15 @@ const pullContext = TestBed.inject(PullContextService);
 const FIGHT_ID = 1;
 const FIGHT_END_MS = 120_000;
 const FIGHT_DURATION_S = 120;
-const PULL: PullRef = { reportCode: 'rX', fightId: FIGHT_ID };
+const PLAYER_ID = 10;
+const PULL: PullRef = { reportCode: 'rX', fightId: FIGHT_ID, playerId: PLAYER_ID };
 const ERROR_ID = 'feature.player-view';
 const EMPTY_VIEW = 'empty';
 const ANALYZED_VIEW = 'analyzed';
 const REPORT = wclReport({ fightId: FIGHT_ID, endTimeMs: FIGHT_END_MS });
 
 function wclFake(getReport: () => Promise<WclReport> = async () => REPORT): WclApiService {
-  return { getReport } as unknown as WclApiService;
+  return { getReport, getAllEvents: async () => [], getPlayerDetails: async () => ({}), getResurrects: async () => [] } as unknown as WclApiService;
 }
 
 const ANALYSIS = {
@@ -34,7 +35,7 @@ function viewAnalysis(over: Partial<typeof ANALYSIS> = {}): typeof ANALYSIS {
 }
 
 describe('analyzePull', () => {
-  it('hands the analysis the report, the named fight, and the fight duration in seconds', async () => {
+  it('hands the analysis the report, the named fight, the fight duration in seconds and the pull model', async () => {
     const seen: PullContext[] = [];
     const result = await pullContext.analyzePull(wclFake(), PULL, viewAnalysis({
       analyze: async context => { seen.push(context); return ANALYZED_VIEW; },
@@ -45,6 +46,7 @@ describe('analyzePull', () => {
     expect(context.report).toBe(REPORT);
     expect(context.fight.id).toBe(FIGHT_ID);
     expect(context.fightDurationS).toBe(FIGHT_DURATION_S);
+    expect(context.model.judgedEndS).toBe(FIGHT_DURATION_S);
   });
 
   it('returns the empty view when the fight is not in the report yet, without running the analysis', async () => {

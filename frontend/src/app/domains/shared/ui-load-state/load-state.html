@@ -1,4 +1,5 @@
 @let err = error();
+@let kind = state();
 <section tuiCardLarge appearance="outline-grayscale">
   <div>
     @if (heading()) {
@@ -12,14 +13,21 @@
       </header>
     }
     <tui-block-status size="m" class="py-6" [class.border-t]="!!heading()" [class.border-dashed]="!!heading()" [class.border-line]="!!heading()">
-      <tui-icon tuiSlot="top" class="icon-18" [class.text-accent]="!!err" [class.text-muted]="!err" [icon]="err ? (err.kind === 'permanent' ? 'error' : 'cloud_off') : 'schedule'" />
+      <tui-icon tuiSlot="top" class="icon-18"
+        [class.text-accent]="kind === 'app' || kind === 'transient'"
+        [class.text-muted]="kind === 'waiting' || kind === 'log' || kind === 'reason'"
+        [icon]="kind === 'app' ? 'error' : kind === 'transient' ? 'cloud_off' : kind === 'log' || kind === 'reason' ? 'info' : 'schedule'" />
       @if (err) {
         <span class="block">{{ err.message }}</span>
         <span class="block text-caption">
-          {{ err.kind === 'permanent'
-            ? 'This analysis is bugged. Retrying will not fix it.'
-            : 'Retries on the next sync, or reselect the fight.' }}
+          @switch (kind) {
+            @case ('app') { This analysis is bugged. Retrying will not fix it. }
+            @case ('log') { Retrying will not fix it. Pick another fight or report. }
+            @default { Retries on the next sync, or reselect the fight. }
+          }
         </span>
+      } @else if (kind === 'reason') {
+        <span class="block">{{ reason() }}</span>
       } @else {
         <span class="block">Waiting for top logs</span>
         @if (caption()) {

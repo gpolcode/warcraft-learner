@@ -15,5 +15,10 @@ export const routes: Routes = [
     data: { pageTitle: 'Pre-fight' },
     loadComponent: () => import('./pre-fight/pre-fight').then(m => m.PreFight),
   },
+  {
+    path: 'method',
+    data: { pageTitle: 'Method' },
+    loadComponent: () => import('./method/method').then(m => m.Method),
+  },
   { path: '**', redirectTo: '' },
 ];

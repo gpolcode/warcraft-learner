@@ -5,7 +5,10 @@ import { LoadState, RenderableLoadError } from './load-state';
 
 const TRANSIENT_ERROR: RenderableLoadError = { kind: 'transient', message: 'WCL is unreachable right now.' };
 const PERMANENT_ERROR: RenderableLoadError = {
-  kind: 'permanent', message: 'Analysis data could not be loaded.', id: 'gear.combatant-info',
+  kind: 'permanent', message: 'Analysis data could not be loaded.', id: 'gear.load', source: 'app',
+};
+const LOG_ERROR: RenderableLoadError = {
+  kind: 'permanent', message: 'This log has no combatant info.', id: 'gear.combatant-info', source: 'log',
 };
 
 interface Rendered {
@@ -49,6 +52,22 @@ describe('LoadState', () => {
     });
   });
 
+  describe('reason state', () => {
+    const REASON = 'Top raiders on your spec are ranked on healing, so there are no burst windows to compare.';
+
+    it('states why the card compares nothing, with the muted info icon and no waiting copy', () => {
+      const { text, icon } = render({ heading: 'Burst windows', reason: REASON });
+      expect(text).toContain(REASON);
+      expect(text).not.toContain('Waiting for top logs');
+      expect(text).not.toContain('Built from the top logs for your spec.');
+      expect(icon).toBe('info');
+    });
+
+    it('gives way to an error, which says more about this load than the reason', () => {
+      expect(render({ heading: 'Burst windows', reason: REASON, error: TRANSIENT_ERROR }).text).not.toContain(REASON);
+    });
+  });
+
   describe('error state (shared UX with the waiting state)', () => {
     it('renders a transient error with its message, the cloud_off icon and a retry-on-sync guide', () => {
       const { text, icon } = render({ heading: 'Offensives', error: TRANSIENT_ERROR });
@@ -63,6 +82,17 @@ describe('LoadState', () => {
       expect(text).toContain(PERMANENT_ERROR.message);
       expect(text).toContain('This analysis is bugged. Retrying will not fix it.');
       expect(icon).toBe('error');
+    });
+
+    it('renders an error the log causes with its message, a muted info icon and a pick-another line', () => {
+      const { text, icon } = render({ error: LOG_ERROR });
+      expect(text).toContain(LOG_ERROR.message);
+      expect(text).toContain('Retrying will not fix it. Pick another fight or report.');
+      expect(icon).toBe('info');
+    });
+
+    it('never calls an error the log causes bugged', () => {
+      expect(render({ error: LOG_ERROR }).text).not.toContain('bugged');
     });
 
     it('keeps the card heading above the error body when given one', () => {

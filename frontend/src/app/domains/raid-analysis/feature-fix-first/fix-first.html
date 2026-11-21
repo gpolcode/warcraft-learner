@@ -1,0 +1,36 @@
+<section tuiCardLarge appearance="outline-grayscale">
+  <div>
+    <header class="pb-2">
+      <div tuiHeader="body-l">
+        <hgroup tuiTitle>
+          <h2>Fix first</h2>
+          <p tuiSubtitle>The costliest colored rows across the cards below.</p>
+        </hgroup>
+      </div>
+    </header>
+
+    @for (row of view().rows; track $index) {
+      <div class="border-t border-line py-2.5 flex items-start gap-3">
+        <tui-icon class="icon-18 shrink-0"
+          [class.text-critical]="row.tone === 'red'"
+          [class.text-warning]="row.tone === 'amber'"
+          [icon]="row.tone === 'red' ? 'error' : 'warning_amber'" />
+        <div class="min-w-0">
+          <span class="block text-label text-muted mb-1">{{ row.card }}</span>
+          <div class="flex items-baseline gap-2 flex-wrap">
+            <span class="text-name">{{ row.subject || row.check }}</span>
+            @if (row.subject) {
+              <span class="text-caption text-muted">{{ row.check }}</span>
+            }
+          </div>
+          <span class="block text-body mt-0.5">{{ row.message }}</span>
+          @if (view().damageShown && row.damage) {
+            <span class="block text-body text-muted">{{ row.damage | damageEstimate }}</span>
+          }
+        </div>
+      </div>
+    } @empty {
+      <wl-empty-state class="border-t border-line">{{ view().empty }}</wl-empty-state>
+    }
+  </div>
+</section>

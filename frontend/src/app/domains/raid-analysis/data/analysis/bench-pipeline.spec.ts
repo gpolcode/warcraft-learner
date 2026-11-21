@@ -9,13 +9,16 @@ import { planLoader, planSpell, specPlan } from '../../../../../testing/builders
 import type { SpecPlanLoaderService } from '../simc/spec-plan-loader-service';
 import { FixtureRanking, abilityLookup, parseRankings, wclReport, reportsByCode } from '../../../../../testing/builders/wcl-fixtures';
 import { AbilityIcons, WclProjectionsService } from './wcl-projections-service';
-import { BenchHeader, BenchRecipe, BenchPipelineService } from './bench-pipeline-service';
+import { BenchHeader, BenchRecipe, BenchPipelineService, ExportHeader } from './bench-pipeline-service';
+import { parseRanking } from '../../../../../testing/builders/bench-sources';
+import { MIN_SAMPLE_COUNT } from './top-parse-selection-service';
 import { TestBed } from '@angular/core/testing';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 const benchPipeline = TestBed.inject(BenchPipelineService);
 
 const SPEC = 'SubtletyRogue';
+const HEALER_SPEC = 'RestorationDruid';
 const ENCOUNTER_ID = 3144;
 const QUERY = { spec: SPEC, encounterId: ENCOUNTER_ID };
 const BOSS_NAME = 'Boss';
@@ -59,8 +62,10 @@ function codeRecipe(over: Partial<BenchRecipe<string, CodeBench>> = {}): BenchRe
   };
 }
 
+/** Each code `rN` is the parse ranked N, so its source is that ranking. */
 function benched(codes: string[]): CodeBench {
-  return { spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, sample_count: codes.length, codes };
+  const sources = codes.map(code => parseRanking({ rank: Number(code.slice(1)) }));
+  return { spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, metric: 'dps', sample_count: codes.length, sources, codes };
 }
 
 describe('benchFromTopParses', () => {
@@ -199,21 +204,57 @@ describe('benchFromTopParses top-parse selection', () => {
   });
 });
 
-interface IdentityBench { spec: string; encounter_id: number; encounter_name: string; codes: string[] }
+interface ExportBench extends ExportHeader { codes: string[] }
+
+describe('benchFromTopParses sample floor', () => {
+  const floored = (): BenchRecipe<string, CodeBench> => codeRecipe({ minSamples: undefined, tooFewParsesMessage: undefined });
+
+  it('benches a recipe without its own floor from exactly the shared minimum of top logs', async () => {
+    const result = await benchPipeline.benchFromTopParses(wclFake({ rankings: parseRankings(MIN_SAMPLE_COUNT) }), QUERY, floored());
+
+    expect(result.ok && result.value.sample_count).toBe(MIN_SAMPLE_COUNT);
+  });
+
+  it('does not bench one top log under the shared minimum, and says how many it had', async () => {
+    const ONE_SHORT = MIN_SAMPLE_COUNT - 1;
+
+    const result = await benchPipeline.benchFromTopParses(wclFake({ rankings: parseRankings(ONE_SHORT) }), QUERY, floored());
+
+    expect(result).toEqual(Results.missing(`Only ${ONE_SHORT} usable top log(s) for this encounter; ${MIN_SAMPLE_COUNT} are needed to bench it.`));
+  });
+});
 
 describe('benchFromTopParses header', () => {
-  it('bakes no sample count for a recipe exporting one named parse', async () => {
-    const recipe: BenchRecipe<string, IdentityBench> = {
-      logSource: 'IdentityRecipe',
+  it('bakes the one exported parse as its source, with no sample count', async () => {
+    const recipe: BenchRecipe<string, ExportBench> = {
+      logSource: 'ExportRecipe',
       errorId: BENCH_ERROR_ID,
       sampleTarget: 1,
+      minSamples: 1,
       noRankingsMessage: NO_RANKINGS_MESSAGE,
-      header: 'identity',
+      header: 'export',
       parse: ({ ranking }) => Promise.resolve(ranking.report_code),
       bench: ({ parses }) => ({ codes: parses }),
     };
     const result = await benchPipeline.benchFromTopParses(wclFake(), QUERY, recipe);
-    expect(result).toEqual(Results.ok({ spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, codes: ['r1'] }));
+    expect(result).toEqual(Results.ok({
+      spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, metric: 'dps', source: parseRanking({ rank: 1 }), codes: ['r1'],
+    }));
+  });
+
+  it('names the sources in acceptance order, skipping a parse the recipe dropped', async () => {
+    const DROPPED = 'r2';
+    const recipe = codeRecipe({ parse: ({ ranking }) => Promise.resolve(ranking.report_code === DROPPED ? null : ranking.report_code) });
+
+    const result = await benchPipeline.benchFromTopParses(wclFake({ rankings: parseRankings(3) }), QUERY, recipe);
+
+    expect(result.ok && result.value.sources.map(source => source.rank)).toEqual([1, 3]);
+  });
+
+  it('marks a healer bench as ranked on healing', async () => {
+    const result = await benchPipeline.benchFromTopParses(wclFake(), { ...QUERY, spec: HEALER_SPEC }, codeRecipe());
+
+    expect(result.ok && result.value.metric).toBe('hps');
   });
 });
 
@@ -227,6 +268,7 @@ function planRecipe(
     logSource: 'PlanRecipe',
     errorId: BENCH_ERROR_ID,
     sampleTarget: 1,
+    minSamples: 1,
     noRankingsMessage: NO_RANKINGS_MESSAGE,
     plan: {
       plans,
@@ -256,7 +298,7 @@ describe('benchFromTopParses plan step', () => {
     const wcl = wclFake({ getAllEvents: async () => [cast(SHADOW_BLADES, 1)] });
     const result = await benchPipeline.benchFromTopParses(wcl, QUERY, planRecipe(planLoader(PLANNED)));
     expect(result).toEqual(Results.ok({
-      spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, sample_count: 1,
+      spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, metric: 'dps', sample_count: 1, sources: [parseRanking({ rank: 1 })],
       codes: [`${PLANNED_COOLDOWN}/r1`, `bench/${PLANNED_COOLDOWN}`],
     }));
   });
@@ -301,6 +343,7 @@ function iconRecipe(): BenchRecipe<string, IconBench> {
     logSource: 'IconRecipe',
     errorId: BENCH_ERROR_ID,
     sampleTarget: 1,
+    minSamples: 1,
     noRankingsMessage: NO_RANKINGS_MESSAGE,
     iconSpellIds: bench => bench.spell_ids,
     parse: ({ ranking }) => Promise.resolve(ranking.report_code),
@@ -318,7 +361,7 @@ describe('benchFromTopParses icon step', () => {
 
     expect(asked).toEqual([[SHADOW_BLADES, CLOAK_OF_SHADOWS]]);
     expect(result).toEqual(Results.ok({
-      spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, sample_count: 1,
+      spec: SPEC, encounter_id: ENCOUNTER_ID, encounter_name: BOSS_NAME, metric: 'dps', sample_count: 1, sources: [parseRanking({ rank: 1 })],
       spell_ids: [SHADOW_BLADES, CLOAK_OF_SHADOWS],
       ability_icons: {
         [SHADOW_BLADES]: { icon: `icon_${SHADOW_BLADES}`, name: `name_${SHADOW_BLADES}` },

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { EVISCERATE } from '../../../../../../testing/spell-ids';
-import type { CastCheck, CastVerdict, LogReading, OrderCheck, TermReading } from './list-check-service';
+import type { CastCheck, CastVerdict, LogReading, MissCheck, TermReading } from './list-check-service';
 import { ListBenchService, MIN_MEASURED_PARSES } from './list-bench-service';
 import { priorityList } from './priority-list-harness';
 import type { Truth } from './priority-list.models';
@@ -20,10 +20,10 @@ const cast = (verdict: CastVerdict, line = 0, cp = 5): CastCheck => ({
   atS: 1, verdict, line,
   lines: [{ truth: cp >= 5 ? 'true' : 'false', terms: [term(cp >= 5 ? 'true' : 'false', [cp, cp])] }, { truth: 'false', terms: [term('false', [0, 0])] }],
 });
-const decision = (pressed: string): OrderCheck => ({ atS: 1, expected: 'eviscerate', pressed, line: 0, terms: [] });
-const log = (casts: CastCheck[], opts: { order?: OrderCheck[]; id?: number } = {}): LogReading => ({
+const idle: MissCheck = { atS: 1, action: 'eviscerate', kind: 'idle', line: 0, terms: [] };
+const log = (casts: CastCheck[], opts: { missed?: MissCheck[]; id?: number } = {}): LogReading => ({
   casts: new Map([['eviscerate', casts]]),
-  order: opts.order ?? [],
+  missed: opts.missed ?? [],
   ids: new Map([['eviscerate', opts.id ?? EVISCERATE]]),
 });
 const field = (count: number, casts: CastCheck[], opts = {}): LogReading[] => Array.from({ length: count }, () => log(casts, opts));
@@ -31,7 +31,7 @@ const benchOf = (readings: LogReading[]) => benches.bench(list, readings)[0];
 
 /** Three right casts of four settled ones. */
 const THREE_QUARTERS = 0.75;
-/** Four right casts of five moments, the fifth a skip when due. */
+/** Four right casts of five moments, the fifth missed while idle. */
 const FOUR_FIFTHS = 0.8;
 
 describe('ListBenchService', () => {
@@ -62,9 +62,27 @@ describe('ListBenchService', () => {
     expect(benchOf(field(MIN_MEASURED_PARSES, [cast('unjudged'), ...quarterOff]))?.right.avg).toBe(THREE_QUARTERS);
   });
 
-  it('counts a moment the button was due and something else was pressed against it', () => {
-    const readings = field(MIN_MEASURED_PARSES, clean, { order: [decision('eviscerate'), decision('backstab')] });
+  it('counts a moment the button was due and nothing was pressed against it', () => {
+    const readings = field(MIN_MEASURED_PARSES, clean, { missed: [idle] });
     expect(benchOf(readings)?.right.avg).toBe(FOUR_FIFTHS);
+  });
+
+  it('counts each log\'s right presses over its moments, a miss while idle being a moment it got wrong', () => {
+    const RIGHT = 4;
+    const MOMENTS = 5;
+    const counts = benches.counts(list, [log(clean, { missed: [idle] })]);
+    expect(counts).toEqual([{ eviscerate: { right: RIGHT, moments: MOMENTS, unjudged: 0 } }]);
+  });
+
+  it('leaves out of a log\'s counts a button it had no moment for', () => {
+    expect(benches.counts(list, [log([cast('unjudged')])])).toEqual([{}]);
+  });
+
+  it('benches the trinket a log\'s trinket line resolved to, under its use spell', () => {
+    const TRINKET = 'item_219314';
+    const resolved = (): LogReading => ({ casts: new Map([[TRINKET, clean]]), missed: [], ids: new Map([[TRINKET, EVISCERATE]]), buttons: new Map([[TRINKET, []]]) });
+    const trinketList = priorityList({ lines: [{ action: 'use_item', terms: [], item: 'trinket1' }] });
+    expect(benches.bench(trinketList, Array.from({ length: MIN_MEASURED_PARSES }, resolved)).map(button => button.action)).toEqual([TRINKET]);
   });
 
   it('names the button\'s icon by the id most top logs cast it under', () => {

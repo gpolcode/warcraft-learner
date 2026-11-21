@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { Results } from '../../../shared/util-http/result';
 import { SHADOW_BLADES, SHADOW_DANCE, EVASION } from '../../../../../testing/spell-ids';
-import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyAbility } from './northern-sky-data-source';
+import { NORTHERN_SKY_DATA_SOURCE, NorthernSkyAbility, NorthernSkyBench } from './northern-sky-data-source';
+import { parseRanking } from '../../../../../testing/builders/bench-sources';
 import { NorthernSkyFeatureService } from './northern-sky-feature-service';
 import { NorthernSkyPhase } from './northern-sky-phases';
 import { featureService } from '../../../../../testing/service-harness';
@@ -119,6 +120,16 @@ describe('buildNorthernSkyNote phase mapping', () => {
   });
 });
 
+describe('hasPhaseTable', () => {
+  it('is true for a bench that carries the boss\'s phase starts', () => {
+    expect(svc.hasPhaseTable(bench({ phases: [...PHASES] }))).toBe(true);
+  });
+
+  it('is false for a bench whose phase table is empty', () => {
+    expect(svc.hasPhaseTable(bench({ phases: [] }))).toBe(false);
+  });
+});
+
 describe('abilitiesByKind', () => {
   it('splits abilities into cooldowns and defensives, preserving order', () => {
     const cd1 = ability(SHADOW_BLADES, 'cooldown', [10]);
@@ -215,5 +226,17 @@ describe('getExport', () => {
   it('propagates a missing bench so the export waiting state shows', async () => {
     const service = featureService(NORTHERN_SKY_DATA_SOURCE, NorthernSkyFeatureService, Results.missing('Not yet ingested.'));
     expect(await service.getExport(NORTHERN_SKY_SPEC, NORTHERN_SKY_ENCOUNTER_ID)).toEqual(Results.missing('Not yet ingested.'));
+  });
+});
+
+describe('sourceOf', () => {
+  it('names the top log the export was taken from', () => {
+    const source = parseRanking({ rank: 3, player: 'Ann' });
+    expect(svc.sourceOf(bench({ source }))).toEqual(source);
+  });
+
+  it('names none for a bench an older ingest wrote without its source', () => {
+    const { source: _dropped, ...older } = bench();
+    expect(svc.sourceOf(older as NorthernSkyBench)).toBeNull();
   });
 });

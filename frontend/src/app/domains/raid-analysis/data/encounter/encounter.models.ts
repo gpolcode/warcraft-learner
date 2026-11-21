@@ -46,11 +46,7 @@ export interface CadenceBenchmark {
   majority_hold: boolean;
 }
 
-export interface PerCdBenchmark extends CadenceBenchmark {
-  avg_bl_offset_s: number | null;
-  stddev_bl_offset_s: number | null;
-  bl_pct: number;
-}
+export type PerCdBenchmark = CadenceBenchmark;
 
 export type PerDefensiveBenchmark = CadenceBenchmark;
 

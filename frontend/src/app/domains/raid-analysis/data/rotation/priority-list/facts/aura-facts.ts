@@ -69,9 +69,9 @@ export class AuraFacts implements FactReader {
 
   private logged(path: FactPath, moment: CastMoment, ctx: FactContext, id: number, spell: PlanSpell | undefined): Range {
     const readS = this.readS(moment, ctx);
-    if (path.field === 'active_dots') return point([...ctx.targetSpans(id).values()].filter(spans => this.auraAt(spans, readS)).length);
+    if (path.field === 'active_dots') return this.activeDots([...ctx.targetSpans(id).values()], readS, moment);
     const on = this.on(path, moment, ctx, id);
-    if (!on) return UNKNOWN;
+    if (!on || this.unreacted(this.changes(on, path, moment), readS, moment)) return UNKNOWN;
     const reading: Reading = { ...on, aura: this.auraAt(on.spans, readS), readS, moment, duration: spell?.duration ?? 0, maxStacks: spell?.max_stacks ?? 0 };
     return this.fields[path.field]?.(reading, ctx) ?? UNKNOWN;
   }
@@ -93,6 +93,27 @@ export class AuraFacts implements FactReader {
     let earlier = index - 1;
     while ((ctx.casts[earlier]?.atS ?? -Infinity) >= atS) earlier--;
     return Math.max(atS - CAST_EFFECTS_LEAD_S, (ctx.casts[earlier]?.atS ?? -Infinity) + LOG_TICK_S);
+  }
+
+  private activeDots(targets: readonly (readonly AuraSpan[])[], readS: number, moment: CastMoment): Range {
+    if (targets.some(spans => this.unreacted(this.edges(spans), readS, moment))) return UNKNOWN;
+    return point(targets.filter(spans => this.auraAt(spans, readS)).length);
+  }
+
+  private changes(on: Pick<Reading, 'spans' | 'stacks'>, { field }: FactPath, { reactS }: CastMoment): number[] {
+    if (!reactS) return [];
+    return [...this.edges(on.spans), ...(field === 'stack' ? on.stacks().entries.map(([atS]) => atS) : [])];
+  }
+
+  private edges(spans: readonly AuraSpan[]): number[] {
+    return spans.flatMap(span => (span.endS == null ? [span.startS] : [span.startS, span.endS]));
+  }
+
+  /** Counted in the log's whole milliseconds, so a change exactly the allowance before the moment is one the player had time to see. */
+  private unreacted(changesS: readonly number[], readS: number, { atS, reactS }: CastMoment): boolean {
+    if (!reactS) return false;
+    const allowance = Math.round(reactS / LOG_TICK_S);
+    return changesS.some(changeS => changeS <= readS && Math.round((atS - changeS) / LOG_TICK_S) < allowance);
   }
 
   /** A refresh ends one span and starts the next, so the aura ends where the last span of the chain does. */

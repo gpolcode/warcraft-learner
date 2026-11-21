@@ -8,6 +8,7 @@ import { NorthernSkyAbility, NorthernSkyBench } from '../data/northern-sky/north
 import { SHADOW_BLADES, EVASION } from '../../../../testing/spell-ids';
 import { whenStable } from '../../../../testing/when-stable';
 import { NORTHERN_SKY_ENCOUNTER_ID, NORTHERN_SKY_SPEC, bench } from '../data/northern-sky/northern-sky-harness';
+import { parseRanking } from '../../../../testing/builders/bench-sources';
 
 const CAST_TIMES_S = [10, 30];
 const EXPORT_BUTTON = 'button[tuiButton]';
@@ -60,6 +61,20 @@ describe('NorthernSkyExport export availability', () => {
     expect(dom.query('wl-load-state')).toBeNull();
     expect(dom.query(EXPORT_BUTTON)).not.toBeNull();
     expect(dom.text()).toContain('Northern Sky export');
+  });
+
+  it('names the top log the timings come from, with its rank, player and kill time', async () => {
+    const SOURCE = parseRanking({ rank: 2, player: 'Ann', duration_s: 331 });
+    const { dom } = await mount(async () => Results.ok(bench({ abilities: POPULATED_ABILITIES, source: SOURCE })));
+
+    expect(dom.text()).toContain('Cooldown timings from the #2 Mythic log for your spec (Ann, 5:31 kill), as a note for the Northern Sky raid addon.');
+  });
+
+  it('says only that the timings come from one top log when the bench names no source', async () => {
+    const { source: _dropped, ...older } = bench({ abilities: POPULATED_ABILITIES });
+    const { dom } = await mount(async () => Results.ok(older as NorthernSkyBench));
+
+    expect(dom.text()).toContain('Cooldown timings from one top Mythic log for your spec, as a note for the Northern Sky raid addon.');
   });
 
   it('shows the load error instead of the export button when the bench fails to load', async () => {

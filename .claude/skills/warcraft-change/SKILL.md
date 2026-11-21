@@ -13,7 +13,7 @@ Layer access, the two HTTP chokepoints, method shape, styling syntax, and file n
 
 ### New finding on an existing feature
 
-Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences` populated on the finding (all `wl-finding-occurrences` needs to render the drill-down), message + remedy copy, boundary-paired specs. No bench change means no `INGEST_VERSION` bump.
+Deliver: the pure check in the feature's `data/<feature>/` service, `occurrences` populated on the finding (all `wl-finding-occurrences` needs to render the drill-down), message + remedy copy, boundary-paired specs, and the verdict contract's deliverables in **warcraft-verdict** (registry entry, decision rule, producing scenario, version). No bench change means no `INGEST_VERSION` bump.
 
 ### New SimC condition
 

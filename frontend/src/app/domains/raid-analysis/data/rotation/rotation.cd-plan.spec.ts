@@ -5,7 +5,7 @@ import { cdBench } from './rotation-harness';
 import { TestBed } from '@angular/core/testing';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
-import { ROTATION_DATA_SOURCE } from './rotation-data-source';
+import { ROTATION_DATA_SOURCE, RotationParseMeasures } from './rotation-data-source';
 
 TestBed.configureTestingModule({ providers: [
   { provide: WCL_TRANSPORT, useValue: {} },
@@ -30,30 +30,35 @@ describe('buildCdPlan', () => {
     expect(plan.map(p => p.name)).toEqual(['Shadow Blades', 'Vanish']);
     assert.exists(plan[0]);
     expect(plan[0].holds).toEqual([{ castIndex: 2, targetS: 100 }]);
-    assert.exists(plan[0]);
-    expect(plan[0].bloodlust).toBe(true);
-    assert.exists(plan[0]);
-    expect(plan[0].bloodlustPct).toBe(100);
   });
 
-  it('drives the Bloodlust badge from bl_pct, not the plan flag', () => {
-    const cooldowns = [
-      { name: 'Aligned', spell_id: SHADOW_BLADES, cooldown: 90 },
-      { name: 'Unaligned', spell_id: VANISH, cooldown: 120 },
-    ];
-    const benchmarks = {
-      Aligned: cdBench({ bl_pct: 50 }),    // flag false, but data says aligned -> badge on (50 boundary)
-      Unaligned: cdBench({ bl_pct: 49 }),  // flag true, but data says not -> badge off
-    };
-    const plan = svc['buildCdPlan'](cooldowns, benchmarks, abilities);
-    const aligned = plan.find(p => p.name === 'Aligned');
-    assert.exists(aligned);
-    const unaligned = plan.find(p => p.name === 'Unaligned');
-    assert.exists(unaligned);
-    expect(aligned.bloodlust).toBe(true);
-    expect(aligned.bloodlustPct).toBe(50);
-    expect(unaligned.bloodlust).toBe(false);
-    expect(unaligned.bloodlustPct).toBeNull();
+  describe('the Bloodlust badge', () => {
+    const MID_LUST_S = 120;
+    const PULL_LUST_S = 1;
+    const IN_LUST_OFFSET_S = 5;
+    /** Past the 40s lust's end. */
+    const OUT_OF_LUST_OFFSET_S = 120;
+    const EFFECT_S = 20;
+    const TOP_LOGS = 10;
+    /** `up` of ten top logs lusting at `lustS` had Shadow Blades up during it; the rest pressed it a minute after the lust. */
+    const lusting = (lustS: number, up: number): RotationParseMeasures[] => Array.from({ length: TOP_LOGS }, (_unused, index) => {
+      const pressS = index < up ? lustS + IN_LUST_OFFSET_S : lustS + OUT_OF_LUST_OFFSET_S;
+      return { idle_s: null, lust_s: lustS, phase_starts: [], buttons: {}, cd_casts_s: { 'Shadow Blades': [pressS] }, cd_up_s: { 'Shadow Blades': [[pressS, pressS + EFFECT_S]] } };
+    });
+    const badge = (perParse: RotationParseMeasures[]): boolean | undefined =>
+      svc['buildCdPlan']([{ name: 'Shadow Blades', spell_id: SHADOW_BLADES, cooldown: 90 }], { 'Shadow Blades': cdBench() }, abilities, { perParse, killsS: [] })[0]?.bloodlust;
+
+    it('shows once half of the top logs that lusted mid-fight had it up during their lust', () => {
+      expect(badge(lusting(MID_LUST_S, TOP_LOGS / 2))).toBe(true);
+    });
+
+    it('does not show at one top log short of half', () => {
+      expect(badge(lusting(MID_LUST_S, TOP_LOGS / 2 - 1))).toBe(false);
+    });
+
+    it('learns nothing from top logs that lusted on the pull', () => {
+      expect(badge(lusting(PULL_LUST_S, TOP_LOGS))).toBe(false);
+    });
   });
 
   it('falls back to an empty icon for a cooldown whose spell id is not in the ability map', () => {

@@ -8,11 +8,18 @@ export class RotationBloodlustService {
 
   // Returns whatever start buildAuraWindows finds, negative included: a Lust cast before the pull still covers the opener.
   detectBloodlust(buffEvents: TimedEvent[]): number | null {
+    return this.lustSpan(buffEvents, Number.POSITIVE_INFINITY)?.startS ?? null;
+  }
+
+  /** The earliest Bloodlust aura on the player; one still up when the log ends closes at `fightEndS`. */
+  lustSpan(buffEvents: TimedEvent[], fightEndS: number): { startS: number; endS: number } | null {
     const windows = this.auraWindows.buildAuraWindows(buffEvents);
-    const starts = [...BLOODLUST_IDS]
-      .map(id => windows.get(id)?.[0]?.[0])
-      .filter((start): start is number => start != null);
-    return starts.length ? Math.min(...starts) : null;
+    const spans = [...BLOODLUST_IDS]
+      .map(id => windows.get(id)?.[0])
+      .filter((span): span is [number, number | null] => span != null)
+      .sort((a, b) => a[0] - b[0]);
+    const [first] = spans;
+    return first ? { startS: first[0], endS: first[1] ?? fightEndS } : null;
   }
 }
 

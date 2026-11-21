@@ -7,9 +7,17 @@ import type { WclEvent } from '../../../wcl/wcl.models';
 import { ConditionEvalService } from '../condition-eval-service';
 import { castAt, factContext, priorityList } from '../priority-list-harness';
 import { Range, UNKNOWN } from '../priority-list.models';
+import { VERDICT_CHOICES } from '../../../verdict/verdict-choices';
 import { CAST_EFFECTS_LEAD_S } from './aura-facts';
 
 const DANCE_S = 8;
+const LOG_TICK_S = 0.001;
+const REACTION_S = VERDICT_CHOICES.reactionS;
+const PRESS_S = 10;
+/** One log tick inside the allowance, so the player had no time to react. */
+const UNSEEN_S = PRESS_S - REACTION_S + LOG_TICK_S;
+/** Exactly the allowance before the press, so the player had just time to react. */
+const SEEN_S = PRESS_S - REACTION_S;
 const MAX_STACKS = 10;
 const RUPTURE_S = 20;
 const PANDEMIC_S = (RUPTURE_S * 30) / 100;
@@ -20,7 +28,6 @@ const OWN_EFFECT_LEAD_S = 0.001;
 const CONSUMED_LEAD_S = 0.013;
 /** Bladestorm fired 18 ms after the Recklessness it was macroed with. */
 const MACRO_GAP_S = 0.018;
-const LOG_TICK_S = 0.001;
 const DARKEST_NIGHT_ENTRY = 117739;
 const DEATHMARK_ENTRY = 112662;
 const OTHER_ENTRY = 117101;
@@ -52,13 +59,15 @@ interface Read {
   casts?: WclEvent[];
   talents?: [number, number][];
   action?: string;
+  reactS?: number;
 }
 
-const read = ({ name, events, atS, target, casts, talents, action = 'x' }: Read): Range => {
+const read = ({ name, events, atS, target, casts, talents, action = 'x', reactS }: Read): Range => {
   const debuffs = events.filter(event => event.type.includes('debuff'));
   const buffs = events.filter(event => !debuffs.includes(event));
   const ctx = factContext(list, { casts: casts ?? [cast(1, atS)], buffs, debuffs, ...(talents ? { talents } : {}) });
-  return evaluator.read(name, castAt(ctx, atS, target === undefined ? (debuffs.length || name.includes('deathmark') ? BOSS_KEY : null) : target), action, ctx);
+  const moment = castAt(ctx, atS, target === undefined ? (debuffs.length || name.includes('deathmark') ? BOSS_KEY : null) : target);
+  return evaluator.read(name, reactS === undefined ? moment : { ...moment, reactS }, action, ctx);
 };
 
 describe('AuraFacts buffs', () => {
@@ -118,6 +127,28 @@ describe('AuraFacts dots', () => {
     { reads: 'that dot as refreshable', name: 'dot.deathmark.refreshable', events: [], atS: 5, talents: [[OTHER_ENTRY, 1]], expected: [1, 1] },
     { reads: 'that dot as unknown when the player took the talent', name: 'dot.deathmark.ticking', events: [], atS: 5, talents: [[DEATHMARK_ENTRY, 1]], expected: UNKNOWN },
     { reads: 'a field the log cannot answer as unknown', name: 'dot.rupture.ticks_remain', events: onBoss, atS: 5, expected: UNKNOWN },
+  ])('reads $reads', row => {
+    expect(read(row)).toEqual(row.expected);
+  });
+});
+
+describe('AuraFacts within the reaction allowance', () => {
+  const appliedAt = (atS: number) => [applyBuff(SHADOW_DANCE, atS)];
+  const droppedAt = (atS: number) => [applyBuff(SHADOW_DANCE, 1), removeBuff(SHADOW_DANCE, atS)];
+  const stackedAt = (atS: number) => [applyBuff(MAELSTROM_WEAPON, 1), applyBuffStack(MAELSTROM_WEAPON, atS, 2)];
+  const spreadAt = (atS: number) => [applyDebuff(RUPTURE, 1, { target: BOSS }), applyDebuff(RUPTURE, atS, { target: ADD })];
+
+  it.each<Read>([
+    { reads: 'a buff applied inside the allowance as unknown', name: 'buff.shadow_dance.up', events: appliedAt(UNSEEN_S), atS: PRESS_S, reactS: REACTION_S, expected: UNKNOWN },
+    { reads: 'a buff applied exactly the allowance before the press as up', name: 'buff.shadow_dance.up', events: appliedAt(SEEN_S), atS: PRESS_S, reactS: REACTION_S, expected: [1, 1] },
+    { reads: 'a buff applied inside the allowance as up when the moment reads the log as it stands', name: 'buff.shadow_dance.up', events: appliedAt(UNSEEN_S), atS: PRESS_S, expected: [1, 1] },
+    { reads: 'a buff that dropped inside the allowance as unknown', name: 'buff.shadow_dance.up', events: droppedAt(UNSEEN_S), atS: PRESS_S, reactS: REACTION_S, expected: UNKNOWN },
+    { reads: 'a buff that dropped exactly the allowance before the press as down', name: 'buff.shadow_dance.up', events: droppedAt(SEEN_S), atS: PRESS_S, reactS: REACTION_S, expected: [0, 0] },
+    { reads: 'a stack gained inside the allowance as unknown under react', name: 'buff.maelstrom_weapon.react', events: stackedAt(UNSEEN_S), atS: PRESS_S, reactS: REACTION_S, expected: UNKNOWN },
+    { reads: 'a stack gained exactly the allowance before the press under react', name: 'buff.maelstrom_weapon.react', events: stackedAt(SEEN_S), atS: PRESS_S, reactS: REACTION_S, expected: [2, 2] },
+    { reads: 'a buff the press itself applies as not yet up, its own effect no change the player reacts to', name: 'buff.shadow_dance.up', events: appliedAt(PRESS_S - OWN_EFFECT_LEAD_S), atS: PRESS_S, reactS: REACTION_S, expected: [0, 0] },
+    { reads: 'the enemies a dot is on as unknown when it spread inside the allowance', name: 'active_dot.rupture', events: spreadAt(UNSEEN_S), atS: PRESS_S, target: null, reactS: REACTION_S, expected: UNKNOWN },
+    { reads: 'the enemies a dot is on when it spread exactly the allowance before the press', name: 'active_dot.rupture', events: spreadAt(SEEN_S), atS: PRESS_S, target: null, reactS: REACTION_S, expected: [2, 2] },
   ])('reads $reads', row => {
     expect(read(row)).toEqual(row.expected);
   });

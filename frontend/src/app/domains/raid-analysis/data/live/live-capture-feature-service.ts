@@ -52,8 +52,8 @@ const SEG_MS = 3_000;
 /** Rolling-buffer retention: covers the longest fight plus WCL upload lag plus pre-roll. */
 const BUFFER_MS = 12 * 60 * 1_000;
 
-const POINT_CLIP_ROLL: ClipRoll = { preMs: 5_000, postMs: 5_000 };
-const NO_CLIP_ROLL: ClipRoll = { preMs: 0, postMs: 0 };
+// Also absorbs the drift between the logger's clock and this PC's, which nothing calibrates.
+const CLIP_ROLL: ClipRoll = { preMs: 5_000, postMs: 5_000 };
 
 /** Grace period before a downloaded clip's object URL is revoked, so the browser can read the blob. */
 const DOWNLOAD_URL_TTL_MS = 10_000;
@@ -274,11 +274,8 @@ export class LiveCaptureFeatureService {
     this.playbackFailed.set(false);
   }
 
-  private clipWindowFor(anchor: ClipAnchor, ctx: { reportStartTime: number; fight: WclFight }): ClipWindow {
-    const { reportStartTime, fight } = ctx;
-    // A window plays its exact span; a point-in-time cast gets pre/post roll for context.
-    const roll: ClipRoll = anchor.windowLengthS > 0 ? NO_CLIP_ROLL : POINT_CLIP_ROLL;
-    return this.buildClipWindow(reportStartTime, fight.startTime, anchor, roll);
+  protected clipWindowFor(anchor: ClipAnchor, ctx: { reportStartTime: number; fight: WclFight }): ClipWindow {
+    return this.buildClipWindow(ctx.reportStartTime, ctx.fight.startTime, anchor, CLIP_ROLL);
   }
 
   /** A second open supersedes the first, so a slow remux must never overwrite the newer clip. */

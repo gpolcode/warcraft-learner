@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { mountVm } from '../../../../testing/component-harness';
 import { FindingTable } from './finding-table';
+import { tone } from '../../../../testing/builders/tone';
 
 describe('FindingTable', () => {
   const rows = [
-    { severity: 'warning' as const, icon: '', measured: { value: '1 / 2' }, occurrences: [] },
-    { severity: 'warning' as const, icon: '', measured: { value: '3 / 4' }, occurrences: [] },
+    { severity: tone('amber'), icon: '', measured: { value: '1 / 2' }, message: 'm', occurrences: [] },
+    { severity: tone('amber'), icon: '', measured: { value: '3 / 4' }, message: 'm', occurrences: [] },
   ];
 
   it('opens no row by default, so the table renders collapsed', () => {
@@ -38,7 +39,7 @@ describe('FindingTable', () => {
     vm.toggle(1);
     expect(vm.openIndex()).toBe(1);
 
-    const otherRows = [{ severity: 'critical' as const, icon: '', measured: { value: '5 / 6' }, occurrences: [] }];
+    const otherRows = [{ severity: tone('red'), icon: '', measured: { value: '5 / 6' }, message: 'm', occurrences: [] }];
     setInput('rows', otherRows);
 
     expect(vm.openIndex()).toBeNull();

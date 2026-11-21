@@ -6,7 +6,10 @@ import { GameIcon } from '../ui-game-icon/game-icon';
 import { LoadState } from '../../shared/ui-load-state/load-state';
 import { GearFeatureService } from '../data/gear/gear-feature-service';
 import { LoadResourceService } from '../../shared/ui-load-state/load-resource-service';
+import type { CardRanking } from '../data/verdict/row-order-service';
 import { EmptyState } from '../../shared/ui-empty-state/empty-state';
+import { BenchStripCaption } from '../ui-bench-strip/bench-strip';
+import { NotGraded } from '../ui-not-graded/not-graded';
 
 const COPY_TEXTS = ['Copy name', 'Copied'] as const;
 const CHIP_LINES = 2;
@@ -14,7 +17,7 @@ const CHIP_LINES = 2;
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'wl-gear',
-  imports: [EmptyState, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiIcon, TuiLink, TuiBadge, TuiChip, TuiItemsWithMore, GameIcon, LoadState],
+  imports: [EmptyState, TuiCardLarge, TuiHeader, TuiTitle, TuiButton, TuiIcon, TuiLink, TuiBadge, TuiChip, TuiItemsWithMore, GameIcon, LoadState, BenchStripCaption, NotGraded],
   templateUrl: './gear.html',
   providers: [{ provide: TUI_COPY_TEXTS, useValue: signal(COPY_TEXTS) }],
 })
@@ -30,6 +33,8 @@ export class Gear {
 
   readonly busyChange = output<boolean>();
   readonly availableChange = output<boolean>();
+  /** The rows this card judged, for the page's "Fix first" strip and damage card. */
+  readonly rankingChange = output<CardRanking>();
 
   private readonly load = this.loadRes.loadResource({
     params: () => ({
@@ -45,6 +50,7 @@ export class Gear {
     context: 'gear.load',
     busyChange: this.busyChange,
     availableChange: this.availableChange,
+    valueChange: view => { this.rankingChange.emit(this.gear.ranking(view)); },
   });
 
   protected readonly view = computed(() => this.load.value() ?? this.gear.emptyGearView());
@@ -52,8 +58,8 @@ export class Gear {
   protected readonly available = this.load.available;
   protected readonly error = this.load.error;
 
-  protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => row.status !== 'ok'));
-  protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.status === 'ok'));
+  protected readonly enchantIssues = computed(() => this.view().enchantRows.filter(row => !row.onPlan));
+  protected readonly enchantOnPlan = computed(() => this.view().enchantRows.filter(row => row.onPlan));
   private readonly openChipLists = signal<ReadonlySet<readonly unknown[]>>(new Set());
 
   protected chipLines(list: readonly unknown[]): number {

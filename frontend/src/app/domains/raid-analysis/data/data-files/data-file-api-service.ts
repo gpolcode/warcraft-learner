@@ -55,6 +55,15 @@ export class DataFileApiService {
     return this.io.writeJson('spec-meta.json', metas);
   }
 
+  /** Typed `unknown`: the shape belongs to the verdict layer, which reads it through its own source. */
+  getCalibrationIndex(): Promise<Result<unknown>> {
+    return this.io.readJson<unknown>('calibration.json');
+  }
+
+  writeCalibrationIndex(data: unknown): Promise<void> {
+    return this.io.writeJson('calibration.json', data);
+  }
+
   // A spec folder name never contains a dot; otherwise the index rebuild reads `index.json/encounters.json` and hits ENOTDIR.
   async listSpecs(): Promise<string[]> {
     return (await this.io.list('')).filter(name => !name.includes('.'));

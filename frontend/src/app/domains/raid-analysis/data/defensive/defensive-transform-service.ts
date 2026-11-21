@@ -13,10 +13,11 @@ import { AuraWindowsService } from '../analysis/aura-windows-service';
 import { WclProjectionsService, TimedEvent } from '../analysis/wcl-projections-service';
 import { BenchPipelineService, BenchParse } from '../analysis/bench-pipeline-service';
 import { DataSource } from '../data-source/data-source';
-import { DefensiveBench, DefensivePlanMeta } from './defensive-data-source';
-import { HoldTargetsService } from '../analysis/hold-targets-service';
+import { DefensiveBench, DefensiveParseMeasures, DefensivePlanMeta } from './defensive-data-source';
 import { CastCadenceService } from '../analysis/cast-cadence-service';
 import { DefensiveUsesService } from './defensive-uses-service';
+import { DefensiveJudgeService } from './defensive-judge-service';
+import { DeathTimelineService } from '../analysis/death-timeline-service';
 
 const CONSENSUS_FRAC = 0.5;
 const MEMBER_MAJORITY_FRAC = 0.5;
@@ -52,11 +53,12 @@ type UsesBySpell = Map<number, DefensiveWindow[]>;
 
 @Injectable({ providedIn: 'root' })
 export class DefensiveTransformService implements DataSource<DefensiveBench> {
-  private readonly holdTargets = inject(HoldTargetsService);
   private readonly castCadence = inject(CastCadenceService);
   private readonly auraWindows = inject(AuraWindowsService);
   private readonly defensiveUses = inject(DefensiveUsesService);
+  private readonly judge = inject(DefensiveJudgeService);
   private readonly benchPipeline = inject(BenchPipelineService);
+  private readonly deathTimeline = inject(DeathTimelineService);
   private readonly wclProjections = inject(WclProjectionsService);
   private readonly wclApi = inject(WclApiService);
   private readonly specPlanLoader = inject(SpecPlanLoaderService);
@@ -84,6 +86,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
           defensive_windows: this.clusterDefensiveWindows(allWindows, parses.length),
           defensives: this.defensivePlanMeta(defensives),
           cd_spell_ids: this.benchPipeline.spellIdsByName(defensives),
+          per_parse: parses.map(parse => this.parseMeasures(parse.summaries, defensives, parse.cover)),
         };
       },
     });
@@ -91,14 +94,16 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
 
   private async parseDefensives(
     { ranking, report, fight, player }: BenchParse, defensives: PlanDefensive[],
-  ): Promise<{ windows: ParseDefWindow[]; summaries: ParseDefensiveSummary[] }> {
+  ): Promise<{ windows: ParseDefWindow[]; summaries: ParseDefensiveSummary[]; cover: Omit<DefensiveParseMeasures, 'def_casts_s'> }> {
     const gameIdByActorId = new Map<number, number>();
     for (const enemy of report.masterData?.enemies ?? []) gameIdByActorId.set(enemy.id, enemy.gameID);
 
-    const [buffs, casts, dmgTaken] = await Promise.all([
+    const [buffs, casts, dmgTaken, deaths] = await Promise.all([
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Buffs', fight.startTime, fight.endTime, player.id),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Casts', fight.startTime, fight.endTime, player.id),
       this.wclApi.getAllEvents(ranking.report_code, fight.id, 'DamageTaken', fight.startTime, fight.endTime, player.id),
+      // A death names its victim as the target, so only the raid-wide read finds the player's.
+      this.wclApi.getAllEvents(ranking.report_code, fight.id, 'Deaths', fight.startTime, fight.endTime),
     ]);
 
     const fightDurationS = this.wclProjections.relativeS(fight.endTime, fight.startTime);
@@ -108,10 +113,27 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
     const uses: UsesBySpell = new Map(defensives.map(defensive => [defensive.spell_id, this.defensiveUses.uses(
       this.auraWindows.spansNamed(auras, defensive, abilities), this.defensiveUses.castTimesS(presses, defensive.spell_id), fightDurationS,
     )]));
+    const taken = this.wclProjections.withRelativeS(dmgTaken, fight.startTime);
+    const deathsTimed = this.wclProjections.withRelativeS(deaths, fight.startTime);
+    const resurrects = deathsTimed.some(event => event.targetID === player.id)
+      ? this.wclProjections.withRelativeS(await this.wclApi.getResurrects(ranking.report_code, fight.id, fight.startTime, fight.endTime), fight.startTime)
+      : [];
     return {
-      windows: this.findParseDefensiveWindows(this.wclProjections.withRelativeS(dmgTaken, fight.startTime), uses, defensives, gameIdByActorId),
+      windows: this.findParseDefensiveWindows(taken, uses, defensives, gameIdByActorId),
       summaries: this.summarizeDefensiveCasts(defensives, uses, fightDurationS),
+      cover: {
+        def_up_s: this.judge.coverSpans(defensives.map(defensive => ({ name: defensive.name, windows: uses.get(defensive.spell_id) ?? [] }))),
+        taken_per_s: this.judge.takenSeries(taken, fightDurationS),
+        dead_s: this.deathTimeline.deadSpans(deathsTimed, resurrects, fightDurationS).get(player.id) ?? [],
+      },
     };
+  }
+
+  protected parseMeasures(
+    summaries: ParseDefensiveSummary[], defensives: PlanDefensive[], cover: Omit<DefensiveParseMeasures, 'def_casts_s'>,
+  ): DefensiveParseMeasures {
+    const used = new Map(summaries.map(summary => [summary.name, summary.cast_times_s]));
+    return { def_casts_s: Object.fromEntries(defensives.map(defensive => [defensive.name, used.get(defensive.name) ?? []])), ...cover };
   }
 
   protected defensivePlanMeta(defensives: PlanDefensive[]): DefensivePlanMeta[] {
@@ -133,21 +155,8 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
   ): ParseDefensiveSummary[] {
     const summaries: ParseDefensiveSummary[] = [];
     for (const defensive of defensives) {
-      const cooldownS = defensive.cooldown;
-      const castTimes = (uses.get(defensive.spell_id) ?? []).map(use => round(use.start_s));
-      const holdWindows = this.holdTargets.detectHoldWindows(castTimes, cooldownS);
-
-      const firstCastS = castTimes[0];
-      if (firstCastS != null) {
-        summaries.push({
-          name: defensive.name,
-          cast_times_s: castTimes,
-          first_cast_s: firstCastS,
-          fight_duration_s: fightDurationS,
-          hold_windows: holdWindows,
-          cast_pattern: holdWindows.length ? 'hold' : 'on_cooldown',
-        });
-      }
+      const castTimes = this.judge.measureUseTimes(uses.get(defensive.spell_id) ?? []);
+      if (castTimes.length) summaries.push({ name: defensive.name, ...this.castCadence.entry(castTimes, fightDurationS, defensive.cooldown) });
     }
     return summaries;
   }
@@ -194,7 +203,7 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
       // A point use is an external on another raider, so none of the caster's damage taken falls in its window.
       for (const { start_s: startS, end_s: endS } of (uses.get(spellId) ?? []).filter(use => use.end_s > use.start_s)) {
         const windowHits = hits.filter(hit => hit[0] >= startS && hit[0] <= endS);
-        const windowDmg = windowHits.reduce((sum, hit) => sum + hit[1], 0);
+        const windowDmg = this.judge.measureDamage(damageTaken, startS, endS);
 
         result.push({
           time_s: round(startS),
@@ -274,6 +283,9 @@ export class DefensiveTransformService implements DataSource<DefensiveBench> {
           common_cds: [defensiveName],
           ref_game_id: this.majorityRefGameId(cluster),
           ability_breakdown: this.clusterAbilityBreakdown(cluster),
+          members: cluster.map(member => ({
+            parse: member.parse_index, time_s: member.time_s, window_length_s: member.window_length_s, damage: member.window_damage,
+          })),
         });
       }
     }

@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import type { WindowStatus } from '../data/analysis/window-comparison.models';
+
+/** The bar's fill color, already read from the window's status or tone. */
+export type RangeLook = 'success' | 'warning' | 'critical' | 'accent' | 'muted';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,5 +15,5 @@ export class RangeBar {
   readonly rangeLeft = input<number | null>(null);
   readonly rangeWidth = input<number | null>(null);
   readonly avg = input<number | null>(null);
-  readonly status = input<WindowStatus>('muted');
+  readonly status = input<RangeLook>('muted');
 }

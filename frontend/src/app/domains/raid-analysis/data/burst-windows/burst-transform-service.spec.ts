@@ -13,6 +13,7 @@ import { abilityLookup, parseRankings, reportsByCode } from '../../../../../test
 import { provideApiFakes } from '../../../../../testing/api-fakes';
 import { WCL_TRANSPORT } from '../wcl/wcl-transport';
 import { DATA_FILE_TRANSPORT } from '../data-files/data-file-transport';
+import { MIN_SAMPLE_COUNT } from '../analysis/top-parse-selection-service';
 
 const wclProjections = TestBed.inject(WclProjectionsService);
 TestBed.resetTestingModule();
@@ -400,7 +401,7 @@ const reportAbilities = [{ gameID: SHADOW_BLADES_DAMAGE, name: 'Eviscerate', ico
 const burstDamage = [damage(SHADOW_BLADES_DAMAGE, 10, BIN_DAMAGE), damage(SHADOW_BLADES_DAMAGE, 11, BIN_DAMAGE), damage(SHADOW_BLADES_DAMAGE, 12, BIN_DAMAGE)];
 const wclFake = {
   // getRankings returns the raw WCL envelope ({ rankings }); the transform unwraps it.
-  getRankings: async () => ({ rankings: parseRankings(2) }),
+  getRankings: async () => ({ rankings: parseRankings(MIN_SAMPLE_COUNT) }),
   getReport: reportsByCode({ abilities: reportAbilities }),
   getAllEvents: async (_code: string, _fightId: number, dataType: string) =>
     dataType === 'Casts' ? [cast(SHADOW_BLADES, 10)] : burstDamage,
@@ -411,20 +412,35 @@ const plansFake = planLoader(specPlan({
 }));
 
 describe('BurstTransformService (live, in-browser)', () => {
-  it('computes a clustered burst bench from the top parses', async () => {
+  it('computes a clustered burst bench from the top parses, with each one\'s damage per second', async () => {
     TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: plansFake }) });
     const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
     expect(bench.ok).toBe(true);
     if (!bench.ok) return;
-    expect(bench.value.sample_count).toBe(2);
+    expect(bench.value.sample_count).toBe(MIN_SAMPLE_COUNT);
     expect(bench.value.encounter_name).toBe('Boss');
     expect(bench.value.cd_spell_ids).toEqual({ 'Shadow Blades': SHADOW_BLADES });
     expect(bench.value.windows).toHaveLength(1);
     assert.exists(bench.value.windows[0]);
     expect(bench.value.windows[0].common_cds).toContain('Shadow Blades');
+    expect(bench.value.per_parse?.map(parse => parse.damage_per_s.slice(10, 13))).toEqual(bench.value.sources.map(() => [BIN_DAMAGE, BIN_DAMAGE, BIN_DAMAGE]));
     // ability_icons is complete: header cooldown AND every window ability resolved by id.
     expect(bench.value.ability_icons[SHADOW_BLADES]).toEqual({ icon: `icon_${SHADOW_BLADES}`, name: `name_${SHADOW_BLADES}` });
     expect(bench.value.ability_icons[SHADOW_BLADES_DAMAGE]).toEqual({ icon: `icon_${SHADOW_BLADES_DAMAGE}`, name: `name_${SHADOW_BLADES_DAMAGE}` });
+  });
+
+  it('names each top log whose window formed the baked one, with its own start, length and damage', async () => {
+    const WINDOW_START_S = 10;
+    const WINDOW_LENGTH_S = 3;
+    const WINDOW_DAMAGE = 3 * BIN_DAMAGE;
+    TestBed.configureTestingModule({ providers: provideApiFakes({ wcl: wclFake, plans: plansFake }) });
+
+    const bench = await TestBed.inject(BurstTransformService).getBench('SubtletyRogue', 1);
+
+    assert(bench.ok);
+    expect(bench.value.windows[0]?.members).toEqual(bench.value.sources.map((_source, parse) => ({
+      parse, time_s: WINDOW_START_S, window_length_s: WINDOW_LENGTH_S, damage: WINDOW_DAMAGE,
+    })));
   });
 
   it('reads the damage with resources, the form the rotation list reads, so the two benches share one fetch', async () => {

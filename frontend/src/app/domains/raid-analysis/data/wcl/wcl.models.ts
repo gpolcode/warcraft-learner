@@ -12,6 +12,10 @@ export interface WclFight {
   fightPercentage: number;
   /** WCL difficulty id: 3/4/5 are raid normal/heroic/mythic, 10 a Mythic+ dungeon boss. */
   difficulty?: number | null;
+  /** Report-relative ms, like `startTime`. Absent on fights read through the fights-only query. */
+  phaseTransitions?: { id: number; startTime: number }[] | null;
+  /** Report-relative ms; set only when the raid called the wipe through the Companion app. */
+  wipeCalledTime?: number | null;
 }
 
 export const MYTHIC_DIFFICULTY = 5;
@@ -78,11 +82,22 @@ export interface WclReport {
   };
 }
 
+export type RankingMetric = 'dps' | 'hps';
+
+/** Baked into every sampled bench as one of its `sources`, so the null facts are ones the rankings row left out. */
 export interface ParseRanking {
   player: string;
   server: string;
   report_code: string;
   fight_id: number;
+  /** Position in WCL's ranked list, counting the anonymized and report-less rows the selection skips. */
+  rank: number;
+  /** The ranked figure, per second, on the bench's `metric`. */
+  amount: number | null;
+  duration_s: number | null;
+  item_level: number | null;
+  /** Epoch seconds at the ranked pull's start. */
+  started_at_s: number | null;
 }
 
 /** resolveTopParses already caps these at CANDIDATE_POOL_DEPTH, so capping them again cuts nothing. */
@@ -129,6 +144,13 @@ export interface WclRawRanking {
   name?: string;
   server?: { name?: string };
   report?: { code?: string; fightID?: number };
+  amount?: number;
+  /** Milliseconds. */
+  duration?: number;
+  /** The ranked character's item level on a raid ranking. */
+  bracketData?: number;
+  /** Epoch milliseconds. */
+  startTime?: number;
 }
 
 // Either a JSON blob (string) or an already-parsed object; consumers unwrap both forms (see `unwrapRankings`).

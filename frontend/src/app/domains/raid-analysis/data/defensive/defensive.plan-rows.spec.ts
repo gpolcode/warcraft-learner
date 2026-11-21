@@ -28,7 +28,7 @@ describe('buildDefensivePlanRows', () => {
       per_defensive_benchmarks: {
         'Cloak of Shadows': defBench({ avg_first_cast_s: 12, avg_gap_s: null, stddev_gap_s: null, median_uses: 2, sample_count: 5, used_sample_count: 5 }),
       },
-      defensive_windows: [{ time_s: 30, window_length_s: 5, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, defensive_name: 'Cloak of Shadows', common_cds: ['Cloak of Shadows'], ability_breakdown: [] }],
+      defensive_windows: [{ time_s: 30, window_length_s: 5, dmg_avg: 0, dmg_min: 0, dmg_max: 0, dmg_stddev: 0, defensive_name: 'Cloak of Shadows', members: [], common_cds: ['Cloak of Shadows'], ability_breakdown: [] }],
     });
     const rows = svc['buildDefensivePlanRows'](bench);
     expect(rows).toHaveLength(1);

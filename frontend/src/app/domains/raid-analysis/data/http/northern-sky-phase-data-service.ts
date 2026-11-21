@@ -11,7 +11,8 @@ const TOC = 'NorthernSkyRaidTools.toc';
 const TIMELINE_MANIFEST = 'BossTimelines/BossTimelines.xml';
 const HTTP_NOT_FOUND = 404;
 
-const ALERT_ENTRY = /^(EncounterAlerts[\\/](?!Locales)[^\\/\s]+[\\/][^\\/\s]+\.lua)\s*$/gm;
+// A TOC line may end in load conditions (` [AllowLoadGameType standard]`), which are not part of the path.
+const ALERT_ENTRY = /^(EncounterAlerts[\\/](?!Locales)[^\\/\s]+[\\/][^\\/\s]+\.lua)(?:[ \t]+\[[^\]\n]*\])*\s*$/gm;
 const TIMELINE_ENTRY = /<Script\s+file="([^"]+\/[^"]+\.lua)"/g;
 const ENCOUNTER_ID = /^\s*local encID\s*=\s*(\d+)/m;
 const REGISTRATION = /NSI\.BossTimelines\[(\d+)\]\s*=\s*\{([\s\S]*?)\}/;
@@ -38,7 +39,7 @@ export class NorthernSkyPhaseDataService {
     try {
       const [toc, manifest] = await Promise.all([this.fetchFile(TOC), this.fetchFile(TIMELINE_MANIFEST)]);
       const [alerts, timelines] = await Promise.all([
-        Promise.all(this.manifestPaths(toc, ALERT_ENTRY, '').map(path => this.fetchOptionalFile(path))),
+        Promise.all(this.alertPaths(toc).map(path => this.fetchOptionalFile(path))),
         Promise.all(this.manifestPaths(manifest, TIMELINE_ENTRY, 'BossTimelines/').map(path => this.fetchOptionalFile(path))),
       ]);
       const phases = this.indexPhases(timelines, alerts);
@@ -61,6 +62,10 @@ export class NorthernSkyPhaseDataService {
       if (cause instanceof HttpErrorResponse && cause.status === HTTP_NOT_FOUND) return '';
       throw cause;
     }
+  }
+
+  protected alertPaths(toc: string): string[] {
+    return this.manifestPaths(toc, ALERT_ENTRY, '');
   }
 
   private manifestPaths(source: string, pattern: RegExp, prefix: string): string[] {

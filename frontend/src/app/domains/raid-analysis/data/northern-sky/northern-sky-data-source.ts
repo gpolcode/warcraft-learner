@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { DataSource } from '../data-source/data-source';
-import { BenchIdentity } from '../analysis/bench-pipeline-service';
+import { ExportHeader } from '../analysis/bench-pipeline-service';
 import { NorthernSkyPhase } from './northern-sky-phases';
 
 export interface NorthernSkyAbility {
@@ -12,7 +12,7 @@ export interface NorthernSkyAbility {
   cast_times_s: number[];
 }
 
-export interface NorthernSkyBench extends BenchIdentity {
+export interface NorthernSkyBench extends ExportHeader {
   abilities: NorthernSkyAbility[];
   /** Empty for an encounter Northern Sky keeps on one clock all fight. */
   phases: NorthernSkyPhase[];

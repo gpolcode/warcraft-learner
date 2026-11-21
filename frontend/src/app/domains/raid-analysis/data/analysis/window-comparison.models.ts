@@ -1,3 +1,6 @@
+import type { UnjudgedCause } from './pull-model-service';
+import type { RowRank, Tone } from '../verdict/tone.models';
+
 export interface RangeRow {
   spellId?: number;
   label: string;
@@ -19,7 +22,8 @@ export interface WindowSpell {
   name: string;
 }
 
-export type WindowStatus = 'good' | 'warn' | 'bad' | 'muted' | 'info';
+/** A tone from the window's check, or muted where the pull model leaves the window unjudged. */
+export type WindowStatus = 'muted' | Tone;
 
 export interface ComparisonWindow {
   timeStartS: number;
@@ -30,6 +34,15 @@ export interface ComparisonWindow {
   note: string;
   status: WindowStatus;
   statusIcon: string;
+  /** A pre-fight window: no player overlay, only the top logs' figures. */
+  benchOnly: boolean;
+  /** The window's verdict in one or two sentences, naming its top logs as a count; empty renders nothing. */
+  message: string;
+  family?: string;
+  /** Absent on a muted or bench-only window. */
+  rank?: RowRank;
+  /** Why a muted window is not judged; null on a judged or bench-only window. */
+  unjudged: UnjudgedCause | null;
   overview: RangeRow;
   detailRows: RangeRow[];
 }

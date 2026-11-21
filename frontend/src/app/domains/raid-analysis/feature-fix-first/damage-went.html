@@ -1,0 +1,40 @@
+@if (view(); as v) {
+<section tuiCardLarge appearance="outline-grayscale">
+  <div>
+    <header class="pb-2">
+      <div tuiHeader="body-l">
+        <hgroup tuiTitle>
+          <h2>Where your damage went</h2>
+          <p tuiSubtitle>What each loss cost in seconds of your own average damage, deaths first.</p>
+        </hgroup>
+      </div>
+    </header>
+
+    @for (death of v.deaths; track death.diedS) {
+      <div class="border-t border-line py-2.5">
+        <span class="block text-label text-muted mb-1">Death</span>
+        <span class="block text-name">You died at {{ death.diedS | formatDuration }}.</span>
+        @if (death.backS !== null) {
+          <span class="block text-body">You were back at {{ death.backS | formatDuration }}.</span>
+        } @else {
+          <span class="block text-body">You stayed dead to the end of the judged pull.</span>
+        }
+        <span class="block text-body text-muted">{{ death.damage | damageEstimate }}</span>
+      </div>
+    }
+    @if (v.foldedUnderDeaths) {
+      <div class="border-t border-line py-2.5 text-body text-muted">
+        {{ v.foldedUnderDeaths }} {{ v.foldedUnderDeaths === 1 ? 'check on the cards is' : 'checks on the cards are' }} not judged while you were dead.
+      </div>
+    }
+
+    @for (row of v.rows; track $index) {
+      <div class="border-t border-line py-2.5">
+        <span class="block text-label text-muted mb-1">{{ row.card }}</span>
+        <span class="block text-name">{{ row.subject || row.check }}</span>
+        <span class="block text-body text-muted">{{ row.damage | damageEstimate }}</span>
+      </div>
+    }
+  </div>
+</section>
+}
