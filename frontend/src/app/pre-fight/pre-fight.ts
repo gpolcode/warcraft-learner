@@ -28,9 +28,9 @@ import { NorthernSkyExport } from '../domains/raid-analysis/feature-northern-sky
 import { LoggerService } from '../domains/shared/util-logging/logger-service';
 import { EmptyState } from '../domains/shared/ui-empty-state/empty-state';
 
-export type PreFightCardId = 'northernSky' | 'gear' | 'cdPlan' | 'defensivePlan' | 'burst';
+type PreFightCardId = 'northernSky' | 'gear' | 'cdPlan' | 'defensivePlan' | 'burst';
 
-export const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
+const PRE_FIGHT_CARDS: readonly CardEntry<PreFightCardId>[] = [
   { id: 'northernSky', hasBench: true },
   { id: 'gear', hasBench: true },
   { id: 'cdPlan', hasBench: true },
