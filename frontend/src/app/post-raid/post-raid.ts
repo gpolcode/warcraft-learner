@@ -374,7 +374,7 @@ export class PostRaid {
 
     if (fight) {
       void this.mapFeature.prepare(this.reportCode(), fight, playerId, spec, this._enemies);
-      this.liveCapture.prepare(this.reportCode(), this.reportStartTime(), fight);
+      this.liveCapture.prepare(this.reportCode(), this.reportStartTime(), fight, this.fightLabel(fight.id));
     }
   }
 

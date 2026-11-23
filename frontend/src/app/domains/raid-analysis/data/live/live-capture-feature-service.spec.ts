@@ -64,6 +64,33 @@ describe('fullPullWindow', () => {
   });
 });
 
+describe('download filenames', () => {
+  const PULL_LABEL = 'Boss - Wipe #3 - 4:12';
+  const CLIP_FROM_S = 36;
+  const CLIP_TO_S = 42;
+  // A cast 2s into the pull with 5s pre-roll starts its clip 3s before the pull.
+  const PRE_PULL_FROM_S = -3;
+  const PRE_PULL_TO_S = 7;
+  const PAST_MINUTE_FROM_S = 65;
+  const PAST_MINUTE_TO_S = 71.9;
+
+  it('names the full pull after the pull as the dropdown shows it, with no time range', () => {
+    expect(svc['fullPullFilename'](PULL_LABEL)).toBe('Boss - Wipe #3 - 4:12.webm');
+  });
+
+  it('appends the clip time range to the pull name', () => {
+    expect(svc['clipFilename'](PULL_LABEL, CLIP_FROM_S, CLIP_TO_S)).toBe('Boss - Wipe #3 - 4:12 - 0:36-0:42.webm');
+  });
+
+  it('starts a clip whose pre-roll reaches before the pull at the pull start', () => {
+    expect(svc['clipFilename'](PULL_LABEL, PRE_PULL_FROM_S, PRE_PULL_TO_S)).toBe('Boss - Wipe #3 - 4:12 - 0:00-0:07.webm');
+  });
+
+  it('writes minutes past the first and drops fractional seconds', () => {
+    expect(svc['clipFilename'](PULL_LABEL, PAST_MINUTE_FROM_S, PAST_MINUTE_TO_S)).toBe('Boss - Wipe #3 - 4:12 - 1:05-1:11.webm');
+  });
+});
+
 describe('selectSegments', () => {
   const window: ClipWindow = { fromMs: 100, toMs: 200, key: 'w0' };
 

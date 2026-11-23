@@ -101,7 +101,7 @@ export class LiveCaptureFeatureService {
   readonly preparing = signal(false);
   readonly playbackFailed = signal(false);
 
-  private readonly ctx = signal<{ reportCode: string; reportStartTime: number; fight: WclFight } | null>(null);
+  private readonly ctx = signal<{ reportCode: string; reportStartTime: number; fight: WclFight; pullLabel: string } | null>(null);
   private currentAnchor: ClipAnchor | null = null;
   /** Clips already cut this session, keyed `reportCode:fightId:windowKey`; keeps a window openable after the buffer rolls past it. */
   private readonly resolved = new Map<string, Promise<ClipHandle | null>>();
@@ -202,8 +202,9 @@ export class LiveCaptureFeatureService {
     setTimeout(() => { if (recorder.state === 'recording') recorder.stop(); }, SEG_MS);
   }
 
-  prepare(reportCode: string, reportStartTime: number, fight: WclFight): void {
-    this.ctx.set({ reportCode, reportStartTime, fight });
+  /** `pullLabel` is the pull's text in the fight dropdown, which every downloaded file is named after. */
+  prepare(reportCode: string, reportStartTime: number, fight: WclFight, pullLabel: string): void {
+    this.ctx.set({ reportCode, reportStartTime, fight, pullLabel });
   }
 
   readonly clipReady = computed(() => {
@@ -231,15 +232,18 @@ export class LiveCaptureFeatureService {
   download(): void {
     const anchor = this.currentAnchor;
     const handle = this.handle();
-    if (!anchor || !handle) return;
-    this.triggerDownload(handle.blob, `${anchor.key}.webm`);
+    const ctx = this.ctx();
+    if (!anchor || !handle || !ctx) return;
+    const window = this.clipWindowFor(anchor, ctx);
+    const fightStartMs = ctx.reportStartTime + ctx.fight.startTime;
+    this.triggerDownload(handle.blob, this.clipFilename(ctx.pullLabel, (window.fromMs - fightStartMs) / 1000, (window.toMs - fightStartMs) / 1000));
   }
 
   async downloadFullPull(): Promise<DownloadOutcome> {
     const ctx = this.ctx();
     if (!ctx) return 'no-footage';
     const segments = this.selectSegments(this.segments(), this.fullPullWindow(ctx.reportStartTime, ctx.fight.startTime, ctx.fight.endTime));
-    return this.saveSegments(segments.map(segment => segment.blob), 'full-pull.webm');
+    return this.saveSegments(segments.map(segment => segment.blob), this.fullPullFilename(ctx.pullLabel));
   }
 
   protected async saveSegments(blobs: Blob[], filename: string): Promise<DownloadOutcome> {
@@ -334,6 +338,19 @@ export class LiveCaptureFeatureService {
       toMs: absStart + window.windowLengthS * 1000 + roll.postMs,
       key: window.key,
     };
+  }
+
+  protected fullPullFilename(pullLabel: string): string {
+    return `${pullLabel}.webm`;
+  }
+
+  /** The pre-roll of a cast in the first seconds of the pull reaches before the pull start, where no footage of the pull exists. */
+  protected clipFilename(pullLabel: string, fromS: number, toS: number): string {
+    return `${pullLabel} - ${this.clockTime(Math.max(0, fromS))}-${this.clockTime(Math.max(0, toS))}.webm`;
+  }
+
+  private clockTime(seconds: number): string {
+    return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
   }
 
   protected fullPullWindow(reportStartTime: number, fightStartTime: number, fightEndTime: number): ClipWindow {
